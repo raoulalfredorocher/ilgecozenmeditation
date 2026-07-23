@@ -1,28 +1,43 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-  <meta name="apple-mobile-web-app-title" content="禅タイマー"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
   <meta name="theme-color" content="#f0ebe0"/>
   <link rel="manifest" href="manifest.json"/>
-  <title>禅 Timer</title>
+  <title>Il Geco Zen</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg:       #f0ebe0;
-      --surface:  #e8e2d5;
-      --card:     #faf7f2;
-      --border:   #d6cfc2;
-      --text:     #3a3228;
-      --muted:    #8a7e72;
-      --gold:     #b8924a;
-      --red:      #9b3a2a;
-      --green:    #4a7c5a;
-      --ring-bg:  #ddd6c8;
+    /* ── Temi ── */
+    html[data-theme="light"] {
+      --bg:      #f0ebe0;
+      --surface: #e8e2d5;
+      --card:    #faf7f2;
+      --border:  #d6cfc2;
+      --text:    #3a3228;
+      --muted:   #8a7e72;
+      --gold:    #b8924a;
+      --red:     #9b3a2a;
+      --ring-bg: #ddd6c8;
+      --input-bg:#faf7f2;
+      --overlay: #f0ebe0;
+    }
+    html[data-theme="dark"] {
+      --bg:      #1c1a16;
+      --surface: #252320;
+      --card:    #2a2720;
+      --border:  #3d3930;
+      --text:    #e8e2d5;
+      --muted:   #8a7e72;
+      --gold:    #c8a84b;
+      --red:     #c05040;
+      --ring-bg: #302e28;
+      --input-bg:#252320;
+      --overlay: #1c1a16;
     }
 
     html, body {
@@ -32,8 +47,8 @@
       font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
+      transition: background .3s, color .3s;
     }
-
     body {
       display: flex;
       flex-direction: column;
@@ -46,311 +61,232 @@
     /* ── Header ── */
     header {
       width: 100%;
-      text-align: center;
-      padding: 24px 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 16px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
-    .kanji {
-      font-size: 1.7rem;
-      letter-spacing: .45em;
+    .header-center { flex: 1; text-align: center; }
+    .app-title {
+      font-size: 1.15rem;
+      letter-spacing: .18em;
       color: var(--gold);
       font-weight: 400;
     }
-    .subtitle {
-      font-size: .6rem;
-      letter-spacing: .3em;
+    .app-sub {
+      font-size: .55rem;
+      letter-spacing: .28em;
       color: var(--muted);
-      margin-top: 4px;
+      margin-top: 3px;
       text-transform: uppercase;
     }
 
-    /* ── SCREENS ── */
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 20px; cursor: pointer;
+      width: 52px; height: 28px;
+      position: relative; flex-shrink: 0;
+      transition: border-color .3s, background .3s;
+    }
+    .theme-toggle .knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--gold);
+      transition: transform .3s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── Screens ── */
     .screen { width: 100%; display: none; flex-direction: column; align-items: center; }
     .screen.active { display: flex; }
 
-    /* ══════════════════════════════════════
-       SCREEN 1 — CONFIGURAZIONE
-    ══════════════════════════════════════ */
+    /* ══════════ SCREEN CONFIG ══════════ */
 
-    /* Picker rotella */
+    /* Picker */
     .picker-section {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px 20px 18px;
-      margin-bottom: 20px;
+      width: 100%; background: var(--card);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px 20px 16px; margin-bottom: 18px;
     }
     .picker-label {
-      font-size: .6rem;
-      letter-spacing: .3em;
-      color: var(--muted);
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 14px;
+      font-size: .58rem; letter-spacing: .3em; color: var(--muted);
+      text-transform: uppercase; text-align: center; margin-bottom: 12px;
     }
     .picker-wrap {
-      position: relative;
-      height: 160px;
-      overflow: hidden;
-      cursor: grab;
+      position: relative; height: 160px; overflow: hidden; cursor: grab;
     }
-    .picker-wrap::before,
-    .picker-wrap::after {
-      content: '';
-      position: absolute;
-      left: 0; right: 0;
-      height: 56px;
-      z-index: 2;
-      pointer-events: none;
+    .picker-wrap::before, .picker-wrap::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 56px;
+      z-index: 2; pointer-events: none;
     }
     .picker-wrap::before { top: 0;    background: linear-gradient(to bottom, var(--card) 10%, transparent); }
     .picker-wrap::after  { bottom: 0; background: linear-gradient(to top,    var(--card) 10%, transparent); }
     .picker-highlight {
-      position: absolute;
-      top: 50%; left: 50%;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       width: 80%; height: 48px;
       border-top: 1.5px solid var(--gold);
       border-bottom: 1.5px solid var(--gold);
-      border-radius: 4px;
-      pointer-events: none;
-      z-index: 3;
+      border-radius: 4px; pointer-events: none; z-index: 3;
     }
     .picker-drum {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform .12s ease-out;
-      padding: 56px 0;
+      display: flex; flex-direction: column; align-items: center;
+      transition: transform .12s ease-out; padding: 56px 0;
     }
     .picker-item {
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      font-weight: 300;
-      color: var(--muted);
-      width: 120px;
-      transition: color .15s, font-size .15s;
-      user-select: none;
+      height: 48px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; font-weight: 300; color: var(--muted);
+      width: 120px; transition: color .15s, font-size .15s; user-select: none;
     }
-    .picker-item.selected {
-      color: var(--text);
-      font-size: 2rem;
-      font-weight: 400;
-    }
-    .picker-item small {
-      font-size: .65rem;
-      color: var(--muted);
-      margin-left: 5px;
-      letter-spacing: .1em;
-    }
+    .picker-item.selected { color: var(--text); font-size: 2rem; font-weight: 400; }
+    .picker-item small { font-size: .65rem; color: var(--muted); margin-left: 5px; letter-spacing: .1em; }
 
-    /* Add step button */
+    /* Add step */
     .btn-add-step {
-      width: 100%;
-      background: var(--card);
-      border: 1.5px dashed var(--border);
-      border-radius: 12px;
-      color: var(--gold);
-      font-size: .85rem;
-      letter-spacing: .15em;
-      padding: 14px;
-      cursor: pointer;
+      width: 100%; background: var(--card);
+      border: 1.5px dashed var(--border); border-radius: 12px;
+      color: var(--gold); font-size: .85rem; letter-spacing: .15em;
+      padding: 13px; cursor: pointer;
       transition: background .2s, border-color .2s;
-      margin-bottom: 20px;
-      font-family: inherit;
+      margin-bottom: 18px; font-family: inherit;
     }
     .btn-add-step:active { background: var(--surface); border-color: var(--gold); }
 
-    /* Step list */
+    /* Config step list */
     .config-steps {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
+      width: 100%; display: flex; flex-direction: column;
+      gap: 9px; margin-bottom: 20px;
     }
     .config-step {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: border-color .2s;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      transition: border-color .2s, opacity .2s;
+      cursor: default;
     }
+    .config-step.drag-over { border-color: var(--gold); opacity: .7; }
+    .step-drag-handle {
+      color: var(--border); font-size: 1rem; cursor: grab;
+      padding: 2px 4px; flex-shrink: 0; touch-action: none;
+      user-select: none;
+    }
+    .step-drag-handle:active { cursor: grabbing; }
     .config-step-num {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: .7rem;
-      color: var(--muted);
-      flex-shrink: 0;
+      font-size: .65rem; color: var(--muted); flex-shrink: 0;
     }
-    .config-step-val {
-      flex: 1;
-      font-size: 1.15rem;
-      font-weight: 400;
-      color: var(--text);
+    .step-body { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .step-mins-row { display: flex; align-items: baseline; gap: 4px; }
+    .step-mins-val { font-size: 1.05rem; font-weight: 400; color: var(--text); }
+    .step-mins-label { font-size: .62rem; color: var(--muted); letter-spacing: .08em; }
+    .step-name-input {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); font-family: inherit;
+      font-size: .75rem; padding: 5px 9px; outline: none;
+      transition: border-color .2s; width: 100%;
     }
-    .config-step-val span {
-      font-size: .65rem;
-      color: var(--muted);
-      margin-left: 4px;
-      letter-spacing: .1em;
-    }
+    .step-name-input:focus { border-color: var(--gold); }
+    .step-name-input::placeholder { color: var(--border); font-size: .7rem; }
     .config-step-del {
-      background: none; border: none;
-      color: var(--border); font-size: 1.1rem;
-      cursor: pointer; padding: 4px 6px;
-      transition: color .2s;
+      background: none; border: none; color: var(--border);
+      font-size: 1rem; cursor: pointer; padding: 3px 5px;
+      transition: color .2s; flex-shrink: 0;
     }
     .config-step-del:active { color: var(--red); }
 
-    /* Preset section */
-    .section-title {
-      width: 100%;
-      font-size: .6rem;
-      letter-spacing: .3em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    .empty-steps {
+      width: 100%; text-align: center; padding: 18px 0;
+      color: var(--muted); font-size: .76rem; letter-spacing: .1em;
     }
+
+    /* Section title */
+    .section-title {
+      width: 100%; font-size: .58rem; letter-spacing: .3em;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 11px;
+    }
+
+    /* Presets */
     .preset-grid {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
+      width: 100%; display: flex; flex-direction: column;
+      gap: 8px; margin-bottom: 16px;
     }
     .preset-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 13px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: border-color .2s, background .2s;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 15px;
+      display: flex; align-items: center; gap: 11px;
+      cursor: pointer; transition: border-color .2s, background .2s;
     }
     .preset-card:active { background: var(--surface); border-color: var(--gold); }
-    .preset-bell { font-size: 1.1rem; flex-shrink: 0; }
+    .preset-bell { font-size: 1rem; flex-shrink: 0; }
     .preset-info { flex: 1; }
-    .preset-name { font-size: .88rem; font-weight: 500; color: var(--text); }
-    .preset-desc { font-size: .7rem; color: var(--muted); margin-top: 2px; letter-spacing: .05em; }
-    .preset-del  { background: none; border: none; color: var(--border); font-size: 1rem; cursor: pointer; padding: 4px 6px; }
+    .preset-name-text { font-size: .86rem; font-weight: 500; color: var(--text); }
+    .preset-desc { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+    .preset-del {
+      background: none; border: none; color: var(--border);
+      font-size: .95rem; cursor: pointer; padding: 3px 5px;
+    }
     .preset-del:active { color: var(--red); }
 
-    /* Save preset row */
-    .save-row {
-      width: 100%;
-      display: flex;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
+    /* Save preset */
     .save-input {
-      flex: 1;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: .88rem;
-      padding: 12px 14px;
-      outline: none;
-      transition: border-color .2s;
+      width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: inherit;
+      font-size: .86rem; padding: 12px 14px; outline: none;
+      transition: border-color .2s; margin-bottom: 14px;
     }
     .save-input:focus { border-color: var(--gold); }
     .save-input::placeholder { color: var(--border); }
 
-    /* Main CTA */
-    .btn-avvia {
-      width: 100%;
-      background: var(--text);
-      color: var(--bg);
-      border: none;
-      border-radius: 14px;
-      font-family: inherit;
-      font-size: .95rem;
-      font-weight: 500;
-      letter-spacing: .2em;
-      padding: 18px;
-      cursor: pointer;
-      transition: background .2s, transform .1s;
-      margin-bottom: 8px;
-    }
-    .btn-avvia:active { background: var(--gold); transform: scale(.98); }
-
     .btn-save-preset {
-      width: 100%;
-      background: none;
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      font-family: inherit;
-      font-size: .82rem;
-      letter-spacing: .15em;
-      color: var(--muted);
-      padding: 13px;
-      cursor: pointer;
-      transition: border-color .2s, color .2s;
-      margin-bottom: 28px;
+      width: 100%; background: none; border: 1.5px solid var(--border);
+      border-radius: 14px; font-family: inherit; font-size: .82rem;
+      letter-spacing: .15em; color: var(--muted); padding: 13px;
+      cursor: pointer; transition: border-color .2s, color .2s; margin-bottom: 28px;
     }
     .btn-save-preset:active { border-color: var(--gold); color: var(--gold); }
 
-    .empty-steps {
-      width: 100%;
-      text-align: center;
-      padding: 20px 0;
-      color: var(--muted);
-      font-size: .78rem;
-      letter-spacing: .1em;
+    /* Avvia */
+    .btn-avvia {
+      width: 100%; background: var(--text); color: var(--bg);
+      border: none; border-radius: 14px; font-family: inherit;
+      font-size: .95rem; font-weight: 500; letter-spacing: .2em;
+      padding: 18px; cursor: pointer;
+      transition: background .2s, transform .1s; margin-bottom: 8px;
     }
+    .btn-avvia:active { background: var(--gold); transform: scale(.98); }
 
-    /* ══════════════════════════════════════
-       SCREEN 2 — TIMER
-    ══════════════════════════════════════ */
+    /* ══════════ SCREEN TIMER ══════════ */
 
     .timer-steps-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 32px;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: flex; gap: 7px; margin-bottom: 28px;
+      flex-wrap: wrap; justify-content: center;
     }
     .timer-step-pill {
-      padding: 5px 14px;
-      border-radius: 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      font-size: .72rem;
-      color: var(--muted);
-      letter-spacing: .05em;
-      transition: all .3s;
+      padding: 4px 13px; border-radius: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: .7rem; color: var(--muted); letter-spacing: .04em;
+      transition: all .3s; text-align: center;
     }
+    .timer-step-pill .pill-name { font-size: .6rem; display: block; opacity: .7; }
     .timer-step-pill.active {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
+      background: var(--text); border-color: var(--text); color: var(--bg);
     }
-    .timer-step-pill.done {
-      opacity: .35;
-    }
+    .timer-step-pill.active .pill-name { opacity: .6; }
+    .timer-step-pill.done { opacity: .3; }
 
-    /* Clock ring */
+    /* Ring */
     #clock-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 36px;
+      position: relative; display: flex; align-items: center;
+      justify-content: center; margin-bottom: 32px;
     }
     #ring-svg { width: 240px; height: 240px; transform: rotate(-90deg); }
     #ring-bg   { fill: none; stroke: var(--ring-bg); stroke-width: 6; }
@@ -359,97 +295,88 @@
       transition: stroke-dashoffset .9s linear;
     }
     #clock-time {
-      position: absolute;
-      font-size: 3.4rem;
-      font-weight: 200;
-      letter-spacing: .04em;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
+      position: absolute; font-size: 3.2rem; font-weight: 200;
+      letter-spacing: .04em; color: var(--text); font-variant-numeric: tabular-nums;
+    }
+    #clock-step-name {
+      position: absolute; bottom: 56px;
+      font-size: .6rem; letter-spacing: .18em; color: var(--muted);
+      text-transform: uppercase; max-width: 160px; text-align: center;
     }
     #clock-min-label {
-      position: absolute;
-      bottom: 52px;
-      font-size: .58rem;
-      letter-spacing: .25em;
-      color: var(--muted);
-      text-transform: uppercase;
+      position: absolute; bottom: 42px;
+      font-size: .52rem; letter-spacing: .2em; color: var(--border);
     }
 
     /* Timer buttons */
-    .timer-btns {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 28px;
-    }
+    .timer-btns { display: flex; gap: 14px; margin-bottom: 20px; }
     .btn-timer {
-      background: none;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: .78rem;
-      letter-spacing: .15em;
-      padding: 12px 26px;
-      cursor: pointer;
-      transition: all .2s;
+      background: none; border: 1.5px solid var(--border); border-radius: 12px;
+      color: var(--text); font-family: inherit; font-size: .76rem;
+      letter-spacing: .15em; padding: 11px 24px; cursor: pointer; transition: all .2s;
     }
     .btn-timer.primary {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
-      padding: 12px 40px;
+      background: var(--text); border-color: var(--text);
+      color: var(--bg); padding: 11px 38px;
     }
     .btn-timer.primary:active { background: var(--gold); border-color: var(--gold); }
     .btn-timer:active { border-color: var(--muted); }
 
+    /* Nature sounds */
+    .nature-section {
+      width: 100%; margin-bottom: 22px;
+    }
+    .nature-label {
+      font-size: .55rem; letter-spacing: .28em; color: var(--muted);
+      text-transform: uppercase; text-align: center; margin-bottom: 10px;
+    }
+    .nature-btns {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    }
+    .btn-nature {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 20px; font-family: inherit; font-size: .7rem;
+      letter-spacing: .08em; color: var(--muted); padding: 7px 14px;
+      cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 5px;
+    }
+    .btn-nature.active {
+      background: var(--surface); border-color: var(--gold); color: var(--text);
+    }
+    .btn-nature:active { border-color: var(--gold); }
+
     .btn-back {
-      background: none; border: none;
-      font-family: inherit; font-size: .72rem;
-      letter-spacing: .15em; color: var(--muted);
-      cursor: pointer; padding: 8px;
-      text-transform: uppercase;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      background: none; border: none; font-family: inherit; font-size: .7rem;
+      letter-spacing: .15em; color: var(--muted); cursor: pointer; padding: 8px;
+      text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;
     }
 
-    /* Bell flash overlay */
+    /* Bell flash */
     #bell-flash {
-      position: fixed; inset: 0;
-      background: rgba(184, 146, 74, .12);
-      pointer-events: none; opacity: 0;
-      transition: opacity .5s; z-index: 999;
+      position: fixed; inset: 0; background: rgba(184,146,74,.1);
+      pointer-events: none; opacity: 0; transition: opacity .5s; z-index: 999;
     }
     #bell-flash.ring { opacity: 1; }
 
-    /* Done screen overlay */
+    /* Done overlay */
     #done-overlay {
-      position: fixed; inset: 0;
-      background: var(--bg);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      gap: 12px;
+      position: fixed; inset: 0; background: var(--overlay);
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; z-index: 100; gap: 10px;
     }
     #done-overlay.show { display: flex; }
     .done-kanji { font-size: 3.5rem; color: var(--gold); letter-spacing: .3em; }
-    .done-text  { font-size: .8rem; letter-spacing: .3em; color: var(--muted); text-transform: uppercase; }
-    .done-sub   { font-size: .65rem; letter-spacing: .2em; color: var(--border); margin-top: 4px; }
+    .done-text  { font-size: .78rem; letter-spacing: .3em; color: var(--muted); text-transform: uppercase; }
+    .done-sub   { font-size: .62rem; letter-spacing: .18em; color: var(--border); margin-top: 2px; }
     .btn-done   {
-      margin-top: 24px;
-      background: var(--text); color: var(--bg);
-      border: none; border-radius: 12px;
-      font-family: inherit; font-size: .82rem;
-      letter-spacing: .2em; padding: 14px 32px;
-      cursor: pointer;
+      margin-top: 22px; background: var(--text); color: var(--bg);
+      border: none; border-radius: 12px; font-family: inherit;
+      font-size: .8rem; letter-spacing: .2em; padding: 13px 30px; cursor: pointer;
     }
 
     footer {
-      margin-top: 24px; width: 100%;
-      border-top: 1px solid var(--border); padding-top: 14px;
-      text-align: center; font-size: .55rem;
-      letter-spacing: .15em; color: var(--border);
+      margin-top: 22px; width: 100%; border-top: 1px solid var(--border);
+      padding-top: 12px; text-align: center; font-size: .52rem;
+      letter-spacing: .14em; color: var(--border);
     }
   </style>
 </head>
@@ -457,7 +384,7 @@
 
 <div id="bell-flash"></div>
 
-<!-- DONE OVERLAY -->
+<!-- Done overlay -->
 <div id="done-overlay">
   <div class="done-kanji">禅</div>
   <div class="done-text">Sessione completata</div>
@@ -466,14 +393,19 @@
 </div>
 
 <header>
-  <div class="kanji">禅　タイマー</div>
-  <div class="subtitle">Zen Meditation Timer</div>
+  <div style="width:52px"></div>
+  <div class="header-center">
+    <div class="app-title">Il Geco Zen</div>
+    <div class="app-sub">timer di meditazione</div>
+  </div>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+    <div class="knob" id="theme-knob">☀️</div>
+  </button>
 </header>
 
 <!-- ══ SCREEN 1: CONFIG ══ -->
 <div class="screen active" id="screen-config">
 
-  <!-- Picker rotella -->
   <div class="picker-section">
     <div class="picker-label">seleziona minuti</div>
     <div class="picker-wrap" id="picker-wrap">
@@ -482,23 +414,18 @@
     </div>
   </div>
 
-  <!-- Add step -->
   <button class="btn-add-step" id="btn-add">＋ aggiungi intervallo</button>
 
-  <!-- Step list -->
   <div class="config-steps" id="config-steps">
     <div class="empty-steps" id="empty-steps">nessun intervallo aggiunto</div>
   </div>
 
-  <!-- Preset section -->
   <div class="section-title">sequenze salvate</div>
   <div class="preset-grid" id="preset-grid"></div>
 
-  <!-- Save row -->
   <input class="save-input" id="preset-name" type="text" placeholder="nome sequenza da salvare…" maxlength="28"/>
-  <button class="btn-save-preset" id="btn-save-preset">&#9675; salva sequenza corrente</button>
+  <button class="btn-save-preset" id="btn-save-preset">♥ salva sequenza corrente</button>
 
-  <!-- Avvia -->
   <button class="btn-avvia" id="btn-avvia">inizia meditazione</button>
 
 </div>
@@ -513,6 +440,7 @@
       <circle id="ring-bg"   cx="120" cy="120" r="104"/>
       <circle id="ring-fill" cx="120" cy="120" r="104"/>
     </svg>
+    <div id="clock-step-name"></div>
     <div id="clock-time">00:00</div>
     <div id="clock-min-label"></div>
   </div>
@@ -522,6 +450,19 @@
     <button class="btn-timer primary" id="btn-start">avvia</button>
   </div>
 
+  <!-- Suoni naturali -->
+  <div class="nature-section">
+    <div class="nature-label">suono di sottofondo</div>
+    <div class="nature-btns">
+      <button class="btn-nature active" data-sound="silence">🤫 silenzio</button>
+      <button class="btn-nature" data-sound="rain">🌧 pioggia</button>
+      <button class="btn-nature" data-sound="sea">🌊 mare</button>
+      <button class="btn-nature" data-sound="wind">🍃 vento</button>
+      <button class="btn-nature" data-sound="birds">🐦 uccellini</button>
+      <button class="btn-nature" data-sound="stream">💧 ruscello</button>
+    </div>
+  </div>
+
   <button class="btn-back" id="btn-back">← modifica sequenza</button>
 
 </div>
@@ -529,10 +470,26 @@
 <footer>Made with IBM Bob</footer>
 
 <script>
-// ─────────────────────────────────────────────
-// AUDIO — Campana buddista sintetizzata
-// Risonanza lunga, 3 parziali, tono caldo
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════
+const html = document.documentElement;
+const themeBtn  = document.getElementById('theme-toggle');
+const themeKnob = document.getElementById('theme-knob');
+
+let isDark = localStorage.getItem('zen_theme') === 'dark';
+function applyTheme() {
+  html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  themeKnob.textContent = isDark ? '🌙' : '☀️';
+  document.querySelector('meta[name="theme-color"]').content = isDark ? '#1c1a16' : '#f0ebe0';
+  localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+}
+applyTheme();
+themeBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+// ═══════════════════════════════════════
+// AUDIO — Campana buddista
+// ═══════════════════════════════════════
 let audioCtx = null;
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -542,37 +499,25 @@ function ensureAudio() {
 function playBellStrike() {
   ensureAudio();
   const now = audioCtx.currentTime;
-
-  // Parziali della campana buddista (fondamentale + overtone)
   const partials = [
-    { freq: 210, gain: 0.55, decay: 6.0 },
-    { freq: 476, gain: 0.28, decay: 4.5 },
-    { freq: 840, gain: 0.12, decay: 2.8 },
-    { freq: 1260,gain: 0.05, decay: 1.6 },
+    { freq: 210,  gain: 0.55, decay: 6.0 },
+    { freq: 476,  gain: 0.28, decay: 4.5 },
+    { freq: 840,  gain: 0.12, decay: 2.8 },
+    { freq: 1260, gain: 0.05, decay: 1.6 },
   ];
-
   partials.forEach(p => {
     const osc  = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     const comp = audioCtx.createDynamicsCompressor();
-
-    osc.connect(gain);
-    gain.connect(comp);
-    comp.connect(audioCtx.destination);
-
+    osc.connect(gain); gain.connect(comp); comp.connect(audioCtx.destination);
     osc.type = 'sine';
     osc.frequency.setValueAtTime(p.freq, now);
     osc.frequency.exponentialRampToValueAtTime(p.freq * 0.994, now + p.decay);
-
     gain.gain.setValueAtTime(0, now);
     gain.gain.linearRampToValueAtTime(p.gain, now + 0.008);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + p.decay);
-
-    osc.start(now);
-    osc.stop(now + p.decay + 0.1);
+    osc.start(now); osc.stop(now + p.decay + 0.1);
   });
-
-  // Flash visivo
   const flash = document.getElementById('bell-flash');
   flash.classList.add('ring');
   setTimeout(() => flash.classList.remove('ring'), 600);
@@ -583,21 +528,129 @@ function ringBell(times, cb) {
   let i = 0;
   function strike() {
     if (i >= times) { if (cb) cb(); return; }
-    i++;
-    playBellStrike();
-    setTimeout(strike, 4800);
+    i++; playBellStrike(); setTimeout(strike, 4800);
   }
   strike();
 }
 
-// ─────────────────────────────────────────────
-// PICKER ROTELLA
-// ─────────────────────────────────────────────
-const ITEM_H   = 48;
-const MIN_VALS = [];
-for (let i = 1; i <= 90; i++) MIN_VALS.push(i);
+// ═══════════════════════════════════════
+// SUONI NATURALI — Web Audio API
+// ═══════════════════════════════════════
+let natureNode = null;
+let currentSound = 'silence';
 
-let pickerIndex = 19; // default 20 min
+const NATURE_SOUNDS = {
+  silence: null,
+
+  rain: (ctx) => {
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.35;
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const filter = ctx.createBiquadFilter(); filter.type = 'bandpass';
+    filter.frequency.value = 1200; filter.Q.value = 0.5;
+    const gain = ctx.createGain(); gain.gain.value = 0.45;
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(); return { stop: () => { try { src.stop(); } catch(e){} } };
+  },
+
+  sea: (ctx) => {
+    // onde: noise LFO
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 600;
+    const gain = ctx.createGain(); gain.gain.value = 0.0;
+    const lfo = ctx.createOscillator(); const lfoGain = ctx.createGain();
+    lfo.frequency.value = 0.18; lfoGain.gain.value = 0.28;
+    lfo.connect(lfoGain); lfoGain.connect(gain.gain);
+    gain.gain.setValueAtTime(0.22, ctx.currentTime);
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(); lfo.start();
+    return { stop: () => { try { src.stop(); lfo.stop(); } catch(e){} } };
+  },
+
+  wind: (ctx) => {
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.6;
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const f1 = ctx.createBiquadFilter(); f1.type = 'bandpass'; f1.frequency.value = 400; f1.Q.value = 0.8;
+    const f2 = ctx.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 200;
+    const gain = ctx.createGain(); gain.gain.value = 0.3;
+    const lfo = ctx.createOscillator(); const lfoG = ctx.createGain();
+    lfo.frequency.value = 0.08; lfoG.gain.value = 0.12;
+    lfo.connect(lfoG); lfoG.connect(gain.gain);
+    src.connect(f1); f1.connect(f2); f2.connect(gain); gain.connect(ctx.destination);
+    src.start(); lfo.start();
+    return { stop: () => { try { src.stop(); lfo.stop(); } catch(e){} } };
+  },
+
+  birds: (ctx) => {
+    let running = true;
+    function chirp() {
+      if (!running) return;
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      const baseF = 2200 + Math.random() * 1800;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(baseF, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(baseF * (1.1 + Math.random() * .2), ctx.currentTime + 0.08);
+      osc.frequency.linearRampToValueAtTime(baseF * 0.95, ctx.currentTime + 0.16);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2);
+      const delay = 600 + Math.random() * 2200;
+      setTimeout(chirp, delay);
+    }
+    chirp();
+    return { stop: () => { running = false; } };
+  },
+
+  stream: (ctx) => {
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const f1 = ctx.createBiquadFilter(); f1.type = 'bandpass'; f1.frequency.value = 900; f1.Q.value = 0.4;
+    const f2 = ctx.createBiquadFilter(); f2.type = 'bandpass'; f2.frequency.value = 400; f2.Q.value = 0.6;
+    const gain = ctx.createGain(); gain.gain.value = 0.25;
+    const lfo = ctx.createOscillator(); const lfoG = ctx.createGain();
+    lfo.frequency.value = 0.35; lfoG.gain.value = 0.06;
+    lfo.connect(lfoG); lfoG.connect(gain.gain);
+    src.connect(f1); src.connect(f2); f1.connect(gain); f2.connect(gain);
+    gain.connect(ctx.destination); src.start(); lfo.start();
+    return { stop: () => { try { src.stop(); lfo.stop(); } catch(e){} } };
+  },
+};
+
+function stopNature() {
+  if (natureNode) { natureNode.stop(); natureNode = null; }
+}
+function startNature(sound) {
+  stopNature();
+  if (sound === 'silence' || !NATURE_SOUNDS[sound]) return;
+  ensureAudio();
+  natureNode = NATURE_SOUNDS[sound](audioCtx);
+}
+
+document.querySelectorAll('.btn-nature').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.btn-nature').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSound = btn.dataset.sound;
+    if (running) startNature(currentSound);
+  });
+});
+
+// ═══════════════════════════════════════
+// PICKER
+// ═══════════════════════════════════════
+const ITEM_H = 48;
+const MIN_VALS = Array.from({length: 90}, (_, i) => i + 1);
+let pickerIndex = 19;
 const drum = document.getElementById('picker-drum');
 const wrap = document.getElementById('picker-wrap');
 
@@ -611,121 +664,165 @@ function buildDrum() {
   });
   setDrumPos(pickerIndex, false);
 }
-
 function setDrumPos(idx, animate) {
-  if (!animate) drum.style.transition = 'none';
-  else drum.style.transition = 'transform .18s ease-out';
+  drum.style.transition = animate ? 'transform .18s ease-out' : 'none';
   drum.style.transform = `translateY(${-idx * ITEM_H}px)`;
-  // aggiorna selected
-  drum.querySelectorAll('.picker-item').forEach((el, i) => {
-    el.classList.toggle('selected', i === idx);
-  });
+  drum.querySelectorAll('.picker-item').forEach((el, i) => el.classList.toggle('selected', i === idx));
   pickerIndex = Math.max(0, Math.min(MIN_VALS.length - 1, idx));
 }
-
-// Touch / mouse drag
 let dragStart = null, dragBase = null;
-function onDragStart(e) {
-  dragStart = (e.touches ? e.touches[0].clientY : e.clientY);
-  dragBase  = pickerIndex;
-  drum.style.transition = 'none';
-}
-function onDragMove(e) {
-  if (dragStart === null) return;
-  const y    = (e.touches ? e.touches[0].clientY : e.clientY);
-  const diff = Math.round((dragStart - y) / ITEM_H);
-  const idx  = Math.max(0, Math.min(MIN_VALS.length - 1, dragBase + diff));
-  setDrumPos(idx, false);
-}
-function onDragEnd() {
-  dragStart = null;
-  // snap
-  drum.style.transition = 'transform .15s ease-out';
-}
-
-wrap.addEventListener('touchstart',  onDragStart, {passive: true});
-wrap.addEventListener('touchmove',   onDragMove,  {passive: true});
-wrap.addEventListener('touchend',    onDragEnd);
-wrap.addEventListener('mousedown',   onDragStart);
-wrap.addEventListener('mousemove',   onDragMove);
-wrap.addEventListener('mouseup',     onDragEnd);
-wrap.addEventListener('mouseleave',  onDragEnd);
-
-// Scroll wheel
-wrap.addEventListener('wheel', e => {
-  e.preventDefault();
-  const dir = e.deltaY > 0 ? 1 : -1;
-  setDrumPos(pickerIndex + dir, true);
-}, { passive: false });
-
+wrap.addEventListener('touchstart',  e => { dragStart = e.touches[0].clientY; dragBase = pickerIndex; drum.style.transition='none'; }, {passive:true});
+wrap.addEventListener('touchmove',   e => { if(dragStart===null)return; const diff=Math.round((dragStart-e.touches[0].clientY)/ITEM_H); setDrumPos(Math.max(0,Math.min(MIN_VALS.length-1,dragBase+diff)),false); }, {passive:true});
+wrap.addEventListener('touchend',    () => { dragStart=null; drum.style.transition='transform .15s ease-out'; });
+wrap.addEventListener('mousedown',   e => { dragStart=e.clientY; dragBase=pickerIndex; drum.style.transition='none'; });
+wrap.addEventListener('mousemove',   e => { if(dragStart===null)return; const diff=Math.round((dragStart-e.clientY)/ITEM_H); setDrumPos(Math.max(0,Math.min(MIN_VALS.length-1,dragBase+diff)),false); });
+wrap.addEventListener('mouseup',     () => { dragStart=null; });
+wrap.addEventListener('mouseleave',  () => { dragStart=null; });
+wrap.addEventListener('wheel', e => { e.preventDefault(); setDrumPos(pickerIndex+(e.deltaY>0?1:-1),true); }, {passive:false});
 buildDrum();
 
-// ─────────────────────────────────────────────
-// STEPS
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
+// STEPS + DRAG & DROP
+// ═══════════════════════════════════════
 let steps = [];
+let dragSrcIdx = null;
 
 function renderConfigSteps() {
   const container = document.getElementById('config-steps');
   const empty     = document.getElementById('empty-steps');
   container.querySelectorAll('.config-step').forEach(el => el.remove());
-  if (!steps.length) { empty.style.display = 'block'; return; }
+  if (!steps.length) { empty.style.display='block'; return; }
   empty.style.display = 'none';
+
   steps.forEach((s, i) => {
     const el = document.createElement('div');
     el.className = 'config-step';
+    el.draggable = true;
+    el.dataset.idx = i;
     el.innerHTML = `
-      <div class="config-step-num">${i + 1}</div>
-      <div class="config-step-val">${s.mins}<span>minuti</span></div>
+      <span class="step-drag-handle" title="trascina per riordinare">⠿</span>
+      <div class="config-step-num">${i+1}</div>
+      <div class="step-body">
+        <div class="step-mins-row">
+          <span class="step-mins-val">${s.mins}</span>
+          <span class="step-mins-label">minuti</span>
+        </div>
+        <input class="step-name-input" type="text" placeholder="nome intervallo (opzionale)"
+               value="${s.name||''}" data-i="${i}" maxlength="30"/>
+      </div>
       <button class="config-step-del" data-i="${i}" aria-label="rimuovi">✕</button>`;
     container.appendChild(el);
-  });
-  container.querySelectorAll('.config-step-del').forEach(b =>
-    b.addEventListener('click', e => {
+
+    // name input
+    el.querySelector('.step-name-input').addEventListener('input', e => {
+      steps[+e.target.dataset.i].name = e.target.value;
+    });
+    // delete
+    el.querySelector('.config-step-del').addEventListener('click', e => {
       steps.splice(+e.currentTarget.dataset.i, 1);
       renderConfigSteps();
-    })
-  );
+    });
+
+    // Drag & drop — desktop
+    el.addEventListener('dragstart', e => {
+      dragSrcIdx = i;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => el.style.opacity = '.4', 0);
+    });
+    el.addEventListener('dragend', () => { el.style.opacity='1'; document.querySelectorAll('.config-step').forEach(c=>c.classList.remove('drag-over')); });
+    el.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragSrcIdx === null || dragSrcIdx === i) return;
+      const moved = steps.splice(dragSrcIdx, 1)[0];
+      steps.splice(i, 0, moved);
+      dragSrcIdx = null;
+      renderConfigSteps();
+    });
+
+    // Drag & drop — touch
+    let touchStartY = null, touchClone = null;
+    el.querySelector('.step-drag-handle').addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+      dragSrcIdx  = i;
+      touchClone  = el.cloneNode(true);
+      touchClone.style.cssText = `position:fixed;left:${el.getBoundingClientRect().left}px;top:${el.getBoundingClientRect().top}px;width:${el.offsetWidth}px;opacity:.8;pointer-events:none;z-index:9999;border-color:var(--gold);`;
+      document.body.appendChild(touchClone);
+      el.style.opacity = '.3';
+    }, {passive:true});
+
+    el.querySelector('.step-drag-handle').addEventListener('touchmove', e => {
+      if (!touchClone) return;
+      const dy = e.touches[0].clientY - touchStartY;
+      touchClone.style.top = (el.getBoundingClientRect().top + dy) + 'px';
+      // find target
+      const allSteps = [...document.querySelectorAll('.config-step')];
+      allSteps.forEach(s2 => s2.classList.remove('drag-over'));
+      const target = allSteps.find(s2 => {
+        const r = s2.getBoundingClientRect();
+        return e.touches[0].clientY >= r.top && e.touches[0].clientY <= r.bottom && s2 !== el;
+      });
+      if (target) target.classList.add('drag-over');
+    }, {passive:true});
+
+    el.querySelector('.step-drag-handle').addEventListener('touchend', e => {
+      if (touchClone) { document.body.removeChild(touchClone); touchClone=null; }
+      el.style.opacity = '1';
+      const allSteps = [...document.querySelectorAll('.config-step')];
+      const targetEl = allSteps.find(s2 => s2.classList.contains('drag-over'));
+      allSteps.forEach(s2 => s2.classList.remove('drag-over'));
+      if (targetEl && dragSrcIdx !== null) {
+        const targetIdx = +targetEl.dataset.idx;
+        if (targetIdx !== dragSrcIdx) {
+          const moved = steps.splice(dragSrcIdx, 1)[0];
+          steps.splice(targetIdx, 0, moved);
+          renderConfigSteps();
+        }
+      }
+      dragSrcIdx = null;
+    });
+  });
 }
 
 document.getElementById('btn-add').addEventListener('click', () => {
-  steps.push({ mins: MIN_VALS[pickerIndex] });
+  steps.push({ mins: MIN_VALS[pickerIndex], name: '' });
   renderConfigSteps();
 });
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
 // PRESETS
-// ─────────────────────────────────────────────
-function loadPresets()  { try { return JSON.parse(localStorage.getItem('zen_v2')||'[]'); } catch { return []; } }
-function savePresets(p) { localStorage.setItem('zen_v2', JSON.stringify(p)); }
+// ═══════════════════════════════════════
+function loadPresets()  { try { return JSON.parse(localStorage.getItem('zen_v3')||'[]'); } catch { return []; } }
+function savePresets(p) { localStorage.setItem('zen_v3', JSON.stringify(p)); }
 
 function renderPresets() {
   const grid = document.getElementById('preset-grid');
   const ps   = loadPresets();
   grid.innerHTML = '';
   if (!ps.length) {
-    grid.innerHTML = '<div style="color:var(--muted);font-size:.72rem;letter-spacing:.1em;padding:8px 0 12px;">nessuna sequenza salvata</div>';
+    grid.innerHTML = '<div style="color:var(--muted);font-size:.7rem;letter-spacing:.1em;padding:6px 0 10px;">nessuna sequenza salvata</div>';
     return;
   }
   ps.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'preset-card';
-    const desc = p.steps.map(s => s.mins + '\'').join(' + ');
+    const desc = p.steps.map(s => (s.name ? `${s.name} ${s.mins}'` : `${s.mins}'`)).join(' + ');
     card.innerHTML = `
       <div class="preset-bell">&#9670;</div>
       <div class="preset-info">
-        <div class="preset-name">${p.name}</div>
+        <div class="preset-name-text">${p.name}</div>
         <div class="preset-desc">${desc}</div>
       </div>
       <button class="preset-del" data-i="${i}" aria-label="elimina">✕</button>`;
     card.addEventListener('click', e => {
       if (e.target.classList.contains('preset-del')) return;
-      steps = p.steps.map(s => ({ mins: s.mins }));
+      steps = p.steps.map(s => ({ mins: s.mins, name: s.name||'' }));
       renderConfigSteps();
     });
     card.querySelector('.preset-del').addEventListener('click', e => {
       e.stopPropagation();
-      const arr = loadPresets(); arr.splice(i, 1); savePresets(arr); renderPresets();
+      const arr=loadPresets(); arr.splice(i,1); savePresets(arr); renderPresets();
     });
     grid.appendChild(card);
   });
@@ -733,11 +830,9 @@ function renderPresets() {
 
 document.getElementById('btn-save-preset').addEventListener('click', () => {
   const name = document.getElementById('preset-name').value.trim();
-  if (!name || !steps.length) {
-    document.getElementById('preset-name').focus(); return;
-  }
+  if (!name || !steps.length) { document.getElementById('preset-name').focus(); return; }
   const arr = loadPresets();
-  arr.push({ name, steps: steps.map(s => ({ mins: s.mins })) });
+  arr.push({ name, steps: steps.map(s => ({ mins: s.mins, name: s.name||'' })) });
   savePresets(arr);
   document.getElementById('preset-name').value = '';
   renderPresets();
@@ -746,9 +841,9 @@ document.getElementById('btn-save-preset').addEventListener('click', () => {
 renderConfigSteps();
 renderPresets();
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
 // SCREEN SWITCH
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -760,21 +855,17 @@ document.getElementById('btn-avvia').addEventListener('click', () => {
   initTimer();
   showScreen('screen-timer');
 });
-
 document.getElementById('btn-back').addEventListener('click', () => {
-  stopTimer();
-  showScreen('screen-config');
+  stopTimer(); stopNature(); showScreen('screen-config');
 });
-
 document.getElementById('btn-done-back').addEventListener('click', () => {
   document.getElementById('done-overlay').classList.remove('show');
-  stopTimer();
-  showScreen('screen-config');
+  stopTimer(); stopNature(); showScreen('screen-config');
 });
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
 // TIMER ENGINE
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════
 const CIRC = 2 * Math.PI * 104;
 document.getElementById('ring-fill').style.strokeDasharray  = CIRC;
 document.getElementById('ring-fill').style.strokeDashoffset = CIRC;
@@ -785,7 +876,7 @@ function setRing(f) {
   document.getElementById('ring-fill').style.strokeDashoffset = CIRC * (1 - Math.max(0, f));
 }
 function fmtTime(s) {
-  const m = Math.floor(s / 60), ss = s % 60;
+  const m = Math.floor(s/60), ss = s%60;
   return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
 }
 
@@ -794,10 +885,9 @@ function renderTimerPills() {
   row.innerHTML = '';
   steps.forEach((s, i) => {
     const pill = document.createElement('div');
-    pill.className = 'timer-step-pill' +
-      (i === current ? ' active' : '') +
-      (i < current  ? ' done'   : '');
-    pill.textContent = s.mins + '\'';
+    pill.className = 'timer-step-pill' + (i===current?' active':'') + (i<current?' done':'');
+    const nameStr = s.name ? `<span class="pill-name">${s.name}</span>` : '';
+    pill.innerHTML = `${s.mins}'${nameStr}`;
     row.appendChild(pill);
   });
 }
@@ -806,68 +896,64 @@ function updateClock() {
   const total = steps[current].mins * 60;
   document.getElementById('clock-time').textContent = fmtTime(remaining);
   document.getElementById('clock-min-label').textContent = steps[current].mins + ' min';
+  document.getElementById('clock-step-name').textContent = steps[current].name || '';
   setRing(remaining / total);
   renderTimerPills();
 }
 
 function initTimer() {
-  current   = 0;
-  remaining = steps[0].mins * 60;
-  running   = false;
+  current = 0; remaining = steps[0].mins * 60; running = false;
   document.getElementById('btn-start').textContent = 'avvia';
   updateClock();
 }
-
 function stopTimer() {
-  clearInterval(ticker);
-  running = false;
+  clearInterval(ticker); running = false;
 }
-
 function loadStep(idx) {
-  current   = idx;
-  remaining = steps[idx].mins * 60;
-  updateClock();
+  current = idx; remaining = steps[idx].mins * 60; updateClock();
 }
 
 function nextStep() {
   if (current + 1 < steps.length) {
+    // campana tra intervalli
     ringBell(3, () => { loadStep(current + 1); startTicker(); });
   } else {
+    // ✅ CAMPANA ANCHE ALL'ULTIMO — poi mostra done overlay
     ringBell(3, () => {
       running = false;
+      stopNature();
       document.getElementById('btn-start').textContent = 'avvia';
       setRing(0);
       document.getElementById('clock-time').textContent = '00:00';
+      document.getElementById('clock-step-name').textContent = '';
       setTimeout(() => {
         document.getElementById('done-overlay').classList.add('show');
-      }, 2000);
+      }, 1200);
     });
   }
 }
 
 function startTicker() {
-  clearInterval(ticker);
-  running = true;
+  clearInterval(ticker); running = true;
   document.getElementById('btn-start').textContent = 'pausa';
+  startNature(currentSound);
   ticker = setInterval(() => {
     if (remaining <= 0) { clearInterval(ticker); nextStep(); return; }
-    remaining--;
-    updateClock();
+    remaining--; updateClock();
   }, 1000);
 }
 
 document.getElementById('btn-start').addEventListener('click', () => {
   ensureAudio();
   if (running) {
-    stopTimer();
+    stopTimer(); stopNature();
     document.getElementById('btn-start').textContent = 'riprendi';
   } else {
     startTicker();
   }
 });
-
 document.getElementById('btn-reset').addEventListener('click', () => {
-  stopTimer();
+  stopTimer(); stopNature();
   document.getElementById('btn-start').textContent = 'avvia';
   loadStep(0);
 });
