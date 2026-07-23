@@ -730,269 +730,310 @@ const NATURE_SOUNDS = {
     return { stop:()=>{ try{src.stop();lfo.stop()}catch(e){} } };
   },
 
-  // ── ANIMALI ───────────────────────────────
+  // ── ANIMALI — tutti continui con noise + oscillatore modulato ──────────────
+
+  // Helper animale: noise filtrato continuo + versi sovrapposti
   birds: (ctx) => {
-    let alive = true;
+    // rumore di uccelli: noise highpass continuo + cinguettii sovrapposti
+    const src = ctx.createBufferSource(); src.buffer = mkNoise(ctx,4,.08); src.loop=true;
+    const fBg = ctx.createBiquadFilter(); fBg.type='highpass'; fBg.frequency.value=2000;
+    const gBg = ctx.createGain(); gBg.gain.value=.18;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function chirp() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
+      if(!alive) return;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      const bf = 2200 + Math.random()*1800; o.type='sine';
-      o.frequency.setValueAtTime(bf, ctx.currentTime);
-      o.frequency.linearRampToValueAtTime(bf*(1.1+Math.random()*.2), ctx.currentTime+.08);
-      o.frequency.linearRampToValueAtTime(bf*.95, ctx.currentTime+.16);
-      g.gain.setValueAtTime(0,ctx.currentTime); g.gain.linearRampToValueAtTime(.1,ctx.currentTime+.02);
+      const bf=2400+Math.random()*1600; o.type='sine';
+      o.frequency.setValueAtTime(bf,ctx.currentTime);
+      o.frequency.linearRampToValueAtTime(bf*1.15,ctx.currentTime+.07);
+      o.frequency.linearRampToValueAtTime(bf*.92,ctx.currentTime+.15);
+      g.gain.setValueAtTime(0,ctx.currentTime); g.gain.linearRampToValueAtTime(.12,ctx.currentTime+.015);
       g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.18);
       o.start(ctx.currentTime); o.stop(ctx.currentTime+.2);
-      setTimeout(chirp, 600 + Math.random()*2200);
+      setTimeout(chirp, 300+Math.random()*900);
     }
     chirp();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   crickets: (ctx) => {
-    let alive = true;
-    function strid() {
-      if (!alive) return;
-      const now = ctx.currentTime;
-      for (let k=0; k<3; k++) {
-        const o = ctx.createOscillator(); const g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.type='square'; o.frequency.value = 4200 + Math.random()*400;
-        g.gain.setValueAtTime(0, now+k*.025);
-        g.gain.linearRampToValueAtTime(.06, now+k*.025+.01);
-        g.gain.exponentialRampToValueAtTime(.001, now+k*.025+.04);
-        o.start(now+k*.025); o.stop(now+k*.025+.05);
-      }
-      setTimeout(strid, 80 + Math.random()*60);
-    }
-    strid();
-    return { stop:()=>{ alive=false; } };
+    // grilli: oscillatore sawtooth ad alta freq modulato in ampiezza — continuo
+    const o=ctx.createOscillator(); const g=ctx.createGain();
+    const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=4400; f.Q.value=8;
+    o.connect(f); f.connect(g); g.connect(ctx.destination);
+    o.type='square'; o.frequency.value=4300;
+    const lfo=ctx.createOscillator(); const lg=ctx.createGain();
+    lfo.type='square'; lfo.frequency.value=22; lg.gain.value=.07;
+    lfo.connect(lg); lg.connect(g.gain);
+    g.gain.value=.07; o.start(); lfo.start();
+    return { stop:()=>{ try{o.stop();lfo.stop()}catch(e){} } };
   },
 
   frogs: (ctx) => {
-    let alive = true;
+    // rane: noise basso continuo + gracidii
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.12); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='lowpass'; fBg.frequency.value=300;
+    const gBg=ctx.createGain(); gBg.gain.value=.2;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function croak() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
+      if(!alive) return;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.type='sawtooth'; o.frequency.value = 180 + Math.random()*60;
-      const now = ctx.currentTime;
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.18,now+.05);
-      g.gain.setValueAtTime(.18,now+.25); g.gain.exponentialRampToValueAtTime(.001,now+.35);
-      o.start(now); o.stop(now+.4);
-      setTimeout(croak, 1200 + Math.random()*3000);
+      o.type='sawtooth'; o.frequency.value=160+Math.random()*60;
+      const now=ctx.currentTime;
+      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.2,now+.04);
+      g.gain.setValueAtTime(.2,now+.2); g.gain.exponentialRampToValueAtTime(.001,now+.32);
+      o.start(now); o.stop(now+.35);
+      setTimeout(croak, 400+Math.random()*800);
     }
     croak();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   bees: (ctx) => {
-    const o = ctx.createOscillator(); const g = ctx.createGain();
-    const f = ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=220; f.Q.value=2;
+    // api: ronzio sawtooth continuo con LFO
+    const o=ctx.createOscillator(); const g=ctx.createGain();
+    const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=220; f.Q.value=2;
     o.connect(f); f.connect(g); g.connect(ctx.destination);
     o.type='sawtooth'; o.frequency.value=240;
-    const lfo = ctx.createOscillator(); const lg = ctx.createGain();
+    const lfo=ctx.createOscillator(); const lg=ctx.createGain();
     lfo.frequency.value=18; lg.gain.value=15; lfo.connect(lg); lg.connect(o.frequency);
-    g.gain.value=.12; o.start(); lfo.start();
+    g.gain.value=.14; o.start(); lfo.start();
     return { stop:()=>{ try{o.stop();lfo.stop()}catch(e){} } };
   },
 
   wolf: (ctx) => {
-    let alive = true;
+    // lupo: noise vento basso continuo + ululati periodici
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.15); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=350; fBg.Q.value=1;
+    const gBg=ctx.createGain(); gBg.gain.value=.18;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function howl() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
+      if(!alive) return;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.type='sine'; const now = ctx.currentTime;
-      o.frequency.setValueAtTime(300, now);
-      o.frequency.linearRampToValueAtTime(520, now+.8);
-      o.frequency.linearRampToValueAtTime(440, now+1.6);
-      o.frequency.linearRampToValueAtTime(380, now+2.5);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.3,now+.3);
-      g.gain.linearRampToValueAtTime(.2,now+2.2); g.gain.exponentialRampToValueAtTime(.001,now+2.8);
+      o.type='sine'; const now=ctx.currentTime;
+      o.frequency.setValueAtTime(300,now); o.frequency.linearRampToValueAtTime(520,now+.8);
+      o.frequency.linearRampToValueAtTime(440,now+1.6); o.frequency.linearRampToValueAtTime(380,now+2.5);
+      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.32,now+.3);
+      g.gain.linearRampToValueAtTime(.22,now+2.2); g.gain.exponentialRampToValueAtTime(.001,now+2.9);
       o.start(now); o.stop(now+3);
-      setTimeout(howl, 8000 + Math.random()*12000);
+      setTimeout(howl, 5000+Math.random()*7000);
     }
     howl();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   whale: (ctx) => {
-    let alive = true;
+    // balena: rumore subacqueo continuo + canti
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.2); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='lowpass'; fBg.frequency.value=120;
+    const gBg=ctx.createGain(); gBg.gain.value=.22;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function song() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      const f = ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=400;
+      if(!alive) return;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
+      const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=400;
       o.connect(f); f.connect(g); g.connect(ctx.destination);
-      o.type='sine'; const now = ctx.currentTime;
-      o.frequency.setValueAtTime(60,now);
-      o.frequency.linearRampToValueAtTime(120,now+2);
-      o.frequency.linearRampToValueAtTime(80,now+5);
-      o.frequency.linearRampToValueAtTime(50,now+8);
+      o.type='sine'; const now=ctx.currentTime;
+      o.frequency.setValueAtTime(60,now); o.frequency.linearRampToValueAtTime(120,now+2);
+      o.frequency.linearRampToValueAtTime(80,now+5); o.frequency.linearRampToValueAtTime(50,now+8);
       g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.35,now+1);
       g.gain.linearRampToValueAtTime(.2,now+6); g.gain.exponentialRampToValueAtTime(.001,now+9);
       o.start(now); o.stop(now+9.5);
-      setTimeout(song, 15000 + Math.random()*15000);
+      setTimeout(song, 8000+Math.random()*8000);
     }
     song();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   owl: (ctx) => {
-    let alive = true;
+    // gufo: vento notturno continuo + ululi
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.1); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=500; fBg.Q.value=.5;
+    const gBg=ctx.createGain(); gBg.gain.value=.15;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function hoot() {
-      if (!alive) return;
-      const now = ctx.currentTime;
-      [0, .35].forEach(dt => {
-        const o = ctx.createOscillator(); const g = ctx.createGain();
+      if(!alive) return;
+      const now=ctx.currentTime;
+      [0,.38].forEach(dt => {
+        const o=ctx.createOscillator(); const g=ctx.createGain();
         o.connect(g); g.connect(ctx.destination);
         o.type='sine'; o.frequency.setValueAtTime(320,now+dt);
-        o.frequency.linearRampToValueAtTime(280,now+dt+.25);
-        g.gain.setValueAtTime(0,now+dt); g.gain.linearRampToValueAtTime(.22,now+dt+.04);
-        g.gain.exponentialRampToValueAtTime(.001,now+dt+.28);
-        o.start(now+dt); o.stop(now+dt+.3);
+        o.frequency.linearRampToValueAtTime(275,now+dt+.28);
+        g.gain.setValueAtTime(0,now+dt); g.gain.linearRampToValueAtTime(.25,now+dt+.04);
+        g.gain.exponentialRampToValueAtTime(.001,now+dt+.3);
+        o.start(now+dt); o.stop(now+dt+.32);
       });
-      setTimeout(hoot, 4000 + Math.random()*6000);
+      setTimeout(hoot, 2500+Math.random()*4000);
     }
     hoot();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   dolphin: (ctx) => {
-    let alive = true;
+    // delfino: rumore acqua continuo + click e fischi
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.12); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=800; fBg.Q.value=.4;
+    const gBg=ctx.createGain(); gBg.gain.value=.15;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function click() {
-      if (!alive) return;
-      const now = ctx.currentTime;
-      // click ultrasonico abbassato
-      const o = ctx.createOscillator(); const g = ctx.createGain();
+      if(!alive) return;
+      const now=ctx.currentTime;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.type='sine'; o.frequency.setValueAtTime(3000+Math.random()*2000,now);
+      o.type='sine'; o.frequency.setValueAtTime(3000+Math.random()*1500,now);
       o.frequency.exponentialRampToValueAtTime(1000,now+.06);
-      g.gain.setValueAtTime(.15,now); g.gain.exponentialRampToValueAtTime(.001,now+.07);
+      g.gain.setValueAtTime(.14,now); g.gain.exponentialRampToValueAtTime(.001,now+.08);
       o.start(now); o.stop(now+.1);
-      if (Math.random()>.5) {
-        // fischio
-        const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+      if(Math.random()>.4) {
+        const o2=ctx.createOscillator(); const g2=ctx.createGain();
         o2.connect(g2); g2.connect(ctx.destination);
-        o2.type='sine'; const t=now+.15;
+        o2.type='sine'; const t=now+.12;
         o2.frequency.setValueAtTime(2000,t); o2.frequency.linearRampToValueAtTime(3500,t+.3);
         o2.frequency.linearRampToValueAtTime(1800,t+.6);
-        g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(.12,t+.05);
+        g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(.13,t+.04);
         g2.gain.exponentialRampToValueAtTime(.001,t+.65);
         o2.start(t); o2.stop(t+.7);
       }
-      setTimeout(click, 800 + Math.random()*2000);
+      setTimeout(click, 500+Math.random()*1200);
     }
     click();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   dog: (ctx) => {
-    let alive = true;
+    // cane: respiro continuo + abbaio
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,2,.1); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=500; fBg.Q.value=.8;
+    const gBg=ctx.createGain(); gBg.gain.value=.12;
+    const lfo=ctx.createOscillator(); const lg=ctx.createGain();
+    lfo.frequency.value=.5; lg.gain.value=.06; lfo.connect(lg); lg.connect(gBg.gain);
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start(); lfo.start();
+    let alive=true;
     function bark() {
-      if (!alive) return;
-      const now = ctx.currentTime;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      const f = ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=600; f.Q.value=1.5;
+      if(!alive) return;
+      const now=ctx.currentTime;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
+      const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=600; f.Q.value=1.5;
       o.connect(f); f.connect(g); g.connect(ctx.destination);
       o.type='sawtooth'; o.frequency.setValueAtTime(500,now);
       o.frequency.exponentialRampToValueAtTime(250,now+.15);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.35,now+.02);
-      g.gain.exponentialRampToValueAtValue(.001,now+.18);
-      g.gain.exponentialRampToValueAtTime(.001,now+.18);
-      o.start(now); o.stop(now+.2);
-      setTimeout(bark, 3000 + Math.random()*8000);
+      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.38,now+.02);
+      g.gain.exponentialRampToValueAtTime(.001,now+.2);
+      o.start(now); o.stop(now+.22);
+      setTimeout(bark, 2000+Math.random()*5000);
     }
     bark();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop();lfo.stop()}catch(e){} } };
   },
 
   cat: (ctx) => {
-    let alive = true;
-    // fusa continue
-    const src = ctx.createBufferSource(); src.buffer = mkNoise(ctx,2,.15); src.loop=true;
-    const f = ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=25; f.Q.value=3;
-    const g = ctx.createGain(); g.gain.value=.35;
-    src.connect(f); f.connect(g); g.connect(ctx.destination); src.start();
-    // miao occasionale
+    // gatto: fusa continue (noise LFO bassa freq) + miao
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,2,.15); src.loop=true;
+    const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=200; f.Q.value=5;
+    const g=ctx.createGain(); g.gain.value=.3;
+    const lfo=ctx.createOscillator(); const lg=ctx.createGain();
+    lfo.frequency.value=25; lg.gain.value=.15; lfo.connect(lg); lg.connect(g.gain);
+    src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(); lfo.start();
+    let alive=true;
     function meow() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const gm = ctx.createGain();
+      if(!alive) return;
+      const o=ctx.createOscillator(); const gm=ctx.createGain();
       o.connect(gm); gm.connect(ctx.destination);
-      o.type='sine'; const now = ctx.currentTime;
+      o.type='sine'; const now=ctx.currentTime;
       o.frequency.setValueAtTime(600,now); o.frequency.linearRampToValueAtTime(900,now+.2);
       o.frequency.linearRampToValueAtTime(500,now+.5);
       gm.gain.setValueAtTime(0,now); gm.gain.linearRampToValueAtTime(.18,now+.05);
       gm.gain.exponentialRampToValueAtTime(.001,now+.55);
       o.start(now); o.stop(now+.6);
-      setTimeout(meow, 8000 + Math.random()*12000);
+      setTimeout(meow, 5000+Math.random()*8000);
     }
     meow();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
+    return { stop:()=>{ alive=false; try{src.stop();lfo.stop()}catch(e){} } };
   },
 
   lion: (ctx) => {
-    let alive = true;
+    // leone: rumore savana continuo + ruggiti
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.18); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=300; fBg.Q.value=.6;
+    const gBg=ctx.createGain(); gBg.gain.value=.2;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function roar() {
-      if (!alive) return;
-      const src = ctx.createBufferSource(); src.buffer = mkNoise(ctx,2.5,.9); src.loop=false;
-      const f1 = ctx.createBiquadFilter(); f1.type='lowpass'; f1.frequency.value=400;
-      const f2 = ctx.createBiquadFilter(); f2.type='highpass'; f2.frequency.value=60;
-      const g = ctx.createGain(); const now = ctx.currentTime;
+      if(!alive) return;
+      const ns=ctx.createBufferSource(); ns.buffer=mkNoise(ctx,2.5,.9); ns.loop=false;
+      const f1=ctx.createBiquadFilter(); f1.type='lowpass'; f1.frequency.value=400;
+      const f2=ctx.createBiquadFilter(); f2.type='highpass'; f2.frequency.value=60;
+      const g=ctx.createGain(); const now=ctx.currentTime;
       g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.55,now+.15);
       g.gain.setValueAtTime(.55,now+1.5); g.gain.exponentialRampToValueAtTime(.001,now+2.5);
-      src.connect(f1); f1.connect(f2); f2.connect(g); g.connect(ctx.destination); src.start();
-      // tono grave
-      const o = ctx.createOscillator(); const go = ctx.createGain();
+      ns.connect(f1); f1.connect(f2); f2.connect(g); g.connect(ctx.destination); ns.start();
+      const o=ctx.createOscillator(); const go=ctx.createGain();
       o.connect(go); go.connect(ctx.destination);
       o.type='sawtooth'; o.frequency.setValueAtTime(90,now);
       o.frequency.exponentialRampToValueAtTime(50,now+2.5);
       go.gain.setValueAtTime(0,now); go.gain.linearRampToValueAtTime(.3,now+.1);
       go.gain.exponentialRampToValueAtTime(.001,now+2.5);
       o.start(now); o.stop(now+2.6);
-      setTimeout(roar, 12000 + Math.random()*20000);
+      setTimeout(roar, 7000+Math.random()*10000);
     }
     roar();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   elephant: (ctx) => {
-    let alive = true;
+    // elefante: rumore basso continuo + barriti
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.15); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='lowpass'; fBg.frequency.value=200;
+    const gBg=ctx.createGain(); gBg.gain.value=.22;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function trumpet() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      const f = ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=800; f.Q.value=1;
+      if(!alive) return;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
+      const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=800; f.Q.value=1;
       o.connect(f); f.connect(g); g.connect(ctx.destination);
-      o.type='sawtooth'; const now = ctx.currentTime;
+      o.type='sawtooth'; const now=ctx.currentTime;
       o.frequency.setValueAtTime(200,now); o.frequency.linearRampToValueAtTime(600,now+.4);
       o.frequency.linearRampToValueAtTime(300,now+.8);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.4,now+.05);
+      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.42,now+.05);
       g.gain.exponentialRampToValueAtTime(.001,now+.9);
       o.start(now); o.stop(now+1);
-      setTimeout(trumpet, 10000 + Math.random()*20000);
+      setTimeout(trumpet, 5000+Math.random()*10000);
     }
     trumpet();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
   deer: (ctx) => {
-    let alive = true;
+    // cervo: foresta continua + bramiti
+    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.1); src.loop=true;
+    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=600; fBg.Q.value=.4;
+    const gBg=ctx.createGain(); gBg.gain.value=.14;
+    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
+    let alive=true;
     function bellow() {
-      if (!alive) return;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      const f = ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=800;
+      if(!alive) return;
+      const o=ctx.createOscillator(); const g=ctx.createGain();
+      const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=800;
       o.connect(f); f.connect(g); g.connect(ctx.destination);
-      o.type='sawtooth'; const now = ctx.currentTime;
+      o.type='sawtooth'; const now=ctx.currentTime;
       o.frequency.setValueAtTime(180,now); o.frequency.linearRampToValueAtTime(260,now+.5);
       o.frequency.linearRampToValueAtTime(140,now+1.2);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.3,now+.1);
+      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.32,now+.1);
       g.gain.exponentialRampToValueAtTime(.001,now+1.4);
       o.start(now); o.stop(now+1.5);
-      setTimeout(bellow, 8000 + Math.random()*15000);
+      setTimeout(bellow, 4000+Math.random()*8000);
     }
     bellow();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 };
 
@@ -1040,14 +1081,32 @@ function setDrumPos(idx, animate) {
   drum.querySelectorAll('.picker-item').forEach((el, i) => el.classList.toggle('selected', i === idx));
   pickerIndex = Math.max(0, Math.min(MIN_VALS.length - 1, idx));
 }
-let dragStart = null, dragBase = null;
-wrap.addEventListener('touchstart',  e => { dragStart = e.touches[0].clientY; dragBase = pickerIndex; drum.style.transition='none'; }, {passive:true});
-wrap.addEventListener('touchmove',   e => { if(dragStart===null)return; const diff=Math.round((dragStart-e.touches[0].clientY)/ITEM_H); setDrumPos(Math.max(0,Math.min(MIN_VALS.length-1,dragBase+diff)),false); }, {passive:true});
-wrap.addEventListener('touchend',    () => { dragStart=null; drum.style.transition='transform .15s ease-out'; });
-wrap.addEventListener('mousedown',   e => { dragStart=e.clientY; dragBase=pickerIndex; drum.style.transition='none'; });
-wrap.addEventListener('mousemove',   e => { if(dragStart===null)return; const diff=Math.round((dragStart-e.clientY)/ITEM_H); setDrumPos(Math.max(0,Math.min(MIN_VALS.length-1,dragBase+diff)),false); });
-wrap.addEventListener('mouseup',     () => { dragStart=null; });
-wrap.addEventListener('mouseleave',  () => { dragStart=null; });
+let dragStart = null, dragBase = null, dragging = false;
+
+wrap.addEventListener('touchstart', e => {
+  dragStart = e.touches[0].clientY;
+  dragBase  = pickerIndex;
+  dragging  = true;
+  drum.style.transition = 'none';
+}, {passive: true});
+
+wrap.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  e.preventDefault(); // blocca scroll pagina durante drag picker
+  const diff = Math.round((dragStart - e.touches[0].clientY) / ITEM_H);
+  setDrumPos(Math.max(0, Math.min(MIN_VALS.length-1, dragBase + diff)), false);
+}, {passive: false}); // passive:false per poter chiamare preventDefault
+
+wrap.addEventListener('touchend', () => {
+  dragging  = false;
+  dragStart = null;
+  drum.style.transition = 'transform .15s ease-out';
+});
+
+wrap.addEventListener('mousedown',  e => { dragStart=e.clientY; dragBase=pickerIndex; dragging=true; drum.style.transition='none'; });
+wrap.addEventListener('mousemove',  e => { if(!dragging) return; const diff=Math.round((dragStart-e.clientY)/ITEM_H); setDrumPos(Math.max(0,Math.min(MIN_VALS.length-1,dragBase+diff)),false); });
+wrap.addEventListener('mouseup',    () => { dragging=false; dragStart=null; });
+wrap.addEventListener('mouseleave', () => { dragging=false; dragStart=null; });
 wrap.addEventListener('wheel', e => { e.preventDefault(); setDrumPos(pickerIndex+(e.deltaY>0?1:-1),true); }, {passive:false});
 buildDrum();
 
