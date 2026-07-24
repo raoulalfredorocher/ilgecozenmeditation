@@ -517,9 +517,20 @@ async function requestWakeLock() {
 function releaseWakeLock() {
   if (wakeLock) { wakeLock.release(); wakeLock = null; }
 }
-// Ri-acquisisce il lock se la pagina torna visibile (es. utente sblocca schermo)
+// Ri-acquisisce il lock e riprende l'audio quando la pagina torna visibile
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && running) requestWakeLock();
+  if (document.visibilityState === 'visible') {
+    // Riprende AudioContext sospeso da iOS
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (running) {
+      requestWakeLock();
+      // Riavvia il suono di natura se era attivo (iOS lo ferma con schermo off)
+      if (currentSound && currentSound !== 'silence') startNature(currentSound);
+    }
+  } else {
+    // Schermo si spegne: sospende la natura (risparmio risorse) ma lascia AudioContext vivo
+    if (running && natureNode) { natureNode.stop(); natureNode = null; }
+  }
 });
 
 // ─── Fallback timer robusto: recupera i secondi persi quando il tab era nascosto ───
@@ -580,12 +591,44 @@ function playBellStrike() {
 
 function ringBell(times, cb) {
   ensureAudio();
-  let i = 0;
-  function strike() {
-    if (i >= times) { if (cb) cb(); return; }
-    i++; playBellStrike(); setTimeout(strike, 4800);
+  // Schedula tutti i rintocchi con timing WebAudio puro (funziona anche con schermo off)
+  const bellSpacing = 4.8; // secondi tra un rintocco e l'altro
+  const now = audioCtx.currentTime;
+  const partials = [
+    { freq: 210,  gain: 0.55, decay: 6.0 },
+    { freq: 476,  gain: 0.28, decay: 4.5 },
+    { freq: 840,  gain: 0.12, decay: 2.8 },
+    { freq: 1260, gain: 0.05, decay: 1.6 },
+  ];
+  for (let i = 0; i < times; i++) {
+    const t = now + i * bellSpacing;
+    partials.forEach(p => {
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const comp = audioCtx.createDynamicsCompressor();
+      osc.connect(gain); gain.connect(comp); comp.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(p.freq, t);
+      osc.frequency.exponentialRampToValueAtTime(p.freq * 0.994, t + p.decay);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(p.gain, t + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + p.decay);
+      osc.start(t); osc.stop(t + p.decay + 0.1);
+    });
   }
-  strike();
+  // Flash visivo solo quando la pagina è visibile (setTimeout è ok per UI)
+  for (let i = 0; i < times; i++) {
+    const delayMs = i * bellSpacing * 1000;
+    setTimeout(() => {
+      if (document.visibilityState !== 'visible') return;
+      const flash = document.getElementById('bell-flash');
+      flash.classList.add('ring');
+      setTimeout(() => flash.classList.remove('ring'), 600);
+    }, delayMs);
+  }
+  // Callback dopo l'ultimo rintocco (schedulato con WebAudio clock)
+  const totalDuration = (times - 1) * bellSpacing + 6.5; // ultimo rintocco + decay
+  setTimeout(() => { if (cb) cb(); }, totalDuration * 1000);
 }
 
 // ═══════════════════════════════════════
