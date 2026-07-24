@@ -1,0 +1,24 @@
+{
+  "name": "Il Geco Zen",
+  "short_name": "Il Geco Zen",
+  "description": "Timer di meditazione buddista zen con campana e suoni naturali",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0ebe0",
+  "theme_color": "#f0ebe0",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "Logo Trasparente.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Logo Trasparente.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
