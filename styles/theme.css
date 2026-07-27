@@ -1,0 +1,49 @@
+/* ── Variabili tema ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html[data-theme="light"] {
+  --bg:      #f0ebe0;
+  --surface: #e8e2d5;
+  --card:    #faf7f2;
+  --border:  #d6cfc2;
+  --text:    #3a3228;
+  --muted:   #8a7e72;
+  --gold:    #b8924a;
+  --red:     #9b3a2a;
+  --ring-bg: #ddd6c8;
+  --input-bg:#faf7f2;
+  --overlay: #f0ebe0;
+}
+
+html[data-theme="dark"] {
+  --bg:      #1c1a16;
+  --surface: #252320;
+  --card:    #2a2720;
+  --border:  #3d3930;
+  --text:    #e8e2d5;
+  --muted:   #8a7e72;
+  --gold:    #c8a84b;
+  --red:     #c05040;
+  --ring-bg: #302e28;
+  --input-bg:#252320;
+  --overlay: #1c1a16;
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  transition: background .3s, color .3s;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 30px);
+  max-width: 420px;
+  margin: 0 auto;
+}

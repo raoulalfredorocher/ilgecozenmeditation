@@ -1,0 +1,191 @@
+/* ── Config screen ── */
+.btn-add-step {
+  width: 100%; background: var(--card);
+  border: 1.5px dashed var(--border); border-radius: 12px;
+  color: var(--gold); font-size: .85rem; letter-spacing: .15em;
+  padding: 13px; cursor: pointer;
+  transition: background .2s, border-color .2s;
+  margin-bottom: 18px; font-family: inherit;
+}
+.btn-add-step:active { background: var(--surface); border-color: var(--gold); }
+
+.config-steps {
+  width: 100%; display: flex; flex-direction: column;
+  gap: 9px; margin-bottom: 20px;
+}
+.config-step {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  transition: border-color .2s, opacity .2s;
+  cursor: default;
+}
+.config-step.drag-over { border-color: var(--gold); opacity: .7; }
+.step-drag-handle {
+  color: var(--border); font-size: 1rem; cursor: grab;
+  padding: 2px 4px; flex-shrink: 0; touch-action: none;
+  user-select: none;
+}
+.step-drag-handle:active { cursor: grabbing; }
+.config-step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; color: var(--muted); flex-shrink: 0;
+}
+.step-body { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.step-mins-row { display: flex; align-items: baseline; gap: 4px; }
+.step-mins-val { font-size: 1.05rem; font-weight: 400; color: var(--text); }
+.step-mins-label { font-size: .62rem; color: var(--muted); letter-spacing: .08em; }
+.step-name-input {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-family: inherit;
+  font-size: .75rem; padding: 5px 9px; outline: none;
+  transition: border-color .2s; width: 100%;
+}
+.step-name-input:focus { border-color: var(--gold); }
+.step-name-input::placeholder { color: var(--border); font-size: .7rem; }
+.config-step-del {
+  background: none; border: none; color: var(--border);
+  font-size: 1rem; cursor: pointer; padding: 3px 5px;
+  transition: color .2s; flex-shrink: 0;
+}
+.config-step-del:active { color: var(--red); }
+
+.empty-steps {
+  width: 100%; text-align: center; padding: 18px 0;
+  color: var(--muted); font-size: .76rem; letter-spacing: .1em;
+}
+
+/* ── Presets ── */
+.preset-grid {
+  width: 100%; display: flex; flex-direction: column;
+  gap: 8px; margin-bottom: 16px;
+}
+.preset-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 15px;
+  display: flex; align-items: center; gap: 11px;
+  cursor: pointer; transition: border-color .2s, background .2s;
+}
+.preset-card:active { background: var(--surface); border-color: var(--gold); }
+.preset-bell { font-size: 1rem; flex-shrink: 0; }
+.preset-info { flex: 1; }
+.preset-name-text { font-size: .86rem; font-weight: 500; color: var(--text); }
+.preset-desc { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+.preset-del {
+  background: none; border: none; color: var(--border);
+  font-size: .95rem; cursor: pointer; padding: 3px 5px;
+}
+.preset-del:active { color: var(--red); }
+
+.save-input {
+  width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); font-family: inherit;
+  font-size: .86rem; padding: 12px 14px; outline: none;
+  transition: border-color .2s; margin-bottom: 14px;
+}
+.save-input:focus { border-color: var(--gold); }
+.save-input::placeholder { color: var(--border); }
+
+.btn-save-preset {
+  width: 100%; background: none; border: 1.5px solid var(--border);
+  border-radius: 14px; font-family: inherit; font-size: .82rem;
+  letter-spacing: .15em; color: var(--muted); padding: 13px;
+  cursor: pointer; transition: border-color .2s, color .2s; margin-bottom: 28px;
+}
+.btn-save-preset:active { border-color: var(--gold); color: var(--gold); }
+
+.btn-avvia {
+  width: 100%; background: var(--text); color: var(--bg);
+  border: none; border-radius: 14px; font-family: inherit;
+  font-size: .95rem; font-weight: 500; letter-spacing: .2em;
+  padding: 18px; cursor: pointer;
+  transition: background .2s, transform .1s; margin-bottom: 8px;
+}
+.btn-avvia:active { background: var(--gold); transform: scale(.98); }
+
+/* ── Timer screen ── */
+.timer-steps-row {
+  display: flex; gap: 7px; margin-bottom: 28px;
+  flex-wrap: wrap; justify-content: center;
+}
+.timer-step-pill {
+  padding: 4px 13px; border-radius: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: .7rem; color: var(--muted); letter-spacing: .04em;
+  transition: all .3s; text-align: center;
+}
+.timer-step-pill .pill-name { font-size: .6rem; display: block; opacity: .7; }
+.timer-step-pill.active {
+  background: var(--text); border-color: var(--text); color: var(--bg);
+}
+.timer-step-pill.active .pill-name { opacity: .6; }
+.timer-step-pill.done { opacity: .3; }
+
+#clock-wrap {
+  position: relative; display: flex; align-items: center;
+  justify-content: center; margin-bottom: 32px;
+}
+#ring-svg { width: 240px; height: 240px; transform: rotate(-90deg); }
+#ring-bg   { fill: none; stroke: var(--ring-bg); stroke-width: 6; }
+#ring-fill {
+  fill: none; stroke: var(--gold); stroke-width: 6; stroke-linecap: round;
+  transition: stroke-dashoffset .9s linear;
+}
+#clock-time {
+  position: absolute; font-size: 3.2rem; font-weight: 200;
+  letter-spacing: .04em; color: var(--text); font-variant-numeric: tabular-nums;
+}
+#clock-step-name {
+  position: absolute; bottom: 56px;
+  font-size: .6rem; letter-spacing: .18em; color: var(--muted);
+  text-transform: uppercase; max-width: 160px; text-align: center;
+}
+#clock-min-label {
+  position: absolute; bottom: 42px;
+  font-size: .52rem; letter-spacing: .2em; color: var(--border);
+}
+
+.timer-btns { display: flex; gap: 14px; margin-bottom: 20px; }
+.btn-timer {
+  background: none; border: 1.5px solid var(--border); border-radius: 12px;
+  color: var(--text); font-family: inherit; font-size: .76rem;
+  letter-spacing: .15em; padding: 11px 24px; cursor: pointer; transition: all .2s;
+}
+.btn-timer.primary {
+  background: var(--text); border-color: var(--text);
+  color: var(--bg); padding: 11px 38px;
+}
+.btn-timer.primary:active { background: var(--gold); border-color: var(--gold); }
+.btn-timer:active { border-color: var(--muted); }
+
+/* ── Nature sounds ── */
+.nature-section { width: 100%; margin-bottom: 22px; }
+.nature-label {
+  font-size: .55rem; letter-spacing: .28em; color: var(--muted);
+  text-transform: uppercase; text-align: center; margin-bottom: 8px;
+}
+.nature-cat-label {
+  font-size: .5rem; letter-spacing: .22em; color: var(--border);
+  text-transform: uppercase; margin: 10px 0 5px; width: 100%;
+}
+.nature-btns {
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-start; width: 100%;
+}
+.btn-nature {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 20px; font-family: inherit; font-size: .67rem;
+  letter-spacing: .03em; color: var(--muted); padding: 5px 11px;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.btn-nature.active {
+  background: var(--surface); border-color: var(--gold); color: var(--text);
+}
+.btn-nature:active { border-color: var(--gold); }
+
+.btn-back {
+  background: none; border: none; font-family: inherit; font-size: .7rem;
+  letter-spacing: .15em; color: var(--muted); cursor: pointer; padding: 8px;
+  text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;
+}
