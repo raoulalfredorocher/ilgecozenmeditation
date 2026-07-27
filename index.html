@@ -472,25 +472,12 @@
       <button class="btn-nature" data-sound="stream">💧 ruscello</button>
       <button class="btn-nature" data-sound="thunder">⚡ tuono</button>
       <button class="btn-nature" data-sound="fire">🔥 camino</button>
-      <button class="btn-nature" data-sound="leaves">🍂 foglie</button>
-      <button class="btn-nature" data-sound="ice">🧊 ghiaccio</button>
     </div>
 
     <div class="nature-cat-label">— animali</div>
     <div class="nature-btns">
       <button class="btn-nature" data-sound="birds">🐦 uccelli</button>
-      <button class="btn-nature" data-sound="crickets">🦗 grilli</button>
-      <button class="btn-nature" data-sound="frogs">🐸 rane</button>
       <button class="btn-nature" data-sound="bees">🐝 api</button>
-      <button class="btn-nature" data-sound="wolf">🐺 lupo</button>
-      <button class="btn-nature" data-sound="whale">🐋 balena</button>
-      <button class="btn-nature" data-sound="owl">🦉 gufo</button>
-      <button class="btn-nature" data-sound="dolphin">🐬 delfino</button>
-      <button class="btn-nature" data-sound="dog">🐕 cane</button>
-      <button class="btn-nature" data-sound="cat">🐈 gatto</button>
-      <button class="btn-nature" data-sound="lion">🦁 leone</button>
-      <button class="btn-nature" data-sound="elephant">🐘 elefante</button>
-      <button class="btn-nature" data-sound="deer">🦌 cervo</button>
     </div>
   </div>
 
@@ -701,153 +688,99 @@ const NATURE_SOUNDS = {
   },
 
   thunder: (ctx) => {
+    // tuono: pioggia continua + boati periodici con rombo basso e riverbero
+    const rain = ctx.createBufferSource(); rain.buffer = mkNoise(ctx,4,.3); rain.loop=true;
+    const fRain = ctx.createBiquadFilter(); fRain.type='bandpass'; fRain.frequency.value=1000; fRain.Q.value=.4;
+    const gRain = ctx.createGain(); gRain.gain.value=.25;
+    rain.connect(fRain); fRain.connect(gRain); gRain.connect(ctx.destination); rain.start();
     let alive = true;
     function boom() {
       if (!alive) return;
-      // rombo basso + noise
-      const src = ctx.createBufferSource(); src.buffer = mkNoise(ctx,3,.8); src.loop=false;
-      const f = ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=180;
-      const g = ctx.createGain();
       const now = ctx.currentTime;
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.6,now+.05);
-      g.gain.exponentialRampToValueAtTime(.001,now+2.5);
-      src.connect(f); f.connect(g); g.connect(ctx.destination); src.start();
-      setTimeout(boom, 6000 + Math.random()*10000);
+      // strato 1: basso profondo (il boato)
+      const s1 = ctx.createBufferSource(); s1.buffer = mkNoise(ctx,2.5,.9); s1.loop=false;
+      const f1 = ctx.createBiquadFilter(); f1.type='lowpass'; f1.frequency.value=120;
+      const g1 = ctx.createGain();
+      g1.gain.setValueAtTime(0,now); g1.gain.linearRampToValueAtTime(.7,now+.04);
+      g1.gain.exponentialRampToValueAtTime(.001,now+2.2);
+      s1.connect(f1); f1.connect(g1); g1.connect(ctx.destination); s1.start(now);
+      // strato 2: schiocco iniziale secco (crack del fulmine)
+      const s2 = ctx.createBufferSource(); s2.buffer = mkNoise(ctx,.12,.95); s2.loop=false;
+      const f2 = ctx.createBiquadFilter(); f2.type='bandpass'; f2.frequency.value=3000; f2.Q.value=1;
+      const g2 = ctx.createGain();
+      g2.gain.setValueAtTime(.6,now); g2.gain.exponentialRampToValueAtTime(.001,now+.1);
+      s2.connect(f2); f2.connect(g2); g2.connect(ctx.destination); s2.start(now);
+      // strato 3: coda mid — riverbero del tuono
+      const s3 = ctx.createBufferSource(); s3.buffer = mkNoise(ctx,3,.6); s3.loop=false;
+      const f3a = ctx.createBiquadFilter(); f3a.type='lowpass'; f3a.frequency.value=350;
+      const f3b = ctx.createBiquadFilter(); f3b.type='highpass'; f3b.frequency.value=60;
+      const g3 = ctx.createGain();
+      g3.gain.setValueAtTime(0,now+.03); g3.gain.linearRampToValueAtTime(.4,now+.12);
+      g3.gain.exponentialRampToValueAtTime(.001,now+2.8);
+      s3.connect(f3a); f3a.connect(f3b); f3b.connect(g3); g3.connect(ctx.destination); s3.start(now);
+      setTimeout(boom, 7000 + Math.random()*12000);
     }
     boom();
-    return { stop:()=>{ alive=false; } };
+    return { stop:()=>{ alive=false; try{rain.stop()}catch(e){} } };
   },
 
   fire: (ctx) => {
-    // camino/falò: crepitio + brace + scoppiettii sporadici
-    // strato 1: brace continua — noise lowpass caldo con lfo lento
-    const base = ctx.createBufferSource(); base.buffer = mkNoise(ctx,4,.5); base.loop=true;
-    const fBase = ctx.createBiquadFilter(); fBase.type='lowpass'; fBase.frequency.value=400;
-    const gBase = ctx.createGain(); gBase.gain.value=.18;
-    const lfoB = ctx.createOscillator(); const lgB = ctx.createGain();
-    lfoB.frequency.value=.15; lgB.gain.value=.06; lfoB.connect(lgB); lgB.connect(gBase.gain);
+    // camino: brace calda continua + scoppiettii irregolari di legno + soffio aria calda
+    // strato 1: brace — rumore marrone caldo, respiro lento del fuoco
+    const base = ctx.createBufferSource(); base.buffer = mkNoise(ctx,4,.6); base.loop=true;
+    const fBase = ctx.createBiquadFilter(); fBase.type='lowpass'; fBase.frequency.value=300;
+    const gBase = ctx.createGain(); gBase.gain.value=.2;
+    const lfoBase = ctx.createOscillator(); const lgBase = ctx.createGain();
+    lfoBase.frequency.value=.08; lgBase.gain.value=.07;
+    lfoBase.connect(lgBase); lgBase.connect(gBase.gain);
     base.connect(fBase); fBase.connect(gBase); gBase.connect(ctx.destination);
-    base.start(); lfoB.start();
-    // strato 2: crepitio mid continuo
-    const crackle = ctx.createBufferSource(); crackle.buffer = mkNoise(ctx,3,.35); crackle.loop=true;
-    const fCr = ctx.createBiquadFilter(); fCr.type='bandpass'; fCr.frequency.value=1800; fCr.Q.value=.5;
-    const gCr = ctx.createGain(); gCr.gain.value=.12;
-    const lfoCr = ctx.createOscillator(); const lgCr = ctx.createGain();
-    lfoCr.frequency.value=3.5; lgCr.gain.value=.06; lfoCr.connect(lgCr); lgCr.connect(gCr.gain);
-    crackle.connect(fCr); fCr.connect(gCr); gCr.connect(ctx.destination);
-    crackle.start(); lfoCr.start();
-    // strato 3: scoppiettii sporadici (legno che si incrina)
+    base.start(); lfoBase.start();
+    // strato 2: soffio caldo mid (aria che sale)
+    const mid = ctx.createBufferSource(); mid.buffer = mkNoise(ctx,3,.3); mid.loop=true;
+    const fMid = ctx.createBiquadFilter(); fMid.type='bandpass'; fMid.frequency.value=600; fMid.Q.value=.6;
+    const gMid = ctx.createGain(); gMid.gain.value=.1;
+    const lfoMid = ctx.createOscillator(); const lgMid = ctx.createGain();
+    lfoMid.frequency.value=.22; lgMid.gain.value=.05;
+    lfoMid.connect(lgMid); lgMid.connect(gMid.gain);
+    mid.connect(fMid); fMid.connect(gMid); gMid.connect(ctx.destination);
+    mid.start(); lfoMid.start();
+    // strato 3: scoppiettii irregolari del legno
     let alive = true;
     function pop() {
       if (!alive) return;
       const now = ctx.currentTime;
-      const s = ctx.createBufferSource(); s.buffer = mkNoise(ctx,.04,.9); s.loop=false;
-      const f = ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=1200+Math.random()*800; f.Q.value=3;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(.28+Math.random()*.2, now);
-      g.gain.exponentialRampToValueAtTime(.001, now+.035);
-      s.connect(f); f.connect(g); g.connect(ctx.destination); s.start(now);
-      // a volte doppio schiocco ravvicinato
+      // schiocco principale: impulso secco con risonanza
+      const sp = ctx.createBufferSource(); sp.buffer = mkNoise(ctx,.05,.95); sp.loop=false;
+      const fp = ctx.createBiquadFilter(); fp.type='bandpass';
+      fp.frequency.value = 800 + Math.random()*1200; fp.Q.value=2.5;
+      const gp = ctx.createGain();
+      const vel = .3 + Math.random()*.4;
+      gp.gain.setValueAtTime(vel,now); gp.gain.exponentialRampToValueAtTime(.001,now+.045);
+      sp.connect(fp); fp.connect(gp); gp.connect(ctx.destination); sp.start(now);
+      // coda di risonanza grave (il legno che vibra dopo lo schiocco)
+      const sr = ctx.createBufferSource(); sr.buffer = mkNoise(ctx,.15,.4); sr.loop=false;
+      const fr = ctx.createBiquadFilter(); fr.type='bandpass'; fr.frequency.value=200+Math.random()*150; fr.Q.value=4;
+      const gr = ctx.createGain();
+      gr.gain.setValueAtTime(vel*.35,now+.008); gr.gain.exponentialRampToValueAtTime(.001,now+.12);
+      sr.connect(fr); fr.connect(gr); gr.connect(ctx.destination); sr.start(now+.005);
+      // 40% di probabilità: doppio scoppiettio ravvicinato
       if (Math.random() > .6) {
-        const dt = .04 + Math.random()*.06;
-        const s2 = ctx.createBufferSource(); s2.buffer = mkNoise(ctx,.03,.7); s2.loop=false;
-        const f2 = ctx.createBiquadFilter(); f2.type='bandpass'; f2.frequency.value=1000+Math.random()*600; f2.Q.value=4;
-        const g2 = ctx.createGain();
-        g2.gain.setValueAtTime(.15, now+dt); g2.gain.exponentialRampToValueAtTime(.001, now+dt+.025);
-        s2.connect(f2); f2.connect(g2); g2.connect(ctx.destination); s2.start(now+dt);
+        const dt = .05 + Math.random()*.08;
+        const sp2 = ctx.createBufferSource(); sp2.buffer = mkNoise(ctx,.04,.8); sp2.loop=false;
+        const fp2 = ctx.createBiquadFilter(); fp2.type='bandpass';
+        fp2.frequency.value = 700+Math.random()*1000; fp2.Q.value=3;
+        const gp2 = ctx.createGain();
+        gp2.gain.setValueAtTime(vel*.5,now+dt); gp2.gain.exponentialRampToValueAtTime(.001,now+dt+.035);
+        sp2.connect(fp2); fp2.connect(gp2); gp2.connect(ctx.destination); sp2.start(now+dt);
       }
-      setTimeout(pop, 120 + Math.random()*380);
+      setTimeout(pop, 80 + Math.random()*300);
     }
     pop();
-    return { stop:()=>{ alive=false; try{base.stop();lfoB.stop();crackle.stop();lfoCr.stop()}catch(e){} } };
-  },
-
-  leaves: (ctx) => {
-    // foglie secche: frusciio continuo di sottofondo + singoli rustii sporadici
-    const wind = ctx.createBufferSource(); wind.buffer = mkNoise(ctx,4,.25); wind.loop=true;
-    const fWind = ctx.createBiquadFilter(); fWind.type='bandpass'; fWind.frequency.value=3500; fWind.Q.value=.6;
-    const gWind = ctx.createGain(); gWind.gain.value=.18;
-    const lfoW = ctx.createOscillator(); const lgW = ctx.createGain();
-    lfoW.frequency.value=.22; lgW.gain.value=.08; lfoW.connect(lgW); lgW.connect(gWind.gain);
-    wind.connect(fWind); fWind.connect(gWind); gWind.connect(ctx.destination);
-    wind.start(); lfoW.start();
-    let alive = true;
-    function rustle() {
-      if (!alive) return;
-      // singolo strato di rustio: burst di noise filtrato highpass con velocity variabile
-      const src = ctx.createBufferSource();
-      const dur = .08 + Math.random()*.22;
-      src.buffer = mkNoise(ctx, dur + .05, .9); src.loop = false;
-      const f1 = ctx.createBiquadFilter(); f1.type='highpass'; f1.frequency.value=2800;
-      const f2 = ctx.createBiquadFilter(); f2.type='lowpass';  f2.frequency.value=8000;
-      const g = ctx.createGain(); const now = ctx.currentTime;
-      const vel = .12 + Math.random()*.22;
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(vel, now + .01);
-      g.gain.exponentialRampToValueAtTime(.001, now + dur + .04);
-      src.connect(f1); f1.connect(f2); f2.connect(g); g.connect(ctx.destination); src.start();
-      // a volte arriva una seconda foglia ravvicinata (folata)
-      if (Math.random() > .55) {
-        const dt = .06 + Math.random()*.1;
-        const s2 = ctx.createBufferSource(); s2.buffer = mkNoise(ctx,.1,.7); s2.loop=false;
-        const ff = ctx.createBiquadFilter(); ff.type='highpass'; ff.frequency.value=3200;
-        const g2 = ctx.createGain();
-        g2.gain.setValueAtTime(0, now+dt);
-        g2.gain.linearRampToValueAtTime(.1+Math.random()*.15, now+dt+.008);
-        g2.gain.exponentialRampToValueAtTime(.001, now+dt+.08);
-        s2.connect(ff); ff.connect(g2); g2.connect(ctx.destination); s2.start(now+dt);
-      }
-      setTimeout(rustle, 180 + Math.random()*550);
-    }
-    rustle();
-    return { stop:()=>{ alive=false; try{wind.stop();lfoW.stop()}catch(e){} } };
-  },
-
-  ice: (ctx) => {
-    // ghiaccio: tintinnio cristallino continuo basso + scricchiolii e crepe sporadiche
-    let alive = true;
-    // fondo: leggero hiss freddo continuo
-    const hiss = ctx.createBufferSource(); hiss.buffer = mkNoise(ctx,4,.12); hiss.loop=true;
-    const fH = ctx.createBiquadFilter(); fH.type='highpass'; fH.frequency.value=5000;
-    const gH = ctx.createGain(); gH.gain.value=.08;
-    hiss.connect(fH); fH.connect(gH); gH.connect(ctx.destination); hiss.start();
-    // funzione crack: scricchiolio con sweep di frequenza discendente
-    function crack() {
-      if (!alive) return;
-      const now = ctx.currentTime;
-      // strato 1: burst impulsivo ad alta frequenza
-      const s1 = ctx.createBufferSource(); s1.buffer = mkNoise(ctx,.06,.9); s1.loop=false;
-      const f1 = ctx.createBiquadFilter(); f1.type='bandpass'; f1.frequency.value=5500+Math.random()*2000; f1.Q.value=4;
-      const g1 = ctx.createGain();
-      g1.gain.setValueAtTime(.35+Math.random()*.2, now);
-      g1.gain.exponentialRampToValueAtTime(.001, now+.05);
-      s1.connect(f1); f1.connect(g1); g1.connect(ctx.destination); s1.start(now);
-      // strato 2: risonanza grave — il crack che si propaga nel ghiaccio
-      const s2 = ctx.createBufferSource(); s2.buffer = mkNoise(ctx,.25,.6); s2.loop=false;
-      const f2 = ctx.createBiquadFilter(); f2.type='bandpass'; f2.frequency.value=800; f2.Q.value=2;
-      const g2 = ctx.createGain();
-      g2.gain.setValueAtTime(.18, now+.005);
-      g2.gain.exponentialRampToValueAtTime(.001, now+.22);
-      s2.connect(f2); f2.connect(g2); g2.connect(ctx.destination); s2.start(now);
-      // strato 3 opzionale: tono cristallino (campana di vetro)
-      if (Math.random() > .45) {
-        const o = ctx.createOscillator(); const go = ctx.createGain();
-        o.connect(go); go.connect(ctx.destination);
-        o.type = 'sine';
-        const cf = 900 + Math.random()*600;
-        o.frequency.setValueAtTime(cf, now); o.frequency.exponentialRampToValueAtTime(cf*.7, now+.35);
-        go.gain.setValueAtTime(.1, now); go.gain.exponentialRampToValueAtTime(.001, now+.4);
-        o.start(now); o.stop(now+.42);
-      }
-      setTimeout(crack, 1200 + Math.random()*5000);
-    }
-    crack();
-    return { stop:()=>{ alive=false; try{hiss.stop()}catch(e){} } };
+    return { stop:()=>{ alive=false; try{base.stop();lfoBase.stop();mid.stop();lfoMid.stop()}catch(e){} } };
   },
 
   // ── ANIMALI ──────────────────────────────────────────────────────────────────
 
-  // Helper animale: noise filtrato continuo + versi sovrapposti
   birds: (ctx) => {
     // coro di uccelli: frusciio foglie continuo + cinguettii multi-voce + trilli
     const src = ctx.createBufferSource(); src.buffer = mkNoise(ctx,4,.06); src.loop=true;
@@ -908,415 +841,38 @@ const NATURE_SOUNDS = {
     return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 
-  crickets: (ctx) => {
-    // grilli: stridulazione realistica — burst rapidi modulati in ampiezza ~50 Hz (treno di impulsi)
-    // ogni "grillo" è un oscillatore AM con portante ~4-5 kHz, AM a ~50 Hz
-    const nodes = [];
-    function addCricket(baseFreq, amFreq, pan, delay) {
-      const o = ctx.createOscillator();
-      const amOsc = ctx.createOscillator(); const amGain = ctx.createGain();
-      const masterGain = ctx.createGain(); const panner = ctx.createStereoPanner();
-      const f = ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=baseFreq; f.Q.value=12;
-      // AM: portante + inviluppo impulsivo
-      amOsc.type='square'; amOsc.frequency.value=amFreq;
-      amGain.gain.value=.5;
-      amOsc.connect(amGain); amGain.connect(masterGain.gain);
-      o.type='sine'; o.frequency.value=baseFreq;
-      masterGain.gain.value=0; // la AM lo controlla
-      o.connect(f); f.connect(masterGain); masterGain.connect(panner); panner.connect(ctx.destination);
-      panner.pan.value = pan;
-      setTimeout(()=>{ o.start(); amOsc.start(); }, delay);
-      nodes.push(o, amOsc);
-    }
-    // 3-4 grilli sparsi stereo
-    addCricket(4200, 48, -.6, 0);
-    addCricket(4600, 52, .4,  180);
-    addCricket(4900, 45, .1,  80);
-    addCricket(3900, 55, -.2, 300);
-    return { stop:()=>{ nodes.forEach(n=>{ try{n.stop()}catch(e){} }); } };
-  },
-
-  frogs: (ctx) => {
-    // rane: gracidio "ribbit" autentico — pulsazione AM bassa freq + sweep
-    // fondo: acqua/notte
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.08); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='lowpass'; fBg.frequency.value=400;
-    const gBg=ctx.createGain(); gBg.gain.value=.1;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    // singolo ribbit: 3-4 impulsi veloci a ~120-150Hz con sweep discendente
-    function ribbit(pan) {
-      if(!alive) return;
-      const now=ctx.currentTime;
-      const baseF=120+Math.random()*40;
-      const pulses=3+Math.floor(Math.random()*2);
-      for(let i=0;i<pulses;i++){
-        const dt=i*.055;
-        const o=ctx.createOscillator(); const g=ctx.createGain(); const p=ctx.createStereoPanner();
-        // modulatore FM per timbro gracidante
-        const fmO=ctx.createOscillator(); const fmG=ctx.createGain();
-        fmO.frequency.value=baseF*1.8; fmG.gain.value=baseF*1.2;
-        fmO.connect(fmG); fmG.connect(o.frequency);
-        o.type='sawtooth';
-        o.frequency.setValueAtTime(baseF*(1-.015*i),now+dt);
-        p.pan.value=pan;
-        o.connect(g); g.connect(p); p.connect(ctx.destination);
-        g.gain.setValueAtTime(0,now+dt);
-        g.gain.linearRampToValueAtTime(.25,now+dt+.008);
-        g.gain.exponentialRampToValueAtTime(.001,now+dt+.042);
-        o.start(now+dt); fmO.start(now+dt);
-        o.stop(now+dt+.05); fmO.stop(now+dt+.05);
-      }
-    }
-    function frogLoop(pan,interval){
-      if(!alive) return;
-      ribbit(pan);
-      setTimeout(()=>frogLoop(pan,interval), interval+Math.random()*interval*.8);
-    }
-    frogLoop(-.6,900);
-    frogLoop( .5,1200);
-    frogLoop( .0,1600);
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
-  },
-
   bees: (ctx) => {
     // api: ronzio alveare realistico — armonici + tremolo + doppler casuale
     const nodes=[];
     function addBee(baseF, pan, delayMs) {
-      // corpo: onda sawtooth + FM leggera (ali che battono)
       const o=ctx.createOscillator(); const fmO=ctx.createOscillator(); const fmG=ctx.createGain();
       const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=baseF*2; f.Q.value=3;
       const g=ctx.createGain(); const panner=ctx.createStereoPanner();
       fmO.frequency.value=baseF*.25; fmG.gain.value=baseF*.4;
       fmO.connect(fmG); fmG.connect(o.frequency);
       o.type='sawtooth'; o.frequency.value=baseF;
-      // LFO volume (tremolo ala)
       const lfo=ctx.createOscillator(); const lfoG=ctx.createGain();
       lfo.frequency.value=14+Math.random()*6; lfoG.gain.value=.06;
       lfo.connect(lfoG); lfoG.connect(g.gain);
       g.gain.value=.09; panner.pan.value=pan;
       o.connect(f); f.connect(g); g.connect(panner); panner.connect(ctx.destination);
-      // micro doppler: variazione lenta di frequenza (ape che vola vicino/lontano)
       const dopplerLfo=ctx.createOscillator(); const dopplerG=ctx.createGain();
       dopplerLfo.frequency.value=.08+Math.random()*.12; dopplerG.gain.value=baseF*.06;
       dopplerLfo.connect(dopplerG); dopplerG.connect(o.frequency);
       nodes.push(o,fmO,lfo,dopplerLfo);
       setTimeout(()=>{ o.start(); fmO.start(); lfo.start(); dopplerLfo.start(); }, delayMs);
     }
-    // 5 api con frequenze leggermente diverse (alveare realistico)
     addBee(220, -.5,   0);
     addBee(235,  .4, 100);
     addBee(245,  .0,  50);
     addBee(215, -.2, 200);
     addBee(255,  .6, 150);
-    // fondo ronzio grave alveare
     const hive=ctx.createBufferSource(); hive.buffer=mkNoise(ctx,4,.2); hive.loop=true;
     const fH=ctx.createBiquadFilter(); fH.type='bandpass'; fH.frequency.value=180; fH.Q.value=4;
     const gH=ctx.createGain(); gH.gain.value=.08;
     hive.connect(fH); fH.connect(gH); gH.connect(ctx.destination); hive.start();
     nodes.push(hive);
     return { stop:()=>{ nodes.forEach(n=>{ try{n.stop()}catch(e){} }); } };
-  },
-
-  wolf: (ctx) => {
-    // lupo: bosco notturno + ululato con curva melodica autentica (salita lunga, discesa)
-    // fondo: vento tra gli alberi
-    const wind=ctx.createBufferSource(); wind.buffer=mkNoise(ctx,4,.2); wind.loop=true;
-    const fW=ctx.createBiquadFilter(); fW.type='bandpass'; fW.frequency.value=320; fW.Q.value=.6;
-    const gW=ctx.createGain(); gW.gain.value=.12;
-    const lfoW=ctx.createOscillator(); const lgW=ctx.createGain();
-    lfoW.frequency.value=.09; lgW.gain.value=.04; lfoW.connect(lgW); lgW.connect(gW.gain);
-    wind.connect(fW); fW.connect(gW); gW.connect(ctx.destination);
-    wind.start(); lfoW.start();
-    let alive=true;
-    function howl(){
-      if(!alive) return;
-      const now=ctx.currentTime;
-      const dur=3.2+Math.random()*1.2;
-      const root=200+Math.random()*50;       // ~200-250 Hz (lupo adulto)
-      const peak=root*(1.5+Math.random()*.3); // salita ~1.5-1.8x
-      // strato principale: sine con vibrato naturale
-      const o=ctx.createOscillator(); const gO=ctx.createGain();
-      const vib=ctx.createOscillator(); const vG=ctx.createGain();
-      vib.frequency.value=4+Math.random()*2; vG.gain.value=6+Math.random()*4;
-      vib.connect(vG); vG.connect(o.frequency);
-      o.type='sine';
-      // curva: partenza bassa → salita rapida → piatto vibrante → discesa lenta
-      o.frequency.setValueAtTime(root,          now);
-      o.frequency.linearRampToValueAtTime(peak,  now+.9);
-      o.frequency.setValueAtTime(peak,           now+dur*.5);
-      o.frequency.linearRampToValueAtTime(root*1.1, now+dur);
-      gO.gain.setValueAtTime(0,now);
-      gO.gain.linearRampToValueAtTime(.38,now+.35);
-      gO.gain.setValueAtTime(.38,now+dur*.55);
-      gO.gain.exponentialRampToValueAtTime(.001,now+dur+.15);
-      o.connect(gO); gO.connect(ctx.destination);
-      o.start(now); vib.start(now); o.stop(now+dur+.2); vib.stop(now+dur+.2);
-      // overtone (terza armonica) — colore del lupo
-      const o2=ctx.createOscillator(); const g2=ctx.createGain();
-      o2.type='sine';
-      o2.frequency.setValueAtTime(root*3,       now);
-      o2.frequency.linearRampToValueAtTime(peak*3, now+.9);
-      o2.frequency.setValueAtTime(peak*3,        now+dur*.5);
-      o2.frequency.linearRampToValueAtTime(root*3.3,now+dur);
-      g2.gain.setValueAtTime(0,now); g2.gain.linearRampToValueAtTime(.08,now+.4);
-      g2.gain.exponentialRampToValueAtTime(.001,now+dur+.1);
-      o2.connect(g2); g2.connect(ctx.destination);
-      o2.start(now); o2.stop(now+dur+.15);
-      // breath noise: inspirazione prima dell'ululato
-      const ns=ctx.createBufferSource(); ns.buffer=mkNoise(ctx,.3,.4); ns.loop=false;
-      const fNs=ctx.createBiquadFilter(); fNs.type='bandpass'; fNs.frequency.value=400; fNs.Q.value=1.5;
-      const gNs=ctx.createGain();
-      gNs.gain.setValueAtTime(0,now); gNs.gain.linearRampToValueAtTime(.12,now+.06);
-      gNs.gain.exponentialRampToValueAtTime(.001,now+.28);
-      ns.connect(fNs); fNs.connect(gNs); gNs.connect(ctx.destination); ns.start(now);
-      setTimeout(howl,7000+Math.random()*10000);
-    }
-    howl();
-    return { stop:()=>{ alive=false; try{wind.stop();lfoW.stop()}catch(e){} } };
-  },
-
-  whale: (ctx) => {
-    // balena: rumore subacqueo continuo + canti
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.2); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='lowpass'; fBg.frequency.value=120;
-    const gBg=ctx.createGain(); gBg.gain.value=.22;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    function song() {
-      if(!alive) return;
-      const o=ctx.createOscillator(); const g=ctx.createGain();
-      const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=400;
-      o.connect(f); f.connect(g); g.connect(ctx.destination);
-      o.type='sine'; const now=ctx.currentTime;
-      o.frequency.setValueAtTime(60,now); o.frequency.linearRampToValueAtTime(120,now+2);
-      o.frequency.linearRampToValueAtTime(80,now+5); o.frequency.linearRampToValueAtTime(50,now+8);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.35,now+1);
-      g.gain.linearRampToValueAtTime(.2,now+6); g.gain.exponentialRampToValueAtTime(.001,now+9);
-      o.start(now); o.stop(now+9.5);
-      setTimeout(song, 8000+Math.random()*8000);
-    }
-    song();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
-  },
-
-  owl: (ctx) => {
-    // gufo: vento notturno continuo + ululi
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.1); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=500; fBg.Q.value=.5;
-    const gBg=ctx.createGain(); gBg.gain.value=.15;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    function hoot() {
-      if(!alive) return;
-      const now=ctx.currentTime;
-      [0,.38].forEach(dt => {
-        const o=ctx.createOscillator(); const g=ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.type='sine'; o.frequency.setValueAtTime(320,now+dt);
-        o.frequency.linearRampToValueAtTime(275,now+dt+.28);
-        g.gain.setValueAtTime(0,now+dt); g.gain.linearRampToValueAtTime(.25,now+dt+.04);
-        g.gain.exponentialRampToValueAtTime(.001,now+dt+.3);
-        o.start(now+dt); o.stop(now+dt+.32);
-      });
-      setTimeout(hoot, 2500+Math.random()*4000);
-    }
-    hoot();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
-  },
-
-  dolphin: (ctx) => {
-    // delfino: rumore acqua continuo + click e fischi
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.12); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=800; fBg.Q.value=.4;
-    const gBg=ctx.createGain(); gBg.gain.value=.15;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    function click() {
-      if(!alive) return;
-      const now=ctx.currentTime;
-      const o=ctx.createOscillator(); const g=ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type='sine'; o.frequency.setValueAtTime(3000+Math.random()*1500,now);
-      o.frequency.exponentialRampToValueAtTime(1000,now+.06);
-      g.gain.setValueAtTime(.14,now); g.gain.exponentialRampToValueAtTime(.001,now+.08);
-      o.start(now); o.stop(now+.1);
-      if(Math.random()>.4) {
-        const o2=ctx.createOscillator(); const g2=ctx.createGain();
-        o2.connect(g2); g2.connect(ctx.destination);
-        o2.type='sine'; const t=now+.12;
-        o2.frequency.setValueAtTime(2000,t); o2.frequency.linearRampToValueAtTime(3500,t+.3);
-        o2.frequency.linearRampToValueAtTime(1800,t+.6);
-        g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(.13,t+.04);
-        g2.gain.exponentialRampToValueAtTime(.001,t+.65);
-        o2.start(t); o2.stop(t+.7);
-      }
-      setTimeout(click, 500+Math.random()*1200);
-    }
-    click();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
-  },
-
-  dog: (ctx) => {
-    // cane: abbaiato realistico — "bau" con attacco noise + tono + coda
-    let alive=true;
-    function bark(){
-      if(!alive) return;
-      const now=ctx.currentTime;
-      // strato 1: noise impulsivo (corpo del bau)
-      const ns=ctx.createBufferSource(); ns.buffer=mkNoise(ctx,.18,.8); ns.loop=false;
-      const fNs=ctx.createBiquadFilter(); fNs.type='bandpass'; fNs.frequency.value=700; fNs.Q.value=1.2;
-      const gNs=ctx.createGain();
-      gNs.gain.setValueAtTime(0,now); gNs.gain.linearRampToValueAtTime(.45,now+.01);
-      gNs.gain.exponentialRampToValueAtTime(.001,now+.16);
-      ns.connect(fNs); fNs.connect(gNs); gNs.connect(ctx.destination); ns.start(now);
-      // strato 2: tono fondamentale del cane (350-550Hz)
-      const freq=350+Math.random()*200;
-      const o=ctx.createOscillator(); const g=ctx.createGain();
-      const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=1200;
-      o.type='sawtooth'; o.frequency.setValueAtTime(freq,now);
-      o.frequency.exponentialRampToValueAtTime(freq*.6,now+.18);
-      o.connect(f); f.connect(g); g.connect(ctx.destination);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.3,now+.012);
-      g.gain.exponentialRampToValueAtTime(.001,now+.2);
-      o.start(now); o.stop(now+.22);
-      // a volte doppio abbai
-      const delay=Math.random()>.5 ? 0.32 : 9999;
-      if(delay<1){
-        setTimeout(()=>{
-          if(!alive) return;
-          const n2=ctx.currentTime;
-          const ns2=ctx.createBufferSource(); ns2.buffer=mkNoise(ctx,.15,.7); ns2.loop=false;
-          const f2=ctx.createBiquadFilter(); f2.type='bandpass'; f2.frequency.value=650; f2.Q.value=1;
-          const g2=ctx.createGain();
-          g2.gain.setValueAtTime(0,n2); g2.gain.linearRampToValueAtTime(.35,n2+.01);
-          g2.gain.exponentialRampToValueAtTime(.001,n2+.13);
-          ns2.connect(f2); f2.connect(g2); g2.connect(ctx.destination); ns2.start(n2);
-        }, delay*1000);
-      }
-      setTimeout(bark, 3000+Math.random()*6000);
-    }
-    bark();
-    return { stop:()=>{ alive=false; } };
-  },
-
-  cat: (ctx) => {
-    // gatto: fusa realistiche (tremolo ~25Hz su noise grave) + miao con vibrato
-    // fusa: modulazione AM rapida su noise filtrato basso — suono gutturale continuo
-    const purSrc=ctx.createBufferSource(); purSrc.buffer=mkNoise(ctx,4,.3); purSrc.loop=true;
-    const purF=ctx.createBiquadFilter(); purF.type='bandpass'; purF.frequency.value=150; purF.Q.value=8;
-    const purG=ctx.createGain(); purG.gain.value=0;
-    const purAM=ctx.createOscillator(); const purAMg=ctx.createGain();
-    purAM.type='square'; purAM.frequency.value=26; purAMg.gain.value=.18;
-    purAM.connect(purAMg); purAMg.connect(purG.gain);
-    purSrc.connect(purF); purF.connect(purG); purG.connect(ctx.destination);
-    purSrc.start(); purAM.start();
-    // breath noise sotto le fusa
-    const brSrc=ctx.createBufferSource(); brSrc.buffer=mkNoise(ctx,3,.08); brSrc.loop=true;
-    const brF=ctx.createBiquadFilter(); brF.type='lowpass'; brF.frequency.value=300;
-    const brG=ctx.createGain(); brG.gain.value=.07;
-    brSrc.connect(brF); brF.connect(brG); brG.connect(ctx.destination); brSrc.start();
-    let alive=true;
-    // miao: sweep con vibrato e due formanti
-    function meow(){
-      if(!alive) return;
-      const now=ctx.currentTime;
-      const root=700+Math.random()*200;
-      // formante principale: "ia"
-      const o=ctx.createOscillator(); const gO=ctx.createGain();
-      const vib=ctx.createOscillator(); const vG=ctx.createGain();
-      vib.frequency.value=6; vG.gain.value=18; vib.connect(vG); vG.connect(o.frequency);
-      o.type='sawtooth';
-      // m-ia-o: sale e poi scende
-      o.frequency.setValueAtTime(root*.7,now);
-      o.frequency.linearRampToValueAtTime(root*1.25,now+.22);
-      o.frequency.linearRampToValueAtTime(root*.55,now+.65);
-      gO.gain.setValueAtTime(0,now); gO.gain.linearRampToValueAtTime(.2,now+.06);
-      gO.gain.setValueAtTime(.2,now+.4); gO.gain.exponentialRampToValueAtTime(.001,now+.7);
-      const fO=ctx.createBiquadFilter(); fO.type='lowpass'; fO.frequency.value=2000;
-      o.connect(fO); fO.connect(gO); gO.connect(ctx.destination);
-      o.start(now); vib.start(now); o.stop(now+.75); vib.stop(now+.75);
-      setTimeout(meow, 5000+Math.random()*9000);
-    }
-    meow();
-    return { stop:()=>{ alive=false; try{purSrc.stop();purAM.stop();brSrc.stop()}catch(e){} } };
-  },
-
-  lion: (ctx) => {
-    // leone: rumore savana continuo + ruggiti
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.18); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=300; fBg.Q.value=.6;
-    const gBg=ctx.createGain(); gBg.gain.value=.2;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    function roar() {
-      if(!alive) return;
-      const ns=ctx.createBufferSource(); ns.buffer=mkNoise(ctx,2.5,.9); ns.loop=false;
-      const f1=ctx.createBiquadFilter(); f1.type='lowpass'; f1.frequency.value=400;
-      const f2=ctx.createBiquadFilter(); f2.type='highpass'; f2.frequency.value=60;
-      const g=ctx.createGain(); const now=ctx.currentTime;
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.55,now+.15);
-      g.gain.setValueAtTime(.55,now+1.5); g.gain.exponentialRampToValueAtTime(.001,now+2.5);
-      ns.connect(f1); f1.connect(f2); f2.connect(g); g.connect(ctx.destination); ns.start();
-      const o=ctx.createOscillator(); const go=ctx.createGain();
-      o.connect(go); go.connect(ctx.destination);
-      o.type='sawtooth'; o.frequency.setValueAtTime(90,now);
-      o.frequency.exponentialRampToValueAtTime(50,now+2.5);
-      go.gain.setValueAtTime(0,now); go.gain.linearRampToValueAtTime(.3,now+.1);
-      go.gain.exponentialRampToValueAtTime(.001,now+2.5);
-      o.start(now); o.stop(now+2.6);
-      setTimeout(roar, 7000+Math.random()*10000);
-    }
-    roar();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
-  },
-
-  elephant: (ctx) => {
-    // elefante: rumore basso continuo + barriti
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,4,.15); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='lowpass'; fBg.frequency.value=200;
-    const gBg=ctx.createGain(); gBg.gain.value=.22;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    function trumpet() {
-      if(!alive) return;
-      const o=ctx.createOscillator(); const g=ctx.createGain();
-      const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=800; f.Q.value=1;
-      o.connect(f); f.connect(g); g.connect(ctx.destination);
-      o.type='sawtooth'; const now=ctx.currentTime;
-      o.frequency.setValueAtTime(200,now); o.frequency.linearRampToValueAtTime(600,now+.4);
-      o.frequency.linearRampToValueAtTime(300,now+.8);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.42,now+.05);
-      g.gain.exponentialRampToValueAtTime(.001,now+.9);
-      o.start(now); o.stop(now+1);
-      setTimeout(trumpet, 5000+Math.random()*10000);
-    }
-    trumpet();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
-  },
-
-  deer: (ctx) => {
-    // cervo: foresta continua + bramiti
-    const src=ctx.createBufferSource(); src.buffer=mkNoise(ctx,3,.1); src.loop=true;
-    const fBg=ctx.createBiquadFilter(); fBg.type='bandpass'; fBg.frequency.value=600; fBg.Q.value=.4;
-    const gBg=ctx.createGain(); gBg.gain.value=.14;
-    src.connect(fBg); fBg.connect(gBg); gBg.connect(ctx.destination); src.start();
-    let alive=true;
-    function bellow() {
-      if(!alive) return;
-      const o=ctx.createOscillator(); const g=ctx.createGain();
-      const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=800;
-      o.connect(f); f.connect(g); g.connect(ctx.destination);
-      o.type='sawtooth'; const now=ctx.currentTime;
-      o.frequency.setValueAtTime(180,now); o.frequency.linearRampToValueAtTime(260,now+.5);
-      o.frequency.linearRampToValueAtTime(140,now+1.2);
-      g.gain.setValueAtTime(0,now); g.gain.linearRampToValueAtTime(.32,now+.1);
-      g.gain.exponentialRampToValueAtTime(.001,now+1.4);
-      o.start(now); o.stop(now+1.5);
-      setTimeout(bellow, 4000+Math.random()*8000);
-    }
-    bellow();
-    return { stop:()=>{ alive=false; try{src.stop()}catch(e){} } };
   },
 };
 
