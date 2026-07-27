@@ -502,54 +502,36 @@
 
 <script>
 // ═══════════════════════════════════════
-// ═══════════════════════════════════════
-// WAKE LOCK
+// SCREEN WAKE LOCK — schermo sempre acceso durante il timer (Chrome)
 // ═══════════════════════════════════════
 let wakeLock = null;
+
 async function requestWakeLock() {
-  if ('wakeLock' in navigator) {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => { wakeLock = null; });
-    } catch (e) {}
-  }
+  if (!('wakeLock' in navigator)) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    // Quando il sistema rilascia il lock (es. utente cambia tab), lo ri-acquisisce
+    // automaticamente non appena la pagina torna visibile
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch (e) {}
 }
+
 function releaseWakeLock() {
-  if (wakeLock) { wakeLock.release(); wakeLock = null; }
+  if (wakeLock) { try { wakeLock.release(); } catch(e){} wakeLock = null; }
 }
 
-// ═══════════════════════════════════════
-// SILENT AUDIO — mantiene AudioContext vivo su iOS con schermo spento
-// iOS sospende Web Audio solo se non c'è una riproduzione <audio> attiva.
-// Un elemento <audio> con un file WAV silenzioso in loop "inganna" il sistema.
-// ═══════════════════════════════════════
-// WAV silenzioso 1 secondo (44100Hz, mono, 16bit) codificato inline base64
-const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-let silentAudio = null;
-
-function startSilentAudio() {
-  if (silentAudio) return;
-  silentAudio = new Audio(SILENT_WAV);
-  silentAudio.loop = true;
-  silentAudio.volume = 0.001; // quasi zero ma non mute — iOS richiede volume > 0
-  silentAudio.play().catch(() => {});
-}
-function stopSilentAudio() {
-  if (silentAudio) { silentAudio.pause(); silentAudio = null; }
-}
-
-// visibilitychange: riprende audio quando schermo si riaccende
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
+// Chrome rilascia il Wake Lock quando la pagina diventa non visibile —
+// lo ri-acquisisce appena l'utente torna sulla pagina/schermo
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && running) {
+    await requestWakeLock();
+    // Riprende AudioContext se era stato sospeso
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    if (silentAudio && silentAudio.paused) silentAudio.play().catch(() => {});
-    if (running && currentSound && currentSound !== 'silence') {
-      // Riavvia natura se era stata fermata
-      if (!natureNode) startNature(currentSound);
+    // Riavvia natura se era stata interrotta
+    if (currentSound && currentSound !== 'silence' && !natureNode) {
+      startNature(currentSound);
     }
-    if (running) requestWakeLock();
   }
-  // Non fermiamo nulla allo spegnimento: lasciamo che silentAudio mantenga il contesto vivo
 });
 
 // ─── Fallback timer robusto: recupera i secondi persi quando il tab era nascosto ───
@@ -1705,7 +1687,6 @@ function initTimer() {
 function stopTimer() {
   clearInterval(ticker); running = false;
   releaseWakeLock();
-  stopSilentAudio();
 }
 function loadStep(idx) {
   current = idx; remaining = steps[idx].mins * 60; updateClock();
@@ -1734,7 +1715,6 @@ function nextStep() {
 function startTicker() {
   clearInterval(ticker); running = true;
   document.getElementById('btn-start').textContent = 'pausa';
-  startSilentAudio(); // mantiene AudioContext vivo su iOS con schermo spento
   startNature(currentSound);
   requestWakeLock();
   tickerLastTick = Date.now();
