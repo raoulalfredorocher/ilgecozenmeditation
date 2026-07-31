@@ -10,16 +10,24 @@ import { requestWakeLock, releaseWakeLock }  from './wakeLock.js';
 
 const CIRC = 2 * Math.PI * 104;
 
-let _steps     = [];
-let _current   = 0;
-let _remaining = 0;
-let _running   = false;
-let _ticker    = null;
-let _lastTick  = 0;
-let _audioCtx  = null;
+let _steps       = [];
+let _current     = 0;
+let _remaining   = 0;
+let _running     = false;
+let _ticker      = null;
+let _lastTick    = 0;
+let _audioCtx    = null;
+let _onComplete  = null; // callback chiamata solo a fine sessione vera
 
 // ── Getters pubblici ──────────────────────────────────────────────────────────
-export const isRunning = () => _running;
+export const isRunning  = () => _running;
+export const getSteps   = () => _steps;
+export const getTotalMinsElapsed = () => {
+  // minuti totali completati: step precedenti + minuti già consumati nello step corrente
+  const prevMins = _steps.slice(0, _current).reduce((acc, s) => acc + s.mins, 0);
+  const currElapsed = Math.floor((_steps[_current].mins * 60 - _remaining) / 60);
+  return prevMins + currElapsed;
+};
 
 // ── Ring SVG ─────────────────────────────────────────────────────────────────
 function setRing(f) {
@@ -72,15 +80,16 @@ function nextStep() {
       startTicker();
     });
   } else {
-    // Fine sessione: campana → done overlay
+    // Fine sessione: campana → done overlay → callback
     stopNature();
     ringBell(_audioCtx, 3, () => {
       _running = false;
       releaseWakeLock();
-      document.getElementById('btn-start').textContent      = 'avvia';
+      document.getElementById('btn-start').textContent       = 'avvia';
       setRing(0);
-      document.getElementById('clock-time').textContent     = '00:00';
+      document.getElementById('clock-time').textContent      = '00:00';
       document.getElementById('clock-step-name').textContent = '';
+      if (_onComplete) _onComplete();
       setTimeout(() => document.getElementById('done-overlay').classList.add('show'), 1200);
     });
   }
@@ -128,12 +137,13 @@ export function stopTimer() {
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-export function initTimer(audioCtx, steps) {
-  _audioCtx  = audioCtx;
-  _steps     = steps;
-  _current   = 0;
-  _remaining = steps[0].mins * 60;
-  _running   = false;
+export function initTimer(audioCtx, steps, onComplete) {
+  _audioCtx   = audioCtx;
+  _steps      = steps;
+  _current    = 0;
+  _remaining  = steps[0].mins * 60;
+  _running    = false;
+  _onComplete = onComplete || null;
   document.getElementById('btn-start').textContent = 'avvia';
 
   // Setup SVG ring

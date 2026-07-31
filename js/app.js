@@ -11,12 +11,25 @@ import { initTimer, toggleStartPause,
 import { requestWakeLock }                   from './wakeLock.js';
 import { startNature, stopNature,
          getCurrentSound, setCurrentSound }  from './audio/sounds.js';
+import { saveSession, renderHistory }        from './history.js';
 
 // ── AudioContext (creato al primo gesto utente) ───────────────────────────────
 let audioCtx = null;
 function ensureAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+// Quando un dispositivo audio (AirPods, BT) viene connesso/scollegato,
+// alcuni browser sospendono l'AudioContext. Lo riprendiamo subito.
+if (typeof navigator.mediaDevices !== 'undefined') {
+  navigator.mediaDevices.addEventListener('devicechange', () => {
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  });
 }
 
 // ── Steps state ──────────────────────────────────────────────────────────────
@@ -41,6 +54,63 @@ themeBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+
+// ── Tab bar ───────────────────────────────────────────────────────────────────
+const tabHome    = document.getElementById('tab-home');
+const tabHistory = document.getElementById('tab-history');
+const tabAvvia   = document.getElementById('tab-avvia');
+
+function setActiveTab(activeId) {
+  [tabHome, tabHistory, tabAvvia].forEach(btn => btn.classList.remove('tab-active'));
+  document.getElementById(activeId).classList.add('tab-active');
+}
+
+tabHome.addEventListener('click', () => {
+  setActiveTab('tab-home');
+  showScreen('screen-config');
+});
+
+tabHistory.addEventListener('click', () => {
+  setActiveTab('tab-history');
+  renderHistory();
+  showScreen('screen-history');
+});
+
+// Pulsante centrale "Avvia pratica"
+tabAvvia.addEventListener('click', () => {
+  ensureAudio();
+  if (!steps.length) {
+    // Porta in home e mostra il picker se non c'è nulla configurato
+    setActiveTab('tab-home');
+    showScreen('screen-config');
+    document.getElementById('btn-add').focus();
+    return;
+  }
+  _startSession();
+});
+
+// ── Avvio sessione ────────────────────────────────────────────────────────────
+function _startSession() {
+  ensureAudio();
+  const totalMins = steps.reduce((acc, s) => acc + s.mins, 0);
+
+  initTimer(audioCtx, steps, () => {
+    // Callback chiamata SOLO quando la sessione è completata al 100%
+    saveSession({ totalMins, steps: steps.map(s => ({ mins: s.mins, name: s.name || '' })) });
+  });
+
+  // Nascondi la tab-bar durante la sessione per massimizzare lo spazio
+  document.getElementById('tab-bar').style.display = 'none';
+
+  showScreen('screen-timer');
+}
+
+function _exitSession() {
+  stopTimer();
+  document.getElementById('tab-bar').style.display = '';
+  setActiveTab('tab-home');
+  showScreen('screen-config');
 }
 
 // ── Config steps render ───────────────────────────────────────────────────────
@@ -151,24 +221,21 @@ document.getElementById('btn-add').addEventListener('click', () => {
   renderConfigSteps();
 });
 
-document.getElementById('btn-avvia').addEventListener('click', () => {
-  ensureAudio();
-  if (!steps.length) { document.getElementById('btn-add').focus(); return; }
-  initTimer(audioCtx, steps);
-  showScreen('screen-timer');
-});
-
-document.getElementById('btn-home').addEventListener('click', () => {
-  stopTimer(); showScreen('screen-config');
+// Pulsante STOP (esce dalla sessione senza salvarla)
+document.getElementById('btn-stop').addEventListener('click', () => {
+  _exitSession();
 });
 
 document.getElementById('btn-back').addEventListener('click', () => {
-  stopTimer(); showScreen('screen-config');
+  _exitSession();
 });
 
 document.getElementById('btn-done-back').addEventListener('click', () => {
   document.getElementById('done-overlay').classList.remove('show');
-  stopTimer(); showScreen('screen-config');
+  document.getElementById('tab-bar').style.display = '';
+  setActiveTab('tab-home');
+  stopTimer();
+  showScreen('screen-config');
 });
 
 document.getElementById('btn-start').addEventListener('click', () => {

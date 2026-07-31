@@ -37,7 +37,7 @@
     </button>
   </header>
 
-  <!-- SCHERMATA CONFIGURAZIONE -->
+  <!-- SCHERMATA HOME / CONFIGURAZIONE -->
   <div class="screen active" id="screen-config">
 
     <div class="picker-section">
@@ -53,8 +53,6 @@
     <div class="config-steps" id="config-steps">
       <div class="empty-steps" id="empty-steps">nessun intervallo aggiunto</div>
     </div>
-
-    <button class="btn-avvia" id="btn-avvia">inizia meditazione</button>
 
     <div class="section-title">sequenze salvate</div>
     <div class="preset-grid" id="preset-grid"></div>
@@ -80,7 +78,7 @@
     </div>
 
     <div class="timer-btns">
-      <button class="btn-timer" id="btn-home">↩ home</button>
+      <button class="btn-timer" id="btn-stop">■ stop</button>
       <button class="btn-timer" id="btn-reset">reset</button>
       <button class="btn-timer primary" id="btn-start">avvia</button>
     </div>
@@ -118,6 +116,54 @@
     <button class="btn-back" id="btn-back">← modifica sequenza</button>
 
   </div>
+
+  <!-- SCHERMATA CRONOLOGIA -->
+  <div class="screen" id="screen-history">
+
+    <div class="history-calendar" id="history-calendar">
+      <!-- generato da JS -->
+    </div>
+
+    <div class="history-month-label" id="history-month-label"></div>
+
+    <div class="history-list" id="history-list">
+      <!-- generato da JS -->
+    </div>
+
+  </div>
+
+  <!-- TAB BAR FISSA -->
+  <nav class="tab-bar" id="tab-bar">
+    <button class="tab-btn" id="tab-history" aria-label="Cronologia">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+        <circle cx="8" cy="15" r=".8" fill="currentColor"/>
+        <circle cx="12" cy="15" r=".8" fill="currentColor"/>
+        <circle cx="16" cy="15" r=".8" fill="currentColor"/>
+      </svg>
+      <span class="tab-label">cronologia</span>
+    </button>
+
+    <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
+      <div class="tab-center-circle">
+        <svg class="tab-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5,3 19,12 5,21" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <span class="tab-label">avvia pratica</span>
+    </button>
+
+    <button class="tab-btn tab-active" id="tab-home" aria-label="Home">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+        <polyline points="9,21 9,13 15,13 15,21"/>
+      </svg>
+      <span class="tab-label">home</span>
+    </button>
+  </nav>
 
   <footer>Made with IBM Bob</footer>
 
