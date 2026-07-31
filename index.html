@@ -6,11 +6,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
-  <meta name="theme-color" content="#f0ebe0"/>
+  <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="Logo Trasparente.png"/>
   <link rel="icon" type="image/png" href="Logo Trasparente.png"/>
-  <title>Il Geco Zen</title>
+  <title><a href="https://www.ilgecozen.it" target="_blank" rel="noopener">Il Geco Zen</a> — Timer di Meditazione</title>
   <link rel="stylesheet" href="styles/theme.css"/>
   <link rel="stylesheet" href="styles/layout.css"/>
   <link rel="stylesheet" href="styles/timer.css"/>
@@ -19,17 +19,30 @@
 
   <div id="bell-flash"></div>
 
+  <!-- DONE OVERLAY -->
   <div id="done-overlay">
     <div class="done-kanji">禅</div>
     <div class="done-text">Sessione completata</div>
     <div class="done-sub">三度の鐘 — tre rintocchi</div>
-    <button class="btn-done" id="btn-done-back">nuova sessione</button>
+    <div class="done-logo-wrap">
+      <img src="Logo Trasparente.png" alt="Il Geco Zen" class="done-logo"/>
+      <div class="done-promo">
+        Vuoi approfondire la mindfulness e la meditazione?<br>
+        Visita <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
+      </div>
+    </div>
+    <button class="btn-done" id="btn-done-back">Nuova sessione</button>
   </div>
 
   <header>
     <div style="width:52px"></div>
     <div class="header-center">
-      <div class="app-title">Il Geco Zen</div>
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="header-logo-link">
+        <img src="Logo Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
+      </a>
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="app-title-link">
+        <div class="app-title">Il Geco Zen</div>
+      </a>
       <div class="app-sub">timer di meditazione</div>
     </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
@@ -41,7 +54,7 @@
   <div class="screen active" id="screen-config">
 
     <div class="picker-section">
-      <div class="picker-label">seleziona minuti</div>
+      <div class="picker-label">seleziona minuti (1 – 60)</div>
       <div class="picker-wrap" id="picker-wrap">
         <div class="picker-highlight"></div>
         <div class="picker-drum" id="picker-drum"></div>
@@ -72,15 +85,26 @@
         <circle id="ring-bg"   cx="120" cy="120" r="104"/>
         <circle id="ring-fill" cx="120" cy="120" r="104"/>
       </svg>
+      <img src="Logo Trasparente.png" alt="" id="clock-gecko" aria-hidden="true"/>
       <div id="clock-step-name"></div>
       <div id="clock-time">00:00</div>
       <div id="clock-min-label"></div>
     </div>
 
-    <div class="timer-btns">
-      <button class="btn-timer" id="btn-stop">■ stop</button>
-      <button class="btn-timer" id="btn-reset">reset</button>
-      <button class="btn-timer primary" id="btn-start">avvia</button>
+    <div class="timer-btns" id="timer-btns">
+      <!-- I pulsanti vengono aggiornati dinamicamente da JS in base allo stato -->
+      <button class="btn-timer btn-stop-red" id="btn-stop">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        Stop
+      </button>
+      <button class="btn-timer" id="btn-reset">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        Reset
+      </button>
+      <button class="btn-timer primary" id="btn-start">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Avvia
+      </button>
     </div>
 
     <div class="nature-section">
@@ -88,29 +112,36 @@
 
       <div class="nature-cat-label">— silenzio</div>
       <div class="nature-btns">
-        <button class="btn-nature active" data-sound="silence">🤫 silenzio</button>
+        <button class="btn-nature active" data-sound="silence">🤫 Silenzio</button>
+      </div>
+
+      <div class="nature-cat-label">— musica meditazione</div>
+      <div class="nature-btns">
+        <button class="btn-nature" data-sound="meditation">🎵 Om meditazione</button>
+        <button class="btn-nature" data-sound="binaural">🎶 Binaural 432Hz</button>
       </div>
 
       <div class="nature-cat-label">— elementi naturali</div>
       <div class="nature-btns">
-        <button class="btn-nature" data-sound="rain">🌧 pioggia</button>
-        <button class="btn-nature" data-sound="sea">🌊 mare</button>
-        <button class="btn-nature" data-sound="wind">🍃 vento</button>
-        <button class="btn-nature" data-sound="stream">💧 ruscello</button>
-        <button class="btn-nature" data-sound="thunder">⚡ tuono</button>
-        <button class="btn-nature" data-sound="fire">🔥 camino</button>
-        <button class="btn-nature" data-sound="leaves">🍂 foglie</button>
-        <button class="btn-nature" data-sound="ice">🧊 ghiaccio</button>
+        <button class="btn-nature" data-sound="rain">🌧 Pioggia</button>
+        <button class="btn-nature" data-sound="sea">🌊 Mare</button>
+        <button class="btn-nature" data-sound="wind">🍃 Vento</button>
+        <button class="btn-nature" data-sound="stream">💧 Ruscello</button>
+        <button class="btn-nature" data-sound="thunder">⚡ Tuono</button>
+        <button class="btn-nature" data-sound="fire">🔥 Camino</button>
       </div>
 
       <div class="nature-cat-label">— animali</div>
       <div class="nature-btns">
-        <button class="btn-nature" data-sound="birds">🐦 uccelli</button>
-        <button class="btn-nature" data-sound="crickets">🦗 grilli</button>
-        <button class="btn-nature" data-sound="frogs">🐸 rane</button>
-        <button class="btn-nature" data-sound="bees">🐝 api</button>
-        <button class="btn-nature" data-sound="wolf">🐺 lupo</button>
+        <button class="btn-nature" data-sound="birds">🐦 Uccelli</button>
+        <button class="btn-nature" data-sound="crickets">🦗 Grilli</button>
+        <button class="btn-nature" data-sound="bees">🐝 Api</button>
       </div>
+    </div>
+
+    <div class="timer-footer">
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
+      — mindfulness &amp; meditazione
     </div>
 
     <button class="btn-back" id="btn-back">← modifica sequenza</button>
@@ -120,19 +151,13 @@
   <!-- SCHERMATA CRONOLOGIA -->
   <div class="screen" id="screen-history">
 
-    <div class="history-calendar" id="history-calendar">
-      <!-- generato da JS -->
-    </div>
-
+    <div class="history-calendar" id="history-calendar"></div>
     <div class="history-month-label" id="history-month-label"></div>
-
-    <div class="history-list" id="history-list">
-      <!-- generato da JS -->
-    </div>
+    <div class="history-list" id="history-list"></div>
 
   </div>
 
-  <!-- TAB BAR FISSA -->
+  <!-- TAB BAR FISSA (visibile su tutte le schermate) -->
   <nav class="tab-bar" id="tab-bar">
     <button class="tab-btn" id="tab-history" aria-label="Cronologia">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -148,12 +173,13 @@
     </button>
 
     <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
-      <div class="tab-center-circle">
-        <svg class="tab-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5,3 19,12 5,21" fill="currentColor" stroke="none"/>
+      <div class="tab-center-circle" id="tab-center-circle">
+        <!-- icona aggiornata da JS: play o stop -->
+        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5,3 19,12 5,21"/>
         </svg>
       </div>
-      <span class="tab-label">avvia pratica</span>
+      <span class="tab-label" id="tab-avvia-label">avvia pratica</span>
     </button>
 
     <button class="tab-btn tab-active" id="tab-home" aria-label="Home">
@@ -164,8 +190,6 @@
       <span class="tab-label">home</span>
     </button>
   </nav>
-
-  <footer>Made with IBM Bob</footer>
 
   <script type="module" src="js/app.js"></script>
 </body>

@@ -163,6 +163,8 @@ function _renderList(all) {
     const stepsDesc = s.steps && s.steps.length
       ? s.steps.map(st => st.mins + (st.name ? ` (${st.name})` : '') + "'").join(' · ')
       : '';
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm2 = String(d.getMinutes()).padStart(2,'0');
     return `
       <div class="history-item">
         <div class="history-item-date">
@@ -170,10 +172,10 @@ function _renderList(all) {
           <div class="history-item-weekday">${wd}</div>
         </div>
         <div class="history-item-info">
-          <div class="history-item-mins">${s.totalMins}<span>min</span></div>
+          <div class="history-item-mins">${s.totalMins}<span>min</span> <span style="font-size:.6rem;color:var(--muted);margin-left:4px">${hh}:${mm2}</span></div>
           ${stepsDesc ? `<div class="history-item-steps">${stepsDesc}</div>` : ''}
         </div>
-        <div class="history-item-bell">🔔</div>
+        <div class="history-item-bell">🦎</div>
       </div>`;
   }).join('');
 }

@@ -17,6 +17,56 @@ function mkNoise(ctx, secs, amp) {
 const SOUNDS = {
   silence: null,
 
+  // ── MUSICA MEDITAZIONE ────────────────────────────────────────────────────
+
+  meditation(ctx) {
+    // OM continuo: drone fondamentale 136 Hz (Om cosmico) + armonici + respiro
+    const nodes = [];
+    const fundamental = 136; // Hz — nota "Om" tradizionale
+    [
+      { f: fundamental,     g: 0.18, type: 'sine'     },
+      { f: fundamental * 2, g: 0.07, type: 'sine'     },
+      { f: fundamental * 3, g: 0.03, type: 'sine'     },
+      { f: fundamental * 5, g: 0.015, type: 'sine'    },
+    ].forEach(({ f, g, type }) => {
+      const o = ctx.createOscillator(); const gn = ctx.createGain();
+      const lfo = ctx.createOscillator(); const lg = ctx.createGain();
+      o.type = type; o.frequency.value = f;
+      lfo.frequency.value = .08 + Math.random() * .04; lg.gain.value = g * .12;
+      lfo.connect(lg); lg.connect(gn.gain);
+      gn.gain.value = g;
+      o.connect(gn); gn.connect(ctx.destination);
+      o.start(); lfo.start();
+      nodes.push(o, lfo);
+    });
+    // "respiro" lento: volume sale e scende ogni ~4s
+    const breathLfo = ctx.createOscillator(); const breathG = ctx.createGain();
+    breathLfo.frequency.value = .12; breathG.gain.value = .06;
+    breathLfo.connect(breathG);
+    // collega il breath a ogni gain principale (approssimazione: gainNode del primo)
+    nodes.push(breathLfo);
+    breathLfo.start();
+    return { stop() { nodes.forEach(n => { try { n.stop(); } catch(e) {} }); } };
+  },
+
+  binaural(ctx) {
+    // Binaural 432 Hz: orecchio sinistro 432 Hz, orecchio destro 440 Hz → battimento 8 Hz (onde alpha)
+    const pL = ctx.createStereoPanner(); pL.pan.value = -1;
+    const pR = ctx.createStereoPanner(); pR.pan.value =  1;
+    const gL = ctx.createGain(); gL.gain.value = .12;
+    const gR = ctx.createGain(); gR.gain.value = .12;
+    const oL = ctx.createOscillator(); oL.type = 'sine'; oL.frequency.value = 432;
+    const oR = ctx.createOscillator(); oR.type = 'sine'; oR.frequency.value = 440;
+    oL.connect(gL); gL.connect(pL); pL.connect(ctx.destination);
+    oR.connect(gR); gR.connect(pR); pR.connect(ctx.destination);
+    // drone grave di supporto 108 Hz
+    const drone = ctx.createOscillator(); const droneG = ctx.createGain();
+    drone.type = 'sine'; drone.frequency.value = 108; droneG.gain.value = .06;
+    drone.connect(droneG); droneG.connect(ctx.destination);
+    oL.start(); oR.start(); drone.start();
+    return { stop() { try { oL.stop(); oR.stop(); drone.stop(); } catch(e) {} } };
+  },
+
   // ── ELEMENTI ─────────────────────────────────────────────────────────────
 
   rain(ctx) {

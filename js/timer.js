@@ -85,7 +85,7 @@ function nextStep() {
     ringBell(_audioCtx, 3, () => {
       _running = false;
       releaseWakeLock();
-      document.getElementById('btn-start').textContent       = 'avvia';
+      document.getElementById('btn-start').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Avvia`;
       setRing(0);
       document.getElementById('clock-time').textContent      = '00:00';
       document.getElementById('clock-step-name').textContent = '';
@@ -120,7 +120,9 @@ function startTicker() {
   clearInterval(_ticker);
   _running  = true;
   _lastTick = Date.now();
-  document.getElementById('btn-start').textContent = 'pausa';
+  // Aggiorna icona + testo
+  const btnStart = document.getElementById('btn-start');
+  btnStart.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg> Pausa`;
   startNature(_audioCtx, getCurrentSound());
   requestWakeLock();
 
@@ -144,7 +146,7 @@ export function initTimer(audioCtx, steps, onComplete) {
   _remaining  = steps[0].mins * 60;
   _running    = false;
   _onComplete = onComplete || null;
-  document.getElementById('btn-start').textContent = 'avvia';
+  document.getElementById('btn-start').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Avvia`;
 
   // Setup SVG ring
   document.getElementById('ring-fill').style.strokeDasharray  = CIRC;
@@ -159,7 +161,7 @@ export function toggleStartPause() {
     _running = false;
     releaseWakeLock();
     stopNature();
-    document.getElementById('btn-start').textContent = 'riprendi';
+    document.getElementById('btn-start').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Riprendi`;
   } else {
     startTicker();
   }
@@ -167,7 +169,7 @@ export function toggleStartPause() {
 
 export function resetTimer() {
   stopTimer();
-  document.getElementById('btn-start').textContent = 'avvia';
+  document.getElementById('btn-start').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Avvia`;
   loadStep(0);
 }
 

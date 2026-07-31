@@ -77,38 +77,77 @@ tabHistory.addEventListener('click', () => {
   showScreen('screen-history');
 });
 
-// Pulsante centrale "Avvia pratica"
+// ── Popup alert zen ──────────────────────────────────────────────────────────
+function showZenAlert(msg) {
+  const ov = document.createElement('div');
+  ov.className = 'zen-alert-overlay';
+  ov.innerHTML = `
+    <div class="zen-alert-box">
+      <div class="zen-alert-icon">🧘</div>
+      <div class="zen-alert-msg">${msg}</div>
+      <button class="zen-alert-btn">Ok</button>
+    </div>`;
+  ov.querySelector('.zen-alert-btn').addEventListener('click', () => ov.remove());
+  document.body.appendChild(ov);
+}
+
+// Pulsante centrale "Avvia pratica" / "Stop" durante la sessione
 tabAvvia.addEventListener('click', () => {
+  if (_sessionActive) {
+    // siamo nel timer → funzione stop
+    _exitSession();
+    return;
+  }
   ensureAudio();
   if (!steps.length) {
-    // Porta in home e mostra il picker se non c'è nulla configurato
     setActiveTab('tab-home');
     showScreen('screen-config');
-    document.getElementById('btn-add').focus();
+    showZenAlert('Cortesemente inserisci almeno un timeslot di meditazione prima di iniziare la pratica 🙏');
     return;
   }
   _startSession();
 });
 
+// ── Stato sessione attiva ────────────────────────────────────────────────────
+let _sessionActive = false;
+
+// Aggiorna il pulsante centrale della tab-bar
+function _updateTabCenter(isRunning) {
+  const circle = document.getElementById('tab-center-circle');
+  const icon   = document.getElementById('tab-center-icon');
+  const label  = document.getElementById('tab-avvia-label');
+  if (isRunning) {
+    circle.classList.add('stop-mode');
+    icon.innerHTML = '<rect x="4" y="4" width="16" height="16" rx="3" fill="white"/>';
+    label.textContent = 'stop';
+  } else {
+    circle.classList.remove('stop-mode');
+    icon.innerHTML = '<polygon points="5,3 19,12 5,21" fill="white"/>';
+    label.textContent = 'avvia pratica';
+  }
+}
+
 // ── Avvio sessione ────────────────────────────────────────────────────────────
 function _startSession() {
   ensureAudio();
+  _sessionActive = true;
   const totalMins = steps.reduce((acc, s) => acc + s.mins, 0);
 
   initTimer(audioCtx, steps, () => {
     // Callback chiamata SOLO quando la sessione è completata al 100%
+    _sessionActive = false;
+    _updateTabCenter(false);
     saveSession({ totalMins, steps: steps.map(s => ({ mins: s.mins, name: s.name || '' })) });
   });
 
-  // Nascondi la tab-bar durante la sessione per massimizzare lo spazio
-  document.getElementById('tab-bar').style.display = 'none';
-
+  _updateTabCenter(true);
   showScreen('screen-timer');
 }
 
 function _exitSession() {
   stopTimer();
-  document.getElementById('tab-bar').style.display = '';
+  _sessionActive = false;
+  _updateTabCenter(false);
   setActiveTab('tab-home');
   showScreen('screen-config');
 }
@@ -128,6 +167,8 @@ function renderConfigSteps() {
     el.className = 'config-step';
     el.draggable = true;
     el.dataset.idx = i;
+    const TIPI = ['Meditazione', 'Meditazione Camminata', 'Mantra'];
+    const selVal = TIPI.includes(s.name) ? s.name : 'Meditazione';
     el.innerHTML = `
       <span class="step-drag-handle" title="trascina per riordinare">⠿</span>
       <div class="config-step-num">${i + 1}</div>
@@ -136,13 +177,15 @@ function renderConfigSteps() {
           <span class="step-mins-val">${s.mins}</span>
           <span class="step-mins-label">minuti</span>
         </div>
-        <input class="step-name-input" type="text" placeholder="nome intervallo (opzionale)"
-               value="${s.name || ''}" data-i="${i}" maxlength="30"/>
+        <select class="step-type-select" data-i="${i}">
+          ${TIPI.map(t => `<option value="${t}"${t === selVal ? ' selected' : ''}>${t}</option>`).join('')}
+        </select>
       </div>
       <button class="config-step-del" data-i="${i}" aria-label="rimuovi">✕</button>`;
     container.appendChild(el);
+    if (!steps[i].name) steps[i].name = selVal; // imposta default al primo render
 
-    el.querySelector('.step-name-input').addEventListener('input', e => {
+    el.querySelector('.step-type-select').addEventListener('change', e => {
       steps[+e.target.dataset.i].name = e.target.value;
     });
     el.querySelector('.config-step-del').addEventListener('click', e => {
@@ -232,7 +275,8 @@ document.getElementById('btn-back').addEventListener('click', () => {
 
 document.getElementById('btn-done-back').addEventListener('click', () => {
   document.getElementById('done-overlay').classList.remove('show');
-  document.getElementById('tab-bar').style.display = '';
+  _sessionActive = false;
+  _updateTabCenter(false);
   setActiveTab('tab-home');
   stopTimer();
   showScreen('screen-config');
@@ -241,6 +285,14 @@ document.getElementById('btn-done-back').addEventListener('click', () => {
 document.getElementById('btn-start').addEventListener('click', () => {
   ensureAudio();
   toggleStartPause();
+  // Aggiorna testo pulsante con maiuscola
+  const btn = document.getElementById('btn-start');
+  const isNowRunning = btn.textContent.trim().startsWith('P') || btn.textContent.trim().startsWith('R');
+  // il testo viene già impostato da timer.js; forziamo maiuscola iniziale
+  setTimeout(() => {
+    const t = btn.textContent.trim();
+    if (t.length) btn.childNodes[btn.childNodes.length - 1].textContent = ' ' + t.charAt(0).toUpperCase() + t.slice(1);
+  }, 50);
 });
 
 document.getElementById('btn-reset').addEventListener('click', () => {

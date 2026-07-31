@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════
-// picker.js — Selettore minuti a tamburo
+// picker.js — Selettore minuti a tamburo (1-60)
 // ═══════════════════════════════════════
 
 const ITEM_H  = 48;
-const MIN_VALS = Array.from({ length: 90 }, (_, i) => i + 1);
+const MIN_VALS = Array.from({ length: 60 }, (_, i) => i + 1); // 1…60
 
 let pickerIndex = 9; // default: 10 minuti
 let drum, wrap;
