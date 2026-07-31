@@ -135,32 +135,50 @@
 
 #clock-wrap {
   position: relative; display: flex; align-items: center;
-  justify-content: center; margin-bottom: 28px;
+  justify-content: center; margin-bottom: 24px;
 }
-#ring-svg { width: 270px; height: 270px; transform: rotate(-90deg); }
-#ring-bg   { fill: none; stroke: var(--ring-bg); stroke-width: 7; }
+/* Ring SVG: 300px CSS, viewBox 300x300, r=132 */
+#ring-svg { width: 300px; height: 300px; transform: rotate(-90deg); flex-shrink: 0; }
+#ring-bg   { fill: none; stroke: var(--ring-bg); stroke-width: 8; }
 #ring-fill {
-  fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round;
+  fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
   transition: stroke-dashoffset .9s linear;
 }
+/* Tempo: grosso, scuro, leggibile su qualsiasi sfondo */
 #clock-time {
-  position: absolute; font-size: 4.4rem; font-weight: 300;
-  letter-spacing: .02em; color: var(--text) !important; font-variant-numeric: tabular-nums;
-  margin-top: 28px;
+  position: absolute;
+  font-size: 5rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: #1e2a38;
+  font-variant-numeric: tabular-nums;
+  margin-top: 40px;
+  z-index: 3;
+  text-shadow: 0 1px 4px rgba(255,255,255,.6);
+}
+html[data-theme="dark"] #clock-time {
+  color: #e8eef4;
+  text-shadow: 0 1px 6px rgba(0,0,0,.7);
+}
+/* Logo geco dentro il ring: più grande */
+#clock-gecko {
+  position: absolute;
+  top: 52px;
+  width: 56px; height: 56px;
+  object-fit: contain;
+  opacity: .8;
   z-index: 2;
 }
-#clock-gecko {
-  position: absolute; top: 40px;
-  width: 40px; height: auto; opacity: .6;
-}
 #clock-step-name {
-  position: absolute; bottom: 62px;
-  font-size: .6rem; letter-spacing: .18em; color: var(--muted);
-  text-transform: uppercase; max-width: 180px; text-align: center;
+  position: absolute; bottom: 72px;
+  font-size: .62rem; letter-spacing: .18em; color: var(--muted);
+  text-transform: uppercase; max-width: 200px; text-align: center;
+  z-index: 2;
 }
 #clock-min-label {
-  position: absolute; bottom: 46px;
-  font-size: .54rem; letter-spacing: .2em; color: var(--border);
+  position: absolute; bottom: 54px;
+  font-size: .56rem; letter-spacing: .2em; color: var(--muted);
+  z-index: 2;
 }
 
 /* Riga unica pulsanti timer: Reset | Avvia/Pausa | Home */

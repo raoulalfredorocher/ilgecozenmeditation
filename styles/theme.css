@@ -38,13 +38,17 @@ html[data-theme="light"] {
   --cat-label: #6a8fa8;  /* colore visibile in light */
 }
 
+html {
+  /* Blocca il bounce iOS solo sull'elemento html, non sul body */
+  overscroll-behavior: none;
+}
+
 html, body {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
   -webkit-font-smoothing: antialiased;
-  overscroll-behavior: none;
   transition: background .3s, color .3s;
 }
 
@@ -52,8 +56,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* padding-top per header fisso (~80px) + safe area top; bottom per tab-bar */
-  padding: calc(80px + env(safe-area-inset-top, 0px)) 20px calc(72px + env(safe-area-inset-bottom, 0px));
+  /* padding-top = altezza header fisso reale: logo 44px + padding 20px + border 1px = 65px → arrotondiamo a 70px */
+  padding: calc(70px + env(safe-area-inset-top, 0px)) 20px calc(72px + env(safe-area-inset-bottom, 0px));
   max-width: 420px;
   margin: 0 auto;
 }

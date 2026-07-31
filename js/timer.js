@@ -8,7 +8,7 @@ import { startNature, stopNature,
          getCurrentSound }                   from './audio/sounds.js';
 import { requestWakeLock, releaseWakeLock }  from './wakeLock.js';
 
-const CIRC = 2 * Math.PI * 114;
+const CIRC = 2 * Math.PI * 132;
 
 let _steps       = [];
 let _current     = 0;
