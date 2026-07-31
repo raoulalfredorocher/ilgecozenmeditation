@@ -52,8 +52,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* spazio per tab-bar piatta (64px + safe area) */
-  padding: env(safe-area-inset-top, 20px) 20px calc(72px + env(safe-area-inset-bottom, 0px));
+  /* padding-top per header fisso (~80px) + safe area top; bottom per tab-bar */
+  padding: calc(80px + env(safe-area-inset-top, 0px)) 20px calc(72px + env(safe-area-inset-bottom, 0px));
   max-width: 420px;
   margin: 0 auto;
 }

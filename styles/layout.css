@@ -1,12 +1,18 @@
-/* ── Header ── */
+/* ── Header fisso ── */
 header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 420px;
   width: 100%;
+  z-index: 150;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0 12px;
+  padding: 10px 20px 10px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
 }
 .header-center { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 /* Logo reale nell'header */
@@ -82,14 +88,16 @@ footer {
 footer a { color: var(--gold); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
-/* ── Tab Bar piatta stile Instagram ── */
+/* ── Tab Bar con cerchio sollevato ── */
 .tab-bar {
   position: fixed;
   bottom: 0;
-  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  /* la barra è più bassa, il cerchio sbuca sopra */
+  height: calc(58px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--card);
   border-top: 1px solid var(--border);
+  border-radius: 22px 22px 0 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -98,6 +106,8 @@ footer a:hover { text-decoration: underline; }
   width: 100%;
   left: 50%;
   transform: translateX(-50%);
+  /* overflow visibile per il cerchio che sbuca */
+  overflow: visible;
 }
 
 .tab-btn {
@@ -126,48 +136,54 @@ footer a:hover { text-decoration: underline; }
   line-height: 1;
 }
 
-/* ── Pulsante centrale circolare ── */
+/* ── Pulsante centrale: cerchio che sbuca metà sopra la barra ── */
 .tab-center {
   flex: 1.1;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  align-items: center; justify-content: flex-end;
+  /* lascia spazio sotto per la label */
+  padding-bottom: 8px;
   gap: 4px;
   overflow: visible;
+  position: relative;
 }
 
 .tab-center-circle {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: var(--accent);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 12px rgba(245,169,188,.5);
+  /* cerchio alzato: translateY negativo di metà altezza barra (~29px) */
+  transform: translateY(-24px);
+  box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(245,169,188,.6);
   transition: background .2s, transform .12s;
 }
 
 .tab-center-circle.stop-mode {
   background: var(--gold);
-  box-shadow: 0 2px 12px rgba(37,115,158,.4);
+  box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(37,115,158,.5);
 }
 
-.tab-center:active .tab-center-circle { transform: scale(.91); }
+.tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
 
 .tab-center-icon {
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   color: #ffffff;
   flex-shrink: 0;
 }
 
 /* Logo geco nel cerchio centrale */
 .tab-center-gecko {
-  width: 34px; height: 34px;
+  width: 38px; height: 38px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
+/* La label è sotto ma deve stare nella barra, non sotto il cerchio sollevato */
 .tab-center .tab-label {
-  margin-top: 0;
+  margin-top: -20px; /* compensa il translateY del cerchio */
 }
 
 /* ── Bell flash ── */
@@ -250,6 +266,9 @@ footer a:hover { text-decoration: underline; }
 .section-title {
   width: 100%; font-size: .56rem; letter-spacing: .28em;
   color: var(--muted); text-transform: uppercase; margin-bottom: 11px;
+}
+.section-title-center {
+  text-align: center;
 }
 
 /* ── Popup alert ── */

@@ -35,7 +35,7 @@
     <button class="btn-done" id="btn-done-back">Nuova sessione</button>
   </div>
 
-  <header>
+  <header id="main-header">
     <div style="width:52px"></div>
     <div class="header-center">
       <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
@@ -51,7 +51,7 @@
   <div class="screen active" id="screen-config">
 
     <div class="picker-section">
-      <div class="picker-label">seleziona minuti (1 – 60)</div>
+      <div class="picker-label">seleziona minuti</div>
       <div class="picker-wrap" id="picker-wrap">
         <div class="picker-highlight"></div>
         <div class="picker-drum" id="picker-drum"></div>
@@ -68,7 +68,7 @@
     <input class="save-input" id="preset-name" type="text" placeholder="Nome sequenza da salvare" maxlength="28"/>
     <button class="btn-save-preset" id="btn-save-preset">♥ Salva sequenza corrente</button>
 
-    <div class="section-title">sequenze salvate</div>
+    <div class="section-title section-title-center">sequenze salvate</div>
     <div class="preset-grid" id="preset-grid"></div>
 
   </div>
@@ -79,9 +79,9 @@
     <div class="timer-steps-row" id="timer-steps-row"></div>
 
     <div id="clock-wrap">
-      <svg id="ring-svg" viewBox="0 0 240 240">
-        <circle id="ring-bg"   cx="120" cy="120" r="104"/>
-        <circle id="ring-fill" cx="120" cy="120" r="104"/>
+      <svg id="ring-svg" viewBox="0 0 260 260">
+        <circle id="ring-bg"   cx="130" cy="130" r="114"/>
+        <circle id="ring-fill" cx="130" cy="130" r="114"/>
       </svg>
       <!-- Logo reale sopra i numeri -->
       <img src="Logo%20Trasparente.png" alt="" id="clock-gecko" class="clock-gecko-svg" aria-hidden="true"/>
@@ -90,26 +90,19 @@
       <div id="clock-min-label"></div>
     </div>
 
-    <!-- Prima riga: Home + Reset + Stop -->
-    <div class="timer-btns timer-btns-top">
-      <button class="btn-timer" id="btn-home-timer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
-        Home
-      </button>
+    <!-- Unica riga: Reset · Avvia/Pausa · Reset -->
+    <div class="timer-btns timer-btns-row">
       <button class="btn-timer" id="btn-reset">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         Reset
       </button>
-      <button class="btn-timer btn-stop-red" id="btn-stop-timer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-        Stop
-      </button>
-    </div>
-    <!-- Seconda riga: Avvia centrato -->
-    <div class="timer-btns timer-btns-bottom">
       <button class="btn-timer primary btn-avvia-wide" id="btn-start">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         Avvia
+      </button>
+      <button class="btn-timer" id="btn-home-timer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
+        Home
       </button>
     </div>
 
@@ -171,12 +164,19 @@
       <span class="tab-label">home</span>
     </button>
 
+    <!-- pulsante centrale: usa un <a> per il link al sito quando attivo -->
     <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
       <div class="tab-center-circle" id="tab-center-circle">
-        <img src="Logo%20Trasparente.png" alt="" class="tab-center-gecko" id="tab-center-gecko" aria-hidden="true"/>
-        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none">
-          <rect x="4" y="4" width="16" height="16" rx="3" fill="white"/>
+        <!-- Stato idle: triangolo play -->
+        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="white">
+          <polygon points="6,3 20,12 6,21"/>
         </svg>
+        <!-- Stato attivo: logo geco (link al sito) — nascosto di default -->
+        <a href="https://www.ilgecozen.it" target="_blank" rel="noopener"
+           id="tab-center-gecko-link" style="display:none; line-height:0;"
+           onclick="event.stopPropagation()">
+          <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko" id="tab-center-gecko"/>
+        </a>
       </div>
       <span class="tab-label" id="tab-avvia-label">avvia pratica</span>
     </button>

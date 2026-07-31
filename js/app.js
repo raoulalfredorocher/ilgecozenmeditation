@@ -118,19 +118,21 @@ let _sessionActive = false;
 
 // Aggiorna il pulsante centrale della tab-bar
 function _updateTabCenter(running) {
-  const circle = document.getElementById('tab-center-circle');
-  const icon   = document.getElementById('tab-center-icon');
-  const gecko  = document.getElementById('tab-center-gecko');
-  const label  = document.getElementById('tab-avvia-label');
+  const circle    = document.getElementById('tab-center-circle');
+  const icon      = document.getElementById('tab-center-icon');
+  const geckoLink = document.getElementById('tab-center-gecko-link');
+  const label     = document.getElementById('tab-avvia-label');
   if (running) {
+    // Sessione attiva: mostra logo geco (con link al sito), nascondi play
     circle.classList.add('stop-mode');
-    if (gecko) gecko.style.display = 'none';
-    icon.style.display = '';
+    icon.style.display      = 'none';
+    if (geckoLink) geckoLink.style.display = '';
     label.textContent = 'stop';
   } else {
+    // Idle: mostra triangolo play, nascondi logo
     circle.classList.remove('stop-mode');
-    if (gecko) gecko.style.display = '';
-    icon.style.display = 'none';
+    icon.style.display      = '';
+    if (geckoLink) geckoLink.style.display = 'none';
     label.textContent = 'avvia pratica';
   }
 }
@@ -272,14 +274,6 @@ function renderConfigSteps() {
 // btn-home-timer: torna alla home senza salvare
 document.getElementById('btn-home-timer').addEventListener('click', () => {
   _exitSession();
-});
-
-// btn-stop-timer: ferma la sessione e rimane nel timer
-document.getElementById('btn-stop-timer').addEventListener('click', () => {
-  stopTimer();
-  _sessionActive = false;
-  _updateTabCenter(false);
-  document.getElementById('btn-start').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Avvia`;
 });
 
 document.getElementById('btn-add').addEventListener('click', () => {
