@@ -104,7 +104,7 @@
         <div class="app-title">Il Geco Zen</div>
       </a>
       <div class="app-sub">
-        timer di meditazione &nbsp;·&nbsp;
+        timer di meditazione &nbsp;&middot;&nbsp;
         <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:inherit;">www.ilgecozen.it</a>
       </div>
     </div>
@@ -127,11 +127,11 @@
     <button class="btn-add-step" id="btn-add">＋ Aggiungi Intervallo</button>
 
     <div class="config-steps" id="config-steps">
-      <div class="empty-steps" id="empty-steps">nessun intervallo aggiunto</div>
+      <div class="empty-steps" id="empty-steps">Nessun intervallo aggiunto</div>
     </div>
 
     <!-- Input salvataggio sequenza — sopra "sequenze salvate" -->
-    <input class="save-input" id="preset-name" type="text" placeholder="Nome sequenza da salvare…" maxlength="28"/>
+    <input class="save-input" id="preset-name" type="text" placeholder="Nome sequenza da salvare" maxlength="28"/>
     <button class="btn-save-preset" id="btn-save-preset">♥ Salva sequenza corrente</button>
 
     <div class="section-title">sequenze salvate</div>
@@ -175,7 +175,8 @@
       <div id="clock-min-label"></div>
     </div>
 
-    <div class="timer-btns" id="timer-btns">
+    <!-- Prima riga: Home + Reset centrati -->
+    <div class="timer-btns timer-btns-top">
       <button class="btn-timer" id="btn-home-timer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
         Home
@@ -184,7 +185,10 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         Reset
       </button>
-      <button class="btn-timer primary" id="btn-start">
+    </div>
+    <!-- Seconda riga: Avvia centrato -->
+    <div class="timer-btns timer-btns-bottom">
+      <button class="btn-timer primary btn-avvia-wide" id="btn-start">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         Avvia
       </button>
@@ -221,9 +225,31 @@
       </div>
     </div>
 
+    <!-- Footer timer: logo geco + link sito -->
     <div class="timer-footer">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-      — mindfulness &amp; meditazione
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="timer-footer-logo-link" aria-label="Visita il sito Il Geco Zen">
+        <svg class="timer-footer-gecko" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="60" cy="62" rx="18" ry="26" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+          <ellipse cx="60" cy="65" rx="10" ry="17" fill="#9DDDE8"/>
+          <ellipse cx="60" cy="36" rx="16" ry="14" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+          <path d="M52 33 Q54 31 56 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M64 33 Q66 31 68 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M54 40 Q60 45 66 40" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M60 88 Q50 100 42 96 Q38 90 44 86 Q52 94 58 86" fill="#74C7E1" stroke="#25739E" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M44 52 Q28 44 22 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="22" cy="36" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <path d="M76 52 Q92 44 98 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <path d="M98 36 Q104 28 108 18" fill="none" stroke="#876a6a" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="108" cy="14" r="5" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <circle cx="100" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <circle cx="115" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <path d="M48 76 Q32 82 26 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="26" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <path d="M72 76 Q88 82 94 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="94" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+        </svg>
+        <span class="timer-footer-text">Visita il sito</span>
+      </a>
     </div>
 
   </div>

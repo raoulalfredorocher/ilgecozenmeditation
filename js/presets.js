@@ -83,7 +83,7 @@ export function renderPresets(steps, onLoad) {
     card.className = 'preset-card';
     const desc = p.steps.map(s => (s.name ? `${s.name} ${s.mins}'` : `${s.mins}'`)).join(' + ');
     card.innerHTML = `
-      <div class="preset-bell">&#9670;</div>
+      <div class="preset-bell">☯</div>
       <div class="preset-info">
         <div class="preset-name-text">${p.name}</div>
         <div class="preset-desc">${desc}</div>
