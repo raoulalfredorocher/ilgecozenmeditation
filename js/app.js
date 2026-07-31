@@ -343,27 +343,6 @@ document.addEventListener('visibilitychange', async () => {
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-
-// Adatta il padding-top del body all'altezza reale dell'header fisso.
-// Aspetta window.load così le immagini sono renderizzate e offsetHeight è corretto.
-function _fixBodyPadding() {
-  const hdr = document.getElementById('main-header');
-  if (!hdr) return;
-  const h = hdr.getBoundingClientRect().height;
-  document.body.style.paddingTop = (h + 12) + 'px';
-}
-// Eseguito sia subito (immagini già in cache) sia dopo il load completo
-_fixBodyPadding();
-window.addEventListener('load', _fixBodyPadding);
-window.addEventListener('resize', _fixBodyPadding);
-// Anche quando il logo header finisce di caricarsi
-const _headerLogo = document.querySelector('.header-logo');
-if (_headerLogo) {
-  _headerLogo.addEventListener('load', _fixBodyPadding);
-  // Se già caricata (cache), forza subito
-  if (_headerLogo.complete) _fixBodyPadding();
-}
-
 initPicker();
 seedDefaultPresets();
 renderConfigSteps();

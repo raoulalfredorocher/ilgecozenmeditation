@@ -56,8 +56,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* padding-top impostato via JS a runtime in base all'altezza reale dell'header */
-  padding-top: 80px;
+  /*
+    Header height: logo 44px + padding-top 10px + padding-bottom 10px + border 1px = 65px
+    + safe-area-inset-top (notch/Dynamic Island) + 10px margine visivo
+  */
+  padding-top: calc(65px + env(safe-area-inset-top, 0px) + 10px);
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
