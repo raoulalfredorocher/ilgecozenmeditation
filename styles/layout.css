@@ -82,21 +82,16 @@ footer {
 footer a { color: var(--gold); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
-/* ── Tab Bar 3D rialzata ── */
+/* ── Tab Bar piatta stile Instagram ── */
 .tab-bar {
   position: fixed;
   bottom: 0;
-  /* Altezza totale aumentata per ospitare il cerchio che "sbuca" sopra */
-  height: calc(84px + env(safe-area-inset-bottom, 0px));
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--card);
-  border-top: none;
-  border-radius: 28px 28px 0 0;
-  box-shadow: 0 -6px 30px rgba(37,115,158,.18), 0 -1px 0 var(--border);
+  border-top: 1px solid var(--border);
   display: flex;
-  /* allinea il contenuto in basso così le icone laterali rimangono centrate a metà */
-  align-items: flex-end;
-  padding-top: 0;
+  align-items: center;
   justify-content: space-around;
   z-index: 200;
   max-width: 420px;
@@ -109,15 +104,14 @@ footer a:hover { text-decoration: underline; }
   flex: 1;
   background: none; border: none;
   display: flex; flex-direction: column;
-  padding-bottom: 14px;
   align-items: center; justify-content: center;
-  gap: 3px;
+  gap: 4px;
   cursor: pointer;
   color: var(--muted);
   transition: color .2s;
-  padding: 0 4px 4px;
-  -webkit-tap-highlight-color: transparent;
+  padding: 8px 4px;
   height: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tab-btn.tab-active { color: var(--gold); }
@@ -132,49 +126,48 @@ footer a:hover { text-decoration: underline; }
   line-height: 1;
 }
 
-/* ── Pulsante centrale circolare 3D che sbuca sopra la barra ── */
+/* ── Pulsante centrale circolare ── */
 .tab-center {
   flex: 1.1;
   display: flex; flex-direction: column;
-  align-items: center;
-  /* sposta il cerchio verso l'alto così metà sporge dalla barra */
-  padding-bottom: 10px;
-  position: relative;
-  /* il cerchio deve essere visibile sopra la barra */
+  align-items: center; justify-content: center;
+  gap: 4px;
   overflow: visible;
-  gap: 3px;
 }
 
 .tab-center-circle {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: var(--accent);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  /* sfuma un po' verso l'alto per l'effetto 3D */
-  box-shadow: 0 -4px 0 var(--card), 0 -5px 0 var(--border), 0 4px 18px rgba(245,169,188,.55);
+  box-shadow: 0 2px 12px rgba(245,169,188,.5);
   transition: background .2s, transform .12s;
-  /* sposta il cerchio verso l'alto di metà altezza rispetto alla barra */
-  transform: translateY(-18px);
 }
 
 .tab-center-circle.stop-mode {
   background: var(--gold);
-  box-shadow: 0 -4px 0 var(--card), 0 -5px 0 var(--border), 0 4px 18px rgba(37,115,158,.5);
+  box-shadow: 0 2px 12px rgba(37,115,158,.4);
 }
 
-.tab-center:active .tab-center-circle { transform: translateY(-18px) scale(.91); }
+.tab-center:active .tab-center-circle { transform: scale(.91); }
 
 .tab-center-icon {
-  width: 20px; height: 20px;
+  width: 18px; height: 18px;
   color: #ffffff;
   flex-shrink: 0;
 }
 
-/* label sotto il cerchio spostata anch'essa */
+/* Logo geco nel cerchio centrale */
+.tab-center-gecko {
+  width: 34px; height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .tab-center .tab-label {
-  margin-top: -10px;
+  margin-top: 0;
 }
 
 /* ── Bell flash ── */

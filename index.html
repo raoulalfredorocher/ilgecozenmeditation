@@ -38,16 +38,9 @@
   <header>
     <div style="width:52px"></div>
     <div class="header-center">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="header-logo-link" aria-label="Il Geco Zen">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
-      </a>
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="app-title-link">
-        <div class="app-title">Il Geco Zen</div>
-      </a>
-      <div class="app-sub">
-        timer di meditazione &nbsp;&middot;&nbsp;
-        <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:inherit;">www.ilgecozen.it</a>
-      </div>
+      <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
+      <div class="app-title">Il Geco Zen</div>
+      <div class="app-sub">timer di meditazione</div>
     </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
       <div class="knob" id="theme-knob">☀️</div>
@@ -97,7 +90,7 @@
       <div id="clock-min-label"></div>
     </div>
 
-    <!-- Prima riga: Home + Reset centrati -->
+    <!-- Prima riga: Home + Reset + Stop -->
     <div class="timer-btns timer-btns-top">
       <button class="btn-timer" id="btn-home-timer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
@@ -106,6 +99,10 @@
       <button class="btn-timer" id="btn-reset">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         Reset
+      </button>
+      <button class="btn-timer btn-stop-red" id="btn-stop-timer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        Stop
       </button>
     </div>
     <!-- Seconda riga: Avvia centrato -->
@@ -176,8 +173,9 @@
 
     <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
       <div class="tab-center-circle" id="tab-center-circle">
-        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="currentColor">
-          <polygon points="5,3 19,12 5,21"/>
+        <img src="Logo%20Trasparente.png" alt="" class="tab-center-gecko" id="tab-center-gecko" aria-hidden="true"/>
+        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+          <rect x="4" y="4" width="16" height="16" rx="3" fill="white"/>
         </svg>
       </div>
       <span class="tab-label" id="tab-avvia-label">avvia pratica</span>

@@ -144,9 +144,10 @@
   transition: stroke-dashoffset .9s linear;
 }
 #clock-time {
-  position: absolute; font-size: 3.6rem; font-weight: 200;
-  letter-spacing: .04em; color: var(--text); font-variant-numeric: tabular-nums;
-  margin-top: 18px; /* spazio per il geco sopra */
+  position: absolute; font-size: 3.8rem; font-weight: 300;
+  letter-spacing: .02em; color: var(--text) !important; font-variant-numeric: tabular-nums;
+  margin-top: 24px; /* spazio per il geco sopra */
+  z-index: 2;
 }
 #clock-gecko {
   position: absolute; top: 38px;

@@ -117,17 +117,20 @@ tabAvvia.addEventListener('click', () => {
 let _sessionActive = false;
 
 // Aggiorna il pulsante centrale della tab-bar
-function _updateTabCenter(isRunning) {
+function _updateTabCenter(running) {
   const circle = document.getElementById('tab-center-circle');
   const icon   = document.getElementById('tab-center-icon');
+  const gecko  = document.getElementById('tab-center-gecko');
   const label  = document.getElementById('tab-avvia-label');
-  if (isRunning) {
+  if (running) {
     circle.classList.add('stop-mode');
-    icon.innerHTML = '<rect x="4" y="4" width="16" height="16" rx="3" fill="white"/>';
+    if (gecko) gecko.style.display = 'none';
+    icon.style.display = '';
     label.textContent = 'stop';
   } else {
     circle.classList.remove('stop-mode');
-    icon.innerHTML = '<polygon points="5,3 19,12 5,21" fill="white"/>';
+    if (gecko) gecko.style.display = '';
+    icon.style.display = 'none';
     label.textContent = 'avvia pratica';
   }
 }
@@ -269,6 +272,14 @@ function renderConfigSteps() {
 // btn-home-timer: torna alla home senza salvare
 document.getElementById('btn-home-timer').addEventListener('click', () => {
   _exitSession();
+});
+
+// btn-stop-timer: ferma la sessione e rimane nel timer
+document.getElementById('btn-stop-timer').addEventListener('click', () => {
+  stopTimer();
+  _sessionActive = false;
+  _updateTabCenter(false);
+  document.getElementById('btn-start').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Avvia`;
 });
 
 document.getElementById('btn-add').addEventListener('click', () => {
