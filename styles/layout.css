@@ -1,11 +1,9 @@
 /* ── Header fisso ── */
 header {
   position: fixed;
-  top: env(safe-area-inset-top, 0px);
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 420px;
-  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 150;
   background: var(--bg);
   display: flex;

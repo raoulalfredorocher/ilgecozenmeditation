@@ -56,11 +56,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /*
-    Header height: logo 44px + padding-top 10px + padding-bottom 10px + border 1px = 65px
-    + safe-area-inset-top (notch/Dynamic Island) + 10px margine visivo
-  */
-  padding-top: calc(65px + env(safe-area-inset-top, 0px) + 10px);
+  /* header fisso: 44px logo + 20px padding + 1px border = 65px; +10px respiro; +safe-area notch */
+  padding-top: calc(75px + env(safe-area-inset-top, 0px));
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
