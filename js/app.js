@@ -343,6 +343,19 @@ document.addEventListener('visibilitychange', async () => {
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+
+// Adatta il padding-top del body all'altezza reale dell'header fisso.
+// Viene chiamato subito e ad ogni resize (orientamento, font-size, ecc.).
+function _fixBodyPadding() {
+  const hdr = document.getElementById('main-header');
+  if (!hdr) return;
+  // offsetHeight include padding + border ma non la safe-area (già gestita dall'header top=0 + viewport-fit=cover)
+  // Aggiungiamo 8px di margine di sicurezza
+  document.body.style.paddingTop = (hdr.offsetHeight + 8) + 'px';
+}
+_fixBodyPadding();
+window.addEventListener('resize', _fixBodyPadding);
+
 initPicker();
 seedDefaultPresets();
 renderConfigSteps();
