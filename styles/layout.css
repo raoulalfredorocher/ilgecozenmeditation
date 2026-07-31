@@ -9,10 +9,19 @@ header {
   margin-bottom: 20px;
 }
 .header-center { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+/* Logo SVG nell'header */
 .header-logo {
-  height: 42px;
+  height: 44px;
   width: auto;
   display: block;
+}
+.gecko-logo-wrap { display: flex; align-items: center; justify-content: center; }
+.gecko-svg { width: 100%; height: 100%; }
+.clock-gecko-svg {
+  position: absolute;
+  top: 46px;
+  width: 34px; height: auto;
+  opacity: .6;
 }
 .header-logo-link { display: flex; align-items: center; justify-content: center; text-decoration: none; }
 .app-title {
@@ -69,10 +78,12 @@ footer a:hover { text-decoration: underline; }
 .tab-bar {
   position: fixed;
   bottom: 0;
-  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  height: calc(68px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--card);
-  border-top: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -4px 24px rgba(37,115,158,.13), 0 -1px 0 var(--border);
   display: flex;
   align-items: center;
   justify-content: space-around;

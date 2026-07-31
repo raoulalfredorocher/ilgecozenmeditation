@@ -19,33 +19,56 @@ const SOUNDS = {
 
   // ── MUSICA MEDITAZIONE ────────────────────────────────────────────────────
 
-  meditation(ctx) {
-    // OM continuo: drone fondamentale 136 Hz (Om cosmico) + armonici + respiro
+  // ── Campana tibetana sintetizzata ─────────────────────────────────────────
+  tibetan(ctx) {
+    let alive = true;
+    // Frequenze tipiche di una singing bowl (nota F#4 + armonici)
+    const PARTIALS = [
+      { f: 369.99, g: 0.30, decay: 9.0 },
+      { f: 1109,   g: 0.12, decay: 6.0 },
+      { f: 2020,   g: 0.06, decay: 4.0 },
+      { f: 3150,   g: 0.03, decay: 2.5 },
+    ];
+    function bowl() {
+      if (!alive) return;
+      const now = ctx.currentTime;
+      PARTIALS.forEach(p => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'sine'; o.frequency.value = p.f;
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(p.g, now + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + p.decay);
+        o.start(now); o.stop(now + p.decay + 0.1);
+      });
+      // Suona ogni 12–18 secondi
+      setTimeout(bowl, 12000 + Math.random() * 6000);
+    }
+    bowl();
+    return { stop() { alive = false; } };
+  },
+
+  // ── Om drone profondo ─────────────────────────────────────────────────────
+  om(ctx) {
     const nodes = [];
-    const fundamental = 136; // Hz — nota "Om" tradizionale
+    const fundamental = 136;
     [
-      { f: fundamental,     g: 0.18, type: 'sine'     },
-      { f: fundamental * 2, g: 0.07, type: 'sine'     },
-      { f: fundamental * 3, g: 0.03, type: 'sine'     },
-      { f: fundamental * 5, g: 0.015, type: 'sine'    },
-    ].forEach(({ f, g, type }) => {
+      { f: fundamental,     g: 0.20 },
+      { f: fundamental * 2, g: 0.08 },
+      { f: fundamental * 3, g: 0.04 },
+      { f: fundamental * 5, g: 0.02 },
+    ].forEach(({ f, g }) => {
       const o = ctx.createOscillator(); const gn = ctx.createGain();
       const lfo = ctx.createOscillator(); const lg = ctx.createGain();
-      o.type = type; o.frequency.value = f;
-      lfo.frequency.value = .08 + Math.random() * .04; lg.gain.value = g * .12;
+      o.type = 'sine'; o.frequency.value = f;
+      lfo.frequency.value = 0.07; lg.gain.value = g * 0.15;
       lfo.connect(lg); lg.connect(gn.gain);
       gn.gain.value = g;
       o.connect(gn); gn.connect(ctx.destination);
       o.start(); lfo.start();
       nodes.push(o, lfo);
     });
-    // "respiro" lento: volume sale e scende ogni ~4s
-    const breathLfo = ctx.createOscillator(); const breathG = ctx.createGain();
-    breathLfo.frequency.value = .12; breathG.gain.value = .06;
-    breathLfo.connect(breathG);
-    // collega il breath a ogni gain principale (approssimazione: gainNode del primo)
-    nodes.push(breathLfo);
-    breathLfo.start();
     return { stop() { nodes.forEach(n => { try { n.stop(); } catch(e) {} }); } };
   },
 

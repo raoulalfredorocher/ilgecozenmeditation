@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════
 
 import { initPicker, getPickerValue }        from './picker.js';
+import { generateAndSetIcons }               from './icon-gen.js';
 import { seedDefaultPresets, loadPresets,
          savePresets, renderPresets }         from './presets.js';
 import { initTimer, toggleStartPause,
@@ -91,11 +92,15 @@ function showZenAlert(msg) {
   document.body.appendChild(ov);
 }
 
-// Pulsante centrale "Avvia pratica" / "Stop" durante la sessione
+// Pulsante centrale: Avvia / Stop (rimane nel timer, non torna alla home)
 tabAvvia.addEventListener('click', () => {
   if (_sessionActive) {
-    // siamo nel timer → funzione stop
-    _exitSession();
+    // Stop: ferma il timer MA rimane nella schermata timer
+    stopTimer();
+    _sessionActive = false;
+    _updateTabCenter(false);
+    // Aggiorna btn-start
+    document.getElementById('btn-start').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Avvia`;
     return;
   }
   ensureAudio();
@@ -177,9 +182,11 @@ function renderConfigSteps() {
           <span class="step-mins-val">${s.mins}</span>
           <span class="step-mins-label">minuti</span>
         </div>
-        <select class="step-type-select" data-i="${i}">
-          ${TIPI.map(t => `<option value="${t}"${t === selVal ? ' selected' : ''}>${t}</option>`).join('')}
-        </select>
+        <div class="step-type-wrap">
+          <select class="step-type-select" data-i="${i}">
+            ${TIPI.map(t => `<option value="${t}"${t === selVal ? ' selected' : ''}>${t}</option>`).join('')}
+          </select>
+        </div>
       </div>
       <button class="config-step-del" data-i="${i}" aria-label="rimuovi">✕</button>`;
     container.appendChild(el);
@@ -259,19 +266,16 @@ function renderConfigSteps() {
 
 // ── Event listeners ───────────────────────────────────────────────────────────
 
+// btn-home-timer: torna alla home senza salvare
+document.getElementById('btn-home-timer').addEventListener('click', () => {
+  _exitSession();
+});
+
 document.getElementById('btn-add').addEventListener('click', () => {
   steps.push({ mins: getPickerValue(), name: '' });
   renderConfigSteps();
 });
 
-// Pulsante STOP (esce dalla sessione senza salvarla)
-document.getElementById('btn-stop').addEventListener('click', () => {
-  _exitSession();
-});
-
-document.getElementById('btn-back').addEventListener('click', () => {
-  _exitSession();
-});
 
 document.getElementById('btn-done-back').addEventListener('click', () => {
   document.getElementById('done-overlay').classList.remove('show');
@@ -338,3 +342,5 @@ initPicker();
 seedDefaultPresets();
 renderConfigSteps();
 renderPresets(steps, loaded => { steps = loaded; renderConfigSteps(); });
+// Genera icone PNG dal SVG del geco (per apple-touch-icon e favicon)
+generateAndSetIcons();

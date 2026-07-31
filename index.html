@@ -8,9 +8,9 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="Logo Trasparente.png"/>
-  <link rel="icon" type="image/png" href="Logo Trasparente.png"/>
-  <title><a href="https://www.ilgecozen.it" target="_blank" rel="noopener">Il Geco Zen</a> — Timer di Meditazione</title>
+  <link rel="apple-touch-icon" href="icon-192.png" id="apple-touch-icon-link"/>
+  <link rel="icon" type="image/png" href="icon-192.png" id="favicon-link"/>
+  <title>Il Geco Zen — Timer di Meditazione</title>
   <link rel="stylesheet" href="styles/theme.css"/>
   <link rel="stylesheet" href="styles/layout.css"/>
   <link rel="stylesheet" href="styles/timer.css"/>
@@ -25,7 +25,44 @@
     <div class="done-text">Sessione completata</div>
     <div class="done-sub">三度の鐘 — tre rintocchi</div>
     <div class="done-logo-wrap">
-      <img src="Logo Trasparente.png" alt="Il Geco Zen" class="done-logo"/>
+      <div class="gecko-logo-wrap done-logo" aria-label="Il Geco Zen">
+        <svg class="gecko-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
+          <!-- corpo -->
+          <ellipse cx="60" cy="62" rx="18" ry="26" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+          <!-- pancia -->
+          <ellipse cx="60" cy="65" rx="10" ry="17" fill="#9DDDE8"/>
+          <!-- testa -->
+          <ellipse cx="60" cy="36" rx="16" ry="14" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+          <!-- occhi chiusi (meditazione) -->
+          <path d="M52 33 Q54 31 56 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M64 33 Q66 31 68 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- sorriso -->
+          <path d="M54 40 Q60 45 66 40" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- coda -->
+          <path d="M60 88 Q50 100 42 96 Q38 90 44 86 Q52 94 58 86" fill="#74C7E1" stroke="#25739E" stroke-width="2" stroke-linejoin="round"/>
+          <!-- zampa sx alta -->
+          <path d="M44 52 Q28 44 22 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="22" cy="36" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <!-- zampa dx alta -->
+          <path d="M76 52 Q92 44 98 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <!-- fiore ramo dx -->
+          <path d="M98 36 Q104 28 108 18" fill="none" stroke="#876a6a" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="108" cy="14" r="5" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <circle cx="100" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <circle cx="115" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <!-- zampa sx bassa -->
+          <path d="M48 76 Q32 82 26 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="26" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <!-- zampa dx bassa -->
+          <path d="M72 76 Q88 82 94 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="94" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <!-- puntini corpo -->
+          <circle cx="54" cy="56" r="2" fill="#9DDDE8"/>
+          <circle cx="66" cy="56" r="2" fill="#9DDDE8"/>
+          <circle cx="58" cy="70" r="2" fill="#9DDDE8"/>
+          <circle cx="62" cy="70" r="2" fill="#9DDDE8"/>
+        </svg>
+      </div>
       <div class="done-promo">
         Vuoi approfondire la mindfulness e la meditazione?<br>
         Visita <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
@@ -37,13 +74,39 @@
   <header>
     <div style="width:52px"></div>
     <div class="header-center">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="header-logo-link">
-        <img src="Logo Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="header-logo-link" aria-label="Il Geco Zen">
+        <svg class="header-logo gecko-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="60" cy="62" rx="18" ry="26" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+          <ellipse cx="60" cy="65" rx="10" ry="17" fill="#9DDDE8"/>
+          <ellipse cx="60" cy="36" rx="16" ry="14" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+          <path d="M52 33 Q54 31 56 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M64 33 Q66 31 68 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M54 40 Q60 45 66 40" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M60 88 Q50 100 42 96 Q38 90 44 86 Q52 94 58 86" fill="#74C7E1" stroke="#25739E" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M44 52 Q28 44 22 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="22" cy="36" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <path d="M76 52 Q92 44 98 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <path d="M98 36 Q104 28 108 18" fill="none" stroke="#876a6a" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="108" cy="14" r="5" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <circle cx="100" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <circle cx="115" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+          <path d="M48 76 Q32 82 26 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="26" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <path d="M72 76 Q88 82 94 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="94" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+          <circle cx="54" cy="56" r="2" fill="#9DDDE8"/>
+          <circle cx="66" cy="56" r="2" fill="#9DDDE8"/>
+          <circle cx="58" cy="70" r="2" fill="#9DDDE8"/>
+          <circle cx="62" cy="70" r="2" fill="#9DDDE8"/>
+        </svg>
       </a>
       <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="app-title-link">
         <div class="app-title">Il Geco Zen</div>
       </a>
-      <div class="app-sub">timer di meditazione</div>
+      <div class="app-sub">
+        timer di meditazione &nbsp;·&nbsp;
+        <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;font-size:inherit;">www.ilgecozen.it</a>
+      </div>
     </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
       <div class="knob" id="theme-knob">☀️</div>
@@ -61,17 +124,18 @@
       </div>
     </div>
 
-    <button class="btn-add-step" id="btn-add">＋ aggiungi intervallo</button>
+    <button class="btn-add-step" id="btn-add">＋ Aggiungi Intervallo</button>
 
     <div class="config-steps" id="config-steps">
       <div class="empty-steps" id="empty-steps">nessun intervallo aggiunto</div>
     </div>
 
+    <!-- Input salvataggio sequenza — sopra "sequenze salvate" -->
+    <input class="save-input" id="preset-name" type="text" placeholder="Nome sequenza da salvare…" maxlength="28"/>
+    <button class="btn-save-preset" id="btn-save-preset">♥ Salva sequenza corrente</button>
+
     <div class="section-title">sequenze salvate</div>
     <div class="preset-grid" id="preset-grid"></div>
-
-    <input class="save-input" id="preset-name" type="text" placeholder="nome sequenza da salvare…" maxlength="28"/>
-    <button class="btn-save-preset" id="btn-save-preset">♥ salva sequenza corrente</button>
 
   </div>
 
@@ -85,24 +149,43 @@
         <circle id="ring-bg"   cx="120" cy="120" r="104"/>
         <circle id="ring-fill" cx="120" cy="120" r="104"/>
       </svg>
-      <img src="Logo Trasparente.png" alt="" id="clock-gecko" aria-hidden="true"/>
+      <!-- Geco piccolo inline sopra i numeri -->
+      <svg id="clock-gecko" class="clock-gecko-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="60" cy="62" rx="18" ry="26" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+        <ellipse cx="60" cy="65" rx="10" ry="17" fill="#9DDDE8"/>
+        <ellipse cx="60" cy="36" rx="16" ry="14" fill="#74C7E1" stroke="#25739E" stroke-width="2"/>
+        <path d="M52 33 Q54 31 56 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M64 33 Q66 31 68 33" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M54 40 Q60 45 66 40" fill="none" stroke="#25739E" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M60 88 Q50 100 42 96 Q38 90 44 86 Q52 94 58 86" fill="#74C7E1" stroke="#25739E" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M44 52 Q28 44 22 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="22" cy="36" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+        <path d="M76 52 Q92 44 98 36" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+        <path d="M98 36 Q104 28 108 18" fill="none" stroke="#876a6a" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="108" cy="14" r="5" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+        <circle cx="100" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+        <circle cx="115" cy="10" r="4" fill="#F5A9BC" stroke="#876a6a" stroke-width="1.2"/>
+        <path d="M48 76 Q32 82 26 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="26" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+        <path d="M72 76 Q88 82 94 90" fill="none" stroke="#74C7E1" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="94" cy="90" r="3.5" fill="#74C7E1" stroke="#25739E" stroke-width="1.5"/>
+      </svg>
       <div id="clock-step-name"></div>
       <div id="clock-time">00:00</div>
       <div id="clock-min-label"></div>
     </div>
 
     <div class="timer-btns" id="timer-btns">
-      <!-- I pulsanti vengono aggiornati dinamicamente da JS in base allo stato -->
-      <button class="btn-timer btn-stop-red" id="btn-stop">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-        Stop
+      <button class="btn-timer" id="btn-home-timer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
+        Home
       </button>
       <button class="btn-timer" id="btn-reset">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         Reset
       </button>
       <button class="btn-timer primary" id="btn-start">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         Avvia
       </button>
     </div>
@@ -110,32 +193,31 @@
     <div class="nature-section">
       <div class="nature-label">suono di sottofondo</div>
 
-      <div class="nature-cat-label">— silenzio</div>
+      <div class="nature-cat-label">silenzio</div>
       <div class="nature-btns">
         <button class="btn-nature active" data-sound="silence">🤫 Silenzio</button>
       </div>
 
-      <div class="nature-cat-label">— musica meditazione</div>
+      <div class="nature-cat-label">musica meditazione</div>
       <div class="nature-btns">
-        <button class="btn-nature" data-sound="meditation">🎵 Om meditazione</button>
+        <button class="btn-nature" data-sound="tibetan">🎵 Campana tibetana</button>
+        <button class="btn-nature" data-sound="om">🕉 Om drone</button>
         <button class="btn-nature" data-sound="binaural">🎶 Binaural 432Hz</button>
       </div>
 
-      <div class="nature-cat-label">— elementi naturali</div>
+      <div class="nature-cat-label">elementi naturali</div>
       <div class="nature-btns">
         <button class="btn-nature" data-sound="rain">🌧 Pioggia</button>
         <button class="btn-nature" data-sound="sea">🌊 Mare</button>
         <button class="btn-nature" data-sound="wind">🍃 Vento</button>
         <button class="btn-nature" data-sound="stream">💧 Ruscello</button>
-        <button class="btn-nature" data-sound="thunder">⚡ Tuono</button>
         <button class="btn-nature" data-sound="fire">🔥 Camino</button>
       </div>
 
-      <div class="nature-cat-label">— animali</div>
+      <div class="nature-cat-label">animali</div>
       <div class="nature-btns">
         <button class="btn-nature" data-sound="birds">🐦 Uccelli</button>
         <button class="btn-nature" data-sound="crickets">🦗 Grilli</button>
-        <button class="btn-nature" data-sound="bees">🐝 Api</button>
       </div>
     </div>
 
@@ -144,21 +226,34 @@
       — mindfulness &amp; meditazione
     </div>
 
-    <button class="btn-back" id="btn-back">← modifica sequenza</button>
-
   </div>
 
   <!-- SCHERMATA CRONOLOGIA -->
   <div class="screen" id="screen-history">
-
     <div class="history-calendar" id="history-calendar"></div>
     <div class="history-month-label" id="history-month-label"></div>
     <div class="history-list" id="history-list"></div>
-
   </div>
 
-  <!-- TAB BAR FISSA (visibile su tutte le schermate) -->
+  <!-- TAB BAR: Home | Avvia(centro) | Calendario -->
   <nav class="tab-bar" id="tab-bar">
+    <button class="tab-btn tab-active" id="tab-home" aria-label="Home">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+        <polyline points="9,21 9,13 15,13 15,21"/>
+      </svg>
+      <span class="tab-label">home</span>
+    </button>
+
+    <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
+      <div class="tab-center-circle" id="tab-center-circle">
+        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+      </div>
+      <span class="tab-label" id="tab-avvia-label">avvia pratica</span>
+    </button>
+
     <button class="tab-btn" id="tab-history" aria-label="Cronologia">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -170,24 +265,6 @@
         <circle cx="16" cy="15" r=".8" fill="currentColor"/>
       </svg>
       <span class="tab-label">cronologia</span>
-    </button>
-
-    <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
-      <div class="tab-center-circle" id="tab-center-circle">
-        <!-- icona aggiornata da JS: play o stop -->
-        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="currentColor">
-          <polygon points="5,3 19,12 5,21"/>
-        </svg>
-      </div>
-      <span class="tab-label" id="tab-avvia-label">avvia pratica</span>
-    </button>
-
-    <button class="tab-btn tab-active" id="tab-home" aria-label="Home">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-        <polyline points="9,21 9,13 15,13 15,21"/>
-      </svg>
-      <span class="tab-label">home</span>
     </button>
   </nav>
 
