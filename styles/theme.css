@@ -41,6 +41,8 @@ html[data-theme="light"] {
 html {
   /* Blocca il bounce iOS solo sull'elemento html, non sul body */
   overscroll-behavior: none;
+  /* Spazio riservato all'header fisso durante lo scroll */
+  scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
 }
 
 html, body {
@@ -56,8 +58,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* header fisso: logo 44px + titolo ~18px + subtitle ~10px + padding 20px + border = ~110px + safe-area */
-  padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
+  padding-top: calc(env(safe-area-inset-top, 0px) + 140px);
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
