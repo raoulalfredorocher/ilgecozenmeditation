@@ -56,13 +56,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /*
-    Header height = safe-area-inset-top + padding-top 10px + logo 44px + padding-bottom 10px + border 1px
-    = safe-area-inset-top + 65px
-    Aggiungiamo 12px di respiro visivo sotto l'header.
-  */
-  /*padding-top: calc(env(safe-area-inset-top, 0px) + 65px + 12px);*/
-  padding-top: 130px;
+  /* uguale all'altezza reale dell'header: safe-area + 10px top + 44px logo + 10px bottom + 1px border + 12px gap */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 77px);
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
