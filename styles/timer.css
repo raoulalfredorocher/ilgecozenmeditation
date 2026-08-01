@@ -144,10 +144,10 @@
   fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
   transition: stroke-dashoffset .9s linear;
 }
-/* Tempo: grosso, scuro, leggibile su qualsiasi sfondo */
+/* Tempo decrescente: più contenuto */
 #clock-time {
   position: absolute;
-  font-size: 5rem;
+  font-size: 3.8rem;
   font-weight: 500;
   letter-spacing: .02em;
   color: #1e2a38;
@@ -177,7 +177,7 @@ html[data-theme="dark"] #clock-time {
 }
 #clock-min-label {
   position: absolute; bottom: 54px;
-  font-size: .56rem; letter-spacing: .2em; color: var(--muted);
+  font-size: .82rem; font-weight: 500; letter-spacing: .08em; color: var(--muted);
   z-index: 2;
 }
 
@@ -348,6 +348,27 @@ html[data-theme="dark"] #clock-time {
 .cal-day.selected .cal-dot { background: var(--bg); }
 
 .cal-day.empty { pointer-events: none; }
+
+/* ── Pulsante Export CSV ── */
+.btn-export-csv {
+  margin-top: 16px;
+  width: 100%;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: .8rem;
+  letter-spacing: .14em;
+  color: var(--muted);
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: border-color .2s, color .2s;
+}
+.btn-export-csv:active { border-color: var(--gold); color: var(--gold); }
 
 /* ── Lista sessioni ── */
 .history-month-label {

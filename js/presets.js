@@ -2,53 +2,53 @@
 // presets.js — Gestione sequenze salvate
 // ═══════════════════════════════════════
 
-const STORAGE_KEY = 'zen_v3';
+const STORAGE_KEY = 'zen_v4';
 
 const DEFAULT_PRESETS = [
   {
     name: 'Zazen Full',
     steps: [
-      { mins: 20, name: 'Zazen' },
-      { mins: 10, name: 'Camminata' },
-      { mins: 20, name: 'Zazen' },
-      { mins: 10, name: 'Camminata' },
-      { mins: 20, name: 'Zazen' },
-      { mins: 10, name: 'Preghiera' },
+      { mins: 20, name: 'Meditazione' },
+      { mins: 10, name: 'Meditazione Camminata' },
+      { mins: 20, name: 'Meditazione' },
+      { mins: 10, name: 'Meditazione Camminata' },
+      { mins: 20, name: 'Meditazione' },
+      { mins: 10, name: 'Mantra' },
     ],
   },
   {
     name: 'Zazen Middle',
     steps: [
-      { mins: 15, name: 'Zazen' },
-      { mins:  5, name: 'Camminata' },
-      { mins: 15, name: 'Zazen' },
-      { mins:  5, name: 'Preghiera' },
+      { mins: 20, name: 'Meditazione' },
+      { mins: 10, name: 'Meditazione Camminata' },
+      { mins: 20, name: 'Meditazione' },
+      { mins: 10, name: 'Mantra' },
     ],
   },
   {
     name: 'Zazen Light',
     steps: [
-      { mins: 10, name: 'Zazen' },
-      { mins:  5, name: 'Camminata' },
-      { mins: 10, name: 'Zazen' },
-      { mins:  5, name: 'Preghiera' },
+      { mins: 10, name: 'Meditazione' },
+      { mins:  5, name: 'Meditazione Camminata' },
+      { mins: 10, name: 'Meditazione' },
+      { mins:  5, name: 'Mantra' },
     ],
   },
   {
     name: 'Zazen Flash',
     steps: [
-      { mins: 8, name: 'Zazen' },
-      { mins: 5, name: 'Camminata' },
-      { mins: 2, name: 'Preghiera' },
+      { mins: 10, name: 'Meditazione' },
+      { mins:  5, name: 'Meditazione Camminata' },
+      { mins:  5, name: 'Mantra' },
     ],
   },
   {
     name: 'Meditation Full',
-    steps: [{ mins: 20, name: 'Zazen' }],
+    steps: [{ mins: 20, name: 'Meditazione' }],
   },
   {
     name: 'Meditation Light',
-    steps: [{ mins: 10, name: 'Zazen' }],
+    steps: [{ mins: 10, name: 'Meditazione' }],
   },
 ];
 

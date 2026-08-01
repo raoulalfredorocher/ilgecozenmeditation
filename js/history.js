@@ -4,6 +4,26 @@
 
 const STORAGE_KEY = 'zen_history';
 
+// ── Export CSV ────────────────────────────────────────────────────────────────
+export function exportCSV() {
+  const all = loadHistory();
+  if (!all.length) return;
+  const rows = [['Data', 'Ora', 'Minuti totali', 'Intervalli']];
+  all.sort((a, b) => a.ts - b.ts).forEach(s => {
+    const d = new Date(s.ts);
+    const data = d.toLocaleDateString('it-IT');
+    const ora  = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    const steps = s.steps ? s.steps.map(st => `${st.mins}min ${st.name||''}`).join(' | ') : '';
+    rows.push([data, ora, s.totalMins, steps]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'meditazioni.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ── Storage ───────────────────────────────────────────────────────────────────
 
 export function loadHistory() {

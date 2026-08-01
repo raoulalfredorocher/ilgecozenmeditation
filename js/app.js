@@ -12,7 +12,8 @@ import { initTimer, toggleStartPause,
 import { requestWakeLock }                   from './wakeLock.js';
 import { startNature, stopNature,
          getCurrentSound, setCurrentSound }  from './audio/sounds.js';
-import { saveSession, renderHistory }        from './history.js';
+import { saveSession, renderHistory,
+         exportCSV }                         from './history.js';
 
 // ── AudioContext (creato al primo gesto utente) ───────────────────────────────
 let audioCtx = null;
@@ -76,6 +77,10 @@ tabHistory.addEventListener('click', () => {
   setActiveTab('tab-history');
   renderHistory();
   showScreen('screen-history');
+});
+
+document.getElementById('btn-export-csv').addEventListener('click', () => {
+  exportCSV();
 });
 
 // ── Popup alert zen ──────────────────────────────────────────────────────────
