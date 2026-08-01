@@ -91,7 +91,8 @@ footer a:hover { text-decoration: underline; }
 .tab-bar {
   position: fixed;
   bottom: 0;
-  /* la barra è più bassa, il cerchio sbuca sopra */
+  left: 0;
+  right: 0;
   height: calc(58px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--card);
@@ -101,11 +102,6 @@ footer a:hover { text-decoration: underline; }
   align-items: center;
   justify-content: space-around;
   z-index: 200;
-  max-width: 420px;
-  width: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  /* overflow visibile per il cerchio che sbuca */
   overflow: visible;
 }
 

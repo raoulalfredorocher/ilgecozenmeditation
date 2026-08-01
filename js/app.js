@@ -69,6 +69,11 @@ function setActiveTab(activeId) {
 }
 
 tabHome.addEventListener('click', () => {
+  if (_sessionActive) {
+    stopTimer();
+    _sessionActive = false;
+    _updateTabCenter(false);
+  }
   setActiveTab('tab-home');
   showScreen('screen-config');
 });
