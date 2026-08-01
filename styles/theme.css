@@ -56,8 +56,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* uguale all'altezza reale dell'header: safe-area + 10px top + 44px logo + 10px bottom + 1px border + 12px gap */
-  padding-top: calc(env(safe-area-inset-top, 0px) + 77px);
+  /* header fisso: logo 44px + titolo ~18px + subtitle ~10px + padding 20px + border = ~110px + safe-area */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
