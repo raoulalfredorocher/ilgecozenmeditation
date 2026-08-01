@@ -68,6 +68,8 @@ function setActiveTab(activeId) {
   document.getElementById(activeId).classList.add('tab-active');
 }
 
+const _csvBtn = document.getElementById('btn-export-csv');
+
 tabHome.addEventListener('click', () => {
   if (_sessionActive) {
     stopTimer();
@@ -76,12 +78,14 @@ tabHome.addEventListener('click', () => {
   }
   setActiveTab('tab-home');
   showScreen('screen-config');
+  _csvBtn.style.visibility = 'hidden';
 });
 
 tabHistory.addEventListener('click', () => {
   setActiveTab('tab-history');
   renderHistory();
   showScreen('screen-history');
+  _csvBtn.style.visibility = 'visible';
 });
 
 document.getElementById('btn-export-csv').addEventListener('click', () => {
@@ -137,7 +141,7 @@ function _updateTabCenter(running) {
     circle.classList.add('stop-mode');
     icon.style.display      = 'none';
     if (geckoLink) geckoLink.style.display = '';
-    label.textContent = 'stop';
+    label.textContent = 'il geco zen';
   } else {
     // Idle: mostra triangolo play, nascondi logo
     circle.classList.remove('stop-mode');
