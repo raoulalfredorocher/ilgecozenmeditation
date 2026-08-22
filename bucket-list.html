@@ -327,6 +327,22 @@
       flex-shrink: 0;
     }
 
+    .btn-delete-dream {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--red);
+      border-radius: 14px;
+      padding: 10px;
+      font-size: .76rem;
+      font-family: inherit;
+      color: var(--red);
+      letter-spacing: .12em;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .2s, color .2s;
+    }
+    .btn-delete-dream:active { background: var(--red); color: #fff; }
+
     /* ── Schermata completati ── */
     .completed-item {
       width: 100%;
@@ -491,6 +507,7 @@
 
       <button class="btn-save-dream" id="btn-save-dream">Salva sogno</button>
       <button class="btn-cancel-modal" id="btn-cancel-modal">Annulla</button>
+      <button class="btn-delete-dream" id="btn-delete-dream" style="display:none;">🗑 Elimina</button>
     </div>
   </div>
 
@@ -575,6 +592,7 @@
     const btnSave      = document.getElementById('btn-save-dream');
     const btnCancel    = document.getElementById('btn-cancel-modal');
     const modalTitle   = document.getElementById('modal-title');
+    const btnDelete    = document.getElementById('btn-delete-dream');
 
     /* ── Tab navigation ── */
     function showScreen(which) {
@@ -627,8 +645,10 @@
             btnImgUpload.textContent = '✓ Immagine presente';
           }
         }
+        btnDelete.style.display = '';   /* mostra Elimina in modifica */
       } else {
         modalTitle.textContent = 'Nuovo Sogno';
+        btnDelete.style.display = 'none'; /* nasconde Elimina per nuovo */
       }
       modalOverlay.classList.add('open');
     }
@@ -640,6 +660,14 @@
       pendingImg = null;
     }
     btnCancel.addEventListener('click', closeModal);
+    btnDelete.addEventListener('click', () => {
+      if (editingId === null) return;
+      items = items.filter(i => i.id !== editingId);
+      save();
+      closeModal();
+      renderGrid();
+      if (screenCompleted.classList.contains('active')) renderCompleted();
+    });
     modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
 
     /* ── Upload immagine ── */
@@ -748,7 +776,7 @@
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
               </svg>
-              modifica
+              Modifica
             </button>
             <button class="btn-check-card" data-id="${item.id}" aria-label="Segna come fatto">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
