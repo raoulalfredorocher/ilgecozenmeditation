@@ -229,7 +229,7 @@
     }
     .weather-widget {
       width: 100%;
-      margin-top: 18px;
+      margin-bottom: 18px;
       padding: 14px 16px;
       background: var(--card);
       border: 1.5px solid var(--border);
@@ -237,8 +237,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 12px;
     }
     .weather-main {
       display: flex;
@@ -246,7 +245,7 @@
       gap: 10px;
     }
     .weather-icon {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       line-height: 1;
     }
     .weather-place {
@@ -263,12 +262,28 @@
     }
     .weather-meta {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
       font-size: .62rem;
       color: var(--muted);
+    }
+    .weather-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .uv-value {
+      font-weight: 700;
+    }
+    .uv-low {
+      color: #2f9e44;
+    }
+    .uv-medium {
+      color: #e0a800;
+    }
+    .uv-high {
+      color: #d64545;
     }
     .footer-quote {
       width: 100%;
@@ -388,6 +403,20 @@
     <div class="hub-title">LA VIA DI MEZZO PER LA PROSPERITÀ</div>
   </header>
 
+  <section class="weather-widget" aria-label="Meteo Pandino">
+    <div class="weather-main">
+      <div class="weather-icon" id="weather-icon">☁️</div>
+      <div>
+        <div class="weather-place">Pandino</div>
+        <div class="weather-temp"><span id="weather-max">--</span>° / <span id="weather-min">--</span>°</div>
+      </div>
+    </div>
+    <div class="weather-meta">
+      <div class="weather-meta-row">UV <strong class="uv-value" id="weather-uv">--</strong></div>
+      <div class="weather-meta-row">Umidità <strong id="weather-humidity">--</strong>%</div>
+    </div>
+  </section>
+
   <section class="section-card" aria-label="Barra della vita" style="margin-bottom: 18px;">
     <div class="section-title" style="text-align:center; margin-bottom: 12px;">Barra della vita</div>
     <div class="life-progress" id="life-progress-label">0%</div>
@@ -472,20 +501,6 @@
     </a>
   </div>
 
-  <section class="weather-widget" aria-label="Meteo Pandino">
-    <div class="weather-main">
-      <div class="weather-icon" id="weather-icon">⛅</div>
-      <div>
-        <div class="weather-place">Pandino</div>
-        <div class="weather-temp"><span id="weather-max">--</span>° / <span id="weather-min">--</span>°</div>
-      </div>
-    </div>
-    <div class="weather-meta">
-      <span>UV <strong id="weather-uv">--</strong></span>
-      <span>Umidità <strong id="weather-humidity">--</strong>%</span>
-    </div>
-  </section>
-
   <footer class="footer-quote">
     “Alla fine sei un 1 o uno 0, vuoi agire o no? Si lo sai ci sono tanti grigi, ma tu quando arrivi al nocciolo sei un 1 oppure uno 0? fai qualcosa o non la fai? dici no o dici si? Questo è il tuo day one oppure questo è one day?<br><br>Io sono sia lo 0 che l’1, io sono l’universo”
   </footer>
@@ -528,38 +543,44 @@
         const weatherCode = data.daily.weather_code[0];
         const humidity = data.hourly.relative_humidity_2m[0];
         const icons = {
-          0: '☀️',
-          1: '🌤️',
-          2: '⛅',
-          3: '☁️',
-          45: '🌫️',
-          48: '🌫️',
-          51: '🌦️',
-          53: '🌦️',
-          55: '🌧️',
-          61: '🌧️',
-          63: '🌧️',
-          65: '🌧️',
-          66: '🧊',
-          67: '🧊',
-          71: '🌨️',
-          73: '🌨️',
-          75: '🌨️',
-          80: '🌦️',
-          81: '🌧️',
-          82: '🌧️',
-          95: '⛈️',
-          96: '🌨️',
-          99: '🌨️'
+          0: 'Sole',
+          1: 'Sole',
+          2: 'Sole',
+          3: 'Nuvola',
+          45: 'Nuvola',
+          48: 'Nuvola',
+          51: 'Pioggia',
+          53: 'Pioggia',
+          55: 'Pioggia',
+          61: 'Pioggia',
+          63: 'Pioggia',
+          65: 'Pioggia',
+          66: 'Grandine',
+          67: 'Grandine',
+          71: 'Grandine',
+          73: 'Grandine',
+          75: 'Grandine',
+          77: 'Grandine',
+          80: 'Pioggia',
+          81: 'Pioggia',
+          82: 'Pioggia',
+          85: 'Grandine',
+          86: 'Grandine',
+          95: 'Pioggia',
+          96: 'Grandine',
+          99: 'Grandine'
         };
+        const uvValue = Math.round(data.daily.uv_index_max[0]);
 
-        weatherIcon.textContent = icons[weatherCode] || '⛅';
+        weatherIcon.textContent = icons[weatherCode] || 'Nuvola';
         weatherMax.textContent = Math.round(data.daily.temperature_2m_max[0]);
         weatherMin.textContent = Math.round(data.daily.temperature_2m_min[0]);
-        weatherUv.textContent = Math.round(data.daily.uv_index_max[0]);
+        weatherUv.textContent = uvValue;
+        weatherUv.className = 'uv-value';
+        weatherUv.classList.add(uvValue <= 2 ? 'uv-low' : uvValue <= 5 ? 'uv-medium' : 'uv-high');
         weatherHumidity.textContent = Math.round(humidity);
       } catch (error) {
-        weatherIcon.textContent = '☁️';
+        weatherIcon.textContent = 'Nuvola';
       }
     }
 
