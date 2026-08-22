@@ -247,6 +247,8 @@
     .weather-icon {
       font-size: 1.8rem;
       line-height: 1;
+      width: 2.2rem;
+      text-align: center;
     }
     .weather-place {
       font-size: .52rem;
@@ -542,37 +544,39 @@
         const data = await response.json();
         const weatherCode = data.daily.weather_code[0];
         const humidity = data.hourly.relative_humidity_2m[0];
-        const icons = {
-          0: 'Sole',
-          1: 'Sole',
-          2: 'Sole',
-          3: 'Nuvola',
-          45: 'Nuvola',
-          48: 'Nuvola',
-          51: 'Pioggia',
-          53: 'Pioggia',
-          55: 'Pioggia',
-          61: 'Pioggia',
-          63: 'Pioggia',
-          65: 'Pioggia',
-          66: 'Grandine',
-          67: 'Grandine',
-          71: 'Grandine',
-          73: 'Grandine',
-          75: 'Grandine',
-          77: 'Grandine',
-          80: 'Pioggia',
-          81: 'Pioggia',
-          82: 'Pioggia',
-          85: 'Grandine',
-          86: 'Grandine',
-          95: 'Pioggia',
-          96: 'Grandine',
-          99: 'Grandine'
+        const weatherTypes = {
+          0: { icon: '☀️', label: 'sole' },
+          1: { icon: '☀️', label: 'sole' },
+          2: { icon: '🌤️', label: 'sole' },
+          3: { icon: '☁️', label: 'nuvoloso' },
+          45: { icon: '☁️', label: 'nuvoloso' },
+          48: { icon: '☁️', label: 'nuvoloso' },
+          51: { icon: '🌧️', label: 'pioggia' },
+          53: { icon: '🌧️', label: 'pioggia' },
+          55: { icon: '🌧️', label: 'pioggia' },
+          61: { icon: '🌧️', label: 'pioggia' },
+          63: { icon: '🌧️', label: 'pioggia' },
+          65: { icon: '🌧️', label: 'pioggia' },
+          66: { icon: '🧊', label: 'grandine' },
+          67: { icon: '🧊', label: 'grandine' },
+          71: { icon: '❄️', label: 'neve' },
+          73: { icon: '❄️', label: 'neve' },
+          75: { icon: '❄️', label: 'neve' },
+          77: { icon: '❄️', label: 'neve' },
+          80: { icon: '🌧️', label: 'pioggia' },
+          81: { icon: '🌧️', label: 'pioggia' },
+          82: { icon: '🌧️', label: 'pioggia' },
+          85: { icon: '❄️', label: 'neve' },
+          86: { icon: '❄️', label: 'neve' },
+          95: { icon: '🌧️', label: 'pioggia' },
+          96: { icon: '🧊', label: 'grandine' },
+          99: { icon: '🧊', label: 'grandine' }
         };
+        const weatherType = weatherTypes[weatherCode] || { icon: '☁️', label: 'nuvoloso' };
         const uvValue = Math.round(data.daily.uv_index_max[0]);
 
-        weatherIcon.textContent = icons[weatherCode] || 'Nuvola';
+        weatherIcon.textContent = weatherType.icon;
+        weatherIcon.setAttribute('aria-label', weatherType.label);
         weatherMax.textContent = Math.round(data.daily.temperature_2m_max[0]);
         weatherMin.textContent = Math.round(data.daily.temperature_2m_min[0]);
         weatherUv.textContent = uvValue;
@@ -580,7 +584,8 @@
         weatherUv.classList.add(uvValue <= 2 ? 'uv-low' : uvValue <= 5 ? 'uv-medium' : 'uv-high');
         weatherHumidity.textContent = Math.round(humidity);
       } catch (error) {
-        weatherIcon.textContent = 'Nuvola';
+        weatherIcon.textContent = '☁️';
+        weatherIcon.setAttribute('aria-label', 'nuvoloso');
       }
     }
 
