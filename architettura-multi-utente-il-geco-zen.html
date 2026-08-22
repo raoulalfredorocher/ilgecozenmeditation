@@ -1,0 +1,529 @@
+
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Architettura multi-utente — Il Geco Zen</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1f2328;
+    background: #ffffff;
+    padding: 32px 16px 48px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 1.35rem; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: .85rem; margin-bottom: 32px; }
+
+  h2 {
+    font-size: .95rem;
+    font-weight: 700;
+    color: #1f2328;
+    margin: 28px 0 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e5e7eb;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  h3 {
+    font-size: .85rem;
+    font-weight: 700;
+    color: #3b82d4;
+    margin: 18px 0 6px;
+  }
+
+  p { margin-bottom: 10px; color: #1f2328; }
+
+  /* Status pills */
+  .pill {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .pill-green  { background: #d1fae5; color: #065f46; }
+  .pill-blue   { background: #dbeafe; color: #1e40af; }
+  .pill-orange { background: #ffedd5; color: #9a3412; }
+  .pill-red    { background: #fee2e2; color: #991b1b; }
+
+  /* Comparison table */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  th {
+    background: #f7f8fa;
+    text-align: left;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    color: #57606a;
+  }
+  td {
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    font-size: .82rem;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f7f8fa; }
+
+  /* Recommended highlight */
+  tr.recommended td { background: #eff6ff; font-weight: 600; }
+  tr.recommended td:first-child { border-left: 3px solid #3b82d4; }
+
+  /* Data boxes */
+  .box {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 10px 0;
+  }
+  .box-title {
+    font-weight: 700;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #57606a;
+    margin-bottom: 8px;
+  }
+  .box ul { padding-left: 18px; }
+  .box li { font-size: .82rem; margin-bottom: 4px; }
+
+  /* Flow steps */
+  .steps-row {
+    display: flex;
+    gap: 0;
+    margin: 14px 0;
+    flex-wrap: wrap;
+  }
+  .step-box {
+    flex: 1;
+    min-width: 120px;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    font-size: .78rem;
+    position: relative;
+  }
+  .step-box:not(:first-child)::before {
+    content: "→";
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #57606a;
+    font-size: .9rem;
+  }
+  .step-num {
+    font-size: .65rem;
+    font-weight: 700;
+    color: #3b82d4;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .step-label { font-weight: 700; font-size: .8rem; margin-bottom: 3px; }
+  .step-sub { color: #57606a; font-size: .72rem; }
+
+  /* Code snippet */
+  .code-box {
+    background: #1f2328;
+    color: #e6edf3;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: "SF Mono", "Consolas", monospace;
+    font-size: .75rem;
+    margin: 10px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-comment { color: #8b949e; }
+  .code-key { color: #79c0ff; }
+  .code-str { color: #a5d6ff; }
+
+  /* Warning box */
+  .warn {
+    background: #fff8f0;
+    border-left: 3px solid #f97316;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: .82rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .note {
+    background: #f0f9ff;
+    border-left: 3px solid #3b82d4;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: .82rem;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Schema */
+  .schema-row {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+  }
+  .schema-card {
+    flex: 1;
+    min-width: 160px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .schema-header {
+    background: #3b82d4;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+  }
+  .schema-fields {
+    padding: 8px 10px;
+    font-size: .73rem;
+    background: #f7f8fa;
+  }
+  .schema-field {
+    padding: 2px 0;
+    border-bottom: 1px dotted #e5e7eb;
+    display: flex;
+    gap: 6px;
+  }
+  .schema-field:last-child { border-bottom: none; }
+  .field-name { color: #1f2328; font-weight: 600; flex: 1; }
+  .field-type { color: #57606a; font-size: .7rem; }
+  .field-pk   { color: #3b82d4; font-size: .65rem; font-weight: 700; text-transform: uppercase; }
+
+  /* Timeline */
+  .timeline { margin: 14px 0; }
+  .tl-item {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dotted #e5e7eb;
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-phase {
+    width: 70px;
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #57606a;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .tl-body { flex: 1; }
+  .tl-title { font-weight: 700; font-size: .82rem; margin-bottom: 2px; }
+  .tl-desc { color: #57606a; font-size: .76rem; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    color: #57606a;
+    font-size: .72rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Il Geco Zen — Architettura multi-utente</h1>
+  <p class="subtitle">Piano tecnico per produzione: autenticazione, DB e sincronizzazione dati per centinaia di utenti</p>
+
+  
+  <h2>1 · Situazione attuale</h2>
+  <p>L'app è una <strong>PWA pura</strong> (HTML/CSS/JS). I dati (template, cronologia) sono salvati nel <code>localStorage</code> del singolo browser/device. È installabile su iPhone via Safari "Aggiungi a schermata Home" grazie al <code>manifest.json</code>.</p>
+
+  <div class="box">
+    <div class="box-title">Cosa vive già nel localStorage</div>
+    <ul>
+      <li><code>zen_v4</code> — array di preset/template personalizzati</li>
+      <li><code>zen_history</code> — array di sessioni completate (timestamp + minuti + steps)</li>
+    </ul>
+  </div>
+
+  <div class="warn">
+    <strong>Problema multi-utente:</strong> localStorage è locale al singolo browser. Se l'utente reinstalla l'app, cambia device, o usa un secondo iPhone, perde tutto. Non c'è nessuna separazione tra utenti.
+  </div>
+
+  
+  <h2>2 · Serve un DB? Serve l'autenticazione?</h2>
+
+  <p><strong>Dipende da quanto vuoi isolare i dati:</strong></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Approccio</th>
+        <th>Autenticazione</th>
+        <th>DB remoto</th>
+        <th>Dati su altro device</th>
+        <th>Costo</th>
+        <th>Complessità</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>A · Solo localStorage</strong> (stato attuale)</td>
+        <td>No</td>
+        <td>No</td>
+        <td>❌ No</td>
+        <td>Gratis</td>
+        <td>Nulla</td>
+      </tr>
+      <tr>
+        <td><strong>B · localStorage + export/import JSON</strong></td>
+        <td>No</td>
+        <td>No</td>
+        <td>⚠️ Manuale</td>
+        <td>Gratis</td>
+        <td>Bassa</td>
+      </tr>
+      <tr class="recommended">
+        <td><strong>C · Firebase Auth + Firestore</strong> <span class="pill pill-blue">Raccomandato</span></td>
+        <td>Google/Apple/Email</td>
+        <td>Firestore (NoSQL)</td>
+        <td>✅ Automatico</td>
+        <td>Gratis fino ~50k utenti</td>
+        <td>Media</td>
+      </tr>
+      <tr>
+        <td><strong>D · Supabase (PostgreSQL)</strong></td>
+        <td>Email/OAuth</td>
+        <td>PostgreSQL</td>
+        <td>✅ Automatico</td>
+        <td>Gratis fino 50k righe</td>
+        <td>Media</td>
+      </tr>
+      <tr>
+        <td><strong>E · Backend custom</strong> (Node/Fastify)</td>
+        <td>Custom JWT</td>
+        <td>Qualsiasi</td>
+        <td>✅ Automatico</td>
+        <td>Server hosting (~5-10€/mese)</td>
+        <td>Alta</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>3 · Raccomandazione — Opzione C: Firebase</h2>
+
+  <p>Firebase è la scelta ideale per questa app perché:</p>
+  <div class="box">
+    <ul>
+      <li>L'app resta <strong>statica su GitHub Pages</strong> — nessun server da gestire</li>
+      <li>Firebase Auth supporta <strong>"Accedi con Google" e "Accedi con Apple"</strong> — nessuna password da ricordare, perfetto per iPhone</li>
+      <li><strong>Piano gratuito Spark</strong>: 50.000 auth/mese, 1 GiB Firestore, 10 GiB transfer — abbondante per centinaia di utenti meditatori</li>
+      <li>Firestore è <strong>offline-first</strong>: i dati si sincronizzano automaticamente anche senza rete, esattamente come un timer deve funzionare</li>
+      <li>SDK già integrato via CDN — zero backend da scrivere</li>
+    </ul>
+  </div>
+
+  
+  <h2>4 · Schema Firestore proposto</h2>
+
+  <div class="schema-row">
+    <div class="schema-card">
+      <div class="schema-header">users/{uid}</div>
+      <div class="schema-fields">
+        <div class="schema-field">
+          <span class="field-pk">PK</span>
+          <span class="field-name">uid</span>
+          <span class="field-type">string</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">displayName</span>
+          <span class="field-type">string</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">createdAt</span>
+          <span class="field-type">timestamp</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">settings</span>
+          <span class="field-type">map (futura)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="schema-card">
+      <div class="schema-header">users/{uid}/presets/{id}</div>
+      <div class="schema-fields">
+        <div class="schema-field">
+          <span class="field-pk">PK</span>
+          <span class="field-name">id</span>
+          <span class="field-type">auto-id</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">name</span>
+          <span class="field-type">string</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">steps</span>
+          <span class="field-type">array[{mins,name}]</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">order</span>
+          <span class="field-type">number</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">updatedAt</span>
+          <span class="field-type">timestamp</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="schema-card">
+      <div class="schema-header">users/{uid}/sessions/{id}</div>
+      <div class="schema-fields">
+        <div class="schema-field">
+          <span class="field-pk">PK</span>
+          <span class="field-name">id</span>
+          <span class="field-type">auto-id</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">ts</span>
+          <span class="field-type">timestamp</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">totalMins</span>
+          <span class="field-type">number</span>
+        </div>
+        <div class="schema-field">
+          <span class="field-name">steps</span>
+          <span class="field-type">array[{mins,name}]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Subcollection per utente:</strong> ogni utente ha la propria subcollection <code>presets</code> e <code>sessions</code>. Non esiste modo per un utente di leggere i dati di un altro. Le Security Rules di Firestore lo impongono a livello server.
+  </div>
+
+  
+  <h2>5 · Flusso utente su iPhone</h2>
+
+  <div class="steps-row">
+    <div class="step-box">
+      <div class="step-num">01</div>
+      <div class="step-label">Visita URL</div>
+      <div class="step-sub">raoulalfredorocher.github.io/…</div>
+    </div>
+    <div class="step-box">
+      <div class="step-num">02</div>
+      <div class="step-label">Accedi</div>
+      <div class="step-sub">"Continua con Google" — 1 tap</div>
+    </div>
+    <div class="step-box">
+      <div class="step-num">03</div>
+      <div class="step-label">Installa PWA</div>
+      <div class="step-sub">Safari → Condividi → Aggiungi a schermata</div>
+    </div>
+    <div class="step-box">
+      <div class="step-num">04</div>
+      <div class="step-label">Usa</div>
+      <div class="step-sub">Preset e storico sincronizzati sul cloud</div>
+    </div>
+    <div class="step-box">
+      <div class="step-num">05</div>
+      <div class="step-label">Nuovo device</div>
+      <div class="step-sub">Accedi → tutto ripristinato automaticamente</div>
+    </div>
+  </div>
+
+  
+  <h2>6 · Piano di implementazione (4 fasi)</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-phase">Fase 1<br /><span style="color:#3b82d4">~1h</span></div>
+      <div class="tl-body">
+        <div class="tl-title">Setup Firebase <span class="pill pill-blue">Prerequisito</span></div>
+        <div class="tl-desc">Creare progetto Firebase, abilitare Auth (Google + Apple), creare database Firestore in modalità produzione, configurare Security Rules, aggiungere il dominio GitHub Pages ai domini autorizzati.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-phase">Fase 2<br /><span style="color:#3b82d4">~2h</span></div>
+      <div class="tl-body">
+        <div class="tl-title">Autenticazione nell'app <span class="pill pill-green">Codice</span></div>
+        <div class="tl-desc">Aggiungere <code>js/auth.js</code>: banner login, pulsante "Accedi con Google", listener onAuthStateChanged, UI con avatar utente e logout. Nessuna modifica ai moduli esistenti in questa fase.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-phase">Fase 3<br /><span style="color:#3b82d4">~2h</span></div>
+      <div class="tl-body">
+        <div class="tl-title">Sincronizzazione preset <span class="pill pill-green">Codice</span></div>
+        <div class="tl-desc">Modificare <code>js/presets.js</code>: <code>loadPresets()</code> e <code>savePresets()</code> leggono/scrivono da Firestore quando l'utente è loggato, altrimenti fallback a localStorage (utente anonimo). Migrazione automatica dei preset locali al primo login.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-phase">Fase 4<br /><span style="color:#3b82d4">~2h</span></div>
+      <div class="tl-body">
+        <div class="tl-title">Sincronizzazione cronologia <span class="pill pill-green">Codice</span></div>
+        <div class="tl-desc">Modificare <code>js/history.js</code>: <code>saveSession()</code> scrive su Firestore, <code>loadHistory()</code> legge da Firestore. Il calendario funziona identicamente — solo i dati cambiano sorgente. Migrazione automatica delle sessioni locali.</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>7 · Security Rules Firestore (minimo necessario)</h2>
+
+  <div class="code-box"><span class="code-comment">// Solo l'utente autenticato può leggere/scrivere i propri dati</span>
+<span class="code-key">rules_version</span> = <span class="code-str">'2'</span>;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+                         &amp;&amp; request.auth.uid == userId;
+    }
+  }
+}</div>
+
+  
+  <h2>8 · Cosa rimane invariato</h2>
+  <div class="box">
+    <ul>
+      <li>GitHub Pages come hosting — nessun server, nessun costo aggiuntivo</li>
+      <li>Il timer, i suoni, la UI, il CSS — nessuna modifica</li>
+      <li>L'app funziona offline — Firestore ha cache locale nativa</li>
+      <li>L'installazione PWA su iPhone rimane identica</li>
+      <li>Gli utenti che non vogliono fare login continuano a usare localStorage</li>
+    </ul>
+  </div>
+
+  
+  <h2>9 · Quando scegliere Supabase invece di Firebase</h2>
+  <p>Supabase (PostgreSQL) è preferibile solo se:</p>
+  <div class="box">
+    <ul>
+      <li>Hai già esperienza con SQL e vuoi query relazionali complesse</li>
+      <li>Vuoi un pannello admin con tabelle visuali (Supabase Studio è ottimo)</li>
+      <li>Devi esportare dati in formato SQL/CSV per analytics avanzate</li>
+    </ul>
+  </div>
+  <p>Per questa app, Firestore batte Supabase su: semplicità di setup, supporto offline nativo, SDK mobile-first, e zero configurazione server.</p>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>
