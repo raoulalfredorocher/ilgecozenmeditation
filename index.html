@@ -7,208 +7,230 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
   <meta name="theme-color" content="#f7f4f9"/>
-  <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png" id="apple-touch-icon-link"/>
-  <link rel="icon" type="image/png" href="icon-192.png" id="favicon-link"/>
-  <title>Il Geco Zen — Timer di Meditazione</title>
-  <link rel="stylesheet" href="styles/theme.css?v=8"/>
-  <link rel="stylesheet" href="styles/layout.css?v=8"/>
-  <link rel="stylesheet" href="styles/timer.css?v=8"/>
+  <title>Il Geco Zen — Home</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html[data-theme="light"] {
+      --bg:      #f7f4f9;
+      --surface: #ede8f4;
+      --card:    #ffffff;
+      --border:  #d4cee0;
+      --text:    #1e2a38;
+      --muted:   #876a6a;
+      --gold:    #25739E;
+      --accent:  #F5A9BC;
+      --accent2: #74C7E1;
+    }
+    html[data-theme="dark"] {
+      --bg:      #111820;
+      --surface: #1a2230;
+      --card:    #1e2a38;
+      --border:  #2e3f52;
+      --text:    #e8eef4;
+      --muted:   #a89090;
+      --gold:    #74C7E1;
+      --accent:  #F5A9BC;
+      --accent2: #9DDDE8;
+    }
+
+    html { overscroll-behavior: none; }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 32px) 24px 48px;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100dvh;
+    }
+
+    /* ── Header logo ── */
+    .hub-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 42px;
+      width: 100%;
+    }
+    .hub-logo {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
+    .hub-title {
+      font-size: 1.1rem;
+      letter-spacing: .22em;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .hub-sub {
+      font-size: .48rem;
+      letter-spacing: .26em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── Theme toggle (top-right assoluto) ── */
+    .theme-toggle {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 0px) + 14px);
+      right: 18px;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      width: 52px; height: 28px;
+      z-index: 50;
+      transition: border-color .3s;
+    }
+    .theme-toggle .knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: transform .3s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── Griglia card ── */
+    .hub-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Card che occupa tutta la larghezza (es. terza) */
+    .hub-card-wide {
+      grid-column: 1 / -1;
+    }
+
+    .hub-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 28px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .2s, background .2s, transform .12s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .hub-card:active {
+      background: var(--surface);
+      border-color: var(--accent);
+      transform: scale(.97);
+    }
+
+    .hub-card-icon {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+    .hub-card-title {
+      font-size: .84rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      color: var(--text);
+      text-align: center;
+    }
+    .hub-card-sub {
+      font-size: .52rem;
+      letter-spacing: .18em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Colori accent per ogni card */
+    .hub-card.food   { --card-accent: #e8a87c; }
+    .hub-card.gym    { --card-accent: #6cbf8a; }
+    .hub-card.zen    { --card-accent: #F5A9BC; --card-border: var(--accent); }
+
+    .hub-card.zen    { border-color: var(--accent); }
+
+    .hub-card-icon.food-icon { filter: drop-shadow(0 2px 6px rgba(232,168,124,.4)); }
+    .hub-card-icon.gym-icon  { filter: drop-shadow(0 2px 6px rgba(108,191,138,.4)); }
+    .hub-card-icon.zen-icon  { filter: drop-shadow(0 2px 6px rgba(245,169,188,.4)); }
+
+    /* Badge "Presto" */
+    .hub-badge {
+      font-size: .44rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2px 7px;
+    }
+  </style>
 </head>
 <body>
 
-  <div id="bell-flash"></div>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+    <div class="knob" id="theme-knob">☀️</div>
+  </button>
 
-  <!-- DONE OVERLAY -->
-  <div id="done-overlay">
-    <div class="done-kanji">禅</div>
-    <div class="done-text">Sessione completata</div>
-    <div class="done-sub">三度の鐘 — tre rintocchi</div>
-    <div class="done-logo-wrap">
-      <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="done-logo"/>
-      <div class="done-promo">
-        Vuoi approfondire la mindfulness e la meditazione?<br>
-        Visita <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-      </div>
-    </div>
-    <button class="btn-done" id="btn-done-back">Nuova sessione</button>
-  </div>
-
-  <header id="main-header">
-    <!-- Pulsante "← Home" hub -->
-    <a class="btn-header-csv" id="btn-hub-home" href="home.html" aria-label="Torna alla home hub"
-       style="text-decoration:none;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
-      <span>Hub</span>
-    </a>
-    <!-- Pulsante export CSV: visibile solo nella schermata cronologia -->
-    <button class="btn-header-csv" id="btn-export-csv" style="visibility:hidden" aria-label="Esporta CSV">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span>CSV</span>
-    </button>
-    <div class="header-center">
-      <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
-      <div class="app-title">Il Geco Zen</div>
-      <div class="app-sub">timer di meditazione</div>
-    </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
+  <header class="hub-header">
+    <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="hub-logo"/>
+    <div class="hub-title">Il Geco Zen</div>
+    <div class="hub-sub">il tuo benessere, un respiro alla volta</div>
   </header>
 
-  <!-- SCHERMATA HOME / CONFIGURAZIONE -->
-  <div class="screen active" id="screen-config">
+  <div class="hub-grid">
 
-    <div class="picker-section">
-      <div class="picker-label">seleziona minuti</div>
-      <div class="picker-wrap" id="picker-wrap">
-        <div class="picker-highlight"></div>
-        <div class="picker-drum" id="picker-drum"></div>
-      </div>
-    </div>
+    <!-- Riga 1: Alimentazione + Allenamento -->
+    <a class="hub-card food" href="alimentazione.html">
+      <span class="hub-card-icon food-icon">🥗</span>
+      <div class="hub-card-title">Alimentazione</div>
+      <div class="hub-card-sub">dieta · ricette · diario</div>
+    </a>
 
-    <button class="btn-add-step" id="btn-add">＋ Aggiungi Intervallo</button>
+    <a class="hub-card gym" href="allenamento.html">
+      <span class="hub-card-icon gym-icon">🏋️</span>
+      <div class="hub-card-title">Allenamento</div>
+      <div class="hub-card-sub">schede · sessioni · log</div>
+    </a>
 
-    <div class="config-steps" id="config-steps">
-      <div class="empty-steps" id="empty-steps">Nessun intervallo aggiunto</div>
-    </div>
-
-    <!-- Input salvataggio sequenza — sopra "sequenze salvate" -->
-    <input class="save-input" id="preset-name" type="text" placeholder="Nome sequenza da salvare" maxlength="28"/>
-    <button class="btn-save-preset" id="btn-save-preset">♥ Salva sequenza corrente</button>
-
-    <div class="section-title section-title-center">sequenze salvate</div>
-    <div class="preset-grid" id="preset-grid"></div>
+    <!-- Riga 2: Meditazione (card centrata, larghezza piena) -->
+    <a class="hub-card zen hub-card-wide" href="meditazione.html">
+      <span class="hub-card-icon zen-icon">🧘</span>
+      <div class="hub-card-title">Meditazione</div>
+      <div class="hub-card-sub">timer · sequenze · cronologia</div>
+    </a>
 
   </div>
 
-  <!-- SCHERMATA TIMER -->
-  <div class="screen" id="screen-timer">
-
-    <div class="timer-steps-row" id="timer-steps-row"></div>
-
-    <div id="clock-wrap">
-      <svg id="ring-svg" viewBox="0 0 300 300">
-        <circle id="ring-bg"   cx="150" cy="150" r="132"/>
-        <circle id="ring-fill" cx="150" cy="150" r="132"/>
-      </svg>
-      <!-- Logo reale sopra i numeri -->
-      <img src="Logo%20Trasparente.png" alt="" id="clock-gecko" class="clock-gecko-svg" aria-hidden="true"/>
-      <div id="clock-step-name"></div>
-      <div id="clock-time">00:00</div>
-      <div id="clock-min-label"></div>
-    </div>
-
-    <!-- Unica riga: Reset · Avvia/Pausa · Reset -->
-    <div class="timer-btns timer-btns-row">
-      <button class="btn-timer" id="btn-reset">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
-        Reset
-      </button>
-      <button class="btn-timer primary btn-avvia-wide" id="btn-start">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-        Avvia
-      </button>
-      <button class="btn-timer" id="btn-home-timer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
-        Home
-      </button>
-    </div>
-
-    <div class="nature-section">
-      <div class="nature-label">suono di sottofondo</div>
-
-      <div class="nature-cat-label">silenzio</div>
-      <div class="nature-btns">
-        <button class="btn-nature active" data-sound="silence">🤫 Silenzio</button>
-      </div>
-
-      <div class="nature-cat-label">musica meditazione</div>
-      <div class="nature-btns">
-        <button class="btn-nature" data-sound="tibetan">🎵 Campana tibetana</button>
-        <button class="btn-nature" data-sound="om">🕉 Om drone</button>
-        <button class="btn-nature" data-sound="binaural">🎶 Binaural 432Hz</button>
-      </div>
-
-      <div class="nature-cat-label">elementi naturali</div>
-      <div class="nature-btns">
-        <button class="btn-nature" data-sound="rain">🌧 Pioggia</button>
-        <button class="btn-nature" data-sound="sea">🌊 Mare</button>
-        <button class="btn-nature" data-sound="wind">🍃 Vento</button>
-        <button class="btn-nature" data-sound="stream">💧 Ruscello</button>
-        <button class="btn-nature" data-sound="fire">🔥 Camino</button>
-      </div>
-
-      <div class="nature-cat-label">animali</div>
-      <div class="nature-btns">
-        <button class="btn-nature" data-sound="birds">🐦 Uccelli</button>
-        <button class="btn-nature" data-sound="crickets">🦗 Grilli</button>
-      </div>
-    </div>
-
-    <!-- Footer timer: logo geco + link sito -->
-    <div class="timer-footer">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="timer-footer-logo-link" aria-label="Visita il sito Il Geco Zen">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="timer-footer-gecko"/>
-        <span class="timer-footer-text">Visita il sito</span>
-      </a>
-    </div>
-
-  </div>
-
-  <!-- SCHERMATA CRONOLOGIA -->
-  <div class="screen" id="screen-history">
-    <div class="history-calendar" id="history-calendar"></div>
-    <div class="history-month-label" id="history-month-label"></div>
-    <div class="history-list" id="history-list"></div>
-    <button class="btn-export-csv" id="btn-export-csv">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Esporta CSV
-    </button>
-  </div>
-
-  <!-- TAB BAR: Home | Avvia(centro) | Calendario -->
-  <nav class="tab-bar" id="tab-bar">
-    <button class="tab-btn tab-active" id="tab-home" aria-label="Home">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-        <polyline points="9,21 9,13 15,13 15,21"/>
-      </svg>
-      <span class="tab-label">home</span>
-    </button>
-
-    <!-- pulsante centrale: usa un <a> per il link al sito quando attivo -->
-    <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
-      <div class="tab-center-circle" id="tab-center-circle">
-        <!-- Stato idle: triangolo play -->
-        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="white">
-          <polygon points="6,3 20,12 6,21"/>
-        </svg>
-        <!-- Stato attivo: logo geco (link al sito) — nascosto di default -->
-        <a href="https://www.ilgecozen.it" target="_blank" rel="noopener"
-           id="tab-center-gecko-link" style="display:none; line-height:0;"
-           onclick="event.stopPropagation()">
-          <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko" id="tab-center-gecko"/>
-        </a>
-      </div>
-      <span class="tab-label" id="tab-avvia-label">avvia pratica</span>
-    </button>
-
-    <button class="tab-btn" id="tab-history" aria-label="Cronologia">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-        <circle cx="8" cy="15" r=".8" fill="currentColor"/>
-        <circle cx="12" cy="15" r=".8" fill="currentColor"/>
-        <circle cx="16" cy="15" r=".8" fill="currentColor"/>
-      </svg>
-      <span class="tab-label">cronologia</span>
-    </button>
-  </nav>
-
-  <script type="module" src="js/app.js?v=8"></script>
+  <script>
+    const htmlEl = document.documentElement;
+    const btn    = document.getElementById('theme-toggle');
+    const knob   = document.getElementById('theme-knob');
+    let isDark   = localStorage.getItem('zen_theme') === 'dark';
+    function apply() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    apply();
+    btn.addEventListener('click', () => { isDark = !isDark; apply(); });
+  </script>
 </body>
 </html>
