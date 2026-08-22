@@ -99,13 +99,6 @@
       text-transform: uppercase;
     }
 
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: var(--border);
-      margin: 18px 0;
-    }
-
     .section-card {
       width: 100%;
       background: var(--card);
@@ -181,6 +174,15 @@
       border-radius: 50%;
       background: var(--surface);
     }
+    .compass-center-wrap {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
     .compass::before,
     .compass::after {
       content: "";
@@ -199,14 +201,43 @@
       height: 1px;
     }
     .compass-center {
-      position: absolute;
-      inset: 50% auto auto 50%;
-      transform: translate(-50%, -50%);
       width: 22px;
       height: 22px;
       border-radius: 50%;
       background: var(--gold);
       border: 4px solid var(--card);
+      cursor: pointer;
+    }
+    .ikigai-popup {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 14px);
+      transform: translateX(-50%);
+      width: 220px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+    .ikigai-popup.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ikigai-popup-title {
+      font-size: .56rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .ikigai-popup-text {
+      font-size: .68rem;
+      color: var(--text);
+      line-height: 1.6;
     }
     .compass-point {
       position: absolute;
@@ -315,9 +346,7 @@
     <div class="hub-title">LA VIA DI MESSO PER PROSPERITÀ</div>
   </header>
 
-  <div class="divider"></div>
-
-  <section class="section-card" aria-label="Barra della vita">
+  <section class="section-card" aria-label="Barra della vita" style="margin-bottom: 18px;">
     <div class="section-header">
       <div class="section-title">Barra della vita</div>
       <div class="section-top-note">Speranza di vita<br>90 anni</div>
@@ -335,22 +364,24 @@
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <section class="section-card" aria-label="Bussola dei valori">
+  <section class="section-card" aria-label="Bussola dei valori" style="margin-bottom: 18px;">
     <div class="section-title" style="text-align:center; margin-bottom: 16px;">Bussola dei valori</div>
     <div class="compass">
       <div class="compass-point north"><strong>Nord</strong>Gentilezza</div>
       <div class="compass-point east"><strong>Est</strong>Serenità</div>
       <div class="compass-point south"><strong>Sud</strong>Salute</div>
       <div class="compass-point west"><strong>Ovest</strong>Prosperità</div>
-      <div class="compass-center"></div>
+      <div class="compass-center-wrap" id="ikigai-trigger-wrap">
+        <button class="compass-center" id="ikigai-trigger" type="button" aria-label="Mostra la mia missione" aria-expanded="false"></button>
+        <div class="ikigai-popup" id="ikigai-popup" role="dialog" aria-label="La mia missione">
+          <div class="ikigai-popup-title">La mia missione</div>
+          <div class="ikigai-popup-text">ikigai ikigai ikigai pi</div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <div class="hub-grid">
+  <div class="hub-grid" style="margin-bottom: 18px;">
     <a class="hub-card bucket" href="bucket-list.html">
       <span class="hub-card-icon">✨</span>
       <div class="hub-card-title">Bucket List</div>
@@ -363,8 +394,6 @@
       <div class="hub-card-sub">rotta · visione · scelte</div>
     </a>
   </div>
-
-  <div class="divider"></div>
 
   <div class="hub-grid">
     <a class="hub-card food" href="alimentazione.html">
@@ -380,15 +409,15 @@
     </a>
 
     <a class="hub-card zen hub-card-wide" href="meditazione.html">
-      <span class="hub-card-icon zen-icon">🧘</span>
-      <div class="hub-card-title">Meditazione</div>
-      <div class="hub-card-sub">timer · sequenze · cronologia</div>
+      <span class="hub-card-icon zen-icon">✨</span>
+      <div class="hub-card-title">Spiritualità</div>
+      <div class="hub-card-sub">pratica · presenza · connessione</div>
     </a>
 
     <a class="hub-card journal" href="journaling.html">
-      <span class="hub-card-icon">📓</span>
-      <div class="hub-card-title">Journaling</div>
-      <div class="hub-card-sub">riflessioni · note · chiarezza</div>
+      <span class="hub-card-icon">🎨</span>
+      <div class="hub-card-title">Le mie passioni</div>
+      <div class="hub-card-sub">interessi · creatività · entusiasmo</div>
     </a>
 
     <a class="hub-card mind" href="salute-mentale.html">
@@ -414,6 +443,9 @@
     const htmlEl = document.documentElement;
     const btn = document.getElementById('theme-toggle');
     const knob = document.getElementById('theme-knob');
+    const ikigaiTrigger = document.getElementById('ikigai-trigger');
+    const ikigaiPopup = document.getElementById('ikigai-popup');
+    const ikigaiTriggerWrap = document.getElementById('ikigai-trigger-wrap');
     let isDark = localStorage.getItem('zen_theme') === 'dark';
 
     function apply() {
@@ -433,8 +465,32 @@
     document.getElementById('life-bar-fill').style.width = `${percentage}%`;
     document.getElementById('life-age-label').textContent = currentAgeYears.toFixed(1).replace('.', ',');
 
+    function showIkigaiPopup() {
+      ikigaiPopup.classList.add('visible');
+      ikigaiTrigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function hideIkigaiPopup() {
+      ikigaiPopup.classList.remove('visible');
+      ikigaiTrigger.setAttribute('aria-expanded', 'false');
+    }
+
     apply();
     btn.addEventListener('click', () => { isDark = !isDark; apply(); });
+    ikigaiTriggerWrap.addEventListener('mouseenter', showIkigaiPopup);
+    ikigaiTriggerWrap.addEventListener('mouseleave', hideIkigaiPopup);
+    ikigaiTrigger.addEventListener('click', () => {
+      if (ikigaiPopup.classList.contains('visible')) {
+        hideIkigaiPopup();
+        return;
+      }
+      showIkigaiPopup();
+    });
+    document.addEventListener('click', (event) => {
+      if (!ikigaiTriggerWrap.contains(event.target)) {
+        hideIkigaiPopup();
+      }
+    });
   </script>
 </body>
 </html>
