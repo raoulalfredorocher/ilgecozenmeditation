@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Journaling"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <title>Il Geco Zen — Journaling</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg: #f7f4f9;
+      --surface: #ede8f4;
+      --card: #ffffff;
+      --border: #d4cee0;
+      --text: #1e2a38;
+      --muted: #876a6a;
+      --primary: #c68a3d;
+      --accent: #f0b36f;
+    }
+    html[data-theme="dark"] {
+      --bg: #111820;
+      --surface: #1a2230;
+      --card: #1e2a38;
+      --border: #2e3f52;
+      --text: #e8eef4;
+      --muted: #a89090;
+      --primary: #f0b36f;
+      --accent: #c68a3d;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 120px) 20px 32px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn-back {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: .58rem;
+      letter-spacing: .1em;
+      padding: 5px 8px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      width: 52px;
+    }
+    .header-center {
+      flex: 1;
+      text-align: center;
+    }
+    .app-title {
+      font-size: .95rem;
+      letter-spacing: .16em;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .app-sub {
+      font-size: .48rem;
+      letter-spacing: .22em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .theme-toggle {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      width: 52px;
+      height: 28px;
+      position: relative;
+    }
+    .theme-toggle .knob {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: transform .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    .placeholder-card {
+      width: 100%;
+      background: var(--card);
+      border: 1.5px dashed var(--border);
+      border-radius: 22px;
+      padding: 42px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .placeholder-icon { font-size: 3rem; }
+    .placeholder-title {
+      font-size: .94rem;
+      letter-spacing: .08em;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .placeholder-sub {
+      font-size: .68rem;
+      color: var(--muted);
+      line-height: 1.7;
+      letter-spacing: .04em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="btn-back" href="index.html" aria-label="Torna alla home">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
+      <span>Home</span>
+    </a>
+    <div class="header-center">
+      <div class="app-title">Journaling</div>
+      <div class="app-sub">pagina in costruzione</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
+
+  <section class="placeholder-card">
+    <div class="placeholder-icon">📓</div>
+    <div class="placeholder-title">Journaling</div>
+    <div class="placeholder-sub">Spazio pronto per raccogliere riflessioni, note e pensieri quotidiani.</div>
+  </section>
+
+  <script>
+    const htmlEl = document.documentElement;
+    const btn = document.getElementById('theme-toggle');
+    const knob = document.getElementById('theme-knob');
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
+
+    function apply() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+
+    apply();
+    btn.addEventListener('click', () => { isDark = !isDark; apply(); });
+  </script>
+</body>
+</html>

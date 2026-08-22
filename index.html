@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <title>Il Geco Zen — Home</title>
-  <!-- v2 hub -->
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -54,34 +53,6 @@
       min-height: 100dvh;
     }
 
-    /* ── Header logo ── */
-    .hub-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 42px;
-      width: 100%;
-    }
-    .hub-logo {
-      height: 64px;
-      width: auto;
-      object-fit: contain;
-    }
-    .hub-title {
-      font-size: 1.1rem;
-      letter-spacing: .22em;
-      color: var(--gold);
-      font-weight: 600;
-    }
-    .hub-sub {
-      font-size: .48rem;
-      letter-spacing: .26em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    /* ── Theme toggle (top-right assoluto) ── */
     .theme-toggle {
       position: fixed;
       top: calc(env(safe-area-inset-top, 0px) + 14px);
@@ -106,19 +77,168 @@
     }
     html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
 
-    /* ── Griglia card ── */
+    .hub-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+    .hub-logo {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
+    .hub-title {
+      font-size: .72rem;
+      letter-spacing: .28em;
+      color: var(--gold);
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 18px 0;
+    }
+
+    .section-card {
+      width: 100%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 20px 18px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: .58rem;
+      letter-spacing: .24em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .section-top-note {
+      font-size: .52rem;
+      letter-spacing: .12em;
+      color: var(--gold);
+      text-transform: uppercase;
+      text-align: right;
+      line-height: 1.4;
+    }
+
+    .life-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: .62rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: .04em;
+    }
+    .life-bar {
+      width: 100%;
+      height: 14px;
+      background: var(--surface);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .life-bar-fill {
+      height: 100%;
+      width: 37.84%;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      border-radius: 999px;
+    }
+    .life-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: .68rem;
+      color: var(--text);
+    }
+    .life-stats strong {
+      color: var(--gold);
+      font-size: .78rem;
+    }
+
+    .compass {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 220px;
+      margin: 6px auto 0;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+    }
+    .compass::before,
+    .compass::after {
+      content: "";
+      position: absolute;
+      background: var(--border);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .compass::before {
+      width: 1px;
+      height: 84%;
+    }
+    .compass::after {
+      width: 84%;
+      height: 1px;
+    }
+    .compass-center {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 4px solid var(--card);
+    }
+    .compass-point {
+      position: absolute;
+      font-size: .58rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.4;
+      width: 110px;
+    }
+    .compass-point strong {
+      display: block;
+      color: var(--gold);
+      font-size: .52rem;
+      letter-spacing: .2em;
+      margin-bottom: 2px;
+    }
+    .compass-point.north { top: 14px; left: 50%; transform: translateX(-50%); }
+    .compass-point.east { top: 50%; right: -18px; transform: translateY(-50%); }
+    .compass-point.south { bottom: 14px; left: 50%; transform: translateX(-50%); }
+    .compass-point.west { top: 50%; left: -18px; transform: translateY(-50%); }
+
     .hub-grid {
       width: 100%;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
-
-    /* Card che occupa tutta la larghezza (es. terza) */
     .hub-card-wide {
       grid-column: 1 / -1;
     }
-
     .hub-card {
       background: var(--card);
       border: 1.5px solid var(--border);
@@ -127,59 +247,60 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 10px;
+      min-height: 138px;
       cursor: pointer;
       text-decoration: none;
       color: inherit;
       transition: border-color .2s, background .2s, transform .12s;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      text-align: center;
     }
     .hub-card:active {
       background: var(--surface);
       border-color: var(--accent);
       transform: scale(.97);
     }
-
     .hub-card-icon {
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       line-height: 1;
     }
     .hub-card-title {
       font-size: .84rem;
       font-weight: 600;
-      letter-spacing: .14em;
+      letter-spacing: .1em;
       color: var(--text);
       text-align: center;
     }
     .hub-card-sub {
       font-size: .52rem;
-      letter-spacing: .18em;
+      letter-spacing: .14em;
       color: var(--muted);
       text-transform: uppercase;
       text-align: center;
+      line-height: 1.5;
     }
 
-    /* Colori accent per ogni card */
-    .hub-card.food   { --card-accent: #e8a87c; }
-    .hub-card.gym    { --card-accent: #6cbf8a; }
-    .hub-card.zen    { --card-accent: #F5A9BC; --card-border: var(--accent); }
-
+    .hub-card.food   { border-color: #e8a87c55; }
+    .hub-card.gym    { border-color: #6cbf8a55; }
     .hub-card.zen    { border-color: var(--accent); }
+    .hub-card.bucket { border-color: #cbb7f8; }
+    .hub-card.dir    { border-color: #74C7E155; }
+    .hub-card.journal{ border-color: #f0b36f66; }
+    .hub-card.mind   { border-color: #9ec5ff66; }
+    .hub-card.social { border-color: #f5a9bc66; }
+    .hub-card.world  { border-color: #25739E55; }
 
-    .hub-card-icon.food-icon { filter: drop-shadow(0 2px 6px rgba(232,168,124,.4)); }
-    .hub-card-icon.gym-icon  { filter: drop-shadow(0 2px 6px rgba(108,191,138,.4)); }
-    .hub-card-icon.zen-icon  { filter: drop-shadow(0 2px 6px rgba(245,169,188,.4)); }
+    .hub-card-icon.food-icon { filter: drop-shadow(0 2px 6px rgba(232,168,124,.35)); }
+    .hub-card-icon.gym-icon  { filter: drop-shadow(0 2px 6px rgba(108,191,138,.35)); }
+    .hub-card-icon.zen-icon  { filter: drop-shadow(0 2px 6px rgba(245,169,188,.35)); }
 
-    /* Badge "Presto" */
-    .hub-badge {
-      font-size: .44rem;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 2px 7px;
+    @media (max-width: 360px) {
+      .compass-point.east { right: -28px; }
+      .compass-point.west { left: -28px; }
+      .compass-point { width: 100px; font-size: .54rem; }
     }
   </style>
 </head>
@@ -191,13 +312,61 @@
 
   <header class="hub-header">
     <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="hub-logo"/>
-    <div class="hub-title">Il Geco Zen</div>
-    <div class="hub-sub">il tuo benessere, un respiro alla volta</div>
+    <div class="hub-title">LA VIA DI MESSO PER PROSPERITÀ</div>
   </header>
 
-  <div class="hub-grid">
+  <div class="divider"></div>
 
-    <!-- Riga 1: Alimentazione + Allenamento -->
+  <section class="section-card" aria-label="Barra della vita">
+    <div class="section-header">
+      <div class="section-title">Barra della vita</div>
+      <div class="section-top-note">Speranza di vita<br>90 anni</div>
+    </div>
+    <div class="life-labels">
+      <span>0 · Nascita</span>
+      <span>90</span>
+    </div>
+    <div class="life-bar" aria-hidden="true">
+      <div class="life-bar-fill" id="life-bar-fill"></div>
+    </div>
+    <div class="life-stats">
+      <span>Età attuale</span>
+      <span><strong id="life-age-label">34,1</strong> anni</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section-card" aria-label="Bussola dei valori">
+    <div class="section-title" style="text-align:center; margin-bottom: 16px;">Bussola dei valori</div>
+    <div class="compass">
+      <div class="compass-point north"><strong>Nord</strong>Gentilezza</div>
+      <div class="compass-point east"><strong>Est</strong>Serenità</div>
+      <div class="compass-point south"><strong>Sud</strong>Salute</div>
+      <div class="compass-point west"><strong>Ovest</strong>Prosperità</div>
+      <div class="compass-center"></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="hub-grid">
+    <a class="hub-card bucket" href="bucket-list.html">
+      <span class="hub-card-icon">✨</span>
+      <div class="hub-card-title">Bucket List</div>
+      <div class="hub-card-sub">desideri · sogni · esperienze</div>
+    </a>
+
+    <a class="hub-card dir" href="direzione.html">
+      <span class="hub-card-icon">🧭</span>
+      <div class="hub-card-title">Direzione</div>
+      <div class="hub-card-sub">rotta · visione · scelte</div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="hub-grid">
     <a class="hub-card food" href="alimentazione.html">
       <span class="hub-card-icon food-icon">🥗</span>
       <div class="hub-card-title">Alimentazione</div>
@@ -210,26 +379,60 @@
       <div class="hub-card-sub">schede · sessioni · log</div>
     </a>
 
-    <!-- Riga 2: Meditazione (card centrata, larghezza piena) -->
     <a class="hub-card zen hub-card-wide" href="meditazione.html">
       <span class="hub-card-icon zen-icon">🧘</span>
       <div class="hub-card-title">Meditazione</div>
       <div class="hub-card-sub">timer · sequenze · cronologia</div>
     </a>
 
+    <a class="hub-card journal" href="journaling.html">
+      <span class="hub-card-icon">📓</span>
+      <div class="hub-card-title">Journaling</div>
+      <div class="hub-card-sub">riflessioni · note · chiarezza</div>
+    </a>
+
+    <a class="hub-card mind" href="salute-mentale.html">
+      <span class="hub-card-icon">🫶</span>
+      <div class="hub-card-title">Salute mentale</div>
+      <div class="hub-card-sub">equilibrio · ascolto · cura</div>
+    </a>
+
+    <a class="hub-card social hub-card-wide" href="armonia-sociale.html">
+      <span class="hub-card-icon">🤝</span>
+      <div class="hub-card-title">Armonia sociale</div>
+      <div class="hub-card-sub">relazioni · connessioni · presenza</div>
+    </a>
+
+    <a class="hub-card world hub-card-wide" href="contributo-al-mondo.html">
+      <span class="hub-card-icon">🌍</span>
+      <div class="hub-card-title">Contributo al mondo</div>
+      <div class="hub-card-sub">lavoro · impatto · significato</div>
+    </a>
   </div>
 
   <script>
     const htmlEl = document.documentElement;
-    const btn    = document.getElementById('theme-toggle');
-    const knob   = document.getElementById('theme-knob');
-    let isDark   = localStorage.getItem('zen_theme') === 'dark';
+    const btn = document.getElementById('theme-toggle');
+    const knob = document.getElementById('theme-knob');
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
+
     function apply() {
       htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
       knob.textContent = isDark ? '🌙' : '☀️';
       document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
       localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
     }
+
+    const birthDate = new Date(1992, 10, 23);
+    const lifeExpectancyYears = 90;
+    const now = new Date();
+    const monthsLived = (now.getFullYear() - birthDate.getFullYear()) * 12 + (now.getMonth() - birthDate.getMonth());
+    const currentAgeYears = monthsLived / 12;
+    const percentage = Math.min((currentAgeYears / lifeExpectancyYears) * 100, 100);
+
+    document.getElementById('life-bar-fill').style.width = `${percentage}%`;
+    document.getElementById('life-age-label').textContent = currentAgeYears.toFixed(1).replace('.', ',');
+
     apply();
     btn.addEventListener('click', () => { isDark = !isDark; apply(); });
   </script>
