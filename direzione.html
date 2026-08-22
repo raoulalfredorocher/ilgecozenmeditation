@@ -20,9 +20,6 @@
       --muted:   #876a6a;
       --gold:    #25739E;
       --accent:  #F5A9BC;
-      --accent2: #74C7E1;
-      --green:   #4a9e7a;
-      --overlay: #f7f4f9;
     }
     html[data-theme="dark"] {
       --bg:      #111820;
@@ -33,15 +30,9 @@
       --muted:   #a89090;
       --gold:    #74C7E1;
       --accent:  #F5A9BC;
-      --accent2: #9DDDE8;
-      --green:   #6abf99;
-      --overlay: #111820;
     }
 
-    html {
-      overscroll-behavior: none;
-      scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
-    }
+    html { overscroll-behavior: none; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); }
     html, body {
       min-height: 100%;
       background: var(--bg);
@@ -94,301 +85,103 @@
     }
     .btn-back:active { color: var(--gold); border-color: var(--gold); }
     .header-center {
-      flex: 1;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
+      flex: 1; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
     .header-logo { height: 44px; width: auto; display: block; object-fit: contain; }
-    .app-title {
-      font-size: 1.0rem;
-      letter-spacing: .18em;
-      color: var(--gold);
-      font-weight: 600;
-    }
-    .app-sub {
-      font-size: .50rem;
-      letter-spacing: .22em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
+    .app-title { font-size: 1.0rem; letter-spacing: .18em; color: var(--gold); font-weight: 600; }
+    .app-sub { font-size: .50rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
     .theme-toggle {
-      background: none;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      cursor: pointer;
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 20px; cursor: pointer;
       width: 52px; height: 28px;
-      position: relative;
-      flex-shrink: 0;
-      transition: border-color .3s;
+      position: relative; flex-shrink: 0; transition: border-color .3s;
     }
     .theme-toggle .knob {
-      position: absolute;
-      top: 3px; left: 3px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      transition: transform .3s;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .7rem;
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent); transition: transform .3s;
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
     }
     html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
 
-    /* ── Intro banner ── */
+    /* ── Intro ── */
     .intro-banner {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 22px 20px 18px;
-      margin-bottom: 22px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      text-align: center;
+      width: 100%; background: var(--card);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 22px 20px 18px; margin-bottom: 28px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; text-align: center;
     }
-    .intro-kanji {
-      font-size: 2.4rem;
-      color: var(--gold);
-      letter-spacing: .2em;
-    }
-    .intro-title {
-      font-size: 1.1rem;
-      letter-spacing: .14em;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .intro-sub {
-      font-size: .70rem;
-      color: var(--muted);
-      line-height: 1.75;
-      letter-spacing: .04em;
-    }
+    .intro-kanji { font-size: 2.4rem; color: var(--gold); letter-spacing: .2em; }
+    .intro-title { font-size: 1.1rem; letter-spacing: .14em; font-weight: 700; color: var(--text); }
+    .intro-sub { font-size: .70rem; color: var(--muted); line-height: 1.75; letter-spacing: .04em; }
 
-    /* ── Sezione macro ── */
-    .macro-section {
-      width: 100%;
-      margin-bottom: 28px;
-    }
+    /* ── Macro sezione ── */
+    .macro-section { width: 100%; margin-bottom: 32px; }
     .macro-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; padding-bottom: 10px;
       border-bottom: 1.5px solid var(--border);
     }
-    .macro-icon {
-      font-size: 1.6rem;
-      flex-shrink: 0;
-    }
+    .macro-icon { font-size: 1.5rem; flex-shrink: 0; }
     .macro-title {
-      font-size: .88rem;
-      letter-spacing: .12em;
-      font-weight: 700;
-      color: var(--gold);
-      text-transform: uppercase;
-    }
-    .macro-goal-badge {
-      font-size: .56rem;
-      letter-spacing: .1em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-top: 2px;
+      font-size: .80rem; letter-spacing: .16em;
+      font-weight: 700; color: var(--gold); text-transform: uppercase;
     }
 
-    /* ── Card area ── */
+    /* ── Area card ── */
     .area-card {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px 18px 14px;
-      margin-bottom: 14px;
+      width: 100%; background: var(--card);
+      border: 1px solid var(--border); border-radius: 18px;
+      padding: 16px 18px; margin-bottom: 12px;
     }
-    .area-card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .area-icon { font-size: 1.1rem; }
     .area-name {
-      font-size: .80rem;
-      font-weight: 700;
-      letter-spacing: .10em;
-      color: var(--text);
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .10em; color: var(--text);
+      margin-bottom: 10px;
     }
-
-    /* ── Direction quote ── */
     .direction-quote {
       background: var(--surface);
       border-left: 3px solid var(--accent);
       border-radius: 0 12px 12px 0;
       padding: 10px 14px;
-      margin-bottom: 12px;
-      font-size: .70rem;
-      color: var(--muted);
-      line-height: 1.75;
-      letter-spacing: .03em;
+      font-size: .70rem; color: var(--muted);
+      line-height: 1.78; letter-spacing: .03em;
       font-style: italic;
     }
     .direction-label {
-      font-size: .50rem;
-      letter-spacing: .22em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 5px;
-      font-style: normal;
+      font-size: .48rem; letter-spacing: .22em;
+      color: var(--accent); text-transform: uppercase;
+      margin-bottom: 5px; font-style: normal; font-weight: 600;
     }
-
-    /* ── Goal semplice ── */
     .simple-goal {
-      font-size: .72rem;
-      color: var(--text);
-      line-height: 1.7;
-      letter-spacing: .03em;
-      margin-bottom: 12px;
+      margin-top: 10px;
+      font-size: .70rem; color: var(--text);
+      line-height: 1.72; letter-spacing: .03em;
     }
     .simple-goal-label {
-      font-size: .50rem;
-      letter-spacing: .22em;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    /* ── Goal list ── */
-    .goals-label {
-      font-size: .50rem;
-      letter-spacing: .22em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      margin-top: 8px;
-    }
-    .goal-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .goal-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: .68rem;
-      color: var(--text);
-      line-height: 1.55;
-      letter-spacing: .02em;
-    }
-    .goal-item .check {
-      flex-shrink: 0;
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      margin-top: 1px;
-      font-size: .5rem;
-    }
-    .goal-item.done .check {
-      background: var(--green);
-      border-color: var(--green);
-      color: #fff;
-    }
-    .goal-item.warn .check {
-      background: #f0a033;
-      border-color: #f0a033;
-      color: #fff;
-    }
-    .goal-item.done > span { color: var(--muted); text-decoration: line-through; }
-
-    /* ── Macro tag ── */
-    .macro-tag {
-      display: inline-block;
-      font-size: .46rem;
-      letter-spacing: .1em;
-      color: var(--gold);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1px 5px;
-      margin-right: 4px;
-      font-style: normal;
-      vertical-align: middle;
-      white-space: nowrap;
+      font-size: .48rem; letter-spacing: .22em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 4px; font-weight: 600;
     }
 
     /* ── Target banner ── */
     .target-banner {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 18px;
-      margin-top: 4px;
-      margin-bottom: 28px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px 16px; margin-top: 4px; margin-bottom: 4px;
+      display: flex; gap: 10px; align-items: flex-start;
     }
-    .target-icon { font-size: 1.2rem; flex-shrink: 0; }
-    .target-text {
-      font-size: .68rem;
-      color: var(--muted);
-      line-height: 1.7;
-      letter-spacing: .03em;
-    }
-
-    /* ── Futuro section ── */
-    .futuro-card {
-      width: 100%;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 18px;
-      padding: 18px 18px 14px;
-      margin-bottom: 14px;
-    }
-    .futuro-title {
-      font-size: .56rem;
-      letter-spacing: .26em;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-    .futuro-item {
-      margin-bottom: 14px;
-    }
-    .futuro-item:last-child { margin-bottom: 0; }
-    .futuro-item-title {
-      font-size: .72rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: .06em;
-      margin-bottom: 5px;
-    }
-    .futuro-item-body {
-      font-size: .68rem;
-      color: var(--muted);
-      line-height: 1.7;
-      letter-spacing: .03em;
-    }
+    .target-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .target-text { font-size: .67rem; color: var(--muted); line-height: 1.7; letter-spacing: .03em; }
 
     /* ── Footer ── */
     .page-footer {
-      margin-top: 10px;
-      width: 100%;
-      border-top: 1px solid var(--border);
-      padding-top: 12px;
-      text-align: center;
-      font-size: .52rem;
-      letter-spacing: .14em;
-      color: var(--muted);
+      margin-top: 16px; width: 100%;
+      border-top: 1px solid var(--border); padding-top: 12px;
+      text-align: center; font-size: .52rem;
+      letter-spacing: .14em; color: var(--muted);
     }
     .page-footer a { color: var(--gold); text-decoration: none; }
   </style>
@@ -412,616 +205,303 @@
     </button>
   </header>
 
-  <!-- INTRO -->
   <div class="intro-banner">
     <div class="intro-kanji">方向</div>
     <div class="intro-title">La Tua Direzione</div>
-    <div class="intro-sub">Rotta, visione e prossime scelte.<br>Non una lista di doveri, ma una bussola per vivere in modo autentico e coerente con ciò che sei.</div>
+    <div class="intro-sub">Non una lista di doveri, ma una bussola per vivere in modo autentico e coerente con ciò che sei.</div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       SALUTE FISICA
-  ══════════════════════════════════════ -->
+  <!-- SALUTE FISICA -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">💪</div>
-      <div>
-        <div class="macro-title">Salute Fisica</div>
-        <div class="macro-goal-badge">🎯 Corpo funzionale, energico e resiliente fino a 80+ anni</div>
-      </div>
+      <div class="macro-title">Salute Fisica</div>
     </div>
 
-    <!-- Allenamento -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🏋️</div>
-        <div class="area-name">Allenamento</div>
-      </div>
+      <div class="area-name">Allenamento</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Avere le energie per scattare e rincorrere tua figlia in un prato, sollevarla in aria e sentire la sua risata — non solo oggi, ma anche quando lei sarà grande e tu avrai i capelli bianchi. Non ti alleni per un fisico perfetto. Ti alleni per guadagnare decenni di vita piena, attiva e gioiosa.
+        Non ti alleni per un fisico perfetto, non ti alleni neanche per arrivare a cent'anni. Ti alleni per guadagnare decenni di vita piena, attiva e gioiosa — per scattare e rincorrere tua figlia in un prato, sollevarla in aria e sentire la sua risata, oggi e quando avrai i capelli bianchi.
       </div>
-      <div class="simple-goal-label">goal semplice</div>
-      <div class="simple-goal">Guadagnare decenni di vita piena, attiva e gioiosa, per essere una fonte di energia per la mia famiglia e un complice di giochi per mia figlia, oggi e in futuro.</div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Completare 120 allenamenti in palestra nel 2026</span></li>
-        <li class="goal-item"><span class="check"></span><span>Standardizzare 3 schede di allenamento (Resistenza, Forza, Flessibilità)</span></li>
-        <li class="goal-item"><span class="check"></span><span>Completare almeno 20 routine off-gym</span></li>
-        <li class="goal-item"><span class="check"></span><span>Aggiungere riscaldamento cardio a inizio e stretching a fine allenamento</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Andare almeno 1 volta in montagna con I Puffi</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Andare almeno 1 volta a calcetto con Brian</span></li>
-        <li class="goal-item"><span class="check"></span><span>Andare almeno 1 volta in piscina con Lorenzo</span></li>
-        <li class="goal-item"><span class="check"></span><span>Andare almeno 1 volta in bici con papà</span></li>
-        <li class="goal-item"><span class="check"></span><span>Andare almeno 1 volta a padel con Vale e Pisa</span></li>
-        <li class="goal-item"><span class="check"></span><span>Gestire senza dolore per 10 min la posizione del mezzo loto in meditazione</span></li>
-        <li class="goal-item"><span class="check"></span><span>Raggiungere e mantenere almeno 8000 passi/giorno di media</span></li>
-      </ul>
+      <div class="simple-goal-label">in sintesi</div>
+      <div class="simple-goal">2–3 allenamenti di forza a settimana, con 10–15 min di cardio iniziale e 5 min di stretching finale.</div>
     </div>
 
-    <!-- Alimentazione -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🌿</div>
-        <div class="area-name">Alimentazione</div>
-      </div>
+      <div class="area-name">Alimentazione</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        La mia scelta alimentare è un atto di duplice responsabilità: verso il mio corpo e verso il mondo. La salute e l'energia non possono essere costruite sulla sofferenza altrui o sulla distruzione del pianeta. Il mio benessere non può essere separato dal benessere degli altri esseri viventi.
+        La mia scelta alimentare è un atto di duplice responsabilità: verso il mio corpo e verso il mondo. Il mio benessere non può essere separato dal benessere degli altri esseri viventi.
       </div>
-      <div class="simple-goal-label">goal semplice</div>
-      <div class="simple-goal">Nutrire il corpo con un'alimentazione prevalentemente vegetale, integrale e biologica, mantenendo al contempo una gioiosa flessibilità sociale. (L'alcol fa male, ma fa più male negare una birra con un amico).</div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item done"><span class="check">✓</span><span>Seguire almeno 5 ricette dal libro di cucina botanica</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Avere almeno 10 piatti vegetali veloci da incorporare in dieta</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Creare la lista spesa (Esselunga, Natura Sì, Mercato)</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Imparare almeno 3 piatti vegetali ad occhi chiusi senza ricetta</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Cucinare almeno 5 ricette giapponesi (Soba, Noodles, Ramen, Okonomiyaki, Riso)</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Nutrirsi max 1 volta a settimana di cibi ultraprocessati</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Cucina prevalentemente vegana (eccetto fiocchi di latte, miele e uova delle galline)</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Nutrirsi 80% con cereali integrali</span></li>
-        <li class="goal-item"><span class="check"></span><span>Imparare la cottura sottovuoto e preparare almeno 3 ricette</span></li>
-        <li class="goal-item"><span class="check"></span><span>Imparare la cottura per essiccazione e preparare almeno 3 ricette</span></li>
-        <li class="goal-item"><span class="check"></span><span>Organizzare 1 pasto a tema Giappone</span></li>
-        <li class="goal-item"><span class="check"></span><span>Organizzare 1 pranzo a cannoli</span></li>
-      </ul>
+      <div class="simple-goal-label">in sintesi</div>
+      <div class="simple-goal">Sistema 80/20 — cucina vegetale, integrale e biologica con gioiosa flessibilità sociale. L'alcol fa male, ma fa più male negare una birra con un amico.</div>
     </div>
 
-    <!-- Sonno -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🌙</div>
-        <div class="area-name">Sonno</div>
-      </div>
+      <div class="area-name">Sonno</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
         La qualità della mia presenza, della mia lucidità e della mia pazienza di domani dipende dalla profondità del mio riposo di stanotte. Onorare il buio per poter essere pienamente luce.
       </div>
-      <div class="simple-goal-label">goal semplice</div>
-      <div class="simple-goal">Stabilire una routine del sonno costante e di altissima qualità, trasformandolo in un rituale sacro che garantisca riposo profondo e rigenerante per massimizzare recupero fisico, lucidità mentale ed equilibrio emotivo.</div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item done"><span class="check">✓</span><span>Dormire almeno 7-8 ore a notte curando la qualità pre, durante e post nanna</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Dormire nel lettone almeno 6 ore a notte</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mettersi nel letto con Emma almeno 2 volte a settimana</span></li>
-      </ul>
+      <div class="simple-goal-label">in sintesi</div>
+      <div class="simple-goal">Zona di atterraggio di 60 minuti prima di dormire: luci soffuse, lettura, musica rilassante. Almeno 7 ore ogni notte.</div>
     </div>
 
-    <!-- Integrazione -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">💊</div>
-        <div class="area-name">Integrazione</div>
-      </div>
+      <div class="area-name">Check-up Medico</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Dare proattivamente al mio corpo gli strumenti per operare al picco della sua vitalità, costruendo la salute che merito per rendere la vita un viaggio meraviglioso.
+        Non attendo che il mio corpo mi segnali un problema. Agisco con intelligenza e rispetto per conoscere il mio stato attuale e anticipare il futuro. Non è un atto di paura, ma di cura.
       </div>
-      <div class="goals-label">routine integratori</div>
-      <ul class="goal-list">
-        <li class="goal-item warn"><span class="check">⚠</span><span>Mattina: Creatina e Beta-Alanina ogni mattina — <em>bloccato dal reflusso</em></span></li>
-        <li class="goal-item"><span class="check"></span><span>Mattina: L-Citrullina nei soli giorni on-gym</span></li>
-        <li class="goal-item"><span class="check"></span><span>Post allenamento: Potassio e Whey vegane</span></li>
-        <li class="goal-item"><span class="check"></span><span>Inverno: Vitamina D e Vitamina C a pranzo e cena</span></li>
-        <li class="goal-item"><span class="check"></span><span>Estate: Omega 3 e Riso Rosso a pranzo e cena</span></li>
-        <li class="goal-item"><span class="check"></span><span>Cicli periodici: Vitamina B12 e multivitaminico</span></li>
-      </ul>
-    </div>
-
-    <!-- Check-up medico -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🩺</div>
-        <div class="area-name">Check-up Medico</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        Non attendo che il mio corpo mi segnali un problema. Agisco con intelligenza e rispetto per conoscere il mio stato attuale e anticipare il futuro. Non è un atto di paura, ma di cura e governo del mio benessere.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Visita cardiologica</span></li>
-        <li class="goal-item"><span class="check"></span><span>Esami del sangue (annuali)</span></li>
-        <li class="goal-item"><span class="check"></span><span>Visita ayurvedica</span></li>
-        <li class="goal-item"><span class="check"></span><span>Visita dal gastroenterologo</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mappatura Nei (2028)</span></li>
-      </ul>
     </div>
 
     <div class="target-banner">
       <div class="target-icon">🎯</div>
-      <div class="target-text">Costruire un corpo funzionale, energico e resiliente fino a 80+ anni attraverso allenamento costante, alimentazione vegetariana consapevole, integrazione mirata, controlli medici regolari e sonno di qualità come fondamenta quotidiane.</div>
+      <div class="target-text">Corpo funzionale, energico e resiliente fino a 80+ anni attraverso allenamento costante, alimentazione vegetariana consapevole, sonno di qualità e controlli medici regolari.</div>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       SALUTE MENTALE
-  ══════════════════════════════════════ -->
+  <!-- SALUTE MENTALE -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">🧘</div>
-      <div>
-        <div class="macro-title">Salute Mentale</div>
-        <div class="macro-goal-badge">🎯 La mente come bussola per decisioni sagge e consapevoli</div>
+      <div class="macro-title">Salute Mentale</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Benessere Psicologico</div>
+      <div class="direction-quote">
+        <div class="direction-label">direction</div>
+        Non puoi cambiare il passato, ma puoi smettere di permettere che ti derubi del presente. Non puoi prevedere il futuro, ma puoi smettere di permettergli di derubarti il presente pensando di controllare tutto. Vivi nel qui e ora.
+      </div>
+      <div class="simple-goal-label">in sintesi</div>
+      <div class="simple-goal">Onorare il Passato come un Maestro, Pianificare il Futuro con Saggezza. La serenità interiore non è qualcosa da costruire: è lo stato naturale della mente.</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Gestione delle Emozioni</div>
+      <div class="direction-quote">
+        <div class="direction-label">direction</div>
+        Le emozioni sono onde che arrivano e si infrangono. Non lasciare che siano tsunami, lascia che cullino la tua anima. Vanno e passano come l'acqua in un fiume: accettale, non giudicarle, non attaccarti ad esse.
       </div>
     </div>
 
-    <!-- Benessere Psicologico -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🌊</div>
-        <div class="area-name">Benessere Psicologico</div>
-      </div>
+      <div class="area-name">Journaling</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Non puoi cambiare il passato, ma puoi smettere di permettere che ti derubi del presente. Non puoi prevedere il futuro, ma puoi smettere di permettergli di derubarti il presente. Coltiva una serenità interiore costante vivendo nel qui e ora.
+        La mia mente a volte è una stanza affollata e rumorosa. Il diario è la porta che apro per uscire in un giardino silenzioso. Scrivere non è un compito, è un rituale di liberazione.
       </div>
-      <div class="simple-goal-label">goal semplice</div>
-      <div class="simple-goal">Onorare il Passato come un Maestro, Pianificare il Futuro con Saggezza. La serenità interiore non è qualcosa da costruire o trovare: è lo stato naturale della mente.</div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Concludere ogni sessione di meditazione con almeno 1 frase mentale di self-care</span></li>
-        <li class="goal-item"><span class="check"></span><span>Dire "no" consapevolmente almeno 1 volta a settimana quando una richiesta è oltre i limiti</span></li>
-        <li class="goal-item"><span class="check"></span><span>Meditare almeno 3 volte a settimana</span></li>
-        <li class="goal-item"><span class="check"></span><span>Finire il corso meditazione di Ongaro</span></li>
-        <li class="goal-item"><span class="check"></span><span>Rivedere notifiche computer, cellulare e tablet entro giugno</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mantenere 2 sedute al mese con la psicologa</span></li>
-      </ul>
-    </div>
-
-    <!-- Gestione Emozioni -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">💧</div>
-        <div class="area-name">Gestione delle Emozioni</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        La vita diventa vissuta solo quando è colma di emozioni — gioia, tristezza, paura, noia. Tutto fa parte del meraviglioso viaggio che si chiama esistenza. Le emozioni sono onde che arrivano e si infrangono: non lasciare che siano tsunami, lascia che cullino la tua anima.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Studiare le emozioni primarie e secondarie e annotarle su Notion</span></li>
-        <li class="goal-item"><span class="check"></span><span>Almeno 1 volta al giorno riconoscere un'emozione quando arriva, ripetendola mentalmente</span></li>
-        <li class="goal-item"><span class="check"></span><span>Quando l'emozione dura più di 5 secondi: chiudere gli occhi, respirare e dire "ok grazie emozione per essere qui"</span></li>
-        <li class="goal-item"><span class="check"></span><span>Quando arriva un'emozione, fermarsi 3 secondi prima di reagire</span></li>
-        <li class="goal-item"><span class="check"></span><span>La domenica sera: identificare un momento emotivo della settimana e chiedersi cosa può insegnarmi</span></li>
-      </ul>
-    </div>
-
-    <!-- Journaling -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">📓</div>
-        <div class="area-name">Journaling</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        La mia mente a volte è una stanza affollata e rumorosa. Il diario è la porta che apro per uscire in un giardino silenzioso. Scrivere non è un compito, è un rituale di liberazione: prendere una matassa aggrovigliata di pensieri e, parola dopo parola, iniziare a sgrovi­gliarla con calma.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Scrivere almeno 1 volta a settimana pensieri ed emozioni della settimana</span></li>
-        <li class="goal-item"><span class="check"></span><span>Rileggere 3 volte l'anno (Gennaio, Aprile, Settembre)</span></li>
-      </ul>
     </div>
 
     <div class="target-banner">
       <div class="target-icon">🎯</div>
-      <div class="target-text">Coltivare equilibrio interiore e resilienza emotiva attraverso journaling, meditazione e gestione consapevole delle emozioni, trasformando la mente in bussola per decisioni sagge.</div>
+      <div class="target-text">Equilibrio interiore e resilienza emotiva attraverso journaling, meditazione e gestione consapevole delle emozioni — la mente come bussola per decisioni sagge.</div>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       RELAZIONI
-  ══════════════════════════════════════ -->
+  <!-- RELAZIONI -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">❤️</div>
-      <div>
-        <div class="macro-title">Relazioni</div>
-        <div class="macro-goal-badge">🎯 Connessioni autentiche basate su presenza e rispetto</div>
+      <div class="macro-title">Relazioni</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Raoul</div>
+      <div class="direction-quote">
+        <div class="direction-label">direction</div>
+        La relazione con me stesso è il fondamento su cui poggiano tutte le altre. L'amore che posso offrire al mondo nasce dall'amore che coltivo per me. Imparare a volermi bene significa anche saper ridere di me stesso e alleggerire i pensieri.
       </div>
     </div>
 
-    <!-- Raoul -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🪞</div>
-        <div class="area-name">Raoul</div>
-      </div>
+      <div class="area-name">Michela</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        La relazione con me stesso non è una tra le tante, ma il fondamento su cui poggiano tutte le altre. L'amore che posso offrire al mondo nasce dall'amore e dal rispetto che coltivo per me. Imparare a volermi bene significa anche saper ridere di me stesso e alleggerire i pensieri.
+        Scelgo di smettere di combattere le differenze e di praticare attivamente l'accettazione, coltivando ogni giorno rispetto, amore e comprensione per la persona che è — senza pretendere che sia diversa.
       </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Una volta al mese, durante la review su Notion, chiedersi se c'è stata coerenza con i valori e se si sta perseguendo l'ikigai</span></li>
-      </ul>
     </div>
 
-    <!-- Michela -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🌸</div>
-        <div class="area-name">Michela</div>
-      </div>
+      <div class="area-name">Emma</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Al di là delle nostre profonde diversità, Michela è la mia compagna e la mamma di nostra figlia. Scelgo di smettere di combattere le differenze e di praticare attivamente l'accettazione, coltivando ogni giorno rispetto, amore e comprensione per la persona che è.
+        Sii un padre guida amorevole. Trasmetti i tuoi valori attraverso l'esempio e proteggi uno spazio sacro in cui Emma possa scoprire ed esprimere liberamente la propria irripetibile unicità.
       </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Almeno 1 volta a settimana: 10–15 min ad ascoltare Michela con domande aperte, senza dare soluzioni</span></li>
-        <li class="goal-item"><span class="check"></span><span>Durante i litigi: almeno 1 pausa consapevole (3 respiri) prima di rispondere</span></li>
-        <li class="goal-item"><span class="check"></span><span>Almeno 1 volta a settimana: momento "noi" di 15–30 min (passeggiata, tè, chiacchiere) senza problemi</span></li>
-        <li class="goal-item"><span class="check"></span><span>Cena senza schermi almeno 5 sere su 7</span></li>
-        <li class="goal-item"><span class="check"></span><span>Entro fine maggio: lista di 20 domande aperte per parlare della sua giornata</span></li>
-      </ul>
+      <div class="simple-goal-label">in sintesi</div>
+      <div class="simple-goal">Emma deve sentire di essere una priorità stabile nella tua vita — non qualcosa che viene dopo lavoro, passioni o altro.</div>
     </div>
 
-    <!-- Emma -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">👧</div>
-        <div class="area-name">Emma</div>
-      </div>
+      <div class="area-name">Animali</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Sii un padre guida amorevole, capace di creare un ambiente familiare sicuro e sereno. Trasmetti i tuoi valori soprattutto attraverso l'esempio e proteggi uno spazio sacro in cui Emma possa scoprire ed esprimere liberamente la propria irripetibile unicità.
+        Siamo animali tra gli animali, parte dell'ecosistema e non sopra di esso. Praticare ahimsa e compassione verso tutti gli esseri viventi che condividono con me casa e giardino.
       </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>"Emma Time" fisso di 1–2 ore a settimana solo con lei, senza telefono</span></li>
-        <li class="goal-item"><span class="check"></span><span>Almeno 1 volta a settimana: piccola regola rotta insieme in sicurezza (gelato prima di cena, ballare sul divano…)</span></li>
-        <li class="goal-item"><span class="check"></span><span>Ogni giorno: almeno 2 minuti a suo livello, occhi negli occhi, ascoltando come sta</span></li>
-        <li class="goal-item"><span class="check"></span><span>Quando è agitata: nominare l'emozione prima di correggere il comportamento</span></li>
-        <li class="goal-item"><span class="check"></span><span>Seguire attivamente almeno uno dei suoi interessi (cartoni, giochi, disegni) facendomi spiegare da lei</span></li>
-        <li class="goal-item"><span class="check"></span><span>Una volta all'anno: attività speciale padre-figlia legata a qualcosa che piace a lei</span></li>
-      </ul>
     </div>
 
-    <!-- Animali -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🐾</div>
-        <div class="area-name">Animali</div>
-      </div>
+      <div class="area-name">Mamma e Papà</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Riconoscere che siamo animali tra gli animali, parte dell'ecosistema e non sopra di esso. Vivere questa consapevolezza prendendomi cura concretamente degli esseri viventi che condividono con me casa e giardino, dal cane alle galline fino agli insetti più piccoli del mio giardino.
+        Smettere di aspettarsi che papà diventi il genitore che non è mai stato e iniziare a relazionarsi con lui per come è oggi. Con la mamma: coltivare un rapporto più profondo, riconoscendo e restituendo l'amore incondizionato che dà.
       </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Garantire ogni giorno cibo e acqua a cane, coniglio e galline, mantenendo le aree pulite</span></li>
-        <li class="goal-item"><span class="check"></span><span>Quando trovi lumache, cimici o insetti in zone "sbagliate": spostarli delicatamente invece di ucciderli</span></li>
-        <li class="goal-item"><span class="check"></span><span>Ridurre intenzionalmente le azioni che contribuiscono alla sofferenza animale</span></li>
-      </ul>
     </div>
 
-    <!-- Mamma e Papà -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">👨‍👩‍👦</div>
-        <div class="area-name">Mamma e Papà</div>
-      </div>
+      <div class="area-name">Amici & Network</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Smettere di aspettarsi che papà diventi il genitore che non è mai stato, e iniziare a relazionarsi con lui per come è oggi. Con la mamma: coltivare un rapporto più profondo, riconoscendo e restituendo l'amore incondizionato e i sacrifici che fa.
+        Scelgo di investire il mio tempo in legami che mi nutrono e mi ricordano chi sono. La vera resilienza non sta nell'isolamento, ma nella forza di una comunità.
       </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Papà: mettere un confine quando si entra in argomenti che fanno male</span></li>
-        <li class="goal-item"><span class="check"></span><span>Papà: bici insieme</span></li>
-        <li class="goal-item"><span class="check"></span><span>Papà & Mamma: Gita Gae Aulenti</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mamma: salsa e cucinare il pane insieme</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mamma: scambiarsi le ricette (Crespelle, Pane, Casatiello, Frittata con peperoni cruschi…)</span></li>
-        <li class="goal-item done"><span class="check">✓</span><span>Mamma: viaggio insieme</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mamma: abbracciarla e baciarla ogni volta che ci vediamo</span></li>
-      </ul>
-    </div>
-
-    <!-- Amici -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🤝</div>
-        <div class="area-name">Amici</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        Scelgo di investire il mio tempo e la mia energia in legami che mi nutrono, mi fanno crescere e mi ricordano chi sono e quali valori ho scelto di onorare.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Cena giapponese con Brian</span></li>
-        <li class="goal-item"><span class="check"></span><span>Uscita a funghi con Matte</span></li>
-        <li class="goal-item"><span class="check"></span><span>Pranzo o cena con i vicini di casa</span></li>
-        <li class="goal-item"><span class="check"></span><span>Pranzo o cena con i genitori dell'asilo</span></li>
-        <li class="goal-item"><span class="check"></span><span>Approfondire i valori di Silvia</span></li>
-      </ul>
-    </div>
-
-    <!-- Network -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🌐</div>
-        <div class="area-name">Network</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        La vera resilienza non sta nell'isolamento, ma nella forza di una comunità. Coltivare la rete significa costruire ponti di fiducia, conoscenza e valore reciproco.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Creare database Notion "Network / Personal CRM" entro 30/06/2026</span></li>
-        <li class="goal-item"><span class="check"></span><span>Popolare con almeno 100 contatti significativi entro fine anno</span></li>
-        <li class="goal-item"><span class="check"></span><span>Creare vista "Top 20" VIP con frequenza target di contatto</span></li>
-        <li class="goal-item"><span class="check"></span><span>Ogni settimana: contattare almeno 3 persone dal CRM con intenzione di connessione vera</span></li>
-        <li class="goal-item"><span class="check"></span><span>Revisione triannuale del CRM (30–60 min) per aggiornare e pianificare</span></li>
-      </ul>
     </div>
 
     <div class="target-banner">
       <div class="target-icon">🎯</div>
-      <div class="target-text">Coltivare connessioni autentiche e gioiose con Michela, Emma, papà, mamma, i miei animali e il mio network, basate su presenza, rispetto e divertimento genuino.</div>
+      <div class="target-text">Connessioni autentiche e gioiose con Michela, Emma, i miei genitori, gli animali e il network — ogni relazione nutre anziché prosciugare energia.</div>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       CONTRIBUTO AL MONDO
-  ══════════════════════════════════════ -->
+  <!-- CONTRIBUTO AL MONDO -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">🌍</div>
-      <div>
-        <div class="macro-title">Contributo al Mondo</div>
-        <div class="macro-goal-badge">🎯 IBM come base, Plastic Free e Il Geco Zen come missione</div>
+      <div class="macro-title">Contributo al Mondo</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">IBM</div>
+      <div class="direction-quote">
+        <div class="direction-label">direction</div>
+        Ogni giorno in IBM è un investimento diretto nella libertà e nel tempo. IBM è la solida piattaforma che mi permette di spiccare il volo nelle mie vere missioni, senza l'ansia di cadere.
+      </div>
+      <div class="simple-goal-label">in sintesi</div>
+      <div class="simple-goal">Performance alta, orari sostenibili, smart working garantito. I paletti non sono negoziabili.</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Il Geco Zen</div>
+      <div class="direction-quote">
+        <div class="direction-label">direction</div>
+        La meditazione è stata la bussola che ti ha riportato a casa. Il Geco Zen non è un progetto di business, è il mio modo di restituire il dono che ho ricevuto. Ogni volta che condividi una pratica, tendi la mano alla versione passata di te stesso.
       </div>
     </div>
 
-    <!-- IBM -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">💼</div>
-        <div class="area-name">IBM</div>
-      </div>
+      <div class="area-name">Finanza</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Ogni giorno in IBM è un investimento diretto nella libertà e nel tempo. Non è un compromesso, è una scelta strategica: IBM è la solida piattaforma che mi permette di spiccare il volo nelle mie vere missioni, senza l'ansia di cadere.
+        La finanza deve essere un atto spirituale: allineare le risorse materiali con i valori più profondi. Ogni euro gestito con saggezza è un voto per la vita che sto costruendo.
       </div>
-      <div class="simple-goal-label">goal semplice</div>
-      <div class="simple-goal">Mantenere una performance professionale di alto livello, operando in modo efficiente per garantire una stabilità economica superiore ai 3k/mese, entro i confini non negoziabili di smart working flessibile e orario sostenibile.</div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Mantenere almeno 3 giorni di smart working a settimana come standard</span></li>
-        <li class="goal-item"><span class="check"></span><span>No call prima delle 10 e no call dopo le 18</span></li>
-        <li class="goal-item"><span class="check"></span><span>Stipendio di minimo 3k/mese netti per 20–25 ore di lavoro a settimana</span></li>
-        <li class="goal-item"><span class="check"></span><span>Dire no o proporre alternative quando una call è inutile</span></li>
-        <li class="goal-item"><span class="check"></span><span>Avere 5 feedback positivi nel 2026 (Stefania, Marina, Max, Andrea)</span></li>
-        <li class="goal-item"><span class="check"></span><span>Essere puntuale, organizzato e preparato nelle call e negli eventi chiave</span></li>
-      </ul>
     </div>
 
-    <!-- Il Geco Zen -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🦎</div>
-        <div class="area-name">Il Geco Zen</div>
-      </div>
+      <div class="area-name">Competenze</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        La meditazione è stata la bussola che ti ha riportato a casa. Il Geco Zen non è un progetto di business, è il mio modo di restituire il dono che ho ricevuto. Ogni volta che condividi una pratica, è come tendere la mano alla versione passata di te stesso.
+        Coltivare competenze che nessuna macchina può togliermi. Come un artigiano: pochi strumenti scelti, usati ogni settimana con cura — guidato dai valori, non dalla paura di restare indietro.
       </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Lanciare il sito del Geco Zen funzionante al 100%</span></li>
-        <li class="goal-item"><span class="check"></span><span>Registrare i video e pubblicare 10 post</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mantenere 100% gratuito con almeno 100 follower</span></li>
-      </ul>
-    </div>
-
-    <!-- Finance -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">💰</div>
-        <div class="area-name">Finanza</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        La finanza per me deve essere un atto spirituale: la pratica quotidiana di allineare le risorse materiali con i valori più profondi. Ogni euro guadagnato e gestito con saggezza diventa un voto per la vita che sto costruendo.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Mappare su Notion entrate, uscite e investimenti</span></li>
-        <li class="goal-item"><span class="check"></span><span>Studiare la finanza personale e gli ETF</span></li>
-        <li class="goal-item"><span class="check"></span><span>Definire il Piano Finanziario di Riferimento (da avviare nel 2027)</span></li>
-      </ul>
-    </div>
-
-    <!-- Competenze -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">📚</div>
-        <div class="area-name">Competenze</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        Coltivare competenze che nessuna macchina può togliermi: la capacità di prendermi cura delle persone, del pianeta e della qualità della presenza. Come un artigiano: pochi strumenti scelti, usati ogni settimana con cura.
-      </div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Studiare il cinese almeno 2 volte a settimana per almeno 10 minuti</span></li>
-        <li class="goal-item"><span class="check"></span><span>Completare il corso di mindfulness di Ongaro</span></li>
-        <li class="goal-item"><span class="check"></span><span>Sperimentare 1 volta nel 2026 la mindfulness in un gruppo esterno</span></li>
-        <li class="goal-item"><span class="check"></span><span>Avere 1 sessione di learning di sostenibilità al mese</span></li>
-      </ul>
     </div>
 
     <div class="target-banner">
       <div class="target-icon">🎯</div>
-      <div class="target-text">IBM come base economica per la serenità familiare, Plastic Free per garantire un futuro a mia figlia, Il Geco Zen per aiutare le persone a stare meglio con se stesse.</div>
+      <div class="target-text">IBM come base economica, Plastic Free per il futuro del pianeta, Il Geco Zen per aiutare le persone a stare meglio con se stesse.</div>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       CONNESSIONE CON IL TUTTO
-  ══════════════════════════════════════ -->
+  <!-- CONNESSIONE CON IL TUTTO -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">☯️</div>
-      <div>
-        <div class="macro-title">Connessione con il Tutto</div>
-        <div class="macro-goal-badge">🎯 Percorrere l'Ottuplice Sentiero con piena responsabilità</div>
+      <div class="macro-title">Connessione con il Tutto</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Buddismo</div>
+      <div class="direction-quote">
+        <div class="direction-label">direction</div>
+        Riconosco che la sofferenza nasce dall'attaccamento. Scelgo il Buddismo come via per comprenderla in profondità e trasformarla, seguendo l'Ottuplice Sentiero come guida concreta per liberare me stesso e alleviare la sofferenza di tutti gli esseri senzienti.
       </div>
     </div>
 
-    <!-- Buddismo -->
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🪷</div>
-        <div class="area-name">Buddismo</div>
-      </div>
+      <div class="area-name">Meditazione</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Riconosco che la sofferenza fa parte dell'esistenza e nasce dall'attaccamento. Scelgo il Buddismo come via per comprenderla in profondità e trasformarla, seguendo l'Ottuplice Sentiero come guida concreta per liberare me stesso e alleviare la sofferenza di tutti gli esseri senzienti.
+        La meditazione è la via per tornare alla semplicità del momento presente, coltivando una mente più quieta, lucida e spaziosa. Un tempo sacro e non negoziabile ogni giorno.
       </div>
-      <div class="goals-label">approfondimenti 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Prima e Seconda Nobile Verità</span></li>
-        <li class="goal-item"><span class="check"></span><span>Non dualità — Interdipendenza — Interconnessione</span></li>
-        <li class="goal-item"><span class="check"></span><span>Impermanenza — Non-sé — Non-attaccamento</span></li>
-        <li class="goal-item"><span class="check"></span><span>Mente del principiante</span></li>
-        <li class="goal-item"><span class="check"></span><span>Retto Pensiero — Retta Parola — Retta Azione</span></li>
-        <li class="goal-item"><span class="check"></span><span>Retto Sostentamento — Retto Sforzo — Retta Concentrazione</span></li>
-      </ul>
-    </div>
-
-    <!-- Meditazione -->
-    <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🕉</div>
-        <div class="area-name">Meditazione</div>
-      </div>
-      <div class="direction-quote">
-        <div class="direction-label">direction</div>
-        Adottare la meditazione come pratica costante: la via per tornare alla semplicità del momento presente, coltivando una mente più quieta, lucida e spaziosa, capace di non farsi trascinare continuamente da pensieri ed emozioni.
-      </div>
-      <div class="simple-goal-label">goal semplice</div>
-      <div class="simple-goal">Consolidare la meditazione come pilastro quotidiano della salute mentale e del percorso spirituale, dedicando un tempo sacro e non negoziabile alla pratica formale.</div>
     </div>
 
     <div class="target-banner">
       <div class="target-icon">🎯</div>
-      <div class="target-text">Percorrere l'Ottuplice Sentiero buddista con piena responsabilità, coltivando Retta Visione e Via di Mezzo per comprendere la sofferenza e contribuire alla sua cessazione per me e tutti gli esseri senzienti.</div>
+      <div class="target-text">Percorrere l'Ottuplice Sentiero con piena responsabilità, coltivando Retta Visione e Via di Mezzo per comprendere la sofferenza e contribuire alla sua cessazione.</div>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       PASSIONI E NUTRIMENTO DELL'ANIMA
-  ══════════════════════════════════════ -->
+  <!-- PASSIONI & ANIMA -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">✨</div>
-      <div>
-        <div class="macro-title">Passioni & Anima</div>
-        <div class="macro-goal-badge">🎯 Coltivare gioia, creatività e meraviglia senza to-do list</div>
-      </div>
+      <div class="macro-title">Passioni & Anima</div>
     </div>
 
     <div class="area-card">
-      <div class="area-card-header">
-        <div class="area-icon">🌈</div>
-        <div class="area-name">Le mie passioni</div>
-      </div>
+      <div class="area-name">Nutrimento dell'anima</div>
       <div class="direction-quote">
         <div class="direction-label">direction</div>
-        Proteggere e coltivare uno spazio vitale di interessi e ispirazione, dove posso dedicarmi alle mie passioni senza obbligo di risultato. Onorare la mia natura curiosa e multipotenziale come una risorsa, non come un difetto.
+        Proteggere uno spazio vitale dove posso dedicarmi alle mie passioni senza obbligo di risultato. Onorare la mia natura curiosa e multipotenziale come una risorsa, non come un difetto. Scegliere il nutrimento e non il veleno per la mente.
       </div>
       <div class="simple-goal-label">universo di passioni</div>
-      <div class="simple-goal">Libri · Film · Serie TV · Anime & Manga · Giardino & Orto · Animali · Sostenibilità · Studio · Giochi da Tavolo · D&D · Videogame · Inter · Yu-Gi-Oh · Domotica · Fotografia · Poesia · Crescita Personale · Viaggi · Musica (chitarra & piano)</div>
-      <div class="goals-label">goal 2026</div>
-      <ul class="goal-list">
-        <li class="goal-item"><span class="check"></span><span>Personal brand: look, capelli, mani, presenza, profumo</span></li>
-        <li class="goal-item"><span class="check"></span><span>Fotografia attiva</span></li>
-        <li class="goal-item"><span class="check"></span><span>Film, serie TV e anime</span></li>
-        <li class="goal-item"><span class="check"></span><span>Libri, articoli e manga</span></li>
-        <li class="goal-item"><span class="check"></span><span>Musica e podcast</span></li>
-        <li class="goal-item"><span class="check"></span><span>Orto, giardino e natura</span></li>
-        <li class="goal-item"><span class="check"></span><span>Tecnologia, domotica e videogiochi</span></li>
-        <li class="goal-item"><span class="check"></span><span>Viaggi: 5 regioni italiane nel 2026</span></li>
-        <li class="goal-item"><span class="check"></span><span>Viaggi: 3 paesi europei nel 2026</span></li>
-        <li class="goal-item"><span class="check"></span><span>Viaggi: 1 paese extra-europeo nel 2026</span></li>
-        <li class="goal-item"><span class="check"></span><span>Percorso verso 50 Patrimoni UNESCO e 5 paesi dai nomi strani</span></li>
-      </ul>
+      <div class="simple-goal">Libri · Film · Anime & Manga · Giardino & Orto · D&D · Videogame · Inter · Domotica · Fotografia · Poesia · Viaggi · Musica</div>
     </div>
 
     <div class="target-banner">
       <div class="target-icon">🎯</div>
-      <div class="target-text">Coltivare gioia ed entusiasmo attraverso le mie passioni, condividendo questa energia con le persone care, non dimenticando mai quei desideri senza scadenza presenti sulla mia Bucket List.</div>
+      <div class="target-text">Coltivare gioia ed entusiasmo attraverso le passioni, condividendo questa energia con le persone care — senza mai dimenticare la Bucket List.</div>
     </div>
   </div>
 
 
-  <!-- ══════════════════════════════════════
-       FUTURO — NOTE STRATEGICHE
-  ══════════════════════════════════════ -->
+  <!-- NOTE PER IL FUTURO -->
   <div class="macro-section">
     <div class="macro-header">
       <div class="macro-icon">🔭</div>
-      <div>
-        <div class="macro-title">Note per il Futuro</div>
-        <div class="macro-goal-badge">riflessioni strategiche a lungo termine</div>
+      <div class="macro-title">Note per il Futuro</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Difesa del Perimetro</div>
+      <div class="direction-quote">
+        <div class="direction-label">memento</div>
+        Il setup attuale è la tua vera ricchezza. Difendi le 20–25 ore settimanali e il blocco delle call fuori orario come se fossero codice critico in produzione.
       </div>
     </div>
-    <div class="futuro-card">
-      <div class="futuro-title">◈ &nbsp;memento strategico</div>
-      <div class="futuro-item">
-        <div class="futuro-item-title">Difesa del Perimetro</div>
-        <div class="futuro-item-body">Il setup attuale (ottimo rapporto ore/rendimento) è la tua vera ricchezza. Il rischio maggiore è il lifestyle creep e cedere sui paletti dello smart working. Difendi le 20–25 ore settimanali come se fossero codice critico in produzione.</div>
+
+    <div class="area-card">
+      <div class="area-name">Non Attaccamento alla Serenità</div>
+      <div class="direction-quote">
+        <div class="direction-label">memento</div>
+        Il rischio di stare molto bene è sviluppare il terrore di perdere questo stato. Accetta che ci saranno giornate storte. Lasciale scorrere senza etichettarle come fallimenti del tuo sistema.
       </div>
-      <div class="futuro-item">
-        <div class="futuro-item-title">Automazione del PFR</div>
-        <div class="futuro-item-body">La transizione verso la pensione anticipata (55–60 anni) richiede di eliminare il fattore emotivo. Automatizza i versamenti sugli ETF etici. La finanza deve essere noiosa e sistematica per funzionare.</div>
-      </div>
-      <div class="futuro-item">
-        <div class="futuro-item-title">Non Attaccamento alla Serenità</div>
-        <div class="futuro-item-body">Il rischio di stare molto bene è sviluppare il terrore di perdere questo stato. Accetta che ci saranno giornate storte, cali di energia e momenti di confusione. Lasciali scorrere senza etichettarli come fallimenti del tuo sistema.</div>
-      </div>
-      <div class="futuro-item">
-        <div class="futuro-item-title">Purezza dell'Impatto</div>
-        <div class="futuro-item-body">Mantieni le tue valvole di sfogo e contributo al mondo svincolate da metriche di vanità. Se la condivisione della mindfulness o l'impegno ambientale diventano un altro lavoro con KPI da inseguire, perderanno la loro funzione rigenerativa.</div>
+    </div>
+
+    <div class="area-card">
+      <div class="area-name">Purezza dell'Impatto</div>
+      <div class="direction-quote">
+        <div class="direction-label">memento</div>
+        Se la condivisione della mindfulness o l'impegno ambientale diventano un altro lavoro con KPI da inseguire, perderanno la loro funzione rigenerativa. Mantieni le valvole di sfogo svincolate da metriche di vanità.
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="page-footer">
     <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
     &nbsp;·&nbsp; Il Geco Zen
@@ -1032,14 +512,12 @@
     const btn    = document.getElementById('theme-toggle');
     const knob   = document.getElementById('theme-knob');
     let isDark   = localStorage.getItem('zen_theme') === 'dark';
-
     function apply() {
       htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
       knob.textContent = isDark ? '🌙' : '☀️';
       document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
       localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
     }
-
     apply();
     btn.addEventListener('click', () => { isDark = !isDark; apply(); });
   </script>
