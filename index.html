@@ -92,11 +92,12 @@
     }
     .hub-title {
       font-size: .72rem;
-      letter-spacing: .28em;
+      letter-spacing: .22em;
       color: var(--gold);
       font-weight: 700;
       text-align: center;
       text-transform: uppercase;
+      line-height: 1.5;
     }
 
     .section-card {
@@ -226,6 +227,17 @@
       color: var(--text);
       line-height: 1.6;
     }
+    .footer-quote {
+      width: 100%;
+      margin-top: 22px;
+      padding: 20px 18px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .72rem;
+      line-height: 1.8;
+      text-align: center;
+      font-style: italic;
+    }
     .compass-point {
       position: absolute;
       font-size: .58rem;
@@ -330,7 +342,7 @@
 
   <header class="hub-header">
     <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="hub-logo"/>
-    <div class="hub-title">LA VIA DI MESSO PER PROSPERITÀ</div>
+    <div class="hub-title">LA VIA DI MEZZO PER LA PROSPERITÀ</div>
   </header>
 
   <section class="section-card" aria-label="Barra della vita" style="margin-bottom: 18px;">
@@ -356,7 +368,7 @@
         <button class="compass-center" id="ikigai-trigger" type="button" aria-label="Mostra la mia missione" aria-expanded="false"></button>
         <div class="ikigai-popup" id="ikigai-popup" role="dialog" aria-label="La mia missione">
           <div class="ikigai-popup-title">La mia missione</div>
-          <div class="ikigai-popup-text">ikigai ikigai ikigai pi</div>
+          <div class="ikigai-popup-text">Vivere una vita lunga, sana, umile e semplice emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
         </div>
       </div>
     </div>
@@ -366,13 +378,11 @@
     <a class="hub-card bucket" href="bucket-list.html">
       <span class="hub-card-icon">✨</span>
       <div class="hub-card-title">Bucket List</div>
-      <div class="hub-card-sub">desideri · sogni · esperienze</div>
     </a>
 
     <a class="hub-card dir" href="direzione.html">
       <span class="hub-card-icon">🧭</span>
       <div class="hub-card-title">Direzione</div>
-      <div class="hub-card-sub">rotta · visione · scelte</div>
     </a>
   </div>
 
@@ -386,7 +396,7 @@
     <a class="hub-card gym" href="allenamento.html">
       <span class="hub-card-icon gym-icon">🏋️</span>
       <div class="hub-card-title">Allenamento</div>
-      <div class="hub-card-sub">schede · sessioni · log</div>
+      <div class="hub-card-sub">schede · sessioni</div>
     </a>
 
     <a class="hub-card zen hub-card-wide" href="meditazione.html">
@@ -397,20 +407,19 @@
 
     <a class="hub-card journal" href="journaling.html">
       <span class="hub-card-icon">🎨</span>
-      <div class="hub-card-title">Le mie passioni</div>
-      <div class="hub-card-sub">interessi · creatività · entusiasmo</div>
+      <div class="hub-card-title">Passioni</div>
     </a>
 
     <a class="hub-card mind" href="salute-mentale.html">
       <span class="hub-card-icon">🫶</span>
       <div class="hub-card-title">Salute mentale</div>
-      <div class="hub-card-sub">equilibrio · ascolto · cura</div>
+      <div class="hub-card-sub">ascolto, emozioni diario</div>
     </a>
 
     <a class="hub-card social hub-card-wide" href="armonia-sociale.html">
       <span class="hub-card-icon">🤝</span>
       <div class="hub-card-title">Armonia sociale</div>
-      <div class="hub-card-sub">relazioni · connessioni · presenza</div>
+      <div class="hub-card-sub">relazioni, CRM</div>
     </a>
 
     <a class="hub-card world hub-card-wide" href="contributo-al-mondo.html">
@@ -419,6 +428,10 @@
       <div class="hub-card-sub">lavoro · impatto · significato</div>
     </a>
   </div>
+
+  <footer class="footer-quote">
+    “Alla fine sei un 1 o uno 0, vuoi agire o no? Si lo sai ci sono tanti grigi, ma tu quando arrivi al nocciolo sei un 1 oppure uno 0? fai qualcosa o non la fai? dici no o dici si? Questo è il tuo day one oppure questo è one day?<br><br>Io sono sia lo 0 che l’1, io sono l’universo”
+  </footer>
 
   <script>
     const htmlEl = document.documentElement;
