@@ -140,21 +140,6 @@
     }
     .dream-card.done .btn-check-card svg { opacity: 1; }
 
-    /* Spunta verde overlay sull'immagine quando done */
-    .done-badge {
-      position: absolute;
-      top: 7px;
-      left: 7px;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: #22c55e;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .dream-card.done .done-badge { display: flex; }
-
     /* Empty state */
     .empty-dreams {
       width: 100%;
@@ -451,7 +436,7 @@
          style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;">
         <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
         <div class="app-title">Il Geco Zen</div>
-        <div class="app-sub-bucket">bucket list</div>
+        <div class="app-sub-bucket">Bucket List</div>
       </a>
     </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
@@ -461,7 +446,7 @@
 
   <!-- SCHERMATA LISTA -->
   <div id="screen-list" class="active">
-    <div class="section-divider" style="margin-bottom:4px;">i tuoi sogni</div>
+    <div class="section-divider" style="margin-bottom:4px;">I Tuoi Sogni</div>
     <div class="dreams-grid" id="dreams-grid"></div>
     <div class="empty-dreams visible" id="empty-dreams">
       Nessun sogno ancora.<br>Tocca ＋ per aggiungerne uno ✨
@@ -470,7 +455,7 @@
 
   <!-- SCHERMATA COMPLETATI -->
   <div id="screen-completed">
-    <div class="section-divider">sogni realizzati</div>
+    <div class="section-divider">Sogni Realizzati</div>
     <div id="completed-list" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
@@ -481,7 +466,7 @@
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal-sheet" id="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title" id="modal-title">nuovo sogno</div>
+      <div class="modal-title" id="modal-title">Nuovo Sogno</div>
 
       <div class="form-group">
         <div class="form-label">Titolo</div>
@@ -523,7 +508,7 @@
         <line x1="3" y1="12" x2="3.01" y2="12"/>
         <line x1="3" y1="18" x2="3.01" y2="18"/>
       </svg>
-      <span class="tab-label">lista</span>
+      <span class="tab-label">Lista</span>
     </button>
 
     <!-- Centro: Home (cerchio con logo) -->
@@ -531,7 +516,7 @@
       <div class="tab-center-circle">
         <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
       </div>
-      <span class="tab-label">home</span>
+      <span class="tab-label">Home</span>
     </button>
 
     <!-- Destra: Completati -->
@@ -541,7 +526,7 @@
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
         <polyline points="22 4 12 14.01 9 11.01"/>
       </svg>
-      <span class="tab-label">completati</span>
+      <span class="tab-label">Completati</span>
     </button>
 
   </nav>
@@ -632,7 +617,7 @@
       if (id !== null) {
         const item = items.find(i => i.id === id);
         if (item) {
-          modalTitle.textContent = 'modifica sogno';
+          modalTitle.textContent = 'Modifica Sogno';
           fTitle.value = item.title;
           fDesc.value  = item.desc;
           if (item.img) {
@@ -643,7 +628,7 @@
           }
         }
       } else {
-        modalTitle.textContent = 'nuovo sogno';
+        modalTitle.textContent = 'Nuovo Sogno';
       }
       modalOverlay.classList.add('open');
     }
@@ -732,6 +717,7 @@
       item.doneDate = null;
       save();
       renderCompleted();
+      renderGrid();
     }
 
     /* ── Render griglia lista ── */
@@ -751,12 +737,6 @@
 
         card.innerHTML = `
           <img class="dream-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>
-          <div class="done-badge">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-                 stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
           <div class="dream-body">
             <div class="dream-title">${esc(item.title)}</div>
             <div class="dream-desc">${esc(item.desc)}</div>
@@ -784,7 +764,8 @@
         });
         card.querySelector('.btn-check-card').addEventListener('click', e => {
           e.stopPropagation();
-          if (!item.done) toggleDone(item.id);
+          if (item.done) undoDone(item.id);
+          else toggleDone(item.id);
         });
 
         dreamsGrid.appendChild(card);
