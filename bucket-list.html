@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <link rel="stylesheet" href="styles/layout.css?v=8"/>
   <style>
-    /* ── Header logo bucket list ── */
     .app-sub-bucket {
       font-size: .48rem;
       letter-spacing: .22em;
@@ -21,109 +20,15 @@
       margin-top: 2px;
     }
 
-    /* ── Schermata Lista ── */
-    #screen-list {
+    /* ── Schermate ── */
+    #screen-list, #screen-completed {
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-    }
-
-    /* ── Form aggiungi sogno ── */
-    .add-dream-card {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px 16px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .add-dream-label {
-      font-size: .54rem;
-      letter-spacing: .26em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-    .add-dream-input {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      font-size: .82rem;
-      font-family: inherit;
-      color: var(--text);
-      outline: none;
-      transition: border-color .2s;
-    }
-    .add-dream-input:focus { border-color: var(--gold); }
-    .add-dream-textarea {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      font-size: .78rem;
-      font-family: inherit;
-      color: var(--text);
-      resize: none;
-      min-height: 68px;
-      outline: none;
-      transition: border-color .2s;
-    }
-    .add-dream-textarea:focus { border-color: var(--gold); }
-
-    /* Upload immagine */
-    .img-upload-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .img-preview {
-      width: 52px;
-      height: 52px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 1px solid var(--border);
       display: none;
-      flex-shrink: 0;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
     }
-    .img-preview.visible { display: block; }
-    .btn-img-upload {
-      flex: 1;
-      background: none;
-      border: 1.5px dashed var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-size: .72rem;
-      font-family: inherit;
-      letter-spacing: .08em;
-      padding: 10px;
-      cursor: pointer;
-      text-align: center;
-      transition: border-color .2s, color .2s;
-    }
-    .btn-img-upload:active { border-color: var(--gold); color: var(--gold); }
-    #img-file-input { display: none; }
-
-    .btn-add-dream {
-      width: 100%;
-      background: var(--gold);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 11px;
-      font-size: .78rem;
-      font-family: inherit;
-      letter-spacing: .14em;
-      cursor: pointer;
-      transition: background .2s;
-    }
-    .btn-add-dream:active { background: var(--accent2); }
+    #screen-list.active, #screen-completed.active { display: flex; }
 
     /* ── Griglia sogni ── */
     .section-divider {
@@ -147,82 +52,114 @@
       background: var(--card);
       border: 1.5px solid var(--border);
       border-radius: 16px;
-      padding: 12px;
+      padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
       position: relative;
-      cursor: pointer;
-      transition: border-color .2s, box-shadow .2s;
+      overflow: hidden;
+      transition: border-color .2s;
       -webkit-tap-highlight-color: transparent;
     }
     .dream-card.done {
-      opacity: .55;
-      border-color: var(--accent);
+      border-color: #22c55e;
     }
-    .dream-card:active { box-shadow: 0 0 0 2px var(--accent); }
 
     .dream-img {
       width: 100%;
       aspect-ratio: 4/3;
       object-fit: cover;
-      border-radius: 10px;
       display: block;
-    }
-    .dream-img-placeholder {
-      width: 100%;
-      aspect-ratio: 4/3;
-      background: var(--surface);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 1.4rem;
+      flex-shrink: 0;
     }
 
+    .dream-body {
+      padding: 9px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
     .dream-title {
-      font-size: .78rem;
+      font-size: .76rem;
       font-weight: 700;
       color: var(--text);
-      letter-spacing: .04em;
+      letter-spacing: .03em;
       line-height: 1.3;
     }
     .dream-desc {
-      font-size: .64rem;
+      font-size: .62rem;
       color: var(--muted);
-      line-height: 1.5;
-      letter-spacing: .03em;
+      line-height: 1.45;
+      letter-spacing: .02em;
     }
 
-    /* Checkbox spunta */
-    .dream-check {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 24px;
-      height: 24px;
+    /* Azioni card: matita + check */
+    .dream-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px 9px;
+      gap: 6px;
+    }
+
+    .btn-edit-card {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 5px 8px;
+      font-size: .7rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: inherit;
+      letter-spacing: .06em;
+      transition: color .2s, border-color .2s;
+      flex-shrink: 0;
+    }
+    .btn-edit-card:active { color: var(--gold); border-color: var(--gold); }
+
+    .btn-check-card {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: 2px solid var(--border);
       background: var(--card);
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: background .2s, border-color .2s;
       flex-shrink: 0;
     }
-    .dream-card.done .dream-check {
-      background: var(--accent);
-      border-color: var(--accent);
+    .btn-check-card svg { opacity: 0; transition: opacity .15s; }
+    .dream-card.done .btn-check-card {
+      background: #22c55e;
+      border-color: #22c55e;
     }
-    .dream-check svg { display: none; }
-    .dream-card.done .dream-check svg { display: block; }
+    .dream-card.done .btn-check-card svg { opacity: 1; }
 
-    /* Nessun sogno */
+    /* Spunta verde overlay sull'immagine quando done */
+    .done-badge {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .dream-card.done .done-badge { display: flex; }
+
+    /* Empty state */
     .empty-dreams {
       width: 100%;
       text-align: center;
-      padding: 32px 0 12px;
+      padding: 40px 0 12px;
       font-size: .7rem;
       color: var(--muted);
       letter-spacing: .08em;
@@ -231,15 +168,245 @@
     }
     .empty-dreams.visible { display: block; }
 
-    /* ── Schermata Completati ── */
-    #screen-completed {
-      width: 100%;
+    /* ── FAB ＋ ── */
+    .fab-add {
+      position: fixed;
+      bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(37,115,158,.35);
+      z-index: 100;
+      transition: transform .12s, background .2s;
+    }
+    .fab-add:active { transform: scale(.91); }
+    /* Nascosto quando siamo nella schermata completati */
+    .fab-add.hidden { display: none; }
+
+    /* ── Modal form ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(30,42,56,.52);
       display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 300;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      margin: 0 auto 4px;
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-size: .72rem;
+      letter-spacing: .22em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .form-label {
+      font-size: .56rem;
+      letter-spacing: .18em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: .82rem;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-input:focus { border-color: var(--gold); }
+    .form-input.error { border-color: var(--red); }
+
+    .form-textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: .78rem;
+      font-family: inherit;
+      color: var(--text);
+      resize: none;
+      min-height: 72px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-textarea:focus { border-color: var(--gold); }
+    .form-textarea.error { border-color: var(--red); }
+
+    .img-upload-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .img-preview {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      display: none;
+      flex-shrink: 0;
+    }
+    .img-preview.visible { display: block; }
+    .btn-img-upload {
+      flex: 1;
+      background: none;
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-family: inherit;
+      letter-spacing: .06em;
+      padding: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-img-upload.error { border-color: var(--red); color: var(--red); }
+    .btn-img-upload:active { border-color: var(--gold); color: var(--gold); }
+    #img-file-input { display: none; }
+
+    .btn-save-dream {
+      width: 100%;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: .8rem;
+      font-family: inherit;
+      letter-spacing: .14em;
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    .btn-save-dream:active { background: var(--accent2); }
+    .btn-cancel-modal {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      font-size: .76rem;
+      font-family: inherit;
+      color: var(--muted);
+      letter-spacing: .12em;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ── Schermata completati ── */
+    .completed-item {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid #22c55e;
+      border-radius: 14px;
+      padding: 11px 13px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+    .completed-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .completed-info { flex: 1; min-width: 0; }
+    .completed-title {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: .03em;
+    }
+    .completed-date {
+      font-size: .58rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+      margin-top: 3px;
+    }
+    .completed-actions {
+      display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
+      gap: 6px;
+      flex-shrink: 0;
     }
-    #screen-completed.active { display: flex; }
+    /* Deseleziona (torna in lista) */
+    .btn-uncheck {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    .btn-uncheck:active { background: var(--muted); }
+    /* Matita nei completati */
+    .btn-edit-completed {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      transition: color .2s, border-color .2s;
+    }
+    .btn-edit-completed:active { color: var(--gold); border-color: var(--gold); }
 
     .completed-empty {
       width: 100%;
@@ -251,59 +418,7 @@
       line-height: 1.8;
     }
 
-    .completed-item {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .completed-img {
-      width: 46px;
-      height: 46px;
-      border-radius: 8px;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .completed-img-placeholder {
-      width: 46px;
-      height: 46px;
-      border-radius: 8px;
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-    .completed-info { flex: 1; min-width: 0; }
-    .completed-title {
-      font-size: .78rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: .04em;
-    }
-    .completed-date {
-      font-size: .58rem;
-      color: var(--muted);
-      letter-spacing: .1em;
-      margin-top: 3px;
-    }
-    .completed-check {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* ── Tab bar bucket ── */
+    /* ── Tab bar ── */
     .tab-bar {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -331,7 +446,6 @@
       </svg>
       <span>Hub</span>
     </a>
-
     <div class="header-center">
       <a href="index.html" aria-label="Torna all'hub"
          style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;">
@@ -340,73 +454,65 @@
         <div class="app-sub-bucket">bucket list</div>
       </a>
     </div>
-
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
       <div class="knob" id="theme-knob">☀️</div>
     </button>
   </header>
 
   <!-- SCHERMATA LISTA -->
-  <div id="screen-list">
-
-    <!-- Form aggiungi sogno -->
-    <div class="add-dream-card">
-      <div class="add-dream-label">✦ aggiungi un sogno</div>
-
-      <input class="add-dream-input" id="dream-title-input" type="text"
-             placeholder="Titolo del sogno" maxlength="48" autocomplete="off"/>
-
-      <textarea class="add-dream-textarea" id="dream-desc-input"
-                placeholder="Descrizione (facoltativa)" maxlength="200"></textarea>
-
-      <div class="img-upload-wrap">
-        <img class="img-preview" id="img-preview" src="" alt="Anteprima"/>
-        <button class="btn-img-upload" id="btn-img-upload" aria-label="Scegli immagine">
-          📷 Aggiungi immagine
-        </button>
-        <input type="file" id="img-file-input" accept="image/*"/>
-      </div>
-
-      <button class="btn-add-dream" id="btn-add-dream">＋ Aggiungi alla lista</button>
-    </div>
-
-    <div class="section-divider">i tuoi sogni</div>
-
+  <div id="screen-list" class="active">
+    <div class="section-divider" style="margin-bottom:4px;">i tuoi sogni</div>
     <div class="dreams-grid" id="dreams-grid"></div>
-    <div class="empty-dreams" id="empty-dreams">
-      Nessun sogno ancora.<br>Aggiungine uno qui sopra ✨
+    <div class="empty-dreams visible" id="empty-dreams">
+      Nessun sogno ancora.<br>Tocca ＋ per aggiungerne uno ✨
     </div>
-
   </div>
 
   <!-- SCHERMATA COMPLETATI -->
   <div id="screen-completed">
     <div class="section-divider">sogni realizzati</div>
-    <div id="completed-list"></div>
+    <div id="completed-list" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
-  <!-- TAB BAR: Completati | Home (cerchio) | Lista -->
+  <!-- FAB ＋ (solo nella lista) -->
+  <button class="fab-add" id="fab-add" aria-label="Aggiungi sogno">＋</button>
+
+  <!-- MODAL FORM -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-sheet" id="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-title">nuovo sogno</div>
+
+      <div class="form-group">
+        <div class="form-label">Titolo</div>
+        <input class="form-input" id="f-title" type="text" placeholder="Es. Vedere l'aurora boreale" maxlength="48" autocomplete="off"/>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Descrizione</div>
+        <textarea class="form-textarea" id="f-desc" placeholder="Racconta il tuo sogno…" maxlength="300"></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Immagine</div>
+        <div class="img-upload-wrap">
+          <img class="img-preview" id="img-preview" src="" alt="Anteprima"/>
+          <button class="btn-img-upload" id="btn-img-upload" aria-label="Scegli immagine">
+            📷 Scegli immagine
+          </button>
+          <input type="file" id="img-file-input" accept="image/*"/>
+        </div>
+      </div>
+
+      <button class="btn-save-dream" id="btn-save-dream">Salva sogno</button>
+      <button class="btn-cancel-modal" id="btn-cancel-modal">Annulla</button>
+    </div>
+  </div>
+
+  <!-- TAB BAR: Lista (sinistra) | Home (centro) | Completati (destra) -->
   <nav class="tab-bar" id="tab-bar">
 
-    <!-- Sinistra: Completati -->
-    <button class="tab-btn" id="tab-completed" aria-label="Sogni completati">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-        <polyline points="22 4 12 14.01 9 11.01"/>
-      </svg>
-      <span class="tab-label">completati</span>
-    </button>
-
-    <!-- Centro: Home (cerchio) -->
-    <button class="tab-btn tab-center" id="tab-home-btn" aria-label="Torna alla home">
-      <div class="tab-center-circle">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
-      </div>
-      <span class="tab-label">home</span>
-    </button>
-
-    <!-- Destra: Lista -->
+    <!-- Sinistra: Lista -->
     <button class="tab-btn tab-active" id="tab-list" aria-label="Lista sogni">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -420,13 +526,31 @@
       <span class="tab-label">lista</span>
     </button>
 
+    <!-- Centro: Home (cerchio con logo) -->
+    <button class="tab-btn tab-center" id="tab-home-btn" aria-label="Torna alla home">
+      <div class="tab-center-circle">
+        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
+      </div>
+      <span class="tab-label">home</span>
+    </button>
+
+    <!-- Destra: Completati -->
+    <button class="tab-btn" id="tab-completed" aria-label="Sogni completati">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <span class="tab-label">completati</span>
+    </button>
+
   </nav>
 
   <script>
     /* ── Tema ── */
-    const htmlEl = document.documentElement;
+    const htmlEl  = document.documentElement;
     const btnTheme = document.getElementById('theme-toggle');
-    const knob = document.getElementById('theme-knob');
+    const knob     = document.getElementById('theme-knob');
     let isDark = localStorage.getItem('zen_theme') === 'dark';
     function applyTheme() {
       htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
@@ -438,13 +562,14 @@
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
     /* ── Storage ── */
-    const STORAGE_KEY = 'zen_bucket_list';
-    function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
-    function save(items) { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+    const SK = 'zen_bucket_list';
+    function load() { try { return JSON.parse(localStorage.getItem(SK)) || []; } catch { return []; } }
+    function save() { localStorage.setItem(SK, JSON.stringify(items)); }
 
     /* ── Stato ── */
     let items = load();
-    let pendingImg = null; // data URL immagine
+    let pendingImg  = null;   // data URL in attesa nel form
+    let editingId   = null;   // id del goal in modifica (null = nuovo)
 
     /* ── Elementi DOM ── */
     const dreamsGrid    = document.getElementById('dreams-grid');
@@ -455,31 +580,84 @@
     const tabList      = document.getElementById('tab-list');
     const tabCompleted = document.getElementById('tab-completed');
     const tabHomeBtn   = document.getElementById('tab-home-btn');
+    const fabAdd       = document.getElementById('fab-add');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const fTitle       = document.getElementById('f-title');
+    const fDesc        = document.getElementById('f-desc');
+    const btnImgUpload = document.getElementById('btn-img-upload');
+    const imgFileInput = document.getElementById('img-file-input');
+    const imgPreview   = document.getElementById('img-preview');
+    const btnSave      = document.getElementById('btn-save-dream');
+    const btnCancel    = document.getElementById('btn-cancel-modal');
+    const modalTitle   = document.getElementById('modal-title');
 
     /* ── Tab navigation ── */
     function showScreen(which) {
       if (which === 'list') {
-        screenList.style.display = 'flex';
+        screenList.classList.add('active');
         screenCompleted.classList.remove('active');
         tabList.classList.add('tab-active');
         tabCompleted.classList.remove('tab-active');
+        fabAdd.classList.remove('hidden');
       } else {
-        screenList.style.display = 'none';
+        screenList.classList.remove('active');
         screenCompleted.classList.add('active');
         tabCompleted.classList.add('tab-active');
         tabList.classList.remove('tab-active');
+        fabAdd.classList.add('hidden');
         renderCompleted();
       }
     }
-    tabList.addEventListener('click', () => showScreen('list'));
+    tabList.addEventListener('click',      () => showScreen('list'));
     tabCompleted.addEventListener('click', () => showScreen('completed'));
-    tabHomeBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+    tabHomeBtn.addEventListener('click',   () => { window.location.href = 'index.html'; });
+
+    /* ── FAB → apri modal nuovo sogno ── */
+    fabAdd.addEventListener('click', () => openModal(null));
+
+    /* ── Modal: apri ── */
+    function openModal(id) {
+      editingId  = id;
+      pendingImg = null;
+      fTitle.value = '';
+      fDesc.value  = '';
+      imgPreview.src = '';
+      imgPreview.classList.remove('visible');
+      btnImgUpload.textContent = '📷 Scegli immagine';
+      btnImgUpload.classList.remove('error');
+      fTitle.classList.remove('error');
+      fDesc.classList.remove('error');
+      imgFileInput.value = '';
+
+      if (id !== null) {
+        const item = items.find(i => i.id === id);
+        if (item) {
+          modalTitle.textContent = 'modifica sogno';
+          fTitle.value = item.title;
+          fDesc.value  = item.desc;
+          if (item.img) {
+            pendingImg = item.img;
+            imgPreview.src = item.img;
+            imgPreview.classList.add('visible');
+            btnImgUpload.textContent = '✓ Immagine presente';
+          }
+        }
+      } else {
+        modalTitle.textContent = 'nuovo sogno';
+      }
+      modalOverlay.classList.add('open');
+    }
+
+    /* ── Modal: chiudi ── */
+    function closeModal() {
+      modalOverlay.classList.remove('open');
+      editingId  = null;
+      pendingImg = null;
+    }
+    btnCancel.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
 
     /* ── Upload immagine ── */
-    const btnImgUpload = document.getElementById('btn-img-upload');
-    const imgFileInput = document.getElementById('img-file-input');
-    const imgPreview   = document.getElementById('img-preview');
-
     btnImgUpload.addEventListener('click', () => imgFileInput.click());
     imgFileInput.addEventListener('change', () => {
       const file = imgFileInput.files[0];
@@ -490,86 +668,52 @@
         imgPreview.src = pendingImg;
         imgPreview.classList.add('visible');
         btnImgUpload.textContent = '✓ Immagine caricata';
+        btnImgUpload.classList.remove('error');
       };
       reader.readAsDataURL(file);
     });
 
-    /* ── Aggiungi sogno ── */
-    document.getElementById('btn-add-dream').addEventListener('click', () => {
-      const title = document.getElementById('dream-title-input').value.trim();
-      if (!title) {
-        document.getElementById('dream-title-input').focus();
-        return;
-      }
-      const desc = document.getElementById('dream-desc-input').value.trim();
-      const item = {
-        id: Date.now(),
-        title,
-        desc,
-        img: pendingImg || null,
-        done: false,
-        doneDate: null
-      };
-      items.push(item);
-      save(items);
-      renderGrid();
+    /* ── Salva sogno (crea o modifica) ── */
+    btnSave.addEventListener('click', () => {
+      const title = fTitle.value.trim();
+      const desc  = fDesc.value.trim();
+      let valid = true;
 
-      /* reset form */
-      document.getElementById('dream-title-input').value = '';
-      document.getElementById('dream-desc-input').value = '';
-      imgPreview.src = '';
-      imgPreview.classList.remove('visible');
-      btnImgUpload.textContent = '📷 Aggiungi immagine';
-      imgFileInput.value = '';
-      pendingImg = null;
+      fTitle.classList.toggle('error', !title);
+      fDesc.classList.toggle('error', !desc);
+      btnImgUpload.classList.toggle('error', !pendingImg);
+      if (!title || !desc || !pendingImg) { valid = false; }
+
+      if (!valid) return;
+
+      if (editingId !== null) {
+        /* modifica */
+        const item = items.find(i => i.id === editingId);
+        if (item) {
+          item.title = title;
+          item.desc  = desc;
+          item.img   = pendingImg;
+        }
+      } else {
+        /* nuovo */
+        items.push({
+          id: Date.now(),
+          title,
+          desc,
+          img: pendingImg,
+          done: false,
+          doneDate: null
+        });
+      }
+
+      save();
+      closeModal();
+      renderGrid();
+      /* se eravamo nei completati aggiorna anche quelli */
+      if (screenCompleted.classList.contains('active')) renderCompleted();
     });
 
-    /* ── Render griglia sogni ── */
-    function renderGrid() {
-      const active = items.filter(i => !i.done);
-      dreamsGrid.innerHTML = '';
-
-      if (active.length === 0) {
-        emptyDreams.classList.add('visible');
-        return;
-      }
-      emptyDreams.classList.remove('visible');
-
-      active.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'dream-card';
-        card.dataset.id = item.id;
-
-        const imgHTML = item.img
-          ? `<img class="dream-img" src="${item.img}" alt="${esc(item.title)}" loading="lazy"/>`
-          : `<div class="dream-img-placeholder">✨</div>`;
-
-        const descHTML = item.desc
-          ? `<div class="dream-desc">${esc(item.desc)}</div>`
-          : '';
-
-        card.innerHTML = `
-          ${imgHTML}
-          <div class="dream-title">${esc(item.title)}</div>
-          ${descHTML}
-          <div class="dream-check">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                 stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>`;
-
-        /* tap sul check = completa */
-        card.querySelector('.dream-check').addEventListener('click', e => {
-          e.stopPropagation();
-          toggleDone(item.id);
-        });
-
-        dreamsGrid.appendChild(card);
-      });
-    }
-
-    /* ── Toggle completamento ── */
+    /* ── Spunta / de-spunta ── */
     function toggleDone(id) {
       const item = items.find(i => i.id === id);
       if (!item) return;
@@ -577,14 +721,80 @@
       item.doneDate = new Date().toLocaleDateString('it-IT', {
         day: '2-digit', month: 'long', year: 'numeric'
       });
-      save(items);
+      save();
       renderGrid();
+    }
+
+    function undoDone(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      item.done     = false;
+      item.doneDate = null;
+      save();
+      renderCompleted();
+    }
+
+    /* ── Render griglia lista ── */
+    function renderGrid() {
+      dreamsGrid.innerHTML = '';
+      /* mostra TUTTI i sogni (non solo quelli non-done) */
+      if (items.length === 0) {
+        emptyDreams.classList.add('visible');
+        return;
+      }
+      emptyDreams.classList.remove('visible');
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'dream-card' + (item.done ? ' done' : '');
+        card.dataset.id = item.id;
+
+        card.innerHTML = `
+          <img class="dream-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>
+          <div class="done-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                 stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="dream-body">
+            <div class="dream-title">${esc(item.title)}</div>
+            <div class="dream-desc">${esc(item.desc)}</div>
+          </div>
+          <div class="dream-actions">
+            <button class="btn-edit-card" data-id="${item.id}" aria-label="Modifica">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              modifica
+            </button>
+            <button class="btn-check-card" data-id="${item.id}" aria-label="Segna come fatto">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                   stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </button>
+          </div>`;
+
+        card.querySelector('.btn-edit-card').addEventListener('click', e => {
+          e.stopPropagation();
+          openModal(item.id);
+        });
+        card.querySelector('.btn-check-card').addEventListener('click', e => {
+          e.stopPropagation();
+          if (!item.done) toggleDone(item.id);
+        });
+
+        dreamsGrid.appendChild(card);
+      });
     }
 
     /* ── Render completati ── */
     function renderCompleted() {
-      const done = items.filter(i => i.done).reverse();
       completedList.innerHTML = '';
+      const done = items.filter(i => i.done).reverse();
 
       if (done.length === 0) {
         completedList.innerHTML =
@@ -596,22 +806,30 @@
         const el = document.createElement('div');
         el.className = 'completed-item';
 
-        const imgHTML = item.img
-          ? `<img class="completed-img" src="${item.img}" alt="${esc(item.title)}" loading="lazy"/>`
-          : `<div class="completed-img-placeholder">✨</div>`;
-
         el.innerHTML = `
-          ${imgHTML}
+          <img class="completed-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>
           <div class="completed-info">
             <div class="completed-title">${esc(item.title)}</div>
-            <div class="completed-date">✓ ${item.doneDate || ''}</div>
+            <div class="completed-date">✓ ${esc(item.doneDate || '')}</div>
           </div>
-          <div class="completed-check">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                 stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
+          <div class="completed-actions">
+            <button class="btn-uncheck" data-id="${item.id}" aria-label="Deseleziona">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                   stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </button>
+            <button class="btn-edit-completed" data-id="${item.id}" aria-label="Modifica">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
           </div>`;
+
+        el.querySelector('.btn-uncheck').addEventListener('click', () => undoDone(item.id));
+        el.querySelector('.btn-edit-completed').addEventListener('click', () => openModal(item.id));
 
         completedList.appendChild(el);
       });
