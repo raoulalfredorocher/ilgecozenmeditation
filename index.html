@@ -227,14 +227,57 @@
       color: var(--text);
       line-height: 1.6;
     }
+    .weather-widget {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .weather-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .weather-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    .weather-place {
+      font-size: .52rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .weather-temp {
+      font-size: .82rem;
+      color: var(--text);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .weather-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: .62rem;
+      color: var(--muted);
+    }
     .footer-quote {
       width: 100%;
       margin-top: 22px;
       padding: 20px 18px 0;
       border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: .72rem;
-      line-height: 1.8;
+      color: var(--accent2);
+      font-size: .86rem;
+      line-height: 1.9;
       text-align: center;
       font-style: italic;
     }
@@ -368,7 +411,7 @@
         <button class="compass-center" id="ikigai-trigger" type="button" aria-label="Mostra la mia missione" aria-expanded="false"></button>
         <div class="ikigai-popup" id="ikigai-popup" role="dialog" aria-label="La mia missione">
           <div class="ikigai-popup-title">La mia missione</div>
-          <div class="ikigai-popup-text">Vivere una vita lunga, sana, umile e semplice emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
+          <div class="ikigai-popup-text">Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
         </div>
       </div>
     </div>
@@ -410,16 +453,16 @@
       <div class="hub-card-title">Passioni</div>
     </a>
 
-    <a class="hub-card mind" href="salute-mentale.html">
-      <span class="hub-card-icon">🫶</span>
-      <div class="hub-card-title">Salute mentale</div>
-      <div class="hub-card-sub">ascolto, emozioni diario</div>
-    </a>
-
-    <a class="hub-card social hub-card-wide" href="armonia-sociale.html">
+    <a class="hub-card social" href="armonia-sociale.html">
       <span class="hub-card-icon">🤝</span>
       <div class="hub-card-title">Armonia sociale</div>
       <div class="hub-card-sub">relazioni, CRM</div>
+    </a>
+
+    <a class="hub-card mind hub-card-wide" href="salute-mentale.html">
+      <span class="hub-card-icon">🫶</span>
+      <div class="hub-card-title">Salute mentale</div>
+      <div class="hub-card-sub">ascolto, emozioni diario</div>
     </a>
 
     <a class="hub-card world hub-card-wide" href="contributo-al-mondo.html">
@@ -428,6 +471,20 @@
       <div class="hub-card-sub">lavoro · impatto · significato</div>
     </a>
   </div>
+
+  <section class="weather-widget" aria-label="Meteo Pandino">
+    <div class="weather-main">
+      <div class="weather-icon" id="weather-icon">⛅</div>
+      <div>
+        <div class="weather-place">Pandino</div>
+        <div class="weather-temp"><span id="weather-max">--</span>° / <span id="weather-min">--</span>°</div>
+      </div>
+    </div>
+    <div class="weather-meta">
+      <span>UV <strong id="weather-uv">--</strong></span>
+      <span>Umidità <strong id="weather-humidity">--</strong>%</span>
+    </div>
+  </section>
 
   <footer class="footer-quote">
     “Alla fine sei un 1 o uno 0, vuoi agire o no? Si lo sai ci sono tanti grigi, ma tu quando arrivi al nocciolo sei un 1 oppure uno 0? fai qualcosa o non la fai? dici no o dici si? Questo è il tuo day one oppure questo è one day?<br><br>Io sono sia lo 0 che l’1, io sono l’universo”
@@ -440,6 +497,11 @@
     const ikigaiTrigger = document.getElementById('ikigai-trigger');
     const ikigaiPopup = document.getElementById('ikigai-popup');
     const ikigaiTriggerWrap = document.getElementById('ikigai-trigger-wrap');
+    const weatherIcon = document.getElementById('weather-icon');
+    const weatherMax = document.getElementById('weather-max');
+    const weatherMin = document.getElementById('weather-min');
+    const weatherUv = document.getElementById('weather-uv');
+    const weatherHumidity = document.getElementById('weather-humidity');
     let isDark = localStorage.getItem('zen_theme') === 'dark';
 
     function apply() {
@@ -459,6 +521,48 @@
     document.getElementById('life-bar-fill').style.width = `${percentage}%`;
     document.getElementById('life-progress-label').textContent = `${percentage.toFixed(1).replace('.', ',')}% | ${currentAgeYears.toFixed(1).replace('.', ',')} anni`;
 
+    async function loadWeather() {
+      try {
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=45.4072&longitude=9.5525&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max&hourly=relative_humidity_2m&current=temperature_2m&timezone=auto&forecast_days=1');
+        const data = await response.json();
+        const weatherCode = data.daily.weather_code[0];
+        const humidity = data.hourly.relative_humidity_2m[0];
+        const icons = {
+          0: '☀️',
+          1: '🌤️',
+          2: '⛅',
+          3: '☁️',
+          45: '🌫️',
+          48: '🌫️',
+          51: '🌦️',
+          53: '🌦️',
+          55: '🌧️',
+          61: '🌧️',
+          63: '🌧️',
+          65: '🌧️',
+          66: '🧊',
+          67: '🧊',
+          71: '🌨️',
+          73: '🌨️',
+          75: '🌨️',
+          80: '🌦️',
+          81: '🌧️',
+          82: '🌧️',
+          95: '⛈️',
+          96: '🌨️',
+          99: '🌨️'
+        };
+
+        weatherIcon.textContent = icons[weatherCode] || '⛅';
+        weatherMax.textContent = Math.round(data.daily.temperature_2m_max[0]);
+        weatherMin.textContent = Math.round(data.daily.temperature_2m_min[0]);
+        weatherUv.textContent = Math.round(data.daily.uv_index_max[0]);
+        weatherHumidity.textContent = Math.round(humidity);
+      } catch (error) {
+        weatherIcon.textContent = '☁️';
+      }
+    }
+
     function showIkigaiPopup() {
       ikigaiPopup.classList.add('visible');
       ikigaiTrigger.setAttribute('aria-expanded', 'true');
@@ -470,6 +574,7 @@
     }
 
     apply();
+    loadWeather();
     btn.addEventListener('click', () => { isDark = !isDark; apply(); });
     ikigaiTriggerWrap.addEventListener('mouseenter', showIkigaiPopup);
     ikigaiTriggerWrap.addEventListener('mouseleave', hideIkigaiPopup);
