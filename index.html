@@ -119,15 +119,6 @@
       color: var(--muted);
       text-transform: uppercase;
     }
-    .section-top-note {
-      font-size: .52rem;
-      letter-spacing: .12em;
-      color: var(--gold);
-      text-transform: uppercase;
-      text-align: right;
-      line-height: 1.4;
-    }
-
     .life-progress {
       font-size: .74rem;
       color: var(--gold);
@@ -158,18 +149,6 @@
       width: 37.84%;
       background: linear-gradient(90deg, var(--accent), var(--gold));
       border-radius: 999px;
-    }
-    .life-stats {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      font-size: .68rem;
-      color: var(--text);
-    }
-    .life-stats strong {
-      color: var(--gold);
-      font-size: .78rem;
     }
 
     .compass {
@@ -355,10 +334,7 @@
   </header>
 
   <section class="section-card" aria-label="Barra della vita" style="margin-bottom: 18px;">
-    <div class="section-header">
-      <div class="section-title">Barra della vita</div>
-      <div class="section-top-note">Speranza di vita<br>90 anni</div>
-    </div>
+    <div class="section-title" style="text-align:center; margin-bottom: 12px;">Barra della vita</div>
     <div class="life-progress" id="life-progress-label">0%</div>
     <div class="life-bar" aria-hidden="true">
       <div class="life-bar-fill" id="life-bar-fill"></div>
@@ -366,10 +342,6 @@
     <div class="life-labels">
       <span>0</span>
       <span>90</span>
-    </div>
-    <div class="life-stats">
-      <span>Età attuale</span>
-      <span><strong id="life-age-label">34,1</strong> anni</span>
     </div>
   </section>
 
@@ -472,8 +444,7 @@
     const percentage = Math.min((currentAgeYears / lifeExpectancyYears) * 100, 100);
 
     document.getElementById('life-bar-fill').style.width = `${percentage}%`;
-    document.getElementById('life-progress-label').textContent = `${percentage.toFixed(1).replace('.', ',')}%`;
-    document.getElementById('life-age-label').textContent = currentAgeYears.toFixed(1).replace('.', ',');
+    document.getElementById('life-progress-label').textContent = `${percentage.toFixed(1).replace('.', ',')}% | ${currentAgeYears.toFixed(1).replace('.', ',')} anni`;
 
     function showIkigaiPopup() {
       ikigaiPopup.classList.add('visible');
