@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Allenamento"/>
+  <meta name="theme-color" content="#f3f8f3"/>
+  <title>Il Geco Zen — Allenamento</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg:      #f3f8f3;
+      --surface: #e3efe3;
+      --card:    #ffffff;
+      --border:  #c4d8c4;
+      --text:    #182018;
+      --muted:   #608060;
+      --primary: #2e8048;   /* verde foresta – gym */
+      --accent:  #6cbf8a;   /* verde menta */
+      --accent2: #f5c842;   /* giallo energia */
+      --red:     #c03040;
+      --input-bg:#ffffff;
+    }
+    html[data-theme="dark"] {
+      --bg:      #101810;
+      --surface: #182018;
+      --card:    #1e2a1e;
+      --border:  #2e4030;
+      --text:    #e0f0e0;
+      --muted:   #80a880;
+      --primary: #5aba7a;
+      --accent:  #6cbf8a;
+      --accent2: #f5c842;
+      --red:     #e05060;
+      --input-bg:#182018;
+    }
+
+    html { overscroll-behavior: none; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn-back-hub {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .58rem;
+      letter-spacing: .1em; padding: 5px 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      width: 52px; text-decoration: none; transition: color .2s, border-color .2s;
+    }
+    .btn-back-hub:active { color: var(--primary); border-color: var(--primary); }
+    .header-center {
+      flex: 1; text-align: center; display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+    }
+    .header-icon { font-size: 1.8rem; line-height: 1; }
+    .app-title {
+      font-size: .95rem; letter-spacing: .16em; color: var(--primary); font-weight: 700;
+    }
+    .app-sub {
+      font-size: .48rem; letter-spacing: .22em; color: var(--muted);
+      margin-top: 2px; text-transform: uppercase;
+    }
+    .theme-toggle {
+      background: none; border: 1.5px solid var(--border); border-radius: 20px;
+      cursor: pointer; width: 52px; height: 28px; position: relative;
+      flex-shrink: 0; transition: border-color .3s;
+    }
+    .theme-toggle .knob {
+      position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent); transition: transform .3s;
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── Screens ── */
+    .screen { width: 100%; display: none; flex-direction: column; align-items: center; }
+    .screen.active { display: flex; }
+
+    /* ── Tab Bar ── */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--card); border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 200;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; color: var(--muted); transition: color .2s;
+      padding: 8px 4px; height: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.tab-active { color: var(--primary); }
+    .tab-icon { width: 22px; height: 22px; flex-shrink: 0; }
+    .tab-label {
+      font-size: .44rem; letter-spacing: .12em; text-transform: uppercase;
+      font-family: inherit; line-height: 1;
+    }
+
+    /* ── Pulsante centrale grande ── */
+    .tab-center {
+      flex: 1.1; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 8px; gap: 4px; overflow: visible; position: relative;
+    }
+    .tab-center-circle {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transform: translateY(-24px);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(108,191,138,.6);
+      transition: background .2s, transform .12s;
+    }
+    .tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
+    .tab-center-circle.active-mode {
+      background: var(--primary);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(46,128,72,.5);
+    }
+    .tab-center-icon { width: 22px; height: 22px; color: #fff; }
+    .tab-center .tab-label { margin-top: -20px; }
+
+    /* ── Section title ── */
+    .section-title {
+      width: 100%; font-size: .54rem; letter-spacing: .28em;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* ── Card placeholder ── */
+    .placeholder-card {
+      width: 100%; background: var(--card); border: 1.5px dashed var(--border);
+      border-radius: 18px; padding: 36px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .placeholder-icon { font-size: 2.8rem; }
+    .placeholder-title { font-size: .9rem; font-weight: 600; color: var(--text); letter-spacing: .06em; text-align: center; }
+    .placeholder-sub { font-size: .68rem; color: var(--muted); letter-spacing: .08em; text-align: center; line-height: 1.6; }
+    .badge-wip {
+      font-size: .44rem; letter-spacing: .16em; text-transform: uppercase;
+      border: 1px solid var(--border); border-radius: 10px; color: var(--muted); padding: 3px 9px;
+    }
+
+    /* ── Schede allenamento ── */
+    .scheda-grid {
+      width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+    }
+    .scheda-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 18px 14px;
+      display: flex; flex-direction: column; gap: 7px;
+      cursor: pointer; transition: border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .scheda-card:active { background: var(--surface); border-color: var(--accent); }
+    .scheda-icon { font-size: 1.6rem; }
+    .scheda-name { font-size: .8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .scheda-info { font-size: .58rem; color: var(--muted); letter-spacing: .06em; }
+    .scheda-badge {
+      font-size: .44rem; letter-spacing: .12em; text-transform: uppercase;
+      background: var(--surface); border-radius: 8px; color: var(--primary);
+      padding: 2px 7px; align-self: flex-start;
+    }
+
+    .btn-new-scheda {
+      width: 100%; background: var(--card); border: 1.5px dashed var(--border);
+      border-radius: 12px; color: var(--primary); font-size: .82rem;
+      letter-spacing: .12em; padding: 13px; cursor: pointer; font-family: inherit;
+      transition: background .2s, border-color .2s; margin-bottom: 20px;
+    }
+    .btn-new-scheda:active { background: var(--surface); border-color: var(--primary); }
+
+    /* ── Avvia schermata ── */
+    .avvia-hero {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; padding: 36px 28px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .avvia-icon { font-size: 3rem; }
+    .avvia-title { font-size: 1rem; font-weight: 600; color: var(--text); letter-spacing: .08em; }
+    .avvia-sub { font-size: .68rem; color: var(--muted); text-align: center; line-height: 1.7; }
+    .btn-avvia-start {
+      background: var(--primary); color: #fff; border: none; border-radius: 26px;
+      font-family: inherit; font-size: .84rem; letter-spacing: .16em;
+      padding: 14px 42px; cursor: pointer; transition: background .2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-avvia-start:active { background: var(--accent); }
+
+    /* Timer live (placeholder) */
+    .timer-live-box {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 28px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .timer-live-label { font-size: .54rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+    .timer-live-time { font-size: 3.2rem; font-weight: 300; color: var(--primary); font-variant-numeric: tabular-nums; }
+    .timer-live-exercise { font-size: .82rem; color: var(--text); font-weight: 600; }
+
+    /* ── Registro allenamenti ── */
+    .registro-list {
+      width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
+    }
+    .registro-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .registro-date {
+      display: flex; flex-direction: column; align-items: center; min-width: 36px;
+    }
+    .registro-day { font-size: 1.3rem; font-weight: 300; color: var(--text); line-height: 1; }
+    .registro-wd { font-size: .44rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+    .registro-info { flex: 1; }
+    .registro-name { font-size: .82rem; font-weight: 600; color: var(--text); }
+    .registro-detail { font-size: .6rem; color: var(--muted); letter-spacing: .06em; margin-top: 2px; }
+    .registro-icon { font-size: 1.2rem; opacity: .6; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-back-hub" href="home.html" aria-label="Torna alla home">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
+      <span>Home</span>
+    </a>
+    <div class="header-center">
+      <div class="header-icon">🏋️</div>
+      <div class="app-title">Allenamento</div>
+      <div class="app-sub">il geco zen · gym</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
+
+  <!-- SCHERMATA SCHEDE -->
+  <div class="screen active" id="screen-schede">
+    <div class="section-title">le mie schede</div>
+
+    <div class="scheda-grid">
+      <div class="scheda-card">
+        <div class="scheda-icon">💪</div>
+        <div class="scheda-name">Upper Body</div>
+        <div class="scheda-info">6 esercizi · 45 min</div>
+        <span class="scheda-badge">Lunedì</span>
+      </div>
+      <div class="scheda-card">
+        <div class="scheda-icon">🦵</div>
+        <div class="scheda-name">Lower Body</div>
+        <div class="scheda-info">5 esercizi · 40 min</div>
+        <span class="scheda-badge">Mercoledì</span>
+      </div>
+      <div class="scheda-card">
+        <div class="scheda-icon">🔥</div>
+        <div class="scheda-name">Full Body</div>
+        <div class="scheda-info">8 esercizi · 55 min</div>
+        <span class="scheda-badge">Venerdì</span>
+      </div>
+      <div class="scheda-card">
+        <div class="scheda-icon">🏃</div>
+        <div class="scheda-name">Cardio HIIT</div>
+        <div class="scheda-info">4 cicli · 25 min</div>
+        <span class="scheda-badge">Sabato</span>
+      </div>
+    </div>
+
+    <button class="btn-new-scheda">＋ Nuova Scheda</button>
+
+    <div class="placeholder-card">
+      <div class="placeholder-icon">✏️</div>
+      <div class="placeholder-title">Editor Schede</div>
+      <div class="placeholder-sub">Crea e personalizza le tue schede con esercizi, serie, ripetizioni e tempi di recupero.</div>
+      <span class="badge-wip">in arrivo</span>
+    </div>
+  </div>
+
+  <!-- SCHERMATA AVVIA ALLENAMENTO -->
+  <div class="screen" id="screen-avvia">
+    <div class="section-title">pronto per allenarti?</div>
+
+    <div class="avvia-hero">
+      <div class="avvia-icon">⚡</div>
+      <div class="avvia-title">Avvia Sessione</div>
+      <div class="avvia-sub">Scegli una scheda e inizia il tuo allenamento. Il timer si avvierà automaticamente con il timer di recupero tra le serie.</div>
+      <button class="btn-avvia-start" id="btn-start-workout">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Inizia Allenamento
+      </button>
+    </div>
+
+    <div class="timer-live-box" id="workout-timer-box" style="display:none;">
+      <div class="timer-live-label">esercizio corrente</div>
+      <div class="timer-live-exercise" id="current-exercise">Squat</div>
+      <div class="timer-live-time" id="workout-time">00:00</div>
+      <div class="timer-live-label">recupero</div>
+    </div>
+
+    <div class="placeholder-card">
+      <div class="placeholder-icon">🎯</div>
+      <div class="placeholder-title">Sessione Guidata</div>
+      <div class="placeholder-sub">Il timer guiderà ogni serie con rintocchi e avvisi vocali, proprio come nella meditazione.</div>
+      <span class="badge-wip">in arrivo</span>
+    </div>
+  </div>
+
+  <!-- SCHERMATA REGISTRO ALLENAMENTI -->
+  <div class="screen" id="screen-registro">
+    <div class="section-title">registro allenamenti</div>
+
+    <div class="registro-list">
+      <div class="registro-card">
+        <div class="registro-date">
+          <div class="registro-day">12</div>
+          <div class="registro-wd">lun</div>
+        </div>
+        <div class="registro-info">
+          <div class="registro-name">Upper Body</div>
+          <div class="registro-detail">6 esercizi · 44 min · 3.200 kcal</div>
+        </div>
+        <div class="registro-icon">💪</div>
+      </div>
+      <div class="registro-card">
+        <div class="registro-date">
+          <div class="registro-day">10</div>
+          <div class="registro-wd">sab</div>
+        </div>
+        <div class="registro-info">
+          <div class="registro-name">Cardio HIIT</div>
+          <div class="registro-detail">4 cicli · 26 min · 280 kcal</div>
+        </div>
+        <div class="registro-icon">🏃</div>
+      </div>
+      <div class="registro-card">
+        <div class="registro-date">
+          <div class="registro-day">09</div>
+          <div class="registro-wd">ven</div>
+        </div>
+        <div class="registro-info">
+          <div class="registro-name">Full Body</div>
+          <div class="registro-detail">8 esercizi · 53 min · 420 kcal</div>
+        </div>
+        <div class="registro-icon">🔥</div>
+      </div>
+      <div class="registro-card">
+        <div class="registro-date">
+          <div class="registro-day">07</div>
+          <div class="registro-wd">mer</div>
+        </div>
+        <div class="registro-info">
+          <div class="registro-name">Lower Body</div>
+          <div class="registro-detail">5 esercizi · 41 min · 360 kcal</div>
+        </div>
+        <div class="registro-icon">🦵</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <nav class="tab-bar">
+    <button class="tab-btn tab-active" id="tab-schede" aria-label="Schede">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span class="tab-label">schede</span>
+    </button>
+
+    <!-- Pulsante centrale -->
+    <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia allenamento">
+      <div class="tab-center-circle" id="tab-center-circle">
+        <svg class="tab-center-icon" viewBox="0 0 24 24" fill="white">
+          <polygon points="6,3 20,12 6,21"/>
+        </svg>
+      </div>
+      <span class="tab-label" style="margin-top: -20px;">avvia</span>
+    </button>
+
+    <button class="tab-btn" id="tab-registro" aria-label="Registro Allenamenti">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span class="tab-label">registro</span>
+    </button>
+  </nav>
+
+  <script>
+    // Theme
+    const htmlEl = document.documentElement;
+    const btn    = document.getElementById('theme-toggle');
+    const knob   = document.getElementById('theme-knob');
+    let isDark   = localStorage.getItem('zen_theme') === 'dark';
+    function applyTheme() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#101810' : '#f3f8f3';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    applyTheme();
+    btn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+    // Tab navigation
+    const tabs = [
+      { btn: document.getElementById('tab-schede'),  screen: 'screen-schede'  },
+      { btn: document.getElementById('tab-avvia'),   screen: 'screen-avvia'   },
+      { btn: document.getElementById('tab-registro'),screen: 'screen-registro'},
+    ];
+    tabs.forEach(({ btn: tabBtn, screen }) => {
+      tabBtn.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.btn.classList.remove('tab-active');
+          const s = document.getElementById(t.screen);
+          s.style.display = 'none';
+          s.classList.remove('active');
+        });
+        tabBtn.classList.add('tab-active');
+        const s = document.getElementById(screen);
+        s.style.display = 'flex';
+        s.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

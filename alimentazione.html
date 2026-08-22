@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Alimentazione"/>
+  <meta name="theme-color" content="#f7f4e9"/>
+  <title>Il Geco Zen — Alimentazione</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg:      #faf8f2;
+      --surface: #f0ece0;
+      --card:    #ffffff;
+      --border:  #ddd5c0;
+      --text:    #2a2018;
+      --muted:   #8a7550;
+      --primary: #c07a30;   /* arancio caldo – food */
+      --accent:  #e8a87c;   /* pesca */
+      --accent2: #7abf6e;   /* verde erba */
+      --red:     #c04040;
+      --input-bg:#ffffff;
+    }
+    html[data-theme="dark"] {
+      --bg:      #181410;
+      --surface: #211d17;
+      --card:    #2a2318;
+      --border:  #3d3322;
+      --text:    #f0e8d8;
+      --muted:   #b09070;
+      --primary: #e8a060;
+      --accent:  #e8a87c;
+      --accent2: #8ed47f;
+      --red:     #e05050;
+      --input-bg:#211d17;
+    }
+
+    html { overscroll-behavior: none; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn-back-hub {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .58rem;
+      letter-spacing: .1em; padding: 5px 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      width: 52px; text-decoration: none; transition: color .2s, border-color .2s;
+    }
+    .btn-back-hub:active { color: var(--primary); border-color: var(--primary); }
+    .header-center {
+      flex: 1; text-align: center; display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+    }
+    .header-icon { font-size: 1.8rem; line-height: 1; }
+    .app-title {
+      font-size: .95rem; letter-spacing: .18em; color: var(--primary);
+      font-weight: 700;
+    }
+    .app-sub {
+      font-size: .48rem; letter-spacing: .22em; color: var(--muted);
+      margin-top: 2px; text-transform: uppercase;
+    }
+    .theme-toggle {
+      background: none; border: 1.5px solid var(--border); border-radius: 20px;
+      cursor: pointer; width: 52px; height: 28px; position: relative;
+      flex-shrink: 0; transition: border-color .3s;
+    }
+    .theme-toggle .knob {
+      position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent); transition: transform .3s;
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── Screens ── */
+    .screen { width: 100%; display: none; flex-direction: column; align-items: center; }
+    .screen.active { display: flex; }
+
+    /* ── Tab Bar ── */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--card); border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 200;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; color: var(--muted); transition: color .2s;
+      padding: 8px 4px; height: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.tab-active { color: var(--primary); }
+    .tab-icon { width: 22px; height: 22px; flex-shrink: 0; }
+    .tab-label {
+      font-size: .44rem; letter-spacing: .12em; text-transform: uppercase;
+      font-family: inherit; line-height: 1;
+    }
+
+    /* ── Sezione titolo ── */
+    .section-title {
+      width: 100%; font-size: .54rem; letter-spacing: .28em;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* ── Card placeholder ── */
+    .placeholder-card {
+      width: 100%;
+      background: var(--card);
+      border: 1.5px dashed var(--border);
+      border-radius: 18px;
+      padding: 36px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .placeholder-icon { font-size: 2.8rem; }
+    .placeholder-title {
+      font-size: .9rem; font-weight: 600; color: var(--text); letter-spacing: .06em;
+      text-align: center;
+    }
+    .placeholder-sub {
+      font-size: .68rem; color: var(--muted); letter-spacing: .08em;
+      text-align: center; line-height: 1.6;
+    }
+    .badge-wip {
+      font-size: .44rem; letter-spacing: .16em; text-transform: uppercase;
+      border: 1px solid var(--border); border-radius: 10px; color: var(--muted);
+      padding: 3px 9px;
+    }
+
+    /* ── Diario — lista pasti ── */
+    .meal-list {
+      width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
+    }
+    .meal-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .meal-icon { font-size: 1.5rem; }
+    .meal-info { flex: 1; }
+    .meal-name { font-size: .84rem; font-weight: 600; color: var(--text); }
+    .meal-time { font-size: .6rem; color: var(--muted); letter-spacing: .08em; margin-top: 2px; }
+    .meal-kcal {
+      font-size: .78rem; font-weight: 600; color: var(--primary);
+    }
+    .meal-kcal span { font-size: .52rem; color: var(--muted); font-weight: 400; }
+
+    .btn-add-meal {
+      width: 100%; background: var(--card); border: 1.5px dashed var(--border);
+      border-radius: 12px; color: var(--primary); font-size: .82rem;
+      letter-spacing: .12em; padding: 13px; cursor: pointer; font-family: inherit;
+      transition: background .2s, border-color .2s; margin-bottom: 20px;
+    }
+    .btn-add-meal:active { background: var(--surface); border-color: var(--primary); }
+
+    /* ── Macro bar ── */
+    .macro-row {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px 18px; margin-bottom: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .macro-label { font-size: .52rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+    .macro-bars { display: flex; flex-direction: column; gap: 7px; }
+    .macro-item { display: flex; align-items: center; gap: 10px; }
+    .macro-name { font-size: .64rem; color: var(--muted); width: 68px; flex-shrink: 0; }
+    .macro-bar-wrap { flex: 1; background: var(--surface); border-radius: 6px; height: 8px; overflow: hidden; }
+    .macro-bar-fill { height: 100%; border-radius: 6px; transition: width .4s; }
+    .macro-val { font-size: .62rem; color: var(--text); width: 44px; text-align: right; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-back-hub" href="home.html" aria-label="Torna alla home">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
+      <span>Home</span>
+    </a>
+    <div class="header-center">
+      <div class="header-icon">🥗</div>
+      <div class="app-title">Alimentazione</div>
+      <div class="app-sub">il geco zen · food</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
+
+  <!-- SCHERMATA DIETA -->
+  <div class="screen active" id="screen-dieta">
+    <div class="section-title">il tuo piano alimentare</div>
+    <div class="placeholder-card">
+      <div class="placeholder-icon">🥦</div>
+      <div class="placeholder-title">Piano Dietetico</div>
+      <div class="placeholder-sub">Configura il tuo piano alimentare personalizzato, calorie giornaliere e obiettivi nutrizionali.</div>
+      <span class="badge-wip">in arrivo</span>
+    </div>
+    <div class="placeholder-card">
+      <div class="placeholder-icon">🎯</div>
+      <div class="placeholder-title">Obiettivi</div>
+      <div class="placeholder-sub">Definisci i tuoi macro: proteine, carboidrati e grassi in base ai tuoi obiettivi.</div>
+      <span class="badge-wip">in arrivo</span>
+    </div>
+  </div>
+
+  <!-- SCHERMATA RICETTARIO -->
+  <div class="screen" id="screen-ricette">
+    <div class="section-title">ricettario</div>
+    <div class="placeholder-card">
+      <div class="placeholder-icon">📖</div>
+      <div class="placeholder-title">Le Mie Ricette</div>
+      <div class="placeholder-sub">Salva e consulta le tue ricette preferite con ingredienti, calorie e istruzioni passo-passo.</div>
+      <span class="badge-wip">in arrivo</span>
+    </div>
+    <div class="placeholder-card">
+      <div class="placeholder-icon">🍳</div>
+      <div class="placeholder-title">Scopri Nuove Ricette</div>
+      <div class="placeholder-sub">Un archivio di ricette sane e bilanciate, filtrabili per categoria e obiettivo.</div>
+      <span class="badge-wip">in arrivo</span>
+    </div>
+  </div>
+
+  <!-- SCHERMATA DIARIO ALIMENTARE -->
+  <div class="screen" id="screen-diario">
+    <div class="section-title">oggi — diario alimentare</div>
+
+    <!-- Riepilogo macro -->
+    <div class="macro-row">
+      <div class="macro-label">riepilogo calorie</div>
+      <div class="macro-bars">
+        <div class="macro-item">
+          <span class="macro-name">Proteine</span>
+          <div class="macro-bar-wrap"><div class="macro-bar-fill" style="width:42%; background:#6cbf8a;"></div></div>
+          <span class="macro-val">63 g</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-name">Carboidrati</span>
+          <div class="macro-bar-wrap"><div class="macro-bar-fill" style="width:65%; background:#e8a87c;"></div></div>
+          <span class="macro-val">195 g</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-name">Grassi</span>
+          <div class="macro-bar-wrap"><div class="macro-bar-fill" style="width:30%; background:#c07a30;"></div></div>
+          <span class="macro-val">44 g</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pasti del giorno (demo) -->
+    <div class="section-title">pasti del giorno</div>
+    <div class="meal-list">
+      <div class="meal-card">
+        <div class="meal-icon">🌅</div>
+        <div class="meal-info">
+          <div class="meal-name">Colazione</div>
+          <div class="meal-time">08:00 — yogurt greco, avena, banana</div>
+        </div>
+        <div class="meal-kcal">340 <span>kcal</span></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">☀️</div>
+        <div class="meal-info">
+          <div class="meal-name">Pranzo</div>
+          <div class="meal-time">13:00 — riso integrale, pollo, verdure</div>
+        </div>
+        <div class="meal-kcal">520 <span>kcal</span></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon">🌙</div>
+        <div class="meal-info">
+          <div class="meal-name">Cena</div>
+          <div class="meal-time">—</div>
+        </div>
+        <div class="meal-kcal" style="color:var(--muted)">— <span>kcal</span></div>
+      </div>
+    </div>
+
+    <button class="btn-add-meal">＋ Aggiungi pasto</button>
+  </div>
+
+  <!-- TAB BAR -->
+  <nav class="tab-bar">
+    <button class="tab-btn tab-active" id="tab-dieta" aria-label="Dieta">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2z"/>
+        <path d="M8 12s1.5 3 4 3 4-3 4-3"/>
+        <line x1="9" y1="9" x2="9.01" y2="9"/>
+        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      </svg>
+      <span class="tab-label">dieta</span>
+    </button>
+
+    <button class="tab-btn" id="tab-ricette" aria-label="Ricettario">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        <line x1="9" y1="7" x2="15" y2="7"/>
+        <line x1="9" y1="11" x2="15" y2="11"/>
+        <line x1="9" y1="15" x2="12" y2="15"/>
+      </svg>
+      <span class="tab-label">ricettario</span>
+    </button>
+
+    <button class="tab-btn" id="tab-diario" aria-label="Diario Alimentare">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+        <circle cx="8" cy="15" r=".8" fill="currentColor"/>
+        <circle cx="12" cy="15" r=".8" fill="currentColor"/>
+        <circle cx="16" cy="15" r=".8" fill="currentColor"/>
+      </svg>
+      <span class="tab-label">diario</span>
+    </button>
+  </nav>
+
+  <script>
+    // Theme
+    const htmlEl = document.documentElement;
+    const btn    = document.getElementById('theme-toggle');
+    const knob   = document.getElementById('theme-knob');
+    let isDark   = localStorage.getItem('zen_theme') === 'dark';
+    function applyTheme() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#181410' : '#faf8f2';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    applyTheme();
+    btn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+    // Tab navigation
+    const tabs = [
+      { btn: document.getElementById('tab-dieta'),   screen: 'screen-dieta'  },
+      { btn: document.getElementById('tab-ricette'), screen: 'screen-ricette'},
+      { btn: document.getElementById('tab-diario'),  screen: 'screen-diario' },
+    ];
+    tabs.forEach(({ btn: tabBtn, screen }) => {
+      tabBtn.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.btn.classList.remove('tab-active');
+          document.getElementById(t.screen).classList.remove('active');
+          document.getElementById(t.screen).style.display = 'none';
+        });
+        tabBtn.classList.add('tab-active');
+        const s = document.getElementById(screen);
+        s.style.display = 'flex';
+        s.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

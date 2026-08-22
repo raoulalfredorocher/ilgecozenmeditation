@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <title>Il Geco Zen — Home</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg:      #f7f4f9;
+      --surface: #ede8f4;
+      --card:    #ffffff;
+      --border:  #d4cee0;
+      --text:    #1e2a38;
+      --muted:   #876a6a;
+      --gold:    #25739E;
+      --accent:  #F5A9BC;
+      --accent2: #74C7E1;
+    }
+    html[data-theme="dark"] {
+      --bg:      #111820;
+      --surface: #1a2230;
+      --card:    #1e2a38;
+      --border:  #2e3f52;
+      --text:    #e8eef4;
+      --muted:   #a89090;
+      --gold:    #74C7E1;
+      --accent:  #F5A9BC;
+      --accent2: #9DDDE8;
+    }
+
+    html { overscroll-behavior: none; }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 32px) 24px 48px;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100dvh;
+    }
+
+    /* ── Header logo ── */
+    .hub-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 42px;
+      width: 100%;
+    }
+    .hub-logo {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
+    .hub-title {
+      font-size: 1.1rem;
+      letter-spacing: .22em;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .hub-sub {
+      font-size: .48rem;
+      letter-spacing: .26em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── Theme toggle (top-right assoluto) ── */
+    .theme-toggle {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 0px) + 14px);
+      right: 18px;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      width: 52px; height: 28px;
+      z-index: 50;
+      transition: border-color .3s;
+    }
+    .theme-toggle .knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: transform .3s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── Griglia card ── */
+    .hub-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Card che occupa tutta la larghezza (es. terza) */
+    .hub-card-wide {
+      grid-column: 1 / -1;
+    }
+
+    .hub-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 28px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .2s, background .2s, transform .12s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .hub-card:active {
+      background: var(--surface);
+      border-color: var(--accent);
+      transform: scale(.97);
+    }
+
+    .hub-card-icon {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+    .hub-card-title {
+      font-size: .84rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      color: var(--text);
+      text-align: center;
+    }
+    .hub-card-sub {
+      font-size: .52rem;
+      letter-spacing: .18em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Colori accent per ogni card */
+    .hub-card.food   { --card-accent: #e8a87c; }
+    .hub-card.gym    { --card-accent: #6cbf8a; }
+    .hub-card.zen    { --card-accent: #F5A9BC; --card-border: var(--accent); }
+
+    .hub-card.zen    { border-color: var(--accent); }
+
+    .hub-card-icon.food-icon { filter: drop-shadow(0 2px 6px rgba(232,168,124,.4)); }
+    .hub-card-icon.gym-icon  { filter: drop-shadow(0 2px 6px rgba(108,191,138,.4)); }
+    .hub-card-icon.zen-icon  { filter: drop-shadow(0 2px 6px rgba(245,169,188,.4)); }
+
+    /* Badge "Presto" */
+    .hub-badge {
+      font-size: .44rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2px 7px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+    <div class="knob" id="theme-knob">☀️</div>
+  </button>
+
+  <header class="hub-header">
+    <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="hub-logo"/>
+    <div class="hub-title">Il Geco Zen</div>
+    <div class="hub-sub">il tuo benessere, un respiro alla volta</div>
+  </header>
+
+  <div class="hub-grid">
+
+    <!-- Riga 1: Alimentazione + Allenamento -->
+    <a class="hub-card food" href="alimentazione.html">
+      <span class="hub-card-icon food-icon">🥗</span>
+      <div class="hub-card-title">Alimentazione</div>
+      <div class="hub-card-sub">dieta · ricette · diario</div>
+    </a>
+
+    <a class="hub-card gym" href="allenamento.html">
+      <span class="hub-card-icon gym-icon">🏋️</span>
+      <div class="hub-card-title">Allenamento</div>
+      <div class="hub-card-sub">schede · sessioni · log</div>
+    </a>
+
+    <!-- Riga 2: Meditazione (card centrata, larghezza piena) -->
+    <a class="hub-card zen hub-card-wide" href="index.html">
+      <span class="hub-card-icon zen-icon">🧘</span>
+      <div class="hub-card-title">Meditazione</div>
+      <div class="hub-card-sub">timer · sequenze · cronologia</div>
+    </a>
+
+  </div>
+
+  <script>
+    const htmlEl = document.documentElement;
+    const btn    = document.getElementById('theme-toggle');
+    const knob   = document.getElementById('theme-knob');
+    let isDark   = localStorage.getItem('zen_theme') === 'dark';
+    function apply() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    apply();
+    btn.addEventListener('click', () => { isDark = !isDark; apply(); });
+  </script>
+</body>
+</html>
