@@ -137,54 +137,49 @@
     /* ══════════════════════════════
        TAB 1 — DIETA
     ══════════════════════════════ */
-    .diet-toolbar {
-      width: 100%; display: flex; gap: 8px; margin-bottom: 14px;
-    }
-    .btn-new-day {
-      flex: 1; background: var(--primary); color: #fff; border: none;
-      border-radius: 12px; padding: 11px; font-family: inherit; font-size: .76rem;
-      font-weight: 600; letter-spacing: .08em; cursor: pointer;
-      -webkit-tap-highlight-color: transparent; transition: opacity .2s;
-    }
-    .btn-new-day:active { opacity: .85; }
 
-    /* Day accordion */
-    .day-accordion { width: 100%; margin-bottom: 10px; }
-    .day-header {
-      width: 100%; display: flex; align-items: center; justify-content: space-between;
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 16px;
-      padding: 12px 14px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent; transition: border-color .2s, background .2s;
+    /* Day pill selector */
+    .day-pill-scroll {
+      width: 100%; overflow-x: auto; display: flex; gap: 8px;
+      margin-bottom: 16px; padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
     }
-    .day-header.open { border-radius: 16px 16px 0 0; border-bottom-color: transparent; background: var(--surface); }
-    .day-header-left { display: flex; align-items: center; gap: 10px; }
-    /* coloured dot */
-    .day-dot {
-      width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid rgba(255,255,255,.3);
+    .day-pill-scroll::-webkit-scrollbar { display: none; }
+    .day-pill {
+      flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 5px;
+      background: var(--card); border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 8px 12px; cursor: pointer; transition: border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent; min-width: 52px;
     }
-    .day-name { font-size: .82rem; font-weight: 700; letter-spacing: .08em; color: var(--text); }
+    .day-pill.active { border-color: var(--primary); background: var(--surface); }
+    .day-pill-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .day-pill-name { font-size: .58rem; font-weight: 700; letter-spacing: .08em; color: var(--text); }
+    .day-pill-type { font-size: .38rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+
+    /* Day card */
+    .day-card {
+      width: 100%; background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 16px; overflow: hidden; margin-bottom: 14px;
+    }
+    .day-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .day-card-left { display: flex; align-items: center; gap: 10px; }
+    .day-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,.3); }
+    .day-name { font-size: .88rem; font-weight: 700; letter-spacing: .08em; color: var(--text); }
     .day-type { font-size: .48rem; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; margin-top: 1px; }
     .day-kcal-badge {
       font-size: .58rem; font-weight: 600; color: var(--primary);
-      background: var(--surface); border: 1px solid var(--accent);
-      border-radius: 12px; padding: 3px 7px; white-space: nowrap;
+      background: var(--bg); border: 1px solid var(--accent);
+      border-radius: 12px; padding: 3px 8px; white-space: nowrap;
     }
-    .day-header-right { display: flex; align-items: center; gap: 6px; }
+    .day-card-right { display: flex; align-items: center; gap: 6px; }
     .day-edit-btn {
       background: none; border: 1px solid var(--border); border-radius: 8px;
-      color: var(--muted); font-size: .7rem; padding: 3px 6px; cursor: pointer;
+      color: var(--muted); font-size: .7rem; padding: 3px 7px; cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-    .day-chevron { font-size: .7rem; color: var(--muted); transition: transform .25s; }
-    .day-header.open .day-chevron { transform: rotate(180deg); }
-
-    .day-body {
-      display: none; flex-direction: column;
-      background: var(--card); border: 1.5px solid var(--border);
-      border-top: none; border-radius: 0 0 16px 16px; overflow: hidden;
-    }
-    .day-body.open { display: flex; }
 
     .meal-slot {
       display: flex; align-items: flex-start; gap: 10px;
@@ -539,10 +534,8 @@
   <!-- ══════════════════════════════  SCREEN 1: DIETA  ══════════════════════════════ -->
   <div class="screen active" id="screen-dieta">
     <div class="section-title">piano alimentare settimanale</div>
-    <div class="diet-toolbar">
-      <button class="btn-new-day" onclick="openDayModal(null)">＋ Nuovo giorno</button>
-    </div>
-    <div id="diet-list"></div>
+    <div class="day-pill-scroll" id="day-pill-scroll"></div>
+    <div id="day-card-wrap"></div>
     <div class="page-footer">
       <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
     </div>
@@ -888,62 +881,25 @@
     { key:'cena',         icon:'🌙', label:'Cena' },
     { key:'pre_nanna',    icon:'🌛', label:'Pre Nanna' },
   ];
-  let diet = JSON.parse(localStorage.getItem(DIET_KEY) || '[]');
+  const DAY_NAMES = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+  const DAY_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+
+  /* Crea i 7 giorni fissi se mancanti in localStorage */
+  let diet = JSON.parse(localStorage.getItem(DIET_KEY) || 'null');
+  if (!diet || !Array.isArray(diet) || diet.length !== 7) {
+    diet = DAY_NAMES.map((name, i) => ({
+      id: 'day_' + i,
+      name,
+      type: (i < 5) ? 'Workout' : 'Riposo',
+      meals: [],
+    }));
+    localStorage.setItem(DIET_KEY, JSON.stringify(diet));
+  }
+
+  let selectedDayIdx = 0;
   let editingDayId = null;
 
   function saveDiet() { localStorage.setItem(DIET_KEY, JSON.stringify(diet)); }
-
-  function renderDiet() {
-    const el = document.getElementById('diet-list');
-    if (!diet.length) {
-      el.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.72rem;padding:32px 0;">Nessun giorno configurato.<br>Premi ＋ per aggiungerne uno.</div>';
-      return;
-    }
-    el.innerHTML = diet.map(day => {
-      const dot   = DOT_COLORS[day.name] || '#888';
-      const total = computeTotals(day.meals);
-      const slotsHtml = MEAL_SLOTS.map(s => {
-        const m = day.meals.find(x => x.slot === s.key);
-        if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-label">${s.label}</div><div class="meal-slot-desc">—</div></div></div>`;
-        return `<div class="meal-slot"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content">
-          <div class="meal-slot-label">${s.label}</div>
-          <div class="meal-slot-desc">${m.desc}</div>
-          <div class="meal-slot-macros">
-            <span class="macro-pill kcal">${m.kcal||0} kcal</span>
-            <span class="macro-pill">P ${m.prot||0}g</span>
-            <span class="macro-pill">C ${m.carb||0}g</span>
-            <span class="macro-pill">F ${m.fat||0}g</span>
-          </div></div></div>`;
-      }).join('');
-      return `<div class="day-accordion">
-        <div class="day-header" onclick="toggleDay(this)">
-          <div class="day-header-left">
-            <div class="day-dot" style="background:${dot}"></div>
-            <div><div class="day-name">${day.name}</div><div class="day-type">${day.type}</div></div>
-          </div>
-          <div class="day-header-right">
-            <span class="day-kcal-badge">~${total.kcal} kcal</span>
-            <button class="day-edit-btn" onclick="event.stopPropagation();openDayModal('${day.id}')">✏️</button>
-            <button class="day-edit-btn" onclick="event.stopPropagation();deleteDay('${day.id}')">🗑️</button>
-            <span class="day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="day-body">
-          ${slotsHtml}
-          <div class="meal-slot meal-slot-totals">
-            <div class="meal-slot-icon">📊</div>
-            <div class="meal-slot-content"><div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~${total.kcal} kcal</span>
-              <span class="macro-pill">P ${total.prot}g</span>
-              <span class="macro-pill">C ${total.carb}g</span>
-              <span class="macro-pill">F ${total.fat}g</span>
-            </div></div>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  }
 
   function computeTotals(meals) {
     return meals.reduce((a, m) => ({
@@ -952,16 +908,64 @@
     }), { kcal:0, prot:0, carb:0, fat:0 });
   }
 
-  function toggleDay(header) {
-    const body = header.nextElementSibling;
-    header.classList.toggle('open');
-    body.classList.toggle('open');
+  function renderDayPills() {
+    const wrap = document.getElementById('day-pill-scroll');
+    if (!wrap) return;
+    wrap.innerHTML = diet.map((day, i) => {
+      const dot   = DOT_COLORS[day.name] || '#888';
+      const active = i === selectedDayIdx ? 'active' : '';
+      return `<button class="day-pill ${active}" onclick="selectedDayIdx=${i};renderDayPills();renderDayCard()">
+        <span class="day-pill-dot" style="background:${dot}"></span>
+        <span class="day-pill-name">${DAY_SHORT[i]}</span>
+        <span class="day-pill-type">${day.type}</span>
+      </button>`;
+    }).join('');
   }
 
-  function deleteDay(id) {
-    if (!confirm('Eliminare questo giorno?')) return;
-    diet = diet.filter(d => d.id !== id);
-    saveDiet(); renderDiet();
+  function renderDayCard() {
+    const wrap = document.getElementById('day-card-wrap');
+    if (!wrap) return;
+    const day   = diet[selectedDayIdx];
+    const dot   = DOT_COLORS[day.name] || '#888';
+    const total = computeTotals(day.meals);
+    const slotsHtml = MEAL_SLOTS.map(s => {
+      const m = day.meals.find(x => x.slot === s.key);
+      if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-label">${s.label}</div><div class="meal-slot-desc">—</div></div></div>`;
+      return `<div class="meal-slot"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content">
+        <div class="meal-slot-label">${s.label}</div>
+        <div class="meal-slot-desc">${m.desc}</div>
+        <div class="meal-slot-macros">
+          <span class="macro-pill kcal">${m.kcal||0} kcal</span>
+          <span class="macro-pill">P ${m.prot||0}g</span>
+          <span class="macro-pill">C ${m.carb||0}g</span>
+          <span class="macro-pill">F ${m.fat||0}g</span>
+        </div></div></div>`;
+    }).join('');
+    wrap.innerHTML = `<div class="day-card">
+      <div class="day-card-header">
+        <div class="day-header-left">
+          <div class="day-dot" style="background:${dot}"></div>
+          <div><div class="day-name">${day.name}</div><div class="day-type">${day.type}</div></div>
+        </div>
+        <div class="day-header-right">
+          <span class="day-kcal-badge">~${total.kcal} kcal</span>
+          <button class="day-edit-btn" onclick="openDayModal('${day.id}')">✏️</button>
+        </div>
+      </div>
+      <div class="day-card-body">
+        ${slotsHtml}
+        <div class="meal-slot meal-slot-totals">
+          <div class="meal-slot-icon">📊</div>
+          <div class="meal-slot-content"><div class="meal-slot-label">Totali</div>
+          <div class="meal-slot-macros">
+            <span class="macro-pill kcal">~${total.kcal} kcal</span>
+            <span class="macro-pill">P ${total.prot}g</span>
+            <span class="macro-pill">C ${total.carb}g</span>
+            <span class="macro-pill">F ${total.fat}g</span>
+          </div></div>
+        </div>
+      </div>
+    </div>`;
   }
 
   /* Day modal */
@@ -971,18 +975,11 @@
     dayMealCount = 0;
     const mealsList = document.getElementById('dm-meals-list');
     mealsList.innerHTML = '';
-    if (id) {
-      const day = diet.find(d => d.id === id);
-      document.getElementById('day-modal-title').textContent = 'Modifica Giorno';
-      document.getElementById('dm-day').value  = day.name;
-      document.getElementById('dm-type').value = day.type;
-      day.meals.forEach(m => addDayMealSlot(m));
-    } else {
-      document.getElementById('day-modal-title').textContent = 'Nuovo Giorno';
-      document.getElementById('dm-day').value  = 'Lunedì';
-      document.getElementById('dm-type').value = 'Workout';
-      addDayMealSlot();
-    }
+    const day = diet.find(d => d.id === id);
+    document.getElementById('day-modal-title').textContent = 'Modifica Giorno';
+    document.getElementById('dm-day').value  = day.name;
+    document.getElementById('dm-type').value = day.type;
+    day.meals.forEach(m => addDayMealSlot(m));
     document.getElementById('day-modal').classList.add('open');
   }
   function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
@@ -1008,10 +1005,10 @@
   }
 
   function saveDay() {
-    const name = document.getElementById('dm-day').value;
-    const type = document.getElementById('dm-type').value;
+    const day  = diet.find(d => d.id === editingDayId);
+    day.type   = document.getElementById('dm-type').value;
     const mealEls = document.querySelectorAll('#dm-meals-list > div');
-    const meals = Array.from(mealEls).map(el => ({
+    day.meals = Array.from(mealEls).map(el => ({
       slot: el.querySelector('[data-role=slot]').value,
       desc: el.querySelector('[data-role=desc]').value.trim(),
       kcal: parseInt(el.querySelector('[data-role=kcal]').value)||0,
@@ -1019,13 +1016,7 @@
       carb: parseInt(el.querySelector('[data-role=carb]').value)||0,
       fat:  parseInt(el.querySelector('[data-role=fat]').value)||0,
     })).filter(m => m.desc);
-    const dayObj = { id: editingDayId || 'd_'+Date.now(), name, type, meals };
-    if (editingDayId) {
-      diet = diet.map(d => d.id === editingDayId ? dayObj : d);
-    } else {
-      diet.push(dayObj);
-    }
-    saveDiet(); renderDiet(); closeDayModal();
+    saveDiet(); renderDayPills(); renderDayCard(); closeDayModal();
   }
 
   /* ════════════ RICETTARIO ════════════ */
@@ -1423,7 +1414,7 @@
   }
 
   /* ════════════ INIT ════════════ */
-  renderDiet();
+  renderDayPills(); renderDayCard();
   renderRecipes();
   initCalendar();
   </script>
