@@ -2,14 +2,21 @@
 // history.js — Gestione cronologia sessioni
 // ═══════════════════════════════════════
 
-const STORAGE_KEY = 'zen_history';
+import {
+  clearSessions,
+  isFirebaseConfigured,
+  loadSessions,
+  saveSessionDoc,
+} from './firebase-config.js';
+
+let _historyCache = [];
 
 // ── Export CSV ────────────────────────────────────────────────────────────────
 export function exportCSV() {
-  const all = loadHistory();
+  const all = _historyCache;
   if (!all.length) return;
   const rows = [['Data', 'Ora', 'Minuti totali', 'Intervalli']];
-  all.sort((a, b) => a.ts - b.ts).forEach(s => {
+  [...all].sort((a, b) => a.ts - b.ts).forEach(s => {
     const d = new Date(s.ts);
     const data = d.toLocaleDateString('it-IT');
     const ora  = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
@@ -26,27 +33,26 @@ export function exportCSV() {
 
 // ── Storage ───────────────────────────────────────────────────────────────────
 
-export function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch(e) { return []; }
-}
-
-function saveHistory(arr) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+export async function loadHistory() {
+  _historyCache = await loadSessions();
+  return _historyCache;
 }
 
 /**
  * Salva una sessione completata.
  * @param {{ totalMins: number, steps: Array<{mins:number,name:string}> }} data
  */
-export function saveSession(data) {
-  const arr = loadHistory();
-  arr.push({
-    ts:        Date.now(),
-    totalMins: data.totalMins,
-    steps:     data.steps,
-  });
-  saveHistory(arr);
+export async function saveSession(data) {
+  await saveSessionDoc(data);
+}
+
+export async function resetHistory() {
+  await clearSessions();
+  _historyCache = [];
+}
+
+export function firebaseReady() {
+  return isFirebaseConfigured();
 }
 
 // ── Calendario ────────────────────────────────────────────────────────────────
@@ -78,8 +84,8 @@ let _selectedDay = null; // null = mostra tutto il mese
 
 // ── Render ────────────────────────────────────────────────────────────────────
 
-export function renderHistory() {
-  const all = loadHistory();
+export async function renderHistory() {
+  const all = await loadHistory();
   _renderCalendar(all);
   _renderList(all);
 }

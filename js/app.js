@@ -13,7 +13,7 @@ import { requestWakeLock }                   from './wakeLock.js';
 import { startNature, stopNature,
          getCurrentSound, setCurrentSound }  from './audio/sounds.js';
 import { saveSession, renderHistory,
-         exportCSV }                         from './history.js';
+         exportCSV, firebaseReady }          from './history.js';
 
 // ── AudioContext (creato al primo gesto utente) ───────────────────────────────
 let audioCtx = null;
@@ -81,9 +81,9 @@ tabHome.addEventListener('click', () => {
   _csvBtn.style.visibility = 'hidden';
 });
 
-tabHistory.addEventListener('click', () => {
+tabHistory.addEventListener('click', async () => {
   setActiveTab('tab-history');
-  renderHistory();
+  await renderHistory();
   showScreen('screen-history');
   _csvBtn.style.visibility = 'visible';
 });
@@ -157,11 +157,11 @@ function _startSession() {
   _sessionActive = true;
   const totalMins = steps.reduce((acc, s) => acc + s.mins, 0);
 
-  initTimer(audioCtx, steps, () => {
+  initTimer(audioCtx, steps, async () => {
     // Callback chiamata SOLO quando la sessione è completata al 100%
     _sessionActive = false;
     _updateTabCenter(false);
-    saveSession({ totalMins, steps: steps.map(s => ({ mins: s.mins, name: s.name || '' })) });
+    await saveSession({ totalMins, steps: steps.map(s => ({ mins: s.mins, name: s.name || '' })) });
   });
 
   _updateTabCenter(true);
@@ -361,5 +361,8 @@ initPicker();
 seedDefaultPresets();
 renderConfigSteps();
 renderPresets(steps, loaded => { steps = loaded; renderConfigSteps(); });
+if (!firebaseReady()) {
+  console.warn('Firebase non configurato: la cronologia meditazione resterà vuota finché non imposti js/firebase-config.js');
+}
 // Genera icone PNG dal SVG del geco (per apple-touch-icon e favicon)
 generateAndSetIcons();
