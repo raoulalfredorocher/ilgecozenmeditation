@@ -38,25 +38,20 @@
       --input-bg:#211d17;
     }
 
-    html { overscroll-behavior: none; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+    html { overscroll-behavior: none; }
     html, body {
       min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       transition: background .3s, color .3s;
     }
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       padding-top: calc(env(safe-area-inset-top, 0px) + 120px);
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-      max-width: 420px;
-      margin: 0 auto;
+      padding-left: 20px; padding-right: 20px;
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      max-width: 420px; margin: 0 auto;
     }
 
     /* ── Header ── */
@@ -76,16 +71,14 @@
     }
     .btn-back-hub:active { color: var(--primary); border-color: var(--primary); }
     .header-center {
-      flex: 1; text-align: center; display: flex; flex-direction: column;
-      align-items: center; gap: 4px;
+      flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;
     }
     .header-icon { font-size: 1.8rem; line-height: 1; }
     .app-title { font-size: .95rem; letter-spacing: .18em; color: var(--primary); font-weight: 700; }
     .app-sub { font-size: .48rem; letter-spacing: .22em; color: var(--muted); margin-top: 2px; text-transform: uppercase; }
     .theme-toggle {
       background: none; border: 1.5px solid var(--border); border-radius: 20px;
-      cursor: pointer; width: 52px; height: 28px; position: relative;
-      flex-shrink: 0; transition: border-color .3s;
+      cursor: pointer; width: 52px; height: 28px; position: relative; flex-shrink: 0; transition: border-color .3s;
     }
     .theme-toggle .knob {
       position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
@@ -98,13 +91,15 @@
     .screen { width: 100%; display: none; flex-direction: column; align-items: center; }
     .screen.active { display: flex; }
 
-    /* ── Tab Bar ── */
+    /* ══════════════════════
+       TAB BAR — stile meditazione
+    ══════════════════════ */
     .tab-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      height: calc(62px + env(safe-area-inset-bottom, 0px));
       padding-bottom: env(safe-area-inset-bottom, 0px);
       background: var(--card); border-top: 1px solid var(--border);
-      border-radius: 22px 22px 0 0;
+      border-radius: 24px 24px 0 0;
       display: flex; align-items: center; justify-content: space-around;
       z-index: 200;
     }
@@ -118,167 +113,198 @@
     .tab-btn.tab-active { color: var(--primary); }
     .tab-icon { width: 22px; height: 22px; flex-shrink: 0; }
     .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; font-family: inherit; line-height: 1; }
+    /* Pulsante centrale in rilievo */
+    .tab-btn.tab-center {
+      flex: 0 0 70px; position: relative; top: -14px;
+    }
+    .tab-center-circle {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(192,122,48,.45);
+      border: 3px solid var(--card);
+      transition: background .2s, transform .12s;
+    }
+    .tab-btn.tab-center:active .tab-center-circle { transform: scale(.93); }
+    .tab-btn.tab-center.tab-active .tab-center-circle { background: var(--primary); }
 
     /* ── Section title ── */
     .section-title {
       width: 100%; font-size: .54rem; letter-spacing: .28em;
-      color: var(--muted); text-transform: uppercase; margin-bottom: 14px;
-      text-align: center;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 14px; text-align: center;
     }
 
     /* ══════════════════════════════
        TAB 1 — DIETA
     ══════════════════════════════ */
-
-    /* Totali banner */
-    .day-totals {
-      display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-      margin-bottom: 6px;
+    .diet-toolbar {
+      width: 100%; display: flex; gap: 8px; margin-bottom: 14px;
     }
-    .day-total-pill {
-      font-size: .58rem; font-weight: 600; letter-spacing: .06em;
-      border-radius: 20px; padding: 3px 8px; background: var(--surface);
-      color: var(--muted); border: 1px solid var(--border);
+    .btn-new-day {
+      flex: 1; background: var(--primary); color: #fff; border: none;
+      border-radius: 12px; padding: 11px; font-family: inherit; font-size: .76rem;
+      font-weight: 600; letter-spacing: .08em; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: opacity .2s;
     }
-    .day-total-pill.kcal { color: var(--primary); border-color: var(--accent); }
+    .btn-new-day:active { opacity: .85; }
 
     /* Day accordion */
     .day-accordion { width: 100%; margin-bottom: 10px; }
     .day-header {
       width: 100%; display: flex; align-items: center; justify-content: space-between;
       background: var(--card); border: 1.5px solid var(--border); border-radius: 16px;
-      padding: 13px 16px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: border-color .2s, background .2s;
+      padding: 12px 14px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: border-color .2s, background .2s;
     }
     .day-header.open { border-radius: 16px 16px 0 0; border-bottom-color: transparent; background: var(--surface); }
     .day-header-left { display: flex; align-items: center; gap: 10px; }
-    .day-emoji { font-size: 1.3rem; line-height: 1; }
+    /* coloured dot */
+    .day-dot {
+      width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,.3);
+    }
     .day-name { font-size: .82rem; font-weight: 700; letter-spacing: .08em; color: var(--text); }
-    .day-type { font-size: .50rem; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; margin-top: 1px; }
+    .day-type { font-size: .48rem; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; margin-top: 1px; }
     .day-kcal-badge {
-      font-size: .60rem; font-weight: 600; color: var(--primary);
+      font-size: .58rem; font-weight: 600; color: var(--primary);
       background: var(--surface); border: 1px solid var(--accent);
-      border-radius: 12px; padding: 3px 8px; white-space: nowrap;
+      border-radius: 12px; padding: 3px 7px; white-space: nowrap;
     }
-    .day-chevron {
-      font-size: .7rem; color: var(--muted); transition: transform .25s; margin-left: 8px;
+    .day-header-right { display: flex; align-items: center; gap: 6px; }
+    .day-edit-btn {
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); font-size: .7rem; padding: 3px 6px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
+    .day-chevron { font-size: .7rem; color: var(--muted); transition: transform .25s; }
     .day-header.open .day-chevron { transform: rotate(180deg); }
 
     .day-body {
-      display: none; flex-direction: column; gap: 0;
+      display: none; flex-direction: column;
       background: var(--card); border: 1.5px solid var(--border);
-      border-top: none; border-radius: 0 0 16px 16px;
-      overflow: hidden;
+      border-top: none; border-radius: 0 0 16px 16px; overflow: hidden;
     }
     .day-body.open { display: flex; }
 
     .meal-slot {
       display: flex; align-items: flex-start; gap: 10px;
-      padding: 11px 16px; border-bottom: 1px solid var(--surface);
+      padding: 10px 14px; border-bottom: 1px solid var(--surface);
     }
     .meal-slot:last-child { border-bottom: none; }
-    .meal-slot-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .meal-slot-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
     .meal-slot-content { flex: 1; }
     .meal-slot-label {
-      font-size: .46rem; letter-spacing: .20em; text-transform: uppercase;
-      color: var(--primary); font-weight: 600; margin-bottom: 3px;
+      font-size: .44rem; letter-spacing: .20em; text-transform: uppercase;
+      color: var(--primary); font-weight: 600; margin-bottom: 2px;
     }
-    .meal-slot-desc { font-size: .70rem; color: var(--text); line-height: 1.6; }
-    .meal-slot-macros {
-      display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;
-    }
+    .meal-slot-desc { font-size: .68rem; color: var(--text); line-height: 1.55; }
+    .meal-slot-macros { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
     .macro-pill {
-      font-size: .48rem; padding: 2px 6px; border-radius: 8px;
+      font-size: .46rem; padding: 2px 6px; border-radius: 8px;
       background: var(--surface); color: var(--muted); border: 1px solid var(--border);
     }
     .macro-pill.kcal { color: var(--primary); border-color: var(--accent); }
     .meal-slot.empty .meal-slot-desc { color: var(--muted); font-style: italic; }
+    .meal-slot-totals { border-top: 1.5px solid var(--border) !important; background: var(--surface); }
 
     /* ══════════════════════════════
        TAB 2 — RICETTARIO
     ══════════════════════════════ */
-    .recipe-category { width: 100%; margin-bottom: 22px; }
+    .recipe-toolbar {
+      width: 100%; display: flex; gap: 8px; margin-bottom: 14px;
+    }
+    .btn-export-recipes {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .68rem;
+      padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+      -webkit-tap-highlight-color: transparent; white-space: nowrap;
+    }
+    .btn-export-recipes:active { color: var(--primary); border-color: var(--primary); }
+
+    .recipe-category { width: 100%; margin-bottom: 20px; }
     .recipe-cat-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px; padding-bottom: 8px;
-      border-bottom: 1.5px solid var(--border);
+      margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1.5px solid var(--border);
     }
-    .recipe-cat-title {
-      font-size: .58rem; letter-spacing: .22em; color: var(--primary);
-      text-transform: uppercase; font-weight: 700;
-    }
+    .recipe-cat-title { font-size: .58rem; letter-spacing: .22em; color: var(--primary); text-transform: uppercase; font-weight: 700; }
     .recipe-cat-count {
-      font-size: .50rem; color: var(--muted); letter-spacing: .1em;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 2px 7px;
+      font-size: .50rem; color: var(--muted); background: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px; padding: 2px 7px;
     }
     .recipe-list { display: flex; flex-direction: column; gap: 8px; }
     .recipe-card {
       background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-      overflow: hidden; cursor: pointer;
-      transition: border-color .2s;
+      overflow: hidden; cursor: pointer; transition: border-color .2s;
       -webkit-tap-highlight-color: transparent;
     }
     .recipe-card:active { border-color: var(--primary); }
     .recipe-card-inner { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
     .recipe-flag { font-size: 1.3rem; flex-shrink: 0; }
+    .recipe-thumb {
+      width: 44px; height: 44px; border-radius: 8px; object-fit: cover;
+      flex-shrink: 0; background: var(--surface);
+    }
     .recipe-info { flex: 1; }
     .recipe-name { font-size: .80rem; font-weight: 600; color: var(--text); }
-    .recipe-macros-row {
-      display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap;
-    }
+    .recipe-macros-row { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
     .recipe-actions { display: flex; gap: 6px; }
     .btn-icon {
       background: none; border: 1px solid var(--border); border-radius: 8px;
       color: var(--muted); cursor: pointer; padding: 5px 7px; font-size: .8rem;
-      transition: color .2s, border-color .2s;
-      -webkit-tap-highlight-color: transparent;
+      transition: color .2s, border-color .2s; -webkit-tap-highlight-color: transparent;
     }
     .btn-icon.del:active { color: var(--red); border-color: var(--red); }
     .btn-icon.edit:active { color: var(--primary); border-color: var(--primary); }
 
     .btn-add-recipe {
       width: 100%; background: var(--card); border: 1.5px dashed var(--border);
-      border-radius: 12px; color: var(--primary); font-size: .80rem;
-      letter-spacing: .10em; padding: 12px; cursor: pointer; font-family: inherit;
+      border-radius: 12px; color: var(--primary); font-size: .78rem;
+      letter-spacing: .10em; padding: 11px; cursor: pointer; font-family: inherit;
       transition: background .2s, border-color .2s; margin-top: 4px; margin-bottom: 2px;
       -webkit-tap-highlight-color: transparent;
     }
     .btn-add-recipe:active { background: var(--surface); border-color: var(--primary); }
 
-    /* Recipe detail panel */
-    .recipe-detail {
-      display: none; flex-direction: column; width: 100%;
-      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-      padding: 16px; margin-bottom: 14px; gap: 10px;
+    /* Recipe detail — POPUP centrato */
+    .recipe-popup-overlay {
+      display: none; position: fixed; inset: 0; z-index: 600;
+      background: rgba(0,0,0,.5); align-items: center; justify-content: center;
+      padding: 20px;
     }
-    .recipe-detail.open { display: flex; }
-    .recipe-detail-header { display: flex; align-items: center; gap: 10px; }
-    .recipe-detail-flag { font-size: 2rem; }
-    .recipe-detail-title { font-size: .9rem; font-weight: 700; color: var(--text); }
-    .recipe-detail-macros { display: flex; gap: 6px; flex-wrap: wrap; }
-    .recipe-photo {
-      width: 100%; max-height: 180px; object-fit: cover;
-      border-radius: 12px; display: block;
+    .recipe-popup-overlay.open { display: flex; }
+    .recipe-popup {
+      background: var(--card); border-radius: 20px;
+      width: 100%; max-width: 380px; max-height: 80vh; overflow-y: auto;
+      padding: 20px; position: relative; display: flex; flex-direction: column; gap: 12px;
     }
-    .recipe-section-label {
-      font-size: .48rem; letter-spacing: .20em; text-transform: uppercase;
-      color: var(--primary); font-weight: 600; margin-bottom: 4px;
+    .recipe-popup-close {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--surface); border: none; border-radius: 50%;
+      width: 30px; height: 30px; font-size: 1rem; cursor: pointer; color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
     }
-    .recipe-ingredients { font-size: .70rem; color: var(--text); line-height: 1.8; }
-    .recipe-steps { display: flex; flex-direction: column; gap: 6px; }
-    .recipe-step { display: flex; gap: 10px; align-items: flex-start; }
+    .recipe-popup-flag { font-size: 2.4rem; text-align: center; }
+    .recipe-popup-title { font-size: 1rem; font-weight: 700; color: var(--text); text-align: center; }
+    .recipe-popup-nat { font-size: .52rem; color: var(--muted); letter-spacing: .14em; text-align: center; }
+    .recipe-popup-macros { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .recipe-popup-photo {
+      width: 100%; max-height: 160px; object-fit: cover; border-radius: 12px;
+    }
+    .recipe-popup-section { font-size: .48rem; letter-spacing: .20em; text-transform: uppercase; color: var(--primary); font-weight: 600; margin-bottom: 4px; }
+    .recipe-popup-ingredients { font-size: .70rem; color: var(--text); line-height: 1.8; }
+    .recipe-popup-steps { display: flex; flex-direction: column; gap: 6px; }
+    .recipe-popup-step { display: flex; gap: 10px; align-items: flex-start; }
     .step-num {
-      width: 20px; height: 20px; border-radius: 50%;
-      background: var(--primary); color: #fff;
+      width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: #fff;
       font-size: .56rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; margin-top: 1px;
     }
     .step-text { font-size: .70rem; color: var(--text); line-height: 1.6; flex: 1; }
 
-    /* Modal overlay */
+    /* ══════════════════════════════
+       MODALI GENERICI
+    ══════════════════════════════ */
     .modal-overlay {
       display: none; position: fixed; inset: 0; z-index: 500;
       background: rgba(0,0,0,.45); align-items: flex-end; justify-content: center;
@@ -288,44 +314,28 @@
       background: var(--bg); border-radius: 24px 24px 0 0;
       width: 100%; max-width: 420px;
       padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
-      max-height: 88vh; overflow-y: auto;
+      max-height: 90vh; overflow-y: auto;
     }
-    .modal-handle {
-      width: 36px; height: 4px; background: var(--border);
-      border-radius: 4px; margin: 0 auto 16px;
-    }
-    .modal-title {
-      font-size: .80rem; font-weight: 700; color: var(--text);
-      letter-spacing: .10em; margin-bottom: 16px; text-align: center;
-    }
+    .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 0 auto 16px; }
+    .modal-title { font-size: .80rem; font-weight: 700; color: var(--text); letter-spacing: .10em; margin-bottom: 16px; text-align: center; }
     .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
     .form-label { font-size: .52rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .form-label .req { color: var(--red); margin-left: 2px; }
     .form-input, .form-select, .form-textarea {
       background: var(--input-bg); border: 1px solid var(--border);
       border-radius: 10px; padding: 10px 12px; font-family: inherit;
-      font-size: .78rem; color: var(--text); width: 100%;
-      transition: border-color .2s;
+      font-size: .78rem; color: var(--text); width: 100%; transition: border-color .2s;
     }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      outline: none; border-color: var(--primary);
-    }
-    .form-textarea { resize: vertical; min-height: 72px; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary); }
+    .form-input.err, .form-select.err, .form-textarea.err { border-color: var(--red); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .form-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
-    .form-photo-preview {
-      width: 100%; height: 120px; border-radius: 10px; object-fit: cover;
-      background: var(--surface); border: 1px dashed var(--border);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: .70rem; cursor: pointer; overflow: hidden;
-    }
-    .form-photo-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    .form-textarea { resize: vertical; min-height: 60px; }
     .btn-primary {
-      width: 100%; background: var(--primary); color: #fff;
-      border: none; border-radius: 12px; padding: 13px;
-      font-family: inherit; font-size: .80rem; font-weight: 600;
-      letter-spacing: .10em; cursor: pointer; margin-top: 6px;
-      transition: opacity .2s;
-      -webkit-tap-highlight-color: transparent;
+      width: 100%; background: var(--primary); color: #fff; border: none;
+      border-radius: 12px; padding: 13px; font-family: inherit; font-size: .80rem;
+      font-weight: 600; letter-spacing: .10em; cursor: pointer; margin-top: 6px;
+      transition: opacity .2s; -webkit-tap-highlight-color: transparent;
     }
     .btn-primary:active { opacity: .85; }
     .btn-cancel {
@@ -335,77 +345,87 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* step list in modal */
-    .step-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-    .step-item { display: flex; gap: 8px; align-items: flex-start; }
+    /* Ingredienti e step list nel modal */
+    .ingredient-list, .step-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .ingredient-item, .step-item { display: flex; gap: 8px; align-items: center; }
     .step-item-num {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: var(--primary); color: #fff;
-      font-size: .56rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 2px;
+      width: 22px; height: 22px; border-radius: 50%; background: var(--primary); color: #fff;
+      font-size: .56rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
-    .step-item input {
+    .ingredient-item input, .step-item input {
       flex: 1; background: var(--input-bg); border: 1px solid var(--border);
-      border-radius: 8px; padding: 8px 10px; font-family: inherit;
-      font-size: .74rem; color: var(--text);
+      border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: .74rem; color: var(--text);
     }
-    .step-item input:focus { outline: none; border-color: var(--primary); }
-    .btn-add-step {
+    .ingredient-item input:focus, .step-item input:focus { outline: none; border-color: var(--primary); }
+    .item-del-btn {
+      background: none; border: none; color: var(--muted); cursor: pointer; font-size: .9rem;
+      padding: 2px 4px; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+    }
+    .item-del-btn:active { color: var(--red); }
+    .btn-add-item {
       background: none; border: 1px dashed var(--border); border-radius: 8px;
       color: var(--muted); font-size: .74rem; padding: 7px; cursor: pointer;
-      width: 100%; font-family: inherit; margin-top: 4px;
-      -webkit-tap-highlight-color: transparent;
+      width: 100%; font-family: inherit; margin-top: 4px; -webkit-tap-highlight-color: transparent;
     }
+
+    /* Foto upload */
+    .photo-upload-row { display: flex; gap: 8px; align-items: center; }
+    .photo-preview-thumb {
+      width: 56px; height: 56px; border-radius: 10px; object-fit: cover;
+      border: 1px solid var(--border); flex-shrink: 0; display: none; background: var(--surface);
+    }
+    .photo-preview-thumb.visible { display: block; }
+    .btn-photo-upload {
+      flex: 1; background: none; border: 1.5px dashed var(--border); border-radius: 10px;
+      color: var(--muted); font-size: .72rem; font-family: inherit; letter-spacing: .06em;
+      padding: 10px; cursor: pointer; text-align: center; transition: border-color .2s, color .2s;
+    }
+    .btn-photo-upload:active { border-color: var(--primary); color: var(--primary); }
+    #rf-photo-input, #dm-photo-input { display: none; }
 
     /* ══════════════════════════════
        TAB 3 — DIARIO
     ══════════════════════════════ */
+    .diary-toolbar {
+      width: 100%; display: flex; gap: 8px; margin-bottom: 4px;
+    }
+    .btn-diary-action {
+      flex: 1; background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .62rem;
+      padding: 8px 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;
+      -webkit-tap-highlight-color: transparent; white-space: nowrap;
+    }
+    .btn-diary-action:active { color: var(--primary); border-color: var(--primary); }
+
     .calendar-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 12px;
     }
     .cal-nav-btn {
       background: none; border: 1px solid var(--border); border-radius: 10px;
       color: var(--muted); padding: 6px 12px; cursor: pointer; font-size: .80rem;
       -webkit-tap-highlight-color: transparent;
     }
-    .cal-month-label {
-      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
-      color: var(--text); text-transform: uppercase;
-    }
+    .cal-month-label { font-size: .72rem; font-weight: 700; letter-spacing: .12em; color: var(--text); text-transform: uppercase; }
     .calendar-grid {
-      width: 100%; display: grid; grid-template-columns: repeat(7, 1fr);
-      gap: 3px; margin-bottom: 16px;
+      width: 100%; display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 16px;
     }
-    .cal-day-label {
-      text-align: center; font-size: .44rem; letter-spacing: .10em;
-      color: var(--muted); text-transform: uppercase; padding: 3px 0;
-    }
+    .cal-day-label { text-align: center; font-size: .44rem; letter-spacing: .10em; color: var(--muted); text-transform: uppercase; padding: 3px 0; }
     .cal-day {
-      aspect-ratio: 1/1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      border-radius: 10px; cursor: pointer; position: relative;
-      -webkit-tap-highlight-color: transparent;
-      transition: background .15s;
+      aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 10px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background .15s;
     }
     .cal-day:hover { background: var(--surface); }
     .cal-day.empty { cursor: default; }
     .cal-day-num { font-size: .68rem; font-weight: 600; color: var(--text); }
-    .cal-day.today .cal-day-num { color: var(--primary); }
     .cal-day.today { background: var(--surface); border: 1.5px solid var(--accent); }
+    .cal-day.today .cal-day-num { color: var(--primary); }
     .cal-day.selected { background: var(--primary); border: none; }
     .cal-day.selected .cal-day-num { color: #fff; }
-    .cal-day-dot {
-      width: 4px; height: 4px; border-radius: 50%;
-      background: var(--accent2); margin-top: 2px;
-    }
+    .cal-day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent2); margin-top: 2px; }
     .cal-day.selected .cal-day-dot { background: rgba(255,255,255,.7); }
 
-    .diary-selected-date {
-      font-size: .58rem; letter-spacing: .20em; color: var(--muted);
-      text-transform: uppercase; margin-bottom: 10px; text-align: center; width: 100%;
-    }
+    .diary-selected-date { font-size: .58rem; letter-spacing: .20em; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; text-align: center; width: 100%; }
     .diary-macro-summary {
       width: 100%; background: var(--card); border: 1px solid var(--border);
       border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
@@ -414,11 +434,9 @@
     .diary-macro-item { text-align: center; }
     .diary-macro-val { font-size: .84rem; font-weight: 700; color: var(--primary); }
     .diary-macro-key { font-size: .44rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
-
     .diary-meal-list { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
     .diary-meal-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 14px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
       display: flex; align-items: center; gap: 12px;
     }
     .diary-meal-icon { font-size: 1.3rem; flex-shrink: 0; }
@@ -427,11 +445,7 @@
     .diary-meal-desc { font-size: .60rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
     .diary-meal-kcal { font-size: .72rem; font-weight: 600; color: var(--primary); }
     .diary-meal-kcal span { font-size: .48rem; color: var(--muted); font-weight: 400; }
-    .diary-meal-del {
-      background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: .9rem; padding: 4px; -webkit-tap-highlight-color: transparent;
-    }
-
+    .diary-meal-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .9rem; padding: 4px; -webkit-tap-highlight-color: transparent; }
     .btn-add-diary-meal {
       width: 100%; background: var(--card); border: 1.5px dashed var(--border);
       border-radius: 12px; color: var(--primary); font-size: .80rem;
@@ -441,14 +455,66 @@
     }
     .btn-add-diary-meal:active { background: var(--surface); border-color: var(--primary); }
 
+    /* Analytics */
+    .analytics-card {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-bottom: 14px;
+    }
+    .analytics-title { font-size: .58rem; letter-spacing: .20em; text-transform: uppercase; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
+    .analytics-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .analytics-tab {
+      flex: 1; padding: 7px; border: 1px solid var(--border); border-radius: 8px;
+      background: none; color: var(--muted); font-size: .60rem; font-family: inherit;
+      cursor: pointer; transition: all .2s; text-align: center; -webkit-tap-highlight-color: transparent;
+    }
+    .analytics-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .analytics-avg-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px;
+    }
+    .analytics-avg-item { text-align: center; }
+    .analytics-avg-val { font-size: .82rem; font-weight: 700; color: var(--primary); }
+    .analytics-avg-key { font-size: .42rem; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+
+    /* Mini bar chart */
+    .bar-chart { width: 100%; margin-top: 4px; }
+    .bar-chart-title { font-size: .48rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .bar-chart-rows { display: flex; flex-direction: column; gap: 5px; }
+    .bar-row { display: flex; align-items: center; gap: 8px; }
+    .bar-label { font-size: .48rem; color: var(--muted); width: 22px; text-align: right; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 10px; background: var(--surface); border-radius: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 6px; transition: width .5s; }
+    .bar-val { font-size: .48rem; color: var(--text); width: 38px; text-align: right; flex-shrink: 0; }
+
+    /* Checkboxes export */
+    .export-check-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--surface); }
+    .export-check-row:last-child { border-bottom: none; }
+    .export-check-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0; }
+    .export-check-label { font-size: .74rem; color: var(--text); flex: 1; }
+    .export-check-cat { font-size: .50rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+    .export-divider { font-size: .50rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 10px 0 6px; }
+    .export-quick-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .btn-export-quick {
+      background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted);
+      font-size: .62rem; padding: 6px 10px; cursor: pointer; font-family: inherit;
+      -webkit-tap-highlight-color: transparent; transition: color .2s, border-color .2s;
+    }
+    .btn-export-quick:active { color: var(--primary); border-color: var(--primary); }
+
     /* ── Footer ── */
     .page-footer {
-      margin-top: 16px; width: 100%;
-      border-top: 1px solid var(--border); padding-top: 12px;
-      text-align: center; font-size: .52rem;
-      letter-spacing: .14em; color: var(--muted);
+      margin-top: 16px; width: 100%; border-top: 1px solid var(--border); padding-top: 12px;
+      text-align: center; font-size: .52rem; letter-spacing: .14em; color: var(--muted);
     }
     .page-footer a { color: var(--primary); text-decoration: none; }
+
+    /* Day color dots palette */
+    .dot-lun { background: #3b82f6; }
+    .dot-mar { background: #06b6d4; }
+    .dot-mer { background: #8b5cf6; }
+    .dot-gio { background: #f59e0b; }
+    .dot-ven { background: #10b981; }
+    .dot-sab { background: #ec4899; }
+    .dot-dom { background: #ef4444; }
   </style>
 </head>
 <body>
@@ -470,845 +536,145 @@
     </button>
   </header>
 
-  <!-- ══════════════════════════════
-       SCREEN 1: DIETA
-  ══════════════════════════════ -->
+  <!-- ══════════════════════════════  SCREEN 1: DIETA  ══════════════════════════════ -->
   <div class="screen active" id="screen-dieta">
     <div class="section-title">piano alimentare settimanale</div>
-
-    <!-- LUNEDÌ -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">💪</div>
-          <div>
-            <div class="day-name">Lunedì</div>
-            <div class="day-type">Workout</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1960 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥤</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Post-Workout</div>
-            <div class="meal-slot-desc">25g Whey Vegane in acqua</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">100 kcal</span>
-              <span class="macro-pill">P 22g</span>
-              <span class="macro-pill">C 2g</span>
-              <span class="macro-pill">F 1g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">3 McVitie's (45g) + 10g Burro d'Arachidi + 100g Yogurt Soia + 150g Frutta fresca</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">390 kcal</span>
-              <span class="macro-pill">P 12g</span>
-              <span class="macro-pill">C 55g</span>
-              <span class="macro-pill">F 14g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">PANISSE (80g Farina di Ceci in padella) + 70g Riso Integrale + 300g Zucchine + 10g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">660 kcal</span>
-              <span class="macro-pill">P 32g</span>
-              <span class="macro-pill">C 68g</span>
-              <span class="macro-pill">F 22g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">200g Seitan piastra + 80g Pasta Integrale + 300g Verdure + 15g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">810 kcal</span>
-              <span class="macro-pill">P 89g</span>
-              <span class="macro-pill">C 60g</span>
-              <span class="macro-pill">F 21g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1960 kcal</span>
-              <span class="macro-pill">P 155g</span>
-              <span class="macro-pill">C 185g</span>
-              <span class="macro-pill">F 58g</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="diet-toolbar">
+      <button class="btn-new-day" onclick="openDayModal(null)">＋ Nuovo giorno</button>
     </div>
-
-    <!-- MARTEDÌ -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">😴</div>
-          <div>
-            <div class="day-name">Martedì</div>
-            <div class="day-type">Riposo</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1920 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🏃</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre-Workout</div>
-            <div class="meal-slot-desc">Giorno di riposo</div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🥤</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Post-Workout</div>
-            <div class="meal-slot-desc">Giorno di riposo</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">3 McVitie's (45g) + 100g Yogurt Soia s/z + 10g Mandorle + 150g Frutta</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">380 kcal</span>
-              <span class="macro-pill">P 12g</span>
-              <span class="macro-pill">C 55g</span>
-              <span class="macro-pill">F 12g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">200g Tofu marinato + 80g Riso Integrale + 250g Broccoli + 12g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">690 kcal</span>
-              <span class="macro-pill">P 45g</span>
-              <span class="macro-pill">C 65g</span>
-              <span class="macro-pill">F 24g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">1 Uovo sodo + 300g Fiocchi di Latte + 350g Patate vapore + 300g Insalata + 15g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">850 kcal</span>
-              <span class="macro-pill">P 88g</span>
-              <span class="macro-pill">C 65g</span>
-              <span class="macro-pill">F 20g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1920 kcal</span>
-              <span class="macro-pill">P 145g</span>
-              <span class="macro-pill">C 185g</span>
-              <span class="macro-pill">F 56g</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MERCOLEDÌ -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">💪</div>
-          <div>
-            <div class="day-name">Mercoledì</div>
-            <div class="day-type">Workout</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1970 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥤</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Post-Workout</div>
-            <div class="meal-slot-desc">25g Whey Vegane in acqua</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">100 kcal</span>
-              <span class="macro-pill">P 22g</span>
-              <span class="macro-pill">C 2g</span>
-              <span class="macro-pill">F 1g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">3 McVitie's (45g) + 100g Yogurt Soia + 10g Olio di cocco + 150g Frutta</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">390 kcal</span>
-              <span class="macro-pill">P 12g</span>
-              <span class="macro-pill">C 55g</span>
-              <span class="macro-pill">F 14g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">SOBA: 80g Soba + 150g Ceci/Fagioli + Verdure miste + Salsa di Soia + 10g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">640 kcal</span>
-              <span class="macro-pill">P 42g</span>
-              <span class="macro-pill">C 65g</span>
-              <span class="macro-pill">F 21g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">RAMEN VEG: 80g Noodles + 1 Uovo sodo + Brodo/Verdure + 150g Fiocchi di Latte + 12g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">840 kcal</span>
-              <span class="macro-pill">P 79g</span>
-              <span class="macro-pill">C 63g</span>
-              <span class="macro-pill">F 22g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1970 kcal</span>
-              <span class="macro-pill">P 155g</span>
-              <span class="macro-pill">C 185g</span>
-              <span class="macro-pill">F 58g</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- GIOVEDÌ -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">😴</div>
-          <div>
-            <div class="day-name">Giovedì</div>
-            <div class="day-type">Riposo</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1920 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">3 McVitie's (45g) + 100g Yogurt Soia + 10g Burro D'arachidi + 150g Frutta</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">380 kcal</span>
-              <span class="macro-pill">P 12g</span>
-              <span class="macro-pill">C 55g</span>
-              <span class="macro-pill">F 12g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">PANISSE (80g Farina di Ceci al forno) + 70g Riso + 300g Verdura + 10g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">660 kcal</span>
-              <span class="macro-pill">P 32g</span>
-              <span class="macro-pill">C 68g</span>
-              <span class="macro-pill">F 22g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">1 Uovo + 150g Burger di Lenticchie/Soia casereccio + 100g Patate Dolci forno + pane dell'hamburger fatto in casa + 300g Verdure + 10g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">880 kcal</span>
-              <span class="macro-pill">P 101g</span>
-              <span class="macro-pill">C 62g</span>
-              <span class="macro-pill">F 22g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1920 kcal</span>
-              <span class="macro-pill">P 145g</span>
-              <span class="macro-pill">C 185g</span>
-              <span class="macro-pill">F 56g</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- VENERDÌ -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">💪</div>
-          <div>
-            <div class="day-name">Venerdì</div>
-            <div class="day-type">Workout</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1960 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥤</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Post-Workout</div>
-            <div class="meal-slot-desc">25g Whey Vegane in acqua</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">100 kcal</span>
-              <span class="macro-pill">P 22g</span>
-              <span class="macro-pill">C 2g</span>
-              <span class="macro-pill">F 1g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">3 McVitie's (45g) + 10g Mandorle + 100g Yogurt Soia + 150g Frutta</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">390 kcal</span>
-              <span class="macro-pill">P 12g</span>
-              <span class="macro-pill">C 55g</span>
-              <span class="macro-pill">F 14g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">150g Tempeh a cubetti + 90g Riso Integrale + Verdure vapore + 12g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">640 kcal</span>
-              <span class="macro-pill">P 40g</span>
-              <span class="macro-pill">C 66g</span>
-              <span class="macro-pill">F 22g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">PASTA E CECI: 100g Pasta Integrale + 200g Ceci cotti + 150g Fiocchi di Latte + 15g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">830 kcal</span>
-              <span class="macro-pill">P 81g</span>
-              <span class="macro-pill">C 65g</span>
-              <span class="macro-pill">F 21g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1960 kcal</span>
-              <span class="macro-pill">P 155g</span>
-              <span class="macro-pill">C 188g</span>
-              <span class="macro-pill">F 58g</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SABATO -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">😴</div>
-          <div>
-            <div class="day-name">Sabato</div>
-            <div class="day-type">Riposo</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1980 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">3 McVitie's (45g) + 10g Mandorle + 150g Frutta + Tè</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">340 kcal</span>
-              <span class="macro-pill">P 10g</span>
-              <span class="macro-pill">C 46g</span>
-              <span class="macro-pill">F 11g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">2 Uova strapazzate + 100g Lenticchie cotte + 80g Riso Integrale + Verdure + 10g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">640 kcal</span>
-              <span class="macro-pill">P 38g</span>
-              <span class="macro-pill">C 65g</span>
-              <span class="macro-pill">F 24g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">🎉 PASTO LIBERO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1000 kcal</span>
-              <span class="macro-pill">P ~82g</span>
-              <span class="macro-pill">C ~79g</span>
-              <span class="macro-pill">F ~30g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1980 kcal</span>
-              <span class="macro-pill">P ~130g</span>
-              <span class="macro-pill">C ~190g</span>
-              <span class="macro-pill">F ~65g</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DOMENICA -->
-    <div class="day-accordion">
-      <div class="day-header" onclick="toggleDay(this)">
-        <div class="day-header-left">
-          <div class="day-emoji">☀️</div>
-          <div>
-            <div class="day-name">Domenica</div>
-            <div class="day-type">Riposo</div>
-          </div>
-        </div>
-        <span class="day-kcal-badge">~1950 kcal</span>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-body">
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🥣</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Colazione</div>
-            <div class="meal-slot-desc">Cappuccino Soia + Brioche</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">420 kcal</span>
-              <span class="macro-pill">P 12g</span>
-              <span class="macro-pill">C 60g</span>
-              <span class="macro-pill">F 15g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍎</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 1</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌤️</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pranzo</div>
-            <div class="meal-slot-desc">BURGER DI LENTICCHIE (200g) + 150g Fiocchi di Latte + 300g Verdura + 10g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">650 kcal</span>
-              <span class="macro-pill">P 48g</span>
-              <span class="macro-pill">C 80g</span>
-              <span class="macro-pill">F 18g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🍊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Spuntino 2</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot">
-          <div class="meal-slot-icon">🌙</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Cena</div>
-            <div class="meal-slot-desc">300g Fiocchi di Latte + 80g Pasta Integrale + 200g Piselli o Fagioli + 15g Olio EVO</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">800 kcal</span>
-              <span class="macro-pill">P 62g</span>
-              <span class="macro-pill">C 63g</span>
-              <span class="macro-pill">F 24g</span>
-            </div>
-          </div>
-        </div>
-        <div class="meal-slot empty">
-          <div class="meal-slot-icon">🌛</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Pre Nanna</div>
-            <div class="meal-slot-desc">—</div>
-          </div>
-        </div>
-        <div class="meal-slot" style="border-top:1.5px solid var(--border); background:var(--surface);">
-          <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content">
-            <div class="meal-slot-label">Totali</div>
-            <div class="meal-slot-macros">
-              <span class="macro-pill kcal">~1950 kcal</span>
-              <span class="macro-pill">P 145g</span>
-              <span class="macro-pill">C 195g</span>
-              <span class="macro-pill">F 55g</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <div id="diet-list"></div>
     <div class="page-footer">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-      &nbsp;·&nbsp; Il Geco Zen
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
     </div>
-  </div><!-- /screen-dieta -->
+  </div>
 
-  <!-- ══════════════════════════════
-       SCREEN 2: RICETTARIO
-  ══════════════════════════════ -->
+  <!-- ══════════════════════════════  SCREEN 2: RICETTARIO  ══════════════════════════════ -->
   <div class="screen" id="screen-ricette">
     <div class="section-title">il mio ricettario</div>
-
-    <!-- Antipasti -->
+    <div class="recipe-toolbar">
+      <button class="btn-export-recipes" onclick="openExportRecipesModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Esporta
+      </button>
+    </div>
     <div class="recipe-category">
-      <div class="recipe-cat-header">
-        <span class="recipe-cat-title">🥗 Antipasti</span>
-        <span class="recipe-cat-count" id="cnt-antipasti">0</span>
-      </div>
+      <div class="recipe-cat-header"><span class="recipe-cat-title">🥗 Antipasti</span><span class="recipe-cat-count" id="cnt-antipasti">0</span></div>
       <div class="recipe-list" id="list-antipasti"></div>
       <button class="btn-add-recipe" onclick="openRecipeModal('antipasti')">＋ Aggiungi antipasto</button>
     </div>
-
-    <!-- Primi -->
     <div class="recipe-category">
-      <div class="recipe-cat-header">
-        <span class="recipe-cat-title">🍝 Primi</span>
-        <span class="recipe-cat-count" id="cnt-primi">0</span>
-      </div>
+      <div class="recipe-cat-header"><span class="recipe-cat-title">🍝 Primi</span><span class="recipe-cat-count" id="cnt-primi">0</span></div>
       <div class="recipe-list" id="list-primi"></div>
       <button class="btn-add-recipe" onclick="openRecipeModal('primi')">＋ Aggiungi primo</button>
     </div>
-
-    <!-- Secondi -->
     <div class="recipe-category">
-      <div class="recipe-cat-header">
-        <span class="recipe-cat-title">🍳 Secondi</span>
-        <span class="recipe-cat-count" id="cnt-secondi">0</span>
-      </div>
+      <div class="recipe-cat-header"><span class="recipe-cat-title">🍳 Secondi</span><span class="recipe-cat-count" id="cnt-secondi">0</span></div>
       <div class="recipe-list" id="list-secondi"></div>
       <button class="btn-add-recipe" onclick="openRecipeModal('secondi')">＋ Aggiungi secondo</button>
     </div>
-
-    <!-- Dolci -->
     <div class="recipe-category">
-      <div class="recipe-cat-header">
-        <span class="recipe-cat-title">🍰 Dolci</span>
-        <span class="recipe-cat-count" id="cnt-dolci">0</span>
-      </div>
+      <div class="recipe-cat-header"><span class="recipe-cat-title">🍰 Dolci</span><span class="recipe-cat-count" id="cnt-dolci">0</span></div>
       <div class="recipe-list" id="list-dolci"></div>
       <button class="btn-add-recipe" onclick="openRecipeModal('dolci')">＋ Aggiungi dolce</button>
     </div>
-
-    <!-- Recipe detail panel (shown inline below the card) -->
-    <div class="recipe-detail" id="recipe-detail-panel"></div>
-
     <div class="page-footer">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-      &nbsp;·&nbsp; Il Geco Zen
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
     </div>
-  </div><!-- /screen-ricette -->
+  </div>
 
-  <!-- ══════════════════════════════
-       SCREEN 3: DIARIO
-  ══════════════════════════════ -->
+  <!-- ══════════════════════════════  SCREEN 3: DIARIO  ══════════════════════════════ -->
   <div class="screen" id="screen-diario">
     <div class="section-title">diario alimentare</div>
-
-    <!-- Calendar nav -->
+    <div class="diary-toolbar">
+      <button class="btn-diary-action" onclick="openExportDiaryModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Esporta CSV
+      </button>
+      <button class="btn-diary-action" onclick="openAnalytics()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
+      </button>
+    </div>
     <div class="calendar-nav">
       <button class="cal-nav-btn" id="cal-prev">‹</button>
       <span class="cal-month-label" id="cal-month-label"></span>
       <button class="cal-nav-btn" id="cal-next">›</button>
     </div>
     <div class="calendar-grid" id="calendar-grid"></div>
-
-    <!-- Selected day -->
     <div class="diary-selected-date" id="diary-date-label">Seleziona un giorno</div>
-
-    <!-- Macro summary -->
-    <div class="diary-macro-summary" id="diary-macro-summary">
-      <div class="diary-macro-item">
-        <div class="diary-macro-val" id="diary-kcal">0</div>
-        <div class="diary-macro-key">kcal</div>
-      </div>
-      <div class="diary-macro-item">
-        <div class="diary-macro-val" id="diary-prot">0g</div>
-        <div class="diary-macro-key">proteine</div>
-      </div>
-      <div class="diary-macro-item">
-        <div class="diary-macro-val" id="diary-carb">0g</div>
-        <div class="diary-macro-key">carbo</div>
-      </div>
-      <div class="diary-macro-item">
-        <div class="diary-macro-val" id="diary-fat">0g</div>
-        <div class="diary-macro-key">grassi</div>
-      </div>
+    <div class="diary-macro-summary">
+      <div class="diary-macro-item"><div class="diary-macro-val" id="diary-kcal">0</div><div class="diary-macro-key">kcal</div></div>
+      <div class="diary-macro-item"><div class="diary-macro-val" id="diary-prot">0g</div><div class="diary-macro-key">proteine</div></div>
+      <div class="diary-macro-item"><div class="diary-macro-val" id="diary-carb">0g</div><div class="diary-macro-key">carbo</div></div>
+      <div class="diary-macro-item"><div class="diary-macro-val" id="diary-fat">0g</div><div class="diary-macro-key">grassi</div></div>
     </div>
-
-    <!-- Meal list -->
     <div class="diary-meal-list" id="diary-meal-list"></div>
-    <button class="btn-add-diary-meal" id="btn-add-diary-meal" onclick="openDiaryMealModal()">＋ Aggiungi pasto</button>
-
-    <div class="page-footer">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-      &nbsp;·&nbsp; Il Geco Zen
+    <button class="btn-add-diary-meal" onclick="openDiaryMealModal()">＋ Aggiungi pasto</button>
+    <div id="analytics-panel" style="display:none;width:100%;">
+      <div class="analytics-card">
+        <div class="analytics-title">📊 Analytics</div>
+        <div class="analytics-tabs">
+          <button class="analytics-tab active" id="atab-week" onclick="switchAnalytics('week')">Settimana</button>
+          <button class="analytics-tab" id="atab-month" onclick="switchAnalytics('month')">Mese</button>
+        </div>
+        <div class="analytics-avg-row">
+          <div class="analytics-avg-item"><div class="analytics-avg-val" id="avg-kcal">—</div><div class="analytics-avg-key">kcal</div></div>
+          <div class="analytics-avg-item"><div class="analytics-avg-val" id="avg-prot">—</div><div class="analytics-avg-key">prot</div></div>
+          <div class="analytics-avg-item"><div class="analytics-avg-val" id="avg-carb">—</div><div class="analytics-avg-key">carbo</div></div>
+          <div class="analytics-avg-item"><div class="analytics-avg-val" id="avg-fat">—</div><div class="analytics-avg-key">grassi</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-chart-title">kcal per giorno</div>
+          <div class="bar-chart-rows" id="chart-kcal"></div>
+        </div>
+        <div class="bar-chart" style="margin-top:14px;">
+          <div class="bar-chart-title">proteine per giorno</div>
+          <div class="bar-chart-rows" id="chart-prot"></div>
+        </div>
+      </div>
     </div>
-  </div><!-- /screen-diario -->
+    <div class="page-footer">
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
+    </div>
+  </div>
 
-  <!-- TAB BAR -->
+  <!-- ══════════════════════════════  TAB BAR  ══════════════════════════════ -->
   <nav class="tab-bar">
     <button class="tab-btn tab-active" id="tab-dieta" aria-label="Dieta">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22V12"/>
-        <path d="M5 12H2a10 10 0 0 0 20 0h-3"/>
-        <path d="M8 6s1.5-2 4-2 4 2 4 2"/>
-        <path d="M2 12A10 10 0 0 1 12 2a10 10 0 0 1 10 10"/>
-      </svg>
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/><circle cx="12" cy="6" r="4"/></svg>
       <span class="tab-label">dieta</span>
     </button>
-    <button class="tab-btn" id="tab-ricette" aria-label="Ricettario">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        <line x1="9" y1="7" x2="15" y2="7"/>
-        <line x1="9" y1="11" x2="15" y2="11"/>
-      </svg>
-      <span class="tab-label">ricettario</span>
+    <button class="tab-btn tab-center tab-active" id="tab-ricette" aria-label="Ricettario">
+      <div class="tab-center-circle">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
+      </div>
+      <span class="tab-label">ricette</span>
     </button>
-    <button class="tab-btn" id="tab-diario" aria-label="Diario Alimentare">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-        <circle cx="8" cy="15" r=".8" fill="currentColor"/>
-        <circle cx="12" cy="15" r=".8" fill="currentColor"/>
-        <circle cx="16" cy="15" r=".8" fill="currentColor"/>
-      </svg>
+    <button class="tab-btn" id="tab-diario" aria-label="Diario">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r=".8" fill="currentColor"/><circle cx="12" cy="15" r=".8" fill="currentColor"/><circle cx="16" cy="15" r=".8" fill="currentColor"/></svg>
       <span class="tab-label">diario</span>
     </button>
   </nav>
 
-  <!-- ══════════════════════════════
-       MODAL: AGGIUNGI / MODIFICA RICETTA
-  ══════════════════════════════ -->
+  <!-- ══════════════════════════════  RECIPE DETAIL POPUP  ══════════════════════════════ -->
+  <div class="recipe-popup-overlay" id="recipe-popup-overlay">
+    <div class="recipe-popup" id="recipe-popup-content">
+      <button class="recipe-popup-close" onclick="closeRecipePopup()">✕</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════  MODAL: NUOVA/MODIFICA RICETTA  ══════════════════════════════ -->
   <div class="modal-overlay" id="recipe-modal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title" id="recipe-modal-title">Nuova Ricetta</div>
-
       <div class="form-group">
-        <label class="form-label">Nome ricetta</label>
-        <input class="form-input" id="rf-name" placeholder="es. Pasta e Ceci" type="text"/>
+        <label class="form-label">Nome ricetta <span class="req">*</span></label>
+        <input class="form-input" id="rf-name" type="text" placeholder="es. Pasta e Ceci"/>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Categoria</label>
+          <label class="form-label">Categoria <span class="req">*</span></label>
           <select class="form-select" id="rf-cat">
             <option value="antipasti">Antipasti</option>
             <option value="primi">Primi</option>
@@ -1317,57 +683,116 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Nazionalità 🏳️</label>
-          <input class="form-input" id="rf-nat" placeholder="es. Italiana" type="text"/>
+          <label class="form-label">Nazionalità <span class="req">*</span></label>
+          <input class="form-input" id="rf-nat" type="text" placeholder="es. Italiana"/>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Foto (URL o lascia vuoto)</label>
-        <input class="form-input" id="rf-photo" placeholder="https://..." type="url"/>
+        <label class="form-label">Foto <span class="req">*</span></label>
+        <div class="photo-upload-row">
+          <img class="photo-preview-thumb" id="rf-photo-preview" src="" alt=""/>
+          <button class="btn-photo-upload" type="button" onclick="document.getElementById('rf-photo-input').click()">📷 Scatta o scegli foto</button>
+          <input type="file" id="rf-photo-input" accept="image/*" capture="environment"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL (facoltativo)</label>
+        <input class="form-input" id="rf-url" type="url" placeholder="https://..."/>
       </div>
       <div class="form-row-4">
         <div class="form-group">
-          <label class="form-label">kcal</label>
-          <input class="form-input" id="rf-kcal" placeholder="0" type="number" min="0"/>
+          <label class="form-label">kcal <span class="req">*</span></label>
+          <input class="form-input" id="rf-kcal" type="number" min="0" placeholder="0"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Prot g</label>
-          <input class="form-input" id="rf-prot" placeholder="0" type="number" min="0"/>
+          <label class="form-label">Prot <span class="req">*</span></label>
+          <input class="form-input" id="rf-prot" type="number" min="0" placeholder="0"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Carbo g</label>
-          <input class="form-input" id="rf-carb" placeholder="0" type="number" min="0"/>
+          <label class="form-label">Carbo <span class="req">*</span></label>
+          <input class="form-input" id="rf-carb" type="number" min="0" placeholder="0"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Grassi g</label>
-          <input class="form-input" id="rf-fat" placeholder="0" type="number" min="0"/>
+          <label class="form-label">Grassi <span class="req">*</span></label>
+          <input class="form-input" id="rf-fat" type="number" min="0" placeholder="0"/>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Ingredienti</label>
-        <textarea class="form-textarea" id="rf-ingredients" placeholder="Un ingrediente per riga..."></textarea>
+        <label class="form-label">Ingredienti <span class="req">*</span></label>
+        <div class="ingredient-list" id="rf-ingredients"></div>
+        <button class="btn-add-item" type="button" onclick="addIngredient()">＋ Ingrediente</button>
       </div>
       <div class="form-group">
-        <label class="form-label">Procedimento</label>
+        <label class="form-label">Procedimento <span class="req">*</span></label>
         <div class="step-list" id="rf-steps"></div>
-        <button class="btn-add-step" onclick="addRecipeStep()">＋ Aggiungi step</button>
+        <button class="btn-add-item" type="button" onclick="addRecipeStep()">＋ Step</button>
       </div>
-
       <button class="btn-primary" onclick="saveRecipe()">Salva ricetta</button>
       <button class="btn-cancel" onclick="closeRecipeModal()">Annulla</button>
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       MODAL: AGGIUNGI PASTO AL DIARIO
-  ══════════════════════════════ -->
+  <!-- ══════════════════════════════  MODAL: EXPORT RICETTE  ══════════════════════════════ -->
+  <div class="modal-overlay" id="export-recipes-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Esporta Ricette</div>
+      <div class="export-divider">Scarica per sezione</div>
+      <div class="export-quick-row">
+        <button class="btn-export-quick" onclick="exportRecipesByCategory('antipasti')">🥗 Antipasti</button>
+        <button class="btn-export-quick" onclick="exportRecipesByCategory('primi')">🍝 Primi</button>
+        <button class="btn-export-quick" onclick="exportRecipesByCategory('secondi')">🍳 Secondi</button>
+        <button class="btn-export-quick" onclick="exportRecipesByCategory('dolci')">🍰 Dolci</button>
+      </div>
+      <div class="export-divider">Seleziona singole ricette</div>
+      <div id="export-recipes-list"></div>
+      <button class="btn-primary" onclick="exportSelectedRecipes()">Scarica selezionate</button>
+      <button class="btn-cancel" onclick="document.getElementById('export-recipes-modal').classList.remove('open')">Annulla</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════  MODAL: NUOVO GIORNO DIETA  ══════════════════════════════ -->
+  <div class="modal-overlay" id="day-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="day-modal-title">Nuovo Giorno</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Giorno <span class="req">*</span></label>
+          <select class="form-select" id="dm-day">
+            <option value="Lunedì">Lunedì</option>
+            <option value="Martedì">Martedì</option>
+            <option value="Mercoledì">Mercoledì</option>
+            <option value="Giovedì">Giovedì</option>
+            <option value="Venerdì">Venerdì</option>
+            <option value="Sabato">Sabato</option>
+            <option value="Domenica">Domenica</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select class="form-select" id="dm-type">
+            <option value="Workout">💪 Workout</option>
+            <option value="Riposo">😴 Riposo</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:6px;"><label class="form-label">Pasti (descrizione + macros)</label></div>
+      <div id="dm-meals-list"></div>
+      <button class="btn-add-item" type="button" onclick="addDayMealSlot()">＋ Aggiungi pasto</button>
+      <button class="btn-primary" style="margin-top:14px;" onclick="saveDay()">Salva</button>
+      <button class="btn-cancel" onclick="closeDayModal()">Annulla</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════  MODAL: AGGIUNGI PASTO DIARIO  ══════════════════════════════ -->
   <div class="modal-overlay" id="diary-modal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title">Aggiungi pasto</div>
       <div class="form-group">
-        <label class="form-label">Pasto</label>
-        <select class="form-select" id="dm-type">
+        <label class="form-label">Tipo pasto</label>
+        <select class="form-select" id="diary-meal-type">
           <option value="🌅 Pre-Workout">🌅 Pre-Workout</option>
           <option value="🥤 Post-Workout">🥤 Post-Workout</option>
           <option value="🥣 Colazione">🥣 Colazione</option>
@@ -1380,437 +805,627 @@
       </div>
       <div class="form-group">
         <label class="form-label">Descrizione</label>
-        <input class="form-input" id="dm-desc" placeholder="es. Pasta e Ceci, 100g" type="text"/>
+        <input class="form-input" id="diary-meal-desc" type="text" placeholder="es. Pasta e Ceci, 100g"/>
       </div>
       <div class="form-row-4">
-        <div class="form-group">
-          <label class="form-label">kcal</label>
-          <input class="form-input" id="dm-kcal" placeholder="0" type="number" min="0"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Prot g</label>
-          <input class="form-input" id="dm-prot" placeholder="0" type="number" min="0"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Carbo g</label>
-          <input class="form-input" id="dm-carb" placeholder="0" type="number" min="0"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grassi g</label>
-          <input class="form-input" id="dm-fat" placeholder="0" type="number" min="0"/>
-        </div>
+        <div class="form-group"><label class="form-label">kcal</label><input class="form-input" id="diary-meal-kcal" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label class="form-label">Prot</label><input class="form-input" id="diary-meal-prot" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label class="form-label">Carbo</label><input class="form-input" id="diary-meal-carb" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label class="form-label">Grassi</label><input class="form-input" id="diary-meal-fat" type="number" min="0" placeholder="0"/></div>
       </div>
       <button class="btn-primary" onclick="saveDiaryMeal()">Aggiungi</button>
       <button class="btn-cancel" onclick="closeDiaryModal()">Annulla</button>
     </div>
   </div>
 
+  <!-- ══════════════════════════════  MODAL: EXPORT DIARIO  ══════════════════════════════ -->
+  <div class="modal-overlay" id="export-diary-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Esporta Diario CSV</div>
+      <div class="export-quick-row">
+        <button class="btn-export-quick" onclick="exportDiaryAll()">📥 Scarica tutto</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Da data</label>
+          <input class="form-input" id="export-from" type="date"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">A data</label>
+          <input class="form-input" id="export-to" type="date"/>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="exportDiaryRange()">Scarica intervallo</button>
+      <button class="btn-cancel" onclick="document.getElementById('export-diary-modal').classList.remove('open')">Annulla</button>
+    </div>
+  </div>
+
   <script>
-    /* ── Theme ── */
-    const htmlEl = document.documentElement;
-    const themBtn = document.getElementById('theme-toggle');
-    const knob    = document.getElementById('theme-knob');
-    let isDark    = localStorage.getItem('zen_theme') === 'dark';
-    function applyTheme() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#181410' : '#faf8f2';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-    }
-    applyTheme();
-    themBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+  /* ════════════ TEMA ════════════ */
+  const htmlEl  = document.documentElement;
+  const themBtn = document.getElementById('theme-toggle');
+  const knob    = document.getElementById('theme-knob');
+  let isDark    = localStorage.getItem('zen_theme') === 'dark';
+  function applyTheme() {
+    htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    knob.textContent = isDark ? '🌙' : '☀️';
+    document.querySelector('meta[name="theme-color"]').content = isDark ? '#181410' : '#faf8f2';
+    localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+  }
+  applyTheme();
+  themBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-    /* ── Tab navigation ── */
-    const tabs = [
-      { btn: document.getElementById('tab-dieta'),   screen: 'screen-dieta'  },
-      { btn: document.getElementById('tab-ricette'), screen: 'screen-ricette'},
-      { btn: document.getElementById('tab-diario'),  screen: 'screen-diario' },
-    ];
-    tabs.forEach(({ btn: tabBtn, screen }) => {
-      tabBtn.addEventListener('click', () => {
-        tabs.forEach(t => {
-          t.btn.classList.remove('tab-active');
-          const s = document.getElementById(t.screen);
-          s.classList.remove('active');
-          s.style.display = 'none';
-        });
-        tabBtn.classList.add('tab-active');
-        const s = document.getElementById(screen);
-        s.style.display = 'flex';
-        s.classList.add('active');
+  /* ════════════ TAB NAV ════════════ */
+  const TABS = [
+    { btn: 'tab-dieta',   screen: 'screen-dieta'   },
+    { btn: 'tab-ricette', screen: 'screen-ricette'  },
+    { btn: 'tab-diario',  screen: 'screen-diario'   },
+  ];
+  TABS.forEach(({ btn, screen }) => {
+    document.getElementById(btn).addEventListener('click', () => {
+      TABS.forEach(t => {
+        document.getElementById(t.btn).classList.remove('tab-active');
+        const s = document.getElementById(t.screen);
+        s.classList.remove('active'); s.style.display = 'none';
       });
+      document.getElementById(btn).classList.add('tab-active');
+      const s = document.getElementById(screen);
+      s.style.display = 'flex'; s.classList.add('active');
     });
+  });
 
-    /* ── Day accordion ── */
-    function toggleDay(header) {
-      const body = header.nextElementSibling;
-      const isOpen = header.classList.contains('open');
-      if (isOpen) {
-        header.classList.remove('open');
-        body.classList.remove('open');
-      } else {
-        header.classList.add('open');
-        body.classList.add('open');
-      }
+  /* ════════════ DIETA ════════════ */
+  const DIET_KEY = 'zen_diet_v2';
+  const DOT_COLORS = { 'Lunedì':'#3b82f6','Martedì':'#06b6d4','Mercoledì':'#8b5cf6','Giovedì':'#f59e0b','Venerdì':'#10b981','Sabato':'#ec4899','Domenica':'#ef4444' };
+  const MEAL_SLOTS = [
+    { key:'pre_workout',  icon:'🌅', label:'Pre-Workout' },
+    { key:'post_workout', icon:'🥤', label:'Post-Workout' },
+    { key:'colazione',    icon:'🥣', label:'Colazione' },
+    { key:'spuntino1',    icon:'🍎', label:'Spuntino 1' },
+    { key:'pranzo',       icon:'🌤️', label:'Pranzo' },
+    { key:'spuntino2',    icon:'🍊', label:'Spuntino 2' },
+    { key:'cena',         icon:'🌙', label:'Cena' },
+    { key:'pre_nanna',    icon:'🌛', label:'Pre Nanna' },
+  ];
+  let diet = JSON.parse(localStorage.getItem(DIET_KEY) || '[]');
+  let editingDayId = null;
+
+  function saveDiet() { localStorage.setItem(DIET_KEY, JSON.stringify(diet)); }
+
+  function renderDiet() {
+    const el = document.getElementById('diet-list');
+    if (!diet.length) {
+      el.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.72rem;padding:32px 0;">Nessun giorno configurato.<br>Premi ＋ per aggiungerne uno.</div>';
+      return;
     }
+    el.innerHTML = diet.map(day => {
+      const dot   = DOT_COLORS[day.name] || '#888';
+      const total = computeTotals(day.meals);
+      const slotsHtml = MEAL_SLOTS.map(s => {
+        const m = day.meals.find(x => x.slot === s.key);
+        if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-label">${s.label}</div><div class="meal-slot-desc">—</div></div></div>`;
+        return `<div class="meal-slot"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content">
+          <div class="meal-slot-label">${s.label}</div>
+          <div class="meal-slot-desc">${m.desc}</div>
+          <div class="meal-slot-macros">
+            <span class="macro-pill kcal">${m.kcal||0} kcal</span>
+            <span class="macro-pill">P ${m.prot||0}g</span>
+            <span class="macro-pill">C ${m.carb||0}g</span>
+            <span class="macro-pill">F ${m.fat||0}g</span>
+          </div></div></div>`;
+      }).join('');
+      return `<div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <div class="day-header-left">
+            <div class="day-dot" style="background:${dot}"></div>
+            <div><div class="day-name">${day.name}</div><div class="day-type">${day.type}</div></div>
+          </div>
+          <div class="day-header-right">
+            <span class="day-kcal-badge">~${total.kcal} kcal</span>
+            <button class="day-edit-btn" onclick="event.stopPropagation();openDayModal('${day.id}')">✏️</button>
+            <button class="day-edit-btn" onclick="event.stopPropagation();deleteDay('${day.id}')">🗑️</button>
+            <span class="day-chevron">▼</span>
+          </div>
+        </div>
+        <div class="day-body">
+          ${slotsHtml}
+          <div class="meal-slot meal-slot-totals">
+            <div class="meal-slot-icon">📊</div>
+            <div class="meal-slot-content"><div class="meal-slot-label">Totali</div>
+            <div class="meal-slot-macros">
+              <span class="macro-pill kcal">~${total.kcal} kcal</span>
+              <span class="macro-pill">P ${total.prot}g</span>
+              <span class="macro-pill">C ${total.carb}g</span>
+              <span class="macro-pill">F ${total.fat}g</span>
+            </div></div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
-    /* ══════════════════════════════
-       RICETTARIO
-    ══════════════════════════════ */
-    const RECIPES_KEY = 'zen_recipes_v1';
-    let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
-    let editingRecipeId = null;
-    let openDetailId = null;
+  function computeTotals(meals) {
+    return meals.reduce((a, m) => ({
+      kcal: a.kcal + (m.kcal||0), prot: a.prot + (m.prot||0),
+      carb: a.carb + (m.carb||0), fat:  a.fat  + (m.fat ||0),
+    }), { kcal:0, prot:0, carb:0, fat:0 });
+  }
 
-    const NATIONALITY_FLAGS = {
-      'italiana': '🇮🇹', 'italiana': '🇮🇹',
-      'giapponese': '🇯🇵', 'giappone': '🇯🇵',
-      'cinese': '🇨🇳', 'cina': '🇨🇳',
-      'messicana': '🇲🇽', 'messico': '🇲🇽',
-      'americana': '🇺🇸', 'america': '🇺🇸',
-      'francese': '🇫🇷', 'francia': '🇫🇷',
-      'spagnola': '🇪🇸', 'spagna': '🇪🇸',
-      'greca': '🇬🇷', 'grecia': '🇬🇷',
-      'indiana': '🇮🇳', 'india': '🇮🇳',
-      'tailandese': '🇹🇭', 'tailandia': '🇹🇭',
-      'tedesca': '🇩🇪', 'germania': '🇩🇪',
-      'brasiliana': '🇧🇷', 'brasile': '🇧🇷',
-      'marocchina': '🇲🇦', 'marocco': '🇲🇦',
-      'turca': '🇹🇷', 'turchia': '🇹🇷',
-      'vietnamita': '🇻🇳', 'vietnam': '🇻🇳',
-      'coreana': '🇰🇷', 'corea': '🇰🇷',
-      'libanese': '🇱🇧', 'libano': '🇱🇧',
-      'israeliana': '🇮🇱', 'israele': '🇮🇱',
-      'peruviana': '🇵🇪', 'perù': '🇵🇪',
-      'argentina': '🇦🇷', 'argentina': '🇦🇷',
-    };
+  function toggleDay(header) {
+    const body = header.nextElementSibling;
+    header.classList.toggle('open');
+    body.classList.toggle('open');
+  }
 
-    function getFlag(nat) {
-      if (!nat) return '🌍';
-      const key = nat.toLowerCase().trim();
-      return NATIONALITY_FLAGS[key] || '🌍';
+  function deleteDay(id) {
+    if (!confirm('Eliminare questo giorno?')) return;
+    diet = diet.filter(d => d.id !== id);
+    saveDiet(); renderDiet();
+  }
+
+  /* Day modal */
+  let dayMealCount = 0;
+  function openDayModal(id) {
+    editingDayId = id;
+    dayMealCount = 0;
+    const mealsList = document.getElementById('dm-meals-list');
+    mealsList.innerHTML = '';
+    if (id) {
+      const day = diet.find(d => d.id === id);
+      document.getElementById('day-modal-title').textContent = 'Modifica Giorno';
+      document.getElementById('dm-day').value  = day.name;
+      document.getElementById('dm-type').value = day.type;
+      day.meals.forEach(m => addDayMealSlot(m));
+    } else {
+      document.getElementById('day-modal-title').textContent = 'Nuovo Giorno';
+      document.getElementById('dm-day').value  = 'Lunedì';
+      document.getElementById('dm-type').value = 'Workout';
+      addDayMealSlot();
     }
+    document.getElementById('day-modal').classList.add('open');
+  }
+  function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
 
-    function renderRecipes() {
-      const cats = ['antipasti', 'primi', 'secondi', 'dolci'];
-      cats.forEach(cat => {
-        const list = document.getElementById('list-' + cat);
-        const cnt  = document.getElementById('cnt-' + cat);
-        const items = recipes.filter(r => r.cat === cat);
-        cnt.textContent = items.length;
-        list.innerHTML = items.map(r => `
-          <div class="recipe-card">
-            <div class="recipe-card-inner" onclick="toggleDetail('${r.id}')">
-              <span class="recipe-flag">${getFlag(r.nat)}</span>
-              <div class="recipe-info">
-                <div class="recipe-name">${r.name}</div>
-                <div class="recipe-macros-row">
-                  <span class="macro-pill kcal">${r.kcal || 0} kcal</span>
-                  <span class="macro-pill">P ${r.prot || 0}g</span>
-                  <span class="macro-pill">C ${r.carb || 0}g</span>
-                  <span class="macro-pill">F ${r.fat || 0}g</span>
-                </div>
-              </div>
-              <div class="recipe-actions" onclick="event.stopPropagation()">
-                <button class="btn-icon edit" title="Modifica" onclick="editRecipe('${r.id}')">✏️</button>
-                <button class="btn-icon del" title="Elimina" onclick="deleteRecipe('${r.id}')">🗑️</button>
+  function addDayMealSlot(prefill) {
+    dayMealCount++;
+    const el = document.createElement('div');
+    el.style = 'background:var(--surface);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;';
+    const opts = MEAL_SLOTS.map(s => `<option value="${s.key}" ${prefill && prefill.slot===s.key?'selected':''}>${s.icon} ${s.label}</option>`).join('');
+    el.innerHTML = `
+      <div style="display:flex;gap:6px;align-items:center;">
+        <select class="form-select" style="flex:1;" data-role="slot">${opts}</select>
+        <button type="button" class="item-del-btn" onclick="this.closest('div[style]').remove()">✕</button>
+      </div>
+      <input class="form-input" type="text" placeholder="Descrizione pasto" data-role="desc" value="${prefill?prefill.desc:''}"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
+        <input class="form-input" type="number" min="0" placeholder="kcal" data-role="kcal" value="${prefill?prefill.kcal:''}"/>
+        <input class="form-input" type="number" min="0" placeholder="Prot" data-role="prot" value="${prefill?prefill.prot:''}"/>
+        <input class="form-input" type="number" min="0" placeholder="Carbo" data-role="carb" value="${prefill?prefill.carb:''}"/>
+        <input class="form-input" type="number" min="0" placeholder="Grassi" data-role="fat" value="${prefill?prefill.fat:''}"/>
+      </div>`;
+    document.getElementById('dm-meals-list').appendChild(el);
+  }
+
+  function saveDay() {
+    const name = document.getElementById('dm-day').value;
+    const type = document.getElementById('dm-type').value;
+    const mealEls = document.querySelectorAll('#dm-meals-list > div');
+    const meals = Array.from(mealEls).map(el => ({
+      slot: el.querySelector('[data-role=slot]').value,
+      desc: el.querySelector('[data-role=desc]').value.trim(),
+      kcal: parseInt(el.querySelector('[data-role=kcal]').value)||0,
+      prot: parseInt(el.querySelector('[data-role=prot]').value)||0,
+      carb: parseInt(el.querySelector('[data-role=carb]').value)||0,
+      fat:  parseInt(el.querySelector('[data-role=fat]').value)||0,
+    })).filter(m => m.desc);
+    const dayObj = { id: editingDayId || 'd_'+Date.now(), name, type, meals };
+    if (editingDayId) {
+      diet = diet.map(d => d.id === editingDayId ? dayObj : d);
+    } else {
+      diet.push(dayObj);
+    }
+    saveDiet(); renderDiet(); closeDayModal();
+  }
+
+  /* ════════════ RICETTARIO ════════════ */
+  const RECIPES_KEY = 'zen_recipes_v2';
+  let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
+  let editingRecipeId = null;
+  let ingredientCount = 0, stepCount = 0;
+  let rfPhotoData = null;
+
+  const NAT_FLAGS = {
+    'italiana':'🇮🇹','giapponese':'🇯🇵','cinese':'🇨🇳','messicana':'🇲🇽',
+    'americana':'🇺🇸','francese':'🇫🇷','spagnola':'🇪🇸','greca':'🇬🇷',
+    'indiana':'🇮🇳','tailandese':'🇹🇭','vietnamita':'🇻🇳','coreana':'🇰🇷',
+    'brasiliana':'🇧🇷','marocchina':'🇲🇦','turca':'🇹🇷','tedesca':'🇩🇪',
+    'libanese':'🇱🇧','peruviana':'🇵🇪','argentina':'🇦🇷',
+  };
+  function getFlag(nat) { return NAT_FLAGS[(nat||'').toLowerCase().trim()] || '🌍'; }
+
+  function saveRecipes() { localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes)); }
+
+  function renderRecipes() {
+    ['antipasti','primi','secondi','dolci'].forEach(cat => {
+      const items = recipes.filter(r => r.cat === cat);
+      document.getElementById('cnt-'+cat).textContent = items.length;
+      document.getElementById('list-'+cat).innerHTML = items.map(r => `
+        <div class="recipe-card">
+          <div class="recipe-card-inner" onclick="showRecipePopup('${r.id}')">
+            ${r.photo ? `<img class="recipe-thumb" src="${r.photo}" alt="${r.name}"/>` : `<span class="recipe-flag">${getFlag(r.nat)}</span>`}
+            <div class="recipe-info">
+              <div class="recipe-name">${r.name}</div>
+              <div class="recipe-macros-row">
+                <span class="macro-pill kcal">${r.kcal||0} kcal</span>
+                <span class="macro-pill">P ${r.prot||0}g</span>
+                <span class="macro-pill">C ${r.carb||0}g</span>
+                <span class="macro-pill">F ${r.fat||0}g</span>
               </div>
             </div>
+            <div class="recipe-actions" onclick="event.stopPropagation()">
+              <button class="btn-icon edit" onclick="editRecipe('${r.id}')">✏️</button>
+              <button class="btn-icon del"  onclick="deleteRecipe('${r.id}')">🗑️</button>
+            </div>
           </div>
-        `).join('');
-      });
-    }
-
-    function toggleDetail(id) {
-      const panel = document.getElementById('recipe-detail-panel');
-      if (openDetailId === id) {
-        panel.classList.remove('open');
-        panel.innerHTML = '';
-        openDetailId = null;
-        return;
-      }
-      const r = recipes.find(x => x.id === id);
-      if (!r) return;
-      openDetailId = id;
-      const stepsHtml = (r.steps || []).map((s, i) => `
-        <div class="recipe-step">
-          <div class="step-num">${i+1}</div>
-          <div class="step-text">${s}</div>
-        </div>
-      `).join('');
-      panel.innerHTML = `
-        <div class="recipe-detail-header">
-          <span class="recipe-detail-flag">${getFlag(r.nat)}</span>
-          <div>
-            <div class="recipe-detail-title">${r.name}</div>
-            ${r.nat ? `<div style="font-size:.52rem;color:var(--muted);letter-spacing:.14em;">${r.nat}</div>` : ''}
-          </div>
-        </div>
-        <div class="recipe-detail-macros">
-          <span class="macro-pill kcal">${r.kcal || 0} kcal</span>
-          <span class="macro-pill">P ${r.prot || 0}g</span>
-          <span class="macro-pill">C ${r.carb || 0}g</span>
-          <span class="macro-pill">F ${r.fat || 0}g</span>
-        </div>
-        ${r.photo ? `<img class="recipe-photo" src="${r.photo}" alt="${r.name}" onerror="this.style.display='none'"/>` : ''}
-        <div>
-          <div class="recipe-section-label">Ingredienti</div>
-          <div class="recipe-ingredients">${(r.ingredients || '').replace(/\n/g, '<br>')}</div>
-        </div>
-        ${stepsHtml ? `<div><div class="recipe-section-label">Procedimento</div><div class="recipe-steps">${stepsHtml}</div></div>` : ''}
-      `;
-      panel.classList.add('open');
-      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    /* Modal recipe */
-    let stepCount = 0;
-
-    function openRecipeModal(cat) {
-      editingRecipeId = null;
-      stepCount = 0;
-      document.getElementById('recipe-modal-title').textContent = 'Nuova Ricetta';
-      document.getElementById('rf-name').value = '';
-      document.getElementById('rf-cat').value = cat;
-      document.getElementById('rf-nat').value = '';
-      document.getElementById('rf-photo').value = '';
-      document.getElementById('rf-kcal').value = '';
-      document.getElementById('rf-prot').value = '';
-      document.getElementById('rf-carb').value = '';
-      document.getElementById('rf-fat').value = '';
-      document.getElementById('rf-ingredients').value = '';
-      document.getElementById('rf-steps').innerHTML = '';
-      addRecipeStep();
-      document.getElementById('recipe-modal').classList.add('open');
-    }
-
-    function editRecipe(id) {
-      const r = recipes.find(x => x.id === id);
-      if (!r) return;
-      editingRecipeId = id;
-      document.getElementById('recipe-modal-title').textContent = 'Modifica Ricetta';
-      document.getElementById('rf-name').value = r.name;
-      document.getElementById('rf-cat').value = r.cat;
-      document.getElementById('rf-nat').value = r.nat || '';
-      document.getElementById('rf-photo').value = r.photo || '';
-      document.getElementById('rf-kcal').value = r.kcal || '';
-      document.getElementById('rf-prot').value = r.prot || '';
-      document.getElementById('rf-carb').value = r.carb || '';
-      document.getElementById('rf-fat').value = r.fat || '';
-      document.getElementById('rf-ingredients').value = r.ingredients || '';
-      const stepsEl = document.getElementById('rf-steps');
-      stepsEl.innerHTML = '';
-      stepCount = 0;
-      (r.steps || ['']).forEach(s => {
-        stepCount++;
-        stepsEl.innerHTML += `<div class="step-item">
-          <div class="step-item-num">${stepCount}</div>
-          <input type="text" value="${s.replace(/"/g, '&quot;')}" placeholder="Step ${stepCount}..."/>
-        </div>`;
-      });
-      document.getElementById('recipe-modal').classList.add('open');
-    }
-
-    function addRecipeStep() {
-      stepCount++;
-      const stepsEl = document.getElementById('rf-steps');
-      const div = document.createElement('div');
-      div.className = 'step-item';
-      div.innerHTML = `<div class="step-item-num">${stepCount}</div>
-        <input type="text" placeholder="Step ${stepCount}..."/>`;
-      stepsEl.appendChild(div);
-    }
-
-    function closeRecipeModal() {
-      document.getElementById('recipe-modal').classList.remove('open');
-    }
-
-    function saveRecipe() {
-      const name = document.getElementById('rf-name').value.trim();
-      if (!name) { alert('Inserisci il nome della ricetta.'); return; }
-      const steps = Array.from(document.querySelectorAll('#rf-steps .step-item input'))
-        .map(i => i.value.trim()).filter(Boolean);
-      const recipe = {
-        id: editingRecipeId || 'r_' + Date.now(),
-        name,
-        cat: document.getElementById('rf-cat').value,
-        nat: document.getElementById('rf-nat').value.trim(),
-        photo: document.getElementById('rf-photo').value.trim(),
-        kcal: parseInt(document.getElementById('rf-kcal').value) || 0,
-        prot: parseInt(document.getElementById('rf-prot').value) || 0,
-        carb: parseInt(document.getElementById('rf-carb').value) || 0,
-        fat: parseInt(document.getElementById('rf-fat').value) || 0,
-        ingredients: document.getElementById('rf-ingredients').value.trim(),
-        steps,
-      };
-      if (editingRecipeId) {
-        recipes = recipes.map(r => r.id === editingRecipeId ? recipe : r);
-      } else {
-        recipes.push(recipe);
-      }
-      localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-      closeRecipeModal();
-      renderRecipes();
-    }
-
-    function deleteRecipe(id) {
-      if (!confirm('Eliminare questa ricetta?')) return;
-      recipes = recipes.filter(r => r.id !== id);
-      localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-      if (openDetailId === id) {
-        const panel = document.getElementById('recipe-detail-panel');
-        panel.classList.remove('open');
-        panel.innerHTML = '';
-        openDetailId = null;
-      }
-      renderRecipes();
-    }
-
-    /* Close modals on overlay click */
-    document.getElementById('recipe-modal').addEventListener('click', function(e) {
-      if (e.target === this) closeRecipeModal();
+        </div>`).join('');
     });
+  }
 
-    renderRecipes();
+  function showRecipePopup(id) {
+    const r = recipes.find(x => x.id === id);
+    if (!r) return;
+    const stepsHtml = (r.steps||[]).map((s,i) =>
+      `<div class="recipe-popup-step"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`
+    ).join('');
+    const ingHtml = (r.ingredients||[]).map(i => `• ${i}`).join('<br>');
+    document.getElementById('recipe-popup-content').innerHTML = `
+      <button class="recipe-popup-close" onclick="closeRecipePopup()">✕</button>
+      <div class="recipe-popup-flag">${getFlag(r.nat)}</div>
+      <div class="recipe-popup-title">${r.name}</div>
+      ${r.nat ? `<div class="recipe-popup-nat">${r.nat}</div>` : ''}
+      <div class="recipe-popup-macros">
+        <span class="macro-pill kcal">${r.kcal||0} kcal</span>
+        <span class="macro-pill">P ${r.prot||0}g</span>
+        <span class="macro-pill">C ${r.carb||0}g</span>
+        <span class="macro-pill">F ${r.fat||0}g</span>
+      </div>
+      ${r.photo ? `<img class="recipe-popup-photo" src="${r.photo}" alt="${r.name}"/>` : ''}
+      ${r.url ? `<div style="font-size:.60rem;"><a href="${r.url}" target="_blank" rel="noopener" style="color:var(--primary);">🔗 ${r.url}</a></div>` : ''}
+      <div><div class="recipe-popup-section">Ingredienti</div><div class="recipe-popup-ingredients">${ingHtml}</div></div>
+      ${stepsHtml ? `<div><div class="recipe-popup-section">Procedimento</div><div class="recipe-popup-steps">${stepsHtml}</div></div>` : ''}
+    `;
+    document.getElementById('recipe-popup-overlay').classList.add('open');
+  }
+  function closeRecipePopup() { document.getElementById('recipe-popup-overlay').classList.remove('open'); }
+  document.getElementById('recipe-popup-overlay').addEventListener('click', function(e) { if (e.target===this) closeRecipePopup(); });
 
-    /* ══════════════════════════════
-       DIARIO ALIMENTARE
-    ══════════════════════════════ */
-    const DIARY_KEY = 'zen_diary_v1';
-    let diary = JSON.parse(localStorage.getItem(DIARY_KEY) || '{}');
-    let calYear, calMonth, selectedDate;
+  /* Recipe modal */
+  function openRecipeModal(cat) {
+    editingRecipeId = null; rfPhotoData = null;
+    ingredientCount = 0; stepCount = 0;
+    document.getElementById('recipe-modal-title').textContent = 'Nuova Ricetta';
+    ['rf-name','rf-nat','rf-url'].forEach(id => document.getElementById(id).value = '');
+    ['rf-kcal','rf-prot','rf-carb','rf-fat'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('rf-cat').value = cat;
+    document.getElementById('rf-ingredients').innerHTML = '';
+    document.getElementById('rf-steps').innerHTML = '';
+    const prev = document.getElementById('rf-photo-preview');
+    prev.src=''; prev.classList.remove('visible');
+    addIngredient(); addRecipeStep();
+    document.getElementById('recipe-modal').classList.add('open');
+  }
 
-    const monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-                        'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-    const dayNames   = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+  function editRecipe(id) {
+    const r = recipes.find(x => x.id === id);
+    if (!r) return;
+    editingRecipeId = id; rfPhotoData = r.photo || null;
+    ingredientCount = 0; stepCount = 0;
+    document.getElementById('recipe-modal-title').textContent = 'Modifica Ricetta';
+    document.getElementById('rf-name').value = r.name;
+    document.getElementById('rf-cat').value  = r.cat;
+    document.getElementById('rf-nat').value  = r.nat || '';
+    document.getElementById('rf-url').value  = r.url || '';
+    document.getElementById('rf-kcal').value = r.kcal || '';
+    document.getElementById('rf-prot').value = r.prot || '';
+    document.getElementById('rf-carb').value = r.carb || '';
+    document.getElementById('rf-fat').value  = r.fat  || '';
+    document.getElementById('rf-ingredients').innerHTML = '';
+    document.getElementById('rf-steps').innerHTML = '';
+    (r.ingredients||[]).forEach(v => addIngredient(v));
+    (r.steps||[]).forEach(v => addRecipeStep(v));
+    const prev = document.getElementById('rf-photo-preview');
+    if (r.photo) { prev.src = r.photo; prev.classList.add('visible'); } else { prev.src=''; prev.classList.remove('visible'); }
+    document.getElementById('recipe-modal').classList.add('open');
+  }
 
-    function todayKey() {
-      const n = new Date();
-      return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+  document.getElementById('rf-photo-input').addEventListener('change', function() {
+    const file = this.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      rfPhotoData = e.target.result;
+      const prev = document.getElementById('rf-photo-preview');
+      prev.src = rfPhotoData; prev.classList.add('visible');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function addIngredient(val) {
+    ingredientCount++;
+    const div = document.createElement('div');
+    div.className = 'ingredient-item';
+    div.innerHTML = `<input type="text" placeholder="es. 100g Pasta integrale" value="${val||''}"/>
+      <button type="button" class="item-del-btn" onclick="this.parentNode.remove()">✕</button>`;
+    document.getElementById('rf-ingredients').appendChild(div);
+  }
+  function addRecipeStep(val) {
+    stepCount++;
+    const n = stepCount;
+    const div = document.createElement('div');
+    div.className = 'step-item';
+    div.innerHTML = `<div class="step-item-num">${n}</div>
+      <input type="text" placeholder="Step ${n}..." value="${val||''}"/>
+      <button type="button" class="item-del-btn" onclick="this.parentNode.remove()">✕</button>`;
+    document.getElementById('rf-steps').appendChild(div);
+  }
+  function closeRecipeModal() { document.getElementById('recipe-modal').classList.remove('open'); }
+  document.getElementById('recipe-modal').addEventListener('click', function(e){ if(e.target===this) closeRecipeModal(); });
+
+  function saveRecipe() {
+    const name = document.getElementById('rf-name').value.trim();
+    const nat  = document.getElementById('rf-nat').value.trim();
+    const kcal = document.getElementById('rf-kcal').value;
+    const prot = document.getElementById('rf-prot').value;
+    const carb = document.getElementById('rf-carb').value;
+    const fat  = document.getElementById('rf-fat').value;
+    const ingEls = document.querySelectorAll('#rf-ingredients .ingredient-item input');
+    const stepEls= document.querySelectorAll('#rf-steps .step-item input');
+    const ingredients = Array.from(ingEls).map(i=>i.value.trim()).filter(Boolean);
+    const steps       = Array.from(stepEls).map(i=>i.value.trim()).filter(Boolean);
+
+    // validation — only url is optional
+    let ok = true;
+    const fields = [
+      { el: document.getElementById('rf-name'), val: name },
+      { el: document.getElementById('rf-nat'),  val: nat  },
+      { el: document.getElementById('rf-kcal'), val: kcal },
+      { el: document.getElementById('rf-prot'), val: prot },
+      { el: document.getElementById('rf-carb'), val: carb },
+      { el: document.getElementById('rf-fat'),  val: fat  },
+    ];
+    fields.forEach(f => { if (!f.val) { f.el.classList.add('err'); ok=false; } else f.el.classList.remove('err'); });
+    if (!rfPhotoData) { document.querySelector('.btn-photo-upload').style.borderColor='var(--red)'; ok=false; }
+    else document.querySelector('.btn-photo-upload').style.borderColor='';
+    if (!ingredients.length || !steps.length) { alert('Aggiungi almeno un ingrediente e uno step.'); ok=false; }
+    if (!ok) return;
+
+    const recipe = {
+      id: editingRecipeId || 'r_'+Date.now(), name,
+      cat: document.getElementById('rf-cat').value,
+      nat, url: document.getElementById('rf-url').value.trim(),
+      photo: rfPhotoData,
+      kcal: parseInt(kcal)||0, prot: parseInt(prot)||0,
+      carb: parseInt(carb)||0, fat:  parseInt(fat) ||0,
+      ingredients, steps,
+    };
+    if (editingRecipeId) recipes = recipes.map(r => r.id===editingRecipeId ? recipe : r);
+    else recipes.push(recipe);
+    saveRecipes(); renderRecipes(); closeRecipeModal();
+  }
+
+  function deleteRecipe(id) {
+    if (!confirm('Eliminare questa ricetta?')) return;
+    recipes = recipes.filter(r => r.id!==id);
+    saveRecipes(); renderRecipes();
+  }
+
+  /* Export ricette */
+  function openExportRecipesModal() {
+    const list = document.getElementById('export-recipes-list');
+    list.innerHTML = recipes.map(r => `
+      <div class="export-check-row">
+        <input type="checkbox" id="ec_${r.id}" value="${r.id}" checked/>
+        <label for="ec_${r.id}">
+          <div class="export-check-label">${getFlag(r.nat)} ${r.name}</div>
+          <div class="export-check-cat">${r.cat}</div>
+        </label>
+      </div>`).join('');
+    document.getElementById('export-recipes-modal').classList.add('open');
+  }
+  document.getElementById('export-recipes-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+
+  function exportRecipesByCategory(cat) {
+    downloadRecipesCSV(recipes.filter(r=>r.cat===cat), `ricette_${cat}.csv`);
+    document.getElementById('export-recipes-modal').classList.remove('open');
+  }
+  function exportSelectedRecipes() {
+    const checked = Array.from(document.querySelectorAll('#export-recipes-list input:checked')).map(i=>i.value);
+    downloadRecipesCSV(recipes.filter(r=>checked.includes(r.id)), 'ricette_selezionate.csv');
+    document.getElementById('export-recipes-modal').classList.remove('open');
+  }
+  function downloadRecipesCSV(list, filename) {
+    const rows = [['Nome','Categoria','Nazionalità','kcal','Proteine(g)','Carbo(g)','Grassi(g)','Ingredienti','Procedimento','URL']];
+    list.forEach(r => rows.push([r.name, r.cat, r.nat||'', r.kcal||0, r.prot||0, r.carb||0, r.fat||0,
+      (r.ingredients||[]).join(' | '), (r.steps||[]).join(' | '), r.url||'']));
+    downloadCSV(rows, filename);
+  }
+
+  /* ════════════ DIARIO ════════════ */
+  const DIARY_KEY = 'zen_diary_v2';
+  let diary = JSON.parse(localStorage.getItem(DIARY_KEY) || '{}');
+  let calYear, calMonth, selectedDate;
+  const MONTH_NAMES = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const DAY_LABELS  = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+
+  function todayKey() {
+    const n = new Date();
+    return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+  }
+  function saveDiary() { localStorage.setItem(DIARY_KEY, JSON.stringify(diary)); }
+
+  function initCalendar() {
+    const now = new Date();
+    calYear=now.getFullYear(); calMonth=now.getMonth(); selectedDate=todayKey();
+    renderCalendar(); renderDiaryDay();
+  }
+  function renderCalendar() {
+    document.getElementById('cal-month-label').textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    const today = todayKey();
+    let html = DAY_LABELS.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+    const first = new Date(calYear,calMonth,1).getDay();
+    const off = (first+6)%7;
+    for(let i=0;i<off;i++) html+=`<div class="cal-day empty"></div>`;
+    const days = new Date(calYear,calMonth+1,0).getDate();
+    for(let d=1;d<=days;d++){
+      const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const has=diary[key]&&diary[key].length>0;
+      let cls='cal-day';
+      if(key===today) cls+=' today';
+      if(key===selectedDate) cls+=' selected';
+      html+=`<div class="${cls}" onclick="selectDay('${key}')"><span class="cal-day-num">${d}</span>${has?'<div class="cal-day-dot"></div>':''}</div>`;
     }
+    document.getElementById('calendar-grid').innerHTML=html;
+  }
+  function selectDay(key) { selectedDate=key; renderCalendar(); renderDiaryDay(); }
+  document.getElementById('cal-prev').addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();});
+  document.getElementById('cal-next').addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();});
 
-    function initCalendar() {
-      const now = new Date();
-      calYear  = now.getFullYear();
-      calMonth = now.getMonth();
-      selectedDate = todayKey();
-      renderCalendar();
-      renderDiaryDay();
+  function renderDiaryDay() {
+    const [y,m,d]=selectedDate.split('-');
+    document.getElementById('diary-date-label').textContent=`${parseInt(d)} ${MONTH_NAMES[parseInt(m)-1]} ${y}`;
+    const meals=diary[selectedDate]||[];
+    let tk=0,tp=0,tc=0,tf=0;
+    meals.forEach(m=>{tk+=m.kcal||0;tp+=m.prot||0;tc+=m.carb||0;tf+=m.fat||0;});
+    document.getElementById('diary-kcal').textContent=tk;
+    document.getElementById('diary-prot').textContent=tp+'g';
+    document.getElementById('diary-carb').textContent=tc+'g';
+    document.getElementById('diary-fat').textContent=tf+'g';
+    const parts=m=>m.type.split(' ');
+    document.getElementById('diary-meal-list').innerHTML=meals.map((m,i)=>{
+      const ps=parts(m); const icon=ps[0]; const nm=ps.slice(1).join(' ');
+      return `<div class="diary-meal-card">
+        <div class="diary-meal-icon">${icon}</div>
+        <div class="diary-meal-info"><div class="diary-meal-name">${nm}</div><div class="diary-meal-desc">${m.desc||''}</div></div>
+        <div class="diary-meal-kcal">${m.kcal||0} <span>kcal</span></div>
+        <button class="diary-meal-del" onclick="deleteDiaryMeal(${i})">✕</button>
+      </div>`;
+    }).join('');
+  }
+  function deleteDiaryMeal(idx){
+    if(!diary[selectedDate])return;
+    diary[selectedDate].splice(idx,1);
+    saveDiary(); renderCalendar(); renderDiaryDay();
+  }
+
+  /* Diary meal modal */
+  function openDiaryMealModal() {
+    document.getElementById('diary-meal-type').value='🥣 Colazione';
+    document.getElementById('diary-meal-desc').value='';
+    ['diary-meal-kcal','diary-meal-prot','diary-meal-carb','diary-meal-fat'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('diary-modal').classList.add('open');
+  }
+  function closeDiaryModal(){ document.getElementById('diary-modal').classList.remove('open'); }
+  document.getElementById('diary-modal').addEventListener('click',function(e){if(e.target===this)closeDiaryModal();});
+
+  function saveDiaryMeal(){
+    const desc=document.getElementById('diary-meal-desc').value.trim();
+    if(!desc){alert('Inserisci una descrizione.');return;}
+    if(!diary[selectedDate])diary[selectedDate]=[];
+    diary[selectedDate].push({
+      type:document.getElementById('diary-meal-type').value, desc,
+      kcal:parseInt(document.getElementById('diary-meal-kcal').value)||0,
+      prot:parseInt(document.getElementById('diary-meal-prot').value)||0,
+      carb:parseInt(document.getElementById('diary-meal-carb').value)||0,
+      fat: parseInt(document.getElementById('diary-meal-fat').value)||0,
+    });
+    saveDiary(); closeDiaryModal(); renderCalendar(); renderDiaryDay();
+  }
+
+  /* Analytics */
+  let analyticsMode='week';
+  function openAnalytics(){
+    const p=document.getElementById('analytics-panel');
+    p.style.display = p.style.display==='none' ? 'block' : 'none';
+    if(p.style.display==='block') computeAnalytics();
+  }
+  function switchAnalytics(mode){
+    analyticsMode=mode;
+    document.getElementById('atab-week').classList.toggle('active',mode==='week');
+    document.getElementById('atab-month').classList.toggle('active',mode==='month');
+    computeAnalytics();
+  }
+  function computeAnalytics(){
+    const today=new Date();
+    let keys=[];
+    if(analyticsMode==='week'){
+      for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);keys.push(d.toISOString().slice(0,10));}
+    } else {
+      const y=today.getFullYear(),m=today.getMonth();
+      const days=new Date(y,m+1,0).getDate();
+      for(let d=1;d<=days;d++) keys.push(`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
     }
-
-    function renderCalendar() {
-      document.getElementById('cal-month-label').textContent = `${monthNames[calMonth]} ${calYear}`;
-      const grid = document.getElementById('calendar-grid');
-      const today = todayKey();
-      // Day headers
-      let html = dayNames.map(d => `<div class="cal-day-label">${d}</div>`).join('');
-      // First weekday of month (Mon=0)
-      const firstDay = new Date(calYear, calMonth, 1).getDay();
-      const offset = (firstDay + 6) % 7; // Mon-based
-      for (let i = 0; i < offset; i++) html += `<div class="cal-day empty"></div>`;
-      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-      for (let d = 1; d <= daysInMonth; d++) {
-        const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const hasMeals = diary[key] && diary[key].length > 0;
-        let cls = 'cal-day';
-        if (key === today) cls += ' today';
-        if (key === selectedDate) cls += ' selected';
-        html += `<div class="${cls}" onclick="selectDay('${key}')">
-          <span class="cal-day-num">${d}</span>
-          ${hasMeals ? '<div class="cal-day-dot"></div>' : ''}
-        </div>`;
-      }
-      grid.innerHTML = html;
-    }
-
-    function selectDay(key) {
-      selectedDate = key;
-      renderCalendar();
-      renderDiaryDay();
-    }
-
-    function renderDiaryDay() {
-      const [y, m, d] = selectedDate.split('-');
-      const label = `${parseInt(d)} ${monthNames[parseInt(m)-1]} ${y}`;
-      document.getElementById('diary-date-label').textContent = label;
-      const meals = diary[selectedDate] || [];
-      let totalKcal = 0, totalProt = 0, totalCarb = 0, totalFat = 0;
-      meals.forEach(m => { totalKcal += m.kcal||0; totalProt += m.prot||0; totalCarb += m.carb||0; totalFat += m.fat||0; });
-      document.getElementById('diary-kcal').textContent = totalKcal;
-      document.getElementById('diary-prot').textContent = totalProt + 'g';
-      document.getElementById('diary-carb').textContent = totalCarb + 'g';
-      document.getElementById('diary-fat').textContent = totalFat + 'g';
-      const list = document.getElementById('diary-meal-list');
-      list.innerHTML = meals.map((m, i) => {
-        const parts = m.type.split(' ');
-        const icon = parts[0];
-        const typeName = parts.slice(1).join(' ');
-        return `<div class="diary-meal-card">
-          <div class="diary-meal-icon">${icon}</div>
-          <div class="diary-meal-info">
-            <div class="diary-meal-name">${typeName}</div>
-            <div class="diary-meal-desc">${m.desc || ''}</div>
-          </div>
-          <div class="diary-meal-kcal">${m.kcal || 0} <span>kcal</span></div>
-          <button class="diary-meal-del" onclick="deleteDiaryMeal(${i})" aria-label="Elimina">✕</button>
-        </div>`;
+    const totals=keys.map(k=>{
+      const meals=diary[k]||[];
+      return meals.reduce((a,m)=>({kcal:a.kcal+(m.kcal||0),prot:a.prot+(m.prot||0),carb:a.carb+(m.carb||0),fat:a.fat+(m.fat||0)}),{kcal:0,prot:0,carb:0,fat:0});
+    });
+    const withData=totals.filter(t=>t.kcal>0);
+    const n=withData.length||1;
+    const avg={kcal:Math.round(withData.reduce((a,t)=>a+t.kcal,0)/n),prot:Math.round(withData.reduce((a,t)=>a+t.prot,0)/n),carb:Math.round(withData.reduce((a,t)=>a+t.carb,0)/n),fat:Math.round(withData.reduce((a,t)=>a+t.fat,0)/n)};
+    document.getElementById('avg-kcal').textContent=avg.kcal;
+    document.getElementById('avg-prot').textContent=avg.prot+'g';
+    document.getElementById('avg-carb').textContent=avg.carb+'g';
+    document.getElementById('avg-fat').textContent=avg.fat+'g';
+    const maxKcal=Math.max(...totals.map(t=>t.kcal),1);
+    const maxProt=Math.max(...totals.map(t=>t.prot),1);
+    function barRows(field,maxVal,color){
+      return keys.map((k,i)=>{
+        const v=totals[i][field];
+        const label=k.slice(5).replace('-','/');
+        const pct=Math.round(v/maxVal*100);
+        return `<div class="bar-row"><span class="bar-label">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};"></div></div><span class="bar-val">${v}</span></div>`;
       }).join('');
     }
+    document.getElementById('chart-kcal').innerHTML=barRows('kcal',maxKcal,'#c07a30');
+    document.getElementById('chart-prot').innerHTML=barRows('prot',maxProt,'#7abf6e');
+  }
 
-    function deleteDiaryMeal(idx) {
-      if (!diary[selectedDate]) return;
-      diary[selectedDate].splice(idx, 1);
-      localStorage.setItem(DIARY_KEY, JSON.stringify(diary));
-      renderCalendar();
-      renderDiaryDay();
-    }
-
-    document.getElementById('cal-prev').addEventListener('click', () => {
-      calMonth--;
-      if (calMonth < 0) { calMonth = 11; calYear--; }
-      renderCalendar();
-    });
-    document.getElementById('cal-next').addEventListener('click', () => {
-      calMonth++;
-      if (calMonth > 11) { calMonth = 0; calYear++; }
-      renderCalendar();
-    });
-
-    /* Diary meal modal */
-    function openDiaryMealModal() {
-      document.getElementById('dm-type').value = '🥣 Colazione';
-      document.getElementById('dm-desc').value = '';
-      document.getElementById('dm-kcal').value = '';
-      document.getElementById('dm-prot').value = '';
-      document.getElementById('dm-carb').value = '';
-      document.getElementById('dm-fat').value = '';
-      document.getElementById('diary-modal').classList.add('open');
-    }
-    function closeDiaryModal() {
-      document.getElementById('diary-modal').classList.remove('open');
-    }
-    function saveDiaryMeal() {
-      const desc = document.getElementById('dm-desc').value.trim();
-      if (!desc) { alert('Inserisci una descrizione.'); return; }
-      if (!diary[selectedDate]) diary[selectedDate] = [];
-      diary[selectedDate].push({
-        type: document.getElementById('dm-type').value,
-        desc,
-        kcal: parseInt(document.getElementById('dm-kcal').value) || 0,
-        prot: parseInt(document.getElementById('dm-prot').value) || 0,
-        carb: parseInt(document.getElementById('dm-carb').value) || 0,
-        fat: parseInt(document.getElementById('dm-fat').value) || 0,
+  /* Export diario */
+  function openExportDiaryModal(){
+    const today=new Date().toISOString().slice(0,10);
+    document.getElementById('export-from').value='';
+    document.getElementById('export-to').value=today;
+    document.getElementById('export-diary-modal').classList.add('open');
+  }
+  function exportDiaryAll(){ exportDiaryCSV(Object.keys(diary)); document.getElementById('export-diary-modal').classList.remove('open'); }
+  function exportDiaryRange(){
+    const from=document.getElementById('export-from').value;
+    const to=document.getElementById('export-to').value;
+    const keys=Object.keys(diary).filter(k=>(!from||k>=from)&&(!to||k<=to)).sort();
+    exportDiaryCSV(keys);
+    document.getElementById('export-diary-modal').classList.remove('open');
+  }
+  function exportDiaryCSV(keys){
+    const rows=[['Data','Tipo pasto','Descrizione','kcal','Proteine(g)','Carbo(g)','Grassi(g)']];
+    keys.sort().forEach(k=>{
+      (diary[k]||[]).forEach(m=>{
+        rows.push([k,m.type,m.desc||'',m.kcal||0,m.prot||0,m.carb||0,m.fat||0]);
       });
-      localStorage.setItem(DIARY_KEY, JSON.stringify(diary));
-      closeDiaryModal();
-      renderCalendar();
-      renderDiaryDay();
-    }
-    document.getElementById('diary-modal').addEventListener('click', function(e) {
-      if (e.target === this) closeDiaryModal();
     });
+    downloadCSV(rows,'diario_alimentare.csv');
+  }
 
-    initCalendar();
+  /* Utility CSV download */
+  function downloadCSV(rows,filename){
+    const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  }
+
+  /* ════════════ INIT ════════════ */
+  renderDiet();
+  renderRecipes();
+  initCalendar();
   </script>
 </body>
 </html>
