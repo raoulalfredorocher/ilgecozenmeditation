@@ -494,6 +494,30 @@
       -webkit-tap-highlight-color: transparent; transition: color .2s, border-color .2s;
     }
     .btn-export-quick:active { color: var(--primary); border-color: var(--primary); }
+ 
+    /* ── Saved diets list ── */
+    .saved-diet-card {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+      margin-bottom: 8px;
+    }
+    .saved-diet-info { flex: 1; }
+    .saved-diet-name { font-size: .80rem; font-weight: 600; color: var(--text); }
+    .saved-diet-meta { font-size: .52rem; color: var(--muted); letter-spacing: .10em; margin-top: 2px; }
+    .saved-diet-obj {
+      font-size: .50rem; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+      border: 1px solid var(--accent); color: var(--primary); background: var(--bg);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .saved-diet-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .diet-toolbar { width: 100%; display: flex; gap: 8px; margin-bottom: 14px; }
+    .btn-save-diet {
+      flex: 1; background: var(--primary); color: #fff; border: none; border-radius: 10px;
+      font-family: inherit; font-size: .68rem; font-weight: 600; letter-spacing: .08em;
+      padding: 9px 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+      -webkit-tap-highlight-color: transparent; transition: opacity .2s;
+    }
+    .btn-save-diet:active { opacity: .85; }
 
     /* ── Footer ── */
     .page-footer {
@@ -534,6 +558,16 @@
   <!-- ══════════════════════════════  SCREEN 1: DIETA  ══════════════════════════════ -->
   <div class="screen active" id="screen-dieta">
     <div class="section-title">piano alimentare settimanale</div>
+    <div class="diet-toolbar">
+      <button class="btn-save-diet" onclick="openSaveDietModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salva dieta
+      </button>
+      <button class="btn-diary-action" onclick="openLoadDietModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Diete salvate
+      </button>
+    </div>
     <div class="day-pill-scroll" id="day-pill-scroll"></div>
     <div id="day-card-wrap"></div>
     <div class="page-footer">
@@ -639,7 +673,20 @@
     </button>
     <button class="tab-btn tab-center tab-active" id="tab-ricette" aria-label="Ricettario">
       <div class="tab-center-circle">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
+        <!-- Libro di ricette aperto con forchetta e coltello -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <!-- copertina sinistra -->
+          <path d="M3 5a2 2 0 0 1 2-2h5v16H5a2 2 0 0 1-2-2V5z"/>
+          <!-- copertina destra -->
+          <path d="M10 3h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5V3z"/>
+          <!-- forchetta (sinistra) -->
+          <line x1="5.8" y1="6" x2="5.8" y2="9"/>
+          <line x1="6.8" y1="6" x2="6.8" y2="9"/>
+          <line x1="7.8" y1="6" x2="7.8" y2="9"/>
+          <path d="M6.8 9 v5" stroke-width="1.5"/>
+          <!-- coltello (destra) -->
+          <path d="M12.5 6 c1.5 0 2.5 1 2.5 2.5 L13.5 11 v4" stroke-width="1.5"/>
+        </svg>
       </div>
       <span class="tab-label">ricette</span>
     </button>
@@ -773,6 +820,44 @@
       </div>
 
       <button class="btn-cancel" onclick="document.getElementById('export-recipes-modal').classList.remove('open')">Chiudi</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════  MODAL: SALVA DIETA  ══════════════════════════════ -->
+  <div class="modal-overlay" id="save-diet-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Salva dieta</div>
+      <div class="form-group">
+        <label class="form-label">Nome dieta <span class="req">*</span></label>
+        <input class="form-input" id="sd-name" type="text" placeholder="es. Dieta Estiva 2025"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data <span class="req">*</span></label>
+          <input class="form-input" id="sd-date" type="date"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Obiettivo <span class="req">*</span></label>
+          <select class="form-select" id="sd-goal">
+            <option value="Normocalorica">⚖️ Normocalorica</option>
+            <option value="Cut">🔥 Cut</option>
+            <option value="Bulk">💪 Bulk</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="confirmSaveDiet()">Salva</button>
+      <button class="btn-cancel" onclick="document.getElementById('save-diet-modal').classList.remove('open')">Annulla</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════  MODAL: DIETE SALVATE  ══════════════════════════════ -->
+  <div class="modal-overlay" id="load-diet-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Diete salvate</div>
+      <div id="saved-diets-list"></div>
+      <button class="btn-cancel" style="margin-top:8px;" onclick="document.getElementById('load-diet-modal').classList.remove('open')">Chiudi</button>
     </div>
   </div>
 
@@ -1472,6 +1557,74 @@
     const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  }
+
+  /* ════════════ DIETE SALVATE ════════════ */
+  const SAVED_DIETS_KEY = 'zen_saved_diets_v1';
+  let savedDiets = JSON.parse(localStorage.getItem(SAVED_DIETS_KEY) || '[]');
+  function saveSavedDiets() { localStorage.setItem(SAVED_DIETS_KEY, JSON.stringify(savedDiets)); }
+
+  function openSaveDietModal() {
+    document.getElementById('sd-name').value = '';
+    document.getElementById('sd-name').classList.remove('err');
+    document.getElementById('sd-date').value = new Date().toISOString().slice(0,10);
+    document.getElementById('sd-goal').value = 'Normocalorica';
+    document.getElementById('save-diet-modal').classList.add('open');
+  }
+  document.getElementById('save-diet-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+
+  function confirmSaveDiet() {
+    const nameEl = document.getElementById('sd-name');
+    const name = nameEl.value.trim();
+    if (!name) { nameEl.classList.add('err'); nameEl.focus(); return; }
+    nameEl.classList.remove('err');
+    savedDiets.push({
+      id: 'sd_' + Date.now(),
+      name,
+      date: document.getElementById('sd-date').value,
+      goal: document.getElementById('sd-goal').value,
+      diet: JSON.parse(JSON.stringify(diet)), // snapshot profonda
+    });
+    saveSavedDiets();
+    document.getElementById('save-diet-modal').classList.remove('open');
+  }
+
+  function openLoadDietModal() {
+    const wrap = document.getElementById('saved-diets-list');
+    if (!savedDiets.length) {
+      wrap.innerHTML = '<div style="font-size:.70rem;color:var(--muted);padding:10px 0;text-align:center;">Nessuna dieta salvata.</div>';
+    } else {
+      const GOAL_ICON = { 'Normocalorica':'⚖️', 'Cut':'🔥', 'Bulk':'💪' };
+      wrap.innerHTML = savedDiets.map(sd => `
+        <div class="saved-diet-card">
+          <div class="saved-diet-info">
+            <div class="saved-diet-name">${sd.name}</div>
+            <div class="saved-diet-meta">${sd.date || '—'}</div>
+          </div>
+          <span class="saved-diet-obj">${GOAL_ICON[sd.goal]||''} ${sd.goal}</span>
+          <div class="saved-diet-actions">
+            <button class="btn-icon edit" title="Carica" onclick="loadSavedDiet('${sd.id}')">📂</button>
+            <button class="btn-icon del"  title="Elimina" onclick="deleteSavedDiet('${sd.id}')">🗑️</button>
+          </div>
+        </div>`).join('');
+    }
+    document.getElementById('load-diet-modal').classList.add('open');
+  }
+  document.getElementById('load-diet-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+
+  function loadSavedDiet(id) {
+    const sd = savedDiets.find(x => x.id === id);
+    if (!sd) return;
+    if (!confirm(`Caricare la dieta "${sd.name}"? La dieta attuale verrà sostituita.`)) return;
+    diet = JSON.parse(JSON.stringify(sd.diet));
+    saveDiet(); renderDayPills(); renderDayCard();
+    document.getElementById('load-diet-modal').classList.remove('open');
+  }
+  function deleteSavedDiet(id) {
+    const sd = savedDiets.find(x => x.id === id);
+    if (!sd || !confirm(`Eliminare la dieta "${sd.name}"?`)) return;
+    savedDiets = savedDiets.filter(x => x.id !== id);
+    saveSavedDiets(); openLoadDietModal();
   }
 
   /* ════════════ INIT ════════════ */
