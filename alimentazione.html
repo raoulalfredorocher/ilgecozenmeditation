@@ -479,9 +479,25 @@
     .bar-chart-rows { display: flex; flex-direction: column; gap: 5px; }
     .bar-row { display: flex; align-items: center; gap: 8px; }
     .bar-label { font-size: .48rem; color: var(--muted); width: 22px; text-align: right; flex-shrink: 0; }
-    .bar-track { flex: 1; height: 10px; background: var(--surface); border-radius: 6px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 6px; transition: width .5s; }
-    .bar-val { font-size: .48rem; color: var(--text); width: 38px; text-align: right; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 12px; background: var(--surface); border-radius: 6px; overflow: hidden; display: flex; }
+    .bar-fill { height: 100%; transition: width .5s; }
+    .bar-val { font-size: .46rem; color: var(--muted); width: 44px; text-align: right; flex-shrink: 0; font-feature-settings: "tnum"; }
+
+    /* Stacked macro legend */
+    .macro-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .macro-legend-item { display: flex; align-items: center; gap: 4px; font-size: .44rem; color: var(--muted); }
+    .macro-legend-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+
+    /* SVG bar chart (mese) */
+    .svg-chart-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .svg-chart-wrap svg { display: block; }
+
+    /* Pie chart */
+    .pie-wrap { display: flex; align-items: center; gap: 14px; margin-top: 4px; }
+    .pie-legend { display: flex; flex-direction: column; gap: 6px; }
+    .pie-legend-row { display: flex; align-items: center; gap: 6px; font-size: .50rem; color: var(--text); }
+    .pie-legend-swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .pie-legend-val { color: var(--muted); font-size: .44rem; }
 
     /* Checkboxes export */
     .export-check-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--surface); }
@@ -653,13 +669,12 @@
           <div class="analytics-avg-item"><div class="analytics-avg-val" id="avg-carb">—</div><div class="analytics-avg-key">carbo</div></div>
           <div class="analytics-avg-item"><div class="analytics-avg-val" id="avg-fat">—</div><div class="analytics-avg-key">grassi</div></div>
         </div>
-        <div class="bar-chart">
-          <div class="bar-chart-title">kcal per giorno</div>
-          <div class="bar-chart-rows" id="chart-kcal"></div>
-        </div>
-        <div class="bar-chart" style="margin-top:14px;">
-          <div class="bar-chart-title">proteine per giorno</div>
-          <div class="bar-chart-rows" id="chart-prot"></div>
+        <!-- Macro stacked bars (settimana) / SVG istogramma (mese) -->
+        <div id="chart-macro-section"></div>
+        <!-- Grafico a torta distribuzione macro media -->
+        <div class="bar-chart" style="margin-top:16px;">
+          <div class="bar-chart-title">distribuzione macro media</div>
+          <div id="chart-pie"></div>
         </div>
       </div>
     </div>
@@ -1494,6 +1509,9 @@
     document.getElementById('atab-month').classList.toggle('active',mode==='month');
     computeAnalytics();
   }
+  /* ── colori macro ── */
+  const MC = { prot:'#7abf6e', carb:'#e8a87c', fat:'#c07a30', kcal:'#8b5cf6' };
+
   function computeAnalytics(){
     const today=new Date();
     let keys=[];
@@ -1515,18 +1533,121 @@
     document.getElementById('avg-prot').textContent=avg.prot+'g';
     document.getElementById('avg-carb').textContent=avg.carb+'g';
     document.getElementById('avg-fat').textContent=avg.fat+'g';
-    const maxKcal=Math.max(...totals.map(t=>t.kcal),1);
-    const maxProt=Math.max(...totals.map(t=>t.prot),1);
-    function barRows(field,maxVal,color){
-      return keys.map((k,i)=>{
-        const v=totals[i][field];
+
+    const section = document.getElementById('chart-macro-section');
+
+    if(analyticsMode==='week'){
+      /* ── SETTIMANA: barre stacked macro (prot+carb+fat) ── */
+      const maxMacro = Math.max(...totals.map(t=>t.prot+t.carb+t.fat),1);
+      const rows = keys.map((k,i)=>{
+        const t=totals[i];
+        const total=t.prot+t.carb+t.fat||0;
         const label=k.slice(5).replace('-','/');
-        const pct=Math.round(v/maxVal*100);
-        return `<div class="bar-row"><span class="bar-label">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};"></div></div><span class="bar-val">${v}</span></div>`;
+        const pPct=total?Math.round(t.prot/total*100):0;
+        const cPct=total?Math.round(t.carb/total*100):0;
+        const fPct=total?Math.round(t.fat/total*100):0;
+        const trackW=Math.round(total/maxMacro*100);
+        return `<div class="bar-row">
+          <span class="bar-label">${label}</span>
+          <div class="bar-track" style="position:relative;">
+            <div style="width:${trackW}%;display:flex;height:100%;">
+              <div class="bar-fill" style="width:${pPct}%;background:${MC.prot};border-radius:6px 0 0 6px;"></div>
+              <div class="bar-fill" style="width:${cPct}%;background:${MC.carb};"></div>
+              <div class="bar-fill" style="width:${fPct}%;background:${MC.fat};border-radius:0 6px 6px 0;"></div>
+            </div>
+          </div>
+          <span class="bar-val">${total}g</span>
+        </div>`;
       }).join('');
+      section.innerHTML=`
+        <div class="bar-chart-title">macro per giorno (g)</div>
+        <div class="macro-legend">
+          <div class="macro-legend-item"><div class="macro-legend-dot" style="background:${MC.prot}"></div>Proteine</div>
+          <div class="macro-legend-item"><div class="macro-legend-dot" style="background:${MC.carb}"></div>Carboidrati</div>
+          <div class="macro-legend-item"><div class="macro-legend-dot" style="background:${MC.fat}"></div>Grassi</div>
+        </div>
+        <div class="bar-chart-rows">${rows}</div>`;
+    } else {
+      /* ── MESE: istogramma SVG kcal per giorno ── */
+      const W=340, H=110, pad={l:28,r:6,t:8,b:22};
+      const chartW=W-pad.l-pad.r;
+      const chartH=H-pad.t-pad.b;
+      const maxKcal=Math.max(...totals.map(t=>t.kcal),1);
+      const barW=Math.max(1,Math.floor(chartW/keys.length)-1);
+      const step=keys.length;
+      // griglia
+      const gridLines=[0,.25,.5,.75,1].map(f=>{
+        const y=pad.t+chartH*(1-f);
+        const lbl=f===0?'':Math.round(maxKcal*f);
+        return `<line x1="${pad.l}" x2="${W-pad.r}" y1="${y}" y2="${y}" stroke="var(--border)" stroke-width=".5"/>
+          <text x="${pad.l-3}" y="${y+3}" text-anchor="end" font-size="7" fill="var(--muted)">${lbl}</text>`;
+      }).join('');
+      // barre
+      const bars=keys.map((k,i)=>{
+        const v=totals[i].kcal;
+        const x=pad.l+i*(chartW/keys.length);
+        const barH=v/maxKcal*chartH;
+        const y=pad.t+chartH-barH;
+        // etichetta giorno (solo per mese: mostra solo i multipli di 5)
+        const dayNum=parseInt(k.slice(8));
+        const lbl=(dayNum===1||dayNum%5===0)?dayNum:'';
+        return `<rect x="${x+.5}" y="${y}" width="${barW}" height="${barH}" fill="${MC.kcal}" rx="2" opacity="${v>0?'1':'.25'}"/>
+          <text x="${x+barW/2}" y="${H-pad.b+10}" text-anchor="middle" font-size="7" fill="var(--muted)">${lbl}</text>`;
+      }).join('');
+      section.innerHTML=`
+        <div class="bar-chart-title">kcal per giorno (mese)</div>
+        <div class="svg-chart-wrap">
+          <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+            ${gridLines}${bars}
+          </svg>
+        </div>`;
     }
-    document.getElementById('chart-kcal').innerHTML=barRows('kcal',maxKcal,'#c07a30');
-    document.getElementById('chart-prot').innerHTML=barRows('prot',maxProt,'#7abf6e');
+
+    /* ── TORTA: distribuzione media macro ── */
+    renderPieChart(avg);
+  }
+
+  function renderPieChart(avg){
+    const data=[
+      {label:'Proteine', val:avg.prot, color:MC.prot},
+      {label:'Carbo',    val:avg.carb, color:MC.carb},
+      {label:'Grassi',   val:avg.fat,  color:MC.fat},
+    ];
+    const total=data.reduce((s,d)=>s+d.val,0)||1;
+    const R=46, cx=54, cy=54, size=108;
+    let startAngle=-Math.PI/2;
+    let slices='';
+    data.forEach(d=>{
+      const angle=d.val/total*2*Math.PI;
+      if(angle===0){startAngle+=angle;return;}
+      const x1=cx+R*Math.cos(startAngle);
+      const y1=cy+R*Math.sin(startAngle);
+      const endAngle=startAngle+angle;
+      const x2=cx+R*Math.cos(endAngle);
+      const y2=cy+R*Math.sin(endAngle);
+      const largeArc=angle>Math.PI?1:0;
+      slices+=`<path d="M${cx},${cy} L${x1},${y1} A${R},${R} 0 ${largeArc},1 ${x2},${y2} Z" fill="${d.color}"/>`;
+      startAngle=endAngle;
+    });
+    // cerchio centrale (donut)
+    slices+=`<circle cx="${cx}" cy="${cy}" r="${R*0.52}" fill="var(--card)"/>`;
+    // testo centrale
+    const totG=avg.prot+avg.carb+avg.fat;
+    slices+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">${totG}g</text>`;
+    slices+=`<text x="${cx}" y="${cy+9}" text-anchor="middle" font-size="7" fill="var(--muted)">macro</text>`;
+    const legend=data.map(d=>{
+      const pct=Math.round(d.val/total*100);
+      return `<div class="pie-legend-row">
+        <div class="pie-legend-swatch" style="background:${d.color}"></div>
+        <span>${d.label}</span>
+        <span class="pie-legend-val">${d.val}g · ${pct}%</span>
+      </div>`;
+    }).join('');
+    document.getElementById('chart-pie').innerHTML=`
+      <div class="pie-wrap">
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0;">${slices}</svg>
+        <div class="pie-legend">${legend}</div>
+      </div>`;
   }
 
   /* Export diario */
