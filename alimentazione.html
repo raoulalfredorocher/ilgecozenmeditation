@@ -1029,15 +1029,23 @@
   function renderDayPills() {
     const wrap = document.getElementById('day-pill-scroll');
     if (!wrap) return;
-    wrap.innerHTML = diet.map((day, i) => {
-      const dot   = DOT_COLORS[day.name] || '#888';
+    wrap.innerHTML = '';
+    diet.forEach((day, i) => {
+      const dot    = DOT_COLORS[day.name] || '#888';
       const active = i === selectedDayIdx ? 'active' : '';
-      return `<button class="day-pill ${active}" onclick="selectedDayIdx=${i};renderDayPills();renderDayCard()">
+      const btn = document.createElement('button');
+      btn.className = `day-pill ${active}`;
+      btn.innerHTML = `
         <span class="day-pill-dot" style="background:${dot}"></span>
         <span class="day-pill-name">${DAY_SHORT[i]}</span>
-        <span class="day-pill-type">${day.type}</span>
-      </button>`;
-    }).join('');
+        <span class="day-pill-type">${day.type}</span>`;
+      btn.addEventListener('click', () => {
+        selectedDayIdx = i;
+        renderDayPills();
+        renderDayCard();
+      });
+      wrap.appendChild(btn);
+    });
   }
 
   function renderDayCard() {
