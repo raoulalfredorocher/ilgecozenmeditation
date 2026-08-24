@@ -549,8 +549,29 @@
   </nav>
 
   <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: [
+        'AIzaSyD0CI9B1uN01ytY8',
+        'CALconh89uU9ZcO6SE',
+      ].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+
+  <script type="module">
+    import {
+      subscribeBucketList,
+      addBucketItem,
+      updateBucketItem,
+      deleteBucketItem,
+    } from './js/firebase-config.js';
+
     /* ── Tema ── */
-    const htmlEl  = document.documentElement;
+    const htmlEl   = document.documentElement;
     const btnTheme = document.getElementById('theme-toggle');
     const knob     = document.getElementById('theme-knob');
     let isDark = localStorage.getItem('zen_theme') === 'dark';
@@ -563,36 +584,31 @@
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-    /* ── Storage ── */
-    const SK = 'zen_bucket_list';
-    function load() { try { return JSON.parse(localStorage.getItem(SK)) || []; } catch { return []; } }
-    function save() { localStorage.setItem(SK, JSON.stringify(items)); }
-
     /* ── Stato ── */
-    let items = load();
-    let pendingImg  = null;   // data URL in attesa nel form
-    let editingId   = null;   // id del goal in modifica (null = nuovo)
+    let items      = [];   // array sincronizzato da Firestore
+    let pendingImg = null; // data URL in attesa nel form
+    let editingId  = null; // id (numerico) del goal in modifica (null = nuovo)
 
     /* ── Elementi DOM ── */
-    const dreamsGrid    = document.getElementById('dreams-grid');
-    const emptyDreams   = document.getElementById('empty-dreams');
-    const completedList = document.getElementById('completed-list');
+    const dreamsGrid      = document.getElementById('dreams-grid');
+    const emptyDreams     = document.getElementById('empty-dreams');
+    const completedList   = document.getElementById('completed-list');
     const screenList      = document.getElementById('screen-list');
     const screenCompleted = document.getElementById('screen-completed');
-    const tabList      = document.getElementById('tab-list');
-    const tabCompleted = document.getElementById('tab-completed');
-    const tabHomeBtn   = document.getElementById('tab-home-btn');
-    const fabAdd       = document.getElementById('fab-add');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const fTitle       = document.getElementById('f-title');
-    const fDesc        = document.getElementById('f-desc');
-    const btnImgUpload = document.getElementById('btn-img-upload');
-    const imgFileInput = document.getElementById('img-file-input');
-    const imgPreview   = document.getElementById('img-preview');
-    const btnSave      = document.getElementById('btn-save-dream');
-    const btnCancel    = document.getElementById('btn-cancel-modal');
-    const modalTitle   = document.getElementById('modal-title');
-    const btnDelete    = document.getElementById('btn-delete-dream');
+    const tabList         = document.getElementById('tab-list');
+    const tabCompleted    = document.getElementById('tab-completed');
+    const tabHomeBtn      = document.getElementById('tab-home-btn');
+    const fabAdd          = document.getElementById('fab-add');
+    const modalOverlay    = document.getElementById('modal-overlay');
+    const fTitle          = document.getElementById('f-title');
+    const fDesc           = document.getElementById('f-desc');
+    const btnImgUpload    = document.getElementById('btn-img-upload');
+    const imgFileInput    = document.getElementById('img-file-input');
+    const imgPreview      = document.getElementById('img-preview');
+    const btnSave         = document.getElementById('btn-save-dream');
+    const btnCancel       = document.getElementById('btn-cancel-modal');
+    const modalTitle      = document.getElementById('modal-title');
+    const btnDelete       = document.getElementById('btn-delete-dream');
 
     /* ── Tab navigation ── */
     function showScreen(which) {
@@ -645,7 +661,7 @@
             btnImgUpload.textContent = '✓ Immagine presente';
           }
         }
-        btnDelete.style.display = '';   /* mostra Elimina in modifica */
+        btnDelete.style.display = '';      /* mostra Elimina in modifica */
       } else {
         modalTitle.textContent = 'Nuovo Sogno';
         btnDelete.style.display = 'none'; /* nasconde Elimina per nuovo */
@@ -660,14 +676,14 @@
       pendingImg = null;
     }
     btnCancel.addEventListener('click', closeModal);
-    btnDelete.addEventListener('click', () => {
+
+    btnDelete.addEventListener('click', async () => {
       if (editingId === null) return;
-      items = items.filter(i => i.id !== editingId);
-      save();
+      const item = items.find(i => i.id === editingId);
+      if (item) await deleteBucketItem(item._docId);
       closeModal();
-      renderGrid();
-      if (screenCompleted.classList.contains('active')) renderCompleted();
     });
+
     modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
 
     /* ── Upload immagine ── */
@@ -687,71 +703,59 @@
     });
 
     /* ── Salva sogno (crea o modifica) ── */
-    btnSave.addEventListener('click', () => {
+    btnSave.addEventListener('click', async () => {
       const title = fTitle.value.trim();
       const desc  = fDesc.value.trim();
-      let valid = true;
 
       fTitle.classList.toggle('error', !title);
       fDesc.classList.toggle('error', !desc);
       btnImgUpload.classList.toggle('error', !pendingImg);
-      if (!title || !desc || !pendingImg) { valid = false; }
-
-      if (!valid) return;
+      if (!title || !desc || !pendingImg) return;
 
       if (editingId !== null) {
         /* modifica */
         const item = items.find(i => i.id === editingId);
         if (item) {
-          item.title = title;
-          item.desc  = desc;
-          item.img   = pendingImg;
+          await updateBucketItem(item._docId, { title, desc, img: pendingImg });
         }
       } else {
         /* nuovo */
-        items.push({
-          id: Date.now(),
+        const newItem = {
+          id:       Date.now(),
           title,
           desc,
-          img: pendingImg,
-          done: false,
-          doneDate: null
-        });
+          img:      pendingImg,
+          done:     false,
+          doneDate: null,
+        };
+        await addBucketItem(newItem);
       }
 
-      save();
       closeModal();
-      renderGrid();
-      /* se eravamo nei completati aggiorna anche quelli */
-      if (screenCompleted.classList.contains('active')) renderCompleted();
+      /* il re-render avviene automaticamente via onSnapshot */
     });
 
     /* ── Spunta / de-spunta ── */
-    function toggleDone(id) {
+    async function toggleDone(id) {
       const item = items.find(i => i.id === id);
       if (!item) return;
-      item.done = true;
-      item.doneDate = new Date().toLocaleDateString('it-IT', {
-        day: '2-digit', month: 'long', year: 'numeric'
+      await updateBucketItem(item._docId, {
+        done:     true,
+        doneDate: new Date().toLocaleDateString('it-IT', {
+          day: '2-digit', month: 'long', year: 'numeric'
+        }),
       });
-      save();
-      renderGrid();
     }
 
-    function undoDone(id) {
+    async function undoDone(id) {
       const item = items.find(i => i.id === id);
       if (!item) return;
-      item.done     = false;
-      item.doneDate = null;
-      save();
-      renderCompleted();
-      renderGrid();
+      await updateBucketItem(item._docId, { done: false, doneDate: null });
     }
 
     /* ── Render griglia lista ── */
     function renderGrid() {
       dreamsGrid.innerHTML = '';
-      /* mostra TUTTI i sogni (non solo quelli non-done) */
       if (items.length === 0) {
         emptyDreams.classList.add('visible');
         return;
@@ -837,7 +841,7 @@
             </button>
           </div>`;
 
-        el.querySelector('.btn-uncheck').addEventListener('click', () => undoDone(item.id));
+        el.querySelector('.btn-uncheck').addEventListener('click',      () => undoDone(item.id));
         el.querySelector('.btn-edit-completed').addEventListener('click', () => openModal(item.id));
 
         completedList.appendChild(el);
@@ -853,8 +857,12 @@
         .replace(/"/g, '&quot;');
     }
 
-    /* ── Init ── */
-    renderGrid();
+    /* ── Init: sottoscrivi Firestore (real-time) ── */
+    subscribeBucketList(newItems => {
+      items = newItems;
+      renderGrid();
+      if (screenCompleted.classList.contains('active')) renderCompleted();
+    });
   </script>
 </body>
 </html>
