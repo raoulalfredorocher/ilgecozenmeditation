@@ -865,27 +865,13 @@
   <div class="modal-overlay" id="day-modal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title" id="day-modal-title">Nuovo Giorno</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Giorno <span class="req">*</span></label>
-          <select class="form-select" id="dm-day">
-            <option value="Lunedì">Lunedì</option>
-            <option value="Martedì">Martedì</option>
-            <option value="Mercoledì">Mercoledì</option>
-            <option value="Giovedì">Giovedì</option>
-            <option value="Venerdì">Venerdì</option>
-            <option value="Sabato">Sabato</option>
-            <option value="Domenica">Domenica</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tipo</label>
-          <select class="form-select" id="dm-type">
-            <option value="Workout">💪 Workout</option>
-            <option value="Riposo">😴 Riposo</option>
-          </select>
-        </div>
+      <div class="modal-title" id="day-modal-title">Modifica Giorno</div>
+      <div class="form-group">
+        <label class="form-label">Tipo giornata</label>
+        <select class="form-select" id="dm-type">
+          <option value="Workout">💪 Workout</option>
+          <option value="Riposo">😴 Riposo</option>
+        </select>
       </div>
       <div class="form-group" style="margin-bottom:6px;"><label class="form-label">Pasti (descrizione + macros)</label></div>
       <div id="dm-meals-list"></div>
@@ -1101,8 +1087,7 @@
     const mealsList = document.getElementById('dm-meals-list');
     mealsList.innerHTML = '';
     const day = diet.find(d => d.id === id);
-    document.getElementById('day-modal-title').textContent = 'Modifica Giorno';
-    document.getElementById('dm-day').value  = day.name;
+    document.getElementById('day-modal-title').textContent = 'Modifica — ' + day.name;
     document.getElementById('dm-type').value = day.type;
     day.meals.forEach(m => addDayMealSlot(m));
     document.getElementById('day-modal').classList.add('open');
