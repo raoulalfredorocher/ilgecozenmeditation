@@ -113,20 +113,23 @@
     .tab-btn.tab-active { color: var(--primary); }
     .tab-icon { width: 22px; height: 22px; flex-shrink: 0; }
     .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; font-family: inherit; line-height: 1; }
-    /* Pulsante centrale in rilievo */
+    /* Pulsante centrale in rilievo — stesso stile di meditazione.html */
     .tab-btn.tab-center {
-      flex: 0 0 70px; position: relative; top: -14px;
+      flex: 1.1; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 8px; gap: 4px; overflow: visible; position: relative;
     }
     .tab-center-circle {
-      width: 54px; height: 54px; border-radius: 50%;
+      width: 58px; height: 58px; border-radius: 50%;
       background: var(--primary); color: #fff;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 18px rgba(192,122,48,.45);
-      border: 3px solid var(--card);
+      flex-shrink: 0;
+      transform: translateY(-24px);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(192,122,48,.55);
       transition: background .2s, transform .12s;
     }
-    .tab-btn.tab-center:active .tab-center-circle { transform: scale(.93); }
-    .tab-btn.tab-center.tab-active .tab-center-circle { background: var(--primary); }
+    .tab-btn.tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
+    .tab-btn.tab-center .tab-label { margin-top: -20px; }
 
     /* ── Section title ── */
     .section-title {
@@ -673,20 +676,7 @@
     </button>
     <button class="tab-btn tab-center tab-active" id="tab-ricette" aria-label="Ricettario">
       <div class="tab-center-circle">
-        <!-- Libro di ricette aperto con forchetta e coltello -->
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <!-- copertina sinistra -->
-          <path d="M3 5a2 2 0 0 1 2-2h5v16H5a2 2 0 0 1-2-2V5z"/>
-          <!-- copertina destra -->
-          <path d="M10 3h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5V3z"/>
-          <!-- forchetta (sinistra) -->
-          <line x1="5.8" y1="6" x2="5.8" y2="9"/>
-          <line x1="6.8" y1="6" x2="6.8" y2="9"/>
-          <line x1="7.8" y1="6" x2="7.8" y2="9"/>
-          <path d="M6.8 9 v5" stroke-width="1.5"/>
-          <!-- coltello (destra) -->
-          <path d="M12.5 6 c1.5 0 2.5 1 2.5 2.5 L13.5 11 v4" stroke-width="1.5"/>
-        </svg>
+        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;"/>
       </div>
       <span class="tab-label">ricette</span>
     </button>
