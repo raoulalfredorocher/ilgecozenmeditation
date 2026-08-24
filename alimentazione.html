@@ -784,7 +784,7 @@
       <div class="modal-handle"></div>
       <div class="modal-title">Aggiungi pasto</div>
       <div class="form-group">
-        <label class="form-label">Tipo pasto</label>
+        <label class="form-label">Tipo pasto <span class="req">*</span></label>
         <select class="form-select" id="diary-meal-type">
           <option value="🌅 Pre-Workout">🌅 Pre-Workout</option>
           <option value="🥤 Post-Workout">🥤 Post-Workout</option>
@@ -797,15 +797,16 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Descrizione</label>
+        <label class="form-label">Descrizione <span class="req">*</span></label>
         <input class="form-input" id="diary-meal-desc" type="text" placeholder="es. Pasta e Ceci, 100g"/>
       </div>
       <div class="form-row-4">
-        <div class="form-group"><label class="form-label">kcal</label><input class="form-input" id="diary-meal-kcal" type="number" min="0" placeholder="0"/></div>
-        <div class="form-group"><label class="form-label">Prot</label><input class="form-input" id="diary-meal-prot" type="number" min="0" placeholder="0"/></div>
-        <div class="form-group"><label class="form-label">Carbo</label><input class="form-input" id="diary-meal-carb" type="number" min="0" placeholder="0"/></div>
-        <div class="form-group"><label class="form-label">Grassi</label><input class="form-input" id="diary-meal-fat" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label class="form-label">kcal</label><input class="form-input" id="diary-meal-kcal" type="number" min="0" placeholder="—"/></div>
+        <div class="form-group"><label class="form-label">Prot</label><input class="form-input" id="diary-meal-prot" type="number" min="0" placeholder="—"/></div>
+        <div class="form-group"><label class="form-label">Carbo</label><input class="form-input" id="diary-meal-carb" type="number" min="0" placeholder="—"/></div>
+        <div class="form-group"><label class="form-label">Grassi</label><input class="form-input" id="diary-meal-fat" type="number" min="0" placeholder="—"/></div>
       </div>
+      <div style="font-size:.52rem;color:var(--muted);letter-spacing:.10em;margin-bottom:6px;">* Obbligatorio &nbsp;·&nbsp; kcal e macros facoltativi</div>
       <button class="btn-primary" onclick="saveDiaryMeal()">Aggiungi</button>
       <button class="btn-cancel" onclick="closeDiaryModal()">Annulla</button>
     </div>
@@ -816,21 +817,28 @@
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title">Esporta Diario CSV</div>
-      <div class="export-quick-row">
-        <button class="btn-export-quick" onclick="exportDiaryAll()">📥 Scarica tutto</button>
+      <!-- Esporta tutto -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);font-weight:600;margin-bottom:8px;">Esporta tutto</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:10px;">Scarica l'intero diario in un unico file CSV.</div>
+        <button class="btn-primary" style="margin-top:0;" onclick="exportDiaryAll()">📥 Esporta tutto in CSV</button>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Da data</label>
-          <input class="form-input" id="export-from" type="date"/>
+      <!-- Esporta per intervallo -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);font-weight:600;margin-bottom:8px;">Da data a data</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Da</label>
+            <input class="form-input" id="export-from" type="date"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">A</label>
+            <input class="form-input" id="export-to" type="date"/>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">A data</label>
-          <input class="form-input" id="export-to" type="date"/>
-        </div>
+        <button class="btn-primary" style="margin-top:4px;" onclick="exportDiaryRange()">📅 Esporta intervallo in CSV</button>
       </div>
-      <button class="btn-primary" onclick="exportDiaryRange()">Scarica intervallo</button>
-      <button class="btn-cancel" onclick="document.getElementById('export-diary-modal').classList.remove('open')">Annulla</button>
+      <button class="btn-cancel" onclick="document.getElementById('export-diary-modal').classList.remove('open')">Chiudi</button>
     </div>
   </div>
 
@@ -1310,24 +1318,31 @@
 
   /* Diary meal modal */
   function openDiaryMealModal() {
-    document.getElementById('diary-meal-type').value='🥣 Colazione';
-    document.getElementById('diary-meal-desc').value='';
-    ['diary-meal-kcal','diary-meal-prot','diary-meal-carb','diary-meal-fat'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('diary-meal-type').value = '🥣 Colazione';
+    const descEl = document.getElementById('diary-meal-desc');
+    descEl.value = ''; descEl.classList.remove('err');
+    ['diary-meal-kcal','diary-meal-prot','diary-meal-carb','diary-meal-fat'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('diary-modal').classList.add('open');
   }
   function closeDiaryModal(){ document.getElementById('diary-modal').classList.remove('open'); }
   document.getElementById('diary-modal').addEventListener('click',function(e){if(e.target===this)closeDiaryModal();});
 
   function saveDiaryMeal(){
-    const desc=document.getElementById('diary-meal-desc').value.trim();
-    if(!desc){alert('Inserisci una descrizione.');return;}
-    if(!diary[selectedDate])diary[selectedDate]=[];
+    const typeEl = document.getElementById('diary-meal-type');
+    const descEl = document.getElementById('diary-meal-desc');
+    const desc   = descEl.value.trim();
+    let ok = true;
+    // tipo pasto: deve essere selezionato (sempre lo è, ha default)
+    // descrizione: obbligatoria
+    if (!desc) { descEl.classList.add('err'); ok = false; } else { descEl.classList.remove('err'); }
+    if (!ok) { descEl.focus(); return; }
+    if (!diary[selectedDate]) diary[selectedDate] = [];
     diary[selectedDate].push({
-      type:document.getElementById('diary-meal-type').value, desc,
-      kcal:parseInt(document.getElementById('diary-meal-kcal').value)||0,
-      prot:parseInt(document.getElementById('diary-meal-prot').value)||0,
-      carb:parseInt(document.getElementById('diary-meal-carb').value)||0,
-      fat: parseInt(document.getElementById('diary-meal-fat').value)||0,
+      type: typeEl.value, desc,
+      kcal: parseInt(document.getElementById('diary-meal-kcal').value) || 0,
+      prot: parseInt(document.getElementById('diary-meal-prot').value) || 0,
+      carb: parseInt(document.getElementById('diary-meal-carb').value) || 0,
+      fat:  parseInt(document.getElementById('diary-meal-fat').value)  || 0,
     });
     saveDiary(); closeDiaryModal(); renderCalendar(); renderDiaryDay();
   }
