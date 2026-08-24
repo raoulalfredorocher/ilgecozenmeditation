@@ -97,3 +97,76 @@ export async function deleteBucketItem(docId) {
   if (!bucketCollection) return;
   await deleteDoc(doc(db, 'bucket_list', docId));
 }
+
+// ─── Alimentazione ──────────────────────────────────────────────────────────
+
+const recipesCollection   = db ? collection(db, 'recipes')    : null;
+const diaryCollection     = db ? collection(db, 'food_diary')  : null;
+const dietCollection      = db ? collection(db, 'diet')        : null;
+const savedDietsCollection= db ? collection(db, 'saved_diets') : null;
+
+/* ── Ricette ── */
+export function subscribeRecipes(callback) {
+  if (!recipesCollection) { callback([]); return () => {}; }
+  return onSnapshot(query(recipesCollection, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addRecipeDoc(recipe) {
+  if (!recipesCollection) return;
+  await addDoc(recipesCollection, { ...recipe, createdAt: Date.now() });
+}
+export async function updateRecipeDoc(docId, fields) {
+  if (!recipesCollection) return;
+  await setDoc(doc(db, 'recipes', docId), fields, { merge: true });
+}
+export async function deleteRecipeDoc(docId) {
+  if (!recipesCollection) return;
+  await deleteDoc(doc(db, 'recipes', docId));
+}
+
+/* ── Diario alimentare ──
+   Un documento per giorno (id = "YYYY-MM-DD"), campo meals: array
+*/
+export function subscribeDiary(callback) {
+  if (!diaryCollection) { callback({}); return () => {}; }
+  return onSnapshot(diaryCollection, snap => {
+    const obj = {};
+    snap.docs.forEach(d => { obj[d.id] = d.data().meals || []; });
+    callback(obj);
+  });
+}
+export async function saveDiaryDay(dateKey, meals) {
+  if (!diaryCollection) return;
+  await setDoc(doc(db, 'food_diary', dateKey), { meals });
+}
+
+/* ── Piano dieta settimanale ──
+   Un unico documento "current" con campo days: array 7 giorni
+*/
+export function subscribeDiet(callback) {
+  if (!dietCollection) { callback(null); return () => {}; }
+  return onSnapshot(doc(db, 'diet', 'current'), snap => {
+    callback(snap.exists() ? snap.data().days : null);
+  });
+}
+export async function saveDietDoc(days) {
+  if (!dietCollection) return;
+  await setDoc(doc(db, 'diet', 'current'), { days });
+}
+
+/* ── Diete salvate ── */
+export function subscribeSavedDiets(callback) {
+  if (!savedDietsCollection) { callback([]); return () => {}; }
+  return onSnapshot(query(savedDietsCollection, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addSavedDietDoc(dietData) {
+  if (!savedDietsCollection) return;
+  await addDoc(savedDietsCollection, { ...dietData, createdAt: Date.now() });
+}
+export async function deleteSavedDietDoc(docId) {
+  if (!savedDietsCollection) return;
+  await deleteDoc(doc(db, 'saved_diets', docId));
+}

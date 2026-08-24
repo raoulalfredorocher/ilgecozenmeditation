@@ -936,6 +936,27 @@
   </div>
 
   <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: [
+        'AIzaSyD0CI9B1uN01ytY8',
+        'CALconh89uU9ZcO6SE',
+      ].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+
+  <script type="module">
+  import {
+    subscribeRecipes, addRecipeDoc, updateRecipeDoc, deleteRecipeDoc,
+    subscribeDiary,   saveDiaryDay,
+    subscribeDiet,    saveDietDoc,
+    subscribeSavedDiets, addSavedDietDoc, deleteSavedDietDoc,
+  } from './js/firebase-config.js';
+
   /* ════════════ TEMA ════════════ */
   const htmlEl  = document.documentElement;
   const themBtn = document.getElementById('theme-toggle');
@@ -970,7 +991,6 @@
   });
 
   /* ════════════ DIETA ════════════ */
-  const DIET_KEY = 'zen_diet_v2';
   const DOT_COLORS = { 'Lunedì':'#3b82f6','Martedì':'#06b6d4','Mercoledì':'#8b5cf6','Giovedì':'#f59e0b','Venerdì':'#10b981','Sabato':'#ec4899','Domenica':'#ef4444' };
   const MEAL_SLOTS = [
     { key:'pre_workout',  icon:'🌅', label:'Pre-Workout' },
@@ -985,22 +1005,19 @@
   const DAY_NAMES = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
   const DAY_SHORT = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 
-  /* Crea i 7 giorni fissi se mancanti in localStorage */
-  let diet = JSON.parse(localStorage.getItem(DIET_KEY) || 'null');
-  if (!diet || !Array.isArray(diet) || diet.length !== 7) {
-    diet = DAY_NAMES.map((name, i) => ({
-      id: 'day_' + i,
-      name,
+  function makeDefaultDiet() {
+    return DAY_NAMES.map((name, i) => ({
+      id: 'day_' + i, name,
       type: (i < 5) ? 'Workout' : 'Riposo',
       meals: [],
     }));
-    localStorage.setItem(DIET_KEY, JSON.stringify(diet));
   }
 
+  let diet = makeDefaultDiet();
   let selectedDayIdx = 0;
   let editingDayId = null;
 
-  function saveDiet() { localStorage.setItem(DIET_KEY, JSON.stringify(diet)); }
+  async function saveDiet() { await saveDietDoc(diet); }
 
   function computeTotals(meals) {
     return meals.reduce((a, m) => ({
@@ -1104,7 +1121,7 @@
     document.getElementById('dm-meals-list').appendChild(el);
   }
 
-  function saveDay() {
+  async function saveDay() {
     const day  = diet.find(d => d.id === editingDayId);
     day.type   = document.getElementById('dm-type').value;
     const mealEls = document.querySelectorAll('#dm-meals-list > div');
@@ -1116,12 +1133,11 @@
       carb: parseInt(el.querySelector('[data-role=carb]').value)||0,
       fat:  parseInt(el.querySelector('[data-role=fat]').value)||0,
     })).filter(m => m.desc);
-    saveDiet(); renderDayPills(); renderDayCard(); closeDayModal();
+    await saveDiet(); renderDayPills(); renderDayCard(); closeDayModal();
   }
 
   /* ════════════ RICETTARIO ════════════ */
-  const RECIPES_KEY = 'zen_recipes_v2';
-  let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
+  let recipes = [];
   let editingRecipeId = null;
   let ingredientCount = 0, stepCount = 0;
   let rfPhotoData = null;
@@ -1134,8 +1150,6 @@
     'libanese':'🇱🇧','peruviana':'🇵🇪','argentina':'🇦🇷',
   };
   function getFlag(nat) { return NAT_FLAGS[(nat||'').toLowerCase().trim()] || '🌍'; }
-
-  function saveRecipes() { localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes)); }
 
   function renderRecipes() {
     ['antipasti','primi','secondi','dolci'].forEach(cat => {
@@ -1262,7 +1276,7 @@
   function closeRecipeModal() { document.getElementById('recipe-modal').classList.remove('open'); }
   document.getElementById('recipe-modal').addEventListener('click', function(e){ if(e.target===this) closeRecipeModal(); });
 
-  function saveRecipe() {
+  async function saveRecipe() {
     const name = document.getElementById('rf-name').value.trim();
     const nat  = document.getElementById('rf-nat').value.trim();
     const kcal = document.getElementById('rf-kcal').value;
@@ -1299,15 +1313,20 @@
       carb: parseInt(carb)||0, fat:  parseInt(fat) ||0,
       ingredients, steps,
     };
-    if (editingRecipeId) recipes = recipes.map(r => r.id===editingRecipeId ? recipe : r);
-    else recipes.push(recipe);
-    saveRecipes(); renderRecipes(); closeRecipeModal();
+    if (editingRecipeId) {
+      const existing = recipes.find(r => r.id === editingRecipeId);
+      if (existing) await updateRecipeDoc(existing._docId, recipe);
+    } else {
+      await addRecipeDoc(recipe);
+    }
+    closeRecipeModal();
+    /* re-render via onSnapshot */
   }
 
-  function deleteRecipe(id) {
+  async function deleteRecipe(id) {
     if (!confirm('Eliminare questa ricetta?')) return;
-    recipes = recipes.filter(r => r.id!==id);
-    saveRecipes(); renderRecipes();
+    const r = recipes.find(x => x.id === id);
+    if (r) await deleteRecipeDoc(r._docId);
   }
 
   /* Export ricette */
@@ -1356,8 +1375,7 @@
   }
 
   /* ════════════ DIARIO ════════════ */
-  const DIARY_KEY = 'zen_diary_v2';
-  let diary = JSON.parse(localStorage.getItem(DIARY_KEY) || '{}');
+  let diary = {};
   let calYear, calMonth, selectedDate;
   const MONTH_NAMES = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
   const DAY_LABELS  = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
@@ -1366,7 +1384,7 @@
     const n = new Date();
     return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
   }
-  function saveDiary() { localStorage.setItem(DIARY_KEY, JSON.stringify(diary)); }
+  async function saveDiary() { await saveDiaryDay(selectedDate, diary[selectedDate] || []); }
 
   function initCalendar() {
     const now = new Date();
@@ -1416,10 +1434,11 @@
       </div>`;
     }).join('');
   }
-  function deleteDiaryMeal(idx){
+  async function deleteDiaryMeal(idx){
     if(!diary[selectedDate])return;
     diary[selectedDate].splice(idx,1);
-    saveDiary(); renderCalendar(); renderDiaryDay();
+    await saveDiaryDay(selectedDate, diary[selectedDate]);
+    renderCalendar(); renderDiaryDay();
   }
 
   /* Diary meal modal */
@@ -1433,7 +1452,7 @@
   function closeDiaryModal(){ document.getElementById('diary-modal').classList.remove('open'); }
   document.getElementById('diary-modal').addEventListener('click',function(e){if(e.target===this)closeDiaryModal();});
 
-  function saveDiaryMeal(){
+  async function saveDiaryMeal(){
     const typeEl = document.getElementById('diary-meal-type');
     const descEl = document.getElementById('diary-meal-desc');
     const desc   = descEl.value.trim();
@@ -1450,7 +1469,8 @@
       carb: parseInt(document.getElementById('diary-meal-carb').value) || 0,
       fat:  parseInt(document.getElementById('diary-meal-fat').value)  || 0,
     });
-    saveDiary(); closeDiaryModal(); renderCalendar(); renderDiaryDay();
+    await saveDiaryDay(selectedDate, diary[selectedDate]);
+    closeDiaryModal(); renderCalendar(); renderDiaryDay();
   }
 
   /* Analytics */
@@ -1535,9 +1555,7 @@
   }
 
   /* ════════════ DIETE SALVATE ════════════ */
-  const SAVED_DIETS_KEY = 'zen_saved_diets_v1';
-  let savedDiets = JSON.parse(localStorage.getItem(SAVED_DIETS_KEY) || '[]');
-  function saveSavedDiets() { localStorage.setItem(SAVED_DIETS_KEY, JSON.stringify(savedDiets)); }
+  let savedDiets = [];
 
   function openSaveDietModal() {
     document.getElementById('sd-name').value = '';
@@ -1548,19 +1566,18 @@
   }
   document.getElementById('save-diet-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
-  function confirmSaveDiet() {
+  async function confirmSaveDiet() {
     const nameEl = document.getElementById('sd-name');
     const name = nameEl.value.trim();
     if (!name) { nameEl.classList.add('err'); nameEl.focus(); return; }
     nameEl.classList.remove('err');
-    savedDiets.push({
-      id: 'sd_' + Date.now(),
+    await addSavedDietDoc({
+      id:   'sd_' + Date.now(),
       name,
       date: document.getElementById('sd-date').value,
       goal: document.getElementById('sd-goal').value,
-      diet: JSON.parse(JSON.stringify(diet)), // snapshot profonda
+      diet: JSON.parse(JSON.stringify(diet)),
     });
-    saveSavedDiets();
     document.getElementById('save-diet-modal').classList.remove('open');
   }
 
@@ -1587,24 +1604,44 @@
   }
   document.getElementById('load-diet-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
-  function loadSavedDiet(id) {
+  async function loadSavedDiet(id) {
     const sd = savedDiets.find(x => x.id === id);
     if (!sd) return;
     if (!confirm(`Caricare la dieta "${sd.name}"? La dieta attuale verrà sostituita.`)) return;
     diet = JSON.parse(JSON.stringify(sd.diet));
-    saveDiet(); renderDayPills(); renderDayCard();
+    await saveDietDoc(diet);
+    renderDayPills(); renderDayCard();
     document.getElementById('load-diet-modal').classList.remove('open');
   }
-  function deleteSavedDiet(id) {
+  async function deleteSavedDiet(id) {
     const sd = savedDiets.find(x => x.id === id);
     if (!sd || !confirm(`Eliminare la dieta "${sd.name}"?`)) return;
-    savedDiets = savedDiets.filter(x => x.id !== id);
-    saveSavedDiets(); openLoadDietModal();
+    await deleteSavedDietDoc(sd._docId);
+    openLoadDietModal();
   }
 
-  /* ════════════ INIT ════════════ */
-  renderDayPills(); renderDayCard();
-  renderRecipes();
+  /* ════════════ INIT: sottoscrivi Firestore (real-time) ════════════ */
+  subscribeRecipes(newRecipes => {
+    recipes = newRecipes;
+    renderRecipes();
+  });
+
+  subscribeDiary(newDiary => {
+    diary = newDiary;
+    renderCalendar();
+    renderDiaryDay();
+  });
+
+  subscribeDiet(days => {
+    if (days && Array.isArray(days) && days.length === 7) diet = days;
+    else diet = makeDefaultDiet();
+    renderDayPills(); renderDayCard();
+  });
+
+  subscribeSavedDiets(newSaved => {
+    savedDiets = newSaved;
+  });
+
   initCalendar();
   </script>
 </body>
