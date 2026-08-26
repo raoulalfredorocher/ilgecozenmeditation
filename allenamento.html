@@ -443,7 +443,7 @@
           <div class="form-group"><label>Kg</label><input id="new-ex-kg" placeholder="80"/></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Tempo (sec)</label><input id="new-ex-tempo" type="number" placeholder="40"/></div>
+          <div class="form-group"><label id="lbl-ex-tempo">Tempo (sec)</label><input id="new-ex-tempo" type="number" placeholder="40"/></div>
           <div class="form-group"><label>Recupero (sec)</label><input id="new-ex-recupero" type="number" placeholder="90"/></div>
         </div>
         <div class="form-group"><label>Note tecniche</label><textarea id="new-ex-desc" placeholder="Note..."></textarea></div>
@@ -759,7 +759,7 @@
         div.innerHTML = `
           <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
           <div class="esercizio-card-meta">
-            ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+ex.tempo+'s' : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
+            ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+(ex.gruppo==='Cardio' ? Math.round(ex.tempo/60)+' min' : ex.tempo+'s') : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
             ${ex.desc||''}
           </div>
           <div class="esercizio-card-actions">
@@ -777,15 +777,27 @@
         list.appendChild(div);
       });
     }
+    function isCardio(gruppo) { return gruppo === 'Cardio'; }
+    function updateTempoLabel() {
+      const cardio = isCardio(document.getElementById('new-ex-gruppo').value);
+      document.getElementById('lbl-ex-tempo').textContent = cardio ? 'Tempo (min)' : 'Tempo (sec)';
+      document.getElementById('new-ex-tempo').placeholder = cardio ? '25' : '40';
+    }
+    document.getElementById('new-ex-gruppo').addEventListener('change', updateTempoLabel);
+
     function openEditEsercizio(eidx, ex) {
       document.getElementById('edit-ex-idx').value = eidx;
       document.getElementById('form-ex-label').textContent = 'Modifica Esercizio';
       document.getElementById('new-ex-gruppo').value = ex.gruppo || 'Petto';
+      updateTempoLabel();
       document.getElementById('new-ex-nome').value = ex.nome || '';
       document.getElementById('new-ex-serie').value = ex.serie || '';
       document.getElementById('new-ex-rep').value = ex.rep || '';
       document.getElementById('new-ex-kg').value = ex.kg || '';
-      document.getElementById('new-ex-tempo').value = ex.tempo || '';
+      // se cardio, mostra in minuti (il valore è salvato in secondi)
+      document.getElementById('new-ex-tempo').value = ex.tempo
+        ? (isCardio(ex.gruppo) ? Math.round(ex.tempo / 60) : ex.tempo)
+        : '';
       document.getElementById('new-ex-recupero').value = ex.recupero || '';
       document.getElementById('new-ex-desc').value = ex.desc || '';
       document.getElementById('form-esercizio').style.display = 'block';
@@ -808,6 +820,7 @@
       ['new-ex-nome','new-ex-kg','new-ex-serie','new-ex-rep','new-ex-tempo','new-ex-recupero','new-ex-desc']
         .forEach(id => document.getElementById(id).value = '');
       document.getElementById('new-ex-gruppo').selectedIndex = 0;
+      updateTempoLabel();
       document.getElementById('form-esercizio').style.display = 'block';
       document.getElementById('btn-new-esercizio').style.display = 'none';
     });
@@ -821,13 +834,16 @@
       const all = allenamentiList.find(a => a._docId === currentAllDocId);
       const sch = all.schede[currentSchedaIdx];
       if (!sch.esercizi) sch.esercizi = [];
+      const gruppo = document.getElementById('new-ex-gruppo').value;
+      const tempoRaw = parseInt(document.getElementById('new-ex-tempo').value) || 0;
       const exData = {
-        gruppo:   document.getElementById('new-ex-gruppo').value,
+        gruppo,
         nome,
         serie:    parseInt(document.getElementById('new-ex-serie').value) || 3,
         rep:      parseInt(document.getElementById('new-ex-rep').value) || 8,
         kg:       document.getElementById('new-ex-kg').value || '',
-        tempo:    parseInt(document.getElementById('new-ex-tempo').value) || 0,
+        // cardio: salva sempre in secondi
+        tempo:    isCardio(gruppo) ? tempoRaw * 60 : tempoRaw,
         recupero: parseInt(document.getElementById('new-ex-recupero').value) || 90,
         desc:     document.getElementById('new-ex-desc').value.trim(),
       };
