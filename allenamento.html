@@ -225,6 +225,13 @@
     .feedback-btn { flex:1; background:var(--surface); border:1.5px solid var(--border);
       border-radius:12px; font-size:1.4rem; padding:8px; cursor:pointer; text-align:center; }
     .feedback-btn.active { border-color:var(--primary); background:var(--card); }
+    .registro-dettagli { border-top:1px solid var(--border); padding-top:10px; margin-bottom:10px; display:flex; flex-direction:column; gap:6px; }
+    .registro-dettaglio-row { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+    .reg-det-nome { font-size:.72rem; font-weight:600; color:var(--text); }
+    .reg-det-info { font-size:.6rem; color:var(--muted); letter-spacing:.04em; text-align:right; }
+    .registro-fb-saved { font-size:.85rem; color:var(--text); margin-top:10px; display:flex; align-items:center; gap:8px; border-top:1px solid var(--border); padding-top:10px; }
+    .registro-fb-saved span { font-size:.7rem; color:var(--muted); font-style:italic; }
+    .feedback-section { margin-top:8px; }
   </style>
 </head>
 <body>
@@ -752,7 +759,7 @@
         div.innerHTML = `
           <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
           <div class="esercizio-card-meta">
-            ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
+            ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+ex.tempo+'s' : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
             ${ex.desc||''}
           </div>
           <div class="esercizio-card-actions">
@@ -978,22 +985,29 @@
       mainSeconds = 0;
       document.getElementById('rec-box').style.display = 'none';
       setRingProgress(0);
-      setClockUI('00:00', label);
+      document.getElementById('clock-phase').textContent = label;
+      document.getElementById('clock-time').textContent = '00:00';
+      document.getElementById('timer-phase-label').textContent = label;
+      document.getElementById('timer-ex-label').textContent = '';
+      document.getElementById('timer-ex-meta').textContent = '';
+      document.getElementById('timer-serie-label').textContent = '';
+      btnStart.textContent = 'Start';
       showBtns({ start: true });
 
       btnStart.onclick = () => {
         if (mainTimer) return;
+        btnStart.textContent = 'Start';
         showBtns({ stop: true, next: true });
         mainTimer = setInterval(() => {
           mainSeconds++;
           document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
-          // ring gira in avanti senza limite (ogni 5 min = giro completo)
           setRingProgress((mainSeconds % 300) / 300);
         }, 1000);
       };
       btnStop.onclick = () => {
         if (!mainTimer) return;
         clearInterval(mainTimer); mainTimer = null;
+        btnStart.textContent = 'Start';
         showBtns({ start: true, next: true });
         btnStart.onclick = () => {
           showBtns({ stop: true, next: true });
@@ -1092,12 +1106,12 @@
       const recSec = parseInt(ex.recupero) || 90;
       recSeconds = recSec;
 
-      // cerchio: countdown recupero
-      document.getElementById('clock-phase').textContent = fmtTime(recSeconds);
-      document.getElementById('clock-time').textContent = '';
+      // cerchio: countdown recupero — stesso font del timer esercizio
+      document.getElementById('clock-time').textContent = fmtTime(recSeconds);
+      document.getElementById('clock-phase').textContent = 'Recupero';
       document.getElementById('timer-phase-label').textContent = 'Recupero';
       const nextInfo = sessSerie === 0
-        ? (sessIdx < sessExercises.length ? 'Prossimo: ' + sessExercises[sessIdx].nome : 'Ultimo esercizio!')
+        ? (sessIdx < sessExercises.length ? 'Prossimo: ' + sessExercises[sessIdx].nome : 'Fine allenamento!')
         : `Serie ${sessSerie + 1} / ${ex.serie}`;
       document.getElementById('timer-ex-meta').textContent = nextInfo;
       document.getElementById('timer-serie-label').textContent = '';
@@ -1105,22 +1119,27 @@
       document.getElementById('rec-box').style.display = 'none';
       setRingCountdown(1);
 
+      // pulsante disabilitato finché countdown > 0
+      btnStart.textContent = 'Prossimo esercizio';
+      btnStart.disabled = true;
+      btnStart.style.opacity = '0.4';
+      showBtns({ start: true });
+
       recTimer = setInterval(() => {
         recSeconds--;
         const t = Math.max(0, recSeconds);
-        document.getElementById('clock-phase').textContent = fmtTime(t);
+        document.getElementById('clock-time').textContent = fmtTime(t);
         setRingCountdown(t / recSec);
         if (recSeconds <= 0) {
           clearInterval(recTimer); recTimer = null;
           suonaCampanello();
-          btnStart.textContent = 'Prossimo esercizio';
-          showBtns({ start: true });
+          btnStart.disabled = false;
+          btnStart.style.opacity = '';
         }
       }, 1000);
 
-      btnStart.textContent = 'Prossimo esercizio';
-      showBtns({ start: true });
       btnStart.onclick = () => {
+        if (btnStart.disabled) return;
         stopAllTimers();
         document.getElementById('rec-box').style.display = 'none';
         loadEsercizio();
@@ -1233,35 +1252,58 @@
       entries.forEach(r => {
         const card = document.createElement('div');
         card.className = 'registro-detail-card';
+        const fbPos = r.feedback==='pos', fbNeu = r.feedback==='neu', fbNeg = r.feedback==='neg';
+        const hasFb = fbPos || fbNeu || fbNeg;
+
+        // blocco dettagli esercizi
+        let dettagliHTML = '';
+        if (r.dettagli && r.dettagli.length) {
+          dettagliHTML = `<div class="registro-dettagli">`;
+          r.dettagli.forEach(d => {
+            dettagliHTML += `<div class="registro-dettaglio-row">
+              <span class="reg-det-nome">${d.nome}</span>
+              <span class="reg-det-info">Serie ${d.serie} · ${d.esecuzione}s esec. · ${d.recupero}s rec.</span>
+            </div>`;
+          });
+          dettagliHTML += `</div>`;
+        }
+
         card.innerHTML = `
           <div class="registro-detail-header">
             <div>
               <div class="registro-detail-name">${r.allenamentoNome}</div>
               <div class="registro-detail-meta">${r.schedaNome} · ${r.durata||'?'} min</div>
             </div>
-            <button class="icon-btn del">${SVG_TRASH}</button>
+            <button class="icon-btn del reg-del-btn">${SVG_TRASH}</button>
           </div>
-          <div class="feedback-row">
-            <button class="feedback-btn ${r.feedback==='pos'?'active':''}" data-fb="pos">😊</button>
-            <button class="feedback-btn ${r.feedback==='neu'?'active':''}" data-fb="neu">😐</button>
-            <button class="feedback-btn ${r.feedback==='neg'?'active':''}" data-fb="neg">😞</button>
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label>Note</label>
-            <textarea placeholder="Appunti...">${r.note||''}</textarea>
-          </div>`;
-        card.querySelector('.icon-btn.del').addEventListener('click', async () => {
+          ${dettagliHTML}
+          ${hasFb
+            ? `<div class="registro-fb-saved">${fbPos?'😊':fbNeu?'😐':'😞'} <span>${r.note||''}</span></div>`
+            : `<div class="feedback-section">
+                <div class="feedback-row">
+                  <button class="feedback-btn" data-fb="pos">😊</button>
+                  <button class="feedback-btn" data-fb="neu">😐</button>
+                  <button class="feedback-btn" data-fb="neg">😞</button>
+                </div>
+                <div class="form-group" style="margin-bottom:0;margin-top:8px">
+                  <textarea id="nota-${r._docId}" placeholder="Note...">${r.note||''}</textarea>
+                </div>
+              </div>`
+          }`;
+
+        card.querySelector('.reg-del-btn').addEventListener('click', async () => {
           if (!confirm('Eliminare questo allenamento dal registro?')) return;
           await deleteRegistroDoc(r._docId);
         });
-        card.querySelectorAll('.feedback-btn').forEach(b => {
-          b.addEventListener('click', async () => {
-            await updateRegistroDoc(r._docId, { feedback: b.dataset.fb });
+
+        if (!hasFb) {
+          card.querySelectorAll('.feedback-btn').forEach(b => {
+            b.addEventListener('click', async () => {
+              const nota = document.getElementById(`nota-${r._docId}`)?.value || '';
+              await updateRegistroDoc(r._docId, { feedback: b.dataset.fb, note: nota });
+            });
           });
-        });
-        card.querySelector('textarea').addEventListener('change', async e => {
-          await updateRegistroDoc(r._docId, { note: e.target.value });
-        });
+        }
         container.appendChild(card);
       });
     }
@@ -1269,12 +1311,20 @@
     // ── EXPORT ──
     document.getElementById('btn-close-export').addEventListener('click', () => closeModal('modal-export'));
     function exportRegistro(list) {
-      let csv = 'Data,Allenamento,Scheda,Durata (min),Feedback,Note\n';
+      // riga principale per ogni sessione
+      let csv = 'Data,Allenamento,Scheda,Durata (min),Feedback,Note,Esercizio,Serie,Esecuzione (s),Recupero (s)\n';
       list.forEach(r => {
-        const fb = r.feedback==='pos'?'😊':r.feedback==='neu'?'😐':r.feedback==='neg'?'😞':'';
-        csv += `${r.data},"${r.allenamentoNome}","${r.schedaNome}",${r.durata||''},"${fb}","${(r.note||'').replace(/"/g,'""')}"\n`;
+        const fb = r.feedback==='pos'?'Positivo':r.feedback==='neu'?'Neutro':r.feedback==='neg'?'Negativo':'';
+        const note = (r.note||'').replace(/"/g,'""');
+        if (r.dettagli && r.dettagli.length) {
+          r.dettagli.forEach((d, i) => {
+            csv += `${i===0?r.data:''},"${i===0?r.allenamentoNome:''}","${i===0?r.schedaNome:''}",${i===0?(r.durata||''):''},"${i===0?fb:''}","${i===0?note:''}","${d.nome}",${d.serie},${d.esecuzione},${d.recupero}\n`;
+          });
+        } else {
+          csv += `${r.data},"${r.allenamentoNome}","${r.schedaNome}",${r.durata||''},"${fb}","${note}","","","",""\n`;
+        }
       });
-      const blob = new Blob([csv], { type:'text/csv' });
+      const blob = new Blob(['\uFEFF'+csv], { type:'text/csv;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'allenamenti-export.csv';
