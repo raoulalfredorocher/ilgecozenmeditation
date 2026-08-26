@@ -422,23 +422,21 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getDatabase, ref, push, set, onValue, remove, update }
-      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-
-    const firebaseConfig = {
+  <script>
+    window.__FIREBASE_CONFIG__ = {
       apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
       authDomain: 'ilgecozen-b2df7.firebaseapp.com',
       projectId:  'ilgecozen-b2df7',
       storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
       messagingSenderId: '956821191073',
       appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-      databaseURL: 'https://ilgecozen-b2df7-default-rtdb.firebaseio.com',
     };
-    const app = initializeApp(firebaseConfig);
-    const db  = getDatabase(app);
+  </script>
+  <script type="module">
+    import {
+      subscribeAllenamenti, addAllenamentoDoc, updateAllenamentoDoc, deleteAllenamentoDoc,
+      subscribeRegistro, addRegistroDoc, updateRegistroDoc, deleteRegistroDoc,
+    } from './js/firebase-config.js';
 
     // ── Theme ──
     const htmlEl = document.documentElement;
@@ -480,18 +478,17 @@
     function openModal(id)  { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-    // ── Firebase data refs ──
-    const allenamenti = {}; // local cache
-    const registroCache = {};
-    onValue(ref(db, 'allenamenti'), snap => {
-      Object.keys(allenamenti).forEach(k => delete allenamenti[k]);
-      if (snap.exists()) Object.assign(allenamenti, snap.val());
+    // ── Firestore subscriptions ──
+    let allenamentiList = [];   // array di oggetti con _docId
+    let registroList = [];
+
+    subscribeAllenamenti(items => {
+      allenamentiList = items;
       renderSchedaList();
       populateAvviaSelects();
     });
-    onValue(ref(db, 'registro'), snap => {
-      Object.keys(registroCache).forEach(k => delete registroCache[k]);
-      if (snap.exists()) Object.assign(registroCache, snap.val());
+    subscribeRegistro(items => {
+      registroList = items;
       renderCalendar();
     });
 
@@ -500,18 +497,19 @@
       const list = document.getElementById('scheda-list');
       list.innerHTML = '';
       const icons = ['🏋️','💪','🦵','🔥','🏃','⚡','🎯','🧘'];
-      Object.entries(allenamenti).forEach(([id, all]) => {
-        const schedeCount = all.schede ? Object.keys(all.schede).length : 0;
+      allenamentiList.forEach(all => {
+        const schedeCount = all.schede ? all.schede.length : 0;
         const div = document.createElement('div');
         div.className = 'scheda-item';
+        const ico = icons[Math.abs((all._docId||'').charCodeAt(1)||0) % icons.length];
         div.innerHTML = `
-          <div class="scheda-item-icon">${icons[Math.abs(id.charCodeAt(1)||0) % icons.length]}</div>
+          <div class="scheda-item-icon">${ico}</div>
           <div class="scheda-item-info">
             <div class="scheda-item-name">${all.nome}</div>
-            <div class="scheda-item-meta">${all.obiettivo || '—'} · ${schedeCount} schede · ${all.settimane||'?'} sett.</div>
+            <div class="scheda-item-meta">${all.obiettivo||'—'} · ${schedeCount} schede · ${all.settimane||'?'} sett.</div>
           </div>
           <div class="scheda-item-chev">›</div>`;
-        div.addEventListener('click', () => openAllenamentoDetail(id));
+        div.addEventListener('click', () => openAllenamentoDetail(all._docId));
         list.appendChild(div);
       });
     }
@@ -523,10 +521,11 @@
       const nome = document.getElementById('new-all-nome').value.trim();
       if (!nome) return;
       const durataVal = document.getElementById('new-all-durata').value;
-      await push(ref(db, 'allenamenti'), {
+      await addAllenamentoDoc({
         nome,
         obiettivo: document.getElementById('new-all-obiettivo').value.trim(),
         settimane: durataVal ? parseInt(durataVal) : 12,
+        schede: [],
       });
       document.getElementById('new-all-nome').value = '';
       document.getElementById('new-all-obiettivo').value = '';
@@ -535,21 +534,20 @@
     });
 
     // Dettaglio allenamento
-    let currentAllId = null;
-    function openAllenamentoDetail(id) {
-      currentAllId = id;
-      const all = allenamenti[id];
+    let currentAllDocId = null;
+    function openAllenamentoDetail(docId) {
+      currentAllDocId = docId;
+      const all = allenamentiList.find(a => a._docId === docId);
       document.getElementById('modal-all-title').textContent = all.nome;
-      renderSchedeInModal(id);
+      renderSchedeInModal(all);
       openModal('modal-allenamento-detail');
     }
-    function renderSchedeInModal(allId) {
+    function renderSchedeInModal(all) {
       const list = document.getElementById('modal-schede-list');
       list.innerHTML = '';
-      const all = allenamenti[allId];
-      if (!all.schede) return;
-      Object.entries(all.schede).forEach(([sid, sch]) => {
-        const exCount = sch.esercizi ? Object.keys(sch.esercizi).length : 0;
+      const schede = all.schede || [];
+      schede.forEach((sch, idx) => {
+        const exCount = sch.esercizi ? sch.esercizi.length : 0;
         const div = document.createElement('div');
         div.className = 'scheda-item';
         div.style.marginBottom = '8px';
@@ -559,14 +557,14 @@
             <div class="scheda-item-name">${sch.nome}</div>
             <div class="scheda-item-meta">${exCount} esercizi</div>
           </div><div class="scheda-item-chev">›</div>`;
-        div.addEventListener('click', () => { closeModal('modal-allenamento-detail'); openSchedaDetail(allId, sid); });
+        div.addEventListener('click', () => { closeModal('modal-allenamento-detail'); openSchedaDetail(currentAllDocId, idx); });
         list.appendChild(div);
       });
     }
     document.getElementById('btn-close-all-detail').addEventListener('click', () => closeModal('modal-allenamento-detail'));
     document.getElementById('btn-delete-allenamento').addEventListener('click', async () => {
       if (!confirm('Elimina questo allenamento?')) return;
-      await remove(ref(db, `allenamenti/${currentAllId}`));
+      await deleteAllenamentoDoc(currentAllDocId);
       closeModal('modal-allenamento-detail');
     });
 
@@ -581,39 +579,45 @@
     document.getElementById('btn-save-new-scheda').addEventListener('click', async () => {
       const nome = document.getElementById('new-scheda-nome').value.trim();
       if (!nome) return;
-      await push(ref(db, `allenamenti/${currentAllId}/schede`), { nome });
+      const all = allenamentiList.find(a => a._docId === currentAllDocId);
+      const schede = all.schede ? [...all.schede] : [];
+      schede.push({ nome, esercizi: [] });
+      await updateAllenamentoDoc(currentAllDocId, { schede });
       document.getElementById('new-scheda-nome').value = '';
       closeModal('modal-new-scheda');
       openModal('modal-allenamento-detail');
     });
 
     // Dettaglio scheda
-    let currentSchedaId = null;
-    function openSchedaDetail(allId, sid) {
-      currentAllId = allId; currentSchedaId = sid;
-      const sch = allenamenti[allId].schede[sid];
+    let currentSchedaIdx = null;
+    function openSchedaDetail(docId, idx) {
+      currentAllDocId = docId; currentSchedaIdx = idx;
+      const all = allenamentiList.find(a => a._docId === docId);
+      const sch = all.schede[idx];
       document.getElementById('modal-scheda-title').textContent = sch.nome;
-      renderEserciziInModal(allId, sid);
+      renderEserciziInModal(all, idx);
       openModal('modal-scheda-detail');
     }
-    function renderEserciziInModal(allId, sid) {
+    function renderEserciziInModal(all, idx) {
       const list = document.getElementById('modal-esercizi-list');
       list.innerHTML = '';
-      const sch = allenamenti[allId]?.schede?.[sid];
-      if (!sch?.esercizi) return;
-      Object.entries(sch.esercizi).forEach(([eid, ex]) => {
+      const esercizi = all.schede[idx]?.esercizi || [];
+      esercizi.forEach((ex, eidx) => {
         const div = document.createElement('div');
         div.className = 'esercizio-card';
         div.innerHTML = `
-          <button class="btn-remove" data-eid="${eid}">✕</button>
+          <button class="btn-remove">✕</button>
           <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
           <div style="font-size:.68rem;color:var(--muted);line-height:1.8">
             ${ex.serie}×${ex.rep} · ${ex.kg||'—'} kg · Recupero ${ex.recupero||90}s<br>
-            ${ex.desc ? ex.desc : ''}
+            ${ex.desc||''}
           </div>`;
         div.querySelector('.btn-remove').addEventListener('click', async e => {
           e.stopPropagation();
-          await remove(ref(db, `allenamenti/${allId}/schede/${sid}/esercizi/${eid}`));
+          const a = allenamentiList.find(a => a._docId === currentAllDocId);
+          const schede = JSON.parse(JSON.stringify(a.schede));
+          schede[currentSchedaIdx].esercizi.splice(eidx, 1);
+          await updateAllenamentoDoc(currentAllDocId, { schede });
         });
         list.appendChild(div);
       });
@@ -623,7 +627,9 @@
     });
     document.getElementById('btn-delete-scheda').addEventListener('click', async () => {
       if (!confirm('Elimina questa scheda?')) return;
-      await remove(ref(db, `allenamenti/${currentAllId}/schede/${currentSchedaId}`));
+      const all = allenamentiList.find(a => a._docId === currentAllDocId);
+      const schede = all.schede.filter((_, i) => i !== currentSchedaIdx);
+      await updateAllenamentoDoc(currentAllDocId, { schede });
       closeModal('modal-scheda-detail'); openModal('modal-allenamento-detail');
     });
 
@@ -637,7 +643,10 @@
     document.getElementById('btn-save-new-ex').addEventListener('click', async () => {
       const nome = document.getElementById('new-ex-nome').value.trim();
       if (!nome) return;
-      await push(ref(db, `allenamenti/${currentAllId}/schede/${currentSchedaId}/esercizi`), {
+      const all = allenamentiList.find(a => a._docId === currentAllDocId);
+      const schede = JSON.parse(JSON.stringify(all.schede));
+      if (!schede[currentSchedaIdx].esercizi) schede[currentSchedaIdx].esercizi = [];
+      schede[currentSchedaIdx].esercizi.push({
         gruppo: document.getElementById('new-ex-gruppo').value,
         nome,
         serie: parseInt(document.getElementById('new-ex-serie').value)||3,
@@ -645,8 +654,9 @@
         kg:    document.getElementById('new-ex-kg').value||'',
         tempo: parseInt(document.getElementById('new-ex-tempo').value)||0,
         recupero: parseInt(document.getElementById('new-ex-recupero').value)||90,
-        desc: document.getElementById('new-ex-desc').value.trim()
+        desc: document.getElementById('new-ex-desc').value.trim(),
       });
+      await updateAllenamentoDoc(currentAllDocId, { schede });
       ['new-ex-nome','new-ex-kg','new-ex-serie','new-ex-rep','new-ex-tempo','new-ex-recupero','new-ex-desc']
         .forEach(id => document.getElementById(id).value = '');
       closeModal('modal-new-esercizio'); openModal('modal-scheda-detail');
@@ -656,22 +666,27 @@
     function populateAvviaSelects() {
       const selAll = document.getElementById('avvia-select-allenamento');
       const selSch = document.getElementById('avvia-select-scheda');
+      const prevAll = selAll.value;
       selAll.innerHTML = '<option value="">— Scegli allenamento —</option>';
-      Object.entries(allenamenti).forEach(([id, all]) => {
+      allenamentiList.forEach(all => {
         const opt = document.createElement('option');
-        opt.value = id; opt.textContent = all.nome;
+        opt.value = all._docId; opt.textContent = all.nome;
         selAll.appendChild(opt);
       });
-      selAll.addEventListener('change', () => {
-        const allId = selAll.value;
+      if (prevAll) selAll.value = prevAll;
+      function updateSchede() {
+        const allDocId = selAll.value;
         selSch.innerHTML = '<option value="">— Scegli scheda —</option>';
-        if (!allId || !allenamenti[allId]?.schede) return;
-        Object.entries(allenamenti[allId].schede).forEach(([sid, sch]) => {
+        if (!allDocId) return;
+        const all = allenamentiList.find(a => a._docId === allDocId);
+        (all?.schede || []).forEach((sch, idx) => {
           const opt = document.createElement('option');
-          opt.value = sid; opt.textContent = sch.nome;
+          opt.value = idx; opt.textContent = sch.nome;
           selSch.appendChild(opt);
         });
-      });
+      }
+      selAll.addEventListener('change', updateSchede);
+      updateSchede();
     }
 
     // Warmup timers
@@ -699,9 +714,9 @@
 
     document.getElementById('btn-avvia-go').addEventListener('click', () => {
       const allId = document.getElementById('avvia-select-allenamento').value;
-      const schId = document.getElementById('avvia-select-scheda').value;
-      if (!allId || !schId) { alert('Seleziona allenamento e scheda'); return; }
-      sessionAllId = allId; sessionSchId = schId;
+      const schIdx = document.getElementById('avvia-select-scheda').value;
+      if (!allId || schIdx === '') { alert('Seleziona allenamento e scheda'); return; }
+      sessionAllId = allId; sessionSchId = parseInt(schIdx);
       wmSecs.risc = 0; wmSecs.str = 0;
       document.getElementById('wm-riscaldamento').textContent = '00:00';
       document.getElementById('wm-stretching').textContent = '00:00';
@@ -737,9 +752,10 @@
     }
 
     function startSessione() {
-      const sch = allenamenti[sessionAllId]?.schede?.[sessionSchId];
-      if (!sch?.esercizi) { alert('Nessun esercizio in questa scheda'); return; }
-      sessExercises = Object.values(sch.esercizi);
+      const all = allenamentiList.find(a => a._docId === sessionAllId);
+      const sch = all?.schede?.[sessionSchId];
+      if (!sch?.esercizi?.length) { alert('Nessun esercizio in questa scheda'); return; }
+      sessExercises = sch.esercizi;
       sessIdx = 0; sessSerie = 0; sessionStartTime = Date.now();
       document.getElementById('sessione-scheda-label').textContent = sch.nome;
       document.getElementById('avvia-step2').style.display = 'none';
@@ -807,17 +823,17 @@
     function endSessione() {
       if (sessTimer) { clearInterval(sessTimer); sessTimer = null; }
       if (recTimer)  { clearInterval(recTimer);  recTimer  = null; }
-      const all = allenamenti[sessionAllId];
+      const all = allenamentiList.find(a => a._docId === sessionAllId);
       const sch = all?.schede?.[sessionSchId];
-      const durata = Math.round((Date.now() - sessionStartTime) / 60000);
+      const durata = Math.round((Date.now() - (sessionStartTime||Date.now())) / 60000);
       const oggi = new Date().toISOString().slice(0,10);
-      push(ref(db, 'registro'), {
+      addRegistroDoc({
         data: oggi,
         allenamentoId: sessionAllId,
         allenamentoNome: all?.nome || '—',
         schedaNome: sch?.nome || '—',
         durata,
-        feedback: null, note: ''
+        feedback: null, note: '',
       });
       document.getElementById('avvia-step3').style.display = 'none';
       document.getElementById('avvia-step1').style.display = 'block';
@@ -845,7 +861,7 @@
 
     function workoutDatesInMonth() {
       const set = new Set();
-      Object.values(registroCache).forEach(r => {
+      registroList.forEach(r => {
         if (r.data && r.data.startsWith(`${calYear}-${String(calMonth+1).padStart(2,'0')}`))
           set.add(r.data);
       });
@@ -886,12 +902,12 @@
     function renderRegistroForDate(dateStr) {
       const container = document.getElementById('registro-selected-list');
       container.innerHTML = '';
-      const entries = Object.entries(registroCache).filter(([,r]) => r.data === dateStr);
+      const entries = registroList.filter(r => r.data === dateStr);
       if (!entries.length) {
         container.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:.7rem;padding:12px;letter-spacing:.1em">Nessun allenamento</div>`;
         return;
       }
-      entries.forEach(([rid, r]) => {
+      entries.forEach(r => {
         const card = document.createElement('div');
         card.className = 'registro-detail-card';
         card.innerHTML = `
@@ -900,37 +916,37 @@
               <div class="registro-detail-name">${r.allenamentoNome}</div>
               <div class="registro-detail-meta">${r.schedaNome} · ${r.durata||'?'} min</div>
             </div>
-            <button class="btn-danger" data-rid="${rid}" style="padding:6px 12px;font-size:.7rem">Elimina</button>
+            <button class="btn-danger" style="padding:6px 12px;font-size:.7rem">Elimina</button>
           </div>
           <div class="feedback-row">
-            <button class="feedback-btn ${r.feedback==='pos'?'active':''}" data-rid="${rid}" data-fb="pos">😊</button>
-            <button class="feedback-btn ${r.feedback==='neu'?'active':''}" data-rid="${rid}" data-fb="neu">😐</button>
-            <button class="feedback-btn ${r.feedback==='neg'?'active':''}" data-rid="${rid}" data-fb="neg">😞</button>
+            <button class="feedback-btn ${r.feedback==='pos'?'active':''}" data-fb="pos">😊</button>
+            <button class="feedback-btn ${r.feedback==='neu'?'active':''}" data-fb="neu">😐</button>
+            <button class="feedback-btn ${r.feedback==='neg'?'active':''}" data-fb="neg">😞</button>
           </div>
           <div class="form-group" style="margin-bottom:0">
             <label>Note</label>
-            <textarea data-rid="${rid}" placeholder="Appunti sull'allenamento...">${r.note||''}</textarea>
+            <textarea placeholder="Appunti sull'allenamento...">${r.note||''}</textarea>
           </div>`;
         card.querySelector('.btn-danger').addEventListener('click', async () => {
           if (!confirm('Eliminare questo allenamento dal registro?')) return;
-          await remove(ref(db, `registro/${rid}`));
+          await deleteRegistroDoc(r._docId);
         });
         card.querySelectorAll('.feedback-btn').forEach(b => {
           b.addEventListener('click', async () => {
-            await update(ref(db, `registro/${rid}`), { feedback: b.dataset.fb });
+            await updateRegistroDoc(r._docId, { feedback: b.dataset.fb });
           });
         });
         card.querySelector('textarea').addEventListener('change', async e => {
-          await update(ref(db, `registro/${rid}`), { note: e.target.value });
+          await updateRegistroDoc(r._docId, { note: e.target.value });
         });
         container.appendChild(card);
       });
     }
 
     // ── EXPORT ──
-    function exportRegistro(entries) {
+    function exportRegistro(list) {
       let csv = 'Data,Allenamento,Scheda,Durata (min),Feedback,Note\n';
-      entries.forEach(([, r]) => {
+      list.forEach(r => {
         const fb = r.feedback === 'pos' ? '😊' : r.feedback === 'neu' ? '😐' : r.feedback === 'neg' ? '😞' : '';
         csv += `${r.data},"${r.allenamentoNome}","${r.schedaNome}",${r.durata||''},"${fb}","${(r.note||'').replace(/"/g,'""')}"\n`;
       });
@@ -944,17 +960,16 @@
       const from = document.getElementById('export-from').value;
       const to   = document.getElementById('export-to').value;
       if (!from || !to) { alert('Seleziona data inizio e fine'); return; }
-      const entries = Object.entries(registroCache).filter(([,r]) => r.data >= from && r.data <= to);
-      if (!entries.length) { alert('Nessun allenamento nel periodo'); return; }
-      exportRegistro(entries);
+      const filtered = registroList.filter(r => r.data >= from && r.data <= to);
+      if (!filtered.length) { alert('Nessun allenamento nel periodo'); return; }
+      exportRegistro(filtered);
     });
     document.getElementById('btn-export-all').addEventListener('click', () => {
-      const entries = Object.entries(registroCache);
-      if (!entries.length) { alert('Nessun allenamento nel registro'); return; }
-      const dates = entries.map(([,r]) => r.data).sort();
+      if (!registroList.length) { alert('Nessun allenamento nel registro'); return; }
+      const dates = registroList.map(r => r.data).sort();
       document.getElementById('export-from').value = dates[0];
       document.getElementById('export-to').value = dates[dates.length-1];
-      exportRegistro(entries);
+      exportRegistro(registroList);
     });
 
   </script>

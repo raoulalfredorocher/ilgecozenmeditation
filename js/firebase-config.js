@@ -170,3 +170,50 @@ export async function deleteSavedDietDoc(docId) {
   if (!savedDietsCollection) return;
   await deleteDoc(doc(db, 'saved_diets', docId));
 }
+
+// ─── Allenamento ────────────────────────────────────────────────────────────
+
+const allenamentoCollection = db ? collection(db, 'allenamenti_piani') : null;
+const registroCollection    = db ? collection(db, 'allenamenti_registro') : null;
+
+/* Allenamenti (piani) */
+export function subscribeAllenamenti(callback) {
+  if (!allenamentoCollection) { callback([]); return () => {}; }
+  return onSnapshot(query(allenamentoCollection, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addAllenamentoDoc(data) {
+  if (!allenamentoCollection) return null;
+  const ref2 = await addDoc(allenamentoCollection, { ...data, createdAt: Date.now() });
+  return ref2.id;
+}
+export async function updateAllenamentoDoc(docId, fields) {
+  if (!allenamentoCollection) return;
+  await setDoc(doc(db, 'allenamenti_piani', docId), fields, { merge: true });
+}
+export async function deleteAllenamentoDoc(docId) {
+  if (!allenamentoCollection) return;
+  await deleteDoc(doc(db, 'allenamenti_piani', docId));
+}
+
+/* Registro sessioni */
+export function subscribeRegistro(callback) {
+  if (!registroCollection) { callback([]); return () => {}; }
+  return onSnapshot(query(registroCollection, orderBy('data', 'desc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addRegistroDoc(data) {
+  if (!registroCollection) return null;
+  const ref2 = await addDoc(registroCollection, { ...data, createdAt: Date.now() });
+  return ref2.id;
+}
+export async function updateRegistroDoc(docId, fields) {
+  if (!registroCollection) return;
+  await setDoc(doc(db, 'allenamenti_registro', docId), fields, { merge: true });
+}
+export async function deleteRegistroDoc(docId) {
+  if (!registroCollection) return;
+  await deleteDoc(doc(db, 'allenamenti_registro', docId));
+}
