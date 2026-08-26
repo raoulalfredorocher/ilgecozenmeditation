@@ -287,6 +287,56 @@
     .uv-high {
       color: #d64545;
     }
+    /* ── Birthday widget ── */
+    .birthday-widget {
+      width: 100%;
+      margin-bottom: 18px;
+      background: var(--card);
+      border: 1.5px solid #f0b36f55;
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: none;
+    }
+    .birthday-widget-title {
+      font-size: .56rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #f0b36f;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .birthday-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .birthday-item:last-child { border-bottom: none; }
+    .birthday-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid #f0b36f44;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem;
+      color: #f0b36f;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .birthday-info { flex: 1; }
+    .birthday-name {
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .birthday-days {
+      font-size: .62rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .birthday-days.today { color: #f0b36f; font-weight: 700; }
+
     .footer-quote {
       width: 100%;
       margin-top: 22px;
@@ -424,6 +474,12 @@
       <div class="weather-meta-row">UV <strong class="uv-value" id="weather-uv">--</strong></div>
       <div class="weather-meta-row">Umidità <strong id="weather-humidity">--</strong>%</div>
     </div>
+  </section>
+
+  <!-- ── Birthday widget ── -->
+  <section class="birthday-widget" id="birthday-widget" aria-label="Compleanni in arrivo">
+    <div class="birthday-widget-title">🎂 Compleanni in arrivo</div>
+    <div id="birthday-list"></div>
   </section>
 
   <section class="section-card" aria-label="Barra della vita" style="margin-bottom: 18px;">
@@ -628,6 +684,44 @@
         hideIkigaiPopup();
       }
     });
+  </script>
+
+  <script type="module">
+    import { getBirthdayContacts } from './js/firebase-config.js';
+
+    async function loadBirthdays() {
+      const contacts = await getBirthdayContacts(7);
+      if (!contacts.length) return;
+
+      const widget = document.getElementById('birthday-widget');
+      const list = document.getElementById('birthday-list');
+      widget.style.display = 'block';
+      list.innerHTML = '';
+
+      contacts.forEach(c => {
+        const initials = ((c.nome?.[0] || '') + (c.cognome?.[0] || '')).toUpperCase() || '?';
+        const isToday = c._daysUntilBirthday === 0;
+        const [,mm,dd] = (c.birthday || '').split('-');
+        const dateStr = mm && dd ? `${dd}/${mm}` : '';
+        const daysLabel = isToday
+          ? '🎉 Oggi!'
+          : c._daysUntilBirthday === 1
+            ? 'Domani'
+            : `Tra ${c._daysUntilBirthday} giorni`;
+
+        const item = document.createElement('div');
+        item.className = 'birthday-item';
+        item.innerHTML = `
+          <div class="birthday-avatar">${initials}</div>
+          <div class="birthday-info">
+            <div class="birthday-name">${(c.nome || '') + ' ' + (c.cognome || '')}</div>
+            <div class="birthday-days${isToday ? ' today' : ''}">${daysLabel}${dateStr ? ' · ' + dateStr : ''}</div>
+          </div>`;
+        list.appendChild(item);
+      });
+    }
+
+    loadBirthdays();
   </script>
 </body>
 </html>
