@@ -13,12 +13,12 @@
     html[data-theme="light"] {
       --bg:#f3f8f3; --surface:#e3efe3; --card:#ffffff; --border:#c4d8c4;
       --text:#182018; --muted:#608060; --primary:#2e8048; --accent:#6cbf8a;
-      --accent2:#f5c842; --red:#c03040; --input-bg:#ffffff;
+      --accent2:#f5c842; --red:#c03040; --input-bg:#ffffff; --ring-bg:#c8e8c8;
     }
     html[data-theme="dark"] {
       --bg:#101810; --surface:#182018; --card:#1e2a1e; --border:#2e4030;
       --text:#e0f0e0; --muted:#80a880; --primary:#5aba7a; --accent:#6cbf8a;
-      --accent2:#f5c842; --red:#e05060; --input-bg:#182018;
+      --accent2:#f5c842; --red:#e05060; --input-bg:#182018; --ring-bg:#1a2e1a;
     }
     html { overscroll-behavior: none; }
     html, body { min-height:100%; background:var(--bg); color:var(--text);
@@ -37,14 +37,13 @@
       color:var(--muted); font-family:inherit; font-size:.58rem;
       letter-spacing:.1em; padding:5px 8px; cursor:pointer;
       display:flex; flex-direction:column; align-items:center; gap:2px;
-      width:52px; text-decoration:none; transition:color .2s,border-color .2s; }
-    .header-center { flex:1; text-align:center; display:flex; flex-direction:column;
-      align-items:center; gap:4px; }
+      width:52px; text-decoration:none; }
+    .header-center { flex:1; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px; }
     .header-icon { font-size:1.8rem; line-height:1; }
     .app-title { font-size:.95rem; letter-spacing:.16em; color:var(--primary); font-weight:700; }
     .app-sub { font-size:.48rem; letter-spacing:.22em; color:var(--muted); margin-top:2px; text-transform:uppercase; }
     .theme-toggle { background:none; border:1.5px solid var(--border); border-radius:20px;
-      cursor:pointer; width:52px; height:28px; position:relative; flex-shrink:0; transition:border-color .3s; }
+      cursor:pointer; width:52px; height:28px; position:relative; flex-shrink:0; }
     .theme-toggle .knob { position:absolute; top:3px; left:3px; width:20px; height:20px;
       border-radius:50%; background:var(--accent); transition:transform .3s;
       display:flex; align-items:center; justify-content:center; font-size:.7rem; }
@@ -63,8 +62,7 @@
       padding:8px 4px; height:100%; -webkit-tap-highlight-color:transparent; }
     .tab-btn.tab-active { color:var(--primary); }
     .tab-icon { width:22px; height:22px; flex-shrink:0; }
-    .tab-label { font-size:.44rem; letter-spacing:.12em; text-transform:uppercase;
-      font-family:inherit; line-height:1; }
+    .tab-label { font-size:.44rem; letter-spacing:.12em; text-transform:uppercase; font-family:inherit; line-height:1; }
     .tab-center { flex:1.1; display:flex; flex-direction:column;
       align-items:center; justify-content:flex-end;
       padding-bottom:8px; gap:4px; overflow:visible; position:relative; }
@@ -78,15 +76,13 @@
     .tab-center .tab-label { margin-top:-20px; }
     .section-title { width:100%; font-size:.54rem; letter-spacing:.28em;
       color:var(--muted); text-transform:uppercase; margin-bottom:12px; text-align:center; }
-    /* bottoni generici */
     .btn-primary { background:var(--primary); color:#fff; border:none; border-radius:24px;
       font-family:inherit; font-size:.82rem; letter-spacing:.12em;
       padding:12px 28px; cursor:pointer; transition:background .2s; }
     .btn-primary:active { background:var(--accent); }
     .btn-outline { background:none; border:1.5px solid var(--border); border-radius:24px;
       color:var(--text); font-family:inherit; font-size:.78rem; letter-spacing:.1em;
-      padding:10px 22px; cursor:pointer; transition:background .2s,border-color .2s; }
-    .btn-outline:active { background:var(--surface); border-color:var(--primary); }
+      padding:10px 22px; cursor:pointer; }
     .btn-danger { background:none; border:1.5px solid var(--red); border-radius:24px;
       color:var(--red); font-family:inherit; font-size:.74rem; letter-spacing:.1em;
       padding:8px 18px; cursor:pointer; }
@@ -100,94 +96,124 @@
     .form-group { width:100%; margin-bottom:14px; }
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
     .form-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px; }
-    /* schede lista */
-    .scheda-list { width:100%; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-    .scheda-item { background:var(--card); border:1.5px solid var(--border); border-radius:16px;
-      padding:16px; display:flex; align-items:center; gap:12px; cursor:pointer;
-      transition:border-color .2s; -webkit-tap-highlight-color:transparent; }
-    .scheda-item:active { border-color:var(--accent); background:var(--surface); }
-    .scheda-item-icon { font-size:1.8rem; flex-shrink:0; }
-    .scheda-item-info { flex:1; }
-    .scheda-item-name { font-size:.88rem; font-weight:600; color:var(--text); }
-    .scheda-item-meta { font-size:.6rem; color:var(--muted); letter-spacing:.06em; margin-top:3px; }
-    .scheda-item-chev { color:var(--muted); font-size:1rem; }
+
+    /* item list */
+    .item-list { width:100%; display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+    .item-row { background:var(--card); border:1.5px solid var(--border); border-radius:14px;
+      padding:14px 12px; display:flex; align-items:center; gap:10px;
+      -webkit-tap-highlight-color:transparent; }
+    .item-row-icon { font-size:1.6rem; flex-shrink:0; }
+    .item-row-info { flex:1; min-width:0; }
+    .item-row-name { font-size:.88rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .item-row-meta { font-size:.6rem; color:var(--muted); letter-spacing:.06em; margin-top:2px; }
+    .item-row-actions { display:flex; gap:6px; flex-shrink:0; }
+    .icon-btn { background:none; border:none; cursor:pointer; color:var(--muted);
+      padding:6px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .icon-btn.del { color:var(--red); }
+    .icon-btn svg { width:16px; height:16px; }
     .btn-add { width:100%; background:var(--card); border:1.5px dashed var(--border);
       border-radius:12px; color:var(--primary); font-size:.82rem; letter-spacing:.12em;
-      padding:13px; cursor:pointer; font-family:inherit;
-      transition:background .2s,border-color .2s; margin-bottom:12px; }
-    .btn-add:active { background:var(--surface); border-color:var(--primary); }
-    /* modal overlay */
+      padding:13px; cursor:pointer; font-family:inherit; margin-bottom:12px; }
+
+    /* modal */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500;
       display:none; align-items:flex-end; justify-content:center; }
     .modal-overlay.open { display:flex; }
     .modal-sheet { background:var(--card); border-radius:22px 22px 0 0; width:100%;
       max-width:420px; padding:24px 20px calc(env(safe-area-inset-bottom,0px) + 24px);
       max-height:90vh; overflow-y:auto; }
-    .modal-handle { width:36px; height:4px; background:var(--border); border-radius:4px;
-      margin:0 auto 18px; }
-    .modal-title { font-size:.9rem; font-weight:700; letter-spacing:.1em; color:var(--text);
-      margin-bottom:18px; text-align:center; }
+    .modal-handle { width:36px; height:4px; background:var(--border); border-radius:4px; margin:0 auto 18px; }
+    .modal-title { font-size:.9rem; font-weight:700; letter-spacing:.1em; color:var(--text); margin-bottom:18px; text-align:center; }
+    .modal-subtitle { font-size:.54rem; letter-spacing:.24em; color:var(--muted); text-transform:uppercase; margin:16px 0 10px; }
+    .modal-divider { width:100%; height:1px; background:var(--border); margin:16px 0; }
     .modal-actions { display:flex; gap:10px; margin-top:18px; }
     .modal-actions .btn-primary { flex:1; }
     .modal-actions .btn-outline { flex:1; }
-    /* esercizi dentro scheda */
-    .esercizio-card { background:var(--surface); border:1px solid var(--border);
-      border-radius:14px; padding:14px; margin-bottom:10px; position:relative; }
-    .esercizio-card-title { font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:10px; }
-    .btn-remove { position:absolute; top:10px; right:10px; background:none; border:none;
-      color:var(--red); font-size:1.1rem; cursor:pointer; padding:2px 6px; }
-    /* avvia screen */
-    .pick-scheda { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:16px; padding:16px; margin-bottom:14px; }
-    .pick-scheda-label { font-size:.54rem; letter-spacing:.22em; color:var(--muted);
-      text-transform:uppercase; margin-bottom:8px; }
-    .pick-scheda select { margin:0; }
-    .warmup-row { display:flex; gap:10px; margin-bottom:14px; }
-    .warmup-block { flex:1; background:var(--card); border:1.5px solid var(--border);
-      border-radius:14px; padding:14px 10px; display:flex; flex-direction:column;
-      align-items:center; gap:8px; }
-    .warmup-label { font-size:.52rem; letter-spacing:.18em; color:var(--muted); text-transform:uppercase; }
-    .warmup-timer { font-size:1.8rem; font-weight:300; color:var(--primary); font-variant-numeric:tabular-nums; }
-    .btn-wm { border:none; border-radius:20px; font-family:inherit; font-size:.72rem;
-      letter-spacing:.1em; padding:7px 16px; cursor:pointer; }
-    .btn-wm-start { background:var(--primary); color:#fff; }
-    .btn-wm-stop { background:var(--red); color:#fff; }
-    /* sessione esercizio */
-    .sessione-box { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:20px; padding:24px 20px; margin-bottom:14px;
-      display:flex; flex-direction:column; align-items:center; gap:10px; }
-    .sessione-label { font-size:.52rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; }
-    .sessione-name { font-size:1.1rem; font-weight:700; color:var(--text); letter-spacing:.06em; text-align:center; }
-    .sessione-meta { font-size:.72rem; color:var(--muted); letter-spacing:.08em; }
-    .sessione-timer { font-size:3.4rem; font-weight:200; color:var(--primary); font-variant-numeric:tabular-nums; line-height:1; }
-    .sessione-serie { font-size:.8rem; color:var(--muted); }
-    .sessione-btns { display:flex; gap:10px; }
-    .btn-sessione-start { background:var(--primary); color:#fff; border:none; border-radius:28px;
-      font-family:inherit; font-size:.9rem; letter-spacing:.14em; padding:14px 36px; cursor:pointer; }
-    .btn-sessione-stop { background:var(--red); color:#fff; border:none; border-radius:28px;
-      font-family:inherit; font-size:.9rem; letter-spacing:.14em; padding:14px 36px; cursor:pointer; }
-    .btn-sessione-next { background:var(--accent2); color:#182018; border:none; border-radius:28px;
-      font-family:inherit; font-size:.9rem; letter-spacing:.14em; padding:14px 36px; cursor:pointer; }
-    .recupero-box { width:100%; background:var(--surface); border:1.5px solid var(--accent);
-      border-radius:16px; padding:20px; display:flex; flex-direction:column; align-items:center; gap:6px; }
-    .recupero-timer { font-size:2.6rem; font-weight:200; color:var(--accent); font-variant-numeric:tabular-nums; }
+    .inline-form { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
+    .inline-form-title { font-size:.7rem; font-weight:600; letter-spacing:.1em; color:var(--primary); margin-bottom:12px; }
+    .esercizio-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:8px; }
+    .esercizio-card-title { font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:6px; }
+    .esercizio-card-meta { font-size:.68rem; color:var(--muted); line-height:1.7; }
+    .esercizio-card-actions { display:flex; gap:6px; margin-top:8px; justify-content:flex-end; }
+
+    /* ── SETUP WIZARD ── */
+    .setup-step { width:100%; }
+    .setup-card { background:var(--card); border:1.5px solid var(--border); border-radius:18px;
+      padding:20px; margin-bottom:14px; }
+    .setup-card-title { font-size:.56rem; letter-spacing:.22em; color:var(--muted);
+      text-transform:uppercase; margin-bottom:12px; }
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .toggle-label { font-size:.88rem; font-weight:600; color:var(--text); }
+    .toggle-switch { position:relative; width:52px; height:28px; flex-shrink:0; cursor:pointer; }
+    .toggle-switch input { opacity:0; width:0; height:0; position:absolute; }
+    .toggle-track { position:absolute; inset:0; background:var(--border); border-radius:14px; transition:background .25s; }
+    .toggle-switch input:checked + .toggle-track { background:var(--primary); }
+    .toggle-knob { position:absolute; top:3px; left:3px; width:22px; height:22px;
+      border-radius:50%; background:#fff; transition:transform .25s;
+      box-shadow:0 1px 4px rgba(0,0,0,.2); }
+    .toggle-switch input:checked ~ .toggle-knob { transform:translateX(24px); }
+    .step-selector { width:100%; }
+    .step-selector select { margin:0; }
+    .setup-next-btn { width:100%; margin-top:4px; }
+
+    /* ── TIMER CERCHIO ── */
+    .timer-screen { width:100%; display:flex; flex-direction:column; align-items:center; }
+    .timer-phase-label { font-size:.52rem; letter-spacing:.28em; color:var(--muted);
+      text-transform:uppercase; margin-bottom:16px; text-align:center; }
+    .timer-ex-label { font-size:1.05rem; font-weight:700; color:var(--text);
+      letter-spacing:.06em; text-align:center; margin-bottom:4px; }
+    .timer-ex-meta { font-size:.72rem; color:var(--muted); letter-spacing:.08em;
+      text-align:center; margin-bottom:20px; }
+    .timer-serie-label { font-size:.7rem; color:var(--muted); letter-spacing:.1em;
+      text-align:center; margin-bottom:10px; }
+
+    /* Ring */
+    #clock-wrap { position:relative; display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+    #ring-svg { width:260px; height:260px; transform:rotate(-90deg); flex-shrink:0; }
+    #ring-bg   { fill:none; stroke:var(--ring-bg); stroke-width:8; }
+    #ring-fill { fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round;
+      transition:stroke-dashoffset .9s linear; }
+    #clock-time { position:absolute; font-size:3.2rem; font-weight:300;
+      color:var(--text); font-variant-numeric:tabular-nums;
+      margin-top:36px; z-index:3; }
+    #clock-gecko { position:absolute; top:46px; width:48px; height:48px;
+      object-fit:contain; opacity:.75; z-index:2; }
+    #clock-phase { position:absolute; bottom:60px; font-size:.56rem; letter-spacing:.18em;
+      color:var(--muted); text-transform:uppercase; z-index:2; text-align:center; max-width:180px; }
+
+    /* recupero bar */
+    .rec-box { width:100%; background:var(--surface); border:1.5px solid var(--accent);
+      border-radius:16px; padding:16px 20px; display:flex; flex-direction:column;
+      align-items:center; gap:4px; margin-bottom:14px; }
+    .rec-label { font-size:.52rem; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+    .rec-timer { font-size:2.2rem; font-weight:200; color:var(--accent); font-variant-numeric:tabular-nums; }
+    .rec-hint { font-size:.6rem; color:var(--muted); letter-spacing:.1em; }
+
+    /* timer buttons */
+    .timer-btns { display:flex; gap:10px; justify-content:center; margin-bottom:16px; flex-wrap:wrap; }
+    .btn-t { border:none; border-radius:28px; font-family:inherit; font-size:.84rem;
+      letter-spacing:.12em; padding:13px 30px; cursor:pointer; transition:background .2s; }
+    .btn-t-start { background:var(--primary); color:#fff; }
+    .btn-t-stop  { background:var(--red); color:#fff; }
+    .btn-t-next  { background:var(--accent); color:#182018; }
+    .btn-t-outline { background:none; border:1.5px solid var(--border); border-radius:28px;
+      color:var(--text); font-family:inherit; font-size:.78rem; letter-spacing:.1em;
+      padding:11px 24px; cursor:pointer; }
+
     /* calendario */
-    .cal-nav { display:flex; align-items:center; justify-content:space-between;
-      width:100%; margin-bottom:12px; }
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:12px; }
     .cal-nav-btn { background:none; border:1px solid var(--border); border-radius:10px;
       color:var(--muted); font-size:.9rem; padding:6px 12px; cursor:pointer; }
     .cal-month { font-size:.72rem; letter-spacing:.2em; color:var(--text); text-transform:uppercase; font-weight:600; }
     .cal-grid { width:100%; display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:16px; }
-    .cal-day-name { font-size:.48rem; letter-spacing:.1em; color:var(--muted); text-align:center;
-      text-transform:uppercase; padding:4px 0; }
+    .cal-day-name { font-size:.48rem; letter-spacing:.1em; color:var(--muted); text-align:center; text-transform:uppercase; padding:4px 0; }
     .cal-day { aspect-ratio:1; display:flex; flex-direction:column; align-items:center;
       justify-content:center; border-radius:10px; cursor:pointer; position:relative;
-      font-size:.78rem; color:var(--text); transition:background .2s; }
-    .cal-day:active { background:var(--surface); }
+      font-size:.78rem; color:var(--text); }
     .cal-day.today { font-weight:700; color:var(--primary); }
     .cal-day.has-workout::after { content:''; position:absolute; bottom:3px;
       width:5px; height:5px; border-radius:50%; background:var(--primary); }
-    .cal-day.selected { background:var(--primary); color:#fff; border-radius:10px; }
+    .cal-day.selected { background:var(--primary); color:#fff; }
     .cal-day.selected::after { background:#fff; }
     .cal-day.empty { cursor:default; }
     .registro-detail-card { width:100%; background:var(--card); border:1px solid var(--border);
@@ -197,16 +223,8 @@
     .registro-detail-meta { font-size:.6rem; color:var(--muted); letter-spacing:.06em; }
     .feedback-row { display:flex; gap:10px; margin:10px 0; }
     .feedback-btn { flex:1; background:var(--surface); border:1.5px solid var(--border);
-      border-radius:12px; font-size:1.4rem; padding:8px; cursor:pointer;
-      transition:border-color .2s; text-align:center; }
+      border-radius:12px; font-size:1.4rem; padding:8px; cursor:pointer; text-align:center; }
     .feedback-btn.active { border-color:var(--primary); background:var(--card); }
-    .export-box { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:16px; padding:16px; margin-bottom:16px; }
-    .export-box-title { font-size:.58rem; letter-spacing:.2em; color:var(--muted);
-      text-transform:uppercase; margin-bottom:12px; }
-    .export-row { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; }
-    .export-row .form-group { flex:1; min-width:100px; margin-bottom:0; }
-    .export-row .btn-primary { flex-shrink:0; padding:10px 18px; font-size:.74rem; }
   </style>
 </head>
 <body>
@@ -231,63 +249,86 @@
   <!-- ══ SCREEN: SCHEDE ══ -->
   <div class="screen active" id="screen-schede">
     <div class="section-title">i miei allenamenti</div>
-    <div class="scheda-list" id="scheda-list"></div>
+    <div class="item-list" id="scheda-list"></div>
     <button class="btn-add" id="btn-new-allenamento">＋ Nuovo Allenamento</button>
   </div>
 
   <!-- ══ SCREEN: AVVIA ══ -->
   <div class="screen" id="screen-avvia">
-    <!-- step 1: selezione scheda -->
-    <div id="avvia-step1" style="width:100%">
-      <div class="section-title">avvia sessione</div>
-      <div class="pick-scheda">
-        <div class="pick-scheda-label">Seleziona allenamento</div>
-        <select id="avvia-select-allenamento"></select>
-      </div>
-      <div class="pick-scheda" style="margin-bottom:14px">
-        <div class="pick-scheda-label">Seleziona scheda</div>
-        <select id="avvia-select-scheda"></select>
-      </div>
-      <button class="btn-primary" style="width:100%" id="btn-avvia-go">Avvia ▶</button>
-    </div>
-    <!-- step 2: riscaldamento + stretching -->
-    <div id="avvia-step2" style="width:100%;display:none">
-      <div class="section-title">preparazione</div>
-      <div class="warmup-row">
-        <div class="warmup-block">
-          <div class="warmup-label">Riscaldamento</div>
-          <div class="warmup-timer" id="wm-riscaldamento">00:00</div>
-          <button class="btn-wm btn-wm-start" id="btn-wm-risc">Start</button>
+
+    <!-- STEP 1: setup wizard -->
+    <div id="avvia-setup" style="width:100%">
+      <div class="section-title">configura sessione</div>
+
+      <div class="setup-card">
+        <div class="setup-card-title">Preparazione</div>
+        <div class="toggle-row" style="margin-bottom:12px">
+          <span class="toggle-label">🔥 Riscaldamento</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="tog-risc" checked/>
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
         </div>
-        <div class="warmup-block">
-          <div class="warmup-label">Stretching</div>
-          <div class="warmup-timer" id="wm-stretching">00:00</div>
-          <button class="btn-wm btn-wm-start" id="btn-wm-str">Start</button>
+        <div class="toggle-row">
+          <span class="toggle-label">🧘 Stretching</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="tog-str" checked/>
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
         </div>
       </div>
-      <button class="btn-primary" style="width:100%;margin-top:8px" id="btn-skip-warmup">Inizia Esercizi →</button>
-    </div>
-    <!-- step 3: esercizio -->
-    <div id="avvia-step3" style="width:100%;display:none">
-      <div class="section-title" id="sessione-scheda-label">scheda</div>
-      <div class="sessione-box">
-        <div class="sessione-label">esercizio</div>
-        <div class="sessione-name" id="sess-ex-name">—</div>
-        <div class="sessione-meta" id="sess-ex-meta">—</div>
-        <div class="sessione-serie" id="sess-ex-serie">Serie 1 / 3</div>
-        <div class="sessione-timer" id="sess-timer">00:00</div>
-        <div class="sessione-btns">
-          <button class="btn-sessione-start" id="btn-sess-start">Start</button>
-          <button class="btn-sessione-stop" id="btn-sess-stop" style="display:none">Stop</button>
+
+      <div class="setup-card">
+        <div class="setup-card-title">Allenamento</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label>Programma</label>
+          <select id="avvia-select-allenamento"></select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Scheda</label>
+          <select id="avvia-select-scheda"></select>
         </div>
       </div>
-      <div class="recupero-box" id="recupero-box" style="display:none">
-        <div class="sessione-label">recupero</div>
-        <div class="recupero-timer" id="recupero-timer">00:00</div>
-        <div style="font-size:.64rem;color:var(--muted);letter-spacing:.1em">Premi Start per riprendere</div>
-      </div>
-      <button class="btn-outline" style="width:100%;margin-top:10px" id="btn-fine-sessione">Fine Sessione</button>
+
+      <button class="btn-primary setup-next-btn" id="btn-avvia-go">Inizia ▶</button>
     </div>
+
+    <!-- STEP 2: timer schermata (riscaldamento / stretching / esercizi) -->
+    <div id="avvia-timer" style="width:100%;display:none">
+      <div class="timer-screen">
+        <div class="timer-phase-label" id="timer-phase-label">—</div>
+        <div class="timer-ex-label" id="timer-ex-label"></div>
+        <div class="timer-ex-meta" id="timer-ex-meta"></div>
+        <div class="timer-serie-label" id="timer-serie-label"></div>
+
+        <div id="clock-wrap">
+          <svg id="ring-svg" viewBox="0 0 260 260">
+            <circle id="ring-bg"   cx="130" cy="130" r="114"/>
+            <circle id="ring-fill" cx="130" cy="130" r="114"/>
+          </svg>
+          <img src="Logo%20Trasparente.png" alt="" id="clock-gecko" aria-hidden="true"/>
+          <div id="clock-phase"></div>
+          <div id="clock-time">00:00</div>
+        </div>
+
+        <!-- recupero countdown -->
+        <div class="rec-box" id="rec-box" style="display:none">
+          <div class="rec-label">recupero</div>
+          <div class="rec-timer" id="rec-timer">00:00</div>
+          <div class="rec-hint">premi Start per il prossimo esercizio</div>
+        </div>
+
+        <div class="timer-btns">
+          <button class="btn-t btn-t-start" id="btn-t-start">Start</button>
+          <button class="btn-t btn-t-stop"  id="btn-t-stop"  style="display:none">Stop</button>
+          <button class="btn-t btn-t-next"  id="btn-t-next"  style="display:none">Avanti →</button>
+        </div>
+        <button class="btn-t-outline" id="btn-abbandona">Abbandona sessione</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- ══ SCREEN: REGISTRO ══ -->
@@ -300,15 +341,7 @@
     </div>
     <div class="cal-grid" id="cal-grid"></div>
     <div id="registro-selected-list"></div>
-    <div class="export-box">
-      <div class="export-box-title">esporta allenamenti</div>
-      <div class="export-row">
-        <div class="form-group"><label>Da</label><input type="date" id="export-from"/></div>
-        <div class="form-group"><label>A</label><input type="date" id="export-to"/></div>
-        <button class="btn-primary" id="btn-export-range">Esporta</button>
-      </div>
-      <button class="btn-outline" style="width:100%;margin-top:10px" id="btn-export-all">Esporta Tutto</button>
-    </div>
+    <button class="btn-outline" style="width:100%;margin-top:6px" id="btn-open-export">↓ Esporta CSV</button>
   </div>
 
   <!-- TAB BAR -->
@@ -321,7 +354,7 @@
       <span class="tab-label">schede</span>
     </button>
     <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia">
-      <div class="tab-center-circle" id="tab-center-circle">
+      <div class="tab-center-circle">
         <svg class="tab-center-icon" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
       </div>
       <span class="tab-label" style="margin-top:-20px">avvia</span>
@@ -335,30 +368,33 @@
     </button>
   </nav>
 
-  <!-- MODALI -->
-  <!-- Modal: nuovo allenamento -->
-  <div class="modal-overlay" id="modal-new-allenamento">
-    <div class="modal-sheet">
-      <div class="modal-handle"></div>
-      <div class="modal-title">Nuovo Allenamento</div>
-      <div class="form-group"><label>Nome</label><input id="new-all-nome" placeholder="es. Upper Body A"/></div>
-      <div class="form-row">
-        <div class="form-group"><label>Obiettivo</label><input id="new-all-obiettivo" placeholder="es. Forza"/></div>
-        <div class="form-group"><label>Durata (settimane)</label><input id="new-all-durata" type="number" placeholder="12"/></div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-outline" id="btn-cancel-new-all">Annulla</button>
-        <button class="btn-primary" id="btn-save-new-all">Salva</button>
-      </div>
-    </div>
-  </div>
-  <!-- Modal: dettaglio allenamento + schede -->
+  <!-- ══ MODALI ══ -->
+
+  <!-- Modal: dettaglio allenamento -->
   <div class="modal-overlay" id="modal-allenamento-detail">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title" id="modal-all-title">Allenamento</div>
-      <div class="section-title" style="margin-bottom:8px">Schede</div>
-      <div id="modal-schede-list"></div>
+      <div class="inline-form">
+        <div class="inline-form-title">Dettagli</div>
+        <div class="form-group"><label>Nome</label><input id="edit-all-nome" placeholder="es. Upper Body A"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Obiettivo</label><input id="edit-all-obiettivo" placeholder="es. Forza"/></div>
+          <div class="form-group"><label>Settimane</label><input id="edit-all-durata" type="number" placeholder="12"/></div>
+        </div>
+        <button class="btn-primary" style="width:100%" id="btn-save-all-edit">Salva Allenamento</button>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-subtitle">Schede</div>
+      <div class="item-list" id="modal-schede-list"></div>
+      <div class="inline-form" id="form-new-scheda" style="display:none">
+        <div class="inline-form-title">Nuova Scheda</div>
+        <div class="form-group"><label>Nome</label><input id="new-scheda-nome" placeholder="es. Giorno A"/></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-outline" style="flex:1" id="btn-cancel-new-scheda">Annulla</button>
+          <button class="btn-primary" style="flex:1" id="btn-save-new-scheda">Aggiungi</button>
+        </div>
+      </div>
       <button class="btn-add" id="btn-new-scheda-in-all">＋ Nuova Scheda</button>
       <div class="modal-actions">
         <button class="btn-danger" id="btn-delete-allenamento">Elimina</button>
@@ -366,25 +402,46 @@
       </div>
     </div>
   </div>
-  <!-- Modal: nuova scheda -->
-  <div class="modal-overlay" id="modal-new-scheda">
-    <div class="modal-sheet">
-      <div class="modal-handle"></div>
-      <div class="modal-title">Nuova Scheda</div>
-      <div class="form-group"><label>Nome scheda</label><input id="new-scheda-nome" placeholder="es. Giorno A"/></div>
-      <div class="modal-actions">
-        <button class="btn-outline" id="btn-cancel-new-scheda">Annulla</button>
-        <button class="btn-primary" id="btn-save-new-scheda">Salva</button>
-      </div>
-    </div>
-  </div>
-  <!-- Modal: dettaglio scheda + esercizi -->
+
+  <!-- Modal: dettaglio scheda -->
   <div class="modal-overlay" id="modal-scheda-detail">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title" id="modal-scheda-title">Scheda</div>
-      <div class="section-title" style="margin-bottom:8px">Esercizi</div>
+      <div class="inline-form">
+        <div class="inline-form-title">Modifica nome</div>
+        <div class="form-group"><label>Nome</label><input id="edit-scheda-nome" placeholder="es. Giorno B"/></div>
+        <button class="btn-primary" style="width:100%" id="btn-save-scheda-edit">Salva Nome</button>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-subtitle">Esercizi</div>
       <div id="modal-esercizi-list"></div>
+      <div class="inline-form" id="form-esercizio" style="display:none">
+        <div class="inline-form-title" id="form-ex-label">Nuovo Esercizio</div>
+        <input type="hidden" id="edit-ex-idx" value=""/>
+        <div class="form-group"><label>Gruppo Muscolare</label>
+          <select id="new-ex-gruppo">
+            <option>Petto</option><option>Schiena</option><option>Spalle</option>
+            <option>Bicipiti</option><option>Tricipiti</option><option>Gambe</option>
+            <option>Glutei</option><option>Addome</option><option>Cardio</option><option>Altro</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Nome Esercizio</label><input id="new-ex-nome" placeholder="es. Panca Piana"/></div>
+        <div class="form-row3">
+          <div class="form-group"><label>Serie</label><input id="new-ex-serie" type="number" placeholder="3"/></div>
+          <div class="form-group"><label>Rep</label><input id="new-ex-rep" type="number" placeholder="8"/></div>
+          <div class="form-group"><label>Kg</label><input id="new-ex-kg" placeholder="80"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Tempo (sec)</label><input id="new-ex-tempo" type="number" placeholder="40"/></div>
+          <div class="form-group"><label>Recupero (sec)</label><input id="new-ex-recupero" type="number" placeholder="90"/></div>
+        </div>
+        <div class="form-group"><label>Note tecniche</label><textarea id="new-ex-desc" placeholder="Note..."></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-outline" style="flex:1" id="btn-cancel-ex">Annulla</button>
+          <button class="btn-primary" style="flex:1" id="btn-save-new-ex">Salva</button>
+        </div>
+      </div>
       <button class="btn-add" id="btn-new-esercizio">＋ Aggiungi Esercizio</button>
       <div class="modal-actions">
         <button class="btn-danger" id="btn-delete-scheda">Elimina Scheda</button>
@@ -392,32 +449,37 @@
       </div>
     </div>
   </div>
-  <!-- Modal: nuovo esercizio -->
-  <div class="modal-overlay" id="modal-new-esercizio">
+
+  <!-- Modal: crea nuovo allenamento -->
+  <div class="modal-overlay" id="modal-new-allenamento">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Nuovo Esercizio</div>
-      <div class="form-group"><label>Gruppo Muscolare</label>
-        <select id="new-ex-gruppo">
-          <option>Petto</option><option>Schiena</option><option>Spalle</option>
-          <option>Bicipiti</option><option>Tricipiti</option><option>Gambe</option>
-          <option>Glutei</option><option>Addome</option><option>Cardio</option><option>Altro</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Nome Esercizio</label><input id="new-ex-nome" placeholder="es. Panca Piana"/></div>
-      <div class="form-row3">
-        <div class="form-group"><label>Serie</label><input id="new-ex-serie" type="number" placeholder="3"/></div>
-        <div class="form-group"><label>Rep</label><input id="new-ex-rep" type="number" placeholder="8"/></div>
-        <div class="form-group"><label>Kg</label><input id="new-ex-kg" placeholder="80"/></div>
-      </div>
+      <div class="modal-title">Nuovo Allenamento</div>
+      <div class="form-group"><label>Nome</label><input id="new-all-nome" placeholder="es. Upper Body A"/></div>
       <div class="form-row">
-        <div class="form-group"><label>Tempo (sec)</label><input id="new-ex-tempo" type="number" placeholder="40"/></div>
-        <div class="form-group"><label>Recupero (sec)</label><input id="new-ex-recupero" type="number" placeholder="90"/></div>
+        <div class="form-group"><label>Obiettivo</label><input id="new-all-obiettivo" placeholder="es. Forza"/></div>
+        <div class="form-group"><label>Settimane</label><input id="new-all-durata" type="number" placeholder="12"/></div>
       </div>
-      <div class="form-group"><label>Descrizione</label><textarea id="new-ex-desc" placeholder="Note tecniche..."></textarea></div>
       <div class="modal-actions">
-        <button class="btn-outline" id="btn-cancel-new-ex">Annulla</button>
-        <button class="btn-primary" id="btn-save-new-ex">Salva</button>
+        <button class="btn-outline" id="btn-cancel-new-all">Annulla</button>
+        <button class="btn-primary" id="btn-save-new-all">Crea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Export CSV -->
+  <div class="modal-overlay" id="modal-export">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Esporta Allenamenti</div>
+      <div class="form-row">
+        <div class="form-group"><label>Da</label><input type="date" id="export-from"/></div>
+        <div class="form-group"><label>A</label><input type="date" id="export-to"/></div>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-bottom:10px" id="btn-export-range">Esporta periodo</button>
+      <button class="btn-outline" style="width:100%;margin-bottom:4px" id="btn-export-all">Esporta tutto</button>
+      <div class="modal-actions" style="margin-top:8px">
+        <button class="btn-outline" style="flex:1" id="btn-close-export">Chiudi</button>
       </div>
     </div>
   </div>
@@ -454,9 +516,9 @@
 
     // ── Tab navigation ──
     const TABS = [
-      { btn: document.getElementById('tab-schede'),  screen: 'screen-schede'  },
-      { btn: document.getElementById('tab-avvia'),   screen: 'screen-avvia'   },
-      { btn: document.getElementById('tab-registro'),screen: 'screen-registro'},
+      { btn: document.getElementById('tab-schede'),   screen: 'screen-schede'  },
+      { btn: document.getElementById('tab-avvia'),    screen: 'screen-avvia'   },
+      { btn: document.getElementById('tab-registro'), screen: 'screen-registro'},
     ];
     function switchTab(id) {
       TABS.forEach(t => {
@@ -474,18 +536,36 @@
     }
     TABS.forEach(t => t.btn.addEventListener('click', () => switchTab(t.screen)));
 
+    // ── SVG icons ──
+    const SVG_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const SVG_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+
     // ── Modal helpers ──
     function openModal(id)  { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-    // ── Firestore subscriptions ──
-    let allenamentiList = [];   // array di oggetti con _docId
+    // ── Firestore state ──
+    let allenamentiList = [];
     let registroList = [];
 
     subscribeAllenamenti(items => {
-      allenamentiList = items;
+      // merge in-place: preserva gli oggetti esistenti, aggiorna i campi
+      items.forEach(item => {
+        const existing = allenamentiList.find(a => a._docId === item._docId);
+        if (existing) Object.assign(existing, item);
+        else allenamentiList.push(item);
+      });
+      // rimuovi quelli cancellati
+      allenamentiList = allenamentiList.filter(a => items.some(i => i._docId === a._docId));
       renderSchedaList();
       populateAvviaSelects();
+      if (currentAllDocId) {
+        const all = allenamentiList.find(a => a._docId === currentAllDocId);
+        if (all && document.getElementById('modal-allenamento-detail').classList.contains('open'))
+          renderSchedeInModal(all);
+        if (all && currentSchedaIdx !== null && document.getElementById('modal-scheda-detail').classList.contains('open'))
+          renderEserciziInModal(all, currentSchedaIdx);
+      }
     });
     subscribeRegistro(items => {
       registroList = items;
@@ -499,121 +579,179 @@
       const icons = ['🏋️','💪','🦵','🔥','🏃','⚡','🎯','🧘'];
       allenamentiList.forEach(all => {
         const schedeCount = all.schede ? all.schede.length : 0;
-        const div = document.createElement('div');
-        div.className = 'scheda-item';
         const ico = icons[Math.abs((all._docId||'').charCodeAt(1)||0) % icons.length];
+        const div = document.createElement('div');
+        div.className = 'item-row';
         div.innerHTML = `
-          <div class="scheda-item-icon">${ico}</div>
-          <div class="scheda-item-info">
-            <div class="scheda-item-name">${all.nome}</div>
-            <div class="scheda-item-meta">${all.obiettivo||'—'} · ${schedeCount} schede · ${all.settimane||'?'} sett.</div>
+          <div class="item-row-icon">${ico}</div>
+          <div class="item-row-info" style="cursor:pointer">
+            <div class="item-row-name">${all.nome}</div>
+            <div class="item-row-meta">${all.obiettivo||'—'} · ${schedeCount} schede · ${all.settimane||'?'} sett.</div>
           </div>
-          <div class="scheda-item-chev">›</div>`;
-        div.addEventListener('click', () => openAllenamentoDetail(all._docId));
+          <div class="item-row-actions">
+            <button class="icon-btn edit" title="Modifica">${SVG_EDIT}</button>
+            <button class="icon-btn del" title="Elimina">${SVG_TRASH}</button>
+          </div>`;
+        div.querySelector('.item-row-info').addEventListener('click', () => openAllenamentoDetail(all._docId));
+        div.querySelector('.icon-btn.edit').addEventListener('click', e => { e.stopPropagation(); openAllenamentoDetail(all._docId); });
+        div.querySelector('.icon-btn.del').addEventListener('click', async e => {
+          e.stopPropagation();
+          if (!confirm(`Eliminare "${all.nome}"?`)) return;
+          await deleteAllenamentoDoc(all._docId);
+        });
         list.appendChild(div);
       });
     }
 
-    // Modal: nuovo allenamento
-    document.getElementById('btn-new-allenamento').addEventListener('click', () => openModal('modal-new-allenamento'));
+    // ── Modal: crea nuovo allenamento ──
+    document.getElementById('btn-new-allenamento').addEventListener('click', () => {
+      document.getElementById('new-all-nome').value = '';
+      document.getElementById('new-all-obiettivo').value = '';
+      document.getElementById('new-all-durata').value = '';
+      openModal('modal-new-allenamento');
+    });
     document.getElementById('btn-cancel-new-all').addEventListener('click', () => closeModal('modal-new-allenamento'));
     document.getElementById('btn-save-new-all').addEventListener('click', async () => {
       const nome = document.getElementById('new-all-nome').value.trim();
       if (!nome) return;
       const durataVal = document.getElementById('new-all-durata').value;
-      await addAllenamentoDoc({
+      const docId = await addAllenamentoDoc({
         nome,
         obiettivo: document.getElementById('new-all-obiettivo').value.trim(),
         settimane: durataVal ? parseInt(durataVal) : 12,
         schede: [],
       });
-      document.getElementById('new-all-nome').value = '';
-      document.getElementById('new-all-obiettivo').value = '';
-      document.getElementById('new-all-durata').value = '';
       closeModal('modal-new-allenamento');
+      if (docId) setTimeout(() => openAllenamentoDetail(docId), 100);
     });
 
-    // Dettaglio allenamento
+    // ── Dettaglio allenamento ──
     let currentAllDocId = null;
     function openAllenamentoDetail(docId) {
       currentAllDocId = docId;
       const all = allenamentiList.find(a => a._docId === docId);
+      if (!all) return;
       document.getElementById('modal-all-title').textContent = all.nome;
+      document.getElementById('edit-all-nome').value = all.nome || '';
+      document.getElementById('edit-all-obiettivo').value = all.obiettivo || '';
+      document.getElementById('edit-all-durata').value = all.settimane || '';
+      document.getElementById('form-new-scheda').style.display = 'none';
+      document.getElementById('btn-new-scheda-in-all').style.display = 'block';
       renderSchedeInModal(all);
       openModal('modal-allenamento-detail');
     }
+    document.getElementById('btn-save-all-edit').addEventListener('click', async () => {
+      const nome = document.getElementById('edit-all-nome').value.trim();
+      if (!nome) return;
+      await updateAllenamentoDoc(currentAllDocId, {
+        nome,
+        obiettivo: document.getElementById('edit-all-obiettivo').value.trim(),
+        settimane: parseInt(document.getElementById('edit-all-durata').value) || 12,
+      });
+      document.getElementById('modal-all-title').textContent = nome;
+    });
     function renderSchedeInModal(all) {
       const list = document.getElementById('modal-schede-list');
       list.innerHTML = '';
-      const schede = all.schede || [];
-      schede.forEach((sch, idx) => {
+      (all.schede || []).forEach((sch, idx) => {
         const exCount = sch.esercizi ? sch.esercizi.length : 0;
         const div = document.createElement('div');
-        div.className = 'scheda-item';
-        div.style.marginBottom = '8px';
+        div.className = 'item-row';
         div.innerHTML = `
-          <div class="scheda-item-icon">📋</div>
-          <div class="scheda-item-info">
-            <div class="scheda-item-name">${sch.nome}</div>
-            <div class="scheda-item-meta">${exCount} esercizi</div>
-          </div><div class="scheda-item-chev">›</div>`;
-        div.addEventListener('click', () => { closeModal('modal-allenamento-detail'); openSchedaDetail(currentAllDocId, idx); });
+          <div class="item-row-icon" style="cursor:pointer">📋</div>
+          <div class="item-row-info" style="cursor:pointer">
+            <div class="item-row-name">${sch.nome}</div>
+            <div class="item-row-meta">${exCount} esercizi</div>
+          </div>
+          <div class="item-row-actions">
+            <button class="icon-btn edit">${SVG_EDIT}</button>
+            <button class="icon-btn del">${SVG_TRASH}</button>
+          </div>`;
+        const openDetail = () => { closeModal('modal-allenamento-detail'); openSchedaDetail(currentAllDocId, idx); };
+        div.querySelector('.item-row-info').addEventListener('click', openDetail);
+        div.querySelector('.item-row-icon').addEventListener('click', openDetail);
+        div.querySelector('.icon-btn.edit').addEventListener('click', e => { e.stopPropagation(); openDetail(); });
+        div.querySelector('.icon-btn.del').addEventListener('click', async e => {
+          e.stopPropagation();
+          if (!confirm(`Eliminare la scheda "${sch.nome}"?`)) return;
+          const a = allenamentiList.find(a => a._docId === currentAllDocId);
+          const schede = a.schede.filter((_, i) => i !== idx);
+          await updateAllenamentoDoc(currentAllDocId, { schede });
+        });
         list.appendChild(div);
       });
     }
     document.getElementById('btn-close-all-detail').addEventListener('click', () => closeModal('modal-allenamento-detail'));
     document.getElementById('btn-delete-allenamento').addEventListener('click', async () => {
-      if (!confirm('Elimina questo allenamento?')) return;
+      const all = allenamentiList.find(a => a._docId === currentAllDocId);
+      if (!confirm(`Eliminare "${all?.nome}"?`)) return;
       await deleteAllenamentoDoc(currentAllDocId);
       closeModal('modal-allenamento-detail');
     });
-
-    // Nuova scheda
     document.getElementById('btn-new-scheda-in-all').addEventListener('click', () => {
-      closeModal('modal-allenamento-detail');
-      openModal('modal-new-scheda');
+      document.getElementById('new-scheda-nome').value = '';
+      document.getElementById('form-new-scheda').style.display = 'block';
+      document.getElementById('btn-new-scheda-in-all').style.display = 'none';
+      document.getElementById('new-scheda-nome').focus();
     });
     document.getElementById('btn-cancel-new-scheda').addEventListener('click', () => {
-      closeModal('modal-new-scheda'); openModal('modal-allenamento-detail');
+      document.getElementById('form-new-scheda').style.display = 'none';
+      document.getElementById('btn-new-scheda-in-all').style.display = 'block';
     });
-    document.getElementById('btn-save-new-scheda').addEventListener('click', async () => {
+    document.getElementById('btn-save-new-scheda').addEventListener('click', () => {
       const nome = document.getElementById('new-scheda-nome').value.trim();
       if (!nome) return;
       const all = allenamentiList.find(a => a._docId === currentAllDocId);
-      const schede = all.schede ? [...all.schede] : [];
-      schede.push({ nome, esercizi: [] });
-      await updateAllenamentoDoc(currentAllDocId, { schede });
+      if (!all.schede) all.schede = [];
+      all.schede.push({ nome, esercizi: [] });
+      renderSchedeInModal(all);
       document.getElementById('new-scheda-nome').value = '';
-      closeModal('modal-new-scheda');
-      openModal('modal-allenamento-detail');
+      document.getElementById('form-new-scheda').style.display = 'none';
+      document.getElementById('btn-new-scheda-in-all').style.display = 'block';
+      updateAllenamentoDoc(currentAllDocId, { schede: all.schede });
     });
 
-    // Dettaglio scheda
+    // ── Dettaglio scheda ──
     let currentSchedaIdx = null;
     function openSchedaDetail(docId, idx) {
       currentAllDocId = docId; currentSchedaIdx = idx;
       const all = allenamentiList.find(a => a._docId === docId);
       const sch = all.schede[idx];
       document.getElementById('modal-scheda-title').textContent = sch.nome;
+      document.getElementById('edit-scheda-nome').value = sch.nome;
+      document.getElementById('form-esercizio').style.display = 'none';
+      document.getElementById('btn-new-esercizio').style.display = 'block';
       renderEserciziInModal(all, idx);
       openModal('modal-scheda-detail');
     }
+    document.getElementById('btn-save-scheda-edit').addEventListener('click', async () => {
+      const nome = document.getElementById('edit-scheda-nome').value.trim();
+      if (!nome) return;
+      const all = allenamentiList.find(a => a._docId === currentAllDocId);
+      const schede = JSON.parse(JSON.stringify(all.schede));
+      schede[currentSchedaIdx].nome = nome;
+      await updateAllenamentoDoc(currentAllDocId, { schede });
+      document.getElementById('modal-scheda-title').textContent = nome;
+    });
     function renderEserciziInModal(all, idx) {
       const list = document.getElementById('modal-esercizi-list');
       list.innerHTML = '';
-      const esercizi = all.schede[idx]?.esercizi || [];
-      esercizi.forEach((ex, eidx) => {
+      (all.schede[idx]?.esercizi || []).forEach((ex, eidx) => {
         const div = document.createElement('div');
         div.className = 'esercizio-card';
         div.innerHTML = `
-          <button class="btn-remove">✕</button>
           <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
-          <div style="font-size:.68rem;color:var(--muted);line-height:1.8">
-            ${ex.serie}×${ex.rep} · ${ex.kg||'—'} kg · Recupero ${ex.recupero||90}s<br>
+          <div class="esercizio-card-meta">
+            ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
             ${ex.desc||''}
+          </div>
+          <div class="esercizio-card-actions">
+            <button class="icon-btn edit">${SVG_EDIT}</button>
+            <button class="icon-btn del">${SVG_TRASH}</button>
           </div>`;
-        div.querySelector('.btn-remove').addEventListener('click', async e => {
-          e.stopPropagation();
+        div.querySelector('.icon-btn.edit').addEventListener('click', () => openEditEsercizio(eidx, ex));
+        div.querySelector('.icon-btn.del').addEventListener('click', async () => {
+          if (!confirm(`Eliminare "${ex.nome}"?`)) return;
           const a = allenamentiList.find(a => a._docId === currentAllDocId);
           const schede = JSON.parse(JSON.stringify(a.schede));
           schede[currentSchedaIdx].esercizi.splice(eidx, 1);
@@ -622,52 +760,82 @@
         list.appendChild(div);
       });
     }
+    function openEditEsercizio(eidx, ex) {
+      document.getElementById('edit-ex-idx').value = eidx;
+      document.getElementById('form-ex-label').textContent = 'Modifica Esercizio';
+      document.getElementById('new-ex-gruppo').value = ex.gruppo || 'Petto';
+      document.getElementById('new-ex-nome').value = ex.nome || '';
+      document.getElementById('new-ex-serie').value = ex.serie || '';
+      document.getElementById('new-ex-rep').value = ex.rep || '';
+      document.getElementById('new-ex-kg').value = ex.kg || '';
+      document.getElementById('new-ex-tempo').value = ex.tempo || '';
+      document.getElementById('new-ex-recupero').value = ex.recupero || '';
+      document.getElementById('new-ex-desc').value = ex.desc || '';
+      document.getElementById('form-esercizio').style.display = 'block';
+      document.getElementById('btn-new-esercizio').style.display = 'none';
+    }
     document.getElementById('btn-close-scheda-detail').addEventListener('click', () => {
       closeModal('modal-scheda-detail'); openModal('modal-allenamento-detail');
     });
     document.getElementById('btn-delete-scheda').addEventListener('click', async () => {
-      if (!confirm('Elimina questa scheda?')) return;
       const all = allenamentiList.find(a => a._docId === currentAllDocId);
+      const sch = all.schede[currentSchedaIdx];
+      if (!confirm(`Eliminare "${sch?.nome}"?`)) return;
       const schede = all.schede.filter((_, i) => i !== currentSchedaIdx);
       await updateAllenamentoDoc(currentAllDocId, { schede });
       closeModal('modal-scheda-detail'); openModal('modal-allenamento-detail');
     });
-
-    // Nuovo esercizio
     document.getElementById('btn-new-esercizio').addEventListener('click', () => {
-      closeModal('modal-scheda-detail'); openModal('modal-new-esercizio');
+      document.getElementById('edit-ex-idx').value = '';
+      document.getElementById('form-ex-label').textContent = 'Nuovo Esercizio';
+      ['new-ex-nome','new-ex-kg','new-ex-serie','new-ex-rep','new-ex-tempo','new-ex-recupero','new-ex-desc']
+        .forEach(id => document.getElementById(id).value = '');
+      document.getElementById('new-ex-gruppo').selectedIndex = 0;
+      document.getElementById('form-esercizio').style.display = 'block';
+      document.getElementById('btn-new-esercizio').style.display = 'none';
     });
-    document.getElementById('btn-cancel-new-ex').addEventListener('click', () => {
-      closeModal('modal-new-esercizio'); openModal('modal-scheda-detail');
+    document.getElementById('btn-cancel-ex').addEventListener('click', () => {
+      document.getElementById('form-esercizio').style.display = 'none';
+      document.getElementById('btn-new-esercizio').style.display = 'block';
     });
-    document.getElementById('btn-save-new-ex').addEventListener('click', async () => {
+    document.getElementById('btn-save-new-ex').addEventListener('click', () => {
       const nome = document.getElementById('new-ex-nome').value.trim();
       if (!nome) return;
       const all = allenamentiList.find(a => a._docId === currentAllDocId);
-      const schede = JSON.parse(JSON.stringify(all.schede));
-      if (!schede[currentSchedaIdx].esercizi) schede[currentSchedaIdx].esercizi = [];
-      schede[currentSchedaIdx].esercizi.push({
-        gruppo: document.getElementById('new-ex-gruppo').value,
+      const sch = all.schede[currentSchedaIdx];
+      if (!sch.esercizi) sch.esercizi = [];
+      const exData = {
+        gruppo:   document.getElementById('new-ex-gruppo').value,
         nome,
-        serie: parseInt(document.getElementById('new-ex-serie').value)||3,
-        rep:   parseInt(document.getElementById('new-ex-rep').value)||8,
-        kg:    document.getElementById('new-ex-kg').value||'',
-        tempo: parseInt(document.getElementById('new-ex-tempo').value)||0,
-        recupero: parseInt(document.getElementById('new-ex-recupero').value)||90,
-        desc: document.getElementById('new-ex-desc').value.trim(),
-      });
-      await updateAllenamentoDoc(currentAllDocId, { schede });
-      ['new-ex-nome','new-ex-kg','new-ex-serie','new-ex-rep','new-ex-tempo','new-ex-recupero','new-ex-desc']
-        .forEach(id => document.getElementById(id).value = '');
-      closeModal('modal-new-esercizio'); openModal('modal-scheda-detail');
+        serie:    parseInt(document.getElementById('new-ex-serie').value) || 3,
+        rep:      parseInt(document.getElementById('new-ex-rep').value) || 8,
+        kg:       document.getElementById('new-ex-kg').value || '',
+        tempo:    parseInt(document.getElementById('new-ex-tempo').value) || 0,
+        recupero: parseInt(document.getElementById('new-ex-recupero').value) || 90,
+        desc:     document.getElementById('new-ex-desc').value.trim(),
+      };
+      const eidxStr = document.getElementById('edit-ex-idx').value;
+      if (eidxStr !== '') {
+        sch.esercizi[parseInt(eidxStr)] = exData;
+      } else {
+        sch.esercizi.push(exData);
+      }
+      renderEserciziInModal(all, currentSchedaIdx);
+      document.getElementById('form-esercizio').style.display = 'none';
+      document.getElementById('btn-new-esercizio').style.display = 'block';
+      updateAllenamentoDoc(currentAllDocId, { schede: all.schede });
     });
 
-    // ── AVVIA SCREEN ──
+    // ══════════════════════════════════════════
+    // ── AVVIA / SESSIONE GUIDATA ──
+    // ══════════════════════════════════════════
+
+    // --- Popola selects ---
     function populateAvviaSelects() {
       const selAll = document.getElementById('avvia-select-allenamento');
       const selSch = document.getElementById('avvia-select-scheda');
       const prevAll = selAll.value;
-      selAll.innerHTML = '<option value="">— Scegli allenamento —</option>';
+      selAll.innerHTML = '<option value="">— Scegli programma —</option>';
       allenamentiList.forEach(all => {
         const opt = document.createElement('option');
         opt.value = all._docId; opt.textContent = all.nome;
@@ -689,60 +857,45 @@
       updateSchede();
     }
 
-    // Warmup timers
-    let wmTimers = { risc: null, str: null };
-    let wmSecs   = { risc: 0, str: 0 };
-    function fmtTime(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+    // --- Ring SVG helper ---
+    // r=114, viewBox 260x260, circumference = 2π*114 ≈ 716.28
+    const CIRC = 2 * Math.PI * 114;
+    const ringFill = document.getElementById('ring-fill');
+    ringFill.style.strokeDasharray = CIRC;
+    ringFill.style.strokeDashoffset = CIRC; // vuoto inizialmente
 
-    function setupWarmupBtn(key, btnId, displayId) {
-      const btn = document.getElementById(btnId);
-      btn.addEventListener('click', () => {
-        if (wmTimers[key]) {
-          clearInterval(wmTimers[key]); wmTimers[key] = null;
-          btn.textContent = 'Start'; btn.className = 'btn-wm btn-wm-start';
-        } else {
-          wmTimers[key] = setInterval(() => {
-            wmSecs[key]++;
-            document.getElementById(displayId).textContent = fmtTime(wmSecs[key]);
-          }, 1000);
-          btn.textContent = 'Stop'; btn.className = 'btn-wm btn-wm-stop';
-        }
-      });
+    function setRingProgress(ratio) {
+      // ratio 0 = cerchio vuoto, 1 = cerchio pieno
+      ringFill.style.strokeDashoffset = CIRC * (1 - Math.min(1, Math.max(0, ratio)));
     }
-    setupWarmupBtn('risc', 'btn-wm-risc', 'wm-riscaldamento');
-    setupWarmupBtn('str',  'btn-wm-str',  'wm-stretching');
+    function setRingCountdown(ratio) {
+      // ratio 1=pieno→vuota mentre il tempo scende
+      ringFill.style.strokeDashoffset = CIRC * (1 - Math.min(1, Math.max(0, ratio)));
+    }
 
-    document.getElementById('btn-avvia-go').addEventListener('click', () => {
-      const allId = document.getElementById('avvia-select-allenamento').value;
-      const schIdx = document.getElementById('avvia-select-scheda').value;
-      if (!allId || schIdx === '') { alert('Seleziona allenamento e scheda'); return; }
-      sessionAllId = allId; sessionSchId = parseInt(schIdx);
-      wmSecs.risc = 0; wmSecs.str = 0;
-      document.getElementById('wm-riscaldamento').textContent = '00:00';
-      document.getElementById('wm-stretching').textContent = '00:00';
-      document.getElementById('avvia-step1').style.display = 'none';
-      document.getElementById('avvia-step2').style.display = 'block';
-    });
+    function fmtTime(s) {
+      return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.abs(s)%60).padStart(2,'0')}`;
+    }
 
-    document.getElementById('btn-skip-warmup').addEventListener('click', () => {
-      // stop warmup timers
-      ['risc','str'].forEach(k => { if (wmTimers[k]) { clearInterval(wmTimers[k]); wmTimers[k] = null; } });
-      startSessione();
-    });
-
-    // ── Sessione allenamento ──
+    // --- Sessione state ---
     let sessionAllId = null, sessionSchId = null;
     let sessExercises = [], sessIdx = 0, sessSerie = 0;
-    let sessTimer = null, sessSeconds = 0;
-    let recTimer = null, recSeconds = 0;
+    let mainTimer = null, mainSeconds = 0;
+    let recTimer  = null, recSeconds  = 0;
     let sessionStartTime = null;
+    // fasi: 'risc' | 'str' | 'esercizio' | 'recupero'
+    let currentPhase = null;
+    let phaseQueue = []; // sequenza di fasi da eseguire
 
-    // Suono campanello (Web Audio API)
+    // pulsanti timer (riferimenti fissi)
+    const btnStart  = document.getElementById('btn-t-start');
+    const btnStop   = document.getElementById('btn-t-stop');
+    const btnNext   = document.getElementById('btn-t-next');
+
     function suonaCampanello() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
         osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
         gain.gain.setValueAtTime(0.6, ctx.currentTime);
@@ -751,93 +904,208 @@
       } catch(e) {}
     }
 
-    function startSessione() {
-      const all = allenamentiList.find(a => a._docId === sessionAllId);
+    function stopAllTimers() {
+      if (mainTimer) { clearInterval(mainTimer); mainTimer = null; }
+      if (recTimer)  { clearInterval(recTimer);  recTimer  = null; }
+    }
+
+    function showBtns({ start=false, stop=false, next=false }) {
+      btnStart.style.display = start ? 'inline-block' : 'none';
+      btnStop.style.display  = stop  ? 'inline-block' : 'none';
+      btnNext.style.display  = next  ? 'inline-block' : 'none';
+    }
+
+    function setClockUI(time, phase, exLabel='', exMeta='', serieLabel='') {
+      document.getElementById('clock-time').textContent = time;
+      document.getElementById('clock-phase').textContent = phase;
+      document.getElementById('timer-phase-label').textContent = phase;
+      document.getElementById('timer-ex-label').textContent = exLabel;
+      document.getElementById('timer-ex-meta').textContent = exMeta;
+      document.getElementById('timer-serie-label').textContent = serieLabel;
+    }
+
+    // --- AVVIA ---
+    document.getElementById('btn-avvia-go').addEventListener('click', () => {
+      const allId  = document.getElementById('avvia-select-allenamento').value;
+      const schIdx = document.getElementById('avvia-select-scheda').value;
+      if (!allId || schIdx === '') { alert('Seleziona programma e scheda'); return; }
+      sessionAllId = allId; sessionSchId = parseInt(schIdx);
+      const all = allenamentiList.find(a => a._docId === allId);
       const sch = all?.schede?.[sessionSchId];
       if (!sch?.esercizi?.length) { alert('Nessun esercizio in questa scheda'); return; }
       sessExercises = sch.esercizi;
-      sessIdx = 0; sessSerie = 0; sessionStartTime = Date.now();
-      document.getElementById('sessione-scheda-label').textContent = sch.nome;
-      document.getElementById('avvia-step2').style.display = 'none';
-      document.getElementById('avvia-step3').style.display = 'block';
-      loadEsercizio();
-    }
+      sessIdx = 0; sessSerie = 0;
+      sessionStartTime = Date.now();
 
-    function loadEsercizio() {
-      if (sessIdx >= sessExercises.length) { endSessione(); return; }
-      const ex = sessExercises[sessIdx];
-      document.getElementById('sess-ex-name').textContent = ex.nome;
-      document.getElementById('sess-ex-meta').textContent =
-        `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · ' + ex.kg + ' kg' : ''}`;
-      document.getElementById('sess-ex-serie').textContent = `Serie ${sessSerie + 1} / ${ex.serie}`;
-      sessSeconds = 0;
-      document.getElementById('sess-timer').textContent = '00:00';
-      document.getElementById('recupero-box').style.display = 'none';
-      document.getElementById('btn-sess-start').style.display = 'inline-block';
-      document.getElementById('btn-sess-stop').style.display = 'none';
-    }
+      // costruisci coda fasi
+      phaseQueue = [];
+      if (document.getElementById('tog-risc').checked)  phaseQueue.push('risc');
+      if (document.getElementById('tog-str').checked)   phaseQueue.push('str');
+      phaseQueue.push('esercizio');
 
-    document.getElementById('btn-sess-start').addEventListener('click', () => {
-      if (sessTimer) return;
-      document.getElementById('btn-sess-start').style.display = 'none';
-      document.getElementById('btn-sess-stop').style.display = 'inline-block';
-      sessTimer = setInterval(() => {
-        sessSeconds++;
-        document.getElementById('sess-timer').textContent = fmtTime(sessSeconds);
-      }, 1000);
+      document.getElementById('avvia-setup').style.display = 'none';
+      document.getElementById('avvia-timer').style.display = 'block';
+      document.getElementById('rec-box').style.display = 'none';
+      setRingProgress(0);
+      nextPhase();
     });
 
-    document.getElementById('btn-sess-stop').addEventListener('click', () => {
-      if (!sessTimer) return;
-      clearInterval(sessTimer); sessTimer = null;
-      document.getElementById('btn-sess-start').style.display = 'inline-block';
-      document.getElementById('btn-sess-stop').style.display = 'none';
-      // avvia recupero
+    function nextPhase() {
+      if (phaseQueue.length === 0) {
+        // arrivati agli esercizi
+        loadEsercizio();
+        return;
+      }
+      const phase = phaseQueue.shift();
+      if (phase === 'risc') startWarmupPhase('🔥 Riscaldamento');
+      else if (phase === 'str') startWarmupPhase('🧘 Stretching');
+      else loadEsercizio();
+    }
+
+    // --- Riscaldamento / Stretching (timer che conta IN AVANTI) ---
+    function startWarmupPhase(label) {
+      currentPhase = 'warmup';
+      stopAllTimers();
+      mainSeconds = 0;
+      document.getElementById('rec-box').style.display = 'none';
+      setRingProgress(0);
+      setClockUI('00:00', label);
+      showBtns({ start: true });
+
+      btnStart.onclick = () => {
+        if (mainTimer) return;
+        showBtns({ stop: true, next: true });
+        mainTimer = setInterval(() => {
+          mainSeconds++;
+          document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+          // ring gira in avanti senza limite (ogni 5 min = giro completo)
+          setRingProgress((mainSeconds % 300) / 300);
+        }, 1000);
+      };
+      btnStop.onclick = () => {
+        if (!mainTimer) return;
+        clearInterval(mainTimer); mainTimer = null;
+        showBtns({ start: true, next: true });
+        btnStart.onclick = () => {
+          showBtns({ stop: true, next: true });
+          mainTimer = setInterval(() => {
+            mainSeconds++;
+            document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+            setRingProgress((mainSeconds % 300) / 300);
+          }, 1000);
+        };
+      };
+      btnNext.onclick = () => {
+        stopAllTimers();
+        nextPhase();
+      };
+    }
+
+    // --- Esercizi ---
+    function loadEsercizio() {
+      if (sessIdx >= sessExercises.length) {
+        // COMPLETATO → salva e torna
+        endSessioneCompleta();
+        return;
+      }
+      currentPhase = 'esercizio';
+      stopAllTimers();
+      mainSeconds = 0;
       const ex = sessExercises[sessIdx];
+      document.getElementById('rec-box').style.display = 'none';
+      setRingProgress(0);
+      const exLabel = ex.nome;
+      const exMeta  = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}`;
+      const serieLabel = `Serie ${sessSerie + 1} / ${ex.serie}`;
+      setClockUI('00:00', 'Esercizio', exLabel, exMeta, serieLabel);
+      showBtns({ start: true });
+
+      btnStart.onclick = () => {
+        showBtns({ stop: true });
+        mainTimer = setInterval(() => {
+          mainSeconds++;
+          document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+          const maxSec = ex.tempo || 120;
+          setRingProgress(mainSeconds / maxSec);
+        }, 1000);
+      };
+
+      btnStop.onclick = () => {
+        if (!mainTimer) return;
+        clearInterval(mainTimer); mainTimer = null;
+        // avanza serie/esercizio
+        sessSerie++;
+        if (sessSerie >= ex.serie) { sessSerie = 0; sessIdx++; }
+        startRecupero(ex);
+      };
+    }
+
+    function startRecupero(ex) {
+      currentPhase = 'recupero';
+      stopAllTimers();
       const recSec = parseInt(ex.recupero) || 90;
       recSeconds = recSec;
-      document.getElementById('recupero-timer').textContent = fmtTime(recSeconds);
-      document.getElementById('recupero-box').style.display = 'flex';
+      document.getElementById('rec-timer').textContent = fmtTime(recSeconds);
+      document.getElementById('rec-box').style.display = 'flex';
+      setClockUI(fmtTime(mainSeconds), 'Recupero', ex.nome,
+        sessSerie === 0 ? (sessIdx < sessExercises.length ? 'Prossimo: '+sessExercises[sessIdx].nome : 'Ultimo esercizio!') : `Serie ${sessSerie + 1} / ${ex.serie}`,
+        '');
+      // ring conta al contrario sul recupero
+      setRingCountdown(1);
+
       recTimer = setInterval(() => {
         recSeconds--;
-        document.getElementById('recupero-timer').textContent = fmtTime(Math.max(0, recSeconds));
-        if (recSeconds <= 0) { clearInterval(recTimer); recTimer = null; suonaCampanello(); }
+        document.getElementById('rec-timer').textContent = fmtTime(Math.max(0, recSeconds));
+        setRingCountdown(recSeconds / recSec);
+        if (recSeconds <= 0) {
+          clearInterval(recTimer); recTimer = null;
+          suonaCampanello();
+          showBtns({ start: true });
+        }
       }, 1000);
-      // avanza serie / esercizio
-      sessSerie++;
-      if (sessSerie >= ex.serie) { sessSerie = 0; sessIdx++; }
-      // il pulsante Start ripartirà il prossimo esercizio
-      document.getElementById('btn-sess-start').addEventListener('click', function nextEx() {
-        document.getElementById('btn-sess-start').removeEventListener('click', nextEx);
-        if (recTimer) { clearInterval(recTimer); recTimer = null; }
-        document.getElementById('recupero-box').style.display = 'none';
+
+      // Start disponibile subito per saltare il recupero
+      showBtns({ start: true });
+      btnStart.onclick = () => {
+        stopAllTimers();
+        document.getElementById('rec-box').style.display = 'none';
         loadEsercizio();
-      }, { once: true });
-    });
+      };
+    }
 
-    document.getElementById('btn-fine-sessione').addEventListener('click', () => {
-      if (!confirm('Terminare la sessione?')) return;
-      endSessione();
-    });
-
-    function endSessione() {
-      if (sessTimer) { clearInterval(sessTimer); sessTimer = null; }
-      if (recTimer)  { clearInterval(recTimer);  recTimer  = null; }
+    // --- Fine sessione COMPLETATA (salva nel registro) ---
+    function endSessioneCompleta() {
+      stopAllTimers();
       const all = allenamentiList.find(a => a._docId === sessionAllId);
       const sch = all?.schede?.[sessionSchId];
-      const durata = Math.round((Date.now() - (sessionStartTime||Date.now())) / 60000);
-      const oggi = new Date().toISOString().slice(0,10);
+      const durata = Math.round((Date.now() - (sessionStartTime || Date.now())) / 60000);
+      const oggi = new Date().toISOString().slice(0, 10);
       addRegistroDoc({
         data: oggi,
         allenamentoId: sessionAllId,
         allenamentoNome: all?.nome || '—',
         schedaNome: sch?.nome || '—',
-        durata,
-        feedback: null, note: '',
+        durata, feedback: null, note: '',
       });
-      document.getElementById('avvia-step3').style.display = 'none';
-      document.getElementById('avvia-step1').style.display = 'block';
+      resetTimerUI();
       switchTab('screen-registro');
+    }
+
+    // --- Abbandona (NON salva) ---
+    document.getElementById('btn-abbandona').addEventListener('click', () => {
+      if (!confirm('Abbandonare la sessione? Non verrà salvata.')) return;
+      stopAllTimers();
+      resetTimerUI();
+    });
+
+    function resetTimerUI() {
+      document.getElementById('avvia-timer').style.display = 'none';
+      document.getElementById('avvia-setup').style.display = 'block';
+      setRingProgress(0);
+      document.getElementById('clock-time').textContent = '00:00';
+      document.getElementById('rec-box').style.display = 'none';
+      showBtns({ start: true });
+      sessIdx = 0; sessSerie = 0; mainSeconds = 0; recSeconds = 0;
     }
 
     // ── REGISTRO / CALENDARIO ──
@@ -869,18 +1137,17 @@
     }
 
     function renderCalendar() {
-      const label = document.getElementById('cal-month-label');
-      label.textContent = `${MESI[calMonth]} ${calYear}`;
+      document.getElementById('cal-month-label').textContent = `${MESI[calMonth]} ${calYear}`;
       const grid = document.getElementById('cal-grid');
       grid.innerHTML = '';
       GIORNI.forEach(g => {
         const d = document.createElement('div');
         d.className = 'cal-day-name'; d.textContent = g; grid.appendChild(d);
       });
-      const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=dom
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
       const startOffset = (firstDay === 0 ? 6 : firstDay - 1);
-      const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-      const today = new Date().toISOString().slice(0,10);
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = new Date().toISOString().slice(0, 10);
       const workoutDates = workoutDatesInMonth();
       for (let i = 0; i < startOffset; i++) {
         const d = document.createElement('div'); d.className = 'cal-day empty'; grid.appendChild(d);
@@ -904,7 +1171,7 @@
       container.innerHTML = '';
       const entries = registroList.filter(r => r.data === dateStr);
       if (!entries.length) {
-        container.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:.7rem;padding:12px;letter-spacing:.1em">Nessun allenamento</div>`;
+        container.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:.7rem;padding:12px;letter-spacing:.1em">Nessun allenamento per questo giorno</div>`;
         return;
       }
       entries.forEach(r => {
@@ -916,7 +1183,7 @@
               <div class="registro-detail-name">${r.allenamentoNome}</div>
               <div class="registro-detail-meta">${r.schedaNome} · ${r.durata||'?'} min</div>
             </div>
-            <button class="btn-danger" style="padding:6px 12px;font-size:.7rem">Elimina</button>
+            <button class="icon-btn del">${SVG_TRASH}</button>
           </div>
           <div class="feedback-row">
             <button class="feedback-btn ${r.feedback==='pos'?'active':''}" data-fb="pos">😊</button>
@@ -925,9 +1192,9 @@
           </div>
           <div class="form-group" style="margin-bottom:0">
             <label>Note</label>
-            <textarea placeholder="Appunti sull'allenamento...">${r.note||''}</textarea>
+            <textarea placeholder="Appunti...">${r.note||''}</textarea>
           </div>`;
-        card.querySelector('.btn-danger').addEventListener('click', async () => {
+        card.querySelector('.icon-btn.del').addEventListener('click', async () => {
           if (!confirm('Eliminare questo allenamento dal registro?')) return;
           await deleteRegistroDoc(r._docId);
         });
@@ -944,16 +1211,18 @@
     }
 
     // ── EXPORT ──
+    document.getElementById('btn-open-export').addEventListener('click', () => openModal('modal-export'));
+    document.getElementById('btn-close-export').addEventListener('click', () => closeModal('modal-export'));
     function exportRegistro(list) {
       let csv = 'Data,Allenamento,Scheda,Durata (min),Feedback,Note\n';
       list.forEach(r => {
-        const fb = r.feedback === 'pos' ? '😊' : r.feedback === 'neu' ? '😐' : r.feedback === 'neg' ? '😞' : '';
+        const fb = r.feedback==='pos'?'😊':r.feedback==='neu'?'😐':r.feedback==='neg'?'😞':'';
         csv += `${r.data},"${r.allenamentoNome}","${r.schedaNome}",${r.durata||''},"${fb}","${(r.note||'').replace(/"/g,'""')}"\n`;
       });
-      const blob = new Blob([csv], { type: 'text/csv' });
+      const blob = new Blob([csv], { type:'text/csv' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `allenamenti-export.csv`;
+      a.download = 'allenamenti-export.csv';
       a.click();
     }
     document.getElementById('btn-export-range').addEventListener('click', () => {
@@ -962,14 +1231,11 @@
       if (!from || !to) { alert('Seleziona data inizio e fine'); return; }
       const filtered = registroList.filter(r => r.data >= from && r.data <= to);
       if (!filtered.length) { alert('Nessun allenamento nel periodo'); return; }
-      exportRegistro(filtered);
+      exportRegistro(filtered); closeModal('modal-export');
     });
     document.getElementById('btn-export-all').addEventListener('click', () => {
       if (!registroList.length) { alert('Nessun allenamento nel registro'); return; }
-      const dates = registroList.map(r => r.data).sort();
-      document.getElementById('export-from').value = dates[0];
-      document.getElementById('export-to').value = dates[dates.length-1];
-      exportRegistro(registroList);
+      exportRegistro(registroList); closeModal('modal-export');
     });
 
   </script>
