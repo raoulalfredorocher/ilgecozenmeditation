@@ -1069,15 +1069,17 @@
         return;
       }
       const phase = phaseQueue.shift();
-      if (phase === 'risc') startWarmupPhase('🔥 Riscaldamento');
-      else if (phase === 'str') startWarmupPhase('🧘 Stretching');
+      if (phase === 'risc') startWarmupPhase('🔥 Riscaldamento', 'warmup');
+      else if (phase === 'str') startWarmupPhase('🧘 Stretching', 'stretching');
       else loadEsercizio();
     }
 
     // --- Riscaldamento / Stretching (timer che conta IN AVANTI) ---
-    function startWarmupPhase(label) {
+    let currentWarmupTipo = 'warmup';
+    function startWarmupPhase(label, tipo = 'warmup') {
       currentPhase = 'warmup';
       currentWarmupLabel = label;
+      currentWarmupTipo = tipo;
       stopAllTimers();
       mainSeconds = 0;
       document.getElementById('rec-box').style.display = 'none';
@@ -1117,7 +1119,7 @@
       };
       btnNext.onclick = () => {
         // salva durata warmup
-        sessionDetails.push({ tipo: 'warmup', nome: currentWarmupLabel, durata: mainSeconds });
+        sessionDetails.push({ tipo: currentWarmupTipo, nome: currentWarmupLabel, durata: mainSeconds });
         stopAllTimers();
         nextPhase();
       };
@@ -1450,29 +1452,61 @@
 
       if (!r.dettagli || !r.dettagli.length) { body.innerHTML = '<div style="color:var(--muted);font-size:.7rem;text-align:center">Nessun dettaglio disponibile</div>'; openModal('modal-session-detail'); return; }
 
-      // raggruppa: warmup in cima, esercizi in mezzo
-      const warmups = r.dettagli.filter(d => d.tipo === 'warmup');
-      const esercizi = r.dettagli.filter(d => !d.tipo || d.tipo === 'esercizio');
+      const fmtDurata = s => {
+        const m = Math.floor(s / 60), sec = s % 60;
+        return m > 0 ? (sec > 0 ? `${m} min ${sec}s` : `${m} min`) : `${sec}s`;
+      };
+      const fmtTempoEx = s => {
+        const m = Math.floor(s / 60), sec = s % 60;
+        return m > 0 ? (sec > 0 ? `${m}m ${sec}s` : `${m}m`) : `${sec}s`;
+      };
+
+      const warmups    = r.dettagli.filter(d => d.tipo === 'warmup');
+      const esercizi   = r.dettagli.filter(d => !d.tipo || d.tipo === 'esercizio');
       const stretching = r.dettagli.filter(d => d.tipo === 'stretching');
 
-      const section = (titolo, rows) => {
+      // sezione warmup/stretching
+      const sectionWarmup = (titolo, rows) => {
         if (!rows.length) return '';
         let h = `<div class="modal-subtitle" style="margin-bottom:6px">${titolo}</div>`;
         rows.forEach(d => {
-          if (d.tipo === 'warmup' || d.tipo === 'stretching') {
-            const min = Math.floor(d.durata/60), sec = d.durata%60;
-            h += `<div class="session-phase-row"><span class="session-phase-label">${d.nome}</span><span class="session-phase-val">${min>0?min+'m ':''  }${sec}s</span></div>`;
-          } else {
-            h += `<div class="session-phase-row"><span class="session-phase-label">${d.nome} · Serie ${d.serie}</span><span class="session-phase-val">${d.esecuzione}s esec. · ${d.recupero}s rec.</span></div>`;
-          }
+          h += `<div class="session-phase-row">
+            <span class="session-phase-label">${d.nome}</span>
+            <span class="session-phase-val">${fmtDurata(d.durata)}</span>
+          </div>`;
+        });
+        return h;
+      };
+
+      // sezione esercizi: raggruppa per nome, mostra totale serie + tempi
+      const sectionEsercizi = (titolo, rows) => {
+        if (!rows.length) return '';
+        // raggruppa per nome esercizio
+        const gruppi = [];
+        const map = {};
+        rows.forEach(d => {
+          if (!map[d.nome]) { map[d.nome] = []; gruppi.push(d.nome); }
+          map[d.nome].push(d);
+        });
+        let h = `<div class="modal-subtitle" style="margin-bottom:6px">${titolo}</div>`;
+        gruppi.forEach(nome => {
+          const serie = map[nome];
+          h += `<div class="session-phase-row" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:8px">
+            <span class="session-phase-label" style="font-weight:600;color:var(--text)">${nome} <span style="font-weight:400;color:var(--muted)">(${serie.length} ser.)</span></span>`;
+          serie.forEach(s => {
+            h += `<span class="session-phase-val" style="font-size:.6rem;font-weight:400">
+              Serie ${s.serie}: ${fmtTempoEx(s.esecuzione)} esec. · ${fmtDurata(s.recupero)} rec.
+            </span>`;
+          });
+          h += `</div>`;
         });
         return h;
       };
 
       body.innerHTML =
-        section('🔥 Riscaldamento', warmups) +
-        section('💪 Esercizi', esercizi) +
-        section('🧘 Stretching', stretching) +
+        sectionWarmup('🔥 Riscaldamento', warmups) +
+        sectionEsercizi('💪 Esercizi', esercizi) +
+        sectionWarmup('🧘 Stretching', stretching) +
         (fbEmoji ? `<div class="registro-fb-saved" style="margin-top:14px">${fbEmoji} <span>${r.note||''}</span></div>` : '');
 
       openModal('modal-session-detail');
