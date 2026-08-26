@@ -241,10 +241,14 @@
         <div class="app-sub">il geco zen · gym</div>
       </a>
     </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
+    <button class="btn-back-hub" id="btn-header-export" style="visibility:hidden" aria-label="Esporta CSV">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>CSV</span>
     </button>
   </header>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema" style="position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:20px;z-index:151">
+    <div class="knob" id="theme-knob">☀️</div>
+  </button>
 
   <!-- ══ SCREEN: SCHEDE ══ -->
   <div class="screen active" id="screen-schede">
@@ -341,7 +345,6 @@
     </div>
     <div class="cal-grid" id="cal-grid"></div>
     <div id="registro-selected-list"></div>
-    <button class="btn-outline" style="width:100%;margin-top:6px" id="btn-open-export">↓ Esporta CSV</button>
   </div>
 
   <!-- TAB BAR -->
@@ -520,6 +523,9 @@
       { btn: document.getElementById('tab-avvia'),    screen: 'screen-avvia'   },
       { btn: document.getElementById('tab-registro'), screen: 'screen-registro'},
     ];
+    const btnHeaderExport = document.getElementById('btn-header-export');
+    btnHeaderExport.addEventListener('click', () => openModal('modal-export'));
+
     function switchTab(id) {
       TABS.forEach(t => {
         t.btn.classList.remove('tab-active');
@@ -531,6 +537,7 @@
       found.btn.classList.add('tab-active');
       const s = document.getElementById(id);
       s.style.display = 'flex'; s.classList.add('active');
+      btnHeaderExport.style.visibility = id === 'screen-registro' ? 'visible' : 'hidden';
       if (id === 'screen-registro') renderCalendar();
       if (id === 'screen-avvia') populateAvviaSelects();
     }
@@ -1211,7 +1218,6 @@
     }
 
     // ── EXPORT ──
-    document.getElementById('btn-open-export').addEventListener('click', () => openModal('modal-export'));
     document.getElementById('btn-close-export').addEventListener('click', () => closeModal('modal-export'));
     function exportRegistro(list) {
       let csv = 'Data,Allenamento,Scheda,Durata (min),Feedback,Note\n';
