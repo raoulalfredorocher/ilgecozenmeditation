@@ -232,7 +232,7 @@
   <header>
     <a class="btn-back-hub" href="index.html" aria-label="Torna al Qui e Ora">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>QUI E ORA</span>
+      <span>TAO</span>
     </a>
     <button class="btn-back-hub" id="btn-header-export" style="visibility:hidden" aria-label="Esporta CSV">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -570,8 +570,11 @@
         const all = allenamentiList.find(a => a._docId === currentAllDocId);
         if (all && document.getElementById('modal-allenamento-detail').classList.contains('open'))
           renderSchedeInModal(all);
-        if (all && currentSchedaIdx !== null && document.getElementById('modal-scheda-detail').classList.contains('open'))
+        if (all && currentSchedaIdx !== null && document.getElementById('modal-scheda-detail').classList.contains('open')) {
           renderEserciziInModal(all, currentSchedaIdx);
+          // aggiorna conteggio anche nel modal padre se è visibile
+          renderSchedeInModal(all);
+        }
       }
     });
     subscribeRegistro(items => {
@@ -661,7 +664,7 @@
       const list = document.getElementById('modal-schede-list');
       list.innerHTML = '';
       (all.schede || []).forEach((sch, idx) => {
-        const exCount = sch.esercizi ? sch.esercizi.length : 0;
+        const exCount = (all.schede[idx]?.esercizi || []).length;
         const div = document.createElement('div');
         div.className = 'item-row';
         div.innerHTML = `
@@ -947,8 +950,8 @@
       // costruisci coda fasi
       phaseQueue = [];
       if (document.getElementById('tog-risc').checked)  phaseQueue.push('risc');
-      if (document.getElementById('tog-str').checked)   phaseQueue.push('str');
       phaseQueue.push('esercizio');
+      if (document.getElementById('tog-str').checked)   phaseQueue.push('str');
 
       document.getElementById('avvia-setup').style.display = 'none';
       document.getElementById('avvia-timer').style.display = 'block';
@@ -959,8 +962,7 @@
 
     function nextPhase() {
       if (phaseQueue.length === 0) {
-        // arrivati agli esercizi
-        loadEsercizio();
+        endSessioneCompleta();
         return;
       }
       const phase = phaseQueue.shift();
@@ -1009,42 +1011,79 @@
     }
 
     // --- Esercizi ---
+    let exStartTime = null, exElapsed = 0;
+    let sessionDetails = []; // accumula { nome, serie, esecuzione, recupero }
+
     function loadEsercizio() {
       if (sessIdx >= sessExercises.length) {
-        // COMPLETATO → salva e torna
-        endSessioneCompleta();
+        // tutti gli esercizi finiti → vai alle fasi restanti (stretching o fine)
+        nextPhase();
         return;
       }
       currentPhase = 'esercizio';
       stopAllTimers();
       mainSeconds = 0;
+      exStartTime = null; exElapsed = 0;
       const ex = sessExercises[sessIdx];
       document.getElementById('rec-box').style.display = 'none';
       setRingProgress(0);
-      const exLabel = ex.nome;
-      const exMeta  = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}`;
+      const hasTempo = ex.tempo && ex.tempo > 0;
+      const exMeta  = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${hasTempo ? ' · '+ex.tempo+'s' : ''}`;
       const serieLabel = `Serie ${sessSerie + 1} / ${ex.serie}`;
-      setClockUI('00:00', 'Esercizio', exLabel, exMeta, serieLabel);
+      // cerchio: nome esercizio inside, meta+serie sopra
+      document.getElementById('timer-ex-label').textContent = '';
+      document.getElementById('timer-ex-meta').textContent = exMeta;
+      document.getElementById('timer-serie-label').textContent = serieLabel;
+      document.getElementById('clock-phase').textContent = ex.nome;
+      document.getElementById('timer-phase-label').textContent = 'Esercizio';
+      document.getElementById('clock-time').textContent = hasTempo ? fmtTime(ex.tempo) : '00:00';
       showBtns({ start: true });
+      btnStart.textContent = 'Start';
 
       btnStart.onclick = () => {
+        exStartTime = Date.now();
         showBtns({ stop: true });
-        mainTimer = setInterval(() => {
-          mainSeconds++;
-          document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
-          const maxSec = ex.tempo || 120;
-          setRingProgress(mainSeconds / maxSec);
-        }, 1000);
+        if (hasTempo) {
+          // countdown dal tempo dell'esercizio
+          mainSeconds = ex.tempo;
+          setRingCountdown(1);
+          mainTimer = setInterval(() => {
+            mainSeconds--;
+            document.getElementById('clock-time').textContent = fmtTime(Math.max(0, mainSeconds));
+            setRingCountdown(mainSeconds / ex.tempo);
+            if (mainSeconds <= 0) {
+              clearInterval(mainTimer); mainTimer = null;
+              suonaCampanello();
+              exElapsed = ex.tempo;
+              advanceSerie(ex);
+            }
+          }, 1000);
+        } else {
+          // conta in avanti (rep libere)
+          mainSeconds = 0;
+          setRingProgress(0);
+          mainTimer = setInterval(() => {
+            mainSeconds++;
+            document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+            setRingProgress((mainSeconds % 60) / 60);
+          }, 1000);
+        }
       };
 
       btnStop.onclick = () => {
         if (!mainTimer) return;
         clearInterval(mainTimer); mainTimer = null;
-        // avanza serie/esercizio
-        sessSerie++;
-        if (sessSerie >= ex.serie) { sessSerie = 0; sessIdx++; }
-        startRecupero(ex);
+        exElapsed = exStartTime ? Math.round((Date.now() - exStartTime) / 1000) : mainSeconds;
+        advanceSerie(ex);
       };
+    }
+
+    function advanceSerie(ex) {
+      sessSerie++;
+      const recSec = parseInt(ex.recupero) || 90;
+      sessionDetails.push({ nome: ex.nome, serie: sessSerie, esecuzione: exElapsed, recupero: recSec });
+      if (sessSerie >= ex.serie) { sessSerie = 0; sessIdx++; }
+      startRecupero(ex);
     }
 
     function startRecupero(ex) {
@@ -1052,26 +1091,34 @@
       stopAllTimers();
       const recSec = parseInt(ex.recupero) || 90;
       recSeconds = recSec;
-      document.getElementById('rec-timer').textContent = fmtTime(recSeconds);
-      document.getElementById('rec-box').style.display = 'flex';
-      setClockUI(fmtTime(mainSeconds), 'Recupero', ex.nome,
-        sessSerie === 0 ? (sessIdx < sessExercises.length ? 'Prossimo: '+sessExercises[sessIdx].nome : 'Ultimo esercizio!') : `Serie ${sessSerie + 1} / ${ex.serie}`,
-        '');
-      // ring conta al contrario sul recupero
+
+      // cerchio: countdown recupero
+      document.getElementById('clock-phase').textContent = fmtTime(recSeconds);
+      document.getElementById('clock-time').textContent = '';
+      document.getElementById('timer-phase-label').textContent = 'Recupero';
+      const nextInfo = sessSerie === 0
+        ? (sessIdx < sessExercises.length ? 'Prossimo: ' + sessExercises[sessIdx].nome : 'Ultimo esercizio!')
+        : `Serie ${sessSerie + 1} / ${ex.serie}`;
+      document.getElementById('timer-ex-meta').textContent = nextInfo;
+      document.getElementById('timer-serie-label').textContent = '';
+      document.getElementById('timer-ex-label').textContent = '';
+      document.getElementById('rec-box').style.display = 'none';
       setRingCountdown(1);
 
       recTimer = setInterval(() => {
         recSeconds--;
-        document.getElementById('rec-timer').textContent = fmtTime(Math.max(0, recSeconds));
-        setRingCountdown(recSeconds / recSec);
+        const t = Math.max(0, recSeconds);
+        document.getElementById('clock-phase').textContent = fmtTime(t);
+        setRingCountdown(t / recSec);
         if (recSeconds <= 0) {
           clearInterval(recTimer); recTimer = null;
           suonaCampanello();
+          btnStart.textContent = 'Prossimo esercizio';
           showBtns({ start: true });
         }
       }, 1000);
 
-      // Start disponibile subito per saltare il recupero
+      btnStart.textContent = 'Prossimo esercizio';
       showBtns({ start: true });
       btnStart.onclick = () => {
         stopAllTimers();
@@ -1093,7 +1140,9 @@
         allenamentoNome: all?.nome || '—',
         schedaNome: sch?.nome || '—',
         durata, feedback: null, note: '',
+        dettagli: sessionDetails,
       });
+      sessionDetails = [];
       resetTimerUI();
       switchTab('screen-registro');
     }
