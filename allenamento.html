@@ -90,6 +90,12 @@
       border-radius:12px; color:var(--text); font-family:inherit; font-size:.82rem;
       padding:10px 14px; width:100%; outline:none; transition:border-color .2s; }
     input:focus, textarea:focus, select:focus { border-color:var(--primary); }
+    input.field-error, select.field-error { border-color:var(--red) !important; animation: shake .3s; }
+    @keyframes shake {
+      0%,100% { transform:translateX(0); }
+      25% { transform:translateX(-5px); }
+      75% { transform:translateX(5px); }
+    }
     textarea { resize:vertical; min-height:70px; }
     label { font-size:.58rem; letter-spacing:.14em; color:var(--muted); text-transform:uppercase;
       display:block; margin-bottom:4px; }
@@ -829,8 +835,25 @@
       document.getElementById('btn-new-esercizio').style.display = 'block';
     });
     document.getElementById('btn-save-new-ex').addEventListener('click', () => {
+      // --- Validazione con evidenziazione rosso ---
+      const campiObbligatori = [
+        { id: 'new-ex-nome',  check: v => v.trim() !== '' },
+        { id: 'new-ex-serie', check: v => parseInt(v) > 0 },
+        { id: 'new-ex-rep',   check: v => parseInt(v) > 0 },
+      ];
+      let hasError = false;
+      campiObbligatori.forEach(({ id, check }) => {
+        const el = document.getElementById(id);
+        el.classList.remove('field-error');
+        if (!check(el.value)) {
+          el.classList.add('field-error');
+          // rimuovi il rosso dopo 2s o al prossimo input
+          el.addEventListener('input', () => el.classList.remove('field-error'), { once: true });
+          hasError = true;
+        }
+      });
+      if (hasError) return;
       const nome = document.getElementById('new-ex-nome').value.trim();
-      if (!nome) return;
       const all = allenamentiList.find(a => a._docId === currentAllDocId);
       const sch = all.schede[currentSchedaIdx];
       if (!sch.esercizi) sch.esercizi = [];
