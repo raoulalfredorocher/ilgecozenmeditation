@@ -344,7 +344,7 @@
       <div class="form-group"><label>Nome</label><input id="new-all-nome" placeholder="es. Upper Body A"/></div>
       <div class="form-row">
         <div class="form-group"><label>Obiettivo</label><input id="new-all-obiettivo" placeholder="es. Forza"/></div>
-        <div class="form-group"><label>Durata (min)</label><input id="new-all-durata" type="number" placeholder="60"/></div>
+        <div class="form-group"><label>Durata (settimane)</label><input id="new-all-durata" type="number" placeholder="12"/></div>
       </div>
       <div class="modal-actions">
         <button class="btn-outline" id="btn-cancel-new-all">Annulla</button>
@@ -508,7 +508,7 @@
           <div class="scheda-item-icon">${icons[Math.abs(id.charCodeAt(1)||0) % icons.length]}</div>
           <div class="scheda-item-info">
             <div class="scheda-item-name">${all.nome}</div>
-            <div class="scheda-item-meta">${all.obiettivo || '—'} · ${schedeCount} schede · ${all.durata||'?'} min</div>
+            <div class="scheda-item-meta">${all.obiettivo || '—'} · ${schedeCount} schede · ${all.settimane||'?'} sett.</div>
           </div>
           <div class="scheda-item-chev">›</div>`;
         div.addEventListener('click', () => openAllenamentoDetail(id));
@@ -522,10 +522,11 @@
     document.getElementById('btn-save-new-all').addEventListener('click', async () => {
       const nome = document.getElementById('new-all-nome').value.trim();
       if (!nome) return;
+      const durataVal = document.getElementById('new-all-durata').value;
       await push(ref(db, 'allenamenti'), {
-        nome, obiettivo: document.getElementById('new-all-obiettivo').value.trim(),
-        durata: document.getElementById('new-all-durata').value || 60,
-        schede: {}
+        nome,
+        obiettivo: document.getElementById('new-all-obiettivo').value.trim(),
+        settimane: durataVal ? parseInt(durataVal) : 12,
       });
       document.getElementById('new-all-nome').value = '';
       document.getElementById('new-all-obiettivo').value = '';
@@ -580,7 +581,7 @@
     document.getElementById('btn-save-new-scheda').addEventListener('click', async () => {
       const nome = document.getElementById('new-scheda-nome').value.trim();
       if (!nome) return;
-      await push(ref(db, `allenamenti/${currentAllId}/schede`), { nome, esercizi: {} });
+      await push(ref(db, `allenamenti/${currentAllId}/schede`), { nome });
       document.getElementById('new-scheda-nome').value = '';
       closeModal('modal-new-scheda');
       openModal('modal-allenamento-detail');
