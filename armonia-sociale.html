@@ -114,38 +114,75 @@
     }
     html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
 
-    /* ── TAB BAR ── */
+    /* ── TAB BAR — stile meditazione ── */
     .tab-bar {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      z-index: 20;
-      background: var(--bg);
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--card);
       border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
       display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 200;
+      overflow: visible;
       max-width: 420px;
       margin: 0 auto;
-      padding: 0 0 calc(env(safe-area-inset-bottom, 0px));
     }
     .tab-btn {
       flex: 1;
       background: none;
       border: none;
-      cursor: pointer;
-      padding: 10px 0 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
       color: var(--muted);
-      font-family: inherit;
-      font-size: .52rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
       transition: color .2s;
+      padding: 8px 4px;
+      height: 100%;
+      font-family: inherit;
+      font-size: .44rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
       -webkit-tap-highlight-color: transparent;
     }
     .tab-btn.active { color: var(--primary); }
-    .tab-btn svg { width: 22px; height: 22px; }
+    .tab-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1; }
+
+    /* Pulsante centrale sollevato */
+    .tab-center {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 8px;
+      gap: 4px;
+      overflow: visible;
+      position: relative;
+    }
+    .tab-center-circle {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transform: translateY(-24px);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(245,169,188,.6);
+      transition: background .2s, transform .12s;
+    }
+    .tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
+    .tab-center-gecko {
+      width: 38px; height: 38px;
+      object-fit: contain;
+    }
+    .tab-center .tab-label { margin-top: -20px; }
 
     /* ── SCREENS ── */
     .screen { display: none; width: 100%; padding: 0 20px; }
@@ -616,16 +653,21 @@
   <!-- ── BOTTOM TAB BAR ── -->
   <nav class="tab-bar" role="tablist">
     <button class="tab-btn active" id="tab-persone" role="tab" aria-selected="true" aria-controls="screen-persone">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Persone</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="tab-label">persone</span>
     </button>
-    <button class="tab-btn" id="tab-chat" role="tab" aria-selected="false" aria-controls="screen-chat">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span>Chat</span>
+
+    <!-- CENTRALE: logo geco -->
+    <button class="tab-btn tab-center" id="tab-chat" role="tab" aria-selected="false" aria-controls="screen-chat">
+      <div class="tab-center-circle">
+        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
+      </div>
+      <span class="tab-label">chat</span>
     </button>
+
     <button class="tab-btn" id="tab-besty" role="tab" aria-selected="false" aria-controls="screen-besty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <span>Besty</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span class="tab-label">besty</span>
     </button>
   </nav>
 
@@ -748,6 +790,12 @@
     let unsubNotes = {};    // docId → unsub
     let notesCache = {};    // docId → array note
 
+    // Dichiarate qui per essere accessibili dal subscriber CRM
+    const detailOverlay = document.getElementById('modal-detail-overlay');
+    const detailBody    = document.getElementById('modal-detail-body');
+    const detailName    = document.getElementById('modal-detail-name');
+    let currentDetailId = null;
+
     /* ─────────────────────── THEME ─────────────────────── */
     const htmlEl = document.documentElement;
     const themBtn = document.getElementById('theme-toggle');
@@ -860,6 +908,11 @@
     subscribeCRM(list => {
       contacts = list;
       renderContacts(document.getElementById('search-input').value);
+      // Se il modal dettaglio è aperto, aggiorna il contatto visualizzato
+      if (currentDetailId && detailOverlay.classList.contains('open')) {
+        const updated = contacts.find(x => x._docId === currentDetailId);
+        if (updated) renderDetail(updated);
+      }
     });
 
     /* ─────────────────────── SEARCH ─────────────────────── */
@@ -959,11 +1012,6 @@
     });
 
     /* ─────────────────────── DETAIL MODAL ─────────────────────── */
-    const detailOverlay = document.getElementById('modal-detail-overlay');
-    const detailBody    = document.getElementById('modal-detail-body');
-    const detailName    = document.getElementById('modal-detail-name');
-    let currentDetailId = null;
-
     function openDetail(docId) {
       currentDetailId = docId;
       const c = contacts.find(x => x._docId === docId);
@@ -1047,11 +1095,10 @@
       detailBody.innerHTML = html;
 
       // bind actions
-      detailBody.querySelector('.btn-star-toggle').addEventListener('click', async btn => {
-        const isBesty = btn.currentTarget.dataset.besty === 'true';
+      detailBody.querySelector('.btn-star-toggle').addEventListener('click', async () => {
+        const isBesty = !!c.besty;
         await updateContactDoc(c._docId, { besty: !isBesty });
-        const updated = contacts.find(x => x._docId === c._docId);
-        if (updated) renderDetail(updated);
+        // renderDetail viene rieseguito dal subscriber quando Firestore aggiorna
       });
 
       detailBody.querySelector('.btn-edit-action').addEventListener('click', () => {

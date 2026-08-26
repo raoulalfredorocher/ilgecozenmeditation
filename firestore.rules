@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /meditation_sessions/{document=**} {
+      allow read, write: if true;
+    }
+    match /bucket_list/{document=**} {
+      allow read, write: if true;
+    }
+    match /recipes/{document=**} {
+      allow read, write: if true;
+    }
+    match /food_diary/{document=**} {
+      allow read, write: if true;
+    }
+    match /diet/{document=**} {
+      allow read, write: if true;
+    }
+    match /saved_diets/{document=**} {
+      allow read, write: if true;
+    }
+    match /allenamenti_piani/{document=**} {
+      allow read, write: if true;
+    }
+    match /allenamenti_registro/{document=**} {
+      allow read, write: if true;
+    }
+    // Personal CRM — contatti e note (subcollection)
+    match /crm_contacts/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
