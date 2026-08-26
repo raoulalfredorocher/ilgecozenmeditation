@@ -238,6 +238,41 @@
     .registro-fb-saved { font-size:.85rem; color:var(--text); margin-top:10px; display:flex; align-items:center; gap:8px; border-top:1px solid var(--border); padding-top:10px; }
     .registro-fb-saved span { font-size:.7rem; color:var(--muted); font-style:italic; }
     .feedback-section { margin-top:8px; }
+
+    /* ── Celebrazione fine allenamento ── */
+    #celebration-overlay {
+      position:fixed; inset:0; z-index:900; display:none;
+      flex-direction:column; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
+    }
+    #celebration-overlay.active { display:flex; }
+    .cele-gecko { font-size:5rem; animation: gecoBounce 1s ease-in-out infinite alternate; }
+    @keyframes gecoBounce {
+      from { transform: translateY(0) rotate(-8deg) scale(1); }
+      to   { transform: translateY(-18px) rotate(8deg) scale(1.1); }
+    }
+    .cele-title { font-size:1.4rem; font-weight:800; color:#fff; letter-spacing:.12em;
+      margin:18px 0 6px; text-align:center; text-transform:uppercase; }
+    .cele-sub { font-size:.72rem; color:rgba(255,255,255,.7); letter-spacing:.18em;
+      text-transform:uppercase; text-align:center; margin-bottom:24px; }
+    .cele-sparks { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+    .spark { position:absolute; width:8px; height:8px; border-radius:50%;
+      animation: sparkFly 1.4s ease-out forwards; opacity:0; }
+    @keyframes sparkFly {
+      0%   { transform:translate(0,0) scale(1); opacity:1; }
+      100% { transform:translate(var(--dx),var(--dy)) scale(0); opacity:0; }
+    }
+    .cele-btn { background:var(--primary); color:#fff; border:none; border-radius:28px;
+      font-family:inherit; font-size:.82rem; font-weight:600; letter-spacing:.12em;
+      padding:14px 36px; cursor:pointer; margin-top:8px; }
+
+    /* ── Modal dettaglio sessione ── */
+    #modal-session-detail .registro-dettagli { border-top:none; padding-top:0; }
+    .session-phase-row { display:flex; justify-content:space-between; padding:6px 0;
+      border-bottom:1px solid var(--border); font-size:.72rem; }
+    .session-phase-row:last-child { border-bottom:none; }
+    .session-phase-label { color:var(--muted); letter-spacing:.06em; }
+    .session-phase-val { color:var(--text); font-weight:600; }
   </style>
 </head>
 <body>
@@ -313,6 +348,14 @@
     </div>
 
     <!-- STEP 2: timer schermata (riscaldamento / stretching / esercizi) -->
+    <div id="celebration-overlay">
+      <div class="cele-sparks" id="cele-sparks"></div>
+      <div class="cele-gecko">🦎</div>
+      <div class="cele-title">Allenamento completato!</div>
+      <div class="cele-sub" id="cele-sub">il geco zen · ottimo lavoro</div>
+      <button class="cele-btn" id="btn-cele-ok">Vai al registro →</button>
+    </div>
+
     <div id="avvia-timer" style="width:100%;display:none">
       <div class="timer-screen">
         <div class="timer-phase-label" id="timer-phase-label">—</div>
@@ -479,6 +522,19 @@
       <div class="modal-actions">
         <button class="btn-outline" id="btn-cancel-new-all">Annulla</button>
         <button class="btn-primary" id="btn-save-new-all">Crea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: dettaglio sessione -->
+  <div class="modal-overlay" id="modal-session-detail">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="msd-title">Dettaglio sessione</div>
+      <div class="modal-subtitle" id="msd-meta" style="font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-top:-8px;margin-bottom:12px;"></div>
+      <div id="msd-body"></div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="btn-outline" style="flex:1" id="btn-close-session-detail">Chiudi</button>
       </div>
     </div>
   </div>
@@ -939,6 +995,7 @@
     let mainTimer = null, mainSeconds = 0;
     let recTimer  = null, recSeconds  = 0;
     let sessionStartTime = null;
+    let currentWarmupLabel = '';
     // fasi: 'risc' | 'str' | 'esercizio' | 'recupero'
     let currentPhase = null;
     let phaseQueue = []; // sequenza di fasi da eseguire
@@ -1020,6 +1077,7 @@
     // --- Riscaldamento / Stretching (timer che conta IN AVANTI) ---
     function startWarmupPhase(label) {
       currentPhase = 'warmup';
+      currentWarmupLabel = label;
       stopAllTimers();
       mainSeconds = 0;
       document.getElementById('rec-box').style.display = 'none';
@@ -1058,6 +1116,8 @@
         };
       };
       btnNext.onclick = () => {
+        // salva durata warmup
+        sessionDetails.push({ tipo: 'warmup', nome: currentWarmupLabel, durata: mainSeconds });
         stopAllTimers();
         nextPhase();
       };
@@ -1185,6 +1245,26 @@
       };
     }
 
+    // --- Celebrazione ---
+    function showCelebration(durata) {
+      const overlay = document.getElementById('celebration-overlay');
+      document.getElementById('cele-sub').textContent = `${durata} min · il geco zen · ottimo lavoro!`;
+      overlay.classList.add('active');
+      // sparks
+      const container = document.getElementById('cele-sparks');
+      container.innerHTML = '';
+      const colors = ['#6cbf8a','#f5c842','#5aba7a','#fff','#e05060','#80a880'];
+      for (let i = 0; i < 40; i++) {
+        const s = document.createElement('div');
+        s.className = 'spark';
+        const cx = 40 + Math.random() * 20, cy = 40 + Math.random() * 20;
+        const dx = (Math.random() - .5) * 300, dy = (Math.random() - .8) * 400;
+        s.style.cssText = `left:${cx}%;top:${cy}%;background:${colors[i%colors.length]};
+          --dx:${dx}px;--dy:${dy}px;animation-delay:${Math.random()*.6}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px`;
+        container.appendChild(s);
+      }
+    }
+
     // --- Fine sessione COMPLETATA (salva nel registro) ---
     function endSessioneCompleta() {
       stopAllTimers();
@@ -1201,9 +1281,14 @@
         dettagli: sessionDetails,
       });
       sessionDetails = [];
+      showCelebration(durata);
+    }
+
+    document.getElementById('btn-cele-ok').addEventListener('click', () => {
+      document.getElementById('celebration-overlay').classList.remove('active');
       resetTimerUI();
       switchTab('screen-registro');
-    }
+    });
 
     // --- Abbandona (NON salva) ---
     document.getElementById('btn-abbandona').addEventListener('click', () => {
@@ -1293,19 +1378,7 @@
         card.className = 'registro-detail-card';
         const fbPos = r.feedback==='pos', fbNeu = r.feedback==='neu', fbNeg = r.feedback==='neg';
         const hasFb = fbPos || fbNeu || fbNeg;
-
-        // blocco dettagli esercizi
-        let dettagliHTML = '';
-        if (r.dettagli && r.dettagli.length) {
-          dettagliHTML = `<div class="registro-dettagli">`;
-          r.dettagli.forEach(d => {
-            dettagliHTML += `<div class="registro-dettaglio-row">
-              <span class="reg-det-nome">${d.nome}</span>
-              <span class="reg-det-info">Serie ${d.serie} · ${d.esecuzione}s esec. · ${d.recupero}s rec.</span>
-            </div>`;
-          });
-          dettagliHTML += `</div>`;
-        }
+        const SVG_SEARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
 
         card.innerHTML = `
           <div class="registro-detail-header">
@@ -1313,20 +1386,23 @@
               <div class="registro-detail-name">${r.allenamentoNome}</div>
               <div class="registro-detail-meta">${r.schedaNome} · ${r.durata||'?'} min</div>
             </div>
-            <button class="icon-btn del reg-del-btn">${SVG_TRASH}</button>
+            <div style="display:flex;gap:6px;align-items:center">
+              ${r.dettagli && r.dettagli.length ? `<button class="icon-btn reg-detail-btn" title="Dettagli">${SVG_SEARCH}</button>` : ''}
+              <button class="icon-btn del reg-del-btn">${SVG_TRASH}</button>
+            </div>
           </div>
-          ${dettagliHTML}
           ${hasFb
             ? `<div class="registro-fb-saved">${fbPos?'😊':fbNeu?'😐':'😞'} <span>${r.note||''}</span></div>`
             : `<div class="feedback-section">
                 <div class="feedback-row">
-                  <button class="feedback-btn" data-fb="pos">😊</button>
-                  <button class="feedback-btn" data-fb="neu">😐</button>
-                  <button class="feedback-btn" data-fb="neg">😞</button>
+                  <button class="feedback-btn ${r._fbSel==='pos'?'active':''}" data-fb="pos">😊</button>
+                  <button class="feedback-btn ${r._fbSel==='neu'?'active':''}" data-fb="neu">😐</button>
+                  <button class="feedback-btn ${r._fbSel==='neg'?'active':''}" data-fb="neg">😞</button>
                 </div>
                 <div class="form-group" style="margin-bottom:0;margin-top:8px">
                   <textarea id="nota-${r._docId}" placeholder="Note...">${r.note||''}</textarea>
                 </div>
+                <button class="btn-primary" style="width:100%;margin-top:10px" data-send-fb="${r._docId}">Invia feedback</button>
               </div>`
           }`;
 
@@ -1335,16 +1411,71 @@
           await deleteRegistroDoc(r._docId);
         });
 
+        // lente → modal dettaglio
+        const detBtn = card.querySelector('.reg-detail-btn');
+        if (detBtn) {
+          detBtn.addEventListener('click', () => openSessionDetail(r));
+        }
+
         if (!hasFb) {
+          // evidenzia faccina selezionata senza salvare
+          let selectedFb = null;
           card.querySelectorAll('.feedback-btn').forEach(b => {
-            b.addEventListener('click', async () => {
-              const nota = document.getElementById(`nota-${r._docId}`)?.value || '';
-              await updateRegistroDoc(r._docId, { feedback: b.dataset.fb, note: nota });
+            b.addEventListener('click', () => {
+              card.querySelectorAll('.feedback-btn').forEach(x => x.classList.remove('active'));
+              b.classList.add('active');
+              selectedFb = b.dataset.fb;
             });
+          });
+          // pulsante invia
+          card.querySelector(`[data-send-fb="${r._docId}"]`).addEventListener('click', async () => {
+            const nota = document.getElementById(`nota-${r._docId}`)?.value || '';
+            if (!selectedFb) { alert('Seleziona una faccina prima di inviare'); return; }
+            await updateRegistroDoc(r._docId, { feedback: selectedFb, note: nota });
           });
         }
         container.appendChild(card);
       });
+    }
+
+    // ── Modal dettaglio sessione ──
+    document.getElementById('btn-close-session-detail').addEventListener('click', () => closeModal('modal-session-detail'));
+
+    function openSessionDetail(r) {
+      document.getElementById('msd-title').textContent = r.allenamentoNome;
+      const fbEmoji = r.feedback==='pos'?'😊':r.feedback==='neu'?'😐':r.feedback==='neg'?'😞':'';
+      document.getElementById('msd-meta').textContent = `${r.schedaNome} · ${r.durata||'?'} min · ${r.data}`;
+      const body = document.getElementById('msd-body');
+      body.innerHTML = '';
+
+      if (!r.dettagli || !r.dettagli.length) { body.innerHTML = '<div style="color:var(--muted);font-size:.7rem;text-align:center">Nessun dettaglio disponibile</div>'; openModal('modal-session-detail'); return; }
+
+      // raggruppa: warmup in cima, esercizi in mezzo
+      const warmups = r.dettagli.filter(d => d.tipo === 'warmup');
+      const esercizi = r.dettagli.filter(d => !d.tipo || d.tipo === 'esercizio');
+      const stretching = r.dettagli.filter(d => d.tipo === 'stretching');
+
+      const section = (titolo, rows) => {
+        if (!rows.length) return '';
+        let h = `<div class="modal-subtitle" style="margin-bottom:6px">${titolo}</div>`;
+        rows.forEach(d => {
+          if (d.tipo === 'warmup' || d.tipo === 'stretching') {
+            const min = Math.floor(d.durata/60), sec = d.durata%60;
+            h += `<div class="session-phase-row"><span class="session-phase-label">${d.nome}</span><span class="session-phase-val">${min>0?min+'m ':''  }${sec}s</span></div>`;
+          } else {
+            h += `<div class="session-phase-row"><span class="session-phase-label">${d.nome} · Serie ${d.serie}</span><span class="session-phase-val">${d.esecuzione}s esec. · ${d.recupero}s rec.</span></div>`;
+          }
+        });
+        return h;
+      };
+
+      body.innerHTML =
+        section('🔥 Riscaldamento', warmups) +
+        section('💪 Esercizi', esercizi) +
+        section('🧘 Stretching', stretching) +
+        (fbEmoji ? `<div class="registro-fb-saved" style="margin-top:14px">${fbEmoji} <span>${r.note||''}</span></div>` : '');
+
+      openModal('modal-session-detail');
     }
 
     // ── EXPORT ──
