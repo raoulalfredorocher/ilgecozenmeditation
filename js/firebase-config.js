@@ -1,4 +1,4 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
 import {
   getFirestore,
   collection,
@@ -11,6 +11,7 @@ import {
   setDoc,
   onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
 
 const firebaseConfig = window.__FIREBASE_CONFIG__ || {
   apiKey: 'INSERISCI_API_KEY',
@@ -25,281 +26,283 @@ const hasValidConfig = Object.values(firebaseConfig).every(
   value => value && !String(value).startsWith('INSERISCI_')
 );
 
-const app = hasValidConfig ? initializeApp(firebaseConfig) : null;
-const db = app ? getFirestore(app) : null;
-const sessionsCollection  = db ? collection(db, 'meditation_sessions') : null;
-const bucketCollection    = db ? collection(db, 'bucket_list')         : null;
+const app = hasValidConfig
+  ? (getApps().length ? getApps()[0] : initializeApp(firebaseConfig))
+  : null;
+const db  = app ? getFirestore(app) : null;
+const auth = app ? getAuth(app) : null;
 
 export function isFirebaseConfigured() {
   return hasValidConfig;
 }
 
+/**
+ * Restituisce la collection root dell'utente corrente.
+ * Struttura: users/{uid}/{collectionName}
+ */
+function userCol(name) {
+  if (!db || !auth?.currentUser) return null;
+  return collection(db, 'users', auth.currentUser.uid, name);
+}
+
+/**
+ * Restituisce un riferimento doc dentro la collection dell'utente.
+ * Struttura: users/{uid}/{collectionName}/{docId}
+ */
+function userDoc(colName, docId) {
+  if (!db || !auth?.currentUser) return null;
+  return doc(db, 'users', auth.currentUser.uid, colName, docId);
+}
+
+// ─── Auth helper (usato internamente) ───────────────────────────────────────
+
+/** Attende che l'auth sia pronto e restituisce l'utente (o null). */
+function waitAuth() {
+  return new Promise(resolve => {
+    if (!auth) { resolve(null); return; }
+    const unsub = onAuthStateChanged(auth, user => { unsub(); resolve(user); });
+  });
+}
+
+// ─── Meditazione ─────────────────────────────────────────────────────────────
+
 export async function loadSessions() {
-  if (!sessionsCollection) return [];
-  const snapshot = await getDocs(query(sessionsCollection, orderBy('ts', 'desc')));
-  return snapshot.docs.map(sessionDoc => ({ id: sessionDoc.id, ...sessionDoc.data() }));
+  const col = userCol('meditation_sessions');
+  if (!col) return [];
+  const snapshot = await getDocs(query(col, orderBy('ts', 'desc')));
+  return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
 export async function saveSessionDoc(data) {
-  if (!sessionsCollection) return;
-  await addDoc(sessionsCollection, {
-    ts: Date.now(),
-    totalMins: data.totalMins,
-    steps: data.steps,
-  });
+  const col = userCol('meditation_sessions');
+  if (!col) return;
+  await addDoc(col, { ts: Date.now(), totalMins: data.totalMins, steps: data.steps });
 }
 
 export async function clearSessions() {
-  if (!sessionsCollection) return;
-  const snapshot = await getDocs(sessionsCollection);
-  await Promise.all(snapshot.docs.map(sessionDoc => deleteDoc(doc(db, 'meditation_sessions', sessionDoc.id))));
+  const col = userCol('meditation_sessions');
+  if (!col) return;
+  const snapshot = await getDocs(col);
+  await Promise.all(snapshot.docs.map(d => deleteDoc(d.ref)));
 }
 
 export async function deleteSessionDoc(sessionId) {
-  if (!sessionsCollection) return;
-  await deleteDoc(doc(db, 'meditation_sessions', sessionId));
+  const ref = userDoc('meditation_sessions', sessionId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-// ─── Bucket List ────────────────────────────────────────────────────────────
+// ─── Bucket List ─────────────────────────────────────────────────────────────
 
-/**
- * Sottoscrive in real-time alla collection bucket_list.
- * Richiama callback(items[]) ad ogni modifica.
- * Ritorna la funzione di unsubscribe.
- */
 export function subscribeBucketList(callback) {
-  if (!bucketCollection) { callback([]); return () => {}; }
-  const q = query(bucketCollection, orderBy('createdAt', 'asc'));
-  return onSnapshot(q, snapshot => {
-    const items = snapshot.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    callback(items);
+  const col = userCol('bucket_list');
+  if (!col) { callback([]); return () => {}; }
+  const q = query(col, orderBy('createdAt', 'asc'));
+  return onSnapshot(q, snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 
-/** Aggiunge un nuovo sogno. */
 export async function addBucketItem(item) {
-  if (!bucketCollection) return null;
-  const docRef = await addDoc(bucketCollection, {
-    id:        item.id,
-    title:     item.title,
-    desc:      item.desc,
-    img:       item.img,
-    done:      item.done,
-    doneDate:  item.doneDate,
-    createdAt: item.id,   // usa il timestamp-id come ordine di creazione
+  const col = userCol('bucket_list');
+  if (!col) return null;
+  const ref = await addDoc(col, {
+    id: item.id, title: item.title, desc: item.desc, img: item.img,
+    done: item.done, doneDate: item.doneDate, createdAt: item.id,
   });
-  return docRef.id;
+  return ref.id;
 }
 
-/** Aggiorna un sogno esistente (per _docId Firestore). */
 export async function updateBucketItem(docId, fields) {
-  if (!bucketCollection) return;
-  await setDoc(doc(db, 'bucket_list', docId), fields, { merge: true });
+  const ref = userDoc('bucket_list', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
 }
 
-/** Elimina un sogno (per _docId Firestore). */
 export async function deleteBucketItem(docId) {
-  if (!bucketCollection) return;
-  await deleteDoc(doc(db, 'bucket_list', docId));
+  const ref = userDoc('bucket_list', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-// ─── Alimentazione ──────────────────────────────────────────────────────────
+// ─── Alimentazione ───────────────────────────────────────────────────────────
 
-const recipesCollection   = db ? collection(db, 'recipes')    : null;
-const diaryCollection     = db ? collection(db, 'food_diary')  : null;
-const dietCollection      = db ? collection(db, 'diet')        : null;
-const savedDietsCollection= db ? collection(db, 'saved_diets') : null;
-
-/* ── Ricette ── */
 export function subscribeRecipes(callback) {
-  if (!recipesCollection) { callback([]); return () => {}; }
-  return onSnapshot(query(recipesCollection, orderBy('createdAt', 'asc')), snap => {
+  const col = userCol('recipes');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 export async function addRecipeDoc(recipe) {
-  if (!recipesCollection) return;
-  await addDoc(recipesCollection, { ...recipe, createdAt: Date.now() });
+  const col = userCol('recipes');
+  if (!col) return;
+  await addDoc(col, { ...recipe, createdAt: Date.now() });
 }
 export async function updateRecipeDoc(docId, fields) {
-  if (!recipesCollection) return;
-  await setDoc(doc(db, 'recipes', docId), fields, { merge: true });
+  const ref = userDoc('recipes', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
 }
 export async function deleteRecipeDoc(docId) {
-  if (!recipesCollection) return;
-  await deleteDoc(doc(db, 'recipes', docId));
+  const ref = userDoc('recipes', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-/* ── Diario alimentare ──
-   Un documento per giorno (id = "YYYY-MM-DD"), campo meals: array
-*/
 export function subscribeDiary(callback) {
-  if (!diaryCollection) { callback({}); return () => {}; }
-  return onSnapshot(diaryCollection, snap => {
+  const col = userCol('food_diary');
+  if (!col) { callback({}); return () => {}; }
+  return onSnapshot(col, snap => {
     const obj = {};
     snap.docs.forEach(d => { obj[d.id] = d.data().meals || []; });
     callback(obj);
   });
 }
 export async function saveDiaryDay(dateKey, meals) {
-  if (!diaryCollection) return;
-  await setDoc(doc(db, 'food_diary', dateKey), { meals });
+  if (!db || !auth?.currentUser) return;
+  await setDoc(doc(db, 'users', auth.currentUser.uid, 'food_diary', dateKey), { meals });
 }
 
-/* ── Piano dieta settimanale ──
-   Un unico documento "current" con campo days: array 7 giorni
-*/
 export function subscribeDiet(callback) {
-  if (!dietCollection) { callback(null); return () => {}; }
-  return onSnapshot(doc(db, 'diet', 'current'), snap => {
+  if (!db || !auth?.currentUser) { callback(null); return () => {}; }
+  return onSnapshot(doc(db, 'users', auth.currentUser.uid, 'diet', 'current'), snap => {
     callback(snap.exists() ? snap.data().days : null);
   });
 }
 export async function saveDietDoc(days) {
-  if (!dietCollection) return;
-  await setDoc(doc(db, 'diet', 'current'), { days });
+  if (!db || !auth?.currentUser) return;
+  await setDoc(doc(db, 'users', auth.currentUser.uid, 'diet', 'current'), { days });
 }
 
-/* ── Diete salvate ── */
 export function subscribeSavedDiets(callback) {
-  if (!savedDietsCollection) { callback([]); return () => {}; }
-  return onSnapshot(query(savedDietsCollection, orderBy('createdAt', 'asc')), snap => {
+  const col = userCol('saved_diets');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 export async function addSavedDietDoc(dietData) {
-  if (!savedDietsCollection) return;
-  await addDoc(savedDietsCollection, { ...dietData, createdAt: Date.now() });
+  const col = userCol('saved_diets');
+  if (!col) return;
+  await addDoc(col, { ...dietData, createdAt: Date.now() });
 }
 export async function deleteSavedDietDoc(docId) {
-  if (!savedDietsCollection) return;
-  await deleteDoc(doc(db, 'saved_diets', docId));
+  const ref = userDoc('saved_diets', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-// ─── Allenamento ────────────────────────────────────────────────────────────
+// ─── Allenamento ─────────────────────────────────────────────────────────────
 
-const allenamentoCollection = db ? collection(db, 'allenamenti_piani') : null;
-const registroCollection    = db ? collection(db, 'allenamenti_registro') : null;
-
-/* Allenamenti (piani) */
 export function subscribeAllenamenti(callback) {
-  if (!allenamentoCollection) { callback([]); return () => {}; }
-  return onSnapshot(query(allenamentoCollection, orderBy('createdAt', 'asc')), snap => {
+  const col = userCol('allenamenti_piani');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 export async function addAllenamentoDoc(data) {
-  if (!allenamentoCollection) return null;
-  const ref2 = await addDoc(allenamentoCollection, { ...data, createdAt: Date.now() });
-  return ref2.id;
+  const col = userCol('allenamenti_piani');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
 }
 export async function updateAllenamentoDoc(docId, fields) {
-  if (!allenamentoCollection) return;
-  await setDoc(doc(db, 'allenamenti_piani', docId), fields, { merge: true });
+  const ref = userDoc('allenamenti_piani', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
 }
 export async function deleteAllenamentoDoc(docId) {
-  if (!allenamentoCollection) return;
-  await deleteDoc(doc(db, 'allenamenti_piani', docId));
+  const ref = userDoc('allenamenti_piani', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-/* Registro sessioni */
 export function subscribeRegistro(callback) {
-  if (!registroCollection) { callback([]); return () => {}; }
-  return onSnapshot(query(registroCollection, orderBy('data', 'desc')), snap => {
+  const col = userCol('allenamenti_registro');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('data', 'desc')), snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 export async function addRegistroDoc(data) {
-  if (!registroCollection) return null;
-  const ref2 = await addDoc(registroCollection, { ...data, createdAt: Date.now() });
-  return ref2.id;
+  const col = userCol('allenamenti_registro');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
 }
 export async function updateRegistroDoc(docId, fields) {
-  if (!registroCollection) return;
-  await setDoc(doc(db, 'allenamenti_registro', docId), fields, { merge: true });
+  const ref = userDoc('allenamenti_registro', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
 }
 export async function deleteRegistroDoc(docId) {
-  if (!registroCollection) return;
-  await deleteDoc(doc(db, 'allenamenti_registro', docId));
+  const ref = userDoc('allenamenti_registro', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-// ─── Personal CRM ────────────────────────────────────────────────────────────
+// ─── Personal CRM ─────────────────────────────────────────────────────────────
 
-const contactsCollection = db ? collection(db, 'crm_contacts') : null;
-
-/**
- * Sottoscrive in real-time alla collection crm_contacts.
- * Richiama callback(contacts[]) ad ogni modifica.
- */
 export function subscribeCRM(callback) {
-  if (!contactsCollection) { callback([]); return () => {}; }
-  const q = query(contactsCollection, orderBy('createdAt', 'asc'));
+  const col = userCol('crm_contacts');
+  if (!col) { callback([]); return () => {}; }
+  const q = query(col, orderBy('createdAt', 'asc'));
   return onSnapshot(q, snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 
-/** Aggiunge un nuovo contatto. */
 export async function addContactDoc(data) {
-  if (!contactsCollection) return null;
-  const ref2 = await addDoc(contactsCollection, { ...data, createdAt: Date.now() });
-  return ref2.id;
+  const col = userCol('crm_contacts');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
 }
 
-/** Aggiorna un contatto esistente. */
 export async function updateContactDoc(docId, fields) {
-  if (!contactsCollection) return;
-  await setDoc(doc(db, 'crm_contacts', docId), fields, { merge: true });
+  const ref = userDoc('crm_contacts', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
 }
 
-/** Elimina un contatto (e le sue note subcollection vengono lasciate orfane — pulizia opzionale). */
 export async function deleteContactDoc(docId) {
-  if (!contactsCollection) return;
-  await deleteDoc(doc(db, 'crm_contacts', docId));
+  const ref = userDoc('crm_contacts', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
 }
 
-/**
- * Sottoscrive in real-time alle note di un contatto.
- * Le note sono una subcollection di crm_contacts/{docId}/notes.
- */
 export function subscribeNotes(contactDocId, callback) {
-  if (!db) { callback([]); return () => {}; }
-  const notesCol = collection(db, 'crm_contacts', contactDocId, 'notes');
-  const q = query(notesCol, orderBy('createdAt', 'asc'));
-  return onSnapshot(q, snap => {
+  if (!db || !auth?.currentUser) { callback([]); return () => {}; }
+  const col = collection(db, 'users', auth.currentUser.uid, 'crm_contacts', contactDocId, 'notes');
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 
-/** Aggiunge una nota a un contatto. */
 export async function addNoteDoc(contactDocId, text) {
-  if (!db) return;
-  const notesCol = collection(db, 'crm_contacts', contactDocId, 'notes');
-  await addDoc(notesCol, { text, createdAt: new Date().toISOString() });
+  if (!db || !auth?.currentUser) return;
+  const col = collection(db, 'users', auth.currentUser.uid, 'crm_contacts', contactDocId, 'notes');
+  await addDoc(col, { text, createdAt: new Date().toISOString() });
 }
 
-/** Elimina una nota di un contatto. */
 export async function deleteNoteDoc(contactDocId, noteDocId) {
-  if (!db) return;
-  await deleteDoc(doc(db, 'crm_contacts', contactDocId, 'notes', noteDocId));
+  if (!db || !auth?.currentUser) return;
+  await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'crm_contacts', contactDocId, 'notes', noteDocId));
 }
 
-/**
- * Restituisce i contatti con compleanno oggi o nei prossimi N giorni.
- * Usato da index.html per il quadrante "Compleanno".
- * Non è real-time, è un fetch puntuale.
- */
 export async function getBirthdayContacts(daysAhead = 7) {
-  if (!contactsCollection) return [];
-  const snap = await getDocs(contactsCollection);
+  const col = userCol('crm_contacts');
+  if (!col) return [];
+  const snap = await getDocs(col);
   const today = new Date();
   const results = [];
   snap.docs.forEach(d => {
     const data = d.data();
     if (!data.birthday) return;
-    const [y, m, day] = data.birthday.split('-').map(Number);
+    const [, m, day] = data.birthday.split('-').map(Number);
     const bday = new Date(today.getFullYear(), m - 1, day);
-    // se già passato quest'anno, considera il prossimo
     if (bday < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
       bday.setFullYear(today.getFullYear() + 1);
     }
@@ -314,60 +317,54 @@ export async function getBirthdayContacts(daysAhead = 7) {
 
 // ─── Lista della spesa ────────────────────────────────────────────────────────
 
-const shoppingStoresCol = db ? collection(db, 'shopping_stores') : null;
-
-/** Sottoscrive in real-time ai negozi. */
 export function subscribeShoppingStores(callback) {
-  if (!shoppingStoresCol) { callback([]); return () => {}; }
-  return onSnapshot(query(shoppingStoresCol, orderBy('createdAt', 'asc')), snap => {
-    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
-  });
-}
-
-/** Aggiunge un negozio. */
-export async function addShoppingStore(data) {
-  if (!shoppingStoresCol) return null;
-  const ref2 = await addDoc(shoppingStoresCol, { ...data, createdAt: Date.now() });
-  return ref2.id;
-}
-
-/** Aggiorna un negozio (es. nome o img). */
-export async function updateShoppingStore(docId, fields) {
-  if (!shoppingStoresCol) return;
-  await setDoc(doc(db, 'shopping_stores', docId), fields, { merge: true });
-}
-
-/** Elimina un negozio (i suoi items vengono eliminati a cascata separatamente). */
-export async function deleteShoppingStore(docId) {
-  if (!shoppingStoresCol) return;
-  await deleteDoc(doc(db, 'shopping_stores', docId));
-}
-
-/** Sottoscrive in real-time agli item di un negozio (subcollection items). */
-export function subscribeShoppingItems(storeDocId, callback) {
-  if (!db) { callback([]); return () => {}; }
-  const col = collection(db, 'shopping_stores', storeDocId, 'items');
+  const col = userCol('shopping_stores');
+  if (!col) { callback([]); return () => {}; }
   return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
 
-/** Aggiunge un prodotto alla lista di un negozio. */
+export async function addShoppingStore(data) {
+  const col = userCol('shopping_stores');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateShoppingStore(docId, fields) {
+  const ref = userDoc('shopping_stores', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteShoppingStore(docId) {
+  const ref = userDoc('shopping_stores', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+export function subscribeShoppingItems(storeDocId, callback) {
+  if (!db || !auth?.currentUser) { callback([]); return () => {}; }
+  const col = collection(db, 'users', auth.currentUser.uid, 'shopping_stores', storeDocId, 'items');
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
 export async function addShoppingItem(storeDocId, data) {
-  if (!db) return null;
-  const col = collection(db, 'shopping_stores', storeDocId, 'items');
-  const ref2 = await addDoc(col, { ...data, createdAt: Date.now() });
-  return ref2.id;
+  if (!db || !auth?.currentUser) return null;
+  const col = collection(db, 'users', auth.currentUser.uid, 'shopping_stores', storeDocId, 'items');
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
 }
 
-/** Aggiorna un prodotto (es. flag acquistato, quantità). */
 export async function updateShoppingItem(storeDocId, itemDocId, fields) {
-  if (!db) return;
-  await setDoc(doc(db, 'shopping_stores', storeDocId, 'items', itemDocId), fields, { merge: true });
+  if (!db || !auth?.currentUser) return;
+  await setDoc(doc(db, 'users', auth.currentUser.uid, 'shopping_stores', storeDocId, 'items', itemDocId), fields, { merge: true });
 }
 
-/** Elimina un prodotto. */
 export async function deleteShoppingItem(storeDocId, itemDocId) {
-  if (!db) return;
-  await deleteDoc(doc(db, 'shopping_stores', storeDocId, 'items', itemDocId));
+  if (!db || !auth?.currentUser) return;
+  await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'shopping_stores', storeDocId, 'items', itemDocId));
 }

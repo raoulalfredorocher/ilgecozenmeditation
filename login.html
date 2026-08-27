@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Accedi</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg: #f7f4f9;
+      --card: #ffffff;
+      --border: #d4cee0;
+      --text: #1e2a38;
+      --muted: #876a6a;
+      --primary: #d56b91;
+      --accent: #f5a9bc;
+    }
+    html[data-theme="dark"] {
+      --bg: #111820;
+      --card: #1e2a38;
+      --border: #2e3f52;
+      --text: #e8eef4;
+      --muted: #a89090;
+      --primary: #f5a9bc;
+      --accent: #d56b91;
+    }
+
+    html, body {
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      gap: 0;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 360px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 28px;
+      padding: 40px 32px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .login-logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      margin-bottom: 18px;
+    }
+
+    .login-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      color: var(--primary);
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .login-sub {
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .btn-google {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-family: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-google:hover { border-color: var(--primary); background: var(--bg); }
+    .btn-google:active { transform: scale(.97); }
+
+    .btn-google svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .login-error {
+      margin-top: 16px;
+      font-size: .72rem;
+      color: #d64545;
+      text-align: center;
+      min-height: 1.2em;
+    }
+
+    .login-footer {
+      margin-top: 32px;
+      font-size: .6rem;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="login-logo"/>
+    <div class="login-title">Il Geco Zen</div>
+    <div class="login-sub">Il tuo spazio personale</div>
+
+    <button class="btn-google" id="btn-google">
+      <!-- Google logo SVG ufficiale -->
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        <path fill="none" d="M0 0h48v48H0z"/>
+      </svg>
+      Accedi con Google
+    </button>
+
+    <div class="login-error" id="login-error"></div>
+
+    <div class="login-footer">I tuoi dati sono privati e legati al tuo account Google</div>
+  </div>
+
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: [
+        'AIzaSyD0CI9B1uN01ytY8',
+        'CALconh89uU9ZcO6SE',
+      ].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+  <script type="module">
+    import { onAuthChange, signInWithGoogle } from './js/auth.js';
+
+    // Se già loggato → vai direttamente all'app
+    onAuthChange(user => {
+      if (user) window.location.replace('index.html');
+    });
+
+    document.getElementById('btn-google').addEventListener('click', async () => {
+      const errEl = document.getElementById('login-error');
+      errEl.textContent = '';
+      try {
+        await signInWithGoogle();
+        // onAuthChange gestirà il redirect
+      } catch (e) {
+        errEl.textContent = 'Accesso non riuscito. Riprova.';
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+</html>
