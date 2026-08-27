@@ -128,8 +128,6 @@
       justify-content: space-around;
       z-index: 200;
       overflow: visible;
-      max-width: 420px;
-      margin: 0 auto;
     }
     .tab-btn {
       flex: 1;
@@ -303,7 +301,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,.46);
-      z-index: 50;
+      z-index: 500;
       display: flex;
       align-items: flex-end;
       justify-content: center;
@@ -1112,9 +1110,14 @@
 
       // bind actions
       detailBody.querySelector('.btn-star-toggle').addEventListener('click', async () => {
-        const isBesties = !!c.besties;
+        // Legge lo stato live da contacts[] per evitare closure stale
+        const live = contacts.find(x => x._docId === c._docId);
+        const isBesties = !!(live ? live.besties : c.besties);
+        // Aggiornamento ottimistico locale: non aspettare Firestore per il render
+        if (live) live.besties = !isBesties;
+        renderContacts(document.getElementById('search-input').value);
+        renderDetail(live || c);
         await updateContactDoc(c._docId, { besties: !isBesties });
-        // renderDetail viene rieseguito dal subscriber quando Firestore aggiorna
       });
 
       detailBody.querySelector('.btn-edit-action').addEventListener('click', () => {
