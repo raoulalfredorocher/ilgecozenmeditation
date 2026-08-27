@@ -86,15 +86,19 @@
     .co{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;z-index:400;padding-bottom:env(safe-area-inset-bottom,0px);}
     .co.open{display:flex;}
     .cs{width:100%;max-width:420px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow-y:auto;}
-    .vo{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:350;padding:calc(env(safe-area-inset-top,0px)+14px) 20px 32px;max-width:420px;margin:0 auto;overflow-y:auto;}
+    /* View — bottom-sheet popup (non più fullscreen) */
+    .vo{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;z-index:350;padding-bottom:env(safe-area-inset-bottom,0px);}
     .vo.open{display:flex;}
-    .vi{width:100%;max-height:280px;object-fit:contain;border-radius:16px;margin-bottom:14px;}
-    .vt{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:.04em;margin-bottom:4px;}
-    .vm{font-size:.64rem;color:var(--muted);letter-spacing:.08em;margin-bottom:8px;}
-    .vs{font-size:1.1rem;margin-bottom:10px;}
-    .vl{font-size:.52rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;margin-top:12px;}
-    .vn{font-size:.76rem;color:var(--text);line-height:1.7;}
-    .bvc{background:none;border:1px solid var(--border);border-radius:12px;padding:10px 20px;font-size:.76rem;font-family:inherit;color:var(--muted);cursor:pointer;margin-top:20px;letter-spacing:.1em;}
+    .vo-sheet{width:100%;max-width:420px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:10px;max-height:88vh;overflow-y:auto;}
+    .vi{width:100%;max-height:220px;object-fit:contain;border-radius:14px;}
+    .vt{font-size:1rem;font-weight:700;color:var(--text);letter-spacing:.04em;}
+    .vm{font-size:.62rem;color:var(--muted);letter-spacing:.07em;}
+    .vs{font-size:1rem;}
+    .vl{font-size:.52rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:6px;}
+    .vn{font-size:.74rem;color:var(--text);line-height:1.7;}
+    .v-amazon{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--gold);border-radius:10px;padding:7px 14px;font-size:.72rem;font-family:inherit;color:var(--gold);cursor:pointer;text-decoration:none;letter-spacing:.06em;margin-top:2px;}
+    .v-amazon:active{background:var(--surface);}
+    .bvc{width:100%;background:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--muted);cursor:pointer;letter-spacing:.1em;margin-top:4px;flex-shrink:0;}
     .tab-bar{position:fixed;bottom:0;left:0;right:0;height:calc(58px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--card);border-top:1px solid var(--border);border-radius:22px 22px 0 0;display:flex;align-items:center;justify-content:space-around;z-index:200;overflow:visible;}
   </style>
   <script>
@@ -155,6 +159,11 @@
         <div class="fg"><div class="fl">Pagine</div><input class="fi" id="f-pages" type="number" placeholder="320" min="1"/></div>
         <div class="fg"><div class="fl">Lingua</div><select class="fs" id="f-lang"><option>Italiano</option><option>Inglese</option><option>Giapponese</option><option>Altro</option></select></div>
       </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Formato</div><select class="fs" id="f-format"><option value="Cartaceo">📖 Cartaceo</option><option value="Ebook">📱 Ebook</option></select></div>
+        <div class="fg"><div class="fl">Acquisto</div><select class="fs" id="f-purchase"><option value="Già acquistato">✅ Già acquistato</option><option value="Da acquistare">🛒 Da acquistare</option></select></div>
+      </div>
+      <div class="fg"><div class="fl">Link Amazon (opzionale)</div><input class="fi" id="f-amazon" type="url" placeholder="https://www.amazon.it/..." autocomplete="off"/></div>
       <div class="fg">
         <div class="fl">Copertina</div>
         <div class="iuw">
@@ -186,13 +195,21 @@
   </div>
 
   <div class="vo" id="vo">
-    <img class="vi" id="v-img" src="" alt="" style="display:none;"/>
-    <div class="vt" id="v-title"></div>
-    <div class="vm" id="v-meta"></div>
-    <div class="vs" id="v-stars"></div>
-    <div class="vl" id="v-note-label" style="display:none;">NOTA / INSEGNAMENTO</div>
-    <div class="vn" id="v-note"></div>
-    <button class="bvc" id="btn-view-close">← Chiudi</button>
+    <div class="vo-sheet">
+      <div class="mh"></div>
+      <img class="vi" id="v-img" src="" alt="" style="display:none;"/>
+      <div class="vt" id="v-title"></div>
+      <div class="vm" id="v-meta"></div>
+      <div class="vm" id="v-badges"></div>
+      <div class="vs" id="v-stars"></div>
+      <div class="vl" id="v-note-label" style="display:none;">NOTA / INSEGNAMENTO</div>
+      <div class="vn" id="v-note"></div>
+      <a class="v-amazon" id="v-amazon" href="#" target="_blank" rel="noopener" style="display:none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Apri su Amazon
+      </a>
+      <button class="bvc" id="btn-view-close">Chiudi</button>
+    </div>
   </div>
 
   <nav class="tab-bar">
@@ -222,6 +239,7 @@
       const booksGrid=document.getElementById('books-grid'),emptyList=document.getElementById('empty-list'),lettiList=document.getElementById('letti-list');
       const fabAdd=document.getElementById('fab-add'),mo=document.getElementById('mo'),co=document.getElementById('co'),vo=document.getElementById('vo');
       const fTitle=document.getElementById('f-title'),fAuthor=document.getElementById('f-author'),fPages=document.getElementById('f-pages'),fLang=document.getElementById('f-lang');
+      const fFormat=document.getElementById('f-format'),fPurchase=document.getElementById('f-purchase'),fAmazon=document.getElementById('f-amazon');
       const imgPreview=document.getElementById('img-preview'),imgFileInput=document.getElementById('img-file-input'),btnImgUpload=document.getElementById('btn-img-upload');
       const btnSave=document.getElementById('btn-save'),btnCancel=document.getElementById('btn-cancel'),btnDelete=document.getElementById('btn-delete'),modalTitle=document.getElementById('modal-title');
       const cNote=document.getElementById('c-note'),starsRow=document.getElementById('stars-row'),cConfirm=document.getElementById('c-confirm'),cCancel=document.getElementById('c-cancel');
@@ -238,9 +256,10 @@
       fabAdd.addEventListener('click',()=>openModal(null));
       function openModal(id){
         editingId=id;pendingImg=null;fTitle.value='';fAuthor.value='';fPages.value='';fLang.value='Italiano';
+        fFormat.value='Cartaceo';fPurchase.value='Già acquistato';fAmazon.value='';
         imgPreview.src='';imgPreview.classList.remove('visible');btnImgUpload.textContent='📷 Scegli immagine';
         [fTitle,fAuthor].forEach(f=>f.classList.remove('err'));imgFileInput.value='';
-        if(id!==null){const item=items.find(i=>i.id===id);if(item){modalTitle.textContent='Modifica Libro';fTitle.value=item.title;fAuthor.value=item.author||'';fPages.value=item.pages||'';fLang.value=item.lang||'Italiano';if(item.img){pendingImg=item.img;imgPreview.src=item.img;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine presente';}}btnDelete.style.display='';}
+        if(id!==null){const item=items.find(i=>i.id===id);if(item){modalTitle.textContent='Modifica Libro';fTitle.value=item.title;fAuthor.value=item.author||'';fPages.value=item.pages||'';fLang.value=item.lang||'Italiano';fFormat.value=item.format||'Cartaceo';fPurchase.value=item.purchase||'Già acquistato';fAmazon.value=item.amazon||'';if(item.img){pendingImg=item.img;imgPreview.src=item.img;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine presente';}}btnDelete.style.display='';}
         else{modalTitle.textContent='Nuovo Libro';btnDelete.style.display='none';}
         mo.classList.add('open');
       }
@@ -250,18 +269,31 @@
       function compressImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=ev=>{const img=new Image();img.onerror=rej;img.onload=()=>{const sc=Math.min(1,500/Math.max(img.width,img.height)),w=Math.round(img.width*sc),h=Math.round(img.height*sc),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',.72));};img.src=ev.target.result;};r.readAsDataURL(file);});}
       btnImgUpload.addEventListener('click',()=>imgFileInput.click());
       imgFileInput.addEventListener('change',async()=>{const f=imgFileInput.files[0];if(!f)return;try{pendingImg=await compressImage(f);imgPreview.src=pendingImg;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine caricata';}catch{alert('Errore immagine.');}});
-      btnSave.addEventListener('click',async()=>{const t=fTitle.value.trim(),a=fAuthor.value.trim();fTitle.classList.toggle('err',!t);fAuthor.classList.toggle('err',!a);if(!t||!a)return;const d={title:t,author:a,pages:fPages.value.trim(),lang:fLang.value,img:pendingImg||null,done:false,doneDate:null,note:null,stars:null};if(editingId!==null){const item=items.find(i=>i.id===editingId);if(item)await updateLibroDoc(item._docId,{title:t,author:a,pages:d.pages,lang:d.lang,img:d.img});}else{await addLibroDoc({...d,id:Date.now()});}closeModal();});
+      btnSave.addEventListener('click',async()=>{const t=fTitle.value.trim(),a=fAuthor.value.trim();fTitle.classList.toggle('err',!t);fAuthor.classList.toggle('err',!a);if(!t||!a)return;const d={title:t,author:a,pages:fPages.value.trim(),lang:fLang.value,format:fFormat.value,purchase:fPurchase.value,amazon:fAmazon.value.trim()||null,img:pendingImg||null,done:false,doneDate:null,note:null,stars:null};if(editingId!==null){const item=items.find(i=>i.id===editingId);if(item)await updateLibroDoc(item._docId,{title:t,author:a,pages:d.pages,lang:d.lang,format:d.format,purchase:d.purchase,amazon:d.amazon,img:d.img});}else{await addLibroDoc({...d,id:Date.now()});}closeModal();});
       function openConfirm(id){confirmId=id;confirmStars=0;cNote.value='';starsRow.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));co.classList.add('open');}
       function closeConfirm(){co.classList.remove('open');confirmId=null;}
       cCancel.addEventListener('click',closeConfirm);co.addEventListener('click',e=>{if(e.target===co)closeConfirm();});
       starsRow.addEventListener('click',e=>{const b=e.target.closest('.sb');if(!b)return;confirmStars=Number(b.dataset.v);starsRow.querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=confirmStars));});
       cConfirm.addEventListener('click',async()=>{if(!confirmId||confirmStars===0||!cNote.value.trim()){if(confirmStars===0)alert('Seleziona almeno una stellina.');else alert('Scrivi cosa ti ha lasciato questo libro.');return;}const item=items.find(i=>i.id===confirmId);if(item)await updateLibroDoc(item._docId,{done:true,doneDate:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'}),note:cNote.value.trim(),stars:confirmStars});closeConfirm();});
       async function undoDone(id){const item=items.find(i=>i.id===id);if(item)await updateLibroDoc(item._docId,{done:false,doneDate:null,note:null,stars:null});}
-      function openView(id){const item=items.find(i=>i.id===id);if(!item)return;const vi=document.getElementById('v-img');vi.src=item.img||'';vi.style.display=item.img?'block':'none';document.getElementById('v-title').textContent=item.title;document.getElementById('v-meta').textContent=[item.author,item.pages?item.pages+' pag.':'',item.lang].filter(Boolean).join(' · ');document.getElementById('v-stars').textContent=item.stars?'⭐'.repeat(item.stars):'';const nl=document.getElementById('v-note-label'),nv=document.getElementById('v-note');if(item.note){nl.style.display='';nv.textContent=item.note;}else{nl.style.display='none';nv.textContent='';}vo.classList.add('open');}
+      function openView(id){
+        const item=items.find(i=>i.id===id);if(!item)return;
+        const vi=document.getElementById('v-img');vi.src=item.img||'';vi.style.display=item.img?'block':'none';
+        document.getElementById('v-title').textContent=item.title;
+        document.getElementById('v-meta').textContent=[item.author,item.pages?item.pages+' pag.':'',item.lang].filter(Boolean).join(' · ');
+        // badges formato + acquisto
+        const badges=[];if(item.format)badges.push(item.format==='Ebook'?'📱 Ebook':'📖 Cartaceo');if(item.purchase)badges.push(item.purchase==='Da acquistare'?'🛒 Da acquistare':'✅ Già acquistato');document.getElementById('v-badges').textContent=badges.join('  ·  ');
+        document.getElementById('v-stars').textContent=item.stars?'⭐'.repeat(item.stars):'';
+        const nl=document.getElementById('v-note-label'),nv=document.getElementById('v-note');
+        if(item.note){nl.style.display='';nv.textContent=item.note;}else{nl.style.display='none';nv.textContent='';}
+        const va=document.getElementById('v-amazon');if(item.amazon){va.href=item.amazon;va.style.display='inline-flex';}else{va.style.display='none';}
+        vo.classList.add('open');
+      }
       btnViewClose.addEventListener('click',()=>vo.classList.remove('open'));
+      vo.addEventListener('click',e=>{if(e.target===vo)vo.classList.remove('open');});
       const EDIT_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
       const DEL_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
-      const EYE_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+      const ZOOM_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
       const CHK_SVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
       function renderGrid(){
         booksGrid.innerHTML='';
@@ -269,7 +301,8 @@
         emptyList.classList.toggle('visible',pending.length===0);
         pending.forEach(item=>{
           const card=document.createElement('div');card.className='book-card';
-          card.innerHTML=`${item.img?`<img class="book-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="book-img-ph">📚</div>`}<div class="book-body"><div class="book-title">${esc(item.title)}</div><div class="book-author">${esc(item.author||'')}</div>${item.pages?`<div class="book-meta">${esc(item.pages)} pag. · ${esc(item.lang||'')}</div>`:''}</div><div class="book-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${EYE_SVG}</button></div><button class="btn-check" data-act="check">${CHK_SVG}</button></div>`;
+          const purchaseBadge=item.purchase==='Da acquistare'?'<span style="font-size:.5rem;color:var(--muted);background:var(--surface);border-radius:4px;padding:1px 4px;margin-top:2px;display:inline-block;">🛒 da acquistare</span>':'';
+          card.innerHTML=`${item.img?`<img class="book-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="book-img-ph">📚</div>`}<div class="book-body"><div class="book-title">${esc(item.title)}</div><div class="book-author">${esc(item.author||'')}</div>${item.pages?`<div class="book-meta">${esc(item.pages)} pag. · ${esc(item.lang||'')}${item.format?' · '+esc(item.format):''}</div>`:''} ${purchaseBadge}</div><div class="book-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${ZOOM_SVG}</button></div><button class="btn-check" data-act="check">${CHK_SVG}</button></div>`;
           card.querySelector('[data-act="edit"]').addEventListener('click',e=>{e.stopPropagation();openModal(item.id);});
           card.querySelector('[data-act="del"]').addEventListener('click',async e=>{e.stopPropagation();if(confirm('Eliminare?')){const it=items.find(i=>i.id===item.id);if(it)await deleteLibroDoc(it._docId);}});
           card.querySelector('[data-act="view"]').addEventListener('click',e=>{e.stopPropagation();openView(item.id);});
@@ -284,7 +317,7 @@
         const ctr=document.createElement('div');ctr.style.cssText='font-size:.64rem;letter-spacing:.14em;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;';ctr.textContent=`${done.length} libro${done.length!==1?'i':''} letto${done.length!==1?'i':''}`;lettiList.appendChild(ctr);
         done.forEach(item=>{
           const el=document.createElement('div');el.className='letto-item';
-          el.innerHTML=`${item.img?`<img class="letto-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="letto-img-ph">📚</div>`}<div class="letto-info"><div class="letto-title">${esc(item.title)}</div><div class="letto-author">${esc(item.author||'')}</div>${item.stars?`<div class="letto-stars">${'⭐'.repeat(item.stars)}</div>`:''} ${item.note?`<div class="letto-note">"${esc(item.note)}"</div>`:''}</div><div class="letto-acts"><button class="btn-unch" data-act="unch">${CHK_SVG}</button><button class="btn-esm" data-act="edit">${EDIT_SVG}</button><button class="btn-esm" data-act="view">${EYE_SVG}</button></div>`;
+          el.innerHTML=`${item.img?`<img class="letto-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="letto-img-ph">📚</div>`}<div class="letto-info"><div class="letto-title">${esc(item.title)}</div><div class="letto-author">${esc(item.author||'')}</div>${item.stars?`<div class="letto-stars">${'⭐'.repeat(item.stars)}</div>`:''} ${item.note?`<div class="letto-note">"${esc(item.note)}"</div>`:''}</div><div class="letto-acts"><button class="btn-unch" data-act="unch">${CHK_SVG}</button><button class="btn-esm" data-act="edit">${EDIT_SVG}</button><button class="btn-esm" data-act="view">${ZOOM_SVG}</button></div>`;
           el.querySelector('[data-act="unch"]').addEventListener('click',()=>undoDone(item.id));
           el.querySelector('[data-act="edit"]').addEventListener('click',()=>openModal(item.id));
           el.querySelector('[data-act="view"]').addEventListener('click',()=>openView(item.id));
