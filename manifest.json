@@ -1,13 +1,19 @@
 {
   "name": "Il Geco Zen",
   "short_name": "Geco Zen",
-  "description": "Timer di meditazione con campana tibetana e suoni naturali",
+  "description": "Il Geco Zen — app per meditazione, benessere e crescita personale",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f7f4f9",
-  "theme_color": "#25739E",
+  "theme_color": "#f7f4f9",
   "orientation": "portrait",
   "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "Logo%20Trasparente.png",
       "sizes": "512x512",
