@@ -1040,10 +1040,13 @@
     subscribeCRM(list => {
       contacts = list;
       renderContacts(document.getElementById('search-input').value);
-      // Se il modal dettaglio è aperto, aggiorna il contatto visualizzato
+      // Se il modal dettaglio è aperto aggiorna solo l'header del nome
+      // (non ricostruire il body: evita listener duplicati e flickering)
       if (currentDetailId && detailOverlay.classList.contains('open')) {
         const updated = contacts.find(x => x._docId === currentDetailId);
-        if (updated) renderDetail(updated);
+        if (updated) {
+          detailName.textContent = `${updated.nome || ''} ${updated.cognome || ''}`.trim();
+        }
       }
     });
 
@@ -1263,15 +1266,20 @@
       detailBody.innerHTML = html;
 
       // bind actions
-      detailBody.querySelector('.btn-star-toggle').addEventListener('click', async () => {
-        // Legge lo stato live da contacts[] per evitare closure stale
+      detailBody.querySelector('.btn-star-toggle').addEventListener('click', async function () {
+        // Legge lo stato attuale dal bottone stesso (evita closure stale su c)
+        const btn = this;
+        const isNowBesties = btn.textContent.includes('Rimuovi');
+        const newVal = !isNowBesties;
+        // Aggiorna ottimisticamente l'oggetto in contacts[]
         const live = contacts.find(x => x._docId === c._docId);
-        const isBesties = !!(live ? live.besties : c.besties);
-        // Aggiornamento ottimistico locale: non aspettare Firestore per il render
-        if (live) live.besties = !isBesties;
+        if (live) live.besties = newVal;
+        // Aggiorna il testo del bottone subito
+        btn.textContent = newVal ? '★ Rimuovi Besties' : '☆ Besties';
+        // Ridisegna le liste (persone + besties)
         renderContacts(document.getElementById('search-input').value);
-        renderDetail(live || c);
-        await updateContactDoc(c._docId, { besties: !isBesties });
+        // Scrivi su Firestore (il subscriber aggiornerà contacts[] definitivamente)
+        await updateContactDoc(c._docId, { besties: newVal });
       });
 
       detailBody.querySelector('.btn-edit-action').addEventListener('click', () => {
