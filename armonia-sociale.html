@@ -282,11 +282,84 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .person-avatar img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .person-badge {
+      font-size: .54rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 7px;
+      color: var(--primary);
+      margin-top: 3px;
+      display: inline-block;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .person-star {
       font-size: 1.1rem;
       opacity: .5;
     }
     .person-star.active { opacity: 1; color: #f0b36f; }
+
+    /* foto picker nel form */
+    .foto-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .foto-preview {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .foto-preview img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .btn-foto-pick {
+      flex: 1;
+      border: 1.5px dashed var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: .76rem;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: center;
+    }
+    /* detail avatar con foto */
+    .detail-avatar img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .detail-group-badge {
+      text-align: center;
+      margin-top: 6px;
+      font-size: .62rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      display: inline-block;
+      padding: 3px 12px;
+    }
 
     .empty-state {
       text-align: center;
@@ -740,6 +813,26 @@
           <input class="form-input" id="f-li" type="text" placeholder="URL o username"/>
         </div>
 
+        <div class="form-section-title">Foto &amp; Gruppo</div>
+        <div class="foto-picker-wrap">
+          <div class="foto-preview" id="foto-preview">📷</div>
+          <label class="btn-foto-pick" for="f-foto">Tocca per scegliere una foto</label>
+          <input type="file" id="f-foto" accept="image/*" style="display:none"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-gruppo">Gruppo</label>
+          <input class="form-input" id="f-gruppo" type="text" list="gruppi-list" placeholder="Es: Amici, Colleghi…" autocomplete="off"/>
+          <datalist id="gruppi-list">
+            <option value="Amici"/>
+            <option value="Familiari"/>
+            <option value="Colleghi"/>
+            <option value="Fornitori"/>
+            <option value="Amici calcetto"/>
+            <option value="Partner"/>
+            <option value="Conoscenti"/>
+          </datalist>
+        </div>
+
         <div class="form-section-title">Interessi</div>
         <div class="tags-wrap" id="tags-wrap"></div>
         <div class="tag-input-row">
@@ -845,6 +938,14 @@
     tabs.forEach((t, i) => t.btn.addEventListener('click', () => switchTab(i)));
 
     /* ─────────────────────── RENDER ─────────────────────── */
+    function sortAZ(arr) {
+      return [...arr].sort((a, b) => {
+        const ka = `${a.cognome || ''} ${a.nome || ''}`.trim().toLowerCase();
+        const kb = `${b.cognome || ''} ${b.nome || ''}`.trim().toLowerCase();
+        return ka.localeCompare(kb, 'it');
+      });
+    }
+
     function renderContacts(filter = '') {
       const list = document.getElementById('person-list');
       const bestiesList = document.getElementById('besties-list');
@@ -853,12 +954,13 @@
       const countEl = document.getElementById('persone-count');
 
       const q = filter.trim().toLowerCase();
-      const filtered = q
+      const filtered = sortAZ(q
         ? contacts.filter(c =>
             `${c.nome} ${c.cognome}`.toLowerCase().includes(q) ||
-            (c.telefono || '').includes(q)
+            (c.telefono || '').includes(q) ||
+            (c.gruppo || '').toLowerCase().includes(q)
           )
-        : contacts;
+        : contacts);
 
       countEl.textContent = `Persone · ${contacts.length}`;
 
@@ -873,7 +975,7 @@
         filtered.forEach(c => list.appendChild(buildCard(c, 'persone')));
       }
 
-      const besties = contacts.filter(c => c.besties);
+      const besties = sortAZ(contacts.filter(c => c.besties));
       if (besties.length === 0) {
         bestiesEmpty.style.display = 'block';
         bestiesList.appendChild(bestiesEmpty);
@@ -890,7 +992,14 @@
 
       const av = document.createElement('div');
       av.className = 'person-avatar';
-      av.textContent = initials(c.nome, c.cognome);
+      if (c.fotoUrl) {
+        const img = document.createElement('img');
+        img.src = c.fotoUrl;
+        img.alt = initials(c.nome, c.cognome);
+        av.appendChild(img);
+      } else {
+        av.textContent = initials(c.nome, c.cognome);
+      }
 
       const info = document.createElement('div');
       info.className = 'person-info';
@@ -904,6 +1013,12 @@
       if (c.azienda) parts.push(c.azienda);
       meta.textContent = parts.join(' · ') || c.telefono || c.email || '';
       info.appendChild(name);
+      if (c.gruppo) {
+        const badge = document.createElement('span');
+        badge.className = 'person-badge';
+        badge.textContent = c.gruppo;
+        info.appendChild(badge);
+      }
       info.appendChild(meta);
 
       const star = document.createElement('span');
@@ -941,10 +1056,13 @@
     const formOverlay = document.getElementById('modal-form-overlay');
     const formTitle   = document.getElementById('modal-form-title');
 
+    let formFotoUrl = null;
+
     function openFormModal(contact = null) {
       editingId = contact ? contact._docId : null;
       formTitle.textContent = contact ? 'Modifica persona' : 'Nuova persona';
       formTags = contact?.interessi ? [...contact.interessi] : [];
+      formFotoUrl = contact?.fotoUrl || null;
 
       document.getElementById('f-nome').value     = contact?.nome     || '';
       document.getElementById('f-cognome').value  = contact?.cognome  || '';
@@ -957,9 +1075,19 @@
       document.getElementById('f-ig').value       = contact?.instagram || '';
       document.getElementById('f-tk').value       = contact?.tiktok   || '';
       document.getElementById('f-li').value       = contact?.linkedin || '';
+      document.getElementById('f-gruppo').value   = contact?.gruppo   || '';
       document.getElementById('tag-input').value  = '';
-      renderFormTags();
+      document.getElementById('f-foto').value     = '';
 
+      // aggiorna anteprima foto
+      const prev = document.getElementById('foto-preview');
+      if (formFotoUrl) {
+        prev.innerHTML = `<img src="${formFotoUrl}" alt="foto"/>`;
+      } else {
+        prev.innerHTML = '📷';
+      }
+
+      renderFormTags();
       formOverlay.classList.add('open');
     }
 
@@ -970,6 +1098,19 @@
     document.getElementById('btn-add-person').addEventListener('click', () => openFormModal());
     document.getElementById('btn-form-close').addEventListener('click', closeFormModal);
     formOverlay.addEventListener('click', e => { if (e.target === formOverlay) closeFormModal(); });
+
+    // Foto picker: converte in base64
+    document.getElementById('f-foto').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        formFotoUrl = ev.target.result;
+        const prev = document.getElementById('foto-preview');
+        prev.innerHTML = `<img src="${formFotoUrl}" alt="foto"/>`;
+      };
+      reader.readAsDataURL(file);
+    });
 
     /* tag */
     function renderFormTags() {
@@ -1012,7 +1153,9 @@
         instagram: document.getElementById('f-ig').value.trim(),
         tiktok:    document.getElementById('f-tk').value.trim(),
         linkedin:  document.getElementById('f-li').value.trim(),
+        gruppo:    document.getElementById('f-gruppo').value.trim(),
         interessi: formTags,
+        fotoUrl:   formFotoUrl || null,
       };
       if (!data.nome && !data.cognome) { alert('Inserisci almeno un nome.'); return; }
 
@@ -1054,8 +1197,16 @@
     function renderDetail(c) {
       detailName.textContent = `${c.nome || ''} ${c.cognome || ''}`.trim();
 
+      const avatarContent = c.fotoUrl
+        ? `<img src="${c.fotoUrl}" alt="${initials(c.nome, c.cognome)}"/>`
+        : initials(c.nome, c.cognome);
+      const groupBadge = c.gruppo
+        ? `<div class="detail-group-badge">${c.gruppo}</div>`
+        : '';
+
       let html = `
-        <div class="detail-avatar">${initials(c.nome, c.cognome)}</div>
+        <div class="detail-avatar">${avatarContent}</div>
+        ${groupBadge}
         <div class="detail-actions">
           <button class="btn-star-toggle" data-id="${c._docId}" data-besties="${c.besties}">
             ${c.besties ? '★ Rimuovi Besties' : '☆ Besties'}
