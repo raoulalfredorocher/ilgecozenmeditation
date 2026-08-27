@@ -12,7 +12,6 @@ import {
   onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-// onAuthStateChanged usato solo in waitForAuth
 
 const firebaseConfig = window.__FIREBASE_CONFIG__ || {
   apiKey: 'INSERISCI_API_KEY',
@@ -33,6 +32,13 @@ const app = hasValidConfig
 const db  = app ? getFirestore(app) : null;
 const auth = app ? getAuth(app) : null;
 
+// Cache dell'uid per garantire che userCol/userDoc funzionino
+// anche se auth.currentUser non è ancora sincronizzato
+let _cachedUid = null;
+if (auth) {
+  onAuthStateChanged(auth, u => { _cachedUid = u ? u.uid : null; });
+}
+
 export function isFirebaseConfigured() {
   return hasValidConfig;
 }
@@ -42,8 +48,9 @@ export function isFirebaseConfigured() {
  * Struttura: users/{uid}/{collectionName}
  */
 function userCol(name) {
-  if (!db || !auth?.currentUser) return null;
-  return collection(db, 'users', auth.currentUser.uid, name);
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return null;
+  return collection(db, 'users', uid, name);
 }
 
 /**
@@ -51,8 +58,9 @@ function userCol(name) {
  * Struttura: users/{uid}/{collectionName}/{docId}
  */
 function userDoc(colName, docId) {
-  if (!db || !auth?.currentUser) return null;
-  return doc(db, 'users', auth.currentUser.uid, colName, docId);
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return null;
+  return doc(db, 'users', uid, colName, docId);
 }
 
 // ─── Auth helper ─────────────────────────────────────────────────────────────
