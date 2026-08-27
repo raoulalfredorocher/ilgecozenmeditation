@@ -688,20 +688,45 @@
 
     modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
 
+    /* ── Comprimi immagine prima di salvarla (evita limite 1MB Firestore) ── */
+    function compressImage(file, maxW = 600, quality = 0.72) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = ev => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+            const w = Math.round(img.width  * scale);
+            const h = Math.round(img.height * scale);
+            const canvas = document.createElement('canvas');
+            canvas.width  = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     /* ── Upload immagine ── */
     btnImgUpload.addEventListener('click', () => imgFileInput.click());
-    imgFileInput.addEventListener('change', () => {
+    imgFileInput.addEventListener('change', async () => {
       const file = imgFileInput.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        pendingImg = e.target.result;
+      try {
+        const compressed = await compressImage(file);
+        pendingImg = compressed;
         imgPreview.src = pendingImg;
         imgPreview.classList.add('visible');
         btnImgUpload.textContent = '✓ Immagine caricata';
         btnImgUpload.classList.remove('error');
-      };
-      reader.readAsDataURL(file);
+      } catch {
+        alert('Errore nel caricamento immagine. Riprova.');
+      }
     });
 
     /* ── Salva sogno (crea o modifica) ── */
