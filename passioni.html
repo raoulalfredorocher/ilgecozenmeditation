@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Passioni"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Passioni</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg:      #f7f4f9;
+      --surface: #ede8f4;
+      --card:    #ffffff;
+      --border:  #d4cee0;
+      --text:    #1e2a38;
+      --muted:   #876a6a;
+      --primary: #a060c8;
+      --accent:  #c8a0f0;
+      --accent2: #f5a9bc;
+    }
+    html[data-theme="dark"] {
+      --bg:      #111820;
+      --surface: #1a2230;
+      --card:    #1e2a38;
+      --border:  #2e3f52;
+      --text:    #e8eef4;
+      --muted:   #a89090;
+      --primary: #c8a0f0;
+      --accent:  #a060c8;
+      --accent2: #f5a9bc;
+    }
+
+    html { overscroll-behavior: none; }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 120px) 20px 48px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn-back {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .58rem;
+      letter-spacing: .1em; padding: 5px 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      width: 52px; text-decoration: none; transition: color .2s, border-color .2s;
+    }
+    .btn-back:active { color: var(--primary); border-color: var(--primary); }
+    .header-center {
+      flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .header-icon { font-size: 1.8rem; line-height: 1; }
+    .app-title { font-size: .95rem; letter-spacing: .18em; color: var(--primary); font-weight: 700; }
+    .app-sub { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+    .theme-toggle {
+      background: none; border: 1.5px solid var(--border); border-radius: 20px;
+      cursor: pointer; width: 52px; height: 28px; position: relative;
+      transition: border-color .3s;
+    }
+    .theme-toggle .knob {
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent); transition: transform .3s;
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── Hub grid (same pattern as index.html) ── */
+    .hub-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .hub-card-wide {
+      grid-column: 1 / -1;
+    }
+    .hub-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 28px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 138px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .2s, background .2s, transform .12s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      text-align: center;
+    }
+    .hub-card:active {
+      background: var(--surface);
+      border-color: var(--accent);
+      transform: scale(.97);
+    }
+    .hub-card-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+    .hub-card-title {
+      font-size: .84rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: var(--text);
+      text-align: center;
+    }
+    .hub-card-sub {
+      font-size: .52rem;
+      letter-spacing: .14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── Card accent colours ── */
+    .hub-card.brand   { border-color: #c8a0f055; }
+    .hub-card.books   { border-color: #f0b36f66; }
+    .hub-card.films   { border-color: #9ec5ff66; }
+    .hub-card.music   { border-color: #6cbf8a55; }
+    .hub-card.photo   { border-color: #f5a9bc66; }
+    .hub-card.finance { border-color: #74C7E155; }
+    .hub-card.games   { border-color: #cbb7f8; }
+    .hub-card.tech    { border-color: #6cbf8a55; }
+    .hub-card.home    { border-color: #e8a87c55; }
+
+    .page-footer {
+      width: 100%;
+      text-align: center;
+      font-size: .58rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      margin-top: 8px;
+    }
+    .page-footer a { color: var(--primary); text-decoration: none; }
+  </style>
+</head>
+<body style="visibility:hidden">
+  <script type="module" src="js/auth-guard.js"></script>
+
+  <header>
+    <a class="btn-back" href="index.html" aria-label="Torna all'hub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      <span>hub</span>
+    </a>
+    <div class="header-center">
+      <div class="header-icon">📷</div>
+      <div class="app-title">Passioni</div>
+      <div class="app-sub">il geco zen · passioni</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
+
+  <!-- Riga 0 — solo Personal Brand (rettangolone pieno larghezza) -->
+  <div class="hub-grid">
+    <a class="hub-card brand hub-card-wide" href="#">
+      <span class="hub-card-icon">🌟</span>
+      <div class="hub-card-title">Personal Brand</div>
+      <div class="hub-card-sub">identità · presenza · narrazione</div>
+    </a>
+  </div>
+
+  <!-- Riga 1 — Libri e Manga / Film, Anime e Serie TV -->
+  <div class="hub-grid">
+    <a class="hub-card books" href="#">
+      <span class="hub-card-icon">📚</span>
+      <div class="hub-card-title">Libri e Manga</div>
+    </a>
+    <a class="hub-card films" href="#">
+      <span class="hub-card-icon">🎬</span>
+      <div class="hub-card-title">Film, Anime e Serie TV</div>
+    </a>
+  </div>
+
+  <!-- Riga 2 — Musica, Video e Podcast / Fotografia -->
+  <div class="hub-grid">
+    <a class="hub-card music" href="#">
+      <span class="hub-card-icon">🎵</span>
+      <div class="hub-card-title">Musica, Video e Podcast</div>
+    </a>
+    <a class="hub-card photo" href="#">
+      <span class="hub-card-icon">📸</span>
+      <div class="hub-card-title">Fotografia</div>
+    </a>
+  </div>
+
+  <!-- Riga 3 — Finanza / Giochi -->
+  <div class="hub-grid">
+    <a class="hub-card finance" href="#">
+      <span class="hub-card-icon">💰</span>
+      <div class="hub-card-title">Finanza</div>
+    </a>
+    <a class="hub-card games" href="#">
+      <span class="hub-card-icon">🎮</span>
+      <div class="hub-card-title">Giochi</div>
+    </a>
+  </div>
+
+  <!-- Riga 4 — Tecnologia / Home -->
+  <div class="hub-grid">
+    <a class="hub-card tech" href="#">
+      <span class="hub-card-icon">💻</span>
+      <div class="hub-card-title">Tecnologia</div>
+    </a>
+    <a class="hub-card home" href="#">
+      <span class="hub-card-icon">🏡</span>
+      <div class="hub-card-title">Home</div>
+    </a>
+  </div>
+
+  <div class="page-footer">
+    <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
+    &nbsp;·&nbsp; Il Geco Zen
+  </div>
+
+  <script>
+    const html = document.documentElement;
+    const btn  = document.getElementById('theme-toggle');
+    const knob = document.getElementById('theme-knob');
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
+    function applyTheme() {
+      html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+    }
+    applyTheme();
+    btn.addEventListener('click', () => { isDark = !isDark; localStorage.setItem('zen_theme', isDark ? 'dark' : 'light'); applyTheme(); });
+    document.body.style.visibility = '';
+  </script>
+</body>
+</html>
