@@ -1028,6 +1028,21 @@
       const star = document.createElement('span');
       star.className = 'person-star' + (c.besties ? ' active' : '');
       star.textContent = '★';
+      star.title = c.besties ? 'Rimuovi dai Besties' : 'Aggiungi ai Besties';
+      star.addEventListener('click', async e => {
+        e.stopPropagation();
+        const newVal = !c.besties;
+        // aggiorna ottimisticamente in locale
+        const live = contacts.find(x => x._docId === c._docId);
+        if (live) live.besties = newVal;
+        c.besties = newVal;
+        star.classList.toggle('active', newVal);
+        star.title = newVal ? 'Rimuovi dai Besties' : 'Aggiungi ai Besties';
+        // ridisegna entrambe le liste
+        renderContacts(document.getElementById('search-input').value);
+        // scrivi su Firestore
+        await updateContactDoc(c._docId, { besties: newVal });
+      });
 
       card.appendChild(av);
       card.appendChild(info);
