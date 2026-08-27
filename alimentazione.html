@@ -1316,6 +1316,22 @@
   function closeRecipeModal() { document.getElementById('recipe-modal').classList.remove('open'); }
   document.getElementById('recipe-modal').addEventListener('click', function(e){ if(e.target===this) closeRecipeModal(); });
 
+  function _compressRecipePhoto(dataUrl, maxW = 800, q = 0.75) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onerror = rej;
+      img.onload = () => {
+        const s = Math.min(1, maxW / Math.max(img.width, img.height));
+        const w = Math.round(img.width * s), h = Math.round(img.height * s);
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        res(c.toDataURL('image/jpeg', q));
+      };
+      img.src = dataUrl;
+    });
+  }
+
   async function saveRecipe() {
     const name = document.getElementById('rf-name').value.trim();
     const nat  = document.getElementById('rf-nat').value.trim();
@@ -1328,11 +1344,10 @@
     const ingredients = Array.from(ingEls).map(i=>i.value.trim()).filter(Boolean);
     const steps       = Array.from(stepEls).map(i=>i.value.trim()).filter(Boolean);
 
-    // validation — only url is optional
+    // validation — nat e url opzionali
     let ok = true;
     const fields = [
       { el: document.getElementById('rf-name'), val: name },
-      { el: document.getElementById('rf-nat'),  val: nat  },
       { el: document.getElementById('rf-kcal'), val: kcal },
       { el: document.getElementById('rf-prot'), val: prot },
       { el: document.getElementById('rf-carb'), val: carb },
@@ -1343,22 +1358,38 @@
     if (!ingredients.length || !steps.length) { alert('Aggiungi almeno un ingrediente e uno step.'); ok=false; }
     if (!ok) return;
 
-    const recipe = {
-      id: editingRecipeId || 'r_'+Date.now(), name,
-      cat: document.getElementById('rf-cat').value,
-      nat, url: document.getElementById('rf-url').value.trim(),
-      photo: rfPhotoData,
-      kcal: parseInt(kcal)||0, prot: parseInt(prot)||0,
-      carb: parseInt(carb)||0, fat:  parseInt(fat) ||0,
-      ingredients, steps,
-    };
-    if (editingRecipeId) {
-      const existing = recipes.find(r => r.id === editingRecipeId);
-      if (existing) await updateRecipeDoc(existing._docId, recipe);
-    } else {
-      await addRecipeDoc(recipe);
+    // Comprimi foto se presente (Firestore ha limite 1MB per documento)
+    let photo = null;
+    if (rfPhotoData) {
+      try { photo = await _compressRecipePhoto(rfPhotoData); }
+      catch { photo = rfPhotoData; }
     }
-    closeRecipeModal();
+
+    const saveBtn = document.querySelector('#recipe-modal .btn-primary');
+    saveBtn.disabled = true; saveBtn.textContent = 'Salvataggio…';
+
+    try {
+      const recipe = {
+        id: editingRecipeId || 'r_'+Date.now(), name,
+        cat: document.getElementById('rf-cat').value,
+        nat, url: document.getElementById('rf-url').value.trim(),
+        photo,
+        kcal: parseInt(kcal)||0, prot: parseInt(prot)||0,
+        carb: parseInt(carb)||0, fat:  parseInt(fat) ||0,
+        ingredients, steps,
+      };
+      if (editingRecipeId) {
+        const existing = recipes.find(r => r.id === editingRecipeId);
+        if (existing) await updateRecipeDoc(existing._docId, recipe);
+      } else {
+        await addRecipeDoc(recipe);
+      }
+      closeRecipeModal();
+    } catch(e) {
+      console.error('saveRecipe error', e);
+      alert('Errore nel salvataggio: ' + (e.message || e));
+      saveBtn.disabled = false; saveBtn.textContent = 'Salva ricetta';
+    }
     /* re-render via onSnapshot */
   }
 
