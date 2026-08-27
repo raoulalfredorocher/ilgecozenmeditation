@@ -562,7 +562,7 @@
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
       <span>TAO</span>
     </a>
-    <button class="btn-back-hub" id="btn-header-csv" onclick="openLoadDietModal()" aria-label="Diete salvate / CSV">
+    <button class="btn-back-hub" id="btn-header-csv" onclick="handleHeaderCsv()" aria-label="CSV / Esporta">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       <span>CSV</span>
     </button>
@@ -597,12 +597,7 @@
   <!-- ══════════════════════════════  SCREEN 2: RICETTARIO  ══════════════════════════════ -->
   <div class="screen" id="screen-ricette">
     <div class="section-title">il mio ricettario</div>
-    <div class="recipe-toolbar">
-      <button class="btn-export-recipes" onclick="openExportRecipesModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Esporta
-      </button>
-    </div>
+    <div class="recipe-toolbar"></div>
     <div class="recipe-category">
       <div class="recipe-cat-header"><span class="recipe-cat-title">🥗 Antipasti</span><span class="recipe-cat-count" id="cnt-antipasti">0</span></div>
       <div class="recipe-list" id="list-antipasti"></div>
@@ -632,10 +627,6 @@
   <div class="screen" id="screen-diario">
     <div class="section-title">diario alimentare</div>
     <div class="diary-toolbar">
-      <button class="btn-diary-action" onclick="openExportDiaryModal()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Esporta CSV
-      </button>
       <button class="btn-diary-action" onclick="openAnalytics()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Analytics
@@ -990,6 +981,7 @@
   themBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
   /* ════════════ TAB NAV ════════════ */
+  let activeScreen = 'screen-dieta';
   const TABS = [
     { btn: 'tab-dieta',   screen: 'screen-dieta'   },
     { btn: 'tab-ricette', screen: 'screen-ricette'  },
@@ -1005,8 +997,20 @@
       document.getElementById(btn).classList.add('tab-active');
       const s = document.getElementById(screen);
       s.style.display = 'flex'; s.classList.add('active');
+      activeScreen = screen;
     });
   });
+
+  function handleHeaderCsv() {
+    if (activeScreen === 'screen-ricette') {
+      openExportRecipesModal();
+    } else if (activeScreen === 'screen-diario') {
+      openExportDiaryModal();
+    } else {
+      openLoadDietModal();
+    }
+  }
+  window.handleHeaderCsv = handleHeaderCsv;
 
   /* ════════════ DIETA ════════════ */
   const DOT_COLORS = { 'Lunedì':'#3b82f6','Martedì':'#06b6d4','Mercoledì':'#8b5cf6','Giovedì':'#f59e0b','Venerdì':'#10b981','Sabato':'#ec4899','Domenica':'#ef4444' };

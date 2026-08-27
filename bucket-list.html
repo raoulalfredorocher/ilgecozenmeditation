@@ -764,7 +764,7 @@
       }
       emptyDreams.classList.remove('visible');
 
-      items.forEach(item => {
+      items.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'dream-card' + (item.done ? ' done' : '');
         card.dataset.id = item.id;
@@ -772,7 +772,7 @@
         card.innerHTML = `
           <img class="dream-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>
           <div class="dream-body">
-            <div class="dream-title">${esc(item.title)}</div>
+            <div class="dream-title"><span style="color:var(--muted);font-size:.65em;margin-right:4px;">${index + 1}.</span>${esc(item.title)}</div>
             <div class="dream-desc">${esc(item.desc)}</div>
           </div>
           <div class="dream-actions">
@@ -810,6 +810,7 @@
     function renderCompleted() {
       completedList.innerHTML = '';
       const done = items.filter(i => i.done).reverse();
+      const total = items.length;
 
       if (done.length === 0) {
         completedList.innerHTML =
@@ -817,14 +818,20 @@
         return;
       }
 
-      done.forEach(item => {
+      /* intestazione contatore */
+      const counter = document.createElement('div');
+      counter.style.cssText = 'font-size:.64rem;letter-spacing:.14em;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;';
+      counter.textContent = `${done.length} di ${total} realizzati`;
+      completedList.appendChild(counter);
+
+      done.forEach((item, index) => {
         const el = document.createElement('div');
         el.className = 'completed-item';
 
         el.innerHTML = `
           <img class="completed-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>
           <div class="completed-info">
-            <div class="completed-title">${esc(item.title)}</div>
+            <div class="completed-title"><span style="color:var(--muted);font-size:.75em;margin-right:3px;">${index + 1}.</span>${esc(item.title)}</div>
             <div class="completed-date">✓ ${esc(item.doneDate || '')}</div>
           </div>
           <div class="completed-actions">

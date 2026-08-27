@@ -482,35 +482,6 @@
     <div id="birthday-list"></div>
   </section>
 
-  <section class="section-card" aria-label="Barra della vita" style="margin-bottom: 18px;">
-    <div class="section-title" style="text-align:center; margin-bottom: 12px;">Barra della vita</div>
-    <div class="life-progress" id="life-progress-label">0%</div>
-    <div class="life-bar" aria-hidden="true">
-      <div class="life-bar-fill" id="life-bar-fill"></div>
-    </div>
-    <div class="life-labels">
-      <span>0</span>
-      <span>90</span>
-    </div>
-  </section>
-
-  <section class="section-card" aria-label="Bussola dei valori" style="margin-bottom: 18px;">
-    <div class="section-title" style="text-align:center; margin-bottom: 16px;">Bussola dei valori</div>
-    <div class="compass">
-      <div class="compass-point north"><strong>Nord</strong>Gentilezza</div>
-      <div class="compass-point east"><strong>Est</strong>Serenità</div>
-      <div class="compass-point south"><strong>Sud</strong>Salute</div>
-      <div class="compass-point west"><strong>Ovest</strong>Prosperità</div>
-      <div class="compass-center-wrap" id="ikigai-trigger-wrap">
-        <button class="compass-center" id="ikigai-trigger" type="button" aria-label="Mostra la mia missione" aria-expanded="false"></button>
-        <div class="ikigai-popup" id="ikigai-popup" role="dialog" aria-label="La mia missione">
-          <div class="ikigai-popup-title">La mia missione</div>
-          <div class="ikigai-popup-text">Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <div class="hub-grid" style="margin-bottom: 18px;">
     <a class="hub-card bucket" href="bucket-list.html">
       <span class="hub-card-icon">✨</span>
@@ -579,9 +550,6 @@
     const htmlEl = document.documentElement;
     const btn = document.getElementById('theme-toggle');
     const knob = document.getElementById('theme-knob');
-    const ikigaiTrigger = document.getElementById('ikigai-trigger');
-    const ikigaiPopup = document.getElementById('ikigai-popup');
-    const ikigaiTriggerWrap = document.getElementById('ikigai-trigger-wrap');
     const weatherIcon = document.getElementById('weather-icon');
     const weatherMax = document.getElementById('weather-max');
     const weatherMin = document.getElementById('weather-min');
@@ -595,16 +563,6 @@
       document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
       localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
     }
-
-    const birthDate = new Date(1992, 10, 23);
-    const lifeExpectancyYears = 90;
-    const now = new Date();
-    const monthsLived = (now.getFullYear() - birthDate.getFullYear()) * 12 + (now.getMonth() - birthDate.getMonth());
-    const currentAgeYears = monthsLived / 12;
-    const percentage = Math.min((currentAgeYears / lifeExpectancyYears) * 100, 100);
-
-    document.getElementById('life-bar-fill').style.width = `${percentage}%`;
-    document.getElementById('life-progress-label').textContent = `${percentage.toFixed(1).replace('.', ',')}% | ${currentAgeYears.toFixed(1).replace('.', ',')} anni`;
 
     async function loadWeather() {
       try {
@@ -657,33 +615,9 @@
       }
     }
 
-    function showIkigaiPopup() {
-      ikigaiPopup.classList.add('visible');
-      ikigaiTrigger.setAttribute('aria-expanded', 'true');
-    }
-
-    function hideIkigaiPopup() {
-      ikigaiPopup.classList.remove('visible');
-      ikigaiTrigger.setAttribute('aria-expanded', 'false');
-    }
-
     apply();
     loadWeather();
     btn.addEventListener('click', () => { isDark = !isDark; apply(); });
-    ikigaiTriggerWrap.addEventListener('mouseenter', showIkigaiPopup);
-    ikigaiTriggerWrap.addEventListener('mouseleave', hideIkigaiPopup);
-    ikigaiTrigger.addEventListener('click', () => {
-      if (ikigaiPopup.classList.contains('visible')) {
-        hideIkigaiPopup();
-        return;
-      }
-      showIkigaiPopup();
-    });
-    document.addEventListener('click', (event) => {
-      if (!ikigaiTriggerWrap.contains(event.target)) {
-        hideIkigaiPopup();
-      }
-    });
   </script>
 
   <script type="module">
