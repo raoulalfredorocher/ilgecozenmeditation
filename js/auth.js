@@ -11,22 +11,46 @@ const firebaseConfig = window.__FIREBASE_CONFIG__ || {};
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+// Forza sempre la schermata di selezione account Google
+provider.setCustomParameters({ prompt: 'select_account' });
 
 /**
  * Avvia il flusso Google Sign-In con popup.
- * Funziona sia su desktop che su mobile (Safari iOS incluso).
- * signInWithRedirect è deprecato su Firebase 10.x e rotto su iOS WebView.
+ * Su iOS Safari/PWA i popup sono bloccati: si usa il redirect come fallback.
  */
 export async function signInWithGoogle() {
-  await signInWithPopup(auth, provider);
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (err) {
+    // popup-blocked o blocked-by-browser (tipico su iOS PWA) → usa redirect
+    if (
+      err.code === 'auth/popup-blocked' ||
+      err.code === 'auth/popup-closed-by-user' ||
+      err.code === 'auth/cancelled-popup-request'
+    ) {
+      const { signInWithRedirect } = await import(
+        'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js'
+      );
+      await signInWithRedirect(auth, provider);
+    } else {
+      throw err;
+    }
+  }
 }
 
 /**
- * Stub mantenuto per compatibilità con login.html.
- * Con popup non serve gestire il redirect result.
+ * Gestisce il risultato del redirect Google (usato su iOS PWA).
  */
 export async function handleRedirectResult() {
-  return null;
+  try {
+    const { getRedirectResult } = await import(
+      'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js'
+    );
+    const result = await getRedirectResult(auth);
+    return result?.user ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /** Disconnette l'utente corrente. */
