@@ -877,7 +877,7 @@
     import {
       subscribeCRM, addContactDoc, updateContactDoc, deleteContactDoc,
       addNoteDoc, deleteNoteDoc, subscribeNotes,
-      isFirebaseConfigured
+      isFirebaseConfigured, waitForAuth,
     } from './js/firebase-config.js';
 
     /* ─────────────────────── UTILS ─────────────────────── */
@@ -922,6 +922,9 @@
     if (!isFirebaseConfigured()) {
       document.getElementById('offline-banner').style.display = 'block';
     }
+
+    waitForAuth().then(user => { if (!user) return; initApp(); });
+    function initApp() {
 
     /* ─────────────────────── TABS ─────────────────────── */
     const tabs = [
@@ -1332,6 +1335,7 @@
         container.appendChild(item);
       });
     }
+    } // fine initApp()
   </script>
 </body>
 </html>

@@ -570,6 +570,7 @@
       addBucketItem,
       updateBucketItem,
       deleteBucketItem,
+      waitForAuth,
     } from './js/firebase-config.js';
 
     /* ── Tema ── */
@@ -585,6 +586,9 @@
     }
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+    waitForAuth().then(user => { if (!user) return; initApp(); });
+    function initApp() {
 
     /* ── Stato ── */
     let items      = [];   // array sincronizzato da Firestore
@@ -897,6 +901,7 @@
       renderGrid();
       if (screenCompleted.classList.contains('active')) renderCompleted();
     });
+    } // fine initApp()
   </script>
 </body>
 </html>

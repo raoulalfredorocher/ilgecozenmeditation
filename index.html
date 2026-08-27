@@ -635,7 +635,7 @@
   </script>
 
   <script type="module">
-    import { getBirthdayContacts } from './js/firebase-config.js';
+    import { getBirthdayContacts, waitForAuth } from './js/firebase-config.js';
 
     async function loadBirthdays() {
       const contacts = await getBirthdayContacts(7);
@@ -669,7 +669,7 @@
       });
     }
 
-    loadBirthdays();
+    waitForAuth().then(user => { if (user) loadBirthdays(); });
   </script>
 </body>
 </html>

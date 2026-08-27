@@ -575,6 +575,7 @@
     import {
       subscribeAllenamenti, addAllenamentoDoc, updateAllenamentoDoc, deleteAllenamentoDoc,
       subscribeRegistro, addRegistroDoc, updateRegistroDoc, deleteRegistroDoc,
+      waitForAuth,
     } from './js/firebase-config.js';
 
     // ── Theme ──
@@ -590,6 +591,9 @@
     }
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+    waitForAuth().then(user => { if (!user) return; initApp(); });
+    function initApp() {
 
     // ── Tab navigation ──
     const TABS = [
@@ -1551,7 +1555,7 @@
       if (!registroList.length) { alert('Nessun allenamento nel registro'); return; }
       exportRegistro(registroList); closeModal('modal-export');
     });
-
+    } // fine initApp()
   </script>
 </body>
 </html>

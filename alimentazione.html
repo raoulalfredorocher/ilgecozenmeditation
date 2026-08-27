@@ -969,6 +969,7 @@
     subscribeDiary,   saveDiaryDay,
     subscribeDiet,    saveDietDoc,
     subscribeSavedDiets, addSavedDietDoc, deleteSavedDietDoc,
+    waitForAuth,
   } from './js/firebase-config.js';
 
   /* ════════════ TEMA ════════════ */
@@ -984,6 +985,10 @@
   }
   applyTheme();
   themBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+  // Attendi auth prima di usare Firestore
+  waitForAuth().then(user => { if (!user) return; initApp(); });
+  function initApp() {
 
   /* ════════════ TAB NAV ════════════ */
   let activeScreen = 'screen-dieta';
@@ -1855,6 +1860,7 @@
   window.deleteRecipe            = deleteRecipe;
   window.renderDayPills          = renderDayPills;
   window.renderDayCard           = renderDayCard;
+  } // fine initApp()
   </script>
 
   <!-- ══════════════════════════════  PANNELLO SPESA  ══════════════════════════════ -->
@@ -2001,7 +2007,11 @@
     import {
       subscribeShoppingStores, addShoppingStore, deleteShoppingStore,
       subscribeShoppingItems, addShoppingItem, updateShoppingItem, deleteShoppingItem,
+      waitForAuth,
     } from './js/firebase-config.js';
+
+    waitForAuth().then(user => { if (!user) return; initShoppingApp(); });
+    function initShoppingApp() {
 
     /* ── stato ── */
     let stores = [];
@@ -2184,6 +2194,7 @@
       stores = newStores;
       renderStores();
     });
+    } // fine initShoppingApp()
   </script>
 </body>
 </html>

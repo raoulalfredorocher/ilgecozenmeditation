@@ -54,12 +54,21 @@ function userDoc(colName, docId) {
   return doc(db, 'users', auth.currentUser.uid, colName, docId);
 }
 
-// ─── Auth helper (usato internamente) ───────────────────────────────────────
+// ─── Auth helper ─────────────────────────────────────────────────────────────
 
-/** Attende che l'auth sia pronto e restituisce l'utente (o null). */
-function waitAuth() {
+/**
+ * Attende che Firebase Auth sia pronto e restituisce l'utente autenticato.
+ * Se non c'è utente restituisce null.
+ * Usare come gate all'inizio di ogni script module che usa Firestore.
+ *
+ * Esempio:
+ *   const user = await waitForAuth();
+ *   if (!user) return; // il guard si occuperà del redirect
+ */
+export function waitForAuth() {
   return new Promise(resolve => {
     if (!auth) { resolve(null); return; }
+    // onAuthStateChanged si risolve immediatamente se lo stato è già noto
     const unsub = onAuthStateChanged(auth, user => { unsub(); resolve(user); });
   });
 }

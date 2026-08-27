@@ -49,8 +49,8 @@ function injectLogoutBtn(user) {
 
   Object.assign(btn.style, {
     position: 'fixed',
-    bottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)',
-    right: '16px',
+    top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
+    right: '72px',
     zIndex: '9999',
     background: 'var(--card, #fff)',
     border: '1.5px solid var(--border, #d4cee0)',
