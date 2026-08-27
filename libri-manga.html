@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="styles/layout.css?v=8"/>
   <style>
     .app-sub-libri{font-size:.48rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+    .btn-csv{background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.52rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;width:52px;text-decoration:none;transition:color .2s,border-color .2s;}
+    .btn-csv:active{color:var(--gold);border-color:var(--gold);}
     #screen-list,#screen-center,#screen-letti{width:100%;display:none;flex-direction:column;align-items:center;gap:14px;}
     #screen-list.active,#screen-center.active,#screen-letti.active{display:flex;}
     .section-divider{width:100%;font-size:.52rem;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;text-align:center;padding:2px 0 4px;}
@@ -126,7 +128,13 @@
         <div class="app-sub-libri">IL GECO ZEN · PASSIONI</div>
       </a>
     </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema"><div class="knob" id="theme-knob">☀️</div></button>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema"><div class="knob" id="theme-knob">☀️</div></button>
+      <button class="btn-csv" id="btn-csv" aria-label="Esporta CSV" style="width:46px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CSV
+      </button>
+    </div>
   </header>
 
   <div id="screen-list" class="active">
@@ -236,10 +244,12 @@
     waitForAuth().then(user=>{if(!user)return;initApp();});
     function initApp(){
       let items=[],editingId=null,pendingImg=null,confirmId=null,confirmStars=0;
+      let currentScreen='list';
       const booksGrid=document.getElementById('books-grid'),emptyList=document.getElementById('empty-list'),lettiList=document.getElementById('letti-list');
       const fabAdd=document.getElementById('fab-add'),mo=document.getElementById('mo'),co=document.getElementById('co'),vo=document.getElementById('vo');
       const fTitle=document.getElementById('f-title'),fAuthor=document.getElementById('f-author'),fPages=document.getElementById('f-pages'),fLang=document.getElementById('f-lang');
       const fFormat=document.getElementById('f-format'),fPurchase=document.getElementById('f-purchase'),fAmazon=document.getElementById('f-amazon');
+      const btnCsv=document.getElementById('btn-csv');
       const imgPreview=document.getElementById('img-preview'),imgFileInput=document.getElementById('img-file-input'),btnImgUpload=document.getElementById('btn-img-upload');
       const btnSave=document.getElementById('btn-save'),btnCancel=document.getElementById('btn-cancel'),btnDelete=document.getElementById('btn-delete'),modalTitle=document.getElementById('modal-title');
       const cNote=document.getElementById('c-note'),starsRow=document.getElementById('stars-row'),cConfirm=document.getElementById('c-confirm'),cCancel=document.getElementById('c-cancel');
@@ -247,11 +257,24 @@
       const sL=document.getElementById('screen-list'),sC=document.getElementById('screen-center'),sLt=document.getElementById('screen-letti');
       const tL=document.getElementById('tab-list'),tC=document.getElementById('tab-center-btn'),tLt=document.getElementById('tab-letti');
       function showScreen(w){
+        currentScreen=w;
         [sL,sC,sLt].forEach(s=>s.classList.remove('active'));[tL,tC,tLt].forEach(b=>b.classList.remove('tab-active'));
         if(w==='list'){sL.classList.add('active');tL.classList.add('tab-active');fabAdd.classList.remove('hidden');}
         if(w==='center'){sC.classList.add('active');tC.classList.add('tab-active');fabAdd.classList.add('hidden');}
         if(w==='letti'){sLt.classList.add('active');tLt.classList.add('tab-active');fabAdd.classList.add('hidden');renderLetti();}
       }
+      /* ── CSV export ── */
+      btnCsv.addEventListener('click',()=>{
+        const isLetti=currentScreen==='letti';
+        const rows=isLetti?items.filter(i=>i.done):items.filter(i=>!i.done);
+        const header=['Titolo','Autore','Pagine','Lingua','Formato','Acquisto','Amazon','Stelle','Nota','Data'];
+        const lines=[header.join(';')];
+        rows.forEach(it=>{lines.push([csvQ(it.title||''),csvQ(it.author||''),it.pages||'',it.lang||'',it.format||'',it.purchase||'',it.amazon||'',it.stars||'',csvQ(it.note||''),it.doneDate||''].join(';'));});
+        const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download=`libri_${isLetti?'letti':'da_leggere'}.csv`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+      });
+      function csvQ(s){return '"'+String(s).replace(/"/g,'""')+'"';}
       tL.addEventListener('click',()=>showScreen('list'));tC.addEventListener('click',()=>showScreen('center'));tLt.addEventListener('click',()=>showScreen('letti'));
       fabAdd.addEventListener('click',()=>openModal(null));
       function openModal(id){
