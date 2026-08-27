@@ -570,8 +570,8 @@
       addBucketItem,
       updateBucketItem,
       deleteBucketItem,
-      waitForAuth,
     } from './js/firebase-config.js';
+    import { waitForUser } from './js/auth-guard.js';
 
     /* ── Tema ── */
     const htmlEl   = document.documentElement;
@@ -587,7 +587,7 @@
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-    waitForAuth().then(user => { if (!user) return; initApp(); });
+    waitForUser().then(user => { if (!user) return; initApp(); });
     function initApp() {
 
     /* ── Stato ── */
