@@ -7,6 +7,7 @@ import {
   isFirebaseConfigured,
   loadSessions,
   saveSessionDoc,
+  deleteSessionDoc,
 } from './firebase-config.js';
 
 let _historyCache = [];
@@ -183,7 +184,8 @@ function _renderList(all) {
 
   const WEEKDAYS = ['dom','lun','mar','mer','gio','ven','sab'];
 
-  listEl.innerHTML = sorted.map(s => {
+  listEl.innerHTML = '';
+  sorted.forEach(s => {
     const d  = new Date(s.ts);
     const wd = WEEKDAYS[d.getDay()];
     const stepsDesc = s.steps && s.steps.length
@@ -191,17 +193,35 @@ function _renderList(all) {
       : '';
     const hh = String(d.getHours()).padStart(2,'0');
     const mm2 = String(d.getMinutes()).padStart(2,'0');
-    return `
-      <div class="history-item">
-        <div class="history-item-date">
-          <div class="history-item-day">${d.getDate()}</div>
-          <div class="history-item-weekday">${wd}</div>
-        </div>
-        <div class="history-item-info">
-          <div class="history-item-mins">${s.totalMins}<span>min</span> <span style="font-size:.6rem;color:var(--muted);margin-left:4px">${hh}:${mm2}</span></div>
-          ${stepsDesc ? `<div class="history-item-steps">${stepsDesc}</div>` : ''}
-        </div>
-        <div class="history-item-bell">🦎</div>
-      </div>`;
-  }).join('');
+
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.style.cssText = 'display:flex;align-items:center;gap:0;';
+    item.innerHTML = `
+      <div class="history-item-date">
+        <div class="history-item-day">${d.getDate()}</div>
+        <div class="history-item-weekday">${wd}</div>
+      </div>
+      <div class="history-item-info" style="flex:1;">
+        <div class="history-item-mins">${s.totalMins}<span>min</span> <span style="font-size:.6rem;color:var(--muted);margin-left:4px">${hh}:${mm2}</span></div>
+        ${stepsDesc ? `<div class="history-item-steps">${stepsDesc}</div>` : ''}
+      </div>
+      <div class="history-item-bell">🦎</div>`;
+
+    const delBtn = document.createElement('button');
+    delBtn.style.cssText = 'background:none;border:none;cursor:pointer;padding:6px 8px;color:#e05050;font-size:1rem;flex-shrink:0;-webkit-tap-highlight-color:transparent;';
+    delBtn.title = 'Elimina sessione';
+    delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+    delBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!confirm('Eliminare questa sessione?')) return;
+      await deleteSessionDoc(s.id);
+      // aggiorna la cache e ri-renderizza
+      _historyCache = _historyCache.filter(x => x.id !== s.id);
+      _renderCalendar(_historyCache);
+      _renderList(_historyCache);
+    });
+    item.appendChild(delBtn);
+    listEl.appendChild(item);
+  });
 }

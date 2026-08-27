@@ -55,6 +55,11 @@ export async function clearSessions() {
   await Promise.all(snapshot.docs.map(sessionDoc => deleteDoc(doc(db, 'meditation_sessions', sessionDoc.id))));
 }
 
+export async function deleteSessionDoc(sessionId) {
+  if (!sessionsCollection) return;
+  await deleteDoc(doc(db, 'meditation_sessions', sessionId));
+}
+
 // ─── Bucket List ────────────────────────────────────────────────────────────
 
 /**

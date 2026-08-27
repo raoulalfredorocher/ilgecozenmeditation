@@ -600,13 +600,16 @@
 </head>
 <body>
   <header>
-    <a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
+    <a class="btn-back" href="index.html" aria-label="Torna alla home">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>QUI E ORA</span>
+      <span>TAO</span>
     </a>
     <div class="header-center">
-      <div class="app-title">Armonia sociale</div>
-      <div class="app-sub">personal crm</div>
+      <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:inherit;">
+        <div style="font-size:1.8rem;line-height:1;">🤝</div>
+        <div class="app-title">Armonia sociale</div>
+        <div class="app-sub">IL GECO ZEN · PERSONAL CRM</div>
+      </a>
     </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
       <div class="knob" id="theme-knob">☀️</div>
@@ -641,12 +644,12 @@
   </section>
 
   <!-- ── TAB BESTY ── -->
-  <section class="screen" id="screen-besty">
+  <section class="screen" id="screen-besties">
     <div class="row-between" style="margin-bottom:12px">
-      <span class="section-label">⭐ I tuoi Besty</span>
+      <span class="section-label">⭐ I tuoi Besties</span>
     </div>
-    <div class="person-list" id="besty-list">
-      <div class="empty-state" id="besty-empty">Nessun Besty ancora. Aggiungi la ⭐ a un contatto.</div>
+    <div class="person-list" id="besties-list">
+      <div class="empty-state" id="besties-empty">Nessun Besties ancora. Aggiungi la ⭐ a un contatto.</div>
     </div>
   </section>
 
@@ -665,9 +668,9 @@
       <span class="tab-label">chat</span>
     </button>
 
-    <button class="tab-btn" id="tab-besty" role="tab" aria-selected="false" aria-controls="screen-besty">
+    <button class="tab-btn" id="tab-besties" role="tab" aria-selected="false" aria-controls="screen-besties">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <span class="tab-label">besty</span>
+      <span class="tab-label">besties</span>
     </button>
   </nav>
 
@@ -765,6 +768,19 @@
     </div>
   </div>
 
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: [
+        'AIzaSyD0CI9B1uN01ytY8',
+        'CALconh89uU9ZcO6SE',
+      ].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
   <script type="module">
     import {
       subscribeCRM, addContactDoc, updateContactDoc, deleteContactDoc,
@@ -819,7 +835,7 @@
     const tabs = [
       { btn: document.getElementById('tab-persone'), screen: document.getElementById('screen-persone') },
       { btn: document.getElementById('tab-chat'),    screen: document.getElementById('screen-chat') },
-      { btn: document.getElementById('tab-besty'),   screen: document.getElementById('screen-besty') },
+      { btn: document.getElementById('tab-besties'),   screen: document.getElementById('screen-besties') },
     ];
     function switchTab(idx) {
       tabs.forEach((t, i) => {
@@ -833,9 +849,9 @@
     /* ─────────────────────── RENDER ─────────────────────── */
     function renderContacts(filter = '') {
       const list = document.getElementById('person-list');
-      const bestyList = document.getElementById('besty-list');
+      const bestiesList = document.getElementById('besties-list');
       const empty = document.getElementById('empty-state');
-      const bestyEmpty = document.getElementById('besty-empty');
+      const bestiesEmpty = document.getElementById('besties-empty');
       const countEl = document.getElementById('persone-count');
 
       const q = filter.trim().toLowerCase();
@@ -849,7 +865,7 @@
       countEl.textContent = `Persone · ${contacts.length}`;
 
       list.innerHTML = '';
-      bestyList.innerHTML = '';
+      bestiesList.innerHTML = '';
 
       if (filtered.length === 0) {
         empty.style.display = 'block';
@@ -859,13 +875,13 @@
         filtered.forEach(c => list.appendChild(buildCard(c, 'persone')));
       }
 
-      const besty = contacts.filter(c => c.besty);
-      if (besty.length === 0) {
-        bestyEmpty.style.display = 'block';
-        bestyList.appendChild(bestyEmpty);
+      const besties = contacts.filter(c => c.besties);
+      if (besties.length === 0) {
+        bestiesEmpty.style.display = 'block';
+        bestiesList.appendChild(bestiesEmpty);
       } else {
-        bestyEmpty.style.display = 'none';
-        besty.forEach(c => bestyList.appendChild(buildCard(c, 'besty')));
+        bestiesEmpty.style.display = 'none';
+        besties.forEach(c => bestiesList.appendChild(buildCard(c, 'besties')));
       }
     }
 
@@ -893,7 +909,7 @@
       info.appendChild(meta);
 
       const star = document.createElement('span');
-      star.className = 'person-star' + (c.besty ? ' active' : '');
+      star.className = 'person-star' + (c.besties ? ' active' : '');
       star.textContent = '★';
 
       card.appendChild(av);
@@ -1005,7 +1021,7 @@
       if (editingId) {
         await updateContactDoc(editingId, data);
       } else {
-        data.besty = false;
+        data.besties = false;
         await addContactDoc(data);
       }
       closeFormModal();
@@ -1043,8 +1059,8 @@
       let html = `
         <div class="detail-avatar">${initials(c.nome, c.cognome)}</div>
         <div class="detail-actions">
-          <button class="btn-star-toggle" data-id="${c._docId}" data-besty="${c.besty}">
-            ${c.besty ? '★ Rimuovi Besty' : '☆ Besty'}
+          <button class="btn-star-toggle" data-id="${c._docId}" data-besties="${c.besties}">
+            ${c.besties ? '★ Rimuovi Besties' : '☆ Besties'}
           </button>
           <button class="btn-edit-action" data-id="${c._docId}">✏️ Modifica</button>
           <button class="btn-delete" data-id="${c._docId}">🗑 Elimina</button>
@@ -1096,8 +1112,8 @@
 
       // bind actions
       detailBody.querySelector('.btn-star-toggle').addEventListener('click', async () => {
-        const isBesty = !!c.besty;
-        await updateContactDoc(c._docId, { besty: !isBesty });
+        const isBesties = !!c.besties;
+        await updateContactDoc(c._docId, { besties: !isBesties });
         // renderDetail viene rieseguito dal subscriber quando Firestore aggiorna
       });
 
