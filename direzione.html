@@ -453,7 +453,41 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { waitForAuth } from './js/firebase-config.js';
+    import { getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+    import {
+      getFirestore, doc, getDoc, setDoc,
+    } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+
+    const _app  = getApps()[0];
+    const _db   = _app ? getFirestore(_app) : null;
+    const _auth = _app ? getAuth(_app) : null;
+
+    function _directionDoc() {
+      const uid = _auth?.currentUser?.uid;
+      if (!_db || !uid) return null;
+      return doc(_db, 'users', uid, 'direction', 'data');
+    }
+
+    async function _loadRemote() {
+      const ref = _directionDoc();
+      if (!ref) return null;
+      try {
+        const snap = await getDoc(ref);
+        if (snap.exists()) return snap.data().sections || null;
+      } catch (e) { console.error('loadData error', e); }
+      return null;
+    }
+
+    async function _saveRemote(data) {
+      const ref = _directionDoc();
+      if (!ref) return;
+      try { await setDoc(ref, { sections: data }); }
+      catch (e) { console.error('saveData error', e); }
+    }
+
     /* ═══════════════════════════════════════════
        TEMA
     ═══════════════════════════════════════════ */
@@ -587,21 +621,12 @@
     /* ═══════════════════════════════════════════
        PERSISTENZA
     ═══════════════════════════════════════════ */
-    const STORAGE_KEY = 'zen_direction_v1';
+    let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
-    function loadData() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (!saved || !Array.isArray(saved)) return JSON.parse(JSON.stringify(DEFAULT_DATA));
-        return saved;
-      } catch { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
-    }
-
+    // saveData è sync per il codice di rendering, ma salva su Firestore in background
     function saveData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      _saveRemote(data);
     }
-
-    let DATA = loadData();
 
     /* ═══════════════════════════════════════════
        RENDERING
@@ -829,7 +854,13 @@
     /* ═══════════════════════════════════════════
        INIT
     ═══════════════════════════════════════════ */
-    renderAll();
+    // Init: attende auth poi carica da Firestore (o usa DEFAULT_DATA)
+    (async () => {
+      await waitForAuth();
+      const remote = await _loadRemote();
+      if (remote && Array.isArray(remote)) DATA = remote;
+      renderAll();
+    })();
   </script>
 </body>
 </html>
