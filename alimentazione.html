@@ -573,6 +573,10 @@
         <div class="app-sub">il geco zen · food</div>
       </a>
     </div>
+    <button class="btn-back-hub" id="btn-header-spesa" onclick="openSpesaPanel()" aria-label="Lista della spesa" style="background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.58rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;width:52px;transition:color .2s,border-color .2s;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span>SPESA</span>
+    </button>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
       <div class="knob" id="theme-knob">☀️</div>
     </button>
@@ -1850,6 +1854,335 @@
   window.deleteRecipe            = deleteRecipe;
   window.renderDayPills          = renderDayPills;
   window.renderDayCard           = renderDayCard;
+  </script>
+
+  <!-- ══════════════════════════════  PANNELLO SPESA  ══════════════════════════════ -->
+  <style>
+    /* ── Spesa overlay ── */
+    .spesa-overlay {
+      display: none; position: fixed; inset: 0; z-index: 400;
+      background: rgba(0,0,0,.45); align-items: flex-end; justify-content: center;
+    }
+    .spesa-overlay.open { display: flex; }
+    .spesa-sheet {
+      background: var(--bg); border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 420px;
+      height: 90dvh; display: flex; flex-direction: column;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .spesa-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .spesa-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 4px; }
+    .spesa-title { font-size: .82rem; font-weight: 700; color: var(--text); letter-spacing: .10em; }
+    .spesa-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); padding: 4px 8px; }
+    .spesa-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+
+    /* Store grid */
+    .store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .store-card {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: 16px;
+      overflow: hidden; cursor: pointer; transition: border-color .2s;
+      -webkit-tap-highlight-color: transparent; position: relative;
+    }
+    .store-card:active { border-color: var(--primary); }
+    .store-card-img { width: 100%; height: 80px; object-fit: cover; background: var(--surface); display: block; }
+    .store-card-img-placeholder { width: 100%; height: 80px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .store-card-name { font-size: .74rem; font-weight: 600; color: var(--text); padding: 8px 10px 10px; }
+    .store-card-del { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.45); border: none; border-radius: 50%; width: 22px; height: 22px; color: #fff; font-size: .7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+    .btn-add-store { width: 100%; background: var(--card); border: 1.5px dashed var(--border); border-radius: 14px; color: var(--primary); font-size: .78rem; letter-spacing: .10em; padding: 14px; cursor: pointer; font-family: inherit; transition: background .2s, border-color .2s; margin-top: 12px; -webkit-tap-highlight-color: transparent; }
+    .btn-add-store:active { background: var(--surface); border-color: var(--primary); }
+
+    /* Lista negozio */
+    .store-list-view { display: none; flex-direction: column; height: 100%; }
+    .store-list-view.active { display: flex; }
+    .store-back-btn { background: none; border: none; color: var(--primary); font-size: .78rem; font-family: inherit; cursor: pointer; padding: 0 0 12px; display: flex; align-items: center; gap: 5px; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
+    .store-list-title { font-size: .82rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+    .store-items-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .store-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 11px 14px; display: flex; align-items: center; gap: 12px;
+      transition: opacity .2s;
+    }
+    .store-item.bought { opacity: .45; }
+    .store-item-check {
+      width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+      flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      background: none; -webkit-tap-highlight-color: transparent; transition: background .15s, border-color .15s;
+    }
+    .store-item-check.checked { background: var(--primary); border-color: var(--primary); }
+    .store-item-check.checked::after { content: '✓'; color: #fff; font-size: .7rem; font-weight: 700; }
+    .store-item-info { flex: 1; }
+    .store-item-name { font-size: .80rem; font-weight: 600; color: var(--text); }
+    .store-item-qty { font-size: .60rem; color: var(--muted); margin-top: 2px; }
+    .store-item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; padding: 4px 6px; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
+    .store-item-del:active { color: var(--red); }
+
+    /* Add item row */
+    .add-item-row { display: flex; gap: 8px; flex-shrink: 0; }
+    .add-item-row input { flex: 1; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; font-family: inherit; font-size: .78rem; color: var(--text); outline: none; min-width: 0; }
+    .add-item-row input:focus { border-color: var(--primary); }
+    .add-item-qty { width: 64px !important; flex: none !important; }
+    .btn-add-item-confirm { background: var(--primary); border: none; border-radius: 10px; color: #fff; font-size: .78rem; font-weight: 600; padding: 9px 14px; cursor: pointer; flex-shrink: 0; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+    .btn-add-item-confirm:active { opacity: .85; }
+
+    /* Modal nuovo negozio */
+    .new-store-overlay {
+      display: none; position: fixed; inset: 0; z-index: 450;
+      background: rgba(0,0,0,.45); align-items: flex-end; justify-content: center;
+    }
+    .new-store-overlay.open { display: flex; }
+    .new-store-sheet {
+      background: var(--bg); border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 420px;
+      padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+  </style>
+
+  <!-- pannello principale spesa -->
+  <div class="spesa-overlay" id="spesa-overlay">
+    <div class="spesa-sheet">
+      <div style="padding:12px 20px 0;flex-shrink:0;">
+        <div class="spesa-handle"></div>
+      </div>
+      <div class="spesa-header">
+        <div class="spesa-title" id="spesa-title">🛒 Lista della spesa</div>
+        <button class="spesa-close" id="spesa-close">✕</button>
+      </div>
+      <div class="spesa-body" id="spesa-body">
+        <!-- griglia negozi -->
+        <div id="stores-view">
+          <div class="store-grid" id="store-grid"></div>
+          <button class="btn-add-store" id="btn-add-store">＋ Aggiungi negozio</button>
+        </div>
+        <!-- lista prodotti del negozio selezionato -->
+        <div class="store-list-view" id="store-list-view">
+          <button class="store-back-btn" id="store-back-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Tutti i negozi
+          </button>
+          <div class="store-list-title" id="store-list-title"></div>
+          <div class="store-items-list" id="store-items-list"></div>
+          <div class="add-item-row">
+            <input type="text" id="new-item-name" placeholder="Prodotto…" autocomplete="off"/>
+            <input type="text" id="new-item-qty"  placeholder="Qtà" class="add-item-qty" autocomplete="off"/>
+            <button class="btn-add-item-confirm" id="btn-add-item-confirm">＋</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal nuovo negozio -->
+  <div class="new-store-overlay" id="new-store-overlay">
+    <div class="new-store-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" style="margin-bottom:16px;">Nuovo negozio</div>
+      <div class="form-group">
+        <div class="form-label">Nome negozio <span style="color:var(--red)">*</span></div>
+        <input class="form-input" id="ns-name" type="text" placeholder="Es. Esselunga, Lidl…" maxlength="32" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Immagine <span style="color:var(--red)">*</span></div>
+        <div class="photo-upload-row">
+          <img class="photo-preview-thumb" id="ns-img-preview" src="" alt=""/>
+          <button class="btn-photo-upload" id="ns-img-btn">📷 Scegli immagine</button>
+          <input type="file" id="ns-img-input" accept="image/*" style="display:none"/>
+        </div>
+      </div>
+      <button class="btn-primary" id="ns-save">Salva negozio</button>
+      <button class="btn-cancel" id="ns-cancel">Annulla</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      subscribeShoppingStores, addShoppingStore, deleteShoppingStore,
+      subscribeShoppingItems, addShoppingItem, updateShoppingItem, deleteShoppingItem,
+    } from './js/firebase-config.js';
+
+    /* ── stato ── */
+    let stores = [];
+    let currentStoreId = null;
+    let unsubItems = null;
+    let pendingStoreImg = null;
+
+    /* ── comprimi immagine store ── */
+    function compressImg(file, maxW = 400, q = 0.75) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onerror = rej;
+        r.onload = ev => {
+          const img = new Image();
+          img.onerror = rej;
+          img.onload = () => {
+            const s = Math.min(1, maxW / Math.max(img.width, img.height));
+            const w = Math.round(img.width * s), h = Math.round(img.height * s);
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.getContext('2d').drawImage(img, 0, 0, w, h);
+            res(c.toDataURL('image/jpeg', q));
+          };
+          img.src = ev.target.result;
+        };
+        r.readAsDataURL(file);
+      });
+    }
+
+    /* ── refs DOM ── */
+    const spesaOverlay    = document.getElementById('spesa-overlay');
+    const spesaClose      = document.getElementById('spesa-close');
+    const storesView      = document.getElementById('stores-view');
+    const storeListView   = document.getElementById('store-list-view');
+    const storeGrid       = document.getElementById('store-grid');
+    const storeListTitle  = document.getElementById('store-list-title');
+    const storeItemsList  = document.getElementById('store-items-list');
+    const storeBackBtn    = document.getElementById('store-back-btn');
+    const btnAddStore     = document.getElementById('btn-add-store');
+    const newStoreOverlay = document.getElementById('new-store-overlay');
+    const nsName          = document.getElementById('ns-name');
+    const nsImgBtn        = document.getElementById('ns-img-btn');
+    const nsImgInput      = document.getElementById('ns-img-input');
+    const nsImgPreview    = document.getElementById('ns-img-preview');
+    const nsSave          = document.getElementById('ns-save');
+    const nsCancel        = document.getElementById('ns-cancel');
+    const newItemName     = document.getElementById('new-item-name');
+    const newItemQty      = document.getElementById('new-item-qty');
+    const btnAddItem      = document.getElementById('btn-add-item-confirm');
+
+    /* ── apri/chiudi pannello ── */
+    window.openSpesaPanel = () => spesaOverlay.classList.add('open');
+    spesaClose.addEventListener('click', () => spesaOverlay.classList.remove('open'));
+    spesaOverlay.addEventListener('click', e => { if (e.target === spesaOverlay) spesaOverlay.classList.remove('open'); });
+
+    /* ── render griglia negozi ── */
+    function renderStores() {
+      storeGrid.innerHTML = '';
+      stores.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'store-card';
+
+        const imgEl = s.img
+          ? `<img class="store-card-img" src="${s.img}" alt="${s.name}" loading="lazy"/>`
+          : `<div class="store-card-img-placeholder">🛒</div>`;
+        card.innerHTML = `${imgEl}<div class="store-card-name">${s.name}</div>
+          <button class="store-card-del" title="Elimina negozio">✕</button>`;
+
+        card.querySelector('.store-card-del').addEventListener('click', async e => {
+          e.stopPropagation();
+          if (!confirm(`Eliminare "${s.name}"?`)) return;
+          await deleteShoppingStore(s._docId);
+        });
+        card.addEventListener('click', () => openStore(s));
+        storeGrid.appendChild(card);
+      });
+    }
+
+    /* ── apri lista di un negozio ── */
+    function openStore(s) {
+      currentStoreId = s._docId;
+      storeListTitle.textContent = s.name;
+      storesView.style.display = 'none';
+      storeListView.classList.add('active');
+      newItemName.value = '';
+      newItemQty.value  = '';
+
+      if (unsubItems) { unsubItems(); unsubItems = null; }
+      unsubItems = subscribeShoppingItems(s._docId, items => renderItems(items, s._docId));
+    }
+
+    storeBackBtn.addEventListener('click', () => {
+      if (unsubItems) { unsubItems(); unsubItems = null; }
+      currentStoreId = null;
+      storeListView.classList.remove('active');
+      storesView.style.display = '';
+    });
+
+    /* ── render items ── */
+    function renderItems(items, storeDocId) {
+      storeItemsList.innerHTML = '';
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'store-item' + (item.bought ? ' bought' : '');
+
+        const chk = document.createElement('button');
+        chk.className = 'store-item-check' + (item.bought ? ' checked' : '');
+        chk.addEventListener('click', () => updateShoppingItem(storeDocId, item._docId, { bought: !item.bought }));
+
+        const info = document.createElement('div');
+        info.className = 'store-item-info';
+        info.innerHTML = `<div class="store-item-name">${item.name}</div>${item.qty ? `<div class="store-item-qty">${item.qty}</div>` : ''}`;
+
+        const del = document.createElement('button');
+        del.className = 'store-item-del';
+        del.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>`;
+        del.addEventListener('click', () => deleteShoppingItem(storeDocId, item._docId));
+
+        row.appendChild(chk);
+        row.appendChild(info);
+        row.appendChild(del);
+        storeItemsList.appendChild(row);
+      });
+    }
+
+    /* ── aggiungi prodotto ── */
+    async function doAddItem() {
+      const name = newItemName.value.trim();
+      const qty  = newItemQty.value.trim();
+      if (!name || !currentStoreId) return;
+      await addShoppingItem(currentStoreId, { name, qty, bought: false });
+      newItemName.value = '';
+      newItemQty.value  = '';
+      newItemName.focus();
+    }
+    btnAddItem.addEventListener('click', doAddItem);
+    newItemName.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAddItem(); } });
+
+    /* ── nuovo negozio modal ── */
+    btnAddStore.addEventListener('click', () => {
+      nsName.value = '';
+      pendingStoreImg = null;
+      nsImgPreview.style.display = 'none';
+      nsImgPreview.src = '';
+      nsImgBtn.textContent = '📷 Scegli immagine';
+      nsImgInput.value = '';
+      nsName.classList.remove('err');
+      nsImgBtn.style.borderColor = '';
+      newStoreOverlay.classList.add('open');
+    });
+    nsCancel.addEventListener('click', () => newStoreOverlay.classList.remove('open'));
+    newStoreOverlay.addEventListener('click', e => { if (e.target === newStoreOverlay) newStoreOverlay.classList.remove('open'); });
+
+    nsImgBtn.addEventListener('click', () => nsImgInput.click());
+    nsImgInput.addEventListener('change', async () => {
+      const file = nsImgInput.files[0];
+      if (!file) return;
+      try {
+        pendingStoreImg = await compressImg(file);
+        nsImgPreview.src = pendingStoreImg;
+        nsImgPreview.classList.add('visible');
+        nsImgPreview.style.display = 'block';
+        nsImgBtn.textContent = '✓ Immagine caricata';
+        nsImgBtn.style.borderColor = '';
+      } catch { alert('Errore immagine. Riprova.'); }
+    });
+
+    nsSave.addEventListener('click', async () => {
+      const name = nsName.value.trim();
+      const hasErr = !name || !pendingStoreImg;
+      nsName.classList.toggle('err', !name);
+      nsImgBtn.style.borderColor = pendingStoreImg ? '' : 'var(--red)';
+      if (hasErr) return;
+      await addShoppingStore({ name, img: pendingStoreImg });
+      newStoreOverlay.classList.remove('open');
+    });
+
+    /* ── subscribe negozi ── */
+    subscribeShoppingStores(newStores => {
+      stores = newStores;
+      renderStores();
+    });
   </script>
 </body>
 </html>

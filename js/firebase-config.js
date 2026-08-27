@@ -311,3 +311,63 @@ export async function getBirthdayContacts(daysAhead = 7) {
   results.sort((a, b) => a._daysUntilBirthday - b._daysUntilBirthday);
   return results;
 }
+
+// ─── Lista della spesa ────────────────────────────────────────────────────────
+
+const shoppingStoresCol = db ? collection(db, 'shopping_stores') : null;
+
+/** Sottoscrive in real-time ai negozi. */
+export function subscribeShoppingStores(callback) {
+  if (!shoppingStoresCol) { callback([]); return () => {}; }
+  return onSnapshot(query(shoppingStoresCol, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+/** Aggiunge un negozio. */
+export async function addShoppingStore(data) {
+  if (!shoppingStoresCol) return null;
+  const ref2 = await addDoc(shoppingStoresCol, { ...data, createdAt: Date.now() });
+  return ref2.id;
+}
+
+/** Aggiorna un negozio (es. nome o img). */
+export async function updateShoppingStore(docId, fields) {
+  if (!shoppingStoresCol) return;
+  await setDoc(doc(db, 'shopping_stores', docId), fields, { merge: true });
+}
+
+/** Elimina un negozio (i suoi items vengono eliminati a cascata separatamente). */
+export async function deleteShoppingStore(docId) {
+  if (!shoppingStoresCol) return;
+  await deleteDoc(doc(db, 'shopping_stores', docId));
+}
+
+/** Sottoscrive in real-time agli item di un negozio (subcollection items). */
+export function subscribeShoppingItems(storeDocId, callback) {
+  if (!db) { callback([]); return () => {}; }
+  const col = collection(db, 'shopping_stores', storeDocId, 'items');
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+/** Aggiunge un prodotto alla lista di un negozio. */
+export async function addShoppingItem(storeDocId, data) {
+  if (!db) return null;
+  const col = collection(db, 'shopping_stores', storeDocId, 'items');
+  const ref2 = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref2.id;
+}
+
+/** Aggiorna un prodotto (es. flag acquistato, quantità). */
+export async function updateShoppingItem(storeDocId, itemDocId, fields) {
+  if (!db) return;
+  await setDoc(doc(db, 'shopping_stores', storeDocId, 'items', itemDocId), fields, { merge: true });
+}
+
+/** Elimina un prodotto. */
+export async function deleteShoppingItem(storeDocId, itemDocId) {
+  if (!db) return;
+  await deleteDoc(doc(db, 'shopping_stores', storeDocId, 'items', itemDocId));
+}

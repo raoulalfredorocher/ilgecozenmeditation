@@ -602,6 +602,13 @@
     }
 
     function renderAll() {
+      /* salva quali sezioni erano aperte prima di distruggere il DOM */
+      const openIds = new Set(
+        Array.from(document.querySelectorAll('.macro-body.open'))
+          .map(el => el.closest('.macro-section')?.id)
+          .filter(Boolean)
+      );
+
       const container = document.getElementById('sections-container');
       container.innerHTML = '';
 
@@ -737,6 +744,14 @@
         wrap.appendChild(bodyDiv);
         wrap.appendChild(footerDiv);
         container.appendChild(wrap);
+
+        /* ripristina stato aperto se era aperto prima */
+        if (openIds.has(sec.id)) {
+          bodyDiv.classList.add('open');
+          headerDiv.classList.add('open');
+          targetDiv.style.borderRadius = '0';
+          footerDiv.style.display = 'block';
+        }
       });
     }
 

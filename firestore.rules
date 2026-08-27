@@ -25,8 +25,10 @@ service cloud.firestore {
     match /allenamenti_registro/{document=**} {
       allow read, write: if true;
     }
-    // Personal CRM — contatti e note (subcollection)
     match /crm_contacts/{document=**} {
+      allow read, write: if true;
+    }
+    match /shopping_stores/{document=**} {
       allow read, write: if true;
     }
   }
