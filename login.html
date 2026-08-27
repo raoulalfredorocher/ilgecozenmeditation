@@ -169,21 +169,34 @@
     };
   </script>
   <script type="module">
-    import { onAuthChange, signInWithGoogle } from './js/auth.js';
+    import { onAuthChange, signInWithGoogle, handleRedirectResult } from './js/auth.js';
 
-    // Se già loggato → vai direttamente all'app
+    const errEl = document.getElementById('login-error');
+    const btn   = document.getElementById('btn-google');
+
+    // 1. Controlla se stiamo tornando da un redirect Google (mobile)
+    handleRedirectResult().then(user => {
+      if (user) window.location.replace('index.html');
+    });
+
+    // 2. Se già loggato (sessione attiva) → vai direttamente all'app
     onAuthChange(user => {
       if (user) window.location.replace('index.html');
     });
 
-    document.getElementById('btn-google').addEventListener('click', async () => {
-      const errEl = document.getElementById('login-error');
+    // 3. Click sul pulsante
+    btn.addEventListener('click', async () => {
       errEl.textContent = '';
+      btn.disabled = true;
+      btn.style.opacity = '.6';
       try {
         await signInWithGoogle();
-        // onAuthChange gestirà il redirect
+        // Su desktop: onAuthChange gestirà il redirect dopo il popup
+        // Su mobile: la pagina viene sostituita dal redirect Google — non arriva qui
       } catch (e) {
         errEl.textContent = 'Accesso non riuscito. Riprova.';
+        btn.disabled = false;
+        btn.style.opacity = '';
         console.error(e);
       }
     });
