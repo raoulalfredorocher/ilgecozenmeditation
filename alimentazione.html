@@ -746,7 +746,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Foto <span class="req">*</span></label>
+        <label class="form-label">Foto <span class="req" style="font-weight:400;color:var(--muted)">(opzionale)</span></label>
         <div class="photo-upload-row">
           <img class="photo-preview-thumb" id="rf-photo-preview" src="" alt=""/>
           <button class="btn-photo-upload" type="button" onclick="document.getElementById('rf-photo-input').click()">📷 Scatta o scegli foto</button>
@@ -1339,8 +1339,7 @@
       { el: document.getElementById('rf-fat'),  val: fat  },
     ];
     fields.forEach(f => { if (!f.val) { f.el.classList.add('err'); ok=false; } else f.el.classList.remove('err'); });
-    if (!rfPhotoData) { document.querySelector('.btn-photo-upload').style.borderColor='var(--red)'; ok=false; }
-    else document.querySelector('.btn-photo-upload').style.borderColor='';
+    document.querySelector('.btn-photo-upload').style.borderColor='';
     if (!ingredients.length || !steps.length) { alert('Aggiungi almeno un ingrediente e uno step.'); ok=false; }
     if (!ok) return;
 
