@@ -386,3 +386,55 @@ export async function deleteShoppingItem(storeDocId, itemDocId) {
   if (!db || !auth?.currentUser) return;
   await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'shopping_stores', storeDocId, 'items', itemDocId));
 }
+
+// ─── Libri e Manga ────────────────────────────────────────────────────────────
+
+export function subscribeLibri(callback) {
+  const col = userCol('libri');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addLibroDoc(data) {
+  const col = userCol('libri');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+export async function updateLibroDoc(docId, fields) {
+  const ref = userDoc('libri', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+export async function deleteLibroDoc(docId) {
+  const ref = userDoc('libri', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+// ─── Film, Anime e Serie TV ───────────────────────────────────────────────────
+
+export function subscribeFilm(callback) {
+  const col = userCol('film');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addFilmDoc(data) {
+  const col = userCol('film');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+export async function updateFilmDoc(docId, fields) {
+  const ref = userDoc('film', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+export async function deleteFilmDoc(docId) {
+  const ref = userDoc('film', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}

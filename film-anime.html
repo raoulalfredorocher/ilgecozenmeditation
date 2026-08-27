@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Film Anime e Serie TV"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Film Anime e Serie TV</title>
+  <link rel="stylesheet" href="styles/theme.css?v=8"/>
+  <link rel="stylesheet" href="styles/layout.css?v=8"/>
+  <style>
+    .app-sub-film{font-size:.48rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+    #screen-list,#screen-center,#screen-visti{width:100%;display:none;flex-direction:column;align-items:center;gap:14px;}
+    #screen-list.active,#screen-center.active,#screen-visti.active{display:flex;}
+    .section-divider{width:100%;font-size:.52rem;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;text-align:center;padding:2px 0 4px;}
+    .films-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .film-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:0;display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s;}
+    .film-card.visto{border-color:#22c55e;}
+    .film-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;flex-shrink:0;}
+    .film-img-ph{width:100%;aspect-ratio:2/3;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:2.4rem;flex-shrink:0;}
+    .film-body{padding:9px 10px 6px;display:flex;flex-direction:column;gap:3px;flex:1;}
+    .film-title{font-size:.76rem;font-weight:700;color:var(--text);letter-spacing:.03em;line-height:1.3;}
+    .film-type{font-size:.58rem;color:var(--muted);letter-spacing:.04em;}
+    .film-meta{font-size:.55rem;color:var(--muted);}
+    .film-actions{display:flex;align-items:center;justify-content:space-between;padding:5px 10px 9px;gap:5px;}
+    .btn-act{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:5px 7px;display:flex;align-items:center;font-family:inherit;transition:color .2s,border-color .2s;}
+    .btn-act:active{color:var(--gold);border-color:var(--gold);}
+    .btn-act.d:active{color:var(--red);border-color:var(--red);}
+    .btn-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s;}
+    .btn-check svg{opacity:0;}
+    .film-card.visto .btn-check{background:#22c55e;border-color:#22c55e;}
+    .film-card.visto .btn-check svg{opacity:1;}
+    .empty-st{width:100%;text-align:center;padding:40px 0 12px;font-size:.7rem;color:var(--muted);letter-spacing:.08em;line-height:1.8;display:none;}
+    .empty-st.visible{display:block;}
+    .visto-item{width:100%;background:var(--card);border:1px solid #22c55e;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:11px;}
+    .visto-img{width:44px;height:62px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+    .visto-img-ph{width:44px;height:62px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .visto-info{flex:1;min-width:0;}
+    .visto-title{font-size:.78rem;font-weight:700;color:var(--text);}
+    .visto-type{font-size:.58rem;color:var(--muted);margin-top:2px;}
+    .visto-stars{font-size:.68rem;margin-top:3px;}
+    .visto-note{font-size:.58rem;color:var(--muted);line-height:1.5;margin-top:3px;font-style:italic;}
+    .visto-acts{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
+    .btn-unch{width:26px;height:26px;border-radius:50%;background:#22c55e;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .btn-unch:active{background:var(--muted);}
+    .btn-esm{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;padding:3px 5px;display:flex;align-items:center;transition:color .2s,border-color .2s;}
+    .btn-esm:active{color:var(--gold);border-color:var(--gold);}
+    /* App streaming */
+    .streaming-section{width:100%;display:flex;flex-direction:column;gap:12px;}
+    .streaming-title{font-size:.58rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;text-align:center;}
+    .streaming-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .btn-stream{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;text-decoration:none;color:var(--text);font-size:.7rem;font-weight:600;letter-spacing:.08em;transition:border-color .2s,transform .12s;}
+    .btn-stream:active{transform:scale(.95);border-color:var(--gold);}
+    .btn-stream-icon{font-size:1.8rem;line-height:1;}
+    /* FAB */
+    .fab-add{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px));right:20px;width:52px;height:52px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,115,158,.35);z-index:100;transition:transform .12s;}
+    .fab-add:active{transform:scale(.91);}
+    .fab-add.hidden{display:none;}
+    .mo{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;z-index:300;padding-bottom:env(safe-area-inset-bottom,0px);}
+    .mo.open{display:flex;}
+    .ms{width:100%;max-width:420px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow-y:auto;}
+    .mh{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 4px;flex-shrink:0;}
+    .mt{font-size:.72rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;text-align:center;flex-shrink:0;}
+    .fl{font-size:.56rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+    .fg{display:flex;flex-direction:column;gap:4px;}
+    .fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .fi{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.82rem;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s;}
+    .fi:focus{border-color:var(--gold);}
+    .fi.err{border-color:var(--red);}
+    .fs{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.82rem;font-family:inherit;color:var(--text);outline:none;appearance:none;}
+    .fs:focus{border-color:var(--gold);}
+    .fta{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.78rem;font-family:inherit;color:var(--text);resize:none;min-height:72px;outline:none;transition:border-color .2s;}
+    .fta:focus{border-color:var(--gold);}
+    .stars-row{display:flex;gap:8px;justify-content:center;padding:4px 0;}
+    .sb{font-size:1.5rem;background:none;border:none;cursor:pointer;opacity:.3;transition:opacity .15s,transform .12s;}
+    .sb.on{opacity:1;}
+    .sb:active{transform:scale(1.2);}
+    #img-file-input{display:none;}
+    .iuw{display:flex;align-items:center;gap:10px;}
+    .ipv{width:56px;height:76px;border-radius:8px;object-fit:cover;border:1px solid var(--border);display:none;flex-shrink:0;}
+    .ipv.visible{display:block;}
+    .iub{flex:1;background:none;border:1.5px dashed var(--border);border-radius:10px;color:var(--muted);font-size:.72rem;font-family:inherit;padding:10px;cursor:pointer;text-align:center;transition:border-color .2s,color .2s;}
+    .iub:active{border-color:var(--gold);color:var(--gold);}
+    .bs{width:100%;background:var(--gold);color:#fff;border:none;border-radius:14px;padding:12px;font-size:.8rem;font-family:inherit;letter-spacing:.14em;cursor:pointer;flex-shrink:0;}
+    .bs:active{opacity:.85;}
+    .bc{width:100%;background:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--muted);letter-spacing:.12em;cursor:pointer;flex-shrink:0;}
+    .bd{width:100%;background:none;border:1px solid var(--red);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--red);letter-spacing:.12em;cursor:pointer;flex-shrink:0;transition:background .2s,color .2s;}
+    .bd:active{background:var(--red);color:#fff;}
+    .co{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;z-index:400;padding-bottom:env(safe-area-inset-bottom,0px);}
+    .co.open{display:flex;}
+    .cs{width:100%;max-width:420px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow-y:auto;}
+    .vo{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:350;padding:calc(env(safe-area-inset-top,0px)+14px) 20px 32px;max-width:420px;margin:0 auto;overflow-y:auto;}
+    .vo.open{display:flex;}
+    .vi{width:100%;max-height:280px;object-fit:contain;border-radius:16px;margin-bottom:14px;}
+    .vt{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:.04em;margin-bottom:4px;}
+    .vm{font-size:.64rem;color:var(--muted);letter-spacing:.08em;margin-bottom:8px;}
+    .vs2{font-size:1.1rem;margin-bottom:10px;}
+    .vl{font-size:.52rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;margin-top:12px;}
+    .vn{font-size:.76rem;color:var(--text);line-height:1.7;}
+    .bvc{background:none;border:1px solid var(--border);border-radius:12px;padding:10px 20px;font-size:.76rem;font-family:inherit;color:var(--muted);cursor:pointer;margin-top:20px;letter-spacing:.1em;}
+    .tab-bar{position:fixed;bottom:0;left:0;right:0;height:calc(58px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--card);border-top:1px solid var(--border);border-radius:22px 22px 0 0;display:flex;align-items:center;justify-content:space-around;z-index:200;overflow:visible;}
+    /* Toggle stagioni/durata */
+    .toggle-row{display:flex;gap:8px;margin-bottom:4px;}
+    .tog-btn{flex:1;background:none;border:1px solid var(--border);border-radius:8px;padding:7px;font-size:.7rem;font-family:inherit;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s;}
+    .tog-btn.active{border-color:var(--gold);color:var(--gold);background:var(--surface);}
+  </style>
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+</head>
+<body style="visibility:hidden">
+  <script type="module" src="js/auth-guard.js"></script>
+  <header id="main-header">
+    <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      <span>TAO</span>
+    </a>
+    <div class="header-center">
+      <a href="passioni.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:inherit;">
+        <div style="font-size:1.8rem;line-height:1;">🎬</div>
+        <div class="app-title" style="font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:700;">FILM ANIME E SERIE TV</div>
+        <div class="app-sub-film">IL GECO ZEN · PASSIONI</div>
+      </a>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema"><div class="knob" id="theme-knob">☀️</div></button>
+  </header>
+
+  <div id="screen-list" class="active">
+    <div class="section-divider">Da Vedere</div>
+    <div class="films-grid" id="films-grid"></div>
+    <div class="empty-st visible" id="empty-list">Nessun titolo ancora.<br>Tocca ＋ per aggiungerne uno 🎬</div>
+  </div>
+
+  <div id="screen-center">
+    <div class="section-divider">App Streaming</div>
+    <div class="streaming-section">
+      <div class="streaming-grid">
+        <a class="btn-stream" href="https://www.netflix.com" target="_blank" rel="noopener"><span class="btn-stream-icon">🔴</span>Netflix</a>
+        <a class="btn-stream" href="https://www.disneyplus.com" target="_blank" rel="noopener"><span class="btn-stream-icon">🏰</span>Disney+</a>
+        <a class="btn-stream" href="https://www.primevideo.com" target="_blank" rel="noopener"><span class="btn-stream-icon">📦</span>Amazon Prime</a>
+        <a class="btn-stream" href="https://www.dazn.com" target="_blank" rel="noopener"><span class="btn-stream-icon">🏆</span>DAZN</a>
+        <a class="btn-stream" href="https://www.youtube.com" target="_blank" rel="noopener"><span class="btn-stream-icon">▶️</span>YouTube</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-visti">
+    <div class="section-divider">Visti</div>
+    <div id="visti-list" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <button class="fab-add" id="fab-add">＋</button>
+
+  <div class="mo" id="mo">
+    <div class="ms">
+      <div class="mh"></div>
+      <div class="mt" id="modal-title">Nuovo Titolo</div>
+      <div class="fg"><div class="fl">Titolo *</div><input class="fi" id="f-title" type="text" placeholder="Es. Spirited Away" maxlength="70" autocomplete="off"/></div>
+      <div class="fr2">
+        <div class="fg">
+          <div class="fl">Tipologia *</div>
+          <select class="fs" id="f-type">
+            <option value="Film">Film</option>
+            <option value="Documentario">Documentario</option>
+            <option value="Anime">Anime</option>
+            <option value="Cartone">Cartone</option>
+            <option value="Serie TV">Serie TV</option>
+          </select>
+        </div>
+        <div class="fg">
+          <div class="fl">Piattaforma</div>
+          <select class="fs" id="f-platform">
+            <option value="Netflix">Netflix</option>
+            <option value="Disney+">Disney+</option>
+            <option value="Amazon Prime">Amazon Prime</option>
+            <option value="DAZN">DAZN</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Altro">Altro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" id="duration-section">
+        <div class="fl">Durata / Stagioni</div>
+        <div class="toggle-row">
+          <button class="tog-btn active" id="tog-min" type="button">Minuti</button>
+          <button class="tog-btn" id="tog-ep" type="button">Stagioni + Ep.</button>
+        </div>
+        <div id="dur-min-wrap"><input class="fi" id="f-duration" type="number" placeholder="Es. 124" min="1"/></div>
+        <div id="dur-ep-wrap" style="display:none;">
+          <div class="fr2">
+            <input class="fi" id="f-seasons" type="number" placeholder="Stagioni" min="1"/>
+            <input class="fi" id="f-episodes" type="number" placeholder="Episodi" min="1"/>
+          </div>
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fl">Locandina</div>
+        <div class="iuw">
+          <img class="ipv" id="img-preview" src="" alt=""/>
+          <button class="iub" id="btn-img-upload">📷 Scegli immagine</button>
+          <input type="file" id="img-file-input" accept="image/*"/>
+        </div>
+      </div>
+      <button class="bs" id="btn-save">Salva titolo</button>
+      <button class="bc" id="btn-cancel">Annulla</button>
+      <button class="bd" id="btn-delete" style="display:none;">🗑 Elimina</button>
+    </div>
+  </div>
+
+  <div class="co" id="co">
+    <div class="cs">
+      <div class="mh"></div>
+      <div class="mt">Segna come Visto</div>
+      <div class="fg"><div class="fl">Cosa ti ha lasciato questo titolo?</div><textarea class="fta" id="c-note" placeholder="Cosa ti ha emozionato? Cosa ti è rimasto?" maxlength="500"></textarea></div>
+      <div class="fg">
+        <div class="fl">Valutazione</div>
+        <div class="stars-row" id="stars-row">
+          <button class="sb" data-v="1">⭐</button><button class="sb" data-v="2">⭐</button><button class="sb" data-v="3">⭐</button><button class="sb" data-v="4">⭐</button><button class="sb" data-v="5">⭐</button>
+        </div>
+      </div>
+      <button class="bs" id="c-confirm">✓ Sposta in Visti</button>
+      <button class="bc" id="c-cancel">Annulla</button>
+    </div>
+  </div>
+
+  <div class="vo" id="vo">
+    <img class="vi" id="v-img" src="" alt="" style="display:none;"/>
+    <div class="vt" id="v-title"></div>
+    <div class="vm" id="v-meta"></div>
+    <div class="vs2" id="v-stars"></div>
+    <div class="vl" id="v-note-label" style="display:none;">COSA MI HA LASCIATO</div>
+    <div class="vn" id="v-note"></div>
+    <button class="bvc" id="btn-view-close">← Chiudi</button>
+  </div>
+
+  <nav class="tab-bar">
+    <button class="tab-btn tab-active" id="tab-list">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+      <span class="tab-label">Da Vedere</span>
+    </button>
+    <button class="tab-btn tab-center" id="tab-center-btn">
+      <div class="tab-center-circle"><img src="Logo%20Trasparente.png" alt="" class="tab-center-gecko"/></div>
+      <span class="tab-label">App</span>
+    </button>
+    <button class="tab-btn" id="tab-visti">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="tab-label">Visti</span>
+    </button>
+  </nav>
+
+  <script type="module">
+    import { subscribeFilm, addFilmDoc, updateFilmDoc, deleteFilmDoc, waitForAuth } from './js/firebase-config.js';
+    const htmlEl=document.documentElement,btnTheme=document.getElementById('theme-toggle'),knob=document.getElementById('theme-knob');
+    let isDark=localStorage.getItem('zen_theme')==='dark';
+    function applyTheme(){htmlEl.setAttribute('data-theme',isDark?'dark':'light');knob.textContent=isDark?'🌙':'☀️';document.querySelector('meta[name="theme-color"]').content=isDark?'#111820':'#f7f4f9';localStorage.setItem('zen_theme',isDark?'dark':'light');}
+    applyTheme();btnTheme.addEventListener('click',()=>{isDark=!isDark;applyTheme();});
+    waitForAuth().then(user=>{if(!user)return;initApp();});
+    function initApp(){
+      let items=[],editingId=null,pendingImg=null,confirmId=null,confirmStars=0;
+      let durMode='min';
+      const filmsGrid=document.getElementById('films-grid'),emptyList=document.getElementById('empty-list'),vistiList=document.getElementById('visti-list');
+      const fabAdd=document.getElementById('fab-add'),mo=document.getElementById('mo'),co=document.getElementById('co'),vo=document.getElementById('vo');
+      const fTitle=document.getElementById('f-title'),fType=document.getElementById('f-type'),fPlatform=document.getElementById('f-platform');
+      const fDuration=document.getElementById('f-duration'),fSeasons=document.getElementById('f-seasons'),fEpisodes=document.getElementById('f-episodes');
+      const togMin=document.getElementById('tog-min'),togEp=document.getElementById('tog-ep');
+      const durMinWrap=document.getElementById('dur-min-wrap'),durEpWrap=document.getElementById('dur-ep-wrap');
+      const imgPreview=document.getElementById('img-preview'),imgFileInput=document.getElementById('img-file-input'),btnImgUpload=document.getElementById('btn-img-upload');
+      const btnSave=document.getElementById('btn-save'),btnCancel=document.getElementById('btn-cancel'),btnDelete=document.getElementById('btn-delete'),modalTitle=document.getElementById('modal-title');
+      const cNote=document.getElementById('c-note'),starsRow=document.getElementById('stars-row'),cConfirm=document.getElementById('c-confirm'),cCancel=document.getElementById('c-cancel');
+      const btnViewClose=document.getElementById('btn-view-close');
+      const sL=document.getElementById('screen-list'),sC=document.getElementById('screen-center'),sV=document.getElementById('screen-visti');
+      const tL=document.getElementById('tab-list'),tC=document.getElementById('tab-center-btn'),tV=document.getElementById('tab-visti');
+
+      togMin.addEventListener('click',()=>{durMode='min';togMin.classList.add('active');togEp.classList.remove('active');durMinWrap.style.display='';durEpWrap.style.display='none';});
+      togEp.addEventListener('click',()=>{durMode='ep';togEp.classList.add('active');togMin.classList.remove('active');durEpWrap.style.display='';durMinWrap.style.display='none';});
+
+      function showScreen(w){
+        [sL,sC,sV].forEach(s=>s.classList.remove('active'));[tL,tC,tV].forEach(b=>b.classList.remove('tab-active'));
+        if(w==='list'){sL.classList.add('active');tL.classList.add('tab-active');fabAdd.classList.remove('hidden');}
+        if(w==='center'){sC.classList.add('active');tC.classList.add('tab-active');fabAdd.classList.add('hidden');}
+        if(w==='visti'){sV.classList.add('active');tV.classList.add('tab-active');fabAdd.classList.add('hidden');renderVisti();}
+      }
+      tL.addEventListener('click',()=>showScreen('list'));tC.addEventListener('click',()=>showScreen('center'));tV.addEventListener('click',()=>showScreen('visti'));
+      fabAdd.addEventListener('click',()=>openModal(null));
+
+      function openModal(id){
+        editingId=id;pendingImg=null;
+        fTitle.value='';fType.value='Film';fPlatform.value='Netflix';fDuration.value='';fSeasons.value='';fEpisodes.value='';
+        imgPreview.src='';imgPreview.classList.remove('visible');btnImgUpload.textContent='📷 Scegli immagine';
+        fTitle.classList.remove('err');imgFileInput.value='';
+        durMode='min';togMin.classList.add('active');togEp.classList.remove('active');durMinWrap.style.display='';durEpWrap.style.display='none';
+        if(id!==null){const item=items.find(i=>i.id===id);if(item){modalTitle.textContent='Modifica Titolo';fTitle.value=item.title;fType.value=item.type||'Film';fPlatform.value=item.platform||'Netflix';if(item.seasons){durMode='ep';togEp.classList.add('active');togMin.classList.remove('active');durEpWrap.style.display='';durMinWrap.style.display='none';fSeasons.value=item.seasons||'';fEpisodes.value=item.episodes||'';}else{fDuration.value=item.duration||'';}if(item.img){pendingImg=item.img;imgPreview.src=item.img;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine presente';}}btnDelete.style.display='';}
+        else{modalTitle.textContent='Nuovo Titolo';btnDelete.style.display='none';}
+        mo.classList.add('open');
+      }
+      function closeModal(){mo.classList.remove('open');editingId=null;pendingImg=null;}
+      btnCancel.addEventListener('click',closeModal);mo.addEventListener('click',e=>{if(e.target===mo)closeModal();});
+      btnDelete.addEventListener('click',async()=>{if(editingId===null)return;const item=items.find(i=>i.id===editingId);if(item)await deleteFilmDoc(item._docId);closeModal();});
+      function compressImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=ev=>{const img=new Image();img.onerror=rej;img.onload=()=>{const sc=Math.min(1,500/Math.max(img.width,img.height)),w=Math.round(img.width*sc),h=Math.round(img.height*sc),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',.72));};img.src=ev.target.result;};r.readAsDataURL(file);});}
+      btnImgUpload.addEventListener('click',()=>imgFileInput.click());
+      imgFileInput.addEventListener('change',async()=>{const f=imgFileInput.files[0];if(!f)return;try{pendingImg=await compressImage(f);imgPreview.src=pendingImg;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine caricata';}catch{alert('Errore immagine.');}});
+      btnSave.addEventListener('click',async()=>{const t=fTitle.value.trim();fTitle.classList.toggle('err',!t);if(!t)return;const d={title:t,type:fType.value,platform:fPlatform.value,img:pendingImg||null,done:false,doneDate:null,note:null,stars:null};if(durMode==='min'){d.duration=fDuration.value.trim();d.seasons=null;d.episodes=null;}else{d.seasons=fSeasons.value.trim();d.episodes=fEpisodes.value.trim();d.duration=null;}if(editingId!==null){const item=items.find(i=>i.id===editingId);if(item)await updateFilmDoc(item._docId,{title:d.title,type:d.type,platform:d.platform,img:d.img,duration:d.duration,seasons:d.seasons,episodes:d.episodes});}else{await addFilmDoc({...d,id:Date.now()});}closeModal();});
+      function openConfirm(id){confirmId=id;confirmStars=0;cNote.value='';starsRow.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));co.classList.add('open');}
+      function closeConfirm(){co.classList.remove('open');confirmId=null;}
+      cCancel.addEventListener('click',closeConfirm);co.addEventListener('click',e=>{if(e.target===co)closeConfirm();});
+      starsRow.addEventListener('click',e=>{const b=e.target.closest('.sb');if(!b)return;confirmStars=Number(b.dataset.v);starsRow.querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=confirmStars));});
+      cConfirm.addEventListener('click',async()=>{if(!confirmId||confirmStars===0||!cNote.value.trim()){if(confirmStars===0)alert('Seleziona almeno una stellina.');else alert('Scrivi cosa ti ha lasciato questo titolo.');return;}const item=items.find(i=>i.id===confirmId);if(item)await updateFilmDoc(item._docId,{done:true,doneDate:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'}),note:cNote.value.trim(),stars:confirmStars});closeConfirm();});
+      async function undoDone(id){const item=items.find(i=>i.id===id);if(item)await updateFilmDoc(item._docId,{done:false,doneDate:null,note:null,stars:null});}
+      function durLabel(item){if(item.seasons)return `${item.seasons} stag. · ${item.episodes||'?'} ep.`;if(item.duration)return `${item.duration} min`;return '';}
+      function openView(id){const item=items.find(i=>i.id===id);if(!item)return;const vi=document.getElementById('v-img');vi.src=item.img||'';vi.style.display=item.img?'block':'none';document.getElementById('v-title').textContent=item.title;document.getElementById('v-meta').textContent=[item.type,item.platform,durLabel(item)].filter(Boolean).join(' · ');document.getElementById('v-stars').textContent=item.stars?'⭐'.repeat(item.stars):'';const nl=document.getElementById('v-note-label'),nv=document.getElementById('v-note');if(item.note){nl.style.display='';nv.textContent=item.note;}else{nl.style.display='none';nv.textContent='';}vo.classList.add('open');}
+      btnViewClose.addEventListener('click',()=>vo.classList.remove('open'));
+      const TYPE_ICONS={Film:'🎬',Documentario:'📹',Anime:'⛩️',Cartone:'🎭','Serie TV':'📺'};
+      const EDIT_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+      const DEL_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+      const EYE_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+      const CHK_SVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+      function renderGrid(){
+        filmsGrid.innerHTML='';const pending=items.filter(i=>!i.done);
+        emptyList.classList.toggle('visible',pending.length===0);
+        pending.forEach(item=>{
+          const card=document.createElement('div');card.className='film-card';
+          const icon=TYPE_ICONS[item.type]||'🎬';
+          card.innerHTML=`${item.img?`<img class="film-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="film-img-ph">${icon}</div>`}<div class="film-body"><div class="film-title">${esc(item.title)}</div><div class="film-type">${icon} ${esc(item.type||'')} · ${esc(item.platform||'')}</div><div class="film-meta">${esc(durLabel(item))}</div></div><div class="film-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${EYE_SVG}</button></div><button class="btn-check" data-act="check">${CHK_SVG}</button></div>`;
+          card.querySelector('[data-act="edit"]').addEventListener('click',e=>{e.stopPropagation();openModal(item.id);});
+          card.querySelector('[data-act="del"]').addEventListener('click',async e=>{e.stopPropagation();if(confirm('Eliminare?')){const it=items.find(i=>i.id===item.id);if(it)await deleteFilmDoc(it._docId);}});
+          card.querySelector('[data-act="view"]').addEventListener('click',e=>{e.stopPropagation();openView(item.id);});
+          card.querySelector('[data-act="check"]').addEventListener('click',e=>{e.stopPropagation();openConfirm(item.id);});
+          filmsGrid.appendChild(card);
+        });
+      }
+      function renderVisti(){
+        vistiList.innerHTML='';const done=items.filter(i=>i.done).reverse();
+        if(done.length===0){vistiList.innerHTML='<div style="width:100%;text-align:center;padding:40px 0;font-size:.7rem;color:var(--muted);letter-spacing:.08em;line-height:1.8;">Nessun titolo visto ancora.<br>Spunta un titolo dalla lista ✨</div>';return;}
+        const ctr=document.createElement('div');ctr.style.cssText='font-size:.64rem;letter-spacing:.14em;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;';ctr.textContent=`${done.length} titolo${done.length!==1?'i':''} visto${done.length!==1?'i':''}`;vistiList.appendChild(ctr);
+        done.forEach(item=>{
+          const el=document.createElement('div');el.className='visto-item';const icon=TYPE_ICONS[item.type]||'🎬';
+          el.innerHTML=`${item.img?`<img class="visto-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="visto-img-ph">${icon}</div>`}<div class="visto-info"><div class="visto-title">${esc(item.title)}</div><div class="visto-type">${icon} ${esc(item.type||'')} · ${esc(item.platform||'')}</div>${item.stars?`<div class="visto-stars">${'⭐'.repeat(item.stars)}</div>`:''} ${item.note?`<div class="visto-note">"${esc(item.note)}"</div>`:''}</div><div class="visto-acts"><button class="btn-unch" data-act="unch">${CHK_SVG}</button><button class="btn-esm" data-act="edit">${EDIT_SVG}</button><button class="btn-esm" data-act="view">${EYE_SVG}</button></div>`;
+          el.querySelector('[data-act="unch"]').addEventListener('click',()=>undoDone(item.id));
+          el.querySelector('[data-act="edit"]').addEventListener('click',()=>openModal(item.id));
+          el.querySelector('[data-act="view"]').addEventListener('click',()=>openView(item.id));
+          vistiList.appendChild(el);
+        });
+      }
+      function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+      subscribeFilm(ni=>{items=ni;renderGrid();if(sV.classList.contains('active'))renderVisti();});
+      document.body.style.visibility='';
+    }
+  </script>
+</body>
+</html>
