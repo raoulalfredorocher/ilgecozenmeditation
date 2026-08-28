@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Giochi"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Giochi</title>
+  <link rel="stylesheet" href="styles/theme.css?v=8"/>
+  <link rel="stylesheet" href="styles/layout.css?v=8"/>
+  <style>
+    .app-sub-giochi{font-size:.48rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+    #screen-list,#screen-center,#screen-giocati{width:100%;display:none;flex-direction:column;align-items:center;gap:14px;}
+    #screen-list.active,#screen-center.active,#screen-giocati.active{display:flex;}
+    .section-divider{width:100%;font-size:.52rem;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;text-align:center;padding:2px 0 4px;}
+    .games-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .game-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:0;display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s;}
+    .game-card.replay{border-color:#f59e0b;background:rgba(245,158,11,.06);}
+    .game-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;flex-shrink:0;}
+    .game-img-ph{width:100%;aspect-ratio:3/4;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:2.4rem;flex-shrink:0;}
+    .game-body{padding:9px 10px 6px;display:flex;flex-direction:column;gap:3px;flex:1;}
+    .game-title{font-size:.76rem;font-weight:700;color:var(--text);letter-spacing:.03em;line-height:1.3;}
+    .game-meta{font-size:.55rem;color:var(--muted);}
+    .replay-badge{font-size:.5rem;color:#f59e0b;background:rgba(245,158,11,.15);border-radius:4px;padding:1px 5px;display:inline-block;margin-top:2px;letter-spacing:.06em;}
+    .game-actions{display:flex;align-items:center;justify-content:space-between;padding:5px 10px 9px;gap:5px;}
+    .btn-act{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;padding:5px 7px;display:flex;align-items:center;font-family:inherit;transition:color .2s,border-color .2s;}
+    .btn-act:active{color:var(--gold);border-color:var(--gold);}
+    .btn-act.d:active{color:var(--red);border-color:var(--red);}
+    .btn-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s;}
+    .btn-check svg{opacity:0;transition:opacity .15s;}
+    .game-card.done .btn-check{background:#22c55e;border-color:#22c55e;}
+    .game-card.done .btn-check svg{opacity:1;}
+    .empty-st{width:100%;text-align:center;padding:40px 0 12px;font-size:.7rem;color:var(--muted);letter-spacing:.08em;line-height:1.8;display:none;}
+    .empty-st.visible{display:block;}
+    /* Giocati list */
+    .giocato-item{width:100%;background:var(--card);border:1px solid #22c55e;border-radius:14px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px;}
+    .giocato-img{width:44px;height:58px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+    .giocato-img-ph{width:44px;height:58px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .giocato-info{flex:1;min-width:0;}
+    .giocato-title{font-size:.78rem;font-weight:700;color:var(--text);}
+    .giocato-meta{font-size:.58rem;color:var(--muted);margin-top:2px;}
+    .giocato-fb{font-size:.58rem;color:var(--muted);margin-top:3px;font-style:italic;line-height:1.5;}
+    .giocato-acts{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;}
+    .btn-unch{width:26px;height:26px;border-radius:50%;background:#22c55e;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .btn-unch:active{background:var(--muted);}
+    .btn-esm{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;padding:3px 5px;display:flex;align-items:center;transition:color .2s,border-color .2s;}
+    .btn-esm:active{color:var(--gold);border-color:var(--gold);}
+    .btn-replay{background:none;border:1px solid #f59e0b;border-radius:6px;color:#f59e0b;cursor:pointer;padding:3px 6px;font-size:.58rem;font-family:inherit;display:flex;align-items:center;gap:2px;transition:background .2s;}
+    .btn-replay:active{background:rgba(245,158,11,.15);}
+    /* Giochi da tavolo */
+    .tavolo-item{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
+    .tavolo-header{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+    .tavolo-img-sm{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+    .tavolo-img-ph{width:40px;height:40px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .tavolo-name{font-size:.82rem;font-weight:700;color:var(--text);flex:1;}
+    .tavolo-chevron{font-size:.7rem;color:var(--muted);transition:transform .25s;flex-shrink:0;}
+    .tavolo-header.open .tavolo-chevron{transform:rotate(180deg);}
+    .tavolo-body{display:none;border-top:1px solid var(--border);padding:10px 14px 12px;}
+    .tavolo-body.open{display:block;}
+    .partita-item{background:var(--surface);border-radius:10px;padding:9px 11px;margin-bottom:8px;font-size:.72rem;color:var(--text);line-height:1.6;}
+    .partita-title{font-weight:700;font-size:.74rem;color:var(--gold);}
+    .partita-detail{font-size:.64rem;color:var(--muted);margin-top:2px;}
+    .btn-add-partita{background:none;border:1.5px dashed var(--border);border-radius:10px;color:var(--muted);font-size:.7rem;font-family:inherit;padding:8px 14px;cursor:pointer;width:100%;text-align:center;margin-top:4px;transition:border-color .2s,color .2s;}
+    .btn-add-partita:active{border-color:var(--gold);color:var(--gold);}
+    /* FAB */
+    .fab-add{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px));right:20px;width:52px;height:52px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,115,158,.35);z-index:100;transition:transform .12s;}
+    .fab-add:active{transform:scale(.91);}
+    .fab-add.hidden{display:none;}
+    /* Modali */
+    .mo,.co,.vo,.po{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);}
+    .mo{z-index:300;}.co{z-index:400;}.vo{z-index:350;}.po{z-index:410;}
+    .mo.open,.co.open,.vo.open,.po.open{display:flex;}
+    .ms,.cs,.vo-sheet,.ps{width:100%;max-width:420px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow-y:auto;}
+    .mh{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 4px;flex-shrink:0;}
+    .mt{font-size:.72rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;text-align:center;flex-shrink:0;}
+    .fl{font-size:.56rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+    .fg{display:flex;flex-direction:column;gap:4px;}
+    .fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .fi{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.82rem;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s;}
+    .fi:focus{border-color:var(--gold);}
+    .fi.err{border-color:var(--red);}
+    .fta{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.78rem;font-family:inherit;color:var(--text);resize:none;min-height:72px;outline:none;transition:border-color .2s;}
+    .fta:focus{border-color:var(--gold);}
+    .stars-row{display:flex;gap:8px;justify-content:center;padding:4px 0;}
+    .sb{font-size:1.5rem;background:none;border:none;cursor:pointer;opacity:.3;transition:opacity .15s,transform .12s;}
+    .sb.on{opacity:1;}
+    .sb:active{transform:scale(1.2);}
+    #img-file-input,#img-file-input2,#img-file-input3{display:none;}
+    .iuw{display:flex;align-items:center;gap:10px;}
+    .ipv{width:56px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border);display:none;flex-shrink:0;}
+    .ipv.visible{display:block;}
+    .iub{flex:1;background:none;border:1.5px dashed var(--border);border-radius:10px;color:var(--muted);font-size:.72rem;font-family:inherit;padding:10px;cursor:pointer;text-align:center;transition:border-color .2s,color .2s;}
+    .iub:active{border-color:var(--gold);color:var(--gold);}
+    .bs{width:100%;background:var(--gold);color:#fff;border:none;border-radius:14px;padding:12px;font-size:.8rem;font-family:inherit;letter-spacing:.14em;cursor:pointer;flex-shrink:0;}
+    .bs:active{opacity:.85;}
+    .bc{width:100%;background:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--muted);letter-spacing:.12em;cursor:pointer;flex-shrink:0;}
+    .bd{width:100%;background:none;border:1px solid var(--red);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--red);letter-spacing:.12em;cursor:pointer;flex-shrink:0;transition:background .2s,color .2s;}
+    .bd:active{background:var(--red);color:#fff;}
+    /* Step storia */
+    .step-item{background:var(--surface);border-radius:10px;padding:9px 12px;display:flex;align-items:flex-start;gap:8px;font-size:.72rem;color:var(--text);line-height:1.6;}
+    .step-date{font-size:.56rem;color:var(--gold);margin-top:1px;white-space:nowrap;flex-shrink:0;}
+    .step-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.9rem;padding:0;margin-left:auto;flex-shrink:0;}
+    .add-step-row{display:flex;gap:8px;}
+    .add-step-row .fi{flex:1;}
+    .btn-step-add{background:var(--gold);border:none;border-radius:10px;color:#fff;padding:0 14px;font-size:.8rem;cursor:pointer;white-space:nowrap;}
+    /* View */
+    .vt{font-size:1rem;font-weight:700;color:var(--text);letter-spacing:.04em;}
+    .vm{font-size:.62rem;color:var(--muted);letter-spacing:.07em;}
+    .vl{font-size:.52rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:8px;}
+    .vfb-block{background:var(--surface);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;}
+    .vfb-num{font-size:.52rem;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;}
+    .vfb-stars{font-size:.9rem;}
+    .vfb-note{font-size:.72rem;color:var(--text);line-height:1.6;font-style:italic;}
+    .bvc{width:100%;background:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--muted);cursor:pointer;letter-spacing:.1em;flex-shrink:0;}
+  </style>
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+</head>
+<body style="visibility:hidden">
+  <script type="module" src="js/auth-guard.js"></script>
+  <header id="main-header">
+    <div style="display:flex;flex-direction:row;gap:6px;align-items:center;">
+      <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        <span>TAO</span>
+      </a>
+    </div>
+    <div class="header-center">
+      <a href="passioni.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:inherit;">
+        <div style="font-size:1.8rem;line-height:1;">🎮</div>
+        <div class="app-title" style="font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:700;">GIOCHI</div>
+        <div class="app-sub-giochi">IL GECO ZEN · PASSIONI</div>
+      </a>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema"><div class="knob" id="theme-knob">☀️</div></button>
+  </header>
+
+  <!-- DA GIOCARE -->
+  <div id="screen-list" class="active">
+    <div class="section-divider">Da Giocare</div>
+    <div class="games-grid" id="games-grid"></div>
+    <div class="empty-st visible" id="empty-list">Nessun gioco ancora.<br>Tocca ＋ per aggiungerne uno 🎮</div>
+  </div>
+
+  <!-- RPG & GIOCHI DA TAVOLO -->
+  <div id="screen-center">
+    <div class="section-divider">Giochi da Tavolo</div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:10px;" id="tavolo-list"></div>
+    <div class="empty-st visible" id="empty-tavolo">Nessun gioco da tavolo ancora.<br>Tocca ＋ per aggiungerne uno 🎲</div>
+  </div>
+
+  <!-- GIOCATI -->
+  <div id="screen-giocati">
+    <div class="section-divider">Giocati</div>
+    <div id="giocati-list" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <button class="fab-add" id="fab-add">＋</button>
+
+  <!-- MODAL AGGIUNGI/MODIFICA GIOCO VIDEOGIOCO -->
+  <div class="mo" id="mo">
+    <div class="ms">
+      <div class="mh"></div>
+      <div class="mt" id="modal-title">Nuovo Gioco</div>
+      <div class="fg"><div class="fl">Nome *</div><input class="fi" id="f-name" type="text" placeholder="Es. The Legend of Zelda" maxlength="70" autocomplete="off"/></div>
+      <div class="fg"><div class="fl">Descrizione *</div><textarea class="fta" id="f-desc" placeholder="Di cosa tratta?" maxlength="300" rows="3"></textarea></div>
+      <div class="fg"><div class="fl">Console *</div><input class="fi" id="f-console" type="text" placeholder="Es. Nintendo Switch, PS5, PC…" autocomplete="off"/></div>
+      <div class="fg">
+        <div class="fl">Immagine</div>
+        <div class="iuw">
+          <img class="ipv" id="img-preview" src="" alt=""/>
+          <button class="iub" id="btn-img-upload">📷 Scegli immagine</button>
+          <input type="file" id="img-file-input" accept="image/*"/>
+        </div>
+      </div>
+      <!-- Sezione La storia (step) — visibile solo in modifica -->
+      <div id="storia-section" style="display:none;">
+        <div style="border-top:1px solid var(--border);margin:4px 0 8px;"></div>
+        <div class="fl">📖 La storia — diario di gioco</div>
+        <div id="steps-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+        <div class="add-step-row">
+          <input class="fi" id="step-input" type="text" placeholder="A che punto sei? Difficoltà…" autocomplete="off"/>
+          <button class="btn-step-add" id="btn-step-add" type="button">＋</button>
+        </div>
+      </div>
+      <button class="bs" id="btn-save">Salva gioco</button>
+      <button class="bc" id="btn-cancel">Annulla</button>
+      <button class="bd" id="btn-delete" style="display:none;">🗑 Elimina</button>
+    </div>
+  </div>
+
+  <!-- MODAL COMPLETATO -->
+  <div class="co" id="co">
+    <div class="cs">
+      <div class="mh"></div>
+      <div class="mt" id="co-title">Segna come Giocato</div>
+      <div class="fg"><div class="fl">Feedback</div><textarea class="fta" id="c-note" placeholder="Cosa ti ha lasciato questo gioco?" maxlength="500"></textarea></div>
+      <div class="fg">
+        <div class="fl">Valutazione</div>
+        <div class="stars-row" id="stars-row">
+          <button class="sb" data-v="1">⭐</button><button class="sb" data-v="2">⭐</button>
+          <button class="sb" data-v="3">⭐</button><button class="sb" data-v="4">⭐</button>
+          <button class="sb" data-v="5">⭐</button>
+        </div>
+      </div>
+      <div class="fg"><div class="fl">Ore di gioco stimate</div><input class="fi" id="c-hours" type="number" placeholder="Es. 40" min="1"/></div>
+      <button class="bs" id="c-confirm">✓ Sposta in Giocati</button>
+      <button class="bc" id="c-cancel">Annulla</button>
+    </div>
+  </div>
+
+  <!-- MODAL VIEW -->
+  <div class="vo" id="vo">
+    <div class="vo-sheet">
+      <div class="mh"></div>
+      <img id="v-img" src="" alt="" style="width:100%;max-height:200px;object-fit:contain;border-radius:14px;display:none;"/>
+      <div class="vt" id="v-title"></div>
+      <div class="vm" id="v-meta"></div>
+      <div class="vm" id="v-desc" style="margin-top:6px;font-size:.72rem;color:var(--text);line-height:1.6;"></div>
+      <div class="vl" id="v-storia-label" style="display:none;">📖 LA STORIA</div>
+      <div id="v-storia-list" style="display:flex;flex-direction:column;gap:5px;margin-top:4px;"></div>
+      <div class="vl" id="v-fb-label" style="display:none;">FEEDBACK</div>
+      <div id="v-feedbacks"></div>
+      <button class="bvc" id="btn-view-close">Chiudi</button>
+    </div>
+  </div>
+
+  <!-- MODAL GIOCO DA TAVOLO -->
+  <div class="mo" id="mo-tavolo" style="z-index:310;">
+    <div class="ms">
+      <div class="mh"></div>
+      <div class="mt" id="tavolo-modal-title">Nuovo Gioco da Tavolo</div>
+      <div class="fg"><div class="fl">Nome *</div><input class="fi" id="t-name" type="text" placeholder="Es. Catan, Pandemic…" autocomplete="off"/></div>
+      <div class="fg"><div class="fl">Regole / Descrizione</div><textarea class="fta" id="t-rules" placeholder="Breve descrizione delle regole…" rows="3"></textarea></div>
+      <div class="fg">
+        <div class="fl">Foto</div>
+        <div class="iuw">
+          <img class="ipv" id="img-preview2" src="" alt=""/>
+          <button class="iub" id="btn-img-upload2">📷 Scegli immagine</button>
+          <input type="file" id="img-file-input2" accept="image/*"/>
+        </div>
+      </div>
+      <button class="bs" id="t-save">Salva</button>
+      <button class="bc" id="t-cancel">Annulla</button>
+      <button class="bd" id="t-delete" style="display:none;">🗑 Elimina</button>
+    </div>
+  </div>
+
+  <!-- MODAL AGGIUNGI PARTITA -->
+  <div class="po" id="po">
+    <div class="ps">
+      <div class="mh"></div>
+      <div class="mt">Nuova Partita</div>
+      <div class="fg"><div class="fl">Partecipanti</div><input class="fi" id="p-players" type="text" placeholder="Es. Raoul, Michela, Emma…" autocomplete="off"/></div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Durata (min)</div><input class="fi" id="p-duration" type="number" placeholder="60" min="1"/></div>
+        <div class="fg"><div class="fl">Vincitore/i</div><input class="fi" id="p-winner" type="text" placeholder="Es. Raoul" autocomplete="off"/></div>
+      </div>
+      <div class="fg"><div class="fl">Note</div><textarea class="fta" id="p-note" placeholder="Momenti divertenti, strategie…" rows="2"></textarea></div>
+      <div class="fg">
+        <div class="fl">Foto partita</div>
+        <div class="iuw">
+          <img class="ipv" id="img-preview3" src="" alt=""/>
+          <button class="iub" id="btn-img-upload3">📷 Aggiungi foto</button>
+          <input type="file" id="img-file-input3" accept="image/*"/>
+        </div>
+      </div>
+      <button class="bs" id="p-save">Salva partita</button>
+      <button class="bc" id="p-cancel">Annulla</button>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <nav class="tab-bar">
+    <button class="tab-btn tab-active" id="tab-list">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+      <span class="tab-label">Da Giocare</span>
+    </button>
+    <button class="tab-btn tab-center" id="tab-center-btn">
+      <div class="tab-center-circle"><img src="Logo%20Trasparente.png" alt="" class="tab-center-gecko"/></div>
+      <span class="tab-label">RPG & Tavolo</span>
+    </button>
+    <button class="tab-btn" id="tab-giocati">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="tab-label">Giocati</span>
+    </button>
+  </nav>
+
+  <script type="module">
+    import { subscribeGiochi, addGiocoDoc, updateGiocoDoc, deleteGiocoDoc,
+             subscribeGiochiTavolo, addGiocoTavoloDoc, updateGiocoTavoloDoc, deleteGiocoTavoloDoc,
+             addPartitaDoc, subscribePartite, deletePartitaDoc,
+             waitForAuth } from './js/firebase-config.js';
+
+    /* ── Tema ── */
+    const htmlEl=document.documentElement,btnTheme=document.getElementById('theme-toggle'),knob=document.getElementById('theme-knob');
+    let isDark=localStorage.getItem('zen_theme')==='dark';
+    function applyTheme(){htmlEl.setAttribute('data-theme',isDark?'dark':'light');knob.textContent=isDark?'🌙':'☀️';document.querySelector('meta[name="theme-color"]').content=isDark?'#111820':'#f7f4f9';localStorage.setItem('zen_theme',isDark?'dark':'light');}
+    applyTheme();btnTheme.addEventListener('click',()=>{isDark=!isDark;applyTheme();});
+
+    waitForAuth().then(user=>{if(!user)return;initApp();});
+
+    function initApp(){
+      let items=[],tavoloItems=[],editingId=null,pendingImg=null,pendingImg2=null,pendingImg3=null;
+      let confirmId=null,confirmStars=0,confirmMode='done';
+      let editingTavoloId=null,partitaTavoloId=null;
+      let currentScreen='list';
+      let editingSteps=[]; // steps del gioco in modifica
+
+      const gamesGrid=document.getElementById('games-grid'),emptyList=document.getElementById('empty-list');
+      const giocatiList=document.getElementById('giocati-list'),tavoloList=document.getElementById('tavolo-list'),emptyTavolo=document.getElementById('empty-tavolo');
+      const fabAdd=document.getElementById('fab-add');
+      const mo=document.getElementById('mo'),co=document.getElementById('co'),vo=document.getElementById('vo');
+      const moTavolo=document.getElementById('mo-tavolo'),po=document.getElementById('po');
+      const sL=document.getElementById('screen-list'),sC=document.getElementById('screen-center'),sG=document.getElementById('screen-giocati');
+      const tL=document.getElementById('tab-list'),tC=document.getElementById('tab-center-btn'),tG=document.getElementById('tab-giocati');
+
+      function showScreen(w){
+        currentScreen=w;
+        [sL,sC,sG].forEach(s=>s.classList.remove('active'));[tL,tC,tG].forEach(b=>b.classList.remove('tab-active'));
+        if(w==='list'){sL.classList.add('active');tL.classList.add('tab-active');fabAdd.classList.remove('hidden');}
+        if(w==='center'){sC.classList.add('active');tC.classList.add('tab-active');fabAdd.classList.remove('hidden');}
+        if(w==='giocati'){sG.classList.add('active');tG.classList.add('tab-active');fabAdd.classList.add('hidden');renderGiocati();}
+      }
+      tL.addEventListener('click',()=>showScreen('list'));
+      tC.addEventListener('click',()=>showScreen('center'));
+      tG.addEventListener('click',()=>showScreen('giocati'));
+      fabAdd.addEventListener('click',()=>{if(currentScreen==='center'){openTavoloModal(null);}else{openModal(null);}});
+
+      /* ── Utils ── */
+      function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+      function compressImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=ev=>{const img=new Image();img.onerror=rej;img.onload=()=>{const sc=Math.min(1,500/Math.max(img.width,img.height)),w=Math.round(img.width*sc),h=Math.round(img.height*sc),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',.72));};img.src=ev.target.result;};r.readAsDataURL(file);});}
+      const nowDate=()=>new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+      const EDIT_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+      const DEL_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+      const ZOOM_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
+      const CHK_SVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+      const RP_SVG=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.64"/></svg>`;
+
+      /* ── MODAL VIDEOGIOCO ── */
+      function openModal(id){
+        editingId=id;pendingImg=null;editingSteps=[];
+        document.getElementById('f-name').value='';document.getElementById('f-desc').value='';document.getElementById('f-console').value='';
+        document.getElementById('img-preview').src='';document.getElementById('img-preview').classList.remove('visible');
+        document.getElementById('btn-img-upload').textContent='📷 Scegli immagine';
+        document.getElementById('img-file-input').value='';
+        document.getElementById('storia-section').style.display='none';
+        ['f-name','f-desc','f-console'].forEach(id=>document.getElementById(id)?.classList.remove('err'));
+        if(id!==null){
+          const item=items.find(i=>i.id===id);
+          if(item){
+            document.getElementById('modal-title').textContent='Modifica Gioco';
+            document.getElementById('f-name').value=item.name;
+            document.getElementById('f-desc').value=item.desc||'';
+            document.getElementById('f-console').value=item.console||'';
+            if(item.img){pendingImg=item.img;document.getElementById('img-preview').src=item.img;document.getElementById('img-preview').classList.add('visible');document.getElementById('btn-img-upload').textContent='✓ Immagine presente';}
+            editingSteps=[...(item.steps||[])];
+            document.getElementById('storia-section').style.display='';
+            renderSteps();
+          }
+          document.getElementById('btn-delete').style.display='';
+        } else {
+          document.getElementById('modal-title').textContent='Nuovo Gioco';
+          document.getElementById('btn-delete').style.display='none';
+        }
+        mo.classList.add('open');
+      }
+      function closeModal(){mo.classList.remove('open');editingId=null;pendingImg=null;}
+      document.getElementById('btn-cancel').addEventListener('click',closeModal);
+      mo.addEventListener('click',e=>{if(e.target===mo)closeModal();});
+      document.getElementById('btn-delete').addEventListener('click',async()=>{if(editingId===null)return;const item=items.find(i=>i.id===editingId);if(item)await deleteGiocoDoc(item._docId);closeModal();});
+
+      document.getElementById('btn-img-upload').addEventListener('click',()=>document.getElementById('img-file-input').click());
+      document.getElementById('img-file-input').addEventListener('change',async()=>{const f=document.getElementById('img-file-input').files[0];if(!f)return;try{pendingImg=await compressImage(f);document.getElementById('img-preview').src=pendingImg;document.getElementById('img-preview').classList.add('visible');document.getElementById('btn-img-upload').textContent='✓ Caricata';}catch{alert('Errore immagine.');}});
+
+      /* Steps La Storia */
+      function renderSteps(){
+        const list=document.getElementById('steps-list');list.innerHTML='';
+        editingSteps.forEach((s,i)=>{
+          const div=document.createElement('div');div.className='step-item';
+          div.innerHTML=`<span class="step-date">${esc(s.date||'')}</span><span style="flex:1">${esc(s.text)}</span><button class="step-del" data-i="${i}" type="button">✕</button>`;
+          div.querySelector('.step-del').addEventListener('click',()=>{editingSteps.splice(i,1);renderSteps();});
+          list.appendChild(div);
+        });
+      }
+      document.getElementById('btn-step-add').addEventListener('click',()=>{
+        const v=document.getElementById('step-input').value.trim();if(!v)return;
+        editingSteps.push({text:v,date:nowDate()});renderSteps();document.getElementById('step-input').value='';
+      });
+      document.getElementById('step-input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('btn-step-add').click();}});
+
+      document.getElementById('btn-save').addEventListener('click',async()=>{
+        const n=document.getElementById('f-name').value.trim(),d=document.getElementById('f-desc').value.trim(),c=document.getElementById('f-console').value.trim();
+        document.getElementById('f-name').classList.toggle('err',!n);
+        document.getElementById('f-desc').classList.toggle('err',!d);
+        document.getElementById('f-console').classList.toggle('err',!c);
+        if(!n||!d||!c)return;
+        const data={name:n,desc:d,console:c,img:pendingImg||null,steps:editingSteps};
+        if(editingId!==null){const item=items.find(i=>i.id===editingId);if(item)await updateGiocoDoc(item._docId,data);}
+        else{await addGiocoDoc({...data,id:Date.now(),done:false,replay:false,feedbacks:[]});}
+        closeModal();
+      });
+
+      /* ── CONFIRM COMPLETATO / REPLAY-FEEDBACK ── */
+      function openConfirm(id,mode='done'){
+        confirmId=id;confirmStars=0;confirmMode=mode;
+        document.getElementById('c-note').value='';document.getElementById('c-hours').value='';
+        document.getElementById('stars-row').querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
+        document.getElementById('co-title').textContent=mode==='replay-feedback'?'Feedback Re-Play':'Segna come Giocato';
+        co.classList.add('open');
+      }
+      function closeConfirm(){co.classList.remove('open');confirmId=null;}
+      document.getElementById('c-cancel').addEventListener('click',closeConfirm);
+      co.addEventListener('click',e=>{if(e.target===co)closeConfirm();});
+      document.getElementById('stars-row').addEventListener('click',e=>{const b=e.target.closest('.sb');if(!b)return;confirmStars=Number(b.dataset.v);document.getElementById('stars-row').querySelectorAll('.sb').forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=confirmStars));});
+      document.getElementById('c-confirm').addEventListener('click',async()=>{
+        if(confirmStars===0){alert('Seleziona almeno una stellina.');return;}
+        if(!document.getElementById('c-note').value.trim()){alert('Scrivi un feedback.');return;}
+        const item=items.find(i=>i.id===confirmId);if(!item)return;
+        const fb={stars:confirmStars,note:document.getElementById('c-note').value.trim(),hours:document.getElementById('c-hours').value||'',date:nowDate()};
+        const fbs=[...(item.feedbacks||[]),fb];
+        await updateGiocoDoc(item._docId,{done:true,replay:false,feedbacks:fbs});
+        closeConfirm();
+      });
+
+      /* Re-Play: solo conferma, torna in Da Giocare con flag arancione */
+      async function doReplay(id){
+        if(!confirm('Sei sicuro di voler fare il Re-Play?'))return;
+        const item=items.find(i=>i.id===id);if(!item)return;
+        await updateGiocoDoc(item._docId,{done:false,replay:true});
+      }
+      async function undoDone(id){const item=items.find(i=>i.id===id);if(item)await updateGiocoDoc(item._docId,{done:false,replay:false});}
+
+      /* ── VIEW ── */
+      function openView(id){
+        const item=items.find(i=>i.id===id);if(!item)return;
+        const vi=document.getElementById('v-img');vi.src=item.img||'';vi.style.display=item.img?'block':'none';
+        document.getElementById('v-title').textContent=item.name;
+        document.getElementById('v-meta').textContent=[item.console,item.done?'✅ Giocato':''].filter(Boolean).join(' · ');
+        document.getElementById('v-desc').textContent=item.desc||'';
+        const sl=document.getElementById('v-storia-label'),svl=document.getElementById('v-storia-list');
+        svl.innerHTML='';
+        const steps=item.steps||[];
+        if(steps.length>0){sl.style.display='';steps.forEach(s=>{const d=document.createElement('div');d.className='step-item';d.innerHTML=`<span class="step-date">${esc(s.date||'')}</span><span style="flex:1">${esc(s.text)}</span>`;svl.appendChild(d);});}else{sl.style.display='none';}
+        const fl=document.getElementById('v-fb-label'),fc=document.getElementById('v-feedbacks');fc.innerHTML='';
+        const fbs=item.feedbacks||[];
+        if(fbs.length>0){fl.style.display='';fbs.forEach((fb,i)=>{const d=document.createElement('div');d.className='vfb-block';d.innerHTML=`<div class="vfb-num">Sessione ${i+1}${fb.date?' · '+esc(fb.date):''}${fb.hours?' · '+esc(fb.hours)+'h':''}</div><div class="vfb-stars">${'⭐'.repeat(fb.stars||0)}</div><div class="vfb-note">"${esc(fb.note||'')}"</div>`;fc.appendChild(d);});}
+        else{fl.style.display='none';}
+        vo.classList.add('open');
+      }
+      document.getElementById('btn-view-close').addEventListener('click',()=>vo.classList.remove('open'));
+      vo.addEventListener('click',e=>{if(e.target===vo)vo.classList.remove('open');});
+
+      /* ── RENDER VIDEOGIOCHI ── */
+      function renderGrid(){
+        gamesGrid.innerHTML='';
+        const pending=items.filter(i=>!i.done||i.replay);
+        emptyList.classList.toggle('visible',pending.length===0);
+        pending.forEach(item=>{
+          const card=document.createElement('div');
+          card.className='game-card'+(item.replay?' replay':'');
+          const rpBadge=item.replay?'<span class="replay-badge">🔁 RE-PLAY</span>':'';
+          const fbs=item.feedbacks||[];const lastFb=fbs.length>0?fbs[fbs.length-1]:null;
+          const starsHtml=lastFb?`<div style="font-size:.62rem;margin-top:2px;">${'⭐'.repeat(lastFb.stars)}</div>`:'';
+          const checkStyle=item.replay?'style="background:#f59e0b;border-color:#f59e0b;"':'';
+          card.innerHTML=`${item.img?`<img class="game-img" src="${esc(item.img)}" alt="${esc(item.name)}" loading="lazy"/>`:`<div class="game-img-ph">🎮</div>`}<div class="game-body"><div class="game-title">${esc(item.name)}</div><div class="game-meta">${esc(item.console||'')}</div>${starsHtml}${rpBadge}</div><div class="game-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${ZOOM_SVG}</button></div><button class="btn-check" data-act="check" ${checkStyle}>${CHK_SVG}</button></div>`;
+          card.querySelector('[data-act="edit"]').addEventListener('click',e=>{e.stopPropagation();openModal(item.id);});
+          card.querySelector('[data-act="del"]').addEventListener('click',async e=>{e.stopPropagation();if(confirm('Eliminare?')){const it=items.find(i=>i.id===item.id);if(it)await deleteGiocoDoc(it._docId);}});
+          card.querySelector('[data-act="view"]').addEventListener('click',e=>{e.stopPropagation();openView(item.id);});
+          card.querySelector('[data-act="check"]').addEventListener('click',e=>{e.stopPropagation();if(item.replay){openConfirm(item.id,'replay-feedback');}else{openConfirm(item.id,'done');}});
+          gamesGrid.appendChild(card);
+        });
+      }
+
+      function renderGiocati(){
+        giocatiList.innerHTML='';
+        const done=items.filter(i=>i.done&&!i.replay).reverse();
+        if(done.length===0){giocatiList.innerHTML='<div style="width:100%;text-align:center;padding:40px 0;font-size:.7rem;color:var(--muted);letter-spacing:.08em;line-height:1.8;">Nessun gioco completato ancora.<br>Spunta un gioco dalla lista 🏆</div>';return;}
+        done.forEach(item=>{
+          const el=document.createElement('div');el.className='giocato-item';
+          const fbs=item.feedbacks||[];const lastFb=fbs.length>0?fbs[fbs.length-1]:null;
+          el.innerHTML=`${item.img?`<img class="giocato-img" src="${esc(item.img)}" alt="${esc(item.name)}" loading="lazy"/>`:`<div class="giocato-img-ph">🎮</div>`}<div class="giocato-info"><div class="giocato-title">${esc(item.name)}</div><div class="giocato-meta">${esc(item.console||'')}</div>${lastFb?`<div class="giocato-fb">${'⭐'.repeat(lastFb.stars||0)} · "${esc((lastFb.note||'').substring(0,60))}${(lastFb.note||'').length>60?'…':''}"</div>`:''}<div style="font-size:.52rem;color:var(--muted);margin-top:2px;">${fbs.length} sessione${fbs.length!==1?'i':''}</div></div><div class="giocato-acts"><button class="btn-unch" data-act="unch">${CHK_SVG}</button><button class="btn-replay" data-act="rp">${RP_SVG} re-play</button><button class="btn-esm" data-act="edit">${EDIT_SVG}</button><button class="btn-esm" data-act="view">${ZOOM_SVG}</button></div>`;
+          el.querySelector('[data-act="unch"]').addEventListener('click',()=>undoDone(item.id));
+          el.querySelector('[data-act="rp"]').addEventListener('click',()=>doReplay(item.id));
+          el.querySelector('[data-act="edit"]').addEventListener('click',()=>openModal(item.id));
+          el.querySelector('[data-act="view"]').addEventListener('click',()=>openView(item.id));
+          giocatiList.appendChild(el);
+        });
+      }
+
+      /* ── GIOCHI DA TAVOLO ── */
+      function openTavoloModal(id){
+        editingTavoloId=id;pendingImg2=null;
+        document.getElementById('t-name').value='';document.getElementById('t-rules').value='';
+        document.getElementById('img-preview2').src='';document.getElementById('img-preview2').classList.remove('visible');
+        document.getElementById('btn-img-upload2').textContent='📷 Scegli immagine';
+        document.getElementById('img-file-input2').value='';
+        if(id!==null){
+          const item=tavoloItems.find(i=>i.id===id);
+          if(item){document.getElementById('tavolo-modal-title').textContent='Modifica Gioco';document.getElementById('t-name').value=item.name;document.getElementById('t-rules').value=item.rules||'';if(item.img){pendingImg2=item.img;document.getElementById('img-preview2').src=item.img;document.getElementById('img-preview2').classList.add('visible');document.getElementById('btn-img-upload2').textContent='✓ Immagine presente';}}
+          document.getElementById('t-delete').style.display='';
+        }else{document.getElementById('tavolo-modal-title').textContent='Nuovo Gioco da Tavolo';document.getElementById('t-delete').style.display='none';}
+        moTavolo.classList.add('open');
+      }
+      function closeTavoloModal(){moTavolo.classList.remove('open');editingTavoloId=null;pendingImg2=null;}
+      document.getElementById('t-cancel').addEventListener('click',closeTavoloModal);
+      moTavolo.addEventListener('click',e=>{if(e.target===moTavolo)closeTavoloModal();});
+      document.getElementById('t-delete').addEventListener('click',async()=>{if(editingTavoloId===null)return;const item=tavoloItems.find(i=>i.id===editingTavoloId);if(item)await deleteGiocoTavoloDoc(item._docId);closeTavoloModal();});
+      document.getElementById('btn-img-upload2').addEventListener('click',()=>document.getElementById('img-file-input2').click());
+      document.getElementById('img-file-input2').addEventListener('change',async()=>{const f=document.getElementById('img-file-input2').files[0];if(!f)return;try{pendingImg2=await compressImage(f);document.getElementById('img-preview2').src=pendingImg2;document.getElementById('img-preview2').classList.add('visible');document.getElementById('btn-img-upload2').textContent='✓ Caricata';}catch{alert('Errore.');}});
+      document.getElementById('t-save').addEventListener('click',async()=>{
+        const n=document.getElementById('t-name').value.trim();if(!n){document.getElementById('t-name').classList.add('err');return;}
+        const data={name:n,rules:document.getElementById('t-rules').value.trim(),img:pendingImg2||null};
+        if(editingTavoloId!==null){const item=tavoloItems.find(i=>i.id===editingTavoloId);if(item)await updateGiocoTavoloDoc(item._docId,data);}
+        else{await addGiocoTavoloDoc({...data,id:Date.now()});}
+        closeTavoloModal();
+      });
+
+      let partitaUnsubs={};
+      function renderTavolo(){
+        tavoloList.innerHTML='';
+        emptyTavolo.classList.toggle('visible',tavoloItems.length===0);
+        tavoloItems.forEach(item=>{
+          const div=document.createElement('div');div.className='tavolo-item';
+          div.innerHTML=`<div class="tavolo-header"><div class="${item.img?'tavolo-img-sm':'tavolo-img-ph'}">${item.img?`<img src="${esc(item.img)}" style="width:100%;height:100%;border-radius:8px;object-fit:cover;" alt=""/>`:''}</div><div class="tavolo-name">${esc(item.name)}</div><button class="btn-esm" data-act="edit" style="margin-right:4px;">${EDIT_SVG}</button><span class="tavolo-chevron">▼</span></div><div class="tavolo-body"><div class="partite-list" id="partite-${esc(item._docId||item.id)}"></div><button class="btn-add-partita" data-tid="${esc(item._docId||item.id)}">＋ Aggiungi partita</button></div>`;
+          const hdr=div.querySelector('.tavolo-header');
+          const body=div.querySelector('.tavolo-body');
+          hdr.addEventListener('click',e=>{if(e.target.closest('.btn-esm'))return;const open=body.classList.contains('open');body.classList.toggle('open',!open);hdr.classList.toggle('open',!open);if(!open)loadPartite(item._docId||item.id);});
+          hdr.querySelector('[data-act="edit"]').addEventListener('click',e=>{e.stopPropagation();openTavoloModal(item.id);});
+          div.querySelector('.btn-add-partita').addEventListener('click',()=>openPartitaModal(item._docId||item.id));
+          tavoloList.appendChild(div);
+        });
+      }
+
+      function loadPartite(tavoloDocId){
+        if(partitaUnsubs[tavoloDocId])return;
+        partitaUnsubs[tavoloDocId]=subscribePartite(tavoloDocId,partite=>{
+          const el=document.getElementById('partite-'+tavoloDocId);if(!el)return;
+          el.innerHTML='';
+          if(partite.length===0){el.innerHTML='<div style="font-size:.64rem;color:var(--muted);text-align:center;padding:8px 0;">Nessuna partita ancora.</div>';return;}
+          partite.forEach(p=>{
+            const d=document.createElement('div');d.className='partita-item';
+            d.innerHTML=`<div class="partita-title">🎲 ${esc(p.date||'')}</div><div class="partita-detail">👥 ${esc(p.players||'—')} · ⏱ ${esc(p.duration?p.duration+' min':'—')} · 🏆 ${esc(p.winner||'—')}</div>${p.note?`<div style="font-size:.62rem;color:var(--muted);margin-top:3px;font-style:italic;">${esc(p.note)}</div>`:''}<button class="btn-esm" style="margin-top:6px;" data-pid="${esc(p._docId||'')}" data-tid="${esc(tavoloDocId)}">${DEL_SVG} elimina</button>`;
+            d.querySelector('[data-pid]').addEventListener('click',async()=>{if(confirm('Eliminare partita?'))await deletePartitaDoc(tavoloDocId,p._docId);});
+            el.appendChild(d);
+          });
+        });
+      }
+
+      function openPartitaModal(tavoloDocId){
+        partitaTavoloId=tavoloDocId;pendingImg3=null;
+        document.getElementById('p-players').value='';document.getElementById('p-duration').value='';
+        document.getElementById('p-winner').value='';document.getElementById('p-note').value='';
+        document.getElementById('img-preview3').src='';document.getElementById('img-preview3').classList.remove('visible');
+        document.getElementById('btn-img-upload3').textContent='📷 Aggiungi foto';
+        document.getElementById('img-file-input3').value='';
+        po.classList.add('open');
+      }
+      function closePartitaModal(){po.classList.remove('open');partitaTavoloId=null;pendingImg3=null;}
+      document.getElementById('p-cancel').addEventListener('click',closePartitaModal);
+      po.addEventListener('click',e=>{if(e.target===po)closePartitaModal();});
+      document.getElementById('btn-img-upload3').addEventListener('click',()=>document.getElementById('img-file-input3').click());
+      document.getElementById('img-file-input3').addEventListener('change',async()=>{const f=document.getElementById('img-file-input3').files[0];if(!f)return;try{pendingImg3=await compressImage(f);document.getElementById('img-preview3').src=pendingImg3;document.getElementById('img-preview3').classList.add('visible');document.getElementById('btn-img-upload3').textContent='✓ Caricata';}catch{alert('Errore.');}});
+      document.getElementById('p-save').addEventListener('click',async()=>{
+        const players=document.getElementById('p-players').value.trim();
+        const data={players,duration:document.getElementById('p-duration').value||'',winner:document.getElementById('p-winner').value.trim(),note:document.getElementById('p-note').value.trim(),img:pendingImg3||null,date:nowDate()};
+        await addPartitaDoc(partitaTavoloId,data);
+        closePartitaModal();
+        // ricarica partite
+        const el=document.getElementById('partite-'+partitaTavoloId);if(el){delete partitaUnsubs[partitaTavoloId];loadPartite(partitaTavoloId);}
+      });
+
+      /* ── SUBSCRIBE ── */
+      subscribeGiochi(ni=>{items=ni;renderGrid();if(sG.classList.contains('active'))renderGiocati();});
+      subscribeGiochiTavolo(ni=>{tavoloItems=ni;if(sC.classList.contains('active'))renderTavolo();});
+      // render tavolo iniziale al cambio schermo
+      tC.addEventListener('click',()=>{renderTavolo();});
+      document.body.style.visibility='';
+    }
+  </script>
+</body>
+</html>

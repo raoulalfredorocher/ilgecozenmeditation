@@ -427,18 +427,16 @@
       });
 
       /* ── Confirm (primo visto o nuovo rewatch feedback) ── */
-      // fromVisti=true quando clicco da schermata Visti (nuovo feedback)
-      let confirmFromVisti=false;
-      function openConfirm(id,fromVisti=false){
-        confirmId=id;confirmStars=0;confirmFromVisti=fromVisti;
+      // confirmMode: 'visto' | 'rewatch-feedback'
+      let confirmMode='visto';
+      function openConfirm(id,mode='visto'){
+        confirmId=id;confirmStars=0;confirmMode=mode;
         cNote.value='';starsRow.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
-        chkRewatch.checked=false;
-        if(fromVisti){
-          coTitle.textContent='Nuovo Feedback';coNoteLabel.textContent='Cosa ti ha lasciato questa volta?';
-          rewatchToggle.style.display='flex';
+        rewatchToggle.style.display='none';
+        if(mode==='rewatch-feedback'){
+          coTitle.textContent='Feedback Rewatch';coNoteLabel.textContent='Cosa ti ha lasciato questa volta?';
         } else {
           coTitle.textContent='Segna come Visto';coNoteLabel.textContent='Cosa ti ha lasciato questo titolo?';
-          rewatchToggle.style.display='none';
         }
         co.classList.add('open');
       }
@@ -451,18 +449,22 @@
         const item=items.find(i=>i.id===confirmId);if(!item)return;
         const fb={stars:confirmStars,note:cNote.value.trim(),date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'})};
         const fbs=[...(item.feedbacks||[]),fb];
-        const doRewatch=confirmFromVisti&&chkRewatch.checked;
-        await updateFilmDoc(item._docId,{
-          done:true,
-          rewatch:doRewatch,
-          feedbacks:fbs,
-          // compat legacy
-          stars:fbs[fbs.length-1].stars,
-          note:fbs[fbs.length-1].note,
-          doneDate:fb.date,
-        });
+        if(confirmMode==='rewatch-feedback'){
+          // completato il rewatch: torna in Visti con tutti i feedback
+          await updateFilmDoc(item._docId,{done:true,rewatch:false,feedbacks:fbs,stars:fb.stars,note:fb.note,doneDate:fb.date});
+        } else {
+          // primo visto
+          await updateFilmDoc(item._docId,{done:true,rewatch:false,feedbacks:fbs,stars:fb.stars,note:fb.note,doneDate:fb.date});
+        }
         closeConfirm();
       });
+
+      // Rewatch: solo conferma, niente feedback, passa in Da Vedere con flag arancione (rewatch:true, done:false)
+      async function doRewatch(id){
+        if(!confirm('Sei sicuro di voler fare il Rewatch?'))return;
+        const item=items.find(i=>i.id===id);if(!item)return;
+        await updateFilmDoc(item._docId,{done:false,rewatch:true});
+      }
 
       async function undoDone(id){const item=items.find(i=>i.id===id);if(item)await updateFilmDoc(item._docId,{done:false,rewatch:false});}
 
@@ -501,21 +503,24 @@
 
       function renderGrid(){
         filmsGrid.innerHTML='';
-        // Da vedere = non done + rewatch
+        // Da vedere = non done; rewatch appare qua ma senza spunta verde
         const pending=items.filter(i=>!i.done||i.rewatch);
         emptyList.classList.toggle('visible',pending.length===0);
         pending.forEach(item=>{
           const card=document.createElement('div');
-          card.className='film-card'+(item.rewatch?' rewatch':item.done?' visto':'');
+          card.className='film-card'+(item.rewatch?' rewatch':'');
           const icon=TYPE_ICONS[item.type]||'🎬';
           const rwBadge=item.rewatch?'<span class="rewatch-badge">🔁 REWATCH</span>':'';
           const fbs=item.feedbacks||[];const lastFb=fbs.length>0?fbs[fbs.length-1]:null;
           const starsHtml=lastFb?`<div style="font-size:.62rem;margin-top:2px;">${'⭐'.repeat(lastFb.stars)}</div>`:'';
-          card.innerHTML=`${item.img?`<img class="film-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="film-img-ph">${icon}</div>`}<div class="film-body"><div class="film-title">${esc(item.title)}</div><div class="film-type">${icon} ${esc(item.type||'')}${item.genre?' · '+esc(item.genre):''}</div><div class="film-meta">${esc(item.platform||'')}${durLabel(item)?' · '+esc(durLabel(item)):''}</div>${starsHtml}${rwBadge}</div><div class="film-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${ZOOM_SVG}</button></div><button class="btn-check" data-act="check">${CHK_SVG}</button></div>`;
+          // btn-check: se è rewatch chiede feedback di rewatch, altrimenti primo visto
+          const checkStyle=item.rewatch?'style="background:#f59e0b;border-color:#f59e0b;"':'';
+          card.innerHTML=`${item.img?`<img class="film-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="film-img-ph">${icon}</div>`}<div class="film-body"><div class="film-title">${esc(item.title)}</div><div class="film-type">${icon} ${esc(item.type||'')}${item.genre?' · '+esc(item.genre):''}</div><div class="film-meta">${esc(item.platform||'')}${durLabel(item)?' · '+esc(durLabel(item)):''}</div>${starsHtml}${rwBadge}</div><div class="film-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${ZOOM_SVG}</button></div><button class="btn-check" data-act="check" ${checkStyle}>${CHK_SVG}</button></div>`;
           card.querySelector('[data-act="edit"]').addEventListener('click',e=>{e.stopPropagation();openModal(item.id);});
           card.querySelector('[data-act="del"]').addEventListener('click',async e=>{e.stopPropagation();if(confirm('Eliminare?')){const it=items.find(i=>i.id===item.id);if(it)await deleteFilmDoc(it._docId);}});
           card.querySelector('[data-act="view"]').addEventListener('click',e=>{e.stopPropagation();openView(item.id);});
-          card.querySelector('[data-act="check"]').addEventListener('click',e=>{e.stopPropagation();openConfirm(item.id,false);});
+          // se rewatch: richiede feedback di rewatch; altrimenti: segna come visto
+          card.querySelector('[data-act="check"]').addEventListener('click',e=>{e.stopPropagation();if(item.rewatch){openConfirm(item.id,'rewatch-feedback');}else{openConfirm(item.id,'visto');}});
           filmsGrid.appendChild(card);
         });
       }
@@ -531,7 +536,7 @@
           const lastFb=fbs.length>0?fbs[fbs.length-1]:null;
           el.innerHTML=`${item.img?`<img class="visto-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="visto-img-ph">${icon}</div>`}<div class="visto-info"><div class="visto-title">${esc(item.title)}</div><div class="visto-type">${icon} ${esc(item.type||'')}${item.genre?' · '+esc(item.genre):''}</div>${lastFb?`<div class="visto-fb">${'⭐'.repeat(lastFb.stars||0)} · "${esc((lastFb.note||'').substring(0,60))}${(lastFb.note||'').length>60?'…':''}"</div>`:''}<div style="font-size:.52rem;color:var(--muted);margin-top:2px;">${fbs.length} visione${fbs.length!==1?'i':''}</div></div><div class="visto-acts"><button class="btn-unch" data-act="unch">${CHK_SVG}</button><button class="btn-rewatch" data-act="rw">${RW_SVG} rewatch</button><button class="btn-esm" data-act="edit">${EDIT_SVG}</button><button class="btn-esm" data-act="view">${ZOOM_SVG}</button></div>`;
           el.querySelector('[data-act="unch"]').addEventListener('click',()=>undoDone(item.id));
-          el.querySelector('[data-act="rw"]').addEventListener('click',()=>openConfirm(item.id,true));
+          el.querySelector('[data-act="rw"]').addEventListener('click',()=>doRewatch(item.id));
           el.querySelector('[data-act="edit"]').addEventListener('click',()=>openModal(item.id));
           el.querySelector('[data-act="view"]').addEventListener('click',()=>openView(item.id));
           vistiList.appendChild(el);

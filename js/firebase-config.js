@@ -484,3 +484,75 @@ export function subscribeEmozioniLog(callback) {
     callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
   });
 }
+
+// ─── Giochi (videogiochi) ────────────────────────────────────────────────────
+
+export function subscribeGiochi(callback) {
+  const col = userCol('giochi');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addGiocoDoc(data) {
+  const col = userCol('giochi');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+export async function updateGiocoDoc(docId, fields) {
+  const ref = userDoc('giochi', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+export async function deleteGiocoDoc(docId) {
+  const ref = userDoc('giochi', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+// ─── Giochi da Tavolo ────────────────────────────────────────────────────────
+
+export function subscribeGiochiTavolo(callback) {
+  const col = userCol('giochi_tavolo');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addGiocoTavoloDoc(data) {
+  const col = userCol('giochi_tavolo');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+export async function updateGiocoTavoloDoc(docId, fields) {
+  const ref = userDoc('giochi_tavolo', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+export async function deleteGiocoTavoloDoc(docId) {
+  const ref = userDoc('giochi_tavolo', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+// ─── Partite (sotto-collection di giochi_tavolo) ─────────────────────────────
+
+export function subscribePartite(tavoloDocId, callback) {
+  if (!db || !auth?.currentUser) { callback([]); return () => {}; }
+  const col = collection(db, 'users', auth.currentUser.uid, 'giochi_tavolo', tavoloDocId, 'partite');
+  return onSnapshot(query(col, orderBy('createdAt', 'desc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+export async function addPartitaDoc(tavoloDocId, data) {
+  if (!db || !auth?.currentUser) return null;
+  const col = collection(db, 'users', auth.currentUser.uid, 'giochi_tavolo', tavoloDocId, 'partite');
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+export async function deletePartitaDoc(tavoloDocId, partitaDocId) {
+  if (!db || !auth?.currentUser) return;
+  await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'giochi_tavolo', tavoloDocId, 'partite', partitaDocId));
+}
