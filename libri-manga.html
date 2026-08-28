@@ -117,7 +117,7 @@
 <body style="visibility:hidden">
   <script type="module" src="js/auth-guard.js"></script>
   <header id="main-header">
-    <div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+    <div style="display:flex;flex-direction:row;gap:6px;align-items:center;">
       <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
         <span>TAO</span>
@@ -165,11 +165,11 @@
       <div class="fg"><div class="fl">Autore *</div><input class="fi" id="f-author" type="text" placeholder="Es. Umberto Eco" maxlength="50" autocomplete="off"/></div>
       <div class="fr2">
         <div class="fg"><div class="fl">Pagine</div><input class="fi" id="f-pages" type="number" placeholder="320" min="1"/></div>
-        <div class="fg"><div class="fl">Lingua</div><select class="fs" id="f-lang"><option>Italiano</option><option>Inglese</option><option>Giapponese</option><option>Altro</option></select></div>
+        <div class="fg"><div class="fl">Lingua</div><select class="fs" id="f-lang"><option value="Italiano">🇮🇹 Italiano</option><option value="Inglese">🇬🇧 Inglese</option><option value="Giapponese">🇯🇵 Giapponese</option><option value="Altro">🌐 Altro</option></select></div>
       </div>
       <div class="fr2">
         <div class="fg"><div class="fl">Formato</div><select class="fs" id="f-format"><option value="Cartaceo">📖 Cartaceo</option><option value="Ebook">📱 Ebook</option></select></div>
-        <div class="fg"><div class="fl">Acquisto</div><select class="fs" id="f-purchase"><option value="Già acquistato">✅ Già acquistato</option><option value="Da acquistare">🛒 Da acquistare</option></select></div>
+        <div class="fg"><div class="fl">Acquisto</div><select class="fs" id="f-purchase"><option value="Già acquistato">✅ Già acquistato</option><option value="Da Acquistare">🛒 Da Acquistare</option></select></div>
       </div>
       <div class="fg"><div class="fl">Link Amazon (opzionale)</div><input class="fi" id="f-amazon" type="url" placeholder="https://www.amazon.it/..." autocomplete="off"/></div>
       <div class="fg">
@@ -180,27 +180,38 @@
           <input type="file" id="img-file-input" accept="image/*"/>
         </div>
       </div>
+      <!-- Sezione stelline + nota (visibile solo in modifica libro letto) -->
+      <div id="edit-letto-section" style="display:none;">
+        <div style="border-top:1px solid var(--border);margin:4px 0 8px;"></div>
+        <div class="fg"><div class="fl">Nota / Insegnamento</div><textarea class="fta" id="edit-note" placeholder="Cosa ti ha lasciato questo libro?" maxlength="500"></textarea></div>
+        <div class="fg">
+          <div class="fl">Valutazione</div>
+          <div class="stars-row" id="edit-stars-row" data-val="0">
+            <button class="sb esb" data-v="1" type="button">⭐</button><button class="sb esb" data-v="2" type="button">⭐</button><button class="sb esb" data-v="3" type="button">⭐</button><button class="sb esb" data-v="4" type="button">⭐</button><button class="sb esb" data-v="5" type="button">⭐</button>
+          </div>
+        </div>
+      </div>
       <button class="bs" id="btn-save">Salva libro</button>
       <button class="bc" id="btn-cancel">Annulla</button>
       <button class="bd" id="btn-delete" style="display:none;">🗑 Elimina</button>
     </div>
   </div>
 
-  <div class="co" id="co">
-    <div class="cs">
-      <div class="mh"></div>
-      <div class="mt">Segna come Letto</div>
-      <div class="fg"><div class="fl">Cosa vuoi ricordare?</div><textarea class="fta" id="c-note" placeholder="Cosa ti ha insegnato? Cosa ti ha lasciato?" maxlength="500"></textarea></div>
-      <div class="fg">
-        <div class="fl">Valutazione</div>
-        <div class="stars-row" id="stars-row">
-          <button class="sb" data-v="1">⭐</button><button class="sb" data-v="2">⭐</button><button class="sb" data-v="3">⭐</button><button class="sb" data-v="4">⭐</button><button class="sb" data-v="5">⭐</button>
-        </div>
-      </div>
-      <button class="bs" id="c-confirm">✓ Sposta in Letti</button>
-      <button class="bc" id="c-cancel">Annulla</button>
+<div class="co" id="co">
+<div class="cs">
+  <div class="mh"></div>
+  <div class="mt">Segna come Letto</div>
+  <div class="fg"><div class="fl">Cosa vuoi ricordare?</div><textarea class="fta" id="c-note" placeholder="Cosa ti ha insegnato? Cosa ti ha lasciato?" maxlength="500"></textarea></div>
+  <div class="fg">
+    <div class="fl">Valutazione</div>
+    <div class="stars-row" id="stars-row">
+      <button class="sb" data-v="1">⭐</button><button class="sb" data-v="2">⭐</button><button class="sb" data-v="3">⭐</button><button class="sb" data-v="4">⭐</button><button class="sb" data-v="5">⭐</button>
     </div>
   </div>
+  <button class="bs" id="c-confirm">✓ Sposta in Letti</button>
+  <button class="bc" id="c-cancel">Annulla</button>
+</div>
+</div>
 
   <div class="vo" id="vo">
     <div class="vo-sheet">
@@ -282,7 +293,10 @@
         fFormat.value='Cartaceo';fPurchase.value='Già acquistato';fAmazon.value='';
         imgPreview.src='';imgPreview.classList.remove('visible');btnImgUpload.textContent='📷 Scegli immagine';
         [fTitle,fAuthor].forEach(f=>f.classList.remove('err'));imgFileInput.value='';
-        if(id!==null){const item=items.find(i=>i.id===id);if(item){modalTitle.textContent='Modifica Libro';fTitle.value=item.title;fAuthor.value=item.author||'';fPages.value=item.pages||'';fLang.value=item.lang||'Italiano';fFormat.value=item.format||'Cartaceo';fPurchase.value=item.purchase||'Già acquistato';fAmazon.value=item.amazon||'';if(item.img){pendingImg=item.img;imgPreview.src=item.img;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine presente';}}btnDelete.style.display='';}
+        if(id!==null){const item=items.find(i=>i.id===id);if(item){modalTitle.textContent='Modifica Libro';fTitle.value=item.title;fAuthor.value=item.author||'';fPages.value=item.pages||'';fLang.value=item.lang||'Italiano';fFormat.value=item.format||'Cartaceo';fPurchase.value=item.purchase||'Già acquistato';fAmazon.value=item.amazon||'';if(item.img){pendingImg=item.img;imgPreview.src=item.img;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine presente';}// Se il libro è già letto mostra anche stelline e nota nel modal
+          const editLettSec=document.getElementById('edit-letto-section');
+          if(item.done&&editLettSec){editLettSec.style.display='';const sr=document.getElementById('edit-stars-row');let es=item.stars||0;sr.querySelectorAll('.esb').forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=es));sr.dataset.val=es;document.getElementById('edit-note').value=item.note||'';}else if(editLettSec){editLettSec.style.display='none';}
+        }btnDelete.style.display='';}
         else{modalTitle.textContent='Nuovo Libro';btnDelete.style.display='none';}
         mo.classList.add('open');
       }
@@ -292,7 +306,9 @@
       function compressImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=ev=>{const img=new Image();img.onerror=rej;img.onload=()=>{const sc=Math.min(1,500/Math.max(img.width,img.height)),w=Math.round(img.width*sc),h=Math.round(img.height*sc),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',.72));};img.src=ev.target.result;};r.readAsDataURL(file);});}
       btnImgUpload.addEventListener('click',()=>imgFileInput.click());
       imgFileInput.addEventListener('change',async()=>{const f=imgFileInput.files[0];if(!f)return;try{pendingImg=await compressImage(f);imgPreview.src=pendingImg;imgPreview.classList.add('visible');btnImgUpload.textContent='✓ Immagine caricata';}catch{alert('Errore immagine.');}});
-      btnSave.addEventListener('click',async()=>{const t=fTitle.value.trim(),a=fAuthor.value.trim();fTitle.classList.toggle('err',!t);fAuthor.classList.toggle('err',!a);if(!t||!a)return;const d={title:t,author:a,pages:fPages.value.trim(),lang:fLang.value,format:fFormat.value,purchase:fPurchase.value,amazon:fAmazon.value.trim()||null,img:pendingImg||null,done:false,doneDate:null,note:null,stars:null};if(editingId!==null){const item=items.find(i=>i.id===editingId);if(item)await updateLibroDoc(item._docId,{title:t,author:a,pages:d.pages,lang:d.lang,format:d.format,purchase:d.purchase,amazon:d.amazon,img:d.img});}else{await addLibroDoc({...d,id:Date.now()});}closeModal();});
+      // Listener stelle di modifica
+      document.getElementById('edit-stars-row').addEventListener('click',e=>{const b=e.target.closest('.esb');if(!b)return;const v=Number(b.dataset.v);const sr=document.getElementById('edit-stars-row');sr.dataset.val=v;sr.querySelectorAll('.esb').forEach(b=>b.classList.toggle('on',Number(b.dataset.v)<=v));});
+      btnSave.addEventListener('click',async()=>{const t=fTitle.value.trim(),a=fAuthor.value.trim();fTitle.classList.toggle('err',!t);fAuthor.classList.toggle('err',!a);if(!t||!a)return;const d={title:t,author:a,pages:fPages.value.trim(),lang:fLang.value,format:fFormat.value,purchase:fPurchase.value,amazon:fAmazon.value.trim()||null,img:pendingImg||null,done:false,doneDate:null,note:null,stars:null};if(editingId!==null){const item=items.find(i=>i.id===editingId);const upd={title:t,author:a,pages:d.pages,lang:d.lang,format:d.format,purchase:d.purchase,amazon:d.amazon,img:d.img};if(item&&item.done){const sr=document.getElementById('edit-stars-row');const es=Number(sr.dataset.val)||item.stars||0;const en=document.getElementById('edit-note').value.trim();upd.stars=es;upd.note=en;}if(item)await updateLibroDoc(item._docId,upd);}else{await addLibroDoc({...d,id:Date.now()});}closeModal();});
       function openConfirm(id){confirmId=id;confirmStars=0;cNote.value='';starsRow.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));co.classList.add('open');}
       function closeConfirm(){co.classList.remove('open');confirmId=null;}
       cCancel.addEventListener('click',closeConfirm);co.addEventListener('click',e=>{if(e.target===co)closeConfirm();});
@@ -305,7 +321,7 @@
         document.getElementById('v-title').textContent=item.title;
         document.getElementById('v-meta').textContent=[item.author,item.pages?item.pages+' pag.':'',item.lang].filter(Boolean).join(' · ');
         // badges formato + acquisto
-        const badges=[];if(item.format)badges.push(item.format==='Ebook'?'📱 Ebook':'📖 Cartaceo');if(item.purchase)badges.push(item.purchase==='Da acquistare'?'🛒 Da acquistare':'✅ Già acquistato');document.getElementById('v-badges').textContent=badges.join('  ·  ');
+        const badges=[];if(item.format)badges.push(item.format==='Ebook'?'📱 Ebook':'📖 Cartaceo');if(item.purchase)badges.push(item.purchase==='Da Acquistare'||item.purchase==='Da acquistare'?'🛒 Da Acquistare':'✅ Già acquistato');document.getElementById('v-badges').textContent=badges.join('  ·  ');
         document.getElementById('v-stars').textContent=item.stars?'⭐'.repeat(item.stars):'';
         const nl=document.getElementById('v-note-label'),nv=document.getElementById('v-note');
         if(item.note){nl.style.display='';nv.textContent=item.note;}else{nl.style.display='none';nv.textContent='';}
@@ -324,7 +340,7 @@
         emptyList.classList.toggle('visible',pending.length===0);
         pending.forEach(item=>{
           const card=document.createElement('div');card.className='book-card';
-          const purchaseBadge=item.purchase==='Da acquistare'?'<span style="font-size:.5rem;color:var(--muted);background:var(--surface);border-radius:4px;padding:1px 4px;margin-top:2px;display:inline-block;">🛒 da acquistare</span>':'';
+          const purchaseBadge=(item.purchase==='Da Acquistare'||item.purchase==='Da acquistare')?'<span style="font-size:.5rem;color:var(--muted);background:var(--surface);border-radius:4px;padding:1px 4px;margin-top:2px;display:inline-block;">🛒 Da Acquistare</span>':'';
           card.innerHTML=`${item.img?`<img class="book-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>`:`<div class="book-img-ph">📚</div>`}<div class="book-body"><div class="book-title">${esc(item.title)}</div><div class="book-author">${esc(item.author||'')}</div>${item.pages?`<div class="book-meta">${esc(item.pages)} pag. · ${esc(item.lang||'')}${item.format?' · '+esc(item.format):''}</div>`:''} ${purchaseBadge}</div><div class="book-actions"><div style="display:flex;gap:4px;"><button class="btn-act" data-act="edit">${EDIT_SVG}</button><button class="btn-act d" data-act="del">${DEL_SVG}</button><button class="btn-act" data-act="view">${ZOOM_SVG}</button></div><button class="btn-check" data-act="check">${CHK_SVG}</button></div>`;
           card.querySelector('[data-act="edit"]').addEventListener('click',e=>{e.stopPropagation();openModal(item.id);});
           card.querySelector('[data-act="del"]').addEventListener('click',async e=>{e.stopPropagation();if(confirm('Eliminare?')){const it=items.find(i=>i.id===item.id);if(it)await deleteLibroDoc(it._docId);}});

@@ -438,3 +438,49 @@ export async function deleteFilmDoc(docId) {
   if (!ref) return;
   await deleteDoc(ref);
 }
+
+// ─── Salute Mentale — Diario ─────────────────────────────────────────────────
+
+export function subscribeMentalDiary(callback) {
+  const col = userCol('mental_diary');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'desc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addMentalDiaryEntry(data) {
+  const col = userCol('mental_diary');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateMentalDiaryEntry(docId, fields) {
+  const ref = userDoc('mental_diary', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteMentalDiaryEntry(docId) {
+  const ref = userDoc('mental_diary', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+// ─── Salute Mentale — Emozioni log ───────────────────────────────────────────
+
+export async function addEmozioneLog(data) {
+  const col = userCol('emozioni_log');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export function subscribeEmozioniLog(callback) {
+  const col = userCol('emozioni_log');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'desc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
