@@ -841,11 +841,11 @@
       window._map = map;
 
       // Tile layer neutro
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         id: 'light-tiles',
       }).addTo(map);
 
-      const darkTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+      const darkTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         id: 'dark-tiles',
       });
 
@@ -922,7 +922,7 @@
           if (!map.hasLayer(darkTile)) darkTile.addTo(map);
         } else {
           map.eachLayer(l => { if (l.options.id === 'dark-tiles') map.removeLayer(l); });
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', { id: 'light-tiles' }).addTo(map);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { id: 'light-tiles' }).addTo(map);
         }
       };
     }
