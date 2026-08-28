@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{height:100%}
-    body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+    html,body{height:100%}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
 
     #map-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--border)}
     .header-btn{background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.58rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;width:52px;text-decoration:none;-webkit-tap-highlight-color:transparent}
@@ -24,9 +24,9 @@
     .map-sub{font-size:.46rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
     .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;-webkit-tap-highlight-color:transparent}
 
-    #page-body{display:flex;flex-direction:column;padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+    #page-body{display:flex;flex-direction:column;flex:1;width:100%;padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
 
-    #map-container{width:100%;height:50vh;z-index:1;position:relative}
+    #map-container{width:100%;height:55vw;min-height:260px;max-height:60vh;z-index:1;position:relative}
     #leaflet-map{width:100%;height:100%}
     .leaflet-control-attribution{display:none!important}
 
@@ -269,18 +269,20 @@
 
     window._geoLayer = null;
 
+    function geoStyle(f) {
+      const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
+      if (!iso2) return {fillOpacity: 0.04, weight: 0.5, color: isDark ? '#3a4f62' : '#b0bec8'};
+      return {
+        color: isDark ? '#9DDDE8' : '#0d4f80',
+        weight: 3,
+        fillColor: isDark ? '#74C7E1' : '#25739E',
+        fillOpacity: 0.5,
+      };
+    }
+
     function paintGeo() {
       if (!window._geoLayer) return;
-      window._geoLayer.setStyle(f => {
-        const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
-        if (!iso2) return {fillOpacity:0, weight:0};
-        return {
-          color: isDark ? '#9DDDE8' : '#1a5f80',
-          weight: 2,
-          fillColor: isDark ? '#74C7E1' : '#25739E',
-          fillOpacity: 0.55,
-        };
-      });
+      window._geoLayer.setStyle(geoStyle);
     }
 
     fetch('./countries-110m.json')
@@ -295,16 +297,7 @@
         s.onload = () => {
           const geojson = topojson.feature(topo, topo.objects.countries);
           window._geoLayer = L.geoJSON(geojson, {
-            style: f => {
-              const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
-              if (!iso2) return {fillOpacity:0, weight:0.2, color:'#ccc'};
-              return {
-                color: isDark ? '#9DDDE8' : '#1a5f80',
-                weight: 2,
-                fillColor: isDark ? '#74C7E1' : '#25739E',
-                fillOpacity: 0.55,
-              };
-            },
+            style: geoStyle,
             onEachFeature(f, layer) {
               const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
               if (!iso2) return;
