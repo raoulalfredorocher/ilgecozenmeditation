@@ -556,3 +556,59 @@ export async function deletePartitaDoc(tavoloDocId, partitaDocId) {
   if (!db || !auth?.currentUser) return;
   await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'giochi_tavolo', tavoloDocId, 'partite', partitaDocId));
 }
+
+// ─── Viaggi & Mappa ─────────────────────────────────────────────────────────
+
+/** Ritorna il doc del paese: { visitedUnescoIds: [...] } */
+export function subscribeCountry(countryCode, callback) {
+  if (!db || !auth?.currentUser) { callback(null); return () => {}; }
+  const ref = doc(db, 'users', auth.currentUser.uid, 'countries', countryCode);
+  return onSnapshot(ref, snap => callback(snap.exists() ? snap.data() : {}));
+}
+
+export async function saveCountryData(countryCode, fields) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return;
+  const ref = doc(db, 'users', uid, 'countries', countryCode);
+  await setDoc(ref, fields, { merge: true });
+}
+
+/** Tutti i paesi dell'utente (per colorare la mappa) */
+export function subscribeAllCountries(callback) {
+  if (!db || !auth?.currentUser) { callback({}); return () => {}; }
+  const col = collection(db, 'users', auth.currentUser.uid, 'countries');
+  return onSnapshot(col, snap => {
+    const map = {};
+    snap.docs.forEach(d => { map[d.id] = d.data(); });
+    callback(map);
+  });
+}
+
+/** Viaggi per un paese */
+export function subscribeTrips(countryCode, callback) {
+  if (!db || !auth?.currentUser) { callback([]); return () => {}; }
+  const col = collection(db, 'users', auth.currentUser.uid, 'countries', countryCode, 'trips');
+  return onSnapshot(query(col, orderBy('dateStart', 'desc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addTripDoc(countryCode, data) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return null;
+  const col = collection(db, 'users', uid, 'countries', countryCode, 'trips');
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateTripDoc(countryCode, tripDocId, fields) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return;
+  await setDoc(doc(db, 'users', uid, 'countries', countryCode, 'trips', tripDocId), fields, { merge: true });
+}
+
+export async function deleteTripDoc(countryCode, tripDocId) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return;
+  await deleteDoc(doc(db, 'users', uid, 'countries', countryCode, 'trips', tripDocId));
+}
