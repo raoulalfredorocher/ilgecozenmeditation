@@ -5,81 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Viaggi"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <link rel="icon" type="image/png" href="icon-192.png"/>
   <title>Il Geco Zen — Fotografia e Viaggi</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-    #map-header{position:fixed;top:0;left:0;right:0;z-index:500;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--border)}
+    html{height:100%}
+    body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+
+    #map-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--border)}
     .header-btn{background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.58rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;width:52px;text-decoration:none;-webkit-tap-highlight-color:transparent}
     .header-center-travel{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
     .map-title{font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:700}
     .map-sub{font-size:.46rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
     .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;-webkit-tap-highlight-color:transparent}
-    #map-wrap{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1;overflow:hidden}
-    #world-svg{width:100%;height:100%;display:block;cursor:grab}
-    #world-svg:active{cursor:grabbing}
-    #map-tooltip{position:fixed;z-index:300;pointer-events:none;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.72rem;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.15);display:none;white-space:nowrap}
-    #stats-badge{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);left:50%;transform:translateX(-50%);z-index:400;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:7px 18px;font-size:.62rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:flex;gap:14px;transition:opacity .3s,transform .3s;box-shadow:0 2px 12px rgba(0,0,0,.12)}
-    #stats-badge.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(10px)}
-    .stat-val{color:var(--gold);font-weight:700;font-size:.75rem;margin-right:3px}
-    #bottom-sheet{position:fixed;left:0;right:0;bottom:0;z-index:600;background:var(--bg);border-radius:22px 22px 0 0;border-top:1.5px solid var(--border);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:82vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
-    #bottom-sheet.open{transform:translateY(0)}
-    #sheet-handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0}
-    #sheet-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)}
-    #sheet-flag{font-size:2.2rem;line-height:1}
-    #sheet-country-name{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:.04em;flex:1;margin:0 12px}
-    #sheet-close{background:none;border:none;font-size:1.4rem;color:var(--muted);cursor:pointer;padding:4px;line-height:1;-webkit-tap-highlight-color:transparent}
-    #sheet-body{overflow-y:auto;flex:1;padding:0 18px 20px;-webkit-overflow-scrolling:touch}
-    .info-chips{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 6px}
-    .info-chip{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:4px 10px;font-size:.62rem;letter-spacing:.06em;color:var(--muted)}
-    .info-chip span{color:var(--text);font-weight:600}
-    .section-title{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+
+    #page-body{display:flex;flex-direction:column;padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+
+    #map-container{width:100%;height:50vh;z-index:1;position:relative}
+    #leaflet-map{width:100%;height:100%}
+    .leaflet-control-attribution{display:none!important}
+
+    #countries-section{padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 80px)}
+
+    .continent-block{margin-bottom:24px}
+    .continent-title{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 0 6px;border-bottom:2px solid var(--gold);margin-bottom:10px}
+
+    .country-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden}
+    .country-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+    .country-flag{font-size:1.6rem;line-height:1;flex-shrink:0}
+    .country-name{font-size:.88rem;font-weight:700;color:var(--text);flex:1}
+    .country-chevron{font-size:.8rem;color:var(--muted);transition:transform .25s}
+    .country-card.open .country-chevron{transform:rotate(180deg)}
+    .country-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+    .country-card.open .country-body{display:block}
+
+    .section-title{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
     .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-    .section-badge{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2px 8px;font-size:.56rem;color:var(--muted);font-weight:500}
-    .unesco-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+    .section-badge{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1px 7px;font-size:.54rem;color:var(--muted);font-weight:500}
+
+    .unesco-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
     .unesco-item:last-child{border-bottom:none}
-    .unesco-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;background:var(--card);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s;margin-top:1px}
+    .unesco-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;background:var(--card);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s;margin-top:1px}
     .unesco-check.checked{background:var(--gold);border-color:var(--gold);color:#fff}
-    .unesco-info{flex:1;min-width:0}
-    .unesco-name{font-size:.78rem;font-weight:600;color:var(--text);line-height:1.3}
-    .unesco-year{font-size:.58rem;color:var(--muted);letter-spacing:.06em;margin-top:2px}
-    .trip-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:10px}
-    .trip-title{font-size:.82rem;font-weight:700;color:var(--text)}
-    .trip-dates{font-size:.58rem;color:var(--muted);letter-spacing:.06em;margin-top:2px}
-    .trip-notes{font-size:.74rem;color:var(--text);line-height:1.5;margin-top:6px;white-space:pre-wrap}
-    .trip-drive{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:.65rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:8px;padding:4px 10px}
-    .trip-actions{display:flex;gap:6px;margin-top:8px}
-    .btn-sm{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.6rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+    .unesco-name{font-size:.76rem;font-weight:600;color:var(--text);line-height:1.3}
+    .unesco-year{font-size:.56rem;color:var(--muted);margin-top:1px}
+
+    .trip-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+    .trip-title{font-size:.8rem;font-weight:700;color:var(--text)}
+    .trip-dates{font-size:.58rem;color:var(--muted);margin-top:2px}
+    .trip-notes{font-size:.72rem;color:var(--text);line-height:1.5;margin-top:5px;white-space:pre-wrap}
+    .trip-drive{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:.62rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:7px;padding:3px 9px}
+    .trip-actions{display:flex;gap:6px;margin-top:7px}
+    .btn-sm{background:none;border:1px solid var(--border);border-radius:7px;padding:3px 9px;font-size:.58rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
     .btn-sm.danger{color:var(--red);border-color:var(--red)}
     .btn-sm.primary{color:var(--gold);border-color:var(--gold)}
-    #add-trip-btn{width:100%;background:none;border:1.5px dashed var(--border);border-radius:14px;padding:12px;font-size:.72rem;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.06em;-webkit-tap-highlight-color:transparent;margin-bottom:10px}
-    .trip-form{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:none}
+
+    .add-trip-btn{width:100%;background:none;border:1.5px dashed var(--border);border-radius:10px;padding:10px;font-size:.7rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;margin-top:4px}
+    .trip-form{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:6px;display:none}
     .trip-form.open{display:block}
-    .form-row{margin-bottom:10px}
-    .form-label{display:block;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-    .form-input,.form-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.78rem;color:var(--text);font-family:inherit}
-    .form-textarea{resize:vertical;min-height:70px}
-    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .form-btns{display:flex;gap:8px;margin-top:10px}
-    .btn-form-save{flex:1;background:var(--gold);color:#fff;border:none;border-radius:10px;padding:9px;font-size:.74rem;font-family:inherit;font-weight:600;cursor:pointer}
-    .btn-form-cancel{background:none;border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:.74rem;font-family:inherit;color:var(--muted);cursor:pointer}
-    #sheet-overlay{position:fixed;inset:0;z-index:590;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s}
-    #sheet-overlay.active{background:rgba(0,0,0,.35);pointer-events:all}
+    .form-row{margin-bottom:9px}
+    .form-label{display:block;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+    .form-input,.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 9px;font-size:.76rem;color:var(--text);font-family:inherit}
+    .form-textarea{resize:vertical;min-height:60px}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .form-btns{display:flex;gap:7px;margin-top:9px}
+    .btn-save{flex:1;background:var(--gold);color:#fff;border:none;border-radius:9px;padding:8px;font-size:.72rem;font-family:inherit;font-weight:600;cursor:pointer}
+    .btn-cancel{background:none;border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-size:.72rem;font-family:inherit;color:var(--muted);cursor:pointer}
+
+    #stats-bar{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.6rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+    .sv{color:var(--gold);font-weight:700;font-size:.72rem;margin-right:2px}
   </style>
   <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    window.__FIREBASE_CONFIG__={
+      apiKey:['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain:'ilgecozen-b2df7.firebaseapp.com',
+      projectId:'ilgecozen-b2df7',
+      storageBucket:'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId:'956821191073',
+      appId:'1:956821191073:web:fd5abf9405e17a9abef3e0',
     };
   </script>
 </head>
@@ -92,453 +100,427 @@
       <span>TAO</span>
     </a>
     <div class="header-center-travel">
-      <div style="font-size:1.4rem;line-height:1;">🗺️</div>
+      <div style="font-size:1.4rem;line-height:1">🗺️</div>
       <div class="map-title">VIAGGI</div>
       <div class="map-sub">fotografia · esplorazione</div>
     </div>
     <button class="theme-toggle" id="theme-toggle"><div id="theme-knob">☀️</div></button>
   </header>
 
-  <div id="map-wrap">
-    <!-- Mappa SVG inline: Mercatore semplificato, tutti gli stati -->
-    <svg id="world-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-      <rect id="ocean" width="1000" height="500" fill="#c8dce8"/>
-      <g id="countries-group"></g>
-    </svg>
-  </div>
-  <div id="map-tooltip"></div>
-
-  <div id="stats-badge">
-    <div><span class="stat-val" id="stat-countries">21</span> paesi</div>
-    <div><span class="stat-val" id="stat-unesco">0</span> UNESCO</div>
-    <div><span class="stat-val" id="stat-trips">0</span> viaggi</div>
-  </div>
-
-  <div id="sheet-overlay"></div>
-  <div id="bottom-sheet" role="dialog" aria-modal="true">
-    <div id="sheet-handle"></div>
-    <div id="sheet-header">
-      <div id="sheet-flag">🌍</div>
-      <div id="sheet-country-name">—</div>
-      <button id="sheet-close">✕</button>
+  <div id="page-body">
+    <div id="map-container">
+      <div id="leaflet-map"></div>
     </div>
-    <div id="sheet-body">
-      <div class="info-chips" id="sheet-chips"></div>
-      <div class="section-title">🏛️ Patrimoni UNESCO <span class="section-badge" id="unesco-badge">0/0</span></div>
-      <div id="unesco-list"></div>
-      <div class="section-title">✈️ I Miei Viaggi <span class="section-badge" id="trips-badge">0</span></div>
-      <div id="trips-list"></div>
-      <button id="add-trip-btn">＋ Aggiungi viaggio</button>
-      <div class="trip-form" id="trip-form">
-        <div class="form-row"><label class="form-label">Titolo viaggio</label><input class="form-input" id="tf-title" type="text" placeholder="es. Giappone Aprile 2019"/></div>
-        <div class="form-row form-row-2">
-          <div><label class="form-label">Data inizio</label><input class="form-input" id="tf-start" type="date"/></div>
-          <div><label class="form-label">Data fine</label><input class="form-input" id="tf-end" type="date"/></div>
-        </div>
-        <div class="form-row"><label class="form-label">Note & ricordi</label><textarea class="form-textarea" id="tf-notes" placeholder="Scrivi qui i tuoi appunti…"></textarea></div>
-        <div class="form-row"><label class="form-label">Link Google Drive foto</label><input class="form-input" id="tf-drive" type="url" placeholder="https://drive.google.com/…"/></div>
-        <div class="form-btns">
-          <button class="btn-form-cancel" id="tf-cancel">Annulla</button>
-          <button class="btn-form-save" id="tf-save">Salva Viaggio</button>
-        </div>
-      </div>
-    </div>
+    <div id="countries-section"></div>
   </div>
 
+  <div id="stats-bar">
+    <div><span class="sv" id="sv-countries">21</span>paesi</div>
+    <div><span class="sv" id="sv-unesco">0</span>UNESCO</div>
+    <div><span class="sv" id="sv-trips">0</span>viaggi</div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module">
     import { waitForAuth } from './js/firebase-config.js';
     import { subscribeAllCountries, subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/firebase-config.js';
 
-    // ── Tema ──────────────────────────────────────────────────────────────────
-    const htmlEl = document.documentElement;
-    const knob   = document.getElementById('theme-knob');
-    let isDark   = localStorage.getItem('zen_theme') === 'dark';
+    // ── Tema ─────────────────────────────────────────────────────────────────
+    const html = document.documentElement;
+    const knob = document.getElementById('theme-knob');
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
     function applyTheme() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      html.setAttribute('data-theme', isDark ? 'dark' : 'light');
       knob.textContent = isDark ? '🌙' : '☀️';
       document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
       localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-      document.getElementById('ocean').setAttribute('fill', isDark ? '#1a2a38' : '#c8dce8');
-      repaintCountries();
+      if (window._geoLayer) paintGeo();
     }
     applyTheme();
     document.getElementById('theme-toggle').addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-    // ── Dati UNESCO ───────────────────────────────────────────────────────────
-    const UNESCO_DATA = {
-      AT:{name:'Austria',flag:'🇦🇹',capital:'Vienna',continent:'Europa',sites:[
-        {id:'AT-1',name:'Centro storico di Salisburgo',year:1996},{id:'AT-2',name:'Palazzo di Schönbrunn',year:1996},
-        {id:'AT-3',name:'Paesaggio di Hallstatt-Dachstein',year:1997},{id:'AT-4',name:'Ferrovia del Semmering',year:1998},
-        {id:'AT-5',name:'Centro storico di Graz',year:1999},{id:'AT-6',name:'Paesaggio di Wachau',year:2000},
-        {id:'AT-7',name:'Vienna storica',year:2001},{id:'AT-8',name:'Lago di Neusiedl',year:2001},
-      ]},
-      HR:{name:'Croazia',flag:'🇭🇷',capital:'Zagabria',continent:'Europa',sites:[
-        {id:'HR-1',name:'Dubrovnik',year:1979},{id:'HR-2',name:'Laghi di Plitvice',year:1979},
-        {id:'HR-3',name:'Palazzo di Diocleziano, Spalato',year:1979},{id:'HR-4',name:'Episcopio di Poreč',year:1997},
-        {id:'HR-5',name:'Fortezza di Šibenik',year:2000},{id:'HR-6',name:'Paesaggio di Stari Grad',year:2008},
-      ]},
-      DK:{name:'Danimarca',flag:'🇩🇰',capital:'Copenaghen',continent:'Europa',sites:[
-        {id:'DK-1',name:'Tumuli di Jelling',year:1994},{id:'DK-2',name:'Cattedrale di Roskilde',year:1995},
-        {id:'DK-3',name:'Castello di Kronborg',year:2000},{id:'DK-4',name:'Costa di Wadden',year:2009},
-      ]},
-      FI:{name:'Finlandia',flag:'🇫🇮',capital:'Helsinki',continent:'Europa',sites:[
-        {id:'FI-1',name:'Fortezza di Suomenlinna',year:1991},{id:'FI-2',name:'Antica città di Rauma',year:1991},
-        {id:'FI-3',name:'Paesaggio di Verla',year:1996},{id:'FI-4',name:'Tumuli di Sammallahdenmäki',year:1999},
-        {id:'FI-5',name:'Foreste primordiali della Fennoscandia',year:2021},
-      ]},
-      FR:{name:'Francia',flag:'🇫🇷',capital:'Parigi',continent:'Europa',sites:[
-        {id:'FR-1',name:'Mont-Saint-Michel',year:1979},{id:'FR-2',name:'Cattedrale di Chartres',year:1979},
-        {id:'FR-3',name:'Palazzo di Versailles',year:1979},{id:'FR-4',name:'Pont du Gard',year:1985},
-        {id:'FR-5',name:'Parigi — Rive della Senna',year:1991},{id:'FR-6',name:'Carcassonne',year:1997},
-        {id:'FR-7',name:'Val de Loire',year:2000},{id:'FR-8',name:'Lione storico',year:1998},
-      ]},
-      VA:{name:'Vaticano',flag:'🇻🇦',capital:'Città del Vaticano',continent:'Europa',sites:[{id:'VA-1',name:'Centro storico di Roma e Vaticano',year:1980}]},
-      DE:{name:'Germania',flag:'🇩🇪',capital:'Berlino',continent:'Europa',sites:[
-        {id:'DE-1',name:'Cattedrale di Aquisgrana',year:1978},{id:'DE-2',name:'Colonia — Cattedrale',year:1996},
-        {id:'DE-3',name:'Berlino — Isola dei Musei',year:1999},{id:'DE-4',name:'Potsdam e Berlino',year:1990},
-        {id:'DE-5',name:'Wartburg',year:1999},{id:'DE-6',name:'Reno alto-medio',year:2002},
-      ]},
-      GR:{name:'Grecia',flag:'🇬🇷',capital:'Atene',continent:'Europa',sites:[
-        {id:'GR-1',name:'Acropoli di Atene',year:1987},{id:'GR-2',name:'Delfi',year:1987},
-        {id:'GR-3',name:'Monte Athos',year:1988},{id:'GR-4',name:'Meteorà',year:1988},
-        {id:'GR-5',name:'Olimpia',year:1989},{id:'GR-6',name:'Epidauro',year:1988},
-        {id:'GR-7',name:'Corfù',year:2007},{id:'GR-8',name:'Delos',year:1990},
-      ]},
-      IT:{name:'Italia',flag:'🇮🇹',capital:'Roma',continent:'Europa',sites:[
-        {id:'IT-1',name:'Arte rupestre in Valcamonica',year:1979},{id:'IT-2',name:'Cenacolo di Leonardo',year:1980},
-        {id:'IT-3',name:'Firenze storica',year:1982},{id:'IT-4',name:'Venezia e la sua laguna',year:1987},
-        {id:'IT-5',name:'Piazza del Duomo di Pisa',year:1987},{id:'IT-6',name:'Sassi di Matera',year:1993},
-        {id:'IT-7',name:'Pompei ed Ercolano',year:1997},{id:'IT-8',name:'Costiera Amalfitana',year:1997},
-        {id:'IT-9',name:'Dolomiti',year:2009},{id:'IT-10',name:'Napoli storica',year:1995},
-        {id:'IT-11',name:'Roma storica e Vaticano',year:1980},{id:'IT-12',name:'Siena storica',year:1995},
-        {id:'IT-13',name:'Reggia di Caserta',year:1997},{id:'IT-14',name:'Val d\'Orcia',year:2004},
-        {id:'IT-15',name:'Mantova e Sabbioneta',year:2008},{id:'IT-16',name:'Bologna — I Portici',year:2021},
-      ]},
-      LI:{name:'Liechtenstein',flag:'🇱🇮',capital:'Vaduz',continent:'Europa',sites:[]},
-      MT:{name:'Malta',flag:'🇲🇹',capital:'La Valletta',continent:'Europa',sites:[
-        {id:'MT-1',name:'Ipogeo di Hal Saflieni',year:1980},{id:'MT-2',name:'La Valletta',year:1980},{id:'MT-3',name:'Templi megalitici',year:1980},
-      ]},
-      MC:{name:'Monaco',flag:'🇲🇨',capital:'Monaco',continent:'Europa',sites:[]},
-      NL:{name:'Paesi Bassi',flag:'🇳🇱',capital:'Amsterdam',continent:'Europa',sites:[
-        {id:'NL-1',name:'Schokland',year:1995},{id:'NL-2',name:'Linea di difesa di Amsterdam',year:1996},
-        {id:'NL-3',name:'Mulini a vento di Kinderdijk',year:1997},{id:'NL-4',name:'Canali di Amsterdam',year:2010},
-      ]},
-      PL:{name:'Polonia',flag:'🇵🇱',capital:'Varsavia',continent:'Europa',sites:[
-        {id:'PL-1',name:'Centro storico di Cracovia',year:1978},{id:'PL-2',name:'Miniera di sale di Wieliczka',year:1978},
-        {id:'PL-3',name:'Auschwitz-Birkenau',year:1979},{id:'PL-4',name:'Foresta di Białowieża',year:1979},
-        {id:'PL-5',name:'Centro storico di Varsavia',year:1980},{id:'PL-6',name:'Castello di Malbork',year:1997},
-      ]},
-      CZ:{name:'Rep. Ceca',flag:'🇨🇿',capital:'Praga',continent:'Europa',sites:[
-        {id:'CZ-1',name:'Centro storico di Praga',year:1992},{id:'CZ-2',name:'Český Krumlov',year:1992},
-        {id:'CZ-3',name:'Telč',year:1992},{id:'CZ-4',name:'Lednice-Valtice',year:1996},
-        {id:'CZ-5',name:'Kutná Hora',year:1995},{id:'CZ-6',name:'Villa Tugendhat',year:2001},
-      ]},
-      TH:{name:'Thailandia',flag:'🇹🇭',capital:'Bangkok',continent:'Asia',sites:[
-        {id:'TH-1',name:'Sukhothai',year:1991},{id:'TH-2',name:'Ayutthaya',year:1991},
-        {id:'TH-3',name:'Thungyai-Huai Kha Khaeng',year:1991},{id:'TH-4',name:'Ban Chiang',year:1992},
-      ]},
-      SM:{name:'San Marino',flag:'🇸🇲',capital:'San Marino',continent:'Europa',sites:[{id:'SM-1',name:'San Marino — Monte Titano',year:2008}]},
-      JP:{name:'Giappone',flag:'🇯🇵',capital:'Tokyo',continent:'Asia',sites:[
-        {id:'JP-1',name:'Horyuji',year:1993},{id:'JP-2',name:'Castello di Himeji',year:1993},
-        {id:'JP-3',name:'Kyoto storica',year:1994},{id:'JP-4',name:'Nara storica',year:1998},
-        {id:'JP-5',name:'Nikko',year:1999},{id:'JP-6',name:'Fujisan',year:2013},
-        {id:'JP-7',name:'Itsukushima',year:1996},{id:'JP-8',name:'Hiroshima — Cupola atomica',year:1996},
-        {id:'JP-9',name:'Yakushima',year:1993},{id:'JP-10',name:'Shirakawa-go',year:1995},
-      ]},
-      ES:{name:'Spagna',flag:'🇪🇸',capital:'Madrid',continent:'Europa',sites:[
-        {id:'ES-1',name:'Alhambra e Generalife',year:1984},{id:'ES-2',name:'Opere di Gaudí',year:1984},
-        {id:'ES-3',name:'Santiago de Compostela',year:1985},{id:'ES-4',name:'Toledo storica',year:1986},
-        {id:'ES-5',name:'Centro storico di Córdoba',year:1984},{id:'ES-6',name:'Ibiza',year:1999},
-        {id:'ES-7',name:'Cammino di Santiago',year:1993},{id:'ES-8',name:'Las Médulas',year:1997},
-      ]},
-      SE:{name:'Svezia',flag:'🇸🇪',capital:'Stoccolma',continent:'Europa',sites:[
-        {id:'SE-1',name:'Drottningholm',year:1991},{id:'SE-2',name:'Birka e Hovgården',year:1993},
-        {id:'SE-3',name:'Petroglifi di Tanum',year:1994},{id:'SE-4',name:'Visby',year:1995},
-        {id:'SE-5',name:'Lapponia',year:1996},{id:'SE-6',name:'Great Copper Mountain',year:2001},
-      ]},
-      CH:{name:'Svizzera',flag:'🇨🇭',capital:'Berna',continent:'Europa',sites:[
-        {id:'CH-1',name:'Abbazia di San Gallo',year:1983},{id:'CH-2',name:'Bellinzona — Tre Castelli',year:2000},
-        {id:'CH-3',name:'Jungfrau-Aletsch',year:2001},{id:'CH-4',name:'Lavaux — Vigneti',year:2007},
-        {id:'CH-5',name:'Ferrovia Retica dell\'Albula',year:2008},
-      ]},
+    // ── Dati paesi ────────────────────────────────────────────────────────────
+    const COUNTRIES = {
+      Europa: {
+        AT:{name:'Austria',flag:'🇦🇹',sites:[
+          {id:'AT-1',name:'Centro storico di Salisburgo',year:1996},{id:'AT-2',name:'Palazzo di Schönbrunn',year:1996},
+          {id:'AT-3',name:'Hallstatt-Dachstein',year:1997},{id:'AT-4',name:'Ferrovia del Semmering',year:1998},
+          {id:'AT-5',name:'Centro storico di Graz',year:1999},{id:'AT-6',name:'Paesaggio di Wachau',year:2000},
+          {id:'AT-7',name:'Vienna storica',year:2001},{id:'AT-8',name:'Lago di Neusiedl',year:2001},
+        ]},
+        HR:{name:'Croazia',flag:'🇭🇷',sites:[
+          {id:'HR-1',name:'Dubrovnik',year:1979},{id:'HR-2',name:'Laghi di Plitvice',year:1979},
+          {id:'HR-3',name:'Spalato — Palazzo di Diocleziano',year:1979},{id:'HR-4',name:'Episcopio di Poreč',year:1997},
+          {id:'HR-5',name:'Fortezza di Šibenik',year:2000},{id:'HR-6',name:'Stari Grad Plain',year:2008},
+        ]},
+        DK:{name:'Danimarca',flag:'🇩🇰',sites:[
+          {id:'DK-1',name:'Tumuli di Jelling',year:1994},{id:'DK-2',name:'Cattedrale di Roskilde',year:1995},
+          {id:'DK-3',name:'Castello di Kronborg',year:2000},{id:'DK-4',name:'Costa di Wadden',year:2009},
+        ]},
+        FI:{name:'Finlandia',flag:'🇫🇮',sites:[
+          {id:'FI-1',name:'Fortezza di Suomenlinna',year:1991},{id:'FI-2',name:'Antica città di Rauma',year:1991},
+          {id:'FI-3',name:'Paesaggio di Verla',year:1996},{id:'FI-4',name:'Tumuli di Sammallahdenmäki',year:1999},
+          {id:'FI-5',name:'Foreste primordiali della Fennoscandia',year:2021},
+        ]},
+        FR:{name:'Francia',flag:'🇫🇷',sites:[
+          {id:'FR-1',name:'Mont-Saint-Michel',year:1979},{id:'FR-2',name:'Cattedrale di Chartres',year:1979},
+          {id:'FR-3',name:'Palazzo di Versailles',year:1979},{id:'FR-4',name:'Pont du Gard',year:1985},
+          {id:'FR-5',name:'Parigi — Rive della Senna',year:1991},{id:'FR-6',name:'Carcassonne',year:1997},
+          {id:'FR-7',name:'Val de Loire',year:2000},{id:'FR-8',name:'Lione storico',year:1998},
+        ]},
+        VA:{name:'Vaticano',flag:'🇻🇦',sites:[{id:'VA-1',name:'Centro storico di Roma e Vaticano',year:1980}]},
+        DE:{name:'Germania',flag:'🇩🇪',sites:[
+          {id:'DE-1',name:'Cattedrale di Aquisgrana',year:1978},{id:'DE-2',name:'Colonia — Cattedrale',year:1996},
+          {id:'DE-3',name:'Berlino — Isola dei Musei',year:1999},{id:'DE-4',name:'Potsdam — Parchi e Palazzi',year:1990},
+          {id:'DE-5',name:'Wartburg',year:1999},{id:'DE-6',name:'Reno alto-medio',year:2002},
+        ]},
+        GR:{name:'Grecia',flag:'🇬🇷',sites:[
+          {id:'GR-1',name:'Acropoli di Atene',year:1987},{id:'GR-2',name:'Delfi',year:1987},
+          {id:'GR-3',name:'Monte Athos',year:1988},{id:'GR-4',name:'Meteorà',year:1988},
+          {id:'GR-5',name:'Olimpia',year:1989},{id:'GR-6',name:'Epidauro',year:1988},
+          {id:'GR-7',name:'Corfù',year:2007},{id:'GR-8',name:'Delos',year:1990},
+        ]},
+        IT:{name:'Italia',flag:'🇮🇹',sites:[
+          {id:'IT-1',name:'Arte rupestre in Valcamonica',year:1979},{id:'IT-2',name:'Cenacolo di Leonardo',year:1980},
+          {id:'IT-3',name:'Firenze storica',year:1982},{id:'IT-4',name:'Venezia e la sua laguna',year:1987},
+          {id:'IT-5',name:'Piazza del Duomo di Pisa',year:1987},{id:'IT-6',name:'Sassi di Matera',year:1993},
+          {id:'IT-7',name:'Pompei ed Ercolano',year:1997},{id:'IT-8',name:'Costiera Amalfitana',year:1997},
+          {id:'IT-9',name:'Dolomiti',year:2009},{id:'IT-10',name:'Napoli storica',year:1995},
+          {id:'IT-11',name:'Roma storica e Vaticano',year:1980},{id:'IT-12',name:'Siena storica',year:1995},
+          {id:'IT-13',name:'Reggia di Caserta',year:1997},{id:'IT-14',name:'Val d\'Orcia',year:2004},
+          {id:'IT-15',name:'Mantova e Sabbioneta',year:2008},{id:'IT-16',name:'Bologna — I Portici',year:2021},
+        ]},
+        LI:{name:'Liechtenstein',flag:'🇱🇮',sites:[]},
+        MT:{name:'Malta',flag:'🇲🇹',sites:[
+          {id:'MT-1',name:'Ipogeo di Hal Saflieni',year:1980},{id:'MT-2',name:'La Valletta',year:1980},
+          {id:'MT-3',name:'Templi megalitici',year:1980},
+        ]},
+        MC:{name:'Monaco',flag:'🇲🇨',sites:[]},
+        NL:{name:'Paesi Bassi',flag:'🇳🇱',sites:[
+          {id:'NL-1',name:'Schokland',year:1995},{id:'NL-2',name:'Linea di difesa di Amsterdam',year:1996},
+          {id:'NL-3',name:'Mulini a vento di Kinderdijk',year:1997},{id:'NL-4',name:'Canali di Amsterdam',year:2010},
+        ]},
+        PL:{name:'Polonia',flag:'🇵🇱',sites:[
+          {id:'PL-1',name:'Centro storico di Cracovia',year:1978},{id:'PL-2',name:'Miniera di Wieliczka',year:1978},
+          {id:'PL-3',name:'Auschwitz-Birkenau',year:1979},{id:'PL-4',name:'Foresta di Białowieża',year:1979},
+          {id:'PL-5',name:'Varsavia storica',year:1980},{id:'PL-6',name:'Castello di Malbork',year:1997},
+        ]},
+        CZ:{name:'Rep. Ceca',flag:'🇨🇿',sites:[
+          {id:'CZ-1',name:'Centro storico di Praga',year:1992},{id:'CZ-2',name:'Český Krumlov',year:1992},
+          {id:'CZ-3',name:'Telč',year:1992},{id:'CZ-4',name:'Lednice-Valtice',year:1996},
+          {id:'CZ-5',name:'Kutná Hora',year:1995},{id:'CZ-6',name:'Villa Tugendhat',year:2001},
+        ]},
+        SM:{name:'San Marino',flag:'🇸🇲',sites:[{id:'SM-1',name:'San Marino — Monte Titano',year:2008}]},
+        ES:{name:'Spagna',flag:'🇪🇸',sites:[
+          {id:'ES-1',name:'Alhambra e Generalife',year:1984},{id:'ES-2',name:'Opere di Gaudí',year:1984},
+          {id:'ES-3',name:'Santiago de Compostela',year:1985},{id:'ES-4',name:'Toledo storica',year:1986},
+          {id:'ES-5',name:'Centro storico di Córdoba',year:1984},{id:'ES-6',name:'Ibiza',year:1999},
+          {id:'ES-7',name:'Cammino di Santiago',year:1993},{id:'ES-8',name:'Las Médulas',year:1997},
+        ]},
+        SE:{name:'Svezia',flag:'🇸🇪',sites:[
+          {id:'SE-1',name:'Drottningholm',year:1991},{id:'SE-2',name:'Birka e Hovgården',year:1993},
+          {id:'SE-3',name:'Petroglifi di Tanum',year:1994},{id:'SE-4',name:'Visby',year:1995},
+          {id:'SE-5',name:'Lapponia',year:1996},{id:'SE-6',name:'Great Copper Mountain',year:2001},
+        ]},
+        CH:{name:'Svizzera',flag:'🇨🇭',sites:[
+          {id:'CH-1',name:'Abbazia di San Gallo',year:1983},{id:'CH-2',name:'Bellinzona — Tre Castelli',year:2000},
+          {id:'CH-3',name:'Jungfrau-Aletsch',year:2001},{id:'CH-4',name:'Lavaux — Vigneti',year:2007},
+          {id:'CH-5',name:'Ferrovia Retica dell\'Albula',year:2008},
+        ]},
+      },
+      Asia: {
+        TH:{name:'Thailandia',flag:'🇹🇭',sites:[
+          {id:'TH-1',name:'Sukhothai',year:1991},{id:'TH-2',name:'Ayutthaya',year:1991},
+          {id:'TH-3',name:'Thungyai-Huai Kha Khaeng',year:1991},{id:'TH-4',name:'Ban Chiang',year:1992},
+        ]},
+        JP:{name:'Giappone',flag:'🇯🇵',sites:[
+          {id:'JP-1',name:'Horyuji',year:1993},{id:'JP-2',name:'Castello di Himeji',year:1993},
+          {id:'JP-3',name:'Kyoto storica',year:1994},{id:'JP-4',name:'Nara storica',year:1998},
+          {id:'JP-5',name:'Nikko',year:1999},{id:'JP-6',name:'Fujisan',year:2013},
+          {id:'JP-7',name:'Itsukushima',year:1996},{id:'JP-8',name:'Hiroshima — Cupola atomica',year:1996},
+          {id:'JP-9',name:'Yakushima',year:1993},{id:'JP-10',name:'Shirakawa-go',year:1995},
+        ]},
+      },
     };
 
-    // ── Mappa: pin cliccabili per ogni paese visitato ─────────────────────────
-    // Coordinate [x,y] nel viewBox 0-1000 x 0-500 (proiezione Mercatore 0-360 lon, 0-180 lat)
-    const PINS = {
-      AT:[503,148], HR:[502,152], DK:[487,130], FI:[515,110],
-      FR:[473,150], VA:[501,160], DE:[492,138], GR:[516,162],
-      IT:[498,158], LI:[490,150], MT:[501,168], MC:[480,156],
-      NL:[479,135], PL:[508,135], CZ:[500,140], TH:[660,195],
-      SM:[499,155], JP:[735,155], ES:[461,158], SE:[500,118], CH:[488,148],
+    // ISO2 → coordinate centro paese per flyTo
+    const CENTERS = {
+      AT:[47.5,14.5],HR:[45.1,15.2],DK:[56.0,10.0],FI:[61.9,25.7],
+      FR:[46.2,2.2],VA:[41.9,12.45],DE:[51.1,10.4],GR:[39.0,22.0],
+      IT:[41.9,12.5],LI:[47.1,9.5],MT:[35.9,14.5],MC:[43.73,7.4],
+      NL:[52.3,5.3],PL:[51.9,19.1],CZ:[49.8,15.5],TH:[15.9,100.9],
+      SM:[43.94,12.46],JP:[36.2,138.3],ES:[40.5,-3.7],SE:[60.1,18.6],CH:[46.8,8.2],
     };
 
-    let currentCode = null;
-    let unsubCountry = null, unsubTrips = null;
-    let editingTripId = null;
+    // ── Leaflet ───────────────────────────────────────────────────────────────
+    const map = L.map('leaflet-map', {zoomControl:true, attributionControl:false});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(map);
+    map.setView([30, 15], 2);
 
-    const svg  = document.getElementById('world-svg');
-    const grp  = document.getElementById('countries-group');
-    const tip  = document.getElementById('map-tooltip');
+    // GeoJSON dei paesi visitati (da file locale già nel repo)
+    const VISITED_ISO2 = new Set(Object.values(COUNTRIES).flatMap(c => Object.keys(c)));
+    // Mappa numeric → iso2
+    const NUM2ISO = {
+      '040':'AT','191':'HR','208':'DK','246':'FI','250':'FR','336':'VA',
+      '276':'DE','300':'GR','380':'IT','438':'LI','470':'MT','492':'MC',
+      '528':'NL','616':'PL','203':'CZ','764':'TH','674':'SM','392':'JP',
+      '724':'ES','752':'SE','756':'CH',
+    };
 
-    // Crea un pin per ogni paese visitato
-    function buildPins() {
-      grp.innerHTML = '';
-      Object.entries(PINS).forEach(([iso2, [cx, cy]]) => {
-        const info = UNESCO_DATA[iso2];
-        if (!info) return;
+    window._geoLayer = null;
 
-        // Cerchio grande cliccabile
-        const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        circle.setAttribute('cx', cx);
-        circle.setAttribute('cy', cy);
-        circle.setAttribute('r', 12);
-        circle.setAttribute('data-iso', iso2);
-        circle.style.cursor = 'pointer';
-
-        // Flag come testo
-        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-        text.setAttribute('x', cx);
-        text.setAttribute('y', cy + 5);
-        text.setAttribute('text-anchor','middle');
-        text.setAttribute('font-size','13');
-        text.setAttribute('pointer-events','none');
-        text.textContent = info.flag;
-
-        grp.appendChild(circle);
-        grp.appendChild(text);
-
-        // Events
-        circle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openSheet(iso2);
-        });
-        circle.addEventListener('mouseover', () => {
-          tip.style.display = 'block';
-          tip.textContent = info.flag + ' ' + info.name;
-        });
-        circle.addEventListener('mousemove', (e) => {
-          tip.style.left = (e.clientX + 12) + 'px';
-          tip.style.top  = (e.clientY - 28) + 'px';
-        });
-        circle.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
-        circle.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          tip.style.display = 'none';
-          openSheet(iso2);
-        }, {passive:false});
-      });
-      repaintCountries();
-    }
-
-    function repaintCountries() {
-      grp.querySelectorAll('circle').forEach(c => {
-        const iso2 = c.getAttribute('data-iso');
-        const sel  = iso2 === currentCode;
-        c.setAttribute('fill', sel ? '#F5A9BC' : (isDark ? '#74C7E1' : '#25739E'));
-        c.setAttribute('stroke', sel ? '#d4809a' : (isDark ? '#9DDDE8' : '#1a5f80'));
-        c.setAttribute('stroke-width', sel ? '3' : '1.5');
-        c.setAttribute('r', sel ? '16' : '12');
+    function paintGeo() {
+      if (!window._geoLayer) return;
+      window._geoLayer.setStyle(f => {
+        const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
+        if (!iso2) return {fillOpacity:0, weight:0};
+        return {
+          color: isDark ? '#9DDDE8' : '#1a5f80',
+          weight: 2,
+          fillColor: isDark ? '#74C7E1' : '#25739E',
+          fillOpacity: 0.55,
+        };
       });
     }
 
-    // Zoom & pan via pointer events
-    let vpX=0, vpY=0, vpScale=1;
-    let dragStart=null;
+    fetch('./countries-110m.json')
+      .then(r => r.json())
+      .then(topo => {
+        // Converti TopoJSON → GeoJSON manualmente senza libreria
+        // Usiamo solo i bounding box come cerchi — no, usiamo un approccio diverso:
+        // Leaflet può leggere GeoJSON direttamente, ma il nostro file è TopoJSON.
+        // Usiamo topojson-client via script tag
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
+        s.onload = () => {
+          const geojson = topojson.feature(topo, topo.objects.countries);
+          window._geoLayer = L.geoJSON(geojson, {
+            style: f => {
+              const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
+              if (!iso2) return {fillOpacity:0, weight:0.2, color:'#ccc'};
+              return {
+                color: isDark ? '#9DDDE8' : '#1a5f80',
+                weight: 2,
+                fillColor: isDark ? '#74C7E1' : '#25739E',
+                fillOpacity: 0.55,
+              };
+            },
+            onEachFeature(f, layer) {
+              const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
+              if (!iso2) return;
+              layer.on('click', () => {
+                map.flyTo(CENTERS[iso2] || layer.getBounds().getCenter(), 5, {duration:1});
+                // Scorri alla card del paese
+                const card = document.getElementById('card-'+iso2);
+                if (card) {
+                  card.classList.add('open');
+                  setTimeout(() => card.scrollIntoView({behavior:'smooth',block:'start'}), 400);
+                }
+              });
+            }
+          }).addTo(map);
+        };
+        document.head.appendChild(s);
+      })
+      .catch(() => {/* se fallisce la mappa funziona comunque senza colori */});
 
-    function applyTransform() {
-      grp.setAttribute('transform', `translate(${vpX},${vpY}) scale(${vpScale})`);
-      document.getElementById('ocean').setAttribute('transform', `translate(${vpX},${vpY}) scale(${vpScale})`);
-      // Mantieni flag size costante
-      grp.querySelectorAll('text').forEach(t => {
-        t.setAttribute('font-size', String(13 / vpScale));
+    // ── Render lista paesi ────────────────────────────────────────────────────
+    const section = document.getElementById('countries-section');
+    const unsubs = {};
+
+    function buildCountriesList() {
+      section.innerHTML = '';
+      Object.entries(COUNTRIES).forEach(([continent, countries]) => {
+        const block = document.createElement('div');
+        block.className = 'continent-block';
+        block.innerHTML = `<div class="continent-title">🌍 ${continent}</div>`;
+
+        Object.entries(countries).forEach(([iso2, info]) => {
+          const card = document.createElement('div');
+          card.className = 'country-card';
+          card.id = 'card-' + iso2;
+
+          card.innerHTML = `
+            <div class="country-header">
+              <div class="country-flag">${info.flag}</div>
+              <div class="country-name">${info.name}</div>
+              <div class="country-chevron">▾</div>
+            </div>
+            <div class="country-body">
+              <div class="section-title">🏛️ Patrimoni UNESCO <span class="section-badge" id="ub-${iso2}">0/${info.sites.length}</span></div>
+              <div id="ul-${iso2}"></div>
+              <div class="section-title">✈️ I Miei Viaggi <span class="section-badge" id="tb-${iso2}">0</span></div>
+              <div id="tl-${iso2}"></div>
+              <button class="add-trip-btn" id="atb-${iso2}">＋ Aggiungi viaggio</button>
+              <div class="trip-form" id="tf-${iso2}">
+                <div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="tf-title-${iso2}" type="text" placeholder="es. Giappone Aprile 2019"/></div>
+                <div class="form-row form-row-2">
+                  <div><label class="form-label">Inizio</label><input class="form-input" id="tf-s-${iso2}" type="date"/></div>
+                  <div><label class="form-label">Fine</label><input class="form-input" id="tf-e-${iso2}" type="date"/></div>
+                </div>
+                <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="tf-n-${iso2}" placeholder="Appunti di viaggio…"></textarea></div>
+                <div class="form-row"><label class="form-label">Link Google Drive</label><input class="form-input" id="tf-d-${iso2}" type="url" placeholder="https://drive.google.com/…"/></div>
+                <div class="form-btns">
+                  <button class="btn-cancel" id="tf-cancel-${iso2}">Annulla</button>
+                  <button class="btn-save" id="tf-save-${iso2}">Salva</button>
+                </div>
+              </div>
+            </div>`;
+
+          // Toggle apertura
+          let editingId = null;
+          card.querySelector('.country-header').addEventListener('click', () => {
+            const wasOpen = card.classList.contains('open');
+            card.classList.toggle('open');
+            if (!wasOpen) startSubs(iso2, info);
+          });
+
+          // Fly to su mappa quando si apre
+          card.querySelector('.country-header').addEventListener('click', () => {
+            if (CENTERS[iso2]) map.flyTo(CENTERS[iso2], 5, {duration:1});
+          });
+
+          // Add trip
+          card.querySelector(`#atb-${iso2}`).addEventListener('click', () => {
+            editingId = null;
+            clearForm(iso2);
+            card.querySelector(`#tf-${iso2}`).classList.add('open');
+            card.querySelector(`#atb-${iso2}`).style.display = 'none';
+          });
+          card.querySelector(`#tf-cancel-${iso2}`).addEventListener('click', () => closeForm(iso2, card));
+          card.querySelector(`#tf-save-${iso2}`).addEventListener('click', async () => {
+            const data = {
+              title:    document.getElementById(`tf-title-${iso2}`).value.trim() || 'Viaggio',
+              dateStart:document.getElementById(`tf-s-${iso2}`).value,
+              dateEnd:  document.getElementById(`tf-e-${iso2}`).value,
+              notes:    document.getElementById(`tf-n-${iso2}`).value.trim(),
+              driveUrl: document.getElementById(`tf-d-${iso2}`).value.trim(),
+            };
+            if (editingId) await updateTripDoc(iso2, editingId, data);
+            else           await addTripDoc(iso2, data);
+            closeForm(iso2, card);
+          });
+
+          function clearForm(c) {
+            ['title','s','e','n','d'].forEach(k => {
+              const el = document.getElementById(`tf-${k}-${c}`);
+              if (el) el.value = '';
+            });
+            document.getElementById(`tf-save-${c}`).textContent = 'Salva';
+          }
+          function closeForm(c, cd) {
+            cd.querySelector(`#tf-${c}`).classList.remove('open');
+            cd.querySelector(`#atb-${c}`).style.display = '';
+            editingId = null;
+          }
+
+          block.appendChild(card);
+        });
+
+        section.appendChild(block);
       });
     }
 
-    svg.addEventListener('pointerdown', e => {
-      if (e.target.tagName === 'circle') return;
-      dragStart = {x: e.clientX - vpX, y: e.clientY - vpY};
-      svg.setPointerCapture(e.pointerId);
-    });
-    svg.addEventListener('pointermove', e => {
-      if (!dragStart) return;
-      vpX = e.clientX - dragStart.x;
-      vpY = e.clientY - dragStart.y;
-      applyTransform();
-    });
-    svg.addEventListener('pointerup', () => { dragStart = null; });
+    // ── Subscriptions Firebase ────────────────────────────────────────────────
+    let globalUnsubs = {};
+    let totalTrips = 0;
 
-    svg.addEventListener('wheel', e => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? 0.85 : 1.18;
-      vpScale = Math.min(8, Math.max(0.5, vpScale * delta));
-      applyTransform();
-    }, {passive:false});
+    function startSubs(iso2, info) {
+      if (globalUnsubs[iso2]) return; // già attive
 
-    // Pinch zoom mobile
-    let touches = {};
-    let lastDist = null;
-    svg.addEventListener('touchstart', e => {
-      [...e.touches].forEach(t => { touches[t.identifier] = {x:t.clientX, y:t.clientY}; });
-    }, {passive:true});
-    svg.addEventListener('touchmove', e => {
-      if (e.touches.length === 2) {
-        const [a, b] = [...e.touches];
-        const dist = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
-        if (lastDist) {
-          vpScale = Math.min(8, Math.max(0.5, vpScale * (dist/lastDist)));
-          applyTransform();
-        }
-        lastDist = dist;
-      } else if (e.touches.length === 1) {
-        const t = e.touches[0];
-        const prev = touches[t.identifier];
-        if (prev) {
-          vpX += t.clientX - prev.x;
-          vpY += t.clientY - prev.y;
-          applyTransform();
-        }
-        touches[t.identifier] = {x:t.clientX, y:t.clientY};
-      }
-    }, {passive:true});
-    svg.addEventListener('touchend', e => {
-      lastDist = null;
-      [...e.changedTouches].forEach(t => { delete touches[t.identifier]; });
-    }, {passive:true});
-
-    svg.addEventListener('click', () => { if (currentCode) closeSheet(); });
-
-    // ── Bottom Sheet ──────────────────────────────────────────────────────────
-    const sheet      = document.getElementById('bottom-sheet');
-    const overlay    = document.getElementById('sheet-overlay');
-    const statsBadge = document.getElementById('stats-badge');
-
-    function openSheet(iso2) {
-      currentCode = iso2;
-      repaintCountries();
-      const info = UNESCO_DATA[iso2];
-      document.getElementById('sheet-flag').textContent         = info.flag;
-      document.getElementById('sheet-country-name').textContent = info.name;
-      document.getElementById('sheet-chips').innerHTML = `
-        <div class="info-chip">🏙 <span>${info.capital}</span></div>
-        <div class="info-chip">🌍 <span>${info.continent}</span></div>
-        <div class="info-chip">🏛️ <span>${info.sites.length}</span> siti UNESCO</div>`;
-      sheet.classList.add('open');
-      overlay.classList.add('active');
-      statsBadge.classList.add('hidden');
-      if (unsubCountry) unsubCountry();
-      if (unsubTrips)   unsubTrips();
-      unsubCountry = subscribeCountry(iso2, data => {
+      globalUnsubs[iso2+'_c'] = subscribeCountry(iso2, data => {
         const visited = data?.visitedUnescoIds || [];
-        renderUnesco(info.sites, visited, iso2);
-        document.getElementById('unesco-badge').textContent = `${visited.length}/${info.sites.length}`;
+        renderUnesco(iso2, info.sites, visited);
+        document.getElementById(`ub-${iso2}`).textContent = `${visited.length}/${info.sites.length}`;
+        updateUnescoStats();
       });
-      unsubTrips = subscribeTrips(iso2, trips => {
-        renderTrips(trips, iso2);
-        document.getElementById('trips-badge').textContent = trips.length;
-        document.getElementById('stat-trips').textContent  = trips.length;
+
+      globalUnsubs[iso2+'_t'] = subscribeTrips(iso2, trips => {
+        renderTrips(iso2, trips);
+        document.getElementById(`tb-${iso2}`).textContent = trips.length;
+        updateTripStats();
       });
     }
 
-    function closeSheet() {
-      sheet.classList.remove('open');
-      overlay.classList.remove('active');
-      statsBadge.classList.remove('hidden');
-      tip.style.display = 'none';
-      currentCode = null;
-      repaintCountries();
-      if (unsubCountry) { unsubCountry(); unsubCountry=null; }
-      if (unsubTrips)   { unsubTrips();   unsubTrips=null; }
-      closeTripForm();
+    function updateUnescoStats() {
+      // ricalcola da DOM
+      let tot = 0;
+      document.querySelectorAll('.unesco-check.checked').forEach(() => tot++);
+      document.getElementById('sv-unesco').textContent = tot;
     }
-    document.getElementById('sheet-close').addEventListener('click', closeSheet);
-    overlay.addEventListener('click', closeSheet);
+    function updateTripStats() {
+      let tot = 0;
+      document.querySelectorAll('.section-badge[id^="tb-"]').forEach(el => { tot += parseInt(el.textContent)||0; });
+      document.getElementById('sv-trips').textContent = tot;
+    }
 
-    // ── UNESCO ────────────────────────────────────────────────────────────────
-    function renderUnesco(sites, visited, iso2) {
-      const list = document.getElementById('unesco-list');
-      if (!sites.length) { list.innerHTML='<div style="font-size:.72rem;color:var(--muted);padding:8px 0;">Nessun sito UNESCO per questo paese.</div>'; return; }
-      list.innerHTML = sites.map(s=>`
+    function renderUnesco(iso2, sites, visited) {
+      const el = document.getElementById(`ul-${iso2}`);
+      if (!el) return;
+      if (!sites.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--muted);padding:6px 0">Nessun sito UNESCO registrato.</div>'; return; }
+      el.innerHTML = sites.map(s => `
         <div class="unesco-item">
-          <div class="unesco-check ${visited.includes(s.id)?'checked':''}" data-id="${s.id}">${visited.includes(s.id)?'✓':''}</div>
-          <div class="unesco-info"><div class="unesco-name">${s.name}</div><div class="unesco-year">📅 ${s.year}</div></div>
+          <div class="unesco-check ${visited.includes(s.id)?'checked':''}" data-id="${s.id}" data-iso="${iso2}">${visited.includes(s.id)?'✓':''}</div>
+          <div><div class="unesco-name">${s.name}</div><div class="unesco-year">📅 ${s.year}</div></div>
         </div>`).join('');
-      list.querySelectorAll('.unesco-check').forEach(el=>{
-        el.addEventListener('click', async()=>{
-          el.classList.toggle('checked');
-          el.textContent = el.classList.contains('checked')?'✓':'';
-          const newV = [...list.querySelectorAll('.unesco-check.checked')].map(e=>e.dataset.id);
-          await saveCountryData(iso2,{visitedUnescoIds:newV});
+      el.querySelectorAll('.unesco-check').forEach(cb => {
+        cb.addEventListener('click', async () => {
+          cb.classList.toggle('checked');
+          cb.textContent = cb.classList.contains('checked') ? '✓' : '';
+          const newV = [...el.querySelectorAll('.unesco-check.checked')].map(e => e.dataset.id);
+          await saveCountryData(iso2, {visitedUnescoIds: newV});
+          updateUnescoStats();
         });
       });
     }
 
-    // ── Viaggi ────────────────────────────────────────────────────────────────
-    function renderTrips(trips, iso2) {
-      const list = document.getElementById('trips-list');
-      if (!trips.length) { list.innerHTML='<div style="font-size:.72rem;color:var(--muted);padding:4px 0 10px;">Nessun viaggio registrato.</div>'; return; }
-      list.innerHTML = trips.map(t=>`
+    function renderTrips(iso2, trips) {
+      const el = document.getElementById(`tl-${iso2}`);
+      if (!el) return;
+      if (!trips.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--muted);padding:4px 0 8px">Nessun viaggio registrato.</div>'; return; }
+      el.innerHTML = trips.map(t => `
         <div class="trip-card">
           <div class="trip-title">✈️ ${esc(t.title||'Viaggio')}</div>
           ${t.dateStart?`<div class="trip-dates">📅 ${t.dateStart}${t.dateEnd?' → '+t.dateEnd:''}</div>`:''}
           ${t.notes?`<div class="trip-notes">${esc(t.notes)}</div>`:''}
           ${t.driveUrl?`<a class="trip-drive" href="${esc(t.driveUrl)}" target="_blank" rel="noopener">📁 Foto su Google Drive</a>`:''}
           <div class="trip-actions">
-            <button class="btn-sm primary" data-edit="${t._docId}">✏️ Modifica</button>
-            <button class="btn-sm danger"  data-del="${t._docId}">🗑 Elimina</button>
+            <button class="btn-sm primary" data-edit="${t._docId}" data-iso="${iso2}">✏️</button>
+            <button class="btn-sm danger" data-del="${t._docId}" data-iso="${iso2}">🗑</button>
           </div>
         </div>`).join('');
-      list.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',async()=>{ if(confirm('Eliminare questo viaggio?')) await deleteTripDoc(iso2,b.dataset.del); }));
-      list.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openTripForm(trips.find(t=>t._docId===b.dataset.edit))));
-    }
-
-    document.getElementById('add-trip-btn').addEventListener('click',()=>openTripForm(null));
-    document.getElementById('tf-cancel').addEventListener('click',closeTripForm);
-    document.getElementById('tf-save').addEventListener('click',async()=>{
-      if(!currentCode) return;
-      const data={
-        title:    document.getElementById('tf-title').value.trim()||'Viaggio',
-        dateStart:document.getElementById('tf-start').value,
-        dateEnd:  document.getElementById('tf-end').value,
-        notes:    document.getElementById('tf-notes').value.trim(),
-        driveUrl: document.getElementById('tf-drive').value.trim(),
-      };
-      if(editingTripId) await updateTripDoc(currentCode,editingTripId,data);
-      else              await addTripDoc(currentCode,data);
-      closeTripForm();
-    });
-
-    function openTripForm(trip) {
-      editingTripId = trip?._docId||null;
-      document.getElementById('tf-title').value = trip?.title    ||'';
-      document.getElementById('tf-start').value = trip?.dateStart||'';
-      document.getElementById('tf-end').value   = trip?.dateEnd  ||'';
-      document.getElementById('tf-notes').value = trip?.notes    ||'';
-      document.getElementById('tf-drive').value = trip?.driveUrl ||'';
-      document.getElementById('tf-save').textContent = trip?'Aggiorna':'Salva Viaggio';
-      document.getElementById('trip-form').classList.add('open');
-      document.getElementById('add-trip-btn').style.display='none';
-    }
-    function closeTripForm() {
-      document.getElementById('trip-form').classList.remove('open');
-      document.getElementById('add-trip-btn').style.display='';
-      editingTripId=null;
+      el.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+        if (confirm('Eliminare?')) await deleteTripDoc(iso2, b.dataset.del);
+      }));
+      el.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
+        const trip = trips.find(t => t._docId === b.dataset.edit);
+        if (!trip) return;
+        const card = document.getElementById('card-'+iso2);
+        document.getElementById(`tf-title-${iso2}`).value = trip.title||'';
+        document.getElementById(`tf-s-${iso2}`).value = trip.dateStart||'';
+        document.getElementById(`tf-e-${iso2}`).value = trip.dateEnd||'';
+        document.getElementById(`tf-n-${iso2}`).value = trip.notes||'';
+        document.getElementById(`tf-d-${iso2}`).value = trip.driveUrl||'';
+        document.getElementById(`tf-save-${iso2}`).textContent = 'Aggiorna';
+        // editingId è nella closure del card — usiamo dataset
+        b.closest('.country-body').querySelector(`#tf-save-${iso2}`).dataset.editId = trip._docId;
+        card.querySelector(`#tf-${iso2}`).classList.add('open');
+        card.querySelector(`#atb-${iso2}`).style.display = 'none';
+      }));
     }
 
     function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    // ── Stats UNESCO ──────────────────────────────────────────────────────────
-    function updateUnescoStats(data) {
-      let tot=0;
-      Object.values(data).forEach(c=>{ tot+=(c.visitedUnescoIds||[]).length; });
-      document.getElementById('stat-unesco').textContent=tot;
-    }
-
     // ── Init ──────────────────────────────────────────────────────────────────
-    waitForAuth().then(()=>{
-      document.body.style.visibility='';
-      buildPins();
-      subscribeAllCountries(data=>{ updateUnescoStats(data); });
+    waitForAuth().then(() => {
+      document.body.style.visibility = '';
+      buildCountriesList();
+      // Pre-carica subscriptions per tutti i paesi (per stats globali)
+      Object.entries(COUNTRIES).forEach(([, countries]) => {
+        Object.entries(countries).forEach(([iso2, info]) => {
+          startSubs(iso2, info);
+        });
+      });
     });
   </script>
 </body>
