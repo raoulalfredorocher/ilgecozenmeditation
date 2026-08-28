@@ -13,125 +13,64 @@
   <title>Il Geco Zen — Fotografia e Viaggi</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system,"Segoe UI",system-ui,sans-serif; -webkit-font-smoothing: antialiased; }
-
-    #map-header {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .header-btn {
-      background: none; border: 1px solid var(--border); border-radius: 10px;
-      color: var(--muted); font-family: inherit; font-size: .58rem; letter-spacing: .1em;
-      padding: 5px 8px; cursor: pointer; display: flex; flex-direction: column;
-      align-items: center; gap: 2px; flex-shrink: 0; width: 52px;
-      text-decoration: none; -webkit-tap-highlight-color: transparent;
-    }
-    .header-center-travel { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .map-title { font-size: .95rem; letter-spacing: .18em; color: var(--gold); font-weight: 700; }
-    .map-sub   { font-size: .46rem; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
-    .theme-toggle { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; -webkit-tap-highlight-color: transparent; }
-
-    /* ── Mappa SVG ── */
-    #map-wrap {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
-      overflow: hidden; touch-action: none;
-    }
-    #map-wrap svg { display: block; width: 100%; height: 100%; }
-    .country { cursor: default; transition: fill .15s; }
-    .country.visited { cursor: pointer; }
-    .country.visited:hover, .country.visited:active { opacity: .8; }
-
-    /* ── Tooltip ── */
-    #map-tooltip {
-      position: fixed; z-index: 300; pointer-events: none;
-      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-      padding: 4px 10px; font-size: .72rem; color: var(--text);
-      box-shadow: 0 2px 8px rgba(0,0,0,.15); display: none;
-      white-space: nowrap;
-    }
-
-    /* ── Stats badge ── */
-    #stats-badge {
-      position: fixed; bottom: calc(env(safe-area-inset-bottom,0px) + 18px);
-      left: 50%; transform: translateX(-50%); z-index: 400;
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px;
-      padding: 7px 18px; font-size: .62rem; letter-spacing: .12em; color: var(--muted);
-      text-transform: uppercase; display: flex; gap: 14px;
-      transition: opacity .3s, transform .3s;
-      box-shadow: 0 2px 12px rgba(0,0,0,.12);
-    }
-    #stats-badge.hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(10px); }
-    .stat-val { color: var(--gold); font-weight: 700; font-size: .75rem; margin-right: 3px; }
-
-    /* ── Bottom Sheet ── */
-    #bottom-sheet {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 600;
-      background: var(--bg); border-radius: 22px 22px 0 0;
-      border-top: 1.5px solid var(--border);
-      transform: translateY(100%); transition: transform .35s cubic-bezier(.4,0,.2,1);
-      max-height: 82vh; display: flex; flex-direction: column;
-      padding-bottom: env(safe-area-inset-bottom,0px);
-    }
-    #bottom-sheet.open { transform: translateY(0); }
-    #sheet-handle { width: 38px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; flex-shrink: 0; }
-    #sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; flex-shrink: 0; border-bottom: 1px solid var(--border); }
-    #sheet-flag { font-size: 2.2rem; line-height: 1; }
-    #sheet-country-name { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: .04em; flex: 1; margin: 0 12px; }
-    #sheet-close { background: none; border: none; font-size: 1.4rem; color: var(--muted); cursor: pointer; padding: 4px; line-height: 1; -webkit-tap-highlight-color: transparent; }
-    #sheet-body { overflow-y: auto; flex: 1; padding: 0 18px 20px; -webkit-overflow-scrolling: touch; }
-
-    .info-chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 0 6px; }
-    .info-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 4px 10px; font-size: .62rem; letter-spacing: .06em; color: var(--muted); }
-    .info-chip span { color: var(--text); font-weight: 600; }
-
-    .section-title { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 18px 0 10px; display: flex; align-items: center; gap: 8px; }
-    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .section-badge { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; font-size: .56rem; color: var(--muted); font-weight: 500; }
-
-    .unesco-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-    .unesco-item:last-child { border-bottom: none; }
-    .unesco-check { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; background: var(--card); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .9rem; -webkit-tap-highlight-color: transparent; transition: border-color .2s, background .2s; margin-top: 1px; }
-    .unesco-check.checked { background: var(--gold); border-color: var(--gold); color: #fff; }
-    .unesco-info { flex: 1; min-width: 0; }
-    .unesco-name { font-size: .78rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-    .unesco-year { font-size: .58rem; color: var(--muted); letter-spacing: .06em; margin-top: 2px; }
-
-    .trip-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
-    .trip-title { font-size: .82rem; font-weight: 700; color: var(--text); }
-    .trip-dates { font-size: .58rem; color: var(--muted); letter-spacing: .06em; margin-top: 2px; }
-    .trip-notes { font-size: .74rem; color: var(--text); line-height: 1.5; margin-top: 6px; white-space: pre-wrap; }
-    .trip-drive { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: .65rem; color: var(--gold); text-decoration: none; border: 1px solid var(--gold); border-radius: 8px; padding: 4px 10px; }
-    .trip-actions { display: flex; gap: 6px; margin-top: 8px; }
-    .btn-sm { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: .6rem; color: var(--muted); cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; }
-    .btn-sm.danger  { color: var(--red); border-color: var(--red); }
-    .btn-sm.primary { color: var(--gold); border-color: var(--gold); }
-
-    #add-trip-btn { width: 100%; background: none; border: 1.5px dashed var(--border); border-radius: 14px; padding: 12px; font-size: .72rem; color: var(--muted); cursor: pointer; font-family: inherit; letter-spacing: .06em; -webkit-tap-highlight-color: transparent; margin-bottom: 10px; }
-    #add-trip-btn:active { border-color: var(--gold); color: var(--gold); }
-
-    .trip-form { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; display: none; }
-    .trip-form.open { display: block; }
-    .form-row { margin-bottom: 10px; }
-    .form-label { display: block; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-    .form-input, .form-textarea { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: .78rem; color: var(--text); font-family: inherit; }
-    .form-textarea { resize: vertical; min-height: 70px; }
-    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .form-btns { display: flex; gap: 8px; margin-top: 10px; }
-    .btn-form-save { flex: 1; background: var(--gold); color: #fff; border: none; border-radius: 10px; padding: 9px; font-size: .74rem; font-family: inherit; font-weight: 600; cursor: pointer; }
-    .btn-form-cancel { background: none; border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; font-size: .74rem; font-family: inherit; color: var(--muted); cursor: pointer; }
-
-    #sheet-overlay { position: fixed; inset: 0; z-index: 590; background: rgba(0,0,0,0); pointer-events: none; transition: background .3s; }
-    #sheet-overlay.active { background: rgba(0,0,0,.35); pointer-events: all; }
-
-    /* spinner caricamento mappa */
-    #map-loader { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; background: var(--bg); flex-direction: column; gap: 14px; }
-    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #map-loader.done { display: none; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    #map-header{position:fixed;top:0;left:0;right:0;z-index:500;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--border)}
+    .header-btn{background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.58rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;width:52px;text-decoration:none;-webkit-tap-highlight-color:transparent}
+    .header-center-travel{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+    .map-title{font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:700}
+    .map-sub{font-size:.46rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+    .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;-webkit-tap-highlight-color:transparent}
+    #map-wrap{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1;overflow:hidden}
+    #world-svg{width:100%;height:100%;display:block;cursor:grab}
+    #world-svg:active{cursor:grabbing}
+    #map-tooltip{position:fixed;z-index:300;pointer-events:none;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.72rem;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.15);display:none;white-space:nowrap}
+    #stats-badge{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);left:50%;transform:translateX(-50%);z-index:400;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:7px 18px;font-size:.62rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:flex;gap:14px;transition:opacity .3s,transform .3s;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+    #stats-badge.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(10px)}
+    .stat-val{color:var(--gold);font-weight:700;font-size:.75rem;margin-right:3px}
+    #bottom-sheet{position:fixed;left:0;right:0;bottom:0;z-index:600;background:var(--bg);border-radius:22px 22px 0 0;border-top:1.5px solid var(--border);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:82vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+    #bottom-sheet.open{transform:translateY(0)}
+    #sheet-handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+    #sheet-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)}
+    #sheet-flag{font-size:2.2rem;line-height:1}
+    #sheet-country-name{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:.04em;flex:1;margin:0 12px}
+    #sheet-close{background:none;border:none;font-size:1.4rem;color:var(--muted);cursor:pointer;padding:4px;line-height:1;-webkit-tap-highlight-color:transparent}
+    #sheet-body{overflow-y:auto;flex:1;padding:0 18px 20px;-webkit-overflow-scrolling:touch}
+    .info-chips{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 6px}
+    .info-chip{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:4px 10px;font-size:.62rem;letter-spacing:.06em;color:var(--muted)}
+    .info-chip span{color:var(--text);font-weight:600}
+    .section-title{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+    .section-badge{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2px 8px;font-size:.56rem;color:var(--muted);font-weight:500}
+    .unesco-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+    .unesco-item:last-child{border-bottom:none}
+    .unesco-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;background:var(--card);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s;margin-top:1px}
+    .unesco-check.checked{background:var(--gold);border-color:var(--gold);color:#fff}
+    .unesco-info{flex:1;min-width:0}
+    .unesco-name{font-size:.78rem;font-weight:600;color:var(--text);line-height:1.3}
+    .unesco-year{font-size:.58rem;color:var(--muted);letter-spacing:.06em;margin-top:2px}
+    .trip-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+    .trip-title{font-size:.82rem;font-weight:700;color:var(--text)}
+    .trip-dates{font-size:.58rem;color:var(--muted);letter-spacing:.06em;margin-top:2px}
+    .trip-notes{font-size:.74rem;color:var(--text);line-height:1.5;margin-top:6px;white-space:pre-wrap}
+    .trip-drive{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:.65rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:8px;padding:4px 10px}
+    .trip-actions{display:flex;gap:6px;margin-top:8px}
+    .btn-sm{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.6rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+    .btn-sm.danger{color:var(--red);border-color:var(--red)}
+    .btn-sm.primary{color:var(--gold);border-color:var(--gold)}
+    #add-trip-btn{width:100%;background:none;border:1.5px dashed var(--border);border-radius:14px;padding:12px;font-size:.72rem;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.06em;-webkit-tap-highlight-color:transparent;margin-bottom:10px}
+    .trip-form{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:none}
+    .trip-form.open{display:block}
+    .form-row{margin-bottom:10px}
+    .form-label{display:block;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .form-input,.form-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.78rem;color:var(--text);font-family:inherit}
+    .form-textarea{resize:vertical;min-height:70px}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .form-btns{display:flex;gap:8px;margin-top:10px}
+    .btn-form-save{flex:1;background:var(--gold);color:#fff;border:none;border-radius:10px;padding:9px;font-size:.74rem;font-family:inherit;font-weight:600;cursor:pointer}
+    .btn-form-cancel{background:none;border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:.74rem;font-family:inherit;color:var(--muted);cursor:pointer}
+    #sheet-overlay{position:fixed;inset:0;z-index:590;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s}
+    #sheet-overlay.active{background:rgba(0,0,0,.35);pointer-events:all}
   </style>
   <script>
     window.__FIREBASE_CONFIG__ = {
@@ -160,8 +99,13 @@
     <button class="theme-toggle" id="theme-toggle"><div id="theme-knob">☀️</div></button>
   </header>
 
-  <div id="map-loader"><div class="spinner"></div><div style="font-size:.72rem;color:var(--muted);letter-spacing:.1em;">CARICAMENTO MAPPA…</div></div>
-  <div id="map-wrap"><svg id="world-svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+  <div id="map-wrap">
+    <!-- Mappa SVG inline: Mercatore semplificato, tutti gli stati -->
+    <svg id="world-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect id="ocean" width="1000" height="500" fill="#c8dce8"/>
+      <g id="countries-group"></g>
+    </svg>
+  </div>
   <div id="map-tooltip"></div>
 
   <div id="stats-badge">
@@ -171,7 +115,6 @@
   </div>
 
   <div id="sheet-overlay"></div>
-
   <div id="bottom-sheet" role="dialog" aria-modal="true">
     <div id="sheet-handle"></div>
     <div id="sheet-header">
@@ -196,36 +139,30 @@
         <div class="form-row"><label class="form-label">Link Google Drive foto</label><input class="form-input" id="tf-drive" type="url" placeholder="https://drive.google.com/…"/></div>
         <div class="form-btns">
           <button class="btn-form-cancel" id="tf-cancel">Annulla</button>
-          <button class="btn-form-save"   id="tf-save">Salva Viaggio</button>
+          <button class="btn-form-save" id="tf-save">Salva Viaggio</button>
         </div>
       </div>
     </div>
   </div>
 
   <script type="module">
-    // D3 e TopoJSON via ESM — import diretto, nessun problema di scope
-    import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
-    import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
     import { waitForAuth } from './js/firebase-config.js';
-    import {
-      subscribeAllCountries, subscribeCountry, saveCountryData,
-      subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc,
-    } from './js/firebase-config.js';
+    import { subscribeAllCountries, subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/firebase-config.js';
 
-    // ── Tema ─────────────────────────────────────────────────────────────────
-    const htmlEl   = document.documentElement;
-    const btnTheme = document.getElementById('theme-toggle');
-    const knob     = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
+    // ── Tema ──────────────────────────────────────────────────────────────────
+    const htmlEl = document.documentElement;
+    const knob   = document.getElementById('theme-knob');
+    let isDark   = localStorage.getItem('zen_theme') === 'dark';
     function applyTheme() {
       htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
       knob.textContent = isDark ? '🌙' : '☀️';
       document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
       localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-      paintMap();
+      document.getElementById('ocean').setAttribute('fill', isDark ? '#1a2a38' : '#c8dce8');
+      repaintCountries();
     }
     applyTheme();
-    btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+    document.getElementById('theme-toggle').addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
     // ── Dati UNESCO ───────────────────────────────────────────────────────────
     const UNESCO_DATA = {
@@ -254,14 +191,11 @@
         {id:'FR-3',name:'Palazzo di Versailles',year:1979},{id:'FR-4',name:'Pont du Gard',year:1985},
         {id:'FR-5',name:'Parigi — Rive della Senna',year:1991},{id:'FR-6',name:'Carcassonne',year:1997},
         {id:'FR-7',name:'Val de Loire',year:2000},{id:'FR-8',name:'Lione storico',year:1998},
-        {id:'FR-9',name:'Abbazia di Fontenay',year:1981},{id:'FR-10',name:'Golfo di Porto — Calanche',year:1983},
       ]},
-      VA:{name:'Vaticano',flag:'🇻🇦',capital:'Città del Vaticano',continent:'Europa',sites:[
-        {id:'VA-1',name:'Centro storico di Roma e Vaticano',year:1980},
-      ]},
+      VA:{name:'Vaticano',flag:'🇻🇦',capital:'Città del Vaticano',continent:'Europa',sites:[{id:'VA-1',name:'Centro storico di Roma e Vaticano',year:1980}]},
       DE:{name:'Germania',flag:'🇩🇪',capital:'Berlino',continent:'Europa',sites:[
         {id:'DE-1',name:'Cattedrale di Aquisgrana',year:1978},{id:'DE-2',name:'Colonia — Cattedrale',year:1996},
-        {id:'DE-3',name:'Berlino — Isola dei Musei',year:1999},{id:'DE-4',name:'Potsdam e Berlino — Parchi',year:1990},
+        {id:'DE-3',name:'Berlino — Isola dei Musei',year:1999},{id:'DE-4',name:'Potsdam e Berlino',year:1990},
         {id:'DE-5',name:'Wartburg',year:1999},{id:'DE-6',name:'Reno alto-medio',year:2002},
       ]},
       GR:{name:'Grecia',flag:'🇬🇷',capital:'Atene',continent:'Europa',sites:[
@@ -269,222 +203,236 @@
         {id:'GR-3',name:'Monte Athos',year:1988},{id:'GR-4',name:'Meteorà',year:1988},
         {id:'GR-5',name:'Olimpia',year:1989},{id:'GR-6',name:'Epidauro',year:1988},
         {id:'GR-7',name:'Corfù',year:2007},{id:'GR-8',name:'Delos',year:1990},
-        {id:'GR-9',name:'Rodi medievale',year:1988},{id:'GR-10',name:'Aigai (Vergina)',year:1996},
       ]},
       IT:{name:'Italia',flag:'🇮🇹',capital:'Roma',continent:'Europa',sites:[
         {id:'IT-1',name:'Arte rupestre in Valcamonica',year:1979},{id:'IT-2',name:'Cenacolo di Leonardo',year:1980},
         {id:'IT-3',name:'Firenze storica',year:1982},{id:'IT-4',name:'Venezia e la sua laguna',year:1987},
-        {id:'IT-5',name:'Piazza del Duomo di Pisa',year:1987},{id:'IT-6',name:'San Gimignano',year:1990},
-        {id:'IT-7',name:'Sassi di Matera',year:1993},{id:'IT-8',name:'Pompei ed Ercolano',year:1997},
-        {id:'IT-9',name:'Costiera Amalfitana',year:1997},{id:'IT-10',name:'Ravenna paleocristiana',year:1996},
-        {id:'IT-11',name:'Dolomiti',year:2009},{id:'IT-12',name:'Napoli storica',year:1995},
-        {id:'IT-13',name:'Roma storica e Vaticano',year:1980},{id:'IT-14',name:'Siena storica',year:1995},
-        {id:'IT-15',name:'Reggia di Caserta',year:1997},{id:'IT-16',name:'Val d\'Orcia',year:2004},
-        {id:'IT-17',name:'Assisi — Basilica di San Francesco',year:2000},{id:'IT-18',name:'Verona storica',year:2000},
-        {id:'IT-19',name:'Mantova e Sabbioneta',year:2008},{id:'IT-20',name:'Padova urbs picta',year:2021},
-        {id:'IT-21',name:'Bologna — I Portici',year:2021},
+        {id:'IT-5',name:'Piazza del Duomo di Pisa',year:1987},{id:'IT-6',name:'Sassi di Matera',year:1993},
+        {id:'IT-7',name:'Pompei ed Ercolano',year:1997},{id:'IT-8',name:'Costiera Amalfitana',year:1997},
+        {id:'IT-9',name:'Dolomiti',year:2009},{id:'IT-10',name:'Napoli storica',year:1995},
+        {id:'IT-11',name:'Roma storica e Vaticano',year:1980},{id:'IT-12',name:'Siena storica',year:1995},
+        {id:'IT-13',name:'Reggia di Caserta',year:1997},{id:'IT-14',name:'Val d\'Orcia',year:2004},
+        {id:'IT-15',name:'Mantova e Sabbioneta',year:2008},{id:'IT-16',name:'Bologna — I Portici',year:2021},
       ]},
       LI:{name:'Liechtenstein',flag:'🇱🇮',capital:'Vaduz',continent:'Europa',sites:[]},
       MT:{name:'Malta',flag:'🇲🇹',capital:'La Valletta',continent:'Europa',sites:[
-        {id:'MT-1',name:'Ipogeo di Hal Saflieni',year:1980},{id:'MT-2',name:'La Valletta',year:1980},
-        {id:'MT-3',name:'Templi megalitici di Malta',year:1980},
+        {id:'MT-1',name:'Ipogeo di Hal Saflieni',year:1980},{id:'MT-2',name:'La Valletta',year:1980},{id:'MT-3',name:'Templi megalitici',year:1980},
       ]},
       MC:{name:'Monaco',flag:'🇲🇨',capital:'Monaco',continent:'Europa',sites:[]},
       NL:{name:'Paesi Bassi',flag:'🇳🇱',capital:'Amsterdam',continent:'Europa',sites:[
         {id:'NL-1',name:'Schokland',year:1995},{id:'NL-2',name:'Linea di difesa di Amsterdam',year:1996},
         {id:'NL-3',name:'Mulini a vento di Kinderdijk',year:1997},{id:'NL-4',name:'Canali di Amsterdam',year:2010},
-        {id:'NL-5',name:'Costa del Wadden',year:2009},
       ]},
       PL:{name:'Polonia',flag:'🇵🇱',capital:'Varsavia',continent:'Europa',sites:[
         {id:'PL-1',name:'Centro storico di Cracovia',year:1978},{id:'PL-2',name:'Miniera di sale di Wieliczka',year:1978},
         {id:'PL-3',name:'Auschwitz-Birkenau',year:1979},{id:'PL-4',name:'Foresta di Białowieża',year:1979},
-        {id:'PL-5',name:'Centro storico di Varsavia',year:1980},{id:'PL-6',name:'Zamość',year:1992},
-        {id:'PL-7',name:'Castello di Malbork',year:1997},
+        {id:'PL-5',name:'Centro storico di Varsavia',year:1980},{id:'PL-6',name:'Castello di Malbork',year:1997},
       ]},
       CZ:{name:'Rep. Ceca',flag:'🇨🇿',capital:'Praga',continent:'Europa',sites:[
         {id:'CZ-1',name:'Centro storico di Praga',year:1992},{id:'CZ-2',name:'Český Krumlov',year:1992},
-        {id:'CZ-3',name:'Centro storico di Telč',year:1992},{id:'CZ-4',name:'Lednice-Valtice',year:1996},
-        {id:'CZ-5',name:'Holašovice',year:1998},{id:'CZ-6',name:'Giardino di Kroměříž',year:1998},
-        {id:'CZ-7',name:'Kutná Hora',year:1995},{id:'CZ-8',name:'Villa Tugendhat',year:2001},
+        {id:'CZ-3',name:'Telč',year:1992},{id:'CZ-4',name:'Lednice-Valtice',year:1996},
+        {id:'CZ-5',name:'Kutná Hora',year:1995},{id:'CZ-6',name:'Villa Tugendhat',year:2001},
       ]},
       TH:{name:'Thailandia',flag:'🇹🇭',capital:'Bangkok',continent:'Asia',sites:[
         {id:'TH-1',name:'Sukhothai',year:1991},{id:'TH-2',name:'Ayutthaya',year:1991},
         {id:'TH-3',name:'Thungyai-Huai Kha Khaeng',year:1991},{id:'TH-4',name:'Ban Chiang',year:1992},
-        {id:'TH-5',name:'Dong Phayayen-Khao Yai',year:2005},
       ]},
-      SM:{name:'San Marino',flag:'🇸🇲',capital:'Città di San Marino',continent:'Europa',sites:[
-        {id:'SM-1',name:'San Marino — Monte Titano',year:2008},
-      ]},
+      SM:{name:'San Marino',flag:'🇸🇲',capital:'San Marino',continent:'Europa',sites:[{id:'SM-1',name:'San Marino — Monte Titano',year:2008}]},
       JP:{name:'Giappone',flag:'🇯🇵',capital:'Tokyo',continent:'Asia',sites:[
         {id:'JP-1',name:'Horyuji',year:1993},{id:'JP-2',name:'Castello di Himeji',year:1993},
         {id:'JP-3',name:'Kyoto storica',year:1994},{id:'JP-4',name:'Nara storica',year:1998},
-        {id:'JP-5',name:'Nikko',year:1999},{id:'JP-6',name:'Gusuku di Ryukyu',year:2000},
-        {id:'JP-7',name:'Fujisan',year:2013},{id:'JP-8',name:'Itsukushima',year:1996},
-        {id:'JP-9',name:'Hiroshima — Cupola atomica',year:1996},{id:'JP-10',name:'Yoshino-Kumano',year:2004},
-        {id:'JP-11',name:'Yakushima',year:1993},{id:'JP-12',name:'Shirakawa-go',year:1995},
+        {id:'JP-5',name:'Nikko',year:1999},{id:'JP-6',name:'Fujisan',year:2013},
+        {id:'JP-7',name:'Itsukushima',year:1996},{id:'JP-8',name:'Hiroshima — Cupola atomica',year:1996},
+        {id:'JP-9',name:'Yakushima',year:1993},{id:'JP-10',name:'Shirakawa-go',year:1995},
       ]},
       ES:{name:'Spagna',flag:'🇪🇸',capital:'Madrid',continent:'Europa',sites:[
-        {id:'ES-1',name:'Alhambra e Generalife',year:1984},{id:'ES-2',name:'Barcellona — Opere di Gaudí',year:1984},
+        {id:'ES-1',name:'Alhambra e Generalife',year:1984},{id:'ES-2',name:'Opere di Gaudí',year:1984},
         {id:'ES-3',name:'Santiago de Compostela',year:1985},{id:'ES-4',name:'Toledo storica',year:1986},
-        {id:'ES-5',name:'Parco di Doñana',year:1994},{id:'ES-6',name:'Centro storico di Córdoba',year:1984},
-        {id:'ES-7',name:'Palau de la Música Catalana',year:1997},{id:'ES-8',name:'Ibiza',year:1999},
-        {id:'ES-9',name:'Università di Alcalá de Henares',year:1998},{id:'ES-10',name:'Cammino di Santiago',year:1993},
-        {id:'ES-11',name:'Las Médulas',year:1997},{id:'ES-12',name:'Pirenei Monte Perdido',year:1997},
+        {id:'ES-5',name:'Centro storico di Córdoba',year:1984},{id:'ES-6',name:'Ibiza',year:1999},
+        {id:'ES-7',name:'Cammino di Santiago',year:1993},{id:'ES-8',name:'Las Médulas',year:1997},
       ]},
       SE:{name:'Svezia',flag:'🇸🇪',capital:'Stoccolma',continent:'Europa',sites:[
         {id:'SE-1',name:'Drottningholm',year:1991},{id:'SE-2',name:'Birka e Hovgården',year:1993},
-        {id:'SE-3',name:'Petroglifi di Tanum',year:1994},{id:'SE-4',name:'Skogskyrkogården',year:1994},
-        {id:'SE-5',name:'Visby',year:1995},{id:'SE-6',name:'Lapponia',year:1996},
-        {id:'SE-7',name:'Alta costa',year:2000},{id:'SE-8',name:'Great Copper Mountain',year:2001},
+        {id:'SE-3',name:'Petroglifi di Tanum',year:1994},{id:'SE-4',name:'Visby',year:1995},
+        {id:'SE-5',name:'Lapponia',year:1996},{id:'SE-6',name:'Great Copper Mountain',year:2001},
       ]},
       CH:{name:'Svizzera',flag:'🇨🇭',capital:'Berna',continent:'Europa',sites:[
         {id:'CH-1',name:'Abbazia di San Gallo',year:1983},{id:'CH-2',name:'Bellinzona — Tre Castelli',year:2000},
-        {id:'CH-3',name:'Jungfrau-Aletsch',year:2001},{id:'CH-4',name:'Monte San Giorgio',year:2003},
-        {id:'CH-5',name:'Lavaux — Vigneti',year:2007},{id:'CH-6',name:'Ferrovia Retica dell\'Albula',year:2008},
-        {id:'CH-7',name:'La Chaux-de-Fonds',year:2009},
+        {id:'CH-3',name:'Jungfrau-Aletsch',year:2001},{id:'CH-4',name:'Lavaux — Vigneti',year:2007},
+        {id:'CH-5',name:'Ferrovia Retica dell\'Albula',year:2008},
       ]},
     };
 
-    // Numeric ISO-3166 → ISO-2 (per world-atlas TopoJSON)
-    const NUM_TO_ISO2 = {
-      '040':'AT','191':'HR','208':'DK','246':'FI','250':'FR','336':'VA',
-      '276':'DE','300':'GR','380':'IT','438':'LI','470':'MT','492':'MC',
-      '528':'NL','616':'PL','203':'CZ','764':'TH','674':'SM','392':'JP',
-      '724':'ES','752':'SE','756':'CH',
+    // ── Mappa: pin cliccabili per ogni paese visitato ─────────────────────────
+    // Coordinate [x,y] nel viewBox 0-1000 x 0-500 (proiezione Mercatore 0-360 lon, 0-180 lat)
+    const PINS = {
+      AT:[503,148], HR:[502,152], DK:[487,130], FI:[515,110],
+      FR:[473,150], VA:[501,160], DE:[492,138], GR:[516,162],
+      IT:[498,158], LI:[490,150], MT:[501,168], MC:[480,156],
+      NL:[479,135], PL:[508,135], CZ:[500,140], TH:[660,195],
+      SM:[499,155], JP:[735,155], ES:[461,158], SE:[500,118], CH:[488,148],
     };
-    const VISITED = new Set(Object.values(NUM_TO_ISO2));
 
-    // ── Mappa D3 SVG ─────────────────────────────────────────────────────────
     let currentCode = null;
-    let countriesFirestore = {};
     let unsubCountry = null, unsubTrips = null;
     let editingTripId = null;
-    let allPaths = null; // d3 selection
 
-    const svg    = d3.select('#world-svg');
-    const mapG   = svg.append('g');
-    const tooltip = document.getElementById('map-tooltip');
+    const svg  = document.getElementById('world-svg');
+    const grp  = document.getElementById('countries-group');
+    const tip  = document.getElementById('map-tooltip');
 
-    const projection = d3.geoNaturalEarth1()
-      .scale(153)
-      .translate([0, 0]); // aggiustato dopo resize
+    // Crea un pin per ogni paese visitato
+    function buildPins() {
+      grp.innerHTML = '';
+      Object.entries(PINS).forEach(([iso2, [cx, cy]]) => {
+        const info = UNESCO_DATA[iso2];
+        if (!info) return;
 
-    const path = d3.geoPath().projection(projection);
+        // Cerchio grande cliccabile
+        const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        circle.setAttribute('cx', cx);
+        circle.setAttribute('cy', cy);
+        circle.setAttribute('r', 12);
+        circle.setAttribute('data-iso', iso2);
+        circle.style.cursor = 'pointer';
 
-    function headerH() { return document.getElementById('map-header').offsetHeight; }
+        // Flag come testo
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('x', cx);
+        text.setAttribute('y', cy + 5);
+        text.setAttribute('text-anchor','middle');
+        text.setAttribute('font-size','13');
+        text.setAttribute('pointer-events','none');
+        text.textContent = info.flag;
 
-    function resizeMap() {
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-      svg.attr('viewBox', `0 0 ${W} ${H}`);
-      projection.scale(W / 6.5).translate([W / 2, (H + headerH()) / 2]);
-      if (allPaths) allPaths.attr('d', path);
-    }
+        grp.appendChild(circle);
+        grp.appendChild(text);
 
-    function countryFill(iso2) {
-      if (!iso2) return isDark ? '#2a3a4a' : '#d0d8e0';
-      if (iso2 === currentCode) return '#F5A9BC';
-      return isDark ? '#74C7E1' : '#25739E';
-    }
-    function countryStroke(iso2) {
-      return isDark ? '#1a2a38' : '#ffffff';
-    }
-
-    function paintMap() {
-      if (!allPaths) return;
-      allPaths
-        .attr('fill', d => countryFill(NUM_TO_ISO2[String(d.id).padStart(3,'0')]))
-        .attr('stroke', d => countryStroke(NUM_TO_ISO2[String(d.id).padStart(3,'0')]));
-      svg.style('background', isDark ? '#111820' : '#c8dce8');
-    }
-
-    // Zoom & pan con d3
-    const zoom = d3.zoom()
-      .scaleExtent([1, 8])
-      .on('zoom', e => mapG.attr('transform', e.transform));
-    svg.call(zoom);
-
-    function loadMap() {
-      fetch('./countries-110m.json')
-        .then(r => r.json())
-        .then(world => {
-          const countries = topojson.feature(world, world.objects.countries);
-          resizeMap();
-
-          allPaths = mapG.selectAll('path')
-            .data(countries.features)
-            .join('path')
-            .attr('class', d => {
-              const iso2 = NUM_TO_ISO2[String(d.id).padStart(3,'0')];
-              return 'country' + (iso2 ? ' visited' : '');
-            })
-            .attr('d', path)
-            .attr('stroke-width', 0.5)
-            .on('click', function(event, d) {
-              const iso2 = NUM_TO_ISO2[String(d.id).padStart(3,'0')];
-              if (!iso2) return;
-              event.stopPropagation();
-              openSheet(iso2);
-            })
-            .on('mousemove touchmove', function(event, d) {
-              const iso2 = NUM_TO_ISO2[String(d.id).padStart(3,'0')];
-              if (!iso2) return;
-              const info = UNESCO_DATA[iso2];
-              if (!info) return;
-              const e = event.touches ? event.touches[0] : event;
-              tooltip.style.display = 'block';
-              tooltip.style.left = (e.clientX + 12) + 'px';
-              tooltip.style.top  = (e.clientY - 28) + 'px';
-              tooltip.textContent = info.flag + ' ' + info.name;
-            })
-            .on('mouseleave touchend', () => { tooltip.style.display = 'none'; });
-
-          paintMap();
-          document.getElementById('map-loader').classList.add('done');
-          window.addEventListener('resize', resizeMap);
-        })
-        .catch(err => {
-          document.getElementById('map-loader').innerHTML = '<div style="font-size:.8rem;color:var(--red);padding:20px;text-align:center;">Errore caricamento mappa.<br>Riprova più tardi.</div>';
+        // Events
+        circle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openSheet(iso2);
         });
+        circle.addEventListener('mouseover', () => {
+          tip.style.display = 'block';
+          tip.textContent = info.flag + ' ' + info.name;
+        });
+        circle.addEventListener('mousemove', (e) => {
+          tip.style.left = (e.clientX + 12) + 'px';
+          tip.style.top  = (e.clientY - 28) + 'px';
+        });
+        circle.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+        circle.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          tip.style.display = 'none';
+          openSheet(iso2);
+        }, {passive:false});
+      });
+      repaintCountries();
     }
 
-    // click su sfondo chiude sheet
-    svg.on('click', () => { if (currentCode) closeSheet(); });
+    function repaintCountries() {
+      grp.querySelectorAll('circle').forEach(c => {
+        const iso2 = c.getAttribute('data-iso');
+        const sel  = iso2 === currentCode;
+        c.setAttribute('fill', sel ? '#F5A9BC' : (isDark ? '#74C7E1' : '#25739E'));
+        c.setAttribute('stroke', sel ? '#d4809a' : (isDark ? '#9DDDE8' : '#1a5f80'));
+        c.setAttribute('stroke-width', sel ? '3' : '1.5');
+        c.setAttribute('r', sel ? '16' : '12');
+      });
+    }
+
+    // Zoom & pan via pointer events
+    let vpX=0, vpY=0, vpScale=1;
+    let dragStart=null;
+
+    function applyTransform() {
+      grp.setAttribute('transform', `translate(${vpX},${vpY}) scale(${vpScale})`);
+      document.getElementById('ocean').setAttribute('transform', `translate(${vpX},${vpY}) scale(${vpScale})`);
+      // Mantieni flag size costante
+      grp.querySelectorAll('text').forEach(t => {
+        t.setAttribute('font-size', String(13 / vpScale));
+      });
+    }
+
+    svg.addEventListener('pointerdown', e => {
+      if (e.target.tagName === 'circle') return;
+      dragStart = {x: e.clientX - vpX, y: e.clientY - vpY};
+      svg.setPointerCapture(e.pointerId);
+    });
+    svg.addEventListener('pointermove', e => {
+      if (!dragStart) return;
+      vpX = e.clientX - dragStart.x;
+      vpY = e.clientY - dragStart.y;
+      applyTransform();
+    });
+    svg.addEventListener('pointerup', () => { dragStart = null; });
+
+    svg.addEventListener('wheel', e => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.85 : 1.18;
+      vpScale = Math.min(8, Math.max(0.5, vpScale * delta));
+      applyTransform();
+    }, {passive:false});
+
+    // Pinch zoom mobile
+    let touches = {};
+    let lastDist = null;
+    svg.addEventListener('touchstart', e => {
+      [...e.touches].forEach(t => { touches[t.identifier] = {x:t.clientX, y:t.clientY}; });
+    }, {passive:true});
+    svg.addEventListener('touchmove', e => {
+      if (e.touches.length === 2) {
+        const [a, b] = [...e.touches];
+        const dist = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
+        if (lastDist) {
+          vpScale = Math.min(8, Math.max(0.5, vpScale * (dist/lastDist)));
+          applyTransform();
+        }
+        lastDist = dist;
+      } else if (e.touches.length === 1) {
+        const t = e.touches[0];
+        const prev = touches[t.identifier];
+        if (prev) {
+          vpX += t.clientX - prev.x;
+          vpY += t.clientY - prev.y;
+          applyTransform();
+        }
+        touches[t.identifier] = {x:t.clientX, y:t.clientY};
+      }
+    }, {passive:true});
+    svg.addEventListener('touchend', e => {
+      lastDist = null;
+      [...e.changedTouches].forEach(t => { delete touches[t.identifier]; });
+    }, {passive:true});
+
+    svg.addEventListener('click', () => { if (currentCode) closeSheet(); });
 
     // ── Bottom Sheet ──────────────────────────────────────────────────────────
-    const sheet       = document.getElementById('bottom-sheet');
-    const overlay     = document.getElementById('sheet-overlay');
-    const statsBadge  = document.getElementById('stats-badge');
+    const sheet      = document.getElementById('bottom-sheet');
+    const overlay    = document.getElementById('sheet-overlay');
+    const statsBadge = document.getElementById('stats-badge');
 
     function openSheet(iso2) {
       currentCode = iso2;
-      paintMap();
-
+      repaintCountries();
       const info = UNESCO_DATA[iso2];
-      document.getElementById('sheet-flag').textContent        = info.flag;
+      document.getElementById('sheet-flag').textContent         = info.flag;
       document.getElementById('sheet-country-name').textContent = info.name;
       document.getElementById('sheet-chips').innerHTML = `
         <div class="info-chip">🏙 <span>${info.capital}</span></div>
         <div class="info-chip">🌍 <span>${info.continent}</span></div>
         <div class="info-chip">🏛️ <span>${info.sites.length}</span> siti UNESCO</div>`;
-
       sheet.classList.add('open');
       overlay.classList.add('active');
       statsBadge.classList.add('hidden');
-
       if (unsubCountry) unsubCountry();
       if (unsubTrips)   unsubTrips();
-
       unsubCountry = subscribeCountry(iso2, data => {
         const visited = data?.visitedUnescoIds || [];
         renderUnesco(info.sites, visited, iso2);
         document.getElementById('unesco-badge').textContent = `${visited.length}/${info.sites.length}`;
-        // aggiorna stats
-        let tot = 0;
-        Object.values(countriesFirestore).forEach(c => { tot += (c.visitedUnescoIds||[]).length; });
-        document.getElementById('stat-unesco').textContent = tot;
       });
-
       unsubTrips = subscribeTrips(iso2, trips => {
         renderTrips(trips, iso2);
         document.getElementById('trips-badge').textContent = trips.length;
@@ -496,39 +444,31 @@
       sheet.classList.remove('open');
       overlay.classList.remove('active');
       statsBadge.classList.remove('hidden');
-      tooltip.style.display = 'none';
+      tip.style.display = 'none';
       currentCode = null;
-      paintMap();
-      if (unsubCountry) { unsubCountry(); unsubCountry = null; }
-      if (unsubTrips)   { unsubTrips();   unsubTrips   = null; }
+      repaintCountries();
+      if (unsubCountry) { unsubCountry(); unsubCountry=null; }
+      if (unsubTrips)   { unsubTrips();   unsubTrips=null; }
       closeTripForm();
     }
-
     document.getElementById('sheet-close').addEventListener('click', closeSheet);
     overlay.addEventListener('click', closeSheet);
 
     // ── UNESCO ────────────────────────────────────────────────────────────────
     function renderUnesco(sites, visited, iso2) {
       const list = document.getElementById('unesco-list');
-      if (!sites.length) {
-        list.innerHTML = '<div style="font-size:.72rem;color:var(--muted);padding:8px 0;">Nessun sito UNESCO per questo paese.</div>';
-        return;
-      }
-      list.innerHTML = sites.map(s => `
+      if (!sites.length) { list.innerHTML='<div style="font-size:.72rem;color:var(--muted);padding:8px 0;">Nessun sito UNESCO per questo paese.</div>'; return; }
+      list.innerHTML = sites.map(s=>`
         <div class="unesco-item">
           <div class="unesco-check ${visited.includes(s.id)?'checked':''}" data-id="${s.id}">${visited.includes(s.id)?'✓':''}</div>
-          <div class="unesco-info">
-            <div class="unesco-name">${s.name}</div>
-            <div class="unesco-year">📅 Iscritto ${s.year}</div>
-          </div>
+          <div class="unesco-info"><div class="unesco-name">${s.name}</div><div class="unesco-year">📅 ${s.year}</div></div>
         </div>`).join('');
-
-      list.querySelectorAll('.unesco-check').forEach(el => {
-        el.addEventListener('click', async () => {
+      list.querySelectorAll('.unesco-check').forEach(el=>{
+        el.addEventListener('click', async()=>{
           el.classList.toggle('checked');
-          el.textContent = el.classList.contains('checked') ? '✓' : '';
-          const newVisited = [...list.querySelectorAll('.unesco-check.checked')].map(e => e.dataset.id);
-          await saveCountryData(iso2, { visitedUnescoIds: newVisited });
+          el.textContent = el.classList.contains('checked')?'✓':'';
+          const newV = [...list.querySelectorAll('.unesco-check.checked')].map(e=>e.dataset.id);
+          await saveCountryData(iso2,{visitedUnescoIds:newV});
         });
       });
     }
@@ -536,11 +476,8 @@
     // ── Viaggi ────────────────────────────────────────────────────────────────
     function renderTrips(trips, iso2) {
       const list = document.getElementById('trips-list');
-      if (!trips.length) {
-        list.innerHTML = '<div style="font-size:.72rem;color:var(--muted);padding:4px 0 10px;">Nessun viaggio registrato.</div>';
-        return;
-      }
-      list.innerHTML = trips.map(t => `
+      if (!trips.length) { list.innerHTML='<div style="font-size:.72rem;color:var(--muted);padding:4px 0 10px;">Nessun viaggio registrato.</div>'; return; }
+      list.innerHTML = trips.map(t=>`
         <div class="trip-card">
           <div class="trip-title">✈️ ${esc(t.title||'Viaggio')}</div>
           ${t.dateStart?`<div class="trip-dates">📅 ${t.dateStart}${t.dateEnd?' → '+t.dateEnd:''}</div>`:''}
@@ -551,61 +488,57 @@
             <button class="btn-sm danger"  data-del="${t._docId}">🗑 Elimina</button>
           </div>
         </div>`).join('');
-
-      list.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
-        if (confirm('Eliminare questo viaggio?')) await deleteTripDoc(iso2, b.dataset.del);
-      }));
-      list.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
-        openTripForm(trips.find(t => t._docId === b.dataset.edit));
-      }));
+      list.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',async()=>{ if(confirm('Eliminare questo viaggio?')) await deleteTripDoc(iso2,b.dataset.del); }));
+      list.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openTripForm(trips.find(t=>t._docId===b.dataset.edit))));
     }
 
-    // ── Form viaggio ──────────────────────────────────────────────────────────
-    document.getElementById('add-trip-btn').addEventListener('click', () => openTripForm(null));
-    document.getElementById('tf-cancel').addEventListener('click', closeTripForm);
-    document.getElementById('tf-save').addEventListener('click', async () => {
-      if (!currentCode) return;
-      const data = {
-        title:    document.getElementById('tf-title').value.trim() || 'Viaggio',
+    document.getElementById('add-trip-btn').addEventListener('click',()=>openTripForm(null));
+    document.getElementById('tf-cancel').addEventListener('click',closeTripForm);
+    document.getElementById('tf-save').addEventListener('click',async()=>{
+      if(!currentCode) return;
+      const data={
+        title:    document.getElementById('tf-title').value.trim()||'Viaggio',
         dateStart:document.getElementById('tf-start').value,
         dateEnd:  document.getElementById('tf-end').value,
         notes:    document.getElementById('tf-notes').value.trim(),
         driveUrl: document.getElementById('tf-drive').value.trim(),
       };
-      if (editingTripId) await updateTripDoc(currentCode, editingTripId, data);
-      else               await addTripDoc(currentCode, data);
+      if(editingTripId) await updateTripDoc(currentCode,editingTripId,data);
+      else              await addTripDoc(currentCode,data);
       closeTripForm();
     });
 
     function openTripForm(trip) {
-      editingTripId = trip?._docId || null;
-      document.getElementById('tf-title').value = trip?.title    || '';
-      document.getElementById('tf-start').value = trip?.dateStart|| '';
-      document.getElementById('tf-end').value   = trip?.dateEnd  || '';
-      document.getElementById('tf-notes').value = trip?.notes    || '';
-      document.getElementById('tf-drive').value = trip?.driveUrl || '';
-      document.getElementById('tf-save').textContent = trip ? 'Aggiorna' : 'Salva Viaggio';
+      editingTripId = trip?._docId||null;
+      document.getElementById('tf-title').value = trip?.title    ||'';
+      document.getElementById('tf-start').value = trip?.dateStart||'';
+      document.getElementById('tf-end').value   = trip?.dateEnd  ||'';
+      document.getElementById('tf-notes').value = trip?.notes    ||'';
+      document.getElementById('tf-drive').value = trip?.driveUrl ||'';
+      document.getElementById('tf-save').textContent = trip?'Aggiorna':'Salva Viaggio';
       document.getElementById('trip-form').classList.add('open');
-      document.getElementById('add-trip-btn').style.display = 'none';
+      document.getElementById('add-trip-btn').style.display='none';
     }
     function closeTripForm() {
       document.getElementById('trip-form').classList.remove('open');
-      document.getElementById('add-trip-btn').style.display = '';
-      editingTripId = null;
+      document.getElementById('add-trip-btn').style.display='';
+      editingTripId=null;
     }
 
     function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    // ── Stats UNESCO ──────────────────────────────────────────────────────────
+    function updateUnescoStats(data) {
+      let tot=0;
+      Object.values(data).forEach(c=>{ tot+=(c.visitedUnescoIds||[]).length; });
+      document.getElementById('stat-unesco').textContent=tot;
+    }
+
     // ── Init ──────────────────────────────────────────────────────────────────
-    waitForAuth().then(() => {
-      document.body.style.visibility = '';
-      loadMap();
-      subscribeAllCountries(data => {
-        countriesFirestore = data;
-        let tot = 0;
-        Object.values(data).forEach(c => { tot += (c.visitedUnescoIds||[]).length; });
-        document.getElementById('stat-unesco').textContent = tot;
-      });
+    waitForAuth().then(()=>{
+      document.body.style.visibility='';
+      buildPins();
+      subscribeAllCountries(data=>{ updateUnescoStats(data); });
     });
   </script>
 </body>
