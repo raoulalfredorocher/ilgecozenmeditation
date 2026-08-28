@@ -375,6 +375,17 @@
     .leaflet-control-zoom {
       margin-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px) !important;
     }
+    .map-tooltip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: .72rem;
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      padding: 4px 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    .map-tooltip::before { display: none; }
   </style>
 
   <script>
@@ -794,12 +805,11 @@
 
     function getMapStyles() {
       return {
-        visited:   { color: '#25739E', weight: 1, fillColor: '#25739E', fillOpacity: .55 },
-        visitedDk: { color: '#74C7E1', weight: 1, fillColor: '#74C7E1', fillOpacity: .45 },
-        normal:    { color: '#888', weight: .4, fillColor: '#aaa', fillOpacity: .12 },
-        normalDk:  { color: '#555', weight: .4, fillColor: '#334', fillOpacity: .25 },
-        hover:     { fillOpacity: .75, weight: 1.5 },
-        selected:  { weight: 2, color: '#F5A9BC' },
+        visited:   { color: '#1a5f80', weight: 1.2, fillColor: '#25739E', fillOpacity: .75 },
+        visitedDk: { color: '#9DDDE8', weight: 1.2, fillColor: '#74C7E1', fillOpacity: .65 },
+        normal:    { color: '#aaa',    weight: .6,  fillColor: '#cccccc', fillOpacity: .55 },
+        normalDk:  { color: '#445',    weight: .6,  fillColor: '#2a3a4a', fillOpacity: .80 },
+        selected:  { weight: 2.5, color: '#F5A9BC', fillOpacity: .90 },
       };
     }
 
@@ -820,34 +830,30 @@
         const iso2 = ISO3_TO_2[iso3];
         const base = styleForFeature(l.feature);
         const isSel = iso2 && iso2 === currentCode;
-        l.setStyle(isSel ? { ...base, ...getMapStyles().selected } : base);
+        const sel   = getMapStyles().selected;
+        l.setStyle(isSel ? { ...base, color: sel.color, weight: sel.weight, fillOpacity: sel.fillOpacity } : base);
       });
     }
 
     function initMap() {
-      // Calcola top offset header
       const headerH = document.getElementById('map-header').offsetHeight;
       document.getElementById('world-map').style.paddingTop = headerH + 'px';
 
       map = L.map('world-map', {
-        center: [20, 10],
+        center: [20, 15],
         zoom: 2,
         minZoom: 1,
-        maxZoom: 8,
+        maxZoom: 6,
         zoomControl: true,
         attributionControl: false,
-        worldCopyJump: true,
+        worldCopyJump: false,
+        // sfondo piatto — nessun tile, solo GeoJSON poligoni
       });
       window._map = map;
 
-      // Tile layer neutro
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        id: 'light-tiles',
-      }).addTo(map);
-
-      const darkTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        id: 'dark-tiles',
-      });
+      // Sfondo neutro (nessun tile OSM, solo colore piatto)
+      // Il colore lo settiamo via CSS sul div della mappa
+      document.getElementById('world-map').style.background = isDark ? '#111820' : '#d4e8f4';
 
       // GeoJSON paesi mondiali via jsDelivr (no CORS, affidabile)
       const NUMERIC_TO_ISO3 = {
@@ -888,11 +894,22 @@
           onEachFeature(feat, layer) {
             const iso3 = feat.properties.ISO_A3 || feat.properties.iso_a3 || feat.properties.ADM0_A3 || '';
             const iso2 = ISO3_TO_2[iso3];
-            if (!iso2) return;
+            const info = iso2 ? UNESCO_DATA[iso2] : null;
+            const isVisited = !!iso2;
+
+            // Tooltip col nome del paese
+            if (info) layer.bindTooltip(info.flag + ' ' + info.name, { sticky: true, className: 'map-tooltip' });
+
+            if (!isVisited) return; // paesi non visitati: solo stile, non cliccabili
+
             layer.on({
               click(e) { L.DomEvent.stopPropagation(e); openSheet(iso2); },
-              mouseover() { if (iso2 !== currentCode) layer.setStyle({ fillOpacity: isDark ? .6 : .75, weight: 1.5 }); },
-              mouseout()  { if (iso2 !== currentCode) layer.setStyle(styleForFeature(feat)); },
+              mouseover() {
+                if (iso2 !== currentCode) layer.setStyle({ fillOpacity: .95, weight: 2, color: '#F5A9BC' });
+              },
+              mouseout() {
+                if (iso2 !== currentCode) layer.setStyle(styleForFeature(feat));
+              },
             });
           },
         }).addTo(map);
@@ -915,15 +932,9 @@
       };
       document.head.appendChild(topoScript);
 
-      // Aggiorna tile per dark mode
+      // Aggiorna sfondo per dark mode (nessun tile, solo colore)
       window._updateTileLayer = () => {
-        if (isDark) {
-          map.eachLayer(l => { if (l.options.id === 'light-tiles') map.removeLayer(l); });
-          if (!map.hasLayer(darkTile)) darkTile.addTo(map);
-        } else {
-          map.eachLayer(l => { if (l.options.id === 'dark-tiles') map.removeLayer(l); });
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { id: 'light-tiles' }).addTo(map);
-        }
+        document.getElementById('world-map').style.background = isDark ? '#111820' : '#d4e8f4';
       };
     }
 
