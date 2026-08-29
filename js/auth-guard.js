@@ -32,38 +32,41 @@ function injectLogoutBtn(user) {
   // Evita duplicati se la funzione viene chiamata più volte
   if (document.getElementById('zen-logout-btn')) return;
 
+  const header = document.getElementById('main-header');
+  if (!header) return;
+
   const btn = document.createElement('button');
   btn.id = 'zen-logout-btn';
   btn.title = `Disconnetti ${user.displayName || user.email}`;
   btn.setAttribute('aria-label', 'Disconnetti');
-  btn.innerHTML = `
-    <img src="${user.photoURL || ''}" alt="" onerror="this.style.display='none'"
-      style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:${user.photoURL ? 'block' : 'none'}"/>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      style="${user.photoURL ? 'display:none' : ''}">
+
+  // Mostra foto profilo se disponibile, altrimenti icona logout
+  if (user.photoURL) {
+    btn.innerHTML = `<img src="${user.photoURL}" alt=""
+      style="width:26px;height:26px;border-radius:50%;object-fit:cover;display:block;"/>`;
+  } else {
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
       <polyline points="16 17 21 12 16 7"/>
       <line x1="21" y1="12" x2="9" y2="12"/>
     </svg>`;
+  }
 
   Object.assign(btn.style, {
-    position: 'fixed',
-    top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
-    right: '72px',
-    zIndex: '9999',
-    background: 'var(--card, #fff)',
+    background: 'none',
     border: '1.5px solid var(--border, #d4cee0)',
     borderRadius: '50%',
     width: '36px',
     height: '36px',
+    flexShrink: '0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    boxShadow: '0 2px 8px rgba(0,0,0,.12)',
     padding: '0',
     WebkitTapHighlightColor: 'transparent',
+    overflow: 'hidden',
   });
 
   btn.addEventListener('click', async () => {
@@ -73,5 +76,11 @@ function injectLogoutBtn(user) {
     }
   });
 
-  document.body.appendChild(btn);
+  // Inserisce il bottone account come penultimo figlio (prima del theme-toggle)
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    header.insertBefore(btn, themeToggle);
+  } else {
+    header.appendChild(btn);
+  }
 }
