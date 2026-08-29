@@ -26,14 +26,22 @@
     .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;-webkit-tap-highlight-color:transparent}
 
     /* ── Page layout ── */
-    #page-body{display:flex;flex-direction:column;flex:1;width:100%;padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+    #page-body{display:flex;flex-direction:column;flex:1;width:100%}
 
-    /* ── Mappa full-width, tocca l'header e i bordi ── */
-    #map-container{width:100%;height:55vw;min-height:260px;max-height:60vh;z-index:1;position:relative;margin:0}
+    /* ── Mappa full-width: attaccata sotto l'header, nessun margine/padding ── */
+    #map-container{
+      width:100%;
+      height:55vw;
+      min-height:260px;
+      max-height:60vh;
+      position:sticky;
+      top:0;
+      z-index:1;
+      margin-top:calc(env(safe-area-inset-top,0px) + 60px);
+    }
     #leaflet-map{width:100%;height:100%;display:block}
     .leaflet-control-attribution{display:none!important}
-    /* Rimuove margine interno Leaflet che crea le bande */
-    .leaflet-container{background:var(--bg)}
+    .leaflet-container{background:#a8d4e6}
 
     /* ── Sezione paesi ── */
     #countries-section{padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 80px)}
@@ -138,10 +146,10 @@
     <button class="theme-toggle" id="theme-toggle"><div id="theme-knob">☀️</div></button>
   </header>
 
+  <div id="map-container">
+    <div id="leaflet-map"></div>
+  </div>
   <div id="page-body">
-    <div id="map-container">
-      <div id="leaflet-map"></div>
-    </div>
     <div id="countries-section"></div>
   </div>
 
@@ -173,11 +181,24 @@
     // ── Dati paesi ────────────────────────────────────────────────────────────
     const COUNTRIES = {
       Europa: {
+        AL:{name:'Albania',flag:'🇦🇱',sites:[{id:'AL-1',name:'Butrint',year:1992}]},
+        AD:{name:'Andorra',flag:'🇦🇩',sites:[]},
         AT:{name:'Austria',flag:'🇦🇹',sites:[
           {id:'AT-1',name:'Centro storico di Salisburgo',year:1996},{id:'AT-2',name:'Palazzo di Schönbrunn',year:1996},
           {id:'AT-3',name:'Hallstatt-Dachstein',year:1997},{id:'AT-4',name:'Ferrovia del Semmering',year:1998},
           {id:'AT-5',name:'Centro storico di Graz',year:1999},{id:'AT-6',name:'Paesaggio di Wachau',year:2000},
           {id:'AT-7',name:'Vienna storica',year:2001},{id:'AT-8',name:'Lago di Neusiedl',year:2001},
+        ]},
+        BE:{name:'Belgio',flag:'🇧🇪',sites:[
+          {id:'BE-1',name:'Bruges storica',year:2000},{id:'BE-2',name:'Grand Place di Bruxelles',year:1998},
+          {id:'BE-3',name:'Beffroi del Belgio',year:1999},{id:'BE-4',name:'Plantin-Moretus',year:2005},
+        ]},
+        BA:{name:'Bosnia-Erzegovina',flag:'🇧🇦',sites:[
+          {id:'BA-1',name:'Ponte Vecchio di Mostar',year:2005},{id:'BA-2',name:'Stećci',year:2016},
+        ]},
+        BG:{name:'Bulgaria',flag:'🇧🇬',sites:[
+          {id:'BG-1',name:'Madara Rider',year:1979},{id:'BG-2',name:'Rila Monastery',year:1983},
+          {id:'BG-3',name:'Nesebar storica',year:1983},{id:'BG-4',name:'Srebarna',year:1983},
         ]},
         HR:{name:'Croazia',flag:'🇭🇷',sites:[
           {id:'HR-1',name:'Dubrovnik',year:1979},{id:'HR-2',name:'Laghi di Plitvice',year:1979},
@@ -187,6 +208,9 @@
         DK:{name:'Danimarca',flag:'🇩🇰',sites:[
           {id:'DK-1',name:'Tumuli di Jelling',year:1994},{id:'DK-2',name:'Cattedrale di Roskilde',year:1995},
           {id:'DK-3',name:'Castello di Kronborg',year:2000},{id:'DK-4',name:'Costa di Wadden',year:2009},
+        ]},
+        EE:{name:'Estonia',flag:'🇪🇪',sites:[
+          {id:'EE-1',name:'Centro storico di Tallinn',year:1997},{id:'EE-2',name:'Struve Geodetic Arc',year:2005},
         ]},
         FI:{name:'Finlandia',flag:'🇫🇮',sites:[
           {id:'FI-1',name:'Fortezza di Suomenlinna',year:1991},{id:'FI-2',name:'Antica città di Rauma',year:1991},
@@ -199,7 +223,6 @@
           {id:'FR-5',name:'Parigi — Rive della Senna',year:1991},{id:'FR-6',name:'Carcassonne',year:1997},
           {id:'FR-7',name:'Val de Loire',year:2000},{id:'FR-8',name:'Lione storico',year:1998},
         ]},
-        VA:{name:'Vaticano',flag:'🇻🇦',sites:[{id:'VA-1',name:'Centro storico di Roma e Vaticano',year:1980}]},
         DE:{name:'Germania',flag:'🇩🇪',sites:[
           {id:'DE-1',name:'Cattedrale di Aquisgrana',year:1978},{id:'DE-2',name:'Colonia — Cattedrale',year:1996},
           {id:'DE-3',name:'Berlino — Isola dei Musei',year:1999},{id:'DE-4',name:'Potsdam — Parchi e Palazzi',year:1990},
@@ -211,6 +234,12 @@
           {id:'GR-5',name:'Olimpia',year:1989},{id:'GR-6',name:'Epidauro',year:1988},
           {id:'GR-7',name:'Corfù',year:2007},{id:'GR-8',name:'Delos',year:1990},
         ]},
+        IE:{name:'Irlanda',flag:'🇮🇪',sites:[
+          {id:'IE-1',name:'Brú na Bóinne',year:1993},{id:'IE-2',name:'Sceilg Mhichíl',year:1996},
+        ]},
+        IS:{name:'Islanda',flag:'🇮🇸',sites:[
+          {id:'IS-1',name:'Þingvellir',year:2004},{id:'IS-2',name:'Surtsey',year:2008},
+        ]},
         IT:{name:'Italia',flag:'🇮🇹',sites:[
           {id:'IT-1',name:'Arte rupestre in Valcamonica',year:1979},{id:'IT-2',name:'Cenacolo di Leonardo',year:1980},
           {id:'IT-3',name:'Firenze storica',year:1982},{id:'IT-4',name:'Venezia e la sua laguna',year:1987},
@@ -221,27 +250,71 @@
           {id:'IT-13',name:'Reggia di Caserta',year:1997},{id:'IT-14',name:'Val d\'Orcia',year:2004},
           {id:'IT-15',name:'Mantova e Sabbioneta',year:2008},{id:'IT-16',name:'Bologna — I Portici',year:2021},
         ]},
+        LV:{name:'Lettonia',flag:'🇱🇻',sites:[
+          {id:'LV-1',name:'Centro storico di Riga',year:1997},
+        ]},
         LI:{name:'Liechtenstein',flag:'🇱🇮',sites:[]},
+        LT:{name:'Lituania',flag:'🇱🇹',sites:[
+          {id:'LT-1',name:'Centro storico di Vilnius',year:1994},{id:'LT-2',name:'Curonian Spit',year:2000},
+        ]},
+        LU:{name:'Lussemburgo',flag:'🇱🇺',sites:[
+          {id:'LU-1',name:'Città di Lussemburgo — Vecchia città e Fortezze',year:1994},
+        ]},
         MT:{name:'Malta',flag:'🇲🇹',sites:[
           {id:'MT-1',name:'Ipogeo di Hal Saflieni',year:1980},{id:'MT-2',name:'La Valletta',year:1980},
           {id:'MT-3',name:'Templi megalitici',year:1980},
         ]},
         MC:{name:'Monaco',flag:'🇲🇨',sites:[]},
+        ME:{name:'Montenegro',flag:'🇲🇪',sites:[
+          {id:'ME-1',name:'Regione naturale e storico-culturale di Kotor',year:1979},
+        ]},
+        MK:{name:'Macedonia del Nord',flag:'🇲🇰',sites:[
+          {id:'MK-1',name:'Ohrid e il suo lago',year:1979},
+        ]},
         NL:{name:'Paesi Bassi',flag:'🇳🇱',sites:[
           {id:'NL-1',name:'Schokland',year:1995},{id:'NL-2',name:'Linea di difesa di Amsterdam',year:1996},
           {id:'NL-3',name:'Mulini a vento di Kinderdijk',year:1997},{id:'NL-4',name:'Canali di Amsterdam',year:2010},
+        ]},
+        NO:{name:'Norvegia',flag:'🇳🇴',sites:[
+          {id:'NO-1',name:'Bryggen',year:1979},{id:'NO-2',name:'Urnes Stave Church',year:1979},
+          {id:'NO-3',name:'Røros',year:1980},{id:'NO-4',name:'Fiordi della Norvegia occidentale',year:2005},
         ]},
         PL:{name:'Polonia',flag:'🇵🇱',sites:[
           {id:'PL-1',name:'Centro storico di Cracovia',year:1978},{id:'PL-2',name:'Miniera di Wieliczka',year:1978},
           {id:'PL-3',name:'Auschwitz-Birkenau',year:1979},{id:'PL-4',name:'Foresta di Białowieża',year:1979},
           {id:'PL-5',name:'Varsavia storica',year:1980},{id:'PL-6',name:'Castello di Malbork',year:1997},
         ]},
+        PT:{name:'Portogallo',flag:'🇵🇹',sites:[
+          {id:'PT-1',name:'Centro storico di Angra do Heroísmo',year:1983},{id:'PT-2',name:'Convento di Cristo di Tomar',year:1983},
+          {id:'PT-3',name:'Monastero degli Hieronymites',year:1983},{id:'PT-4',name:'Centro storico di Évora',year:1986},
+          {id:'PT-5',name:'Centro storico di Sintra',year:1995},{id:'PT-6',name:'Centro storico di Porto',year:1996},
+          {id:'PT-7',name:'Paesaggio viticolo dell\'Alto Douro',year:2001},{id:'PT-8',name:'Paesaggio viticolo di Pico',year:2004},
+        ]},
+        GB:{name:'Regno Unito',flag:'🇬🇧',sites:[
+          {id:'GB-1',name:'Stonehenge',year:1986},{id:'GB-2',name:'Cattedrale di Canterbury',year:1988},
+          {id:'GB-3',name:'Tower of London',year:1988},{id:'GB-4',name:'Palazzi di Westminster',year:1987},
+          {id:'GB-5',name:'Edinburgh Old & New Town',year:1995},{id:'GB-6',name:'Blenheim Palace',year:1987},
+        ]},
         CZ:{name:'Rep. Ceca',flag:'🇨🇿',sites:[
           {id:'CZ-1',name:'Centro storico di Praga',year:1992},{id:'CZ-2',name:'Český Krumlov',year:1992},
           {id:'CZ-3',name:'Telč',year:1992},{id:'CZ-4',name:'Lednice-Valtice',year:1996},
           {id:'CZ-5',name:'Kutná Hora',year:1995},{id:'CZ-6',name:'Villa Tugendhat',year:2001},
         ]},
+        RO:{name:'Romania',flag:'🇷🇴',sites:[
+          {id:'RO-1',name:'Danubio Delta',year:1991},{id:'RO-2',name:'Villaggi con chiese fortezza della Transilvania',year:1993},
+          {id:'RO-3',name:'Monasteri della Moldavia',year:1993},{id:'RO-4',name:'Centro storico di Sighişoara',year:1999},
+        ]},
         SM:{name:'San Marino',flag:'🇸🇲',sites:[{id:'SM-1',name:'San Marino — Monte Titano',year:2008}]},
+        RS:{name:'Serbia',flag:'🇷🇸',sites:[
+          {id:'RS-1',name:'Stari Ras e Sopoćani',year:1979},{id:'RS-2',name:'Studenica Monastery',year:1986},
+        ]},
+        SK:{name:'Slovacchia',flag:'🇸🇰',sites:[
+          {id:'SK-1',name:'Centro storico di Banská Štiavnica',year:1993},{id:'SK-2',name:'Levoča e Spišský Hrad',year:1993},
+          {id:'SK-3',name:'Vlkolínec',year:1993},
+        ]},
+        SI:{name:'Slovenia',flag:'🇸🇮',sites:[
+          {id:'SI-1',name:'Škocjan Caves',year:1986},
+        ]},
         ES:{name:'Spagna',flag:'🇪🇸',sites:[
           {id:'ES-1',name:'Alhambra e Generalife',year:1984},{id:'ES-2',name:'Opere di Gaudí',year:1984},
           {id:'ES-3',name:'Santiago de Compostela',year:1985},{id:'ES-4',name:'Toledo storica',year:1986},
@@ -258,11 +331,38 @@
           {id:'CH-3',name:'Jungfrau-Aletsch',year:2001},{id:'CH-4',name:'Lavaux — Vigneti',year:2007},
           {id:'CH-5',name:'Ferrovia Retica dell\'Albula',year:2008},
         ]},
+        UA:{name:'Ucraina',flag:'🇺🇦',sites:[
+          {id:'UA-1',name:'Centro storico di Leopoli',year:1998},{id:'UA-2',name:'Kiev — Cattedrale di Santa Sofia',year:1990},
+        ]},
+        HU:{name:'Ungheria',flag:'🇭🇺',sites:[
+          {id:'HU-1',name:'Budapest — Rive del Danubio',year:1987},{id:'HU-2',name:'Abbazia di Pannonhalma',year:1996},
+          {id:'HU-3',name:'Hortobágy',year:1999},{id:'HU-4',name:'Pécs — Necropoli paleocristiana',year:2000},
+        ]},
+        VA:{name:'Vaticano',flag:'🇻🇦',sites:[{id:'VA-1',name:'Centro storico di Roma e Vaticano',year:1980}]},
       },
       Asia: {
-        TH:{name:'Thailandia',flag:'🇹🇭',sites:[
-          {id:'TH-1',name:'Sukhothai',year:1991},{id:'TH-2',name:'Ayutthaya',year:1991},
-          {id:'TH-3',name:'Thungyai-Huai Kha Khaeng',year:1991},{id:'TH-4',name:'Ban Chiang',year:1992},
+        AM:{name:'Armenia',flag:'🇦🇲',sites:[
+          {id:'AM-1',name:'Monasteri di Haghpat e Sanahin',year:1996},{id:'AM-2',name:'Monastero di Geghard',year:2000},
+        ]},
+        AZ:{name:'Azerbaigian',flag:'🇦🇿',sites:[
+          {id:'AZ-1',name:'Città murata di Baku',year:2000},
+        ]},
+        BH:{name:'Bahrain',flag:'🇧🇭',sites:[
+          {id:'BH-1',name:'Qal\'at al-Bahrain',year:2005},
+        ]},
+        KH:{name:'Cambogia',flag:'🇰🇭',sites:[
+          {id:'KH-1',name:'Angkor',year:1992},
+        ]},
+        CN:{name:'Cina',flag:'🇨🇳',sites:[
+          {id:'CN-1',name:'Grande Muraglia',year:1987},{id:'CN-2',name:'Città Proibita',year:1987},
+          {id:'CN-3',name:'Mausoleo di Qin Shi Huang',year:1987},{id:'CN-4',name:'Monte Huangshan',year:1990},
+          {id:'CN-5',name:'Parco nazionale Jiuzhaigou',year:1992},{id:'CN-6',name:'Karst di Guilin',year:2014},
+        ]},
+        AE:{name:'Emirati Arabi',flag:'🇦🇪',sites:[
+          {id:'AE-1',name:'Al Ain — Oasi e siti culturali',year:2011},
+        ]},
+        GE:{name:'Georgia',flag:'🇬🇪',sites:[
+          {id:'GE-1',name:'Città storica di Mtskheta',year:1994},{id:'GE-2',name:'Cattedrale di Bagrati',year:1994},
         ]},
         JP:{name:'Giappone',flag:'🇯🇵',sites:[
           {id:'JP-1',name:'Horyuji',year:1993},{id:'JP-2',name:'Castello di Himeji',year:1993},
@@ -271,16 +371,358 @@
           {id:'JP-7',name:'Itsukushima',year:1996},{id:'JP-8',name:'Hiroshima — Cupola atomica',year:1996},
           {id:'JP-9',name:'Yakushima',year:1993},{id:'JP-10',name:'Shirakawa-go',year:1995},
         ]},
+        IN:{name:'India',flag:'🇮🇳',sites:[
+          {id:'IN-1',name:'Taj Mahal',year:1983},{id:'IN-2',name:'Agra Fort',year:1983},
+          {id:'IN-3',name:'Ajanta Caves',year:1983},{id:'IN-4',name:'Ellora Caves',year:1983},
+          {id:'IN-5',name:'Fatehpur Sikri',year:1986},{id:'IN-6',name:'Goa storica',year:1986},
+        ]},
+        ID:{name:'Indonesia',flag:'🇮🇩',sites:[
+          {id:'ID-1',name:'Borobudur',year:1991},{id:'ID-2',name:'Prambanan',year:1991},
+          {id:'ID-3',name:'Parco nazionale Komodo',year:1991},{id:'ID-4',name:'Bali culturale',year:2012},
+        ]},
+        IR:{name:'Iran',flag:'🇮🇷',sites:[
+          {id:'IR-1',name:'Persepoli',year:1979},{id:'IR-2',name:'Esfahan — Piazza Naqsh-e Jahan',year:1979},
+          {id:'IR-3',name:'Pasargadae',year:2004},{id:'IR-4',name:'Giardini persiani',year:2011},
+        ]},
+        IL:{name:'Israele',flag:'🇮🇱',sites:[
+          {id:'IL-1',name:'Acri storica',year:2001},{id:'IL-2',name:'Tel Aviv — Città Bianca',year:2003},
+          {id:'IL-3',name:'Via dell\'Incenso — Città nel Negev',year:2005},
+        ]},
+        JO:{name:'Giordania',flag:'🇯🇴',sites:[
+          {id:'JO-1',name:'Petra',year:1985},{id:'JO-2',name:'Quseir Amra',year:1985},
+          {id:'JO-3',name:'Um er-Rasas',year:2004},{id:'JO-4',name:'Wadi Rum',year:2011},
+        ]},
+        KZ:{name:'Kazakistan',flag:'🇰🇿',sites:[
+          {id:'KZ-1',name:'Mausoleo di Khoja Ahmed Yasawi',year:2003},
+        ]},
+        KG:{name:'Kirghizistan',flag:'🇰🇬',sites:[
+          {id:'KG-1',name:'Sulaiman-Too',year:2009},
+        ]},
+        LA:{name:'Laos',flag:'🇱🇦',sites:[
+          {id:'LA-1',name:'Luang Prabang',year:1995},{id:'LA-2',name:'Vat Phou',year:2001},
+        ]},
+        LB:{name:'Libano',flag:'🇱🇧',sites:[
+          {id:'LB-1',name:'Anjar',year:1984},{id:'LB-2',name:'Baalbek',year:1984},
+          {id:'LB-3',name:'Byblos',year:1984},{id:'LB-4',name:'Tiro',year:1984},
+        ]},
+        MY:{name:'Malaysia',flag:'🇲🇾',sites:[
+          {id:'MY-1',name:'Kinabalu Park',year:2000},{id:'MY-2',name:'Gunung Mulu',year:2000},
+          {id:'MY-3',name:'Melaka e George Town',year:2008},
+        ]},
+        MN:{name:'Mongolia',flag:'🇲🇳',sites:[
+          {id:'MN-1',name:'Uvs Nuur Basin',year:2003},{id:'MN-2',name:'Orkhon Valley',year:2004},
+        ]},
+        MM:{name:'Myanmar',flag:'🇲🇲',sites:[
+          {id:'MM-1',name:'Città sacra di Bagan',year:2019},
+        ]},
+        NP:{name:'Nepal',flag:'🇳🇵',sites:[
+          {id:'NP-1',name:'Sagarmatha National Park',year:1979},{id:'NP-2',name:'Chitwan National Park',year:1984},
+          {id:'NP-3',name:'Lumbini',year:1997},{id:'NP-4',name:'Kathmandu Valley',year:1979},
+        ]},
+        OM:{name:'Oman',flag:'🇴🇲',sites:[
+          {id:'OM-1',name:'Bahla Fort',year:1987},{id:'OM-2',name:'Archaeological Sites of Bat',year:1988},
+          {id:'OM-3',name:'Frankincense Trail',year:2000},{id:'OM-4',name:'Falaj Irrigation Systems',year:2006},
+        ]},
+        PK:{name:'Pakistan',flag:'🇵🇰',sites:[
+          {id:'PK-1',name:'Mohenjo-daro',year:1980},{id:'PK-2',name:'Taxila',year:1980},
+          {id:'PK-3',name:'Lahore Fort e Shalimar Gardens',year:1981},
+        ]},
+        PS:{name:'Palestina',flag:'🇵🇸',sites:[
+          {id:'PS-1',name:'Betlemme — Basilica della Natività',year:2012},
+        ]},
+        QA:{name:'Qatar',flag:'🇶🇦',sites:[
+          {id:'QA-1',name:'Al Zubarah',year:2013},
+        ]},
+        KR:{name:'Corea del Sud',flag:'🇰🇷',sites:[
+          {id:'KR-1',name:'Haeinsa Temple',year:1995},{id:'KR-2',name:'Jongmyo Shrine',year:1995},
+          {id:'KR-3',name:'Changdeokgung',year:1997},{id:'KR-4',name:'Gyeongju',year:2000},
+        ]},
+        LK:{name:'Sri Lanka',flag:'🇱🇰',sites:[
+          {id:'LK-1',name:'Città sacra di Anuradhapura',year:1982},{id:'LK-2',name:'Città antica di Polonnaruwa',year:1982},
+          {id:'LK-3',name:'Rocca di Sigiriya',year:1982},{id:'LK-4',name:'Parco nazionale Sinharaja',year:1988},
+        ]},
+        SA:{name:'Arabia Saudita',flag:'🇸🇦',sites:[
+          {id:'SA-1',name:'Al-Hijr (Madain Salih)',year:2008},{id:'SA-2',name:'Distretto storico di Jeddah',year:2014},
+        ]},
+        SY:{name:'Siria',flag:'🇸🇾',sites:[
+          {id:'SY-1',name:'Damasco storica',year:1979},{id:'SY-2',name:'Bosra storica',year:1980},
+          {id:'SY-3',name:'Palmira',year:1980},{id:'SY-4',name:'Aleppo storica',year:1986},
+        ]},
+        TW:{name:'Taiwan',flag:'🇹🇼',sites:[]},
+        TH:{name:'Thailandia',flag:'🇹🇭',sites:[
+          {id:'TH-1',name:'Sukhothai',year:1991},{id:'TH-2',name:'Ayutthaya',year:1991},
+          {id:'TH-3',name:'Thungyai-Huai Kha Khaeng',year:1991},{id:'TH-4',name:'Ban Chiang',year:1992},
+        ]},
+        TR:{name:'Turchia',flag:'🇹🇷',sites:[
+          {id:'TR-1',name:'Göreme — Cappadocia',year:1985},{id:'TR-2',name:'Hattusa',year:1986},
+          {id:'TR-3',name:'Nemrut Dağ',year:1987},{id:'TR-4',name:'Xanthos-Letoon',year:1988},
+          {id:'TR-5',name:'Hierapolis-Pamukkale',year:1988},{id:'TR-6',name:'Istanbul storica',year:1985},
+          {id:'TR-7',name:'Efeso',year:2015},{id:'TR-8',name:'Troia',year:1998},
+        ]},
+        TM:{name:'Turkmenistan',flag:'🇹🇲',sites:[
+          {id:'TM-1',name:'Stato storico di Merv',year:1999},{id:'TM-2',name:'Kunya-Urgench',year:2005},
+        ]},
+        UZ:{name:'Uzbekistan',flag:'🇺🇿',sites:[
+          {id:'UZ-1',name:'Itchan Kala',year:1990},{id:'UZ-2',name:'Centro storico di Bukhara',year:1993},
+          {id:'UZ-3',name:'Centro storico di Samarcanda',year:2001},{id:'UZ-4',name:'Shakhrisyabz storica',year:2000},
+        ]},
+        VN:{name:'Vietnam',flag:'🇻🇳',sites:[
+          {id:'VN-1',name:'Ha Long Bay',year:1994},{id:'VN-2',name:'Hue storica',year:1993},
+          {id:'VN-3',name:'Hoi An storica',year:1999},{id:'VN-4',name:'Mỹ Sơn',year:1999},
+          {id:'VN-5',name:'Parco nazionale Phong Nha-Ke Bang',year:2003},
+        ]},
+      },
+      'Americhe': {
+        AR:{name:'Argentina',flag:'🇦🇷',sites:[
+          {id:'AR-1',name:'Parco nazionale Iguazú',year:1984},{id:'AR-2',name:'Los Glaciares',year:1981},
+          {id:'AR-3',name:'Missioni Gesuiti',year:1983},{id:'AR-4',name:'Cueva de las Manos',year:1999},
+        ]},
+        BO:{name:'Bolivia',flag:'🇧🇴',sites:[
+          {id:'BO-1',name:'Potosí storica',year:1987},{id:'BO-2',name:'Missioni Gesuiti dei Chiquitanos',year:1990},
+          {id:'BO-3',name:'Tiwanaku',year:2000},
+        ]},
+        BR:{name:'Brasile',flag:'🇧🇷',sites:[
+          {id:'BR-1',name:'Parco nazionale Iguaçu',year:1986},{id:'BR-2',name:'Centro storico di Ouro Preto',year:1980},
+          {id:'BR-3',name:'Brasilia',year:1987},{id:'BR-4',name:'Rio de Janeiro',year:2012},
+          {id:'BR-5',name:'Parco nazionale Serra da Capivara',year:1991},
+        ]},
+        CA:{name:'Canada',flag:'🇨🇦',sites:[
+          {id:'CA-1',name:'Parco nazionale di Nahanni',year:1978},{id:'CA-2',name:'Dinosaur Provincial Park',year:1979},
+          {id:'CA-3',name:'Head-Smashed-In Buffalo Jump',year:1981},{id:'CA-4',name:'Landscape of Grand Pré',year:2012},
+        ]},
+        CL:{name:'Cile',flag:'🇨🇱',sites:[
+          {id:'CL-1',name:'Isola di Pasqua',year:1995},{id:'CL-2',name:'Chiese di Chiloé',year:2000},
+          {id:'CL-3',name:'Città mineraria di Humberstone',year:2005},
+        ]},
+        CO:{name:'Colombia',flag:'🇨🇴',sites:[
+          {id:'CO-1',name:'Cartagena storica',year:1984},{id:'CO-2',name:'San Agustín',year:1995},
+          {id:'CO-3',name:'Mompox storica',year:1995},{id:'CO-4',name:'Parco nazionale Los Katíos',year:1994},
+        ]},
+        CR:{name:'Costa Rica',flag:'🇨🇷',sites:[
+          {id:'CR-1',name:'Parco nazionale Guanacaste',year:1999},{id:'CR-2',name:'Sfere precolombiane',year:2014},
+        ]},
+        CU:{name:'Cuba',flag:'🇨🇺',sites:[
+          {id:'CU-1',name:'L\'Avana vecchia',year:1982},{id:'CU-2',name:'Trinidad storica',year:1988},
+          {id:'CU-3',name:'Valle de Viñales',year:1999},
+        ]},
+        EC:{name:'Ecuador',flag:'🇪🇨',sites:[
+          {id:'EC-1',name:'Isole Galápagos',year:1978},{id:'EC-2',name:'Quito storica',year:1978},
+          {id:'EC-3',name:'Parco nazionale Sangay',year:1983},
+        ]},
+        SV:{name:'El Salvador',flag:'🇸🇻',sites:[
+          {id:'SV-1',name:'Joya de Cerén',year:1993},
+        ]},
+        GT:{name:'Guatemala',flag:'🇬🇹',sites:[
+          {id:'GT-1',name:'Tikal',year:1979},{id:'GT-2',name:'Antigua Guatemala',year:1979},
+        ]},
+        HN:{name:'Honduras',flag:'🇭🇳',sites:[
+          {id:'HN-1',name:'Sito maya di Copán',year:1980},
+        ]},
+        MX:{name:'Messico',flag:'🇲🇽',sites:[
+          {id:'MX-1',name:'Chichén Itzá',year:1988},{id:'MX-2',name:'Centro storico di Mexico City',year:1987},
+          {id:'MX-3',name:'Oaxaca storica e Monte Albán',year:1987},{id:'MX-4',name:'Teotihuacán',year:1987},
+          {id:'MX-5',name:'Città preispanica di Palenque',year:1987},{id:'MX-6',name:'Uxmal',year:1996},
+        ]},
+        NI:{name:'Nicaragua',flag:'🇳🇮',sites:[
+          {id:'NI-1',name:'Rovine di León Viejo',year:2000},
+        ]},
+        PA:{name:'Panama',flag:'🇵🇦',sites:[
+          {id:'PA-1',name:'Panama Vieja',year:1997},{id:'PA-2',name:'Parco nazionale Darién',year:1981},
+        ]},
+        PE:{name:'Perù',flag:'🇵🇪',sites:[
+          {id:'PE-1',name:'Machu Picchu',year:1983},{id:'PE-2',name:'Cusco storica',year:1983},
+          {id:'PE-3',name:'Linee di Nazca',year:1994},{id:'PE-4',name:'Parco nazionale Huascarán',year:1985},
+          {id:'PE-5',name:'Chan Chan',year:1986},
+        ]},
+        US:{name:'Stati Uniti',flag:'🇺🇸',sites:[
+          {id:'US-1',name:'Mesa Verde',year:1978},{id:'US-2',name:'Grand Canyon',year:1979},
+          {id:'US-3',name:'Independence Hall',year:1979},{id:'US-4',name:'Yellowstone',year:1978},
+          {id:'US-5',name:'Statue of Liberty',year:1984},{id:'US-6',name:'Monticello e University of Virginia',year:1987},
+        ]},
+        UY:{name:'Uruguay',flag:'🇺🇾',sites:[
+          {id:'UY-1',name:'Barrio histórico de la ciudad de Colonia',year:1995},
+        ]},
+        VE:{name:'Venezuela',flag:'🇻🇪',sites:[
+          {id:'VE-1',name:'Coro e il suo porto',year:1993},{id:'VE-2',name:'Parco nazionale Canaima',year:1994},
+        ]},
+      },
+      Africa: {
+        DZ:{name:'Algeria',flag:'🇩🇿',sites:[
+          {id:'DZ-1',name:'Al Qal\'a dei Beni Hammad',year:1980},{id:'DZ-2',name:'Djémila',year:1982},
+          {id:'DZ-3',name:'Timgad',year:1982},{id:'DZ-4',name:'M\'Zab Valley',year:1982},
+          {id:'DZ-5',name:'Tipasa',year:1982},{id:'DZ-6',name:'Tassili n\'Ajjer',year:1982},
+        ]},
+        AO:{name:'Angola',flag:'🇦🇴',sites:[
+          {id:'AO-1',name:'Mbanza Kongo',year:2017},
+        ]},
+        BJ:{name:'Benin',flag:'🇧🇯',sites:[
+          {id:'BJ-1',name:'Palais royaux d\'Abomey',year:1985},
+        ]},
+        BW:{name:'Botswana',flag:'🇧🇼',sites:[
+          {id:'BW-1',name:'Tsodilo',year:2001},{id:'BW-2',name:'Okavango Delta',year:2014},
+        ]},
+        BF:{name:'Burkina Faso',flag:'🇧🇫',sites:[
+          {id:'BF-1',name:'Ruins of Loropéni',year:2009},
+        ]},
+        CM:{name:'Camerun',flag:'🇨🇲',sites:[
+          {id:'CM-1',name:'Dja Faunal Reserve',year:1987},
+        ]},
+        CV:{name:'Capo Verde',flag:'🇨🇻',sites:[
+          {id:'CV-1',name:'Città Velha',year:2009},
+        ]},
+        CF:{name:'Rep. Centrafricana',flag:'🇨🇫',sites:[
+          {id:'CF-1',name:'Manovo-Gounda St Floris',year:1988},
+        ]},
+        CI:{name:'Costa d\'Avorio',flag:'🇨🇮',sites:[
+          {id:'CI-1',name:'Parc National de la Comoé',year:1983},{id:'CI-2',name:'Tai National Park',year:1982},
+        ]},
+        EG:{name:'Egitto',flag:'🇪🇬',sites:[
+          {id:'EG-1',name:'Memphis e necropoli — le Piramidi',year:1979},{id:'EG-2',name:'Tebe storica',year:1979},
+          {id:'EG-3',name:'Monumenti nubiani',year:1979},{id:'EG-4',name:'Il Cairo storico',year:1979},
+          {id:'EG-5',name:'Abu Mena',year:1979},{id:'EG-6',name:'Santa Caterina',year:2002},
+        ]},
+        ET:{name:'Etiopia',flag:'🇪🇹',sites:[
+          {id:'ET-1',name:'Parco nazionale Simien',year:1978},{id:'ET-2',name:'Aksum',year:1980},
+          {id:'ET-3',name:'Fasil Ghebbi',year:1979},{id:'ET-4',name:'Lalibela',year:1978},
+          {id:'ET-5',name:'Valle dell\'Omo bassa',year:1980},
+        ]},
+        GA:{name:'Gabon',flag:'🇬🇦',sites:[
+          {id:'GA-1',name:'Ecosystem and Relict Cultural Landscape of Lopé-Okanda',year:2007},
+        ]},
+        GH:{name:'Ghana',flag:'🇬🇭',sites:[
+          {id:'GH-1',name:'Forti e castelli del Ghana',year:1979},{id:'GH-2',name:'Villaggi Ashanti tradizionali',year:1980},
+        ]},
+        KE:{name:'Kenya',flag:'🇰🇪',sites:[
+          {id:'KE-1',name:'Parco nazionale Mt. Kenya',year:1997},{id:'KE-2',name:'Parco nazionale/riserva Lago Turkana',year:1997},
+          {id:'KE-3',name:'Lamu Old Town',year:2001},{id:'KE-4',name:'Parchi nazionali Tsavo',year:1999},
+        ]},
+        LS:{name:'Lesotho',flag:'🇱🇸',sites:[
+          {id:'LS-1',name:'Maloti-Drakensberg Park',year:2000},
+        ]},
+        LY:{name:'Libia',flag:'🇱🇾',sites:[
+          {id:'LY-1',name:'Leptis Magna',year:1982},{id:'LY-2',name:'Sabratha',year:1982},
+          {id:'LY-3',name:'Cirene',year:1982},{id:'LY-4',name:'Akakus rock-art sites',year:1985},
+        ]},
+        MG:{name:'Madagascar',flag:'🇲🇬',sites:[
+          {id:'MG-1',name:'Tsingy de Bemaraha',year:1990},{id:'MG-2',name:'Colline di Ambohimanga',year:2001},
+        ]},
+        MW:{name:'Malawi',flag:'🇲🇼',sites:[
+          {id:'MW-1',name:'Parco nazionale del Lago Malawi',year:1984},{id:'MW-2',name:'Chongoni Rock-Art Area',year:2006},
+        ]},
+        ML:{name:'Mali',flag:'🇲🇱',sites:[
+          {id:'ML-1',name:'Vecchia Timbuctù',year:1988},{id:'ML-2',name:'Djenné storica',year:1988},
+          {id:'ML-3',name:'Falésie di Bandiagara',year:1989},{id:'ML-4',name:'Tomba degli Askia',year:2004},
+        ]},
+        MA:{name:'Marocco',flag:'🇲🇦',sites:[
+          {id:'MA-1',name:'Medina di Fez',year:1981},{id:'MA-2',name:'Medina di Marrakech',year:1985},
+          {id:'MA-3',name:'Ksar di Aït-Ben-Haddou',year:1987},{id:'MA-4',name:'Medina di Essaouira',year:2001},
+          {id:'MA-5',name:'Rabat storica',year:2012},{id:'MA-6',name:'Medina di Meknès',year:1996},
+        ]},
+        MZ:{name:'Mozambico',flag:'🇲🇿',sites:[
+          {id:'MZ-1',name:'Isola di Mozambico',year:1991},
+        ]},
+        NA:{name:'Namibia',flag:'🇳🇦',sites:[
+          {id:'NA-1',name:'Parco nazionale Twyfelfontein',year:2007},
+        ]},
+        NE:{name:'Niger',flag:'🇳🇪',sites:[
+          {id:'NE-1',name:'Parco nazionale dell\'Air e del Ténéré',year:1991},{id:'NE-2',name:'Riserva naturale nazionale di W',year:1996},
+        ]},
+        NG:{name:'Nigeria',flag:'🇳🇬',sites:[
+          {id:'NG-1',name:'Osun-Osogbo Sacred Grove',year:2005},{id:'NG-2',name:'Sukur Cultural Landscape',year:1999},
+        ]},
+        RW:{name:'Ruanda',flag:'🇷🇼',sites:[]},
+        SN:{name:'Senegal',flag:'🇸🇳',sites:[
+          {id:'SN-1',name:'Isola di Gorée',year:1978},{id:'SN-2',name:'Parco nazionale del Niokolo-Koba',year:1981},
+          {id:'SN-3',name:'Parco nazionale degli Uccelli del Djoudj',year:1981},
+        ]},
+        ZA:{name:'Sudafrica',flag:'🇿🇦',sites:[
+          {id:'ZA-1',name:'Robben Island',year:1999},{id:'ZA-2',name:'Cradle of Humankind',year:1999},
+          {id:'ZA-3',name:'iSimangaliso Wetland Park',year:1999},{id:'ZA-4',name:'Mapungubwe',year:2003},
+          {id:'ZA-5',name:'Cape Floral Region',year:2004},{id:'ZA-6',name:'uKhahlamba Drakensberg Park',year:2000},
+        ]},
+        TZ:{name:'Tanzania',flag:'🇹🇿',sites:[
+          {id:'TZ-1',name:'Parco nazionale Serengeti',year:1981},{id:'TZ-2',name:'Conservazione del Ngorongoro',year:1979},
+          {id:'TZ-3',name:'Zanzibar — Stone Town',year:2000},{id:'TZ-4',name:'Parco nazionale Kilimanjaro',year:1987},
+        ]},
+        TN:{name:'Tunisia',flag:'🇹🇳',sites:[
+          {id:'TN-1',name:'Cartagine',year:1979},{id:'TN-2',name:'Medina di Tunisi',year:1979},
+          {id:'TN-3',name:'Amphitheatre di El Jem',year:1979},{id:'TN-4',name:'Medina di Sousse',year:1988},
+          {id:'TN-5',name:'Kairouan',year:1988},{id:'TN-6',name:'Dougga',year:1997},
+        ]},
+        UG:{name:'Uganda',flag:'🇺🇬',sites:[
+          {id:'UG-1',name:'Bwindi Impenetrable National Park',year:1994},{id:'UG-2',name:'Rwenzori Mountains',year:1994},
+          {id:'UG-3',name:'Kasubi Tombs',year:2001},
+        ]},
+        ZM:{name:'Zambia',flag:'🇿🇲',sites:[
+          {id:'ZM-1',name:'Mosi-oa-Tunya / Victoria Falls',year:1989},
+        ]},
+        ZW:{name:'Zimbabwe',flag:'🇿🇼',sites:[
+          {id:'ZW-1',name:'Mana Pools',year:1984},{id:'ZW-2',name:'Zimbabwe Grande',year:1986},
+          {id:'ZW-3',name:'Khami Ruins',year:1986},{id:'ZW-4',name:'Victoria Falls',year:1989},
+        ]},
+      },
+      Oceania: {
+        AU:{name:'Australia',flag:'🇦🇺',sites:[
+          {id:'AU-1',name:'Grande Barriera Corallina',year:1981},{id:'AU-2',name:'Kakadu National Park',year:1981},
+          {id:'AU-3',name:'Willandra Lakes Region',year:1981},{id:'AU-4',name:'Uluru-Kata Tjuta',year:1987},
+          {id:'AU-5',name:'Opera House di Sydney',year:2007},{id:'AU-6',name:'Purnululu National Park',year:2003},
+        ]},
+        FJ:{name:'Figi',flag:'🇫🇯',sites:[
+          {id:'FJ-1',name:'Levuka storica',year:2013},
+        ]},
+        MH:{name:'Isole Marshall',flag:'🇲🇭',sites:[
+          {id:'MH-1',name:'Bikini Atoll Nuclear Test Site',year:2010},
+        ]},
+        NZ:{name:'Nuova Zelanda',flag:'🇳🇿',sites:[
+          {id:'NZ-1',name:'Te Wahipounamu',year:1990},{id:'NZ-2',name:'Tongariro National Park',year:1990},
+          {id:'NZ-3',name:'New Zealand Sub-Antarctic Islands',year:1998},
+        ]},
+        PG:{name:'Papua Nuova Guinea',flag:'🇵🇬',sites:[
+          {id:'PG-1',name:'Kuk Early Agricultural Site',year:2008},
+        ]},
+        WS:{name:'Samoa',flag:'🇼🇸',sites:[]},
+        VU:{name:'Vanuatu',flag:'🇻🇺',sites:[
+          {id:'VU-1',name:'Chief Roi Mata\'s Domain',year:2008},
+        ]},
       },
     };
 
     // ISO2 → coordinate centro paese per flyTo
     const CENTERS = {
-      AT:[47.5,14.5],HR:[45.1,15.2],DK:[56.0,10.0],FI:[61.9,25.7],
-      FR:[46.2,2.2],VA:[41.9,12.45],DE:[51.1,10.4],GR:[39.0,22.0],
-      IT:[41.9,12.5],LI:[47.1,9.5],MT:[35.9,14.5],MC:[43.73,7.4],
-      NL:[52.3,5.3],PL:[51.9,19.1],CZ:[49.8,15.5],TH:[15.9,100.9],
-      SM:[43.94,12.46],JP:[36.2,138.3],ES:[40.5,-3.7],SE:[60.1,18.6],CH:[46.8,8.2],
+      // Europa
+      AL:[41.1,20.2],AD:[42.5,1.5],AT:[47.5,14.5],BE:[50.5,4.5],BA:[44.2,17.9],
+      BG:[42.7,25.5],HR:[45.1,15.2],CZ:[49.8,15.5],DK:[56.0,10.0],EE:[58.7,25.0],
+      FI:[61.9,25.7],FR:[46.2,2.2],DE:[51.1,10.4],GR:[39.0,22.0],HU:[47.2,19.5],
+      IE:[53.4,-8.2],IS:[64.9,-18.7],IT:[41.9,12.5],LV:[56.9,24.6],LI:[47.1,9.5],
+      LT:[55.2,23.9],LU:[49.8,6.1],MT:[35.9,14.5],MC:[43.73,7.4],ME:[42.7,19.4],
+      MK:[41.6,21.7],NL:[52.3,5.3],NO:[60.5,8.5],PL:[51.9,19.1],PT:[39.4,-8.2],
+      GB:[54.4,-3.4],RO:[45.9,24.9],SM:[43.94,12.46],RS:[44.0,21.0],SK:[48.7,19.7],
+      SI:[46.1,14.9],ES:[40.5,-3.7],SE:[60.1,18.6],CH:[46.8,8.2],UA:[48.4,31.2],VA:[41.9,12.45],
+      // Asia
+      AM:[40.1,45.0],AZ:[40.1,47.6],BH:[26.0,50.6],KH:[12.6,104.9],CN:[35.9,104.2],
+      AE:[23.4,53.8],GE:[42.3,43.4],JP:[36.2,138.3],IN:[20.6,79.0],ID:[-2.5,118.0],
+      IR:[32.4,53.7],IL:[31.5,35.0],JO:[31.2,36.5],KZ:[48.0,68.0],KG:[41.2,74.8],
+      LA:[18.2,103.8],LB:[33.9,35.5],MY:[3.1,101.7],MN:[46.9,103.8],MM:[17.1,96.1],
+      NP:[28.4,84.1],OM:[21.5,55.9],PK:[30.4,69.3],PS:[31.9,35.2],QA:[25.4,51.2],
+      KR:[36.5,127.9],LK:[7.9,80.8],SA:[23.9,45.1],SY:[34.8,38.9],TW:[23.7,121.0],
+      TH:[15.9,100.9],TR:[39.0,35.2],TM:[39.8,59.6],UZ:[41.4,64.6],VN:[14.1,108.3],
+      // Americhe
+      AR:[-34.6,-64.3],BO:[-16.3,-63.6],BR:[-10.3,-53.2],CA:[56.1,-106.3],
+      CL:[-35.7,-71.5],CO:[4.1,-72.9],CR:[9.7,-83.8],CU:[21.5,-79.5],
+      EC:[-1.8,-78.2],SV:[13.8,-88.9],GT:[15.8,-90.2],HN:[15.2,-86.2],
+      MX:[23.6,-102.5],NI:[12.9,-85.2],PA:[8.5,-80.8],PE:[-9.2,-75.0],
+      US:[37.1,-95.7],UY:[-32.5,-55.8],VE:[6.4,-66.6],
+      // Africa
+      DZ:[28.0,2.6],AO:[-11.2,17.9],BJ:[9.3,2.3],BW:[-22.3,24.7],BF:[12.4,-1.6],
+      CM:[3.9,11.5],CV:[16.0,-24.0],CF:[7.0,21.0],CI:[5.4,-4.0],EG:[26.8,30.8],
+      ET:[9.1,40.5],GA:[-0.8,11.6],GH:[8.0,-1.2],KE:[-0.0,37.9],LS:[-29.6,28.2],
+      LY:[26.3,17.2],MG:[-18.8,47.0],MW:[-13.3,34.3],ML:[17.6,-2.0],MA:[31.8,-7.1],
+      MZ:[-18.7,35.5],NA:[-22.0,17.0],NE:[17.6,8.1],NG:[9.1,8.7],RW:[-1.9,29.9],
+      SN:[14.5,-14.5],ZA:[-29.0,25.0],TZ:[-6.4,34.9],TN:[34.0,9.0],UG:[1.4,32.3],
+      ZM:[-13.1,27.8],ZW:[-19.0,29.2],
+      // Oceania
+      AU:[-25.3,133.8],FJ:[-17.7,178.1],MH:[7.1,171.2],NZ:[-40.9,174.9],
+      PG:[-6.3,143.9],WS:[-13.8,-172.1],VU:[-15.4,166.9],
     };
 
     // ── Mappa visitati (caricata da Firebase) ─────────────────────────────────
@@ -296,14 +738,33 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(map);
     map.setView([30, 15], 2);
 
-    // GeoJSON dei paesi visitati
-    const VISITED_ISO2 = new Set(Object.values(COUNTRIES).flatMap(c => Object.keys(c)));
-    // Mappa numeric → iso2
+    // Mappa numeric ISO3166 → iso2
     const NUM2ISO = {
-      '040':'AT','191':'HR','208':'DK','246':'FI','250':'FR','336':'VA',
-      '276':'DE','300':'GR','380':'IT','438':'LI','470':'MT','492':'MC',
-      '528':'NL','616':'PL','203':'CZ','764':'TH','674':'SM','392':'JP',
-      '724':'ES','752':'SE','756':'CH',
+      // Europa
+      '008':'AL','020':'AD','040':'AT','056':'BE','070':'BA','100':'BG','191':'HR',
+      '203':'CZ','208':'DK','233':'EE','246':'FI','250':'FR','276':'DE','300':'GR',
+      '348':'HU','372':'IE','352':'IS','380':'IT','428':'LV','438':'LI','440':'LT',
+      '442':'LU','470':'MT','492':'MC','499':'ME','807':'MK','528':'NL','578':'NO',
+      '616':'PL','620':'PT','826':'GB','642':'RO','674':'SM','688':'RS','703':'SK',
+      '705':'SI','724':'ES','752':'SE','756':'CH','804':'UA','336':'VA',
+      // Asia
+      '051':'AM','031':'AZ','048':'BH','116':'KH','156':'CN','784':'AE','268':'GE',
+      '392':'JP','356':'IN','360':'ID','364':'IR','376':'IL','400':'JO','398':'KZ',
+      '417':'KG','418':'LA','422':'LB','458':'MY','496':'MN','104':'MM','524':'NP',
+      '512':'OM','586':'PK','275':'PS','634':'QA','410':'KR','144':'LK','682':'SA',
+      '760':'SY','158':'TW','764':'TH','792':'TR','795':'TM','860':'UZ','704':'VN',
+      // Americhe
+      '032':'AR','068':'BO','076':'BR','124':'CA','152':'CL','170':'CO','188':'CR',
+      '192':'CU','218':'EC','222':'SV','320':'GT','340':'HN','484':'MX','558':'NI',
+      '591':'PA','604':'PE','840':'US','858':'UY','862':'VE',
+      // Africa
+      '012':'DZ','024':'AO','204':'BJ','072':'BW','854':'BF','120':'CM','132':'CV',
+      '140':'CF','384':'CI','818':'EG','231':'ET','266':'GA','288':'GH','404':'KE',
+      '426':'LS','434':'LY','450':'MG','454':'MW','466':'ML','504':'MA','508':'MZ',
+      '516':'NA','562':'NE','566':'NG','646':'RW','686':'SN','710':'ZA','834':'TZ',
+      '788':'TN','800':'UG','894':'ZM','716':'ZW',
+      // Oceania
+      '036':'AU','242':'FJ','584':'MH','554':'NZ','598':'PG','882':'WS','548':'VU',
     };
 
     window._geoLayer = null;
