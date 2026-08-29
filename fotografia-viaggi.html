@@ -17,6 +17,7 @@
     html,body{height:100%}
     body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
 
+    /* ── Header ── */
     #map-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--border)}
     .header-btn{background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.58rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;width:52px;text-decoration:none;-webkit-tap-highlight-color:transparent}
     .header-center-travel{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -24,30 +25,59 @@
     .map-sub{font-size:.46rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
     .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;-webkit-tap-highlight-color:transparent}
 
+    /* ── Page layout ── */
     #page-body{display:flex;flex-direction:column;flex:1;width:100%;padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
 
-    #map-container{width:100%;height:55vw;min-height:260px;max-height:60vh;z-index:1;position:relative}
-    #leaflet-map{width:100%;height:100%}
+    /* ── Mappa full-width, tocca l'header e i bordi ── */
+    #map-container{width:100%;height:55vw;min-height:260px;max-height:60vh;z-index:1;position:relative;margin:0}
+    #leaflet-map{width:100%;height:100%;display:block}
     .leaflet-control-attribution{display:none!important}
+    /* Rimuove margine interno Leaflet che crea le bande */
+    .leaflet-container{background:var(--bg)}
 
+    /* ── Sezione paesi ── */
     #countries-section{padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 80px)}
 
-    .continent-block{margin-bottom:24px}
-    .continent-title{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 0 6px;border-bottom:2px solid var(--gold);margin-bottom:10px}
+    /* ── Blocco continente con accordion ── */
+    .continent-block{margin-bottom:16px}
+    .continent-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 6px;border-bottom:2px solid var(--gold);margin-bottom:0;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+    .continent-title-text{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:700}
+    .continent-chevron{font-size:.7rem;color:var(--gold);transition:transform .25s;flex-shrink:0}
+    .continent-block.open .continent-chevron{transform:rotate(180deg)}
+    .continent-body{display:none;padding-top:10px}
+    .continent-block.open .continent-body{display:block}
 
+    /* ── Card paese ── */
     .country-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden}
     .country-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
     .country-flag{font-size:1.6rem;line-height:1;flex-shrink:0}
     .country-name{font-size:.88rem;font-weight:700;color:var(--text);flex:1}
-    .country-chevron{font-size:.8rem;color:var(--muted);transition:transform .25s}
+    /* Flag "visitato" accanto al nome */
+    .country-visited-badge{font-size:.7rem;background:#22c55e;color:#fff;border-radius:8px;padding:1px 7px;margin-left:4px;letter-spacing:.05em;font-weight:600;display:none}
+    .country-card.visited .country-visited-badge{display:inline-block}
+    .country-card.visited .country-name{color:var(--gold)}
+    /* Toggle visitato */
+    .country-visit-toggle{font-size:1.1rem;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:2px 4px;border-radius:8px;transition:transform .15s}
+    .country-visit-toggle:active{transform:scale(.85)}
+    .country-chevron{font-size:.8rem;color:var(--muted);transition:transform .25s;flex-shrink:0}
     .country-card.open .country-chevron{transform:rotate(180deg)}
     .country-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
     .country-card.open .country-body{display:block}
 
+    /* ── Section title ── */
     .section-title{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
     .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
     .section-badge{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1px 7px;font-size:.54rem;color:var(--muted);font-weight:500}
 
+    /* ── Link Foto Drive (campo fisso paese) ── */
+    .drive-section{margin-top:14px;margin-bottom:2px}
+    .drive-link-wrap{display:flex;align-items:center;gap:8px;margin-top:4px}
+    .drive-link-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:.72rem;color:var(--text);font-family:inherit}
+    .drive-link-input:focus{outline:none;border-color:var(--gold)}
+    .drive-link-save{background:var(--gold);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:.66rem;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+    .drive-link-open{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:7px;padding:3px 9px;margin-top:5px}
+
+    /* ── UNESCO ── */
     .unesco-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
     .unesco-item:last-child{border-bottom:none}
     .unesco-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;background:var(--card);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s;margin-top:1px}
@@ -55,11 +85,11 @@
     .unesco-name{font-size:.76rem;font-weight:600;color:var(--text);line-height:1.3}
     .unesco-year{font-size:.56rem;color:var(--muted);margin-top:1px}
 
+    /* ── Viaggi ── */
     .trip-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
     .trip-title{font-size:.8rem;font-weight:700;color:var(--text)}
     .trip-dates{font-size:.58rem;color:var(--muted);margin-top:2px}
     .trip-notes{font-size:.72rem;color:var(--text);line-height:1.5;margin-top:5px;white-space:pre-wrap}
-    .trip-drive{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:.62rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:7px;padding:3px 9px}
     .trip-actions{display:flex;gap:6px;margin-top:7px}
     .btn-sm{background:none;border:1px solid var(--border);border-radius:7px;padding:3px 9px;font-size:.58rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
     .btn-sm.danger{color:var(--red);border-color:var(--red)}
@@ -77,6 +107,7 @@
     .btn-save{flex:1;background:var(--gold);color:#fff;border:none;border-radius:9px;padding:8px;font-size:.72rem;font-family:inherit;font-weight:600;cursor:pointer}
     .btn-cancel{background:none;border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-size:.72rem;font-family:inherit;color:var(--muted);cursor:pointer}
 
+    /* ── Stats bar ── */
     #stats-bar{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.6rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
     .sv{color:var(--gold);font-weight:700;font-size:.72rem;margin-right:2px}
   </style>
@@ -115,7 +146,7 @@
   </div>
 
   <div id="stats-bar">
-    <div><span class="sv" id="sv-countries">21</span>paesi</div>
+    <div><span class="sv" id="sv-countries">0</span>paesi</div>
     <div><span class="sv" id="sv-unesco">0</span>UNESCO</div>
     <div><span class="sv" id="sv-trips">0</span>viaggi</div>
   </div>
@@ -252,12 +283,20 @@
       SM:[43.94,12.46],JP:[36.2,138.3],ES:[40.5,-3.7],SE:[60.1,18.6],CH:[46.8,8.2],
     };
 
+    // ── Mappa visitati (caricata da Firebase) ─────────────────────────────────
+    // iso2 → true/false
+    const visitedCountries = new Set();
+
     // ── Leaflet ───────────────────────────────────────────────────────────────
+    // Calcola altezza header per il padding-top della mappa
+    const headerEl = document.getElementById('map-header');
+    const headerH = headerEl.offsetHeight || 60;
+
     const map = L.map('leaflet-map', {zoomControl:true, attributionControl:false});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(map);
     map.setView([30, 15], 2);
 
-    // GeoJSON dei paesi visitati (da file locale già nel repo)
+    // GeoJSON dei paesi visitati
     const VISITED_ISO2 = new Set(Object.values(COUNTRIES).flatMap(c => Object.keys(c)));
     // Mappa numeric → iso2
     const NUM2ISO = {
@@ -272,6 +311,16 @@
     function geoStyle(f) {
       const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
       if (!iso2) return {fillOpacity: 0.04, weight: 0.5, color: isDark ? '#3a4f62' : '#b0bec8'};
+      // Se il paese è nella lista ma non ancora visitato: tenue
+      if (!visitedCountries.has(iso2)) {
+        return {
+          color: isDark ? '#3a4f62' : '#b0bec8',
+          weight: 1,
+          fillColor: isDark ? '#2a3a4a' : '#d8e8f0',
+          fillOpacity: 0.25,
+        };
+      }
+      // Paese visitato: blu stile originale
       return {
         color: isDark ? '#9DDDE8' : '#0d4f80',
         weight: 3,
@@ -288,10 +337,6 @@
     fetch('./countries-110m.json')
       .then(r => r.json())
       .then(topo => {
-        // Converti TopoJSON → GeoJSON manualmente senza libreria
-        // Usiamo solo i bounding box come cerchi — no, usiamo un approccio diverso:
-        // Leaflet può leggere GeoJSON direttamente, ma il nostro file è TopoJSON.
-        // Usiamo topojson-client via script tag
         const s = document.createElement('script');
         s.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
         s.onload = () => {
@@ -303,10 +348,12 @@
               if (!iso2) return;
               layer.on('click', () => {
                 map.flyTo(CENTERS[iso2] || layer.getBounds().getCenter(), 5, {duration:1});
-                // Scorri alla card del paese
                 const card = document.getElementById('card-'+iso2);
                 if (card) {
                   card.classList.add('open');
+                  // Apri anche il blocco continente padre
+                  const block = card.closest('.continent-block');
+                  if (block) block.classList.add('open');
                   setTimeout(() => card.scrollIntoView({behavior:'smooth',block:'start'}), 400);
                 }
               });
@@ -315,20 +362,56 @@
         };
         document.head.appendChild(s);
       })
-      .catch(() => {/* se fallisce la mappa funziona comunque senza colori */});
+      .catch(() => {});
+
+    // ── Stato visitati ────────────────────────────────────────────────────────
+    function updateVisitedCount() {
+      document.getElementById('sv-countries').textContent = visitedCountries.size;
+    }
+
+    function setCountryVisited(iso2, visited) {
+      if (visited) visitedCountries.add(iso2);
+      else visitedCountries.delete(iso2);
+      // Aggiorna card UI
+      const card = document.getElementById('card-'+iso2);
+      if (card) {
+        card.classList.toggle('visited', visited);
+        const btn = card.querySelector('.country-visit-toggle');
+        if (btn) btn.textContent = visited ? '🏁' : '🏴';
+      }
+      // Aggiorna mappa
+      if (window._geoLayer) paintGeo();
+      updateVisitedCount();
+    }
 
     // ── Render lista paesi ────────────────────────────────────────────────────
     const section = document.getElementById('countries-section');
-    const unsubs = {};
+    const globalUnsubs = {};
 
     function buildCountriesList() {
       section.innerHTML = '';
       Object.entries(COUNTRIES).forEach(([continent, countries]) => {
         const block = document.createElement('div');
-        block.className = 'continent-block';
-        block.innerHTML = `<div class="continent-title">🌍 ${continent}</div>`;
+        block.className = 'continent-block'; // chiuso di default
 
-        Object.entries(countries).forEach(([iso2, info]) => {
+        // Ordina i paesi alfabeticamente per nome
+        const sortedEntries = Object.entries(countries).sort(([,a],[,b]) => a.name.localeCompare(b.name, 'it'));
+
+        block.innerHTML = `
+          <div class="continent-header">
+            <div class="continent-title-text">🌍 ${continent}</div>
+            <div class="continent-chevron">▾</div>
+          </div>
+          <div class="continent-body"></div>`;
+
+        // Toggle accordion continente
+        block.querySelector('.continent-header').addEventListener('click', () => {
+          block.classList.toggle('open');
+        });
+
+        const bodyEl = block.querySelector('.continent-body');
+
+        sortedEntries.forEach(([iso2, info]) => {
           const card = document.createElement('div');
           card.className = 'country-card';
           card.id = 'card-' + iso2;
@@ -336,10 +419,19 @@
           card.innerHTML = `
             <div class="country-header">
               <div class="country-flag">${info.flag}</div>
-              <div class="country-name">${info.name}</div>
+              <div class="country-name">${info.name}<span class="country-visited-badge">✓ visitato</span></div>
+              <div class="country-visit-toggle" title="Segna come visitato">🏴</div>
               <div class="country-chevron">▾</div>
             </div>
             <div class="country-body">
+              <div class="drive-section">
+                <div class="section-title">📁 Foto Drive</div>
+                <div class="drive-link-wrap">
+                  <input class="drive-link-input" id="di-${iso2}" type="url" placeholder="https://drive.google.com/…"/>
+                  <button class="drive-link-save" id="ds-${iso2}">Salva</button>
+                </div>
+                <div id="dl-${iso2}"></div>
+              </div>
               <div class="section-title">🏛️ Patrimoni UNESCO <span class="section-badge" id="ub-${iso2}">0/${info.sites.length}</span></div>
               <div id="ul-${iso2}"></div>
               <div class="section-title">✈️ I Miei Viaggi <span class="section-badge" id="tb-${iso2}">0</span></div>
@@ -352,7 +444,6 @@
                   <div><label class="form-label">Fine</label><input class="form-input" id="tf-e-${iso2}" type="date"/></div>
                 </div>
                 <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="tf-n-${iso2}" placeholder="Appunti di viaggio…"></textarea></div>
-                <div class="form-row"><label class="form-label">Link Google Drive</label><input class="form-input" id="tf-d-${iso2}" type="url" placeholder="https://drive.google.com/…"/></div>
                 <div class="form-btns">
                   <button class="btn-cancel" id="tf-cancel-${iso2}">Annulla</button>
                   <button class="btn-save" id="tf-save-${iso2}">Salva</button>
@@ -360,17 +451,34 @@
               </div>
             </div>`;
 
-          // Toggle apertura
           let editingId = null;
-          card.querySelector('.country-header').addEventListener('click', () => {
+
+          // Toggle apertura card paese
+          card.querySelector('.country-header').addEventListener('click', e => {
+            // Non propagare se si clicca sul toggle visitato
+            if (e.target.closest('.country-visit-toggle')) return;
             const wasOpen = card.classList.contains('open');
             card.classList.toggle('open');
-            if (!wasOpen) startSubs(iso2, info);
+            if (!wasOpen) {
+              startSubs(iso2, info);
+              if (CENTERS[iso2]) map.flyTo(CENTERS[iso2], 5, {duration:1});
+            }
           });
 
-          // Fly to su mappa quando si apre
-          card.querySelector('.country-header').addEventListener('click', () => {
-            if (CENTERS[iso2]) map.flyTo(CENTERS[iso2], 5, {duration:1});
+          // Toggle "visitato"
+          card.querySelector('.country-visit-toggle').addEventListener('click', async e => {
+            e.stopPropagation();
+            const nowVisited = !visitedCountries.has(iso2);
+            setCountryVisited(iso2, nowVisited);
+            // Salva su Firebase come parte dei dati paese
+            await saveCountryData(iso2, {visited: nowVisited});
+          });
+
+          // Drive link
+          card.querySelector(`#ds-${iso2}`).addEventListener('click', async () => {
+            const url = document.getElementById(`di-${iso2}`).value.trim();
+            await saveCountryData(iso2, {driveUrl: url});
+            renderDriveLink(iso2, url);
           });
 
           // Add trip
@@ -382,24 +490,26 @@
           });
           card.querySelector(`#tf-cancel-${iso2}`).addEventListener('click', () => closeForm(iso2, card));
           card.querySelector(`#tf-save-${iso2}`).addEventListener('click', async () => {
+            const saveBtn = card.querySelector(`#tf-save-${iso2}`);
+            const resolvedId = editingId || saveBtn.dataset.editId || null;
             const data = {
               title:    document.getElementById(`tf-title-${iso2}`).value.trim() || 'Viaggio',
               dateStart:document.getElementById(`tf-s-${iso2}`).value,
               dateEnd:  document.getElementById(`tf-e-${iso2}`).value,
               notes:    document.getElementById(`tf-n-${iso2}`).value.trim(),
-              driveUrl: document.getElementById(`tf-d-${iso2}`).value.trim(),
             };
-            if (editingId) await updateTripDoc(iso2, editingId, data);
-            else           await addTripDoc(iso2, data);
+            if (resolvedId) await updateTripDoc(iso2, resolvedId, data);
+            else            await addTripDoc(iso2, data);
             closeForm(iso2, card);
           });
 
           function clearForm(c) {
-            ['title','s','e','n','d'].forEach(k => {
+            ['title','s','e','n'].forEach(k => {
               const el = document.getElementById(`tf-${k}-${c}`);
               if (el) el.value = '';
             });
-            document.getElementById(`tf-save-${c}`).textContent = 'Salva';
+            card.querySelector(`#tf-save-${iso2}`).textContent = 'Salva';
+            delete card.querySelector(`#tf-save-${iso2}`).dataset.editId;
           }
           function closeForm(c, cd) {
             cd.querySelector(`#tf-${c}`).classList.remove('open');
@@ -407,22 +517,40 @@
             editingId = null;
           }
 
-          block.appendChild(card);
+          bodyEl.appendChild(card);
         });
 
         section.appendChild(block);
       });
     }
 
-    // ── Subscriptions Firebase ────────────────────────────────────────────────
-    let globalUnsubs = {};
-    let totalTrips = 0;
+    function renderDriveLink(iso2, url) {
+      const el = document.getElementById(`dl-${iso2}`);
+      if (!el) return;
+      if (url) {
+        el.innerHTML = `<a class="drive-link-open" href="${esc(url)}" target="_blank" rel="noopener">📂 Apri cartella foto</a>`;
+      } else {
+        el.innerHTML = '';
+      }
+    }
 
+    // ── Subscriptions Firebase ────────────────────────────────────────────────
     function startSubs(iso2, info) {
-      if (globalUnsubs[iso2]) return; // già attive
+      if (globalUnsubs[iso2]) return;
 
       globalUnsubs[iso2+'_c'] = subscribeCountry(iso2, data => {
         const visited = data?.visitedUnescoIds || [];
+        const isVisited = data?.visited || false;
+        const driveUrl = data?.driveUrl || '';
+
+        // Stato visitato paese
+        setCountryVisited(iso2, isVisited);
+
+        // Link Drive
+        const inputEl = document.getElementById(`di-${iso2}`);
+        if (inputEl && driveUrl) inputEl.value = driveUrl;
+        renderDriveLink(iso2, driveUrl);
+
         renderUnesco(iso2, info.sites, visited);
         document.getElementById(`ub-${iso2}`).textContent = `${visited.length}/${info.sites.length}`;
         updateUnescoStats();
@@ -436,7 +564,6 @@
     }
 
     function updateUnescoStats() {
-      // ricalcola da DOM
       let tot = 0;
       document.querySelectorAll('.unesco-check.checked').forEach(() => tot++);
       document.getElementById('sv-unesco').textContent = tot;
@@ -451,7 +578,9 @@
       const el = document.getElementById(`ul-${iso2}`);
       if (!el) return;
       if (!sites.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--muted);padding:6px 0">Nessun sito UNESCO registrato.</div>'; return; }
-      el.innerHTML = sites.map(s => `
+      // Ordina per anno poi per nome
+      const sorted = [...sites].sort((a,b) => a.year - b.year || a.name.localeCompare(b.name,'it'));
+      el.innerHTML = sorted.map(s => `
         <div class="unesco-item">
           <div class="unesco-check ${visited.includes(s.id)?'checked':''}" data-id="${s.id}" data-iso="${iso2}">${visited.includes(s.id)?'✓':''}</div>
           <div><div class="unesco-name">${s.name}</div><div class="unesco-year">📅 ${s.year}</div></div>
@@ -476,7 +605,6 @@
           <div class="trip-title">✈️ ${esc(t.title||'Viaggio')}</div>
           ${t.dateStart?`<div class="trip-dates">📅 ${t.dateStart}${t.dateEnd?' → '+t.dateEnd:''}</div>`:''}
           ${t.notes?`<div class="trip-notes">${esc(t.notes)}</div>`:''}
-          ${t.driveUrl?`<a class="trip-drive" href="${esc(t.driveUrl)}" target="_blank" rel="noopener">📁 Foto su Google Drive</a>`:''}
           <div class="trip-actions">
             <button class="btn-sm primary" data-edit="${t._docId}" data-iso="${iso2}">✏️</button>
             <button class="btn-sm danger" data-del="${t._docId}" data-iso="${iso2}">🗑</button>
@@ -493,10 +621,9 @@
         document.getElementById(`tf-s-${iso2}`).value = trip.dateStart||'';
         document.getElementById(`tf-e-${iso2}`).value = trip.dateEnd||'';
         document.getElementById(`tf-n-${iso2}`).value = trip.notes||'';
-        document.getElementById(`tf-d-${iso2}`).value = trip.driveUrl||'';
-        document.getElementById(`tf-save-${iso2}`).textContent = 'Aggiorna';
-        // editingId è nella closure del card — usiamo dataset
-        b.closest('.country-body').querySelector(`#tf-save-${iso2}`).dataset.editId = trip._docId;
+        const saveBtn = card.querySelector(`#tf-save-${iso2}`);
+        saveBtn.textContent = 'Aggiorna';
+        saveBtn.dataset.editId = trip._docId;
         card.querySelector(`#tf-${iso2}`).classList.add('open');
         card.querySelector(`#atb-${iso2}`).style.display = 'none';
       }));
@@ -508,7 +635,7 @@
     waitForAuth().then(() => {
       document.body.style.visibility = '';
       buildCountriesList();
-      // Pre-carica subscriptions per tutti i paesi (per stats globali)
+      // Pre-carica subscriptions per tutti i paesi (per stats globali e visitati)
       Object.entries(COUNTRIES).forEach(([, countries]) => {
         Object.entries(countries).forEach(([iso2, info]) => {
           startSubs(iso2, info);
