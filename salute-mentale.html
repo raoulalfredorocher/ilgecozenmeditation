@@ -527,11 +527,15 @@
   <!-- ── TAB EMOZIONI ── -->
   <section class="screen" id="screen-emozioni">
 
-    <!-- Ruota delle emozioni placeholder -->
+    <!-- Ruota delle emozioni -->
     <div class="wheel-placeholder">
       <div class="wheel-placeholder-title">Ruota delle emozioni — Robert Plutchik</div>
-      <div class="wheel-img-wrap">
-        <img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni"/>
+      <div class="wheel-img-wrap" id="wheel-img-wrap" style="cursor:pointer;" title="Clicca per ingrandire">
+        <img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" id="wheel-img"/>
+      </div>
+      <div class="plutchik-actions" style="margin-top:10px;">
+        <button class="btn-plutchik" id="btn-wheel-zoom">🔍 Visualizza grande</button>
+        <a class="btn-plutchik" href="Ruotadelleemozioni.webp" download="ruota-emozioni.webp" style="text-decoration:none;">⬇ Scarica</a>
       </div>
     </div>
 
@@ -1354,6 +1358,20 @@
         hdr.classList.toggle('open', !open);
       });
     });
+
+    /* ═══════════════════════════════════════════
+       RUOTA lightbox
+    ═══════════════════════════════════════════ */
+    const wheelLb = document.getElementById('plutchik-lightbox');
+    const wheelLbContent = document.getElementById('plutchik-lb-content');
+    function openWheelLb() {
+      wheelLbContent.innerHTML = '<img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" style="width:100%;height:auto;border-radius:12px;"/>';
+      wheelLb.classList.add('open');
+    }
+    document.getElementById('btn-wheel-zoom').addEventListener('click', openWheelLb);
+    document.getElementById('wheel-img-wrap').addEventListener('click', openWheelLb);
+    document.getElementById('plutchik-lb-close').addEventListener('click', () => wheelLb.classList.remove('open'));
+    wheelLb.addEventListener('click', e => { if (e.target === wheelLb) wheelLb.classList.remove('open'); });
 
     /* ═══════════════════════════════════════════
        INIT
