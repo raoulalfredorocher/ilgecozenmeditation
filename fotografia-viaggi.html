@@ -771,21 +771,21 @@
 
     function geoStyle(f) {
       const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
-      if (!iso2) return {fillOpacity: 0.04, weight: 0.5, color: isDark ? '#3a4f62' : '#b0bec8'};
-      // Se il paese è nella lista ma non ancora visitato: tenue
+      if (!iso2) return {fillOpacity: 0.04, weight: 0.5, color: '#b0bec8'};
+      // Paese non ancora visitato: tenue
       if (!visitedCountries.has(iso2)) {
         return {
-          color: isDark ? '#3a4f62' : '#b0bec8',
+          color: '#b0bec8',
           weight: 1,
-          fillColor: isDark ? '#2a3a4a' : '#d8e8f0',
+          fillColor: '#d8e8f0',
           fillOpacity: 0.25,
         };
       }
-      // Paese visitato: blu stile originale
+      // Paese visitato: blu fisso (stesso in light e dark)
       return {
-        color: isDark ? '#9DDDE8' : '#0d4f80',
+        color: '#0d4f80',
         weight: 3,
-        fillColor: isDark ? '#74C7E1' : '#25739E',
+        fillColor: '#25739E',
         fillOpacity: 0.5,
       };
     }
