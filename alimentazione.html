@@ -962,15 +962,28 @@
       <div class="form-group" style="margin-bottom:6px;"><label class="form-label">Pasti (descrizione + macros)</label></div>
       <div id="dm-meals-list"></div>
       <button class="btn-add-item" type="button" onclick="addDayMealSlot()">＋ Aggiungi pasto</button>
-      <!-- Sezione Integratori -->
-      <div class="form-group" style="margin-top:16px;margin-bottom:6px;">
-        <label class="form-label">Integrazione (vitamine, integratori…)</label>
-        <textarea class="form-textarea" id="dm-supplements" placeholder="es. Vitamina D 2000 UI, Omega 3 2g, Creatina 5g…" style="min-height:64px;"></textarea>
-      </div>
+      <div class="form-group" style="margin-top:14px;margin-bottom:6px;"><label class="form-label">Integratori</label></div>
+      <div id="dm-supplements-list"></div>
+      <button class="btn-add-item" type="button" onclick="openAddSupplementModal()">＋ Aggiungi integratore</button>
       <button class="btn-primary" style="margin-top:14px;" onclick="saveDay()">Salva</button>
       <button class="btn-cancel" onclick="closeDayModal()">Annulla</button>
     </div>
   </div>
+
+  <!-- ══════  MODAL: AGGIUNGI INTEGRATORE (giorno dieta)  ══════ -->
+  <div class="modal-overlay" id="supplement-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Aggiungi integratore</div>
+      <div class="form-group">
+        <label class="form-label">Nome integratore <span class="req">*</span></label>
+        <input class="form-input" id="supp-name" type="text" placeholder="es. Vitamina D 2000 UI"/>
+      </div>
+      <button class="btn-primary" onclick="confirmAddSupplement()">Aggiungi</button>
+      <button class="btn-cancel" onclick="document.getElementById('supplement-modal').classList.remove('open')">Annulla</button>
+    </div>
+  </div>
+
 
   <!-- ══════════════════════════════  MODAL: AGGIUNGI PASTO DIARIO  ══════════════════════════════ -->
   <div class="modal-overlay" id="diary-modal">
@@ -1242,7 +1255,8 @@
         ${deltaHtml('grassi', total.fat, tgt.fat, 'g')}
       </div>` : '';
 
-    const suppHtml = day.supplements ? `<div class="meal-slot"><div class="meal-slot-icon">💊</div><div class="meal-slot-content"><div class="meal-slot-header"><div class="meal-slot-label">Integrazione</div></div><div class="meal-slot-desc">${day.supplements}</div></div></div>` : '';
+    const suppArr = Array.isArray(day.supplements) ? day.supplements : (day.supplements ? [day.supplements] : []);
+    const suppHtml = suppArr.length ? `<div class="meal-slot"><div class="meal-slot-icon">💊</div><div class="meal-slot-content"><div class="meal-slot-header"><div class="meal-slot-label">Integrazione</div></div><div class="meal-slot-desc">${suppArr.join(' · ')}</div></div></div>` : '';
 
     wrap.innerHTML = `<div class="day-card">
       <div class="day-card-header">
@@ -1282,11 +1296,36 @@
     const day = diet.find(d => d.id === id);
     document.getElementById('day-modal-title').textContent = 'Modifica — ' + day.name;
     document.getElementById('dm-type').value = day.type;
-    document.getElementById('dm-supplements').value = day.supplements || '';
+    // carica integratori nella lista
+    const suppList = document.getElementById('dm-supplements-list');
+    suppList.innerHTML = '';
+    (day.supplements || []).forEach(s => addSupplementRow(s));
     day.meals.forEach(m => addDayMealSlot(m));
     document.getElementById('day-modal').classList.add('open');
   }
   function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
+
+  function addSupplementRow(name) {
+    const el = document.createElement('div');
+    el.className = 'ingredient-item';
+    el.style.marginBottom = '4px';
+    el.innerHTML = `<input type="text" class="form-input" style="flex:1;" data-role="supp" value="${name.replace(/"/g,'&quot;')}"/>
+      <button type="button" class="item-del-btn" onclick="this.parentNode.remove()">✕</button>`;
+    document.getElementById('dm-supplements-list').appendChild(el);
+  }
+  function openAddSupplementModal() {
+    document.getElementById('supp-name').value = '';
+    document.getElementById('supp-name').classList.remove('err');
+    document.getElementById('supplement-modal').classList.add('open');
+    setTimeout(() => document.getElementById('supp-name').focus(), 120);
+  }
+  function confirmAddSupplement() {
+    const val = document.getElementById('supp-name').value.trim();
+    if (!val) { document.getElementById('supp-name').classList.add('err'); return; }
+    addSupplementRow(val);
+    document.getElementById('supplement-modal').classList.remove('open');
+  }
+  document.getElementById('supplement-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 
   /* Drag-and-drop riordino pasti nel modal */
   let dmDragSrc = null;
@@ -1345,7 +1384,7 @@
   async function saveDay() {
     const day  = diet.find(d => d.id === editingDayId);
     day.type   = document.getElementById('dm-type').value;
-    day.supplements = document.getElementById('dm-supplements').value.trim();
+    day.supplements = Array.from(document.querySelectorAll('#dm-supplements-list [data-role=supp]')).map(i=>i.value.trim()).filter(Boolean);
     const mealEls = document.querySelectorAll('#dm-meals-list .dm-meal-block');
     day.meals = Array.from(mealEls).map(el => ({
       slot: el.querySelector('[data-role=slot]').value,
@@ -2118,6 +2157,8 @@
   window.addDayMealSlot          = addDayMealSlot;
   window.saveDay                 = saveDay;
   window.closeDayModal           = closeDayModal;
+  window.openAddSupplementModal  = openAddSupplementModal;
+  window.confirmAddSupplement    = confirmAddSupplement;
   window.saveDiaryMeal           = saveDiaryMeal;
   window.closeDiaryModal         = closeDiaryModal;
   window.openDiaryAutocomplete   = openDiaryAutocomplete;
