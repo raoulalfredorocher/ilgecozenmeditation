@@ -656,19 +656,19 @@
       <div class="macros-target-grid">
         <div class="macros-target-item">
           <div class="macros-target-label">Kcal</div>
-          <input class="macros-target-input" id="target-kcal" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+          <input class="macros-target-input" id="target-kcal" type="number" min="0" placeholder="—" oninput="saveTargets();renderDayCard()"/>
         </div>
         <div class="macros-target-item">
           <div class="macros-target-label">Prote</div>
-          <input class="macros-target-input" id="target-prot" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+          <input class="macros-target-input" id="target-prot" type="number" min="0" placeholder="—" oninput="saveTargets();renderDayCard()"/>
         </div>
         <div class="macros-target-item">
           <div class="macros-target-label">Carbo</div>
-          <input class="macros-target-input" id="target-carb" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+          <input class="macros-target-input" id="target-carb" type="number" min="0" placeholder="—" oninput="saveTargets();renderDayCard()"/>
         </div>
         <div class="macros-target-item">
           <div class="macros-target-label">Grassi</div>
-          <input class="macros-target-input" id="target-fat" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+          <input class="macros-target-input" id="target-fat" type="number" min="0" placeholder="—" oninput="saveTargets();renderDayCard()"/>
         </div>
       </div>
     </div>
@@ -1164,6 +1164,24 @@
     });
   }
 
+  function saveTargets() {
+    const t = {
+      kcal: document.getElementById('target-kcal').value,
+      prot: document.getElementById('target-prot').value,
+      carb: document.getElementById('target-carb').value,
+      fat:  document.getElementById('target-fat').value,
+    };
+    localStorage.setItem('zen_macros_target', JSON.stringify(t));
+  }
+  function loadTargets() {
+    try {
+      const t = JSON.parse(localStorage.getItem('zen_macros_target') || '{}');
+      if (t.kcal) document.getElementById('target-kcal').value = t.kcal;
+      if (t.prot) document.getElementById('target-prot').value = t.prot;
+      if (t.carb) document.getElementById('target-carb').value = t.carb;
+      if (t.fat)  document.getElementById('target-fat').value  = t.fat;
+    } catch {}
+  }
   function getTargets() {
     return {
       kcal: parseInt(document.getElementById('target-kcal').value) || 0,
@@ -2012,6 +2030,7 @@
           <span class="saved-diet-obj">${GOAL_ICON[sd.goal]||''} ${sd.goal}</span>
           <div class="saved-diet-actions">
             <button class="btn-icon edit" title="Carica" onclick="loadSavedDiet('${sd.id}')">📂</button>
+            <button class="btn-icon edit" title="Scarica CSV" onclick="exportSavedDietCSV('${sd.id}')">⬇️</button>
             <button class="btn-icon del"  title="Elimina" onclick="deleteSavedDiet('${sd.id}')">🗑️</button>
           </div>
         </div>`).join('');
@@ -2029,6 +2048,23 @@
     renderDayPills(); renderDayCard();
     document.getElementById('load-diet-modal').classList.remove('open');
   }
+  function exportSavedDietCSV(id) {
+    const sd = savedDiets.find(x => x.id === id);
+    if (!sd) return;
+    const rows = [['Giorno','Tipo','Slot','Descrizione','kcal','Prote(g)','Carbo(g)','Grassi(g)']];
+    (sd.diet || []).forEach(day => {
+      (day.meals || []).forEach(m => {
+        rows.push([day.name, day.type, m.slot, m.desc||'', m.kcal||0, m.prot||0, m.carb||0, m.fat||0]);
+      });
+    });
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `dieta_${sd.name.replace(/\s+/g,'_')}.csv`;
+    a.click();
+  }
+
   async function deleteSavedDiet(id) {
     const sd = savedDiets.find(x => x.id === id);
     if (!sd || !confirm(`Eliminare la dieta "${sd.name}"?`)) return;
@@ -2059,6 +2095,7 @@
   });
 
   initCalendar();
+  loadTargets();
 
   /* ════════════ ESPONI FUNZIONI A window (richiesto da onclick inline) ════════════ */
   window.openSaveDietModal       = openSaveDietModal;
@@ -2091,6 +2128,8 @@
   window.deleteDiaryMeal         = deleteDiaryMeal;
   window.loadSavedDiet           = loadSavedDiet;
   window.deleteSavedDiet         = deleteSavedDiet;
+  window.exportSavedDietCSV      = exportSavedDietCSV;
+  window.saveTargets             = saveTargets;
   window.openDayModal            = openDayModal;
   window.showRecipePopup         = showRecipePopup;
   window.editRecipe              = editRecipe;
