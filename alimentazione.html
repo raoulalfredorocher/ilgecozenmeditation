@@ -175,17 +175,22 @@
     .day-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,.3); }
     .day-name { font-size: .88rem; font-weight: 700; letter-spacing: .08em; color: var(--text); }
     .day-type { font-size: .48rem; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; margin-top: 1px; }
-    .day-kcal-badge {
-      font-size: .58rem; font-weight: 600; color: var(--primary);
-      background: var(--bg); border: 1px solid var(--accent);
-      border-radius: 12px; padding: 3px 8px; white-space: nowrap;
-    }
     .day-card-right { display: flex; align-items: center; gap: 6px; }
     .day-edit-btn {
       background: none; border: 1px solid var(--border); border-radius: 8px;
       color: var(--muted); font-size: .7rem; padding: 3px 7px; cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
+
+    /* Drag-and-drop meal slots nel modal giorno */
+    .dm-meal-block { position: relative; }
+    .dm-drag-handle {
+      cursor: grab; color: var(--muted); font-size: .85rem; padding: 2px 4px;
+      flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+    .dm-meal-block.dragging { opacity: .4; }
+    .dm-meal-block.drag-over { border-top: 2px solid var(--primary); }
 
     .meal-slot {
       display: flex; align-items: flex-start; gap: 10px;
@@ -194,11 +199,16 @@
     .meal-slot:last-child { border-bottom: none; }
     .meal-slot-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
     .meal-slot-content { flex: 1; }
+    .meal-slot-header {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;
+      margin-bottom: 3px;
+    }
     .meal-slot-label {
       font-size: .44rem; letter-spacing: .20em; text-transform: uppercase;
-      color: var(--primary); font-weight: 600; margin-bottom: 2px;
+      color: var(--primary); font-weight: 600;
     }
-    .meal-slot-desc { font-size: .68rem; color: var(--text); line-height: 1.55; }
+    .meal-slot-header-macros { display: flex; gap: 4px; flex-wrap: wrap; }
+    .meal-slot-desc { font-size: .68rem; color: var(--text); line-height: 1.55; margin-bottom: 2px; }
     .meal-slot-macros { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
     .macro-pill {
       font-size: .46rem; padding: 2px 6px; border-radius: 8px;
@@ -207,6 +217,39 @@
     .macro-pill.kcal { color: var(--primary); border-color: var(--accent); }
     .meal-slot.empty .meal-slot-desc { color: var(--muted); font-style: italic; }
     .meal-slot-totals { border-top: 1.5px solid var(--border) !important; background: var(--surface); }
+
+    /* Macros di riferimento */
+    .macros-target-box {
+      width: 100%; background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 12px 14px; margin-bottom: 14px;
+    }
+    .macros-target-title {
+      font-size: .48rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--muted); font-weight: 600; margin-bottom: 10px; text-align: center;
+    }
+    .macros-target-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;
+    }
+    .macros-target-item { display: flex; flex-direction: column; gap: 4px; }
+    .macros-target-label { font-size: .42rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); text-align: center; }
+    .macros-target-input {
+      background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 6px 4px; font-family: inherit; font-size: .70rem; color: var(--text);
+      width: 100%; text-align: center; transition: border-color .2s;
+    }
+    .macros-target-input:focus { outline: none; border-color: var(--primary); }
+
+    /* Delta macros target */
+    .macros-delta-box {
+      width: 100%; background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 10px 14px; margin-top: -6px; margin-bottom: 14px;
+      display: flex; gap: 8px; justify-content: space-around; flex-wrap: wrap;
+    }
+    .macros-delta-item { text-align: center; min-width: 60px; }
+    .macros-delta-val { font-size: .74rem; font-weight: 700; }
+    .macros-delta-val.ok { color: #10b981; }
+    .macros-delta-val.over { color: var(--red); }
+    .macros-delta-key { font-size: .40rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
 
     /* ══════════════════════════════
        TAB 2 — RICETTARIO
@@ -607,6 +650,28 @@
       </button>
     </div>
     <div class="day-pill-scroll" id="day-pill-scroll"></div>
+    <!-- Macros di riferimento -->
+    <div class="macros-target-box">
+      <div class="macros-target-title">Macros di riferimento</div>
+      <div class="macros-target-grid">
+        <div class="macros-target-item">
+          <div class="macros-target-label">Kcal</div>
+          <input class="macros-target-input" id="target-kcal" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+        </div>
+        <div class="macros-target-item">
+          <div class="macros-target-label">Prote</div>
+          <input class="macros-target-input" id="target-prot" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+        </div>
+        <div class="macros-target-item">
+          <div class="macros-target-label">Carbo</div>
+          <input class="macros-target-input" id="target-carb" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+        </div>
+        <div class="macros-target-item">
+          <div class="macros-target-label">Grassi</div>
+          <input class="macros-target-input" id="target-fat" type="number" min="0" placeholder="—" oninput="renderDayCard()"/>
+        </div>
+      </div>
+    </div>
     <div id="day-card-wrap"></div>
     <div class="page-footer">
       <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
@@ -690,7 +755,10 @@
       <div class="diary-macro-item"><div class="diary-macro-val" id="diary-fat">0g</div><div class="diary-macro-key">grassi</div></div>
     </div>
     <div class="diary-meal-list" id="diary-meal-list"></div>
-    <button class="btn-add-diary-meal" onclick="openDiaryMealModal()">＋ Aggiungi pasto</button>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn-add-diary-meal" style="margin-bottom:0;flex:1;" onclick="openDiaryMealModal()">＋ Aggiungi pasto</button>
+      <button class="btn-add-diary-meal" style="margin-bottom:0;flex:0 0 auto;font-size:.68rem;padding:10px 14px;background:var(--surface);" onclick="openDiaryAutocomplete()" title="Carica dieta del giorno">📋 Dieta</button>
+    </div>
     <div class="page-footer">
       <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
     </div>
@@ -894,6 +962,11 @@
       <div class="form-group" style="margin-bottom:6px;"><label class="form-label">Pasti (descrizione + macros)</label></div>
       <div id="dm-meals-list"></div>
       <button class="btn-add-item" type="button" onclick="addDayMealSlot()">＋ Aggiungi pasto</button>
+      <!-- Sezione Integratori -->
+      <div class="form-group" style="margin-top:16px;margin-bottom:6px;">
+        <label class="form-label">Integrazione (vitamine, integratori…)</label>
+        <textarea class="form-textarea" id="dm-supplements" placeholder="es. Vitamina D 2000 UI, Omega 3 2g, Creatina 5g…" style="min-height:64px;"></textarea>
+      </div>
       <button class="btn-primary" style="margin-top:14px;" onclick="saveDay()">Salva</button>
       <button class="btn-cancel" onclick="closeDayModal()">Annulla</button>
     </div>
@@ -930,6 +1003,17 @@
       <div style="font-size:.52rem;color:var(--muted);letter-spacing:.10em;margin-bottom:6px;">* Obbligatorio &nbsp;·&nbsp; kcal e macros facoltativi</div>
       <button class="btn-primary" onclick="saveDiaryMeal()">Aggiungi</button>
       <button class="btn-cancel" onclick="closeDiaryModal()">Annulla</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════  MODAL: AUTOCOMPLETE DIETA NEL DIARIO  ══════════════════════════════ -->
+  <div class="modal-overlay" id="diary-autocomplete-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">📋 Carica dieta del giorno</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-bottom:12px;text-align:center;">Seleziona il giorno della dieta da copiare nel diario. Puoi modificare ogni voce prima di salvare.</div>
+      <div id="diary-autocomplete-day-select" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+      <button class="btn-cancel" onclick="document.getElementById('diary-autocomplete-modal').classList.remove('open')">Chiudi</button>
     </div>
   </div>
 
@@ -1080,6 +1164,15 @@
     });
   }
 
+  function getTargets() {
+    return {
+      kcal: parseInt(document.getElementById('target-kcal').value) || 0,
+      prot: parseInt(document.getElementById('target-prot').value) || 0,
+      carb: parseInt(document.getElementById('target-carb').value) || 0,
+      fat:  parseInt(document.getElementById('target-fat').value)  || 0,
+    };
+  }
+
   function renderDayCard() {
     const wrap = document.getElementById('day-card-wrap');
     if (!wrap) return;
@@ -1088,33 +1181,67 @@
     const total = computeTotals(day.meals);
     const slotsHtml = MEAL_SLOTS.map(s => {
       const m = day.meals.find(x => x.slot === s.key);
-      if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-label">${s.label}</div><div class="meal-slot-desc">—</div></div></div>`;
+      if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-header"><div class="meal-slot-label">${s.label}</div></div><div class="meal-slot-desc">—</div></div></div>`;
       return `<div class="meal-slot"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content">
-        <div class="meal-slot-label">${s.label}</div>
+        <div class="meal-slot-header">
+          <div class="meal-slot-label">${s.label}</div>
+          <div class="meal-slot-header-macros">
+            <span class="macro-pill kcal">${m.kcal||0} kcal</span>
+            <span class="macro-pill">P ${m.prot||0}g</span>
+            <span class="macro-pill">C ${m.carb||0}g</span>
+            <span class="macro-pill">F ${m.fat||0}g</span>
+          </div>
+        </div>
         <div class="meal-slot-desc">${m.desc}</div>
-        <div class="meal-slot-macros">
-          <span class="macro-pill kcal">${m.kcal||0} kcal</span>
-          <span class="macro-pill">P ${m.prot||0}g</span>
-          <span class="macro-pill">C ${m.carb||0}g</span>
-          <span class="macro-pill">F ${m.fat||0}g</span>
-        </div></div></div>`;
+        </div></div>`;
     }).join('');
+
+    const tgt = getTargets();
+    const hasTarget = tgt.kcal > 0 || tgt.prot > 0 || tgt.carb > 0 || tgt.fat > 0;
+
+    function deltaHtml(key, val, target, unit) {
+      if (!target) return '';
+      const diff = val - target;
+      let cls, sign;
+      if (key === 'kcal') {
+        cls = diff > 0 ? 'over' : 'ok';
+        sign = diff > 0 ? '+' : '';
+      } else {
+        cls = (diff > 0 || diff < -50) ? 'over' : 'ok';
+        sign = diff > 0 ? '+' : '';
+      }
+      return `<div class="macros-delta-item">
+        <div class="macros-delta-val ${cls}">${sign}${diff}${unit}</div>
+        <div class="macros-delta-key">${key}</div>
+      </div>`;
+    }
+
+    const deltaBlock = hasTarget ? `
+      <div class="macros-delta-box">
+        ${deltaHtml('kcal', total.kcal, tgt.kcal, '')}
+        ${deltaHtml('prote', total.prot, tgt.prot, 'g')}
+        ${deltaHtml('carbo', total.carb, tgt.carb, 'g')}
+        ${deltaHtml('grassi', total.fat, tgt.fat, 'g')}
+      </div>` : '';
+
+    const suppHtml = day.supplements ? `<div class="meal-slot"><div class="meal-slot-icon">💊</div><div class="meal-slot-content"><div class="meal-slot-header"><div class="meal-slot-label">Integrazione</div></div><div class="meal-slot-desc">${day.supplements}</div></div></div>` : '';
+
     wrap.innerHTML = `<div class="day-card">
       <div class="day-card-header">
-        <div class="day-header-left">
+        <div class="day-card-left">
           <div class="day-dot" style="background:${dot}"></div>
           <div><div class="day-name">${day.name}</div><div class="day-type">${day.type}</div></div>
         </div>
-        <div class="day-header-right">
-          <span class="day-kcal-badge">~${total.kcal} kcal</span>
+        <div class="day-card-right">
           <button class="day-edit-btn" onclick="openDayModal('${day.id}')">✏️</button>
         </div>
       </div>
       <div class="day-card-body">
         ${slotsHtml}
+        ${suppHtml}
         <div class="meal-slot meal-slot-totals">
           <div class="meal-slot-icon">📊</div>
-          <div class="meal-slot-content"><div class="meal-slot-label">Totali</div>
+          <div class="meal-slot-content"><div class="meal-slot-label">Totali giornata</div>
           <div class="meal-slot-macros">
             <span class="macro-pill kcal">~${total.kcal} kcal</span>
             <span class="macro-pill">P ${total.prot}g</span>
@@ -1123,7 +1250,8 @@
           </div></div>
         </div>
       </div>
-    </div>`;
+    </div>
+    ${deltaBlock}`;
   }
 
   /* Day modal */
@@ -1136,35 +1264,71 @@
     const day = diet.find(d => d.id === id);
     document.getElementById('day-modal-title').textContent = 'Modifica — ' + day.name;
     document.getElementById('dm-type').value = day.type;
+    document.getElementById('dm-supplements').value = day.supplements || '';
     day.meals.forEach(m => addDayMealSlot(m));
     document.getElementById('day-modal').classList.add('open');
   }
   function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
 
+  /* Drag-and-drop riordino pasti nel modal */
+  let dmDragSrc = null;
+  function initDmDragDrop(el) {
+    el.setAttribute('draggable', 'true');
+    el.addEventListener('dragstart', () => { dmDragSrc = el; el.classList.add('dragging'); });
+    el.addEventListener('dragend',   () => { dmDragSrc = null; el.classList.remove('dragging'); document.querySelectorAll('#dm-meals-list .dm-meal-block').forEach(b=>b.classList.remove('drag-over')); });
+    el.addEventListener('dragover',  e => { e.preventDefault(); if (el !== dmDragSrc) el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if (!dmDragSrc || dmDragSrc === el) return;
+      const list = document.getElementById('dm-meals-list');
+      const nodes = [...list.children];
+      const srcIdx = nodes.indexOf(dmDragSrc);
+      const tgtIdx = nodes.indexOf(el);
+      if (srcIdx < tgtIdx) list.insertBefore(dmDragSrc, el.nextSibling);
+      else list.insertBefore(dmDragSrc, el);
+    });
+    /* touch drag: pulsanti ↑↓ */
+    const handle = el.querySelector('.dm-drag-handle');
+    if (handle) {
+      handle.addEventListener('click', () => {
+        // cicla: ogni click sposta su di 1
+        const list = document.getElementById('dm-meals-list');
+        const prev = el.previousElementSibling;
+        if (prev) list.insertBefore(el, prev);
+      });
+    }
+  }
+
   function addDayMealSlot(prefill) {
     dayMealCount++;
     const el = document.createElement('div');
+    el.className = 'dm-meal-block';
     el.style = 'background:var(--surface);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;';
     const opts = MEAL_SLOTS.map(s => `<option value="${s.key}" ${prefill && prefill.slot===s.key?'selected':''}>${s.icon} ${s.label}</option>`).join('');
     el.innerHTML = `
       <div style="display:flex;gap:6px;align-items:center;">
+        <span class="dm-drag-handle" title="Sposta su">☰</span>
         <select class="form-select" style="flex:1;" data-role="slot">${opts}</select>
-        <button type="button" class="item-del-btn" onclick="this.closest('div[style]').remove()">✕</button>
+        <button type="button" class="item-del-btn" onclick="this.closest('.dm-meal-block').remove()">✕</button>
       </div>
       <input class="form-input" type="text" placeholder="Descrizione pasto" data-role="desc" value="${prefill?prefill.desc:''}"/>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
-        <input class="form-input" type="number" min="0" placeholder="kcal" data-role="kcal" value="${prefill?prefill.kcal:''}"/>
-        <input class="form-input" type="number" min="0" placeholder="Prot" data-role="prot" value="${prefill?prefill.prot:''}"/>
-        <input class="form-input" type="number" min="0" placeholder="Carbo" data-role="carb" value="${prefill?prefill.carb:''}"/>
-        <input class="form-input" type="number" min="0" placeholder="Grassi" data-role="fat" value="${prefill?prefill.fat:''}"/>
+        <input class="form-input" type="number" min="0" placeholder="kcal" data-role="kcal" value="${prefill?(prefill.kcal||''):''}"/>
+        <input class="form-input" type="number" min="0" placeholder="Prot" data-role="prot" value="${prefill?(prefill.prot||''):''}"/>
+        <input class="form-input" type="number" min="0" placeholder="Carbo" data-role="carb" value="${prefill?(prefill.carb||''):''}"/>
+        <input class="form-input" type="number" min="0" placeholder="Grassi" data-role="fat" value="${prefill?(prefill.fat||''):''}"/>
       </div>`;
     document.getElementById('dm-meals-list').appendChild(el);
+    initDmDragDrop(el);
   }
 
   async function saveDay() {
     const day  = diet.find(d => d.id === editingDayId);
     day.type   = document.getElementById('dm-type').value;
-    const mealEls = document.querySelectorAll('#dm-meals-list > div');
+    day.supplements = document.getElementById('dm-supplements').value.trim();
+    const mealEls = document.querySelectorAll('#dm-meals-list .dm-meal-block');
     day.meals = Array.from(mealEls).map(el => ({
       slot: el.querySelector('[data-role=slot]').value,
       desc: el.querySelector('[data-role=desc]').value.trim(),
@@ -1521,6 +1685,47 @@
   }
   function closeDiaryModal(){ document.getElementById('diary-modal').classList.remove('open'); }
   document.getElementById('diary-modal').addEventListener('click',function(e){if(e.target===this)closeDiaryModal();});
+  document.getElementById('diary-autocomplete-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+  /* ── Autocomplete dieta → diario ── */
+  const SLOT_TO_DIARY_TYPE = {
+    pre_workout:'🌅 Pre-Workout', post_workout:'🥤 Post-Workout',
+    colazione:'🥣 Colazione', spuntino1:'🍎 Spuntino 1',
+    pranzo:'🌤️ Pranzo', spuntino2:'🍊 Spuntino 2',
+    cena:'🌙 Cena', pre_nanna:'🌛 Pre Nanna',
+  };
+
+  function openDiaryAutocomplete() {
+    const wrap = document.getElementById('diary-autocomplete-day-select');
+    wrap.innerHTML = DAY_NAMES.map((name, i) => {
+      const dot = DOT_COLORS[name] || '#888';
+      return `<button style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:.80rem;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;transition:border-color .2s;-webkit-tap-highlight-color:transparent;" onclick="applyDietDayToDiary(${i})">
+        <span style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;display:inline-block;"></span>
+        <span style="font-weight:700;">${name}</span>
+        <span style="font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;">${diet[i].type}</span>
+        <span style="margin-left:auto;font-size:.60rem;color:var(--primary);">${diet[i].meals.length} pasti</span>
+      </button>`;
+    }).join('');
+    document.getElementById('diary-autocomplete-modal').classList.add('open');
+  }
+
+  async function applyDietDayToDiary(dayIdx) {
+    document.getElementById('diary-autocomplete-modal').classList.remove('open');
+    const srcDay = diet[dayIdx];
+    if (!srcDay.meals.length) { alert('Nessun pasto in questo giorno della dieta.'); return; }
+    if (!diary[selectedDate]) diary[selectedDate] = [];
+    const newMeals = srcDay.meals.map(m => ({
+      type: SLOT_TO_DIARY_TYPE[m.slot] || ('🍽️ ' + m.slot),
+      desc: m.desc || '',
+      kcal: m.kcal || 0,
+      prot: m.prot || 0,
+      carb: m.carb || 0,
+      fat:  m.fat  || 0,
+    }));
+    diary[selectedDate] = [...diary[selectedDate], ...newMeals];
+    await saveDiaryDay(selectedDate, diary[selectedDate]);
+    renderCalendar(); renderDiaryDay();
+  }
 
   async function saveDiaryMeal(){
     const typeEl = document.getElementById('diary-meal-type');
@@ -1878,6 +2083,8 @@
   window.closeDayModal           = closeDayModal;
   window.saveDiaryMeal           = saveDiaryMeal;
   window.closeDiaryModal         = closeDiaryModal;
+  window.openDiaryAutocomplete   = openDiaryAutocomplete;
+  window.applyDietDayToDiary     = applyDietDayToDiary;
   window.exportDiaryAll          = exportDiaryAll;
   window.exportDiaryRange        = exportDiaryRange;
   window.selectDay               = selectDay;
