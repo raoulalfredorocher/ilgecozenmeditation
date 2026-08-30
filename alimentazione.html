@@ -1016,9 +1016,6 @@
       <div class="form-group" style="margin-bottom:6px;"><label class="form-label">Pasti (descrizione + macros)</label></div>
       <div id="dm-meals-list"></div>
       <button class="btn-add-item" type="button" onclick="addDayMealSlot()">＋ Aggiungi pasto</button>
-      <div class="form-group" style="margin-top:14px;margin-bottom:6px;"><label class="form-label">Integratori</label></div>
-      <div id="dm-supplements-list"></div>
-      <button class="btn-add-item" type="button" onclick="openAddSupplementModal()">＋ Aggiungi integratore</button>
       <button class="btn-primary" style="margin-top:14px;" onclick="saveDay()">Salva</button>
       <button class="btn-cancel" onclick="closeDayModal()">Annulla</button>
     </div>
@@ -1421,6 +1418,7 @@
           </div>
         </div>
         <div class="meal-slot-desc">${m.desc}</div>
+        ${m.supp ? `<div class="meal-slot-desc" style="color:var(--muted);font-size:.60rem;">💊 ${m.supp}</div>` : ''}
         </div></div>`;
     }).join('');
 
@@ -1493,10 +1491,6 @@
     const day = diet.find(d => d.id === id);
     document.getElementById('day-modal-title').textContent = 'Modifica — ' + day.name;
     document.getElementById('dm-type').value = day.type;
-    // carica integratori nella lista
-    const suppList = document.getElementById('dm-supplements-list');
-    suppList.innerHTML = '';
-    (day.supplements || []).forEach(s => addSupplementRow(s));
     day.meals.forEach(m => addDayMealSlot(m));
     document.getElementById('day-modal').classList.add('open');
   }
@@ -1568,6 +1562,7 @@
         <button type="button" class="item-del-btn" onclick="this.closest('.dm-meal-block').remove()">✕</button>
       </div>
       <input class="form-input" type="text" placeholder="Descrizione pasto" data-role="desc" value="${prefill?prefill.desc:''}"/>
+      <input class="form-input" type="text" placeholder="💊 Integratori (es. Creatina 5g, Vit D)" data-role="supp" value="${prefill?(prefill.supp||''):''}"/>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
         <input class="form-input" type="number" min="0" placeholder="kcal" data-role="kcal" value="${prefill?(prefill.kcal||''):''}"/>
         <input class="form-input" type="number" min="0" placeholder="Prot" data-role="prot" value="${prefill?(prefill.prot||''):''}"/>
@@ -1581,11 +1576,11 @@
   async function saveDay() {
     const day  = diet.find(d => d.id === editingDayId);
     day.type   = document.getElementById('dm-type').value;
-    day.supplements = Array.from(document.querySelectorAll('#dm-supplements-list [data-role=supp]')).map(i=>i.value.trim()).filter(Boolean);
     const mealEls = document.querySelectorAll('#dm-meals-list .dm-meal-block');
     day.meals = Array.from(mealEls).map(el => ({
       slot: el.querySelector('[data-role=slot]').value,
       desc: el.querySelector('[data-role=desc]').value.trim(),
+      supp: el.querySelector('[data-role=supp]').value.trim(),
       kcal: parseInt(el.querySelector('[data-role=kcal]').value)||0,
       prot: parseInt(el.querySelector('[data-role=prot]').value)||0,
       carb: parseInt(el.querySelector('[data-role=carb]').value)||0,
