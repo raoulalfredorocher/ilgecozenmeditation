@@ -2413,34 +2413,57 @@
     /* Lista negozio */
     .store-list-view { display: none; flex-direction: column; height: 100%; }
     .store-list-view.active { display: flex; }
-    .store-back-btn { background: none; border: none; color: var(--primary); font-size: .78rem; font-family: inherit; cursor: pointer; padding: 0 0 12px; display: flex; align-items: center; gap: 5px; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
-    .store-list-title { font-size: .82rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
-    .store-items-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .store-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
+    .store-back-btn { background: none; border: none; color: var(--primary); font-size: .78rem; font-family: inherit; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
+    .btn-export-csv { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: .70rem; font-weight: 600; border-radius: 8px; padding: 5px 9px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: inherit; }
+    .btn-export-csv:hover { border-color: var(--primary); color: var(--primary); }
+    .store-list-title { font-size: .82rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    
+    /* Categorie chips / gestione */
+    .category-filter-bar { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; flex-shrink: 0; scrollbar-width: none; }
+    .category-filter-bar::-webkit-scrollbar { display: none; }
+    .cat-chip { padding: 4px 10px; border-radius: 20px; font-size: .70rem; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; transition: all .2s; }
+    .cat-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 600; }
+    .cat-chip-manage { border-style: dashed; }
+    
+    .category-section-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 4px; font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--border); margin-top: 10px; margin-bottom: 6px; }
+    .category-section-actions { display: flex; gap: 4px; }
+    .cat-action-btn { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px 4px; font-size: .65rem; border-radius: 4px; }
+    .cat-action-btn:hover { color: var(--text); }
+    
+    .store-items-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .store-item {
       background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 11px 14px; display: flex; align-items: center; gap: 12px;
+      padding: 9px 12px; display: flex; align-items: center; gap: 8px;
       transition: opacity .2s;
     }
     .store-item.bought { opacity: .45; }
     .store-item-check {
-      width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+      width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border);
       flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
       background: none; -webkit-tap-highlight-color: transparent; transition: background .15s, border-color .15s;
     }
     .store-item-check.checked { background: var(--primary); border-color: var(--primary); }
-    .store-item-check.checked::after { content: '✓'; color: #fff; font-size: .7rem; font-weight: 700; }
-    .store-item-info { flex: 1; }
-    .store-item-name { font-size: .80rem; font-weight: 600; color: var(--text); }
-    .store-item-qty { font-size: .60rem; color: var(--muted); margin-top: 2px; }
-    .store-item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; padding: 4px 6px; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
+    .store-item-check.checked::after { content: '✓'; color: #fff; font-size: .65rem; font-weight: 700; }
+    .store-item-info { flex: 1; min-width: 0; }
+    .store-item-name { font-size: .78rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .store-item-qty { font-size: .60rem; color: var(--muted); margin-top: 1px; }
+    .store-item-cat-badge { font-size: .55rem; color: var(--primary); background: rgba(59,130,212,0.1); padding: 1px 5px; border-radius: 4px; display: inline-block; margin-right: 4px; }
+    .store-item-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+    .store-item-move { background: none; border: none; color: var(--muted); cursor: pointer; padding: 3px 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+    .store-item-move:disabled { opacity: 0.25; cursor: default; }
+    .store-item-move svg { width: 14px; height: 14px; }
+    .store-item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; padding: 3px 5px; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
     .store-item-del:active { color: var(--red); }
 
     /* Add item row */
-    .add-item-row { display: flex; gap: 8px; flex-shrink: 0; }
-    .add-item-row input { flex: 1; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; font-family: inherit; font-size: .78rem; color: var(--text); outline: none; min-width: 0; }
-    .add-item-row input:focus { border-color: var(--primary); }
-    .add-item-qty { width: 64px !important; flex: none !important; }
-    .btn-add-item-confirm { background: var(--primary); border: none; border-radius: 10px; color: #fff; font-size: .78rem; font-weight: 600; padding: 9px 14px; cursor: pointer; flex-shrink: 0; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+    .add-item-row { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .add-item-inputs { display: flex; gap: 6px; }
+    .add-item-row input, .add-item-row select { background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-family: inherit; font-size: .75rem; color: var(--text); outline: none; min-width: 0; }
+    .add-item-row input:focus, .add-item-row select:focus { border-color: var(--primary); }
+    .add-item-qty { width: 56px !important; flex: none !important; }
+    .add-item-cat-select { max-width: 110px; }
+    .btn-add-item-confirm { background: var(--primary); border: none; border-radius: 10px; color: #fff; font-size: .78rem; font-weight: 600; padding: 8px 14px; cursor: pointer; flex-shrink: 0; font-family: inherit; -webkit-tap-highlight-color: transparent; }
     .btn-add-item-confirm:active { opacity: .85; }
 
     /* Modal nuovo negozio */
@@ -2474,16 +2497,26 @@
         </div>
         <!-- lista prodotti del negozio selezionato -->
         <div class="store-list-view" id="store-list-view">
-          <button class="store-back-btn" id="store-back-btn">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            Tutti i negozi
-          </button>
+          <div class="store-header-row">
+            <button class="store-back-btn" id="store-back-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              Tutti i negozi
+            </button>
+            <button class="btn-export-csv" id="btn-export-csv" title="Scarica CSV">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              CSV
+            </button>
+          </div>
           <div class="store-list-title" id="store-list-title"></div>
+          <div class="category-filter-bar" id="category-filter-bar"></div>
           <div class="store-items-list" id="store-items-list"></div>
           <div class="add-item-row">
-            <input type="text" id="new-item-name" placeholder="Prodotto…" autocomplete="off"/>
-            <input type="text" id="new-item-qty"  placeholder="Qtà" class="add-item-qty" autocomplete="off"/>
-            <button class="btn-add-item-confirm" id="btn-add-item-confirm">＋</button>
+            <div class="add-item-inputs">
+              <input type="text" id="new-item-name" placeholder="Prodotto…" autocomplete="off"/>
+              <input type="text" id="new-item-qty"  placeholder="Qtà" class="add-item-qty" autocomplete="off"/>
+              <select id="new-item-cat" class="add-item-cat-select"></select>
+              <button class="btn-add-item-confirm" id="btn-add-item-confirm">＋</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2514,7 +2547,7 @@
 
   <script type="module">
     import {
-      subscribeShoppingStores, addShoppingStore, deleteShoppingStore,
+      subscribeShoppingStores, addShoppingStore, updateShoppingStore, deleteShoppingStore,
       subscribeShoppingItems, addShoppingItem, updateShoppingItem, deleteShoppingItem,
       waitForAuth,
     } from './js/firebase-config.js';
@@ -2522,9 +2555,15 @@
     waitForAuth().then(user => { if (!user) return; initShoppingApp(); });
     function initShoppingApp() {
 
+    const SVG_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`;
+    const SVG_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+
     /* ── stato ── */
     let stores = [];
     let currentStoreId = null;
+    let currentStoreObj = null;
+    let currentItems = [];
+    let selectedCategoryFilter = 'ALL';
     let unsubItems = null;
     let pendingStoreImg = null;
 
@@ -2559,6 +2598,8 @@
     const storeListTitle  = document.getElementById('store-list-title');
     const storeItemsList  = document.getElementById('store-items-list');
     const storeBackBtn    = document.getElementById('store-back-btn');
+    const btnExportCsv    = document.getElementById('btn-export-csv');
+    const catFilterBar    = document.getElementById('category-filter-bar');
     const btnAddStore     = document.getElementById('btn-add-store');
     const newStoreOverlay = document.getElementById('new-store-overlay');
     const nsName          = document.getElementById('ns-name');
@@ -2569,6 +2610,7 @@
     const nsCancel        = document.getElementById('ns-cancel');
     const newItemName     = document.getElementById('new-item-name');
     const newItemQty      = document.getElementById('new-item-qty');
+    const newItemCat      = document.getElementById('new-item-cat');
     const btnAddItem      = document.getElementById('btn-add-item-confirm');
 
     /* ── apri/chiudi pannello ── */
@@ -2599,30 +2641,183 @@
       });
     }
 
+    /* ── categorie predefinite e del negozio ── */
+    const DEFAULT_CATEGORIES = ['Generale', 'Frutta', 'Verdura', 'Formaggi', 'Carne', 'Pesce', 'Dispensa', 'Bevande', 'Cura Casa', 'Altro'];
+
+    function getStoreCategories(s) {
+      if (!s) return DEFAULT_CATEGORIES;
+      return (s.categories && Array.isArray(s.categories) && s.categories.length > 0) ? s.categories : DEFAULT_CATEGORIES;
+    }
+
+    function renderCategoryControls() {
+      if (!currentStoreObj) return;
+      const cats = getStoreCategories(currentStoreObj);
+      
+      // popola select del form aggiunta
+      newItemCat.innerHTML = '';
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        newItemCat.appendChild(opt);
+      });
+
+      // render chips filtro e gestione categorie
+      catFilterBar.innerHTML = '';
+      
+      // Bottone "Tutti"
+      const allChip = document.createElement('button');
+      allChip.className = 'cat-chip' + (selectedCategoryFilter === 'ALL' ? ' active' : '');
+      allChip.textContent = 'Tutti';
+      allChip.addEventListener('click', () => {
+        selectedCategoryFilter = 'ALL';
+        renderCategoryControls();
+        renderItems(currentItems, currentStoreId);
+      });
+      catFilterBar.appendChild(allChip);
+
+      // Chips categorie
+      cats.forEach(c => {
+        const chip = document.createElement('button');
+        chip.className = 'cat-chip' + (selectedCategoryFilter === c ? ' active' : '');
+        chip.textContent = c;
+        chip.addEventListener('click', () => {
+          selectedCategoryFilter = c;
+          renderCategoryControls();
+          renderItems(currentItems, currentStoreId);
+        });
+        catFilterBar.appendChild(chip);
+      });
+
+      // Bottone Gestisci Sezioni
+      const manageBtn = document.createElement('button');
+      manageBtn.className = 'cat-chip cat-chip-manage';
+      manageBtn.innerHTML = '⚙️ Sezioni';
+      manageBtn.title = 'Aggiungi / Modifica / Elimina sezioni';
+      manageBtn.addEventListener('click', () => promptManageCategories());
+      catFilterBar.appendChild(manageBtn);
+    }
+
+    async function promptManageCategories() {
+      if (!currentStoreObj) return;
+      const cats = [...getStoreCategories(currentStoreObj)];
+      const action = prompt(`Gestione Sezioni per "${currentStoreObj.name}":\n1. Digita "aggiungi: NomeSezione" per aggiungere\n2. Digita "elimina: NomeSezione" per eliminare\n3. Digita "modifica: VecchioNome -> NuovoNome" per rinominare\n\nSezioni attuali:\n${cats.join(', ')}`);
+      if (!action) return;
+      const trimmed = action.trim();
+      
+      if (trimmed.toLowerCase().startsWith('aggiungi:')) {
+        const newCat = trimmed.substring(9).trim();
+        if (newCat && !cats.includes(newCat)) {
+          cats.push(newCat);
+          await updateShoppingStore(currentStoreId, { categories: cats });
+          currentStoreObj.categories = cats;
+          renderCategoryControls();
+        }
+      } else if (trimmed.toLowerCase().startsWith('elimina:')) {
+        const toDel = trimmed.substring(8).trim();
+        if (toDel) {
+          const updated = cats.filter(c => c.toLowerCase() !== toDel.toLowerCase());
+          if (updated.length === 0) {
+            alert('Deve rimanere almeno una sezione.');
+            return;
+          }
+          await updateShoppingStore(currentStoreId, { categories: updated });
+          currentStoreObj.categories = updated;
+          if (selectedCategoryFilter === toDel) selectedCategoryFilter = 'ALL';
+          renderCategoryControls();
+        }
+      } else if (trimmed.toLowerCase().startsWith('modifica:')) {
+        const parts = trimmed.substring(9).split('->');
+        if (parts.length === 2) {
+          const oldName = parts[0].trim();
+          const newName = parts[1].trim();
+          const idx = cats.findIndex(c => c.toLowerCase() === oldName.toLowerCase());
+          if (idx !== -1 && newName) {
+            cats[idx] = newName;
+            await updateShoppingStore(currentStoreId, { categories: cats });
+            currentStoreObj.categories = cats;
+            // Aggiorna anche gli items esistenti con quella categoria
+            for (const it of currentItems) {
+              if (it.category === oldName) {
+                await updateShoppingItem(currentStoreId, it._docId, { category: newName });
+              }
+            }
+            if (selectedCategoryFilter === oldName) selectedCategoryFilter = newName;
+            renderCategoryControls();
+          }
+        }
+      }
+    }
+
     /* ── apri lista di un negozio ── */
     function openStore(s) {
       currentStoreId = s._docId;
+      currentStoreObj = s;
+      selectedCategoryFilter = 'ALL';
       storeListTitle.textContent = s.name;
       storesView.style.display = 'none';
       storeListView.classList.add('active');
       newItemName.value = '';
       newItemQty.value  = '';
 
+      renderCategoryControls();
+
       if (unsubItems) { unsubItems(); unsubItems = null; }
-      unsubItems = subscribeShoppingItems(s._docId, items => renderItems(items, s._docId));
+      unsubItems = subscribeShoppingItems(s._docId, items => {
+        currentItems = items;
+        renderItems(items, s._docId);
+      });
     }
 
     storeBackBtn.addEventListener('click', () => {
       if (unsubItems) { unsubItems(); unsubItems = null; }
       currentStoreId = null;
+      currentStoreObj = null;
+      currentItems = [];
       storeListView.classList.remove('active');
       storesView.style.display = '';
     });
 
-    /* ── render items ── */
+    /* ── esporta CSV ── */
+    btnExportCsv.addEventListener('click', () => {
+      if (!currentItems || currentItems.length === 0) {
+        alert('Nessun prodotto nella lista della spesa da scaricare.');
+        return;
+      }
+      const storeName = currentStoreObj ? currentStoreObj.name : 'spesa';
+      const headers = ['Prodotto', 'Quantità', 'Sezione', 'Acquistato'];
+      const rows = currentItems.map(it => [
+        `"${(it.name || '').replace(/"/g, '""')}"`,
+        `"${(it.qty || '').replace(/"/g, '""')}"`,
+        `"${(it.category || 'Generale').replace(/"/g, '""')}"`,
+        it.bought ? '"Sì"' : '"No"'
+      ]);
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lista_spesa_${storeName.toLowerCase().replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    /* ── render items con riordinamento e sezioni ── */
     function renderItems(items, storeDocId) {
       storeItemsList.innerHTML = '';
-      items.forEach(item => {
+      
+      const filtered = selectedCategoryFilter === 'ALL'
+        ? items
+        : items.filter(it => (it.category || 'Generale') === selectedCategoryFilter);
+
+      if (filtered.length === 0) {
+        storeItemsList.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:0.75rem; padding:20px 0;">Nessun prodotto ${selectedCategoryFilter === 'ALL' ? 'nella lista' : 'in questa sezione'}</div>`;
+        return;
+      }
+
+      filtered.forEach((item, fIdx) => {
         const row = document.createElement('div');
         row.className = 'store-item' + (item.bought ? ' bought' : '');
 
@@ -2632,16 +2827,69 @@
 
         const info = document.createElement('div');
         info.className = 'store-item-info';
-        info.innerHTML = `<div class="store-item-name">${item.name}</div>${item.qty ? `<div class="store-item-qty">${item.qty}</div>` : ''}`;
+        const catBadge = item.category ? `<span class="store-item-cat-badge">${item.category}</span>` : '';
+        info.innerHTML = `<div class="store-item-name">${catBadge}${item.name}</div>${item.qty ? `<div class="store-item-qty">${item.qty}</div>` : ''}`;
+
+        const actions = document.createElement('div');
+        actions.className = 'store-item-actions';
+
+        const btnUp = document.createElement('button');
+        btnUp.className = 'store-item-move';
+        btnUp.title = 'Sposta su';
+        btnUp.innerHTML = SVG_UP;
+        if (fIdx === 0) btnUp.disabled = true;
+        else {
+          btnUp.addEventListener('click', async () => {
+            const prevItem = filtered[fIdx - 1];
+            // Trova indici o ordini
+            const curIdxInAll = items.findIndex(i => i._docId === item._docId);
+            const prevIdxInAll = items.findIndex(i => i._docId === prevItem._docId);
+            if (curIdxInAll !== -1 && prevIdxInAll !== -1) {
+              const order1 = prevItem.order !== undefined ? prevItem.order : (prevItem.createdAt || prevIdxInAll);
+              const order2 = item.order !== undefined ? item.order : (item.createdAt || curIdxInAll);
+              // se uguali o invertiti, assegniamo valori distinti
+              const targetOrderPrev = (order1 === order2) ? order1 + 1 : order2;
+              const targetOrderCur = (order1 === order2) ? order1 : order1;
+              await updateShoppingItem(storeDocId, item._docId, { order: targetOrderCur });
+              await updateShoppingItem(storeDocId, prevItem._docId, { order: targetOrderPrev });
+            }
+          });
+        }
+
+        const btnDown = document.createElement('button');
+        btnDown.className = 'store-item-move';
+        btnDown.title = 'Sposta giù';
+        btnDown.innerHTML = SVG_DOWN;
+        if (fIdx === filtered.length - 1) btnDown.disabled = true;
+        else {
+          btnDown.addEventListener('click', async () => {
+            const nextItem = filtered[fIdx + 1];
+            const curIdxInAll = items.findIndex(i => i._docId === item._docId);
+            const nextIdxInAll = items.findIndex(i => i._docId === nextItem._docId);
+            if (curIdxInAll !== -1 && nextIdxInAll !== -1) {
+              const order1 = item.order !== undefined ? item.order : (item.createdAt || curIdxInAll);
+              const order2 = nextItem.order !== undefined ? nextItem.order : (nextItem.createdAt || nextIdxInAll);
+              const targetOrderNext = (order1 === order2) ? order1 : order1;
+              const targetOrderCur = (order1 === order2) ? order1 + 1 : order2;
+              await updateShoppingItem(storeDocId, item._docId, { order: targetOrderCur });
+              await updateShoppingItem(storeDocId, nextItem._docId, { order: targetOrderNext });
+            }
+          });
+        }
 
         const del = document.createElement('button');
         del.className = 'store-item-del';
+        del.title = 'Elimina';
         del.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>`;
         del.addEventListener('click', () => deleteShoppingItem(storeDocId, item._docId));
 
+        actions.appendChild(btnUp);
+        actions.appendChild(btnDown);
+        actions.appendChild(del);
+
         row.appendChild(chk);
         row.appendChild(info);
-        row.appendChild(del);
+        row.appendChild(actions);
         storeItemsList.appendChild(row);
       });
     }
@@ -2650,8 +2898,11 @@
     async function doAddItem() {
       const name = newItemName.value.trim();
       const qty  = newItemQty.value.trim();
+      const category = newItemCat.value || 'Generale';
       if (!name || !currentStoreId) return;
-      await addShoppingItem(currentStoreId, { name, qty, bought: false });
+      // calcola order alla fine
+      const maxOrder = currentItems.reduce((max, it) => Math.max(max, (it.order !== undefined ? it.order : (it.createdAt || 0))), 0);
+      await addShoppingItem(currentStoreId, { name, qty, category, bought: false, order: maxOrder + 10 });
       newItemName.value = '';
       newItemQty.value  = '';
       newItemName.focus();
@@ -2701,6 +2952,13 @@
     /* ── subscribe negozi ── */
     subscribeShoppingStores(newStores => {
       stores = newStores;
+      if (currentStoreId) {
+        const found = stores.find(s => s._docId === currentStoreId);
+        if (found) {
+          currentStoreObj = found;
+          renderCategoryControls();
+        }
+      }
       renderStores();
     });
     } // fine initShoppingApp()

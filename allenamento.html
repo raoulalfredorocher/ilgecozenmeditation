@@ -624,6 +624,8 @@
     // ── SVG icons ──
     const SVG_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     const SVG_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+    const SVG_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`;
+    const SVG_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
 
     // ── Modal helpers ──
     function openModal(id)  { document.getElementById(id).classList.add('open'); }
@@ -741,6 +743,7 @@
     function renderSchedeInModal(all) {
       const list = document.getElementById('modal-schede-list');
       list.innerHTML = '';
+      const totalSchede = (all.schede || []).length;
       (all.schede || []).forEach((sch, idx) => {
         const exCount = (all.schede[idx]?.esercizi || []).length;
         const div = document.createElement('div');
@@ -752,18 +755,44 @@
             <div class="item-row-meta">${exCount} esercizi</div>
           </div>
           <div class="item-row-actions">
-            <button class="icon-btn edit">${SVG_EDIT}</button>
-            <button class="icon-btn del">${SVG_TRASH}</button>
+            <button class="icon-btn move-up" title="Sposta su" ${idx === 0 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_UP}</button>
+            <button class="icon-btn move-down" title="Sposta giù" ${idx === totalSchede - 1 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_DOWN}</button>
+            <button class="icon-btn edit" title="Modifica">${SVG_EDIT}</button>
+            <button class="icon-btn del" title="Elimina">${SVG_TRASH}</button>
           </div>`;
         const openDetail = () => { closeModal('modal-allenamento-detail'); openSchedaDetail(currentAllDocId, idx); };
         div.querySelector('.item-row-info').addEventListener('click', openDetail);
         div.querySelector('.item-row-icon').addEventListener('click', openDetail);
+        if (idx > 0) {
+          div.querySelector('.icon-btn.move-up').addEventListener('click', async e => {
+            e.stopPropagation();
+            const a = allenamentiList.find(a => a._docId === currentAllDocId);
+            const schede = [...a.schede];
+            [schede[idx - 1], schede[idx]] = [schede[idx], schede[idx - 1]];
+            a.schede = schede;
+            renderSchedeInModal(a);
+            await updateAllenamentoDoc(currentAllDocId, { schede });
+          });
+        }
+        if (idx < totalSchede - 1) {
+          div.querySelector('.icon-btn.move-down').addEventListener('click', async e => {
+            e.stopPropagation();
+            const a = allenamentiList.find(a => a._docId === currentAllDocId);
+            const schede = [...a.schede];
+            [schede[idx], schede[idx + 1]] = [schede[idx + 1], schede[idx]];
+            a.schede = schede;
+            renderSchedeInModal(a);
+            await updateAllenamentoDoc(currentAllDocId, { schede });
+          });
+        }
         div.querySelector('.icon-btn.edit').addEventListener('click', e => { e.stopPropagation(); openDetail(); });
         div.querySelector('.icon-btn.del').addEventListener('click', async e => {
           e.stopPropagation();
           if (!confirm(`Eliminare la scheda "${sch.nome}"?`)) return;
           const a = allenamentiList.find(a => a._docId === currentAllDocId);
           const schede = a.schede.filter((_, i) => i !== idx);
+          a.schede = schede;
+          renderSchedeInModal(a);
           await updateAllenamentoDoc(currentAllDocId, { schede });
         });
         list.appendChild(div);
@@ -824,25 +853,56 @@
     function renderEserciziInModal(all, idx) {
       const list = document.getElementById('modal-esercizi-list');
       list.innerHTML = '';
+      const totalEx = (all.schede[idx]?.esercizi || []).length;
       (all.schede[idx]?.esercizi || []).forEach((ex, eidx) => {
         const div = document.createElement('div');
         div.className = 'esercizio-card';
         div.innerHTML = `
-          <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
-          <div class="esercizio-card-meta">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+            <div class="esercizio-card-title" style="margin-bottom:0">${ex.gruppo} — ${ex.nome}</div>
+            <div style="display:flex; gap:4px; flex-shrink:0;">
+              <button class="icon-btn move-up" title="Sposta su" ${eidx === 0 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_UP}</button>
+              <button class="icon-btn move-down" title="Sposta giù" ${eidx === totalEx - 1 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_DOWN}</button>
+            </div>
+          </div>
+          <div class="esercizio-card-meta" style="margin-top:6px;">
             ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+(ex.gruppo==='Cardio' ? Math.round(ex.tempo/60)+' min' : ex.tempo+'s') : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
             ${ex.desc||''}
           </div>
           <div class="esercizio-card-actions">
-            <button class="icon-btn edit">${SVG_EDIT}</button>
-            <button class="icon-btn del">${SVG_TRASH}</button>
+            <button class="icon-btn edit" title="Modifica">${SVG_EDIT}</button>
+            <button class="icon-btn del" title="Elimina">${SVG_TRASH}</button>
           </div>`;
+        if (eidx > 0) {
+          div.querySelector('.icon-btn.move-up').addEventListener('click', async () => {
+            const a = allenamentiList.find(a => a._docId === currentAllDocId);
+            const schede = JSON.parse(JSON.stringify(a.schede));
+            const arr = schede[currentSchedaIdx].esercizi;
+            [arr[eidx - 1], arr[eidx]] = [arr[eidx], arr[eidx - 1]];
+            a.schede = schede;
+            renderEserciziInModal(a, currentSchedaIdx);
+            await updateAllenamentoDoc(currentAllDocId, { schede });
+          });
+        }
+        if (eidx < totalEx - 1) {
+          div.querySelector('.icon-btn.move-down').addEventListener('click', async () => {
+            const a = allenamentiList.find(a => a._docId === currentAllDocId);
+            const schede = JSON.parse(JSON.stringify(a.schede));
+            const arr = schede[currentSchedaIdx].esercizi;
+            [arr[eidx], arr[eidx + 1]] = [arr[eidx + 1], arr[eidx]];
+            a.schede = schede;
+            renderEserciziInModal(a, currentSchedaIdx);
+            await updateAllenamentoDoc(currentAllDocId, { schede });
+          });
+        }
         div.querySelector('.icon-btn.edit').addEventListener('click', () => openEditEsercizio(eidx, ex));
         div.querySelector('.icon-btn.del').addEventListener('click', async () => {
           if (!confirm(`Eliminare "${ex.nome}"?`)) return;
           const a = allenamentiList.find(a => a._docId === currentAllDocId);
           const schede = JSON.parse(JSON.stringify(a.schede));
           schede[currentSchedaIdx].esercizi.splice(eidx, 1);
+          a.schede = schede;
+          renderEserciziInModal(a, currentSchedaIdx);
           await updateAllenamentoDoc(currentAllDocId, { schede });
         });
         list.appendChild(div);

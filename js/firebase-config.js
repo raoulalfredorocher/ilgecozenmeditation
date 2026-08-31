@@ -365,8 +365,14 @@ export async function deleteShoppingStore(docId) {
 export function subscribeShoppingItems(storeDocId, callback) {
   if (!db || !auth?.currentUser) { callback([]); return () => {}; }
   const col = collection(db, 'users', auth.currentUser.uid, 'shopping_stores', storeDocId, 'items');
-  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
-    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  return onSnapshot(query(col), snap => {
+    const list = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+    list.sort((a, b) => {
+      const ordA = a.order !== undefined ? a.order : (a.createdAt || 0);
+      const ordB = b.order !== undefined ? b.order : (b.createdAt || 0);
+      return ordA - ordB;
+    });
+    callback(list);
   });
 }
 

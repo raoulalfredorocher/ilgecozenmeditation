@@ -421,6 +421,52 @@
       line-height: 1.8;
     }
 
+    /* ── Progress bar bucket list ── */
+    .bucket-progress-card {
+      width: 100%;
+      max-width: 440px;
+      margin: 10px auto 14px;
+      padding: 12px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+    .bucket-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: .75rem;
+    }
+    .bucket-progress-title {
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bucket-progress-stats {
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .05em;
+    }
+    .bucket-progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--surface);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .bucket-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4af37, #f39c12);
+      border-radius: 999px;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+
     /* ── Tab bar ── */
     .tab-bar {
       position: fixed;
@@ -475,6 +521,17 @@
       <div class="knob" id="theme-knob">☀️</div>
     </button>
   </header>
+
+  <!-- BARRA PROGRESSO REALIZZATI VS CREATI -->
+  <div class="bucket-progress-card" id="bucket-progress-card">
+    <div class="bucket-progress-header">
+      <div class="bucket-progress-title"><span>✨</span> Sogni Realizzati</div>
+      <div class="bucket-progress-stats" id="bucket-progress-stats">0 / 0 (0%)</div>
+    </div>
+    <div class="bucket-progress-track">
+      <div class="bucket-progress-fill" id="bucket-progress-fill"></div>
+    </div>
+  </div>
 
   <!-- SCHERMATA LISTA -->
   <div id="screen-list" class="active">
@@ -895,9 +952,21 @@
         .replace(/"/g, '&quot;');
     }
 
+    /* ── Aggiornamento progress bar ── */
+    function updateProgressBar() {
+      const total = items.length;
+      const doneCount = items.filter(i => i.done).length;
+      const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+      const statsEl = document.getElementById('bucket-progress-stats');
+      const fillEl = document.getElementById('bucket-progress-fill');
+      if (statsEl) statsEl.textContent = `${doneCount} / ${total} (${pct}%)`;
+      if (fillEl) fillEl.style.width = `${pct}%`;
+    }
+
     /* ── Init: sottoscrivi Firestore (real-time) ── */
     subscribeBucketList(newItems => {
       items = newItems;
+      updateProgressBar();
       renderGrid();
       if (screenCompleted.classList.contains('active')) renderCompleted();
     });
