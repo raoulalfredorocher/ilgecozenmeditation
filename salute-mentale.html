@@ -1028,10 +1028,13 @@
     function subscribeDiary() {
       const col = _diaryCol();
       if (!col) { renderDiary(); return; }
+      if (diaryUnsub) { diaryUnsub(); diaryUnsub = null; }
       const q = query(col, orderBy('createdAt', 'desc'));
       diaryUnsub = onSnapshot(q, snap => {
         diaryEntries = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
         renderDiary();
+      }, err => {
+        console.warn('Errore snapshot diario:', err);
       });
     }
 
@@ -1143,24 +1146,51 @@
     diaryOverlay.addEventListener('click', e => { if (e.target === diaryOverlay) closeDiaryModal(); });
 
     document.getElementById('btn-diary-save').addEventListener('click', async () => {
+      const saveBtn = document.getElementById('btn-diary-save');
       const titolo = document.getElementById('d-titolo').value.trim();
       const testo  = document.getElementById('d-testo').value.trim();
       const data   = document.getElementById('d-data').value;
       const ora    = document.getElementById('d-ora').value;
       if (!titolo) { alert('Inserisci un titolo.'); return; }
 
-      const col = _diaryCol(); if (!col) return;
+      const col = _diaryCol();
+      if (!col) { alert('Errore di sessione. Riprova tra un istante.'); return; }
+
+      const nowTs = Date.now();
       const payload = { titolo, testo, data, ora };
       if (_pendingAttach) {
         payload.attachName = _pendingAttach.name;
         payload.attachData = _pendingAttach.dataUrl;
       }
-      if (editingDiaryId) {
-        await updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload);
-      } else {
-        await addDoc(col, { ...payload, createdAt: Date.now() });
+
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = '0.6';
+
+      try {
+        if (editingDiaryId) {
+          await updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload);
+          const idx = diaryEntries.findIndex(e => e._docId === editingDiaryId);
+          if (idx !== -1) {
+            diaryEntries[idx] = { ...diaryEntries[idx], ...payload };
+          }
+        } else {
+          const docRef = await addDoc(col, { ...payload, createdAt: nowTs });
+          // Inserimento immediato ottimistico in cima alla lista
+          const newEntry = { _docId: docRef.id, ...payload, createdAt: nowTs };
+          if (!diaryEntries.some(e => e._docId === docRef.id)) {
+            diaryEntries.unshift(newEntry);
+          }
+        }
+        renderDiary();
+        switchTab(1); // Passa / assicura la vista sul tab Diario
+        closeDiaryModal();
+      } catch (err) {
+        console.error('Errore salvataggio diario:', err);
+        alert('Errore durante il salvataggio. Controlla la connessione.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
       }
-      closeDiaryModal();
     });
 
     /* CSV export */
