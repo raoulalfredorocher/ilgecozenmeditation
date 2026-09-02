@@ -715,28 +715,10 @@
     </div>
 
     <!-- Selezione Playlist -->
-    <div class="section-divider" style="margin-top:6px;">Le tue Playlist</div>
-    <div class="playlists-picker">
-      <div class="playlist-card-item" data-uri="spotify:playlist:450jCqgY0RmUDztCyO1EwZ" id="pl-1">
-        <div class="playlist-card-info">
-          <span class="playlist-card-icon">🔥</span>
-          <div>
-            <div class="playlist-card-title">Playlist Zen 1</div>
-            <div style="font-size:.60rem;color:var(--muted);">spotify:playlist:450jCqgY0RmUDztCyO1EwZ</div>
-          </div>
-        </div>
-        <button class="btn-play-pl">▶ Riproduci</button>
-      </div>
-
-      <div class="playlist-card-item" data-uri="spotify:playlist:6MnZOtcOrMg5jgwL54lInX" id="pl-2">
-        <div class="playlist-card-info">
-          <span class="playlist-card-icon">🌿</span>
-          <div>
-            <div class="playlist-card-title">Playlist Zen 2</div>
-            <div style="font-size:.60rem;color:var(--muted);">spotify:playlist:6MnZOtcOrMg5jgwL54lInX</div>
-          </div>
-        </div>
-        <button class="btn-play-pl">▶ Riproduci</button>
+    <div class="section-divider" style="margin-top:6px;">Le tue Playlist Spotify</div>
+    <div class="playlists-picker" id="spotify-playlists-container">
+      <div style="text-align:center;font-size:.70rem;color:var(--muted);padding:14px;">
+        Caricamento playlist in corso... 🎵
       </div>
     </div>
   </div>
@@ -871,7 +853,9 @@
       'user-read-email',
       'user-read-private',
       'user-modify-playback-state',
-      'user-read-playback-state'
+      'user-read-playback-state',
+      'playlist-read-private',
+      'playlist-read-collaborative'
     ].join(' ');
 
     let spotifyToken = localStorage.getItem('spotify_access_token');
@@ -1033,6 +1017,7 @@
           console.log('Ready with Device ID', device_id);
           spotifyDeviceId = device_id;
           document.getElementById('p-status').innerHTML = '<span class="status-dot"></span> Player Connesso';
+          loadUserPlaylists();
         });
 
         spotifyPlayer.addListener('not_ready', ({ device_id }) => {
@@ -1152,6 +1137,64 @@
       redirectToSpotifyAuth();
     });
 
+    async function loadUserPlaylists() {
+      const container = document.getElementById('spotify-playlists-container');
+      if (!spotifyToken) return;
+
+      try {
+        const res = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
+          headers: { 'Authorization': `Bearer ${spotifyToken}` }
+        });
+
+        if (res.status === 401) {
+          const fresh = await refreshSpotifyToken();
+          if (fresh) return loadUserPlaylists();
+        }
+
+        const data = await res.json();
+        const items = data.items || [];
+
+        container.innerHTML = '';
+        if (items.length === 0) {
+          container.innerHTML = '<div style="text-align:center;font-size:.70rem;color:var(--muted);padding:14px;">Nessuna playlist trovata nel tuo account.</div>';
+          return;
+        }
+
+        items.forEach(pl => {
+          const card = document.createElement('div');
+          card.className = 'playlist-card-item';
+          card.setAttribute('data-uri', pl.uri);
+
+          const imgUrl = (pl.images && pl.images[0]) ? pl.images[0].url : '';
+          const imgHtml = imgUrl
+            ? `<img src="${imgUrl}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);" loading="lazy"/>`
+            : `<span class="playlist-card-icon">🎵</span>`;
+
+          card.innerHTML = `
+            <div class="playlist-card-info">
+              ${imgHtml}
+              <div style="min-width:0;">
+                <div class="playlist-card-title">${escapeHtml(pl.name)}</div>
+                <div style="font-size:.60rem;color:var(--muted);">${pl.tracks?.total || 0} brani</div>
+              </div>
+            </div>
+            <button class="btn-play-pl">▶ Riproduci</button>
+          `;
+
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.playlist-card-item').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            playSpotifyUri(pl.uri);
+          });
+
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Error loading playlists', err);
+        container.innerHTML = '<div style="text-align:center;font-size:.70rem;color:var(--muted);padding:14px;">Errore nel caricamento delle playlist. Riprova.</div>';
+      }
+    }
+
     // Controls
     document.getElementById('btn-play-pause').addEventListener('click', () => {
       if (spotifyPlayer) spotifyPlayer.togglePlay();
@@ -1161,16 +1204,6 @@
     });
     document.getElementById('btn-next').addEventListener('click', () => {
       if (spotifyPlayer) spotifyPlayer.nextTrack();
-    });
-
-    // Playlist buttons
-    document.querySelectorAll('.playlist-card-item').forEach(card => {
-      card.addEventListener('click', () => {
-        const uri = card.getAttribute('data-uri');
-        document.querySelectorAll('.playlist-card-item').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        playSpotifyUri(uri);
-      });
     });
 
     waitForAuth().then(user => {
