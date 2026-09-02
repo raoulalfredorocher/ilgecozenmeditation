@@ -1168,19 +1168,21 @@
       saveBtn.disabled = true;
       saveBtn.style.opacity = '0.6';
 
-      // fire-and-forget: Firestore applica la modifica nel cache locale subito,
-      // onSnapshot aggiorna il DOM automaticamente. Niente await bloccante.
-      if (editingDiaryId) {
-        updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload)
-          .catch(err => console.warn('Errore aggiornamento diario:', err));
-      } else {
-        addDoc(col, { ...payload, createdAt: nowTs })
-          .catch(err => console.warn('Errore inserimento diario:', err));
+      try {
+        if (editingDiaryId) {
+          await updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload);
+        } else {
+          await addDoc(col, { ...payload, createdAt: nowTs });
+        }
+      } catch (err) {
+        // errore rete: Firestore sincronizzerà appena possibile, nessun alert
+        console.warn('Salvataggio diario in coda (offline?):', err);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
+        switchTab(1);
+        closeDiaryModal();
       }
-      saveBtn.disabled = false;
-      saveBtn.style.opacity = '1';
-      switchTab(1);
-      closeDiaryModal();
     });
 
     /* CSV export */
