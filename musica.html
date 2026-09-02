@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <link rel="icon" type="image/png" href="icon-192.png"/>
-  <title>Il Geco Zen — Musica, Video e Podcast</title>
+  <title>Il Geco Zen — Musica, Accordi, Video e Podcast</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <link rel="stylesheet" href="styles/layout.css?v=8"/>
   <style>
@@ -56,6 +56,13 @@
       display: block;
       width: 100%;
       border: none;
+    }
+    .spotify-hint {
+      font-size: .62rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+      padding: 4px 8px 10px;
     }
 
     /* ── Tab 2: Canzoni e Accordi ── */
@@ -122,64 +129,91 @@
       transition: opacity .15s;
     }
     .btn-accordi:active { opacity: .85; }
-    .btn-icon-sm {
+    .btn-act {
       background: none;
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--muted);
       cursor: pointer;
-      padding: 6px 8px;
+      padding: 5px 7px;
       display: flex;
       align-items: center;
       font-family: inherit;
       transition: color .2s, border-color .2s;
     }
-    .btn-icon-sm:active { color: var(--gold); border-color: var(--gold); }
-    .btn-icon-sm.del:active { color: var(--red); border-color: var(--red); }
+    .btn-act:active { color: var(--gold); border-color: var(--gold); }
+    .btn-act.d:active { color: var(--red); border-color: var(--red); }
 
-    /* ── Tab 3: Video e Podcast ── */
+    /* ── Tab 3: Video e Podcast (Collassabili) ── */
     .media-category-block {
       width: 100%;
-      margin-bottom: 8px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color .2s;
     }
     .media-category-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 0 6px;
-      border-bottom: 2px solid var(--gold);
-      margin-bottom: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
-    .media-category-title {
-      font-size: .65rem;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
+    .media-category-title-wrap {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+    }
+    .media-category-title {
+      font-size: .80rem;
+      letter-spacing: .08em;
+      color: var(--text);
+      font-weight: 700;
+      text-transform: uppercase;
     }
     .media-category-count {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1px 7px;
-      font-size: .54rem;
+      font-size: .56rem;
       color: var(--muted);
       font-weight: 500;
+    }
+    .media-category-chevron {
+      font-size: .75rem;
+      color: var(--muted);
+      transition: transform .25s;
+      flex-shrink: 0;
+    }
+    .media-category-block.open .media-category-chevron {
+      transform: rotate(180deg);
+      color: var(--gold);
+    }
+    .media-category-body {
+      display: none;
+      padding: 0 12px 12px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .media-category-block.open .media-category-body {
+      display: block;
     }
     .media-grid {
       width: 100%;
       display: grid;
       grid-template-columns: 1fr;
       gap: 10px;
+      padding-top: 10px;
     }
     .media-card {
       background: var(--card);
       border: 1.5px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 14px;
+      border-radius: 14px;
+      padding: 11px 13px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -238,14 +272,6 @@
       align-items: center;
       gap: 3px;
     }
-    .media-cat-badge {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1px 6px;
-      font-size: .52rem;
-      letter-spacing: .04em;
-    }
     .media-actions {
       display: flex;
       flex-direction: column;
@@ -257,8 +283,8 @@
       background: #ff0000;
       color: #fff;
       border: none;
-      border-radius: 9px;
-      padding: 6px 10px;
+      border-radius: 8px;
+      padding: 5px 9px;
       font-size: .62rem;
       font-weight: 600;
       font-family: inherit;
@@ -270,7 +296,7 @@
     }
     .btn-yt:active { opacity: .85; }
 
-    /* ── FAB & Modali ── */
+    /* ── FAB & Modali (stile coerente) ── */
     .fab-add {
       position: fixed;
       bottom: calc(68px + env(safe-area-inset-bottom, 0px));
@@ -435,16 +461,14 @@
   <script type="module" src="js/auth-guard.js"></script>
 
   <header id="main-header">
-    <div style="display:flex;flex-direction:row;gap:6px;align-items:center;">
-      <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-        <span>TAO</span>
-      </a>
-    </div>
+    <a class="btn-header-csv" href="passioni.html" aria-label="Torna a Passioni" style="text-decoration:none;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      <span>TAO</span>
+    </a>
     <div class="header-center">
       <a href="passioni.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:inherit;">
         <div style="font-size:1.8rem;line-height:1;">🎵</div>
-        <div class="app-title" style="font-size:.92rem;letter-spacing:.16em;color:var(--gold);font-weight:700;">MUSICA & MEDIA</div>
+        <div class="app-title" style="font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:700;">MUSICA & MEDIA</div>
         <div class="app-sub-music">IL GECO ZEN · PASSIONI</div>
       </a>
     </div>
@@ -461,6 +485,7 @@
       <div class="spotify-card">
         <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6MnZOtcOrMg5jgwL54lInX?utm_source=generator&si=14604be59e4e4dbd" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
+      <div class="spotify-hint">💡 Clicca sul titolo o sul logo di Spotify nell'embed per aprire e riprodurre l'intera traccia/playlist direttamente nell'app Spotify.</div>
     </div>
   </div>
 
@@ -474,7 +499,7 @@
   <!-- Schermata 3: Video & Podcast -->
   <div id="screen-media">
     <div class="section-divider">Video & Podcast</div>
-    <div id="media-categories-container" style="width:100%;display:flex;flex-direction:column;gap:14px;"></div>
+    <div id="media-categories-container" style="width:100%;display:flex;flex-direction:column;gap:12px;"></div>
     <div class="empty-st visible" id="empty-media">Nessun video o podcast inserito.<br>Tocca ＋ per aggiungere un contenuto 🎬</div>
   </div>
 
@@ -520,7 +545,7 @@
         </div>
         <div class="fg">
           <div class="fl">Categoria *</div>
-          <input class="fi" id="f-media-category" type="text" placeholder="Es. Filosofia, Podcast, Musica" maxlength="40" autocomplete="off" list="media-cat-suggestions"/>
+          <input class="fi" id="f-media-category" type="text" placeholder="Es. Podcast, Musica, Zen" maxlength="40" autocomplete="off" list="media-cat-suggestions"/>
           <datalist id="media-cat-suggestions">
             <option value="Podcast">
             <option value="Crescita Personale">
@@ -551,13 +576,8 @@
       </svg>
       <span class="tab-label">Musica</span>
     </button>
-    <button class="tab-btn" id="tab-accordi">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 18V5l12-2v13"/>
-        <circle cx="6" cy="18" r="3"/>
-        <circle cx="18" cy="16" r="3"/>
-        <path d="M3 9h18"/>
-      </svg>
+    <button class="tab-btn tab-center" id="tab-accordi">
+      <div class="tab-center-circle"><img src="Logo%20Trasparente.png" alt="" class="tab-center-gecko"/></div>
       <span class="tab-label">Accordi</span>
     </button>
     <button class="tab-btn" id="tab-media">
@@ -600,6 +620,7 @@
       let currentScreen = 'musica';
       let accordiListItems = [];
       let mediaListItems = [];
+      let openCategories = new Set(); // tiene traccia delle sezioni aperte
       let editingAccordoId = null;
       let editingMediaId = null;
 
@@ -784,7 +805,7 @@
           `;
 
           const btnEdit = document.createElement('button');
-          btnEdit.className = 'btn-icon-sm';
+          btnEdit.className = 'btn-act';
           btnEdit.title = 'Modifica';
           btnEdit.innerHTML = `
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -903,19 +924,40 @@
 
         const sortedCategories = Object.keys(groups).sort((a, b) => a.localeCompare(b));
 
+        // Se è la prima volta, apri tutte le categorie di default
+        if (openCategories.size === 0) {
+          sortedCategories.forEach(c => openCategories.add(c));
+        }
+
         sortedCategories.forEach(cat => {
           const items = groups[cat];
+          const isOpen = openCategories.has(cat);
+
           const block = document.createElement('div');
-          block.className = 'media-category-block';
+          block.className = `media-category-block ${isOpen ? 'open' : ''}`;
 
           const header = document.createElement('div');
           header.className = 'media-category-header';
           header.innerHTML = `
-            <div class="media-category-title">
-              <span>📁</span> ${escapeHtml(cat)}
+            <div class="media-category-title-wrap">
+              <span class="media-category-title">${escapeHtml(cat)}</span>
+              <span class="media-category-count">${items.length}</span>
             </div>
-            <span class="media-category-count">${items.length} ${items.length === 1 ? 'contenuto' : 'contenuti'}</span>
+            <span class="media-category-chevron">▼</span>
           `;
+
+          header.addEventListener('click', () => {
+            if (block.classList.contains('open')) {
+              block.classList.remove('open');
+              openCategories.delete(cat);
+            } else {
+              block.classList.add('open');
+              openCategories.add(cat);
+            }
+          });
+
+          const body = document.createElement('div');
+          body.className = 'media-category-body';
 
           const grid = document.createElement('div');
           grid.className = 'media-grid';
@@ -953,7 +995,7 @@
             `;
 
             const btnEdit = document.createElement('button');
-            btnEdit.className = 'btn-icon-sm';
+            btnEdit.className = 'btn-act';
             btnEdit.title = 'Modifica';
             btnEdit.innerHTML = `
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -967,8 +1009,9 @@
             grid.appendChild(card);
           });
 
+          body.appendChild(grid);
           block.appendChild(header);
-          block.appendChild(grid);
+          block.appendChild(body);
           mediaCatContainer.appendChild(block);
         });
       }
