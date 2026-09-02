@@ -159,11 +159,40 @@
     .grand-summary-value { font-size:1.18rem; font-weight:700; margin-top:4px; }
 
     .account-card { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:16px; padding:14px; margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+      border-radius:16px; padding:0; margin-bottom:10px; overflow:hidden; }
+    .account-card-header { display:flex; align-items:center; gap:12px; padding:14px;
+      cursor:pointer; -webkit-tap-highlight-color:transparent; }
     .account-icon { font-size:1.5rem; flex-shrink:0; }
     .account-info { flex:1; min-width:0; }
     .account-name { font-size:.86rem; font-weight:600; color:var(--text); }
     .account-meta { font-size:.57rem; color:var(--muted); margin-top:2px; letter-spacing:.05em; }
+    .account-balance { text-align:right; flex-shrink:0; }
+    .account-balance-val { font-size:.9rem; font-weight:700; }
+    .account-balance-val.pos { color:#22a85e; }
+    .account-balance-val.neg { color:var(--red); }
+    .account-balance-label { font-size:.5rem; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-top:1px; }
+    .account-detail { border-top:1px solid var(--border); padding:12px 14px; display:none; }
+    .account-detail.open { display:block; }
+    .account-detail-row { display:flex; justify-content:space-between; align-items:center;
+      padding:4px 0; font-size:.76rem; }
+    .account-detail-label { color:var(--muted); }
+    .account-detail-value { font-weight:600; }
+    .account-detail-value.pos { color:#22a85e; }
+    .account-detail-value.neg { color:var(--red); }
+    .account-exp-list { margin-top:8px; border-top:1px dashed var(--border); padding-top:8px; }
+    .account-exp-item { display:flex; justify-content:space-between; align-items:center;
+      padding:4px 0; font-size:.72rem; border-bottom:1px solid var(--surface); }
+    .account-exp-item:last-child { border-bottom:none; }
+    .account-exp-title { color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:8px; }
+    .account-exp-badge { font-size:.46rem; letter-spacing:.1em; text-transform:uppercase;
+      padding:2px 6px; border-radius:6px; flex-shrink:0; margin-right:6px; }
+    .account-exp-badge.entrata { background:rgba(34,168,94,.15); color:#22a85e; }
+    .account-exp-badge.uscita { background:rgba(192,64,96,.12); color:var(--red); }
+    .account-exp-amount { font-weight:600; flex-shrink:0; }
+    .account-exp-amount.pos { color:#22a85e; }
+    .account-exp-amount.neg { color:var(--red); }
+    .account-chevron { font-size:.7rem; color:var(--muted); transition:transform .2s; flex-shrink:0; margin-left:6px; }
+    .account-chevron.open { transform:rotate(180deg); }
 
     .cat-block { width:100%; background:var(--card); border:1.5px solid var(--border);
       border-radius:18px; padding:16px; margin-bottom:14px; }
@@ -183,6 +212,11 @@
       border-top:1px solid var(--border); margin-top:10px; padding-top:10px; }
     .cat-total-label { font-size:.58rem; color:var(--muted); letter-spacing:.08em; }
     .cat-total-value { font-size:.82rem; font-weight:700; color:var(--primary); }
+
+    .tipo-badge { display:inline-block; font-size:.46rem; letter-spacing:.1em; text-transform:uppercase;
+      padding:2px 6px; border-radius:6px; margin-left:4px; vertical-align:middle; }
+    .tipo-badge.entrata { background:rgba(34,168,94,.15); color:#22a85e; }
+    .tipo-badge.uscita { background:rgba(192,64,96,.12); color:var(--red); }
 
     /* PATRIMONIO */
     .patrimonio-empty { width:100%; text-align:center; padding:60px 20px; }
@@ -242,12 +276,22 @@
       <div class="grand-summary-title">Riepilogo totale</div>
       <div class="grand-summary-grid">
         <div class="grand-summary-item">
-          <div class="grand-summary-label">Mensile</div>
+          <div class="grand-summary-label">Saldo mensile netto</div>
           <div class="grand-summary-value" id="grand-monthly">€ 0</div>
         </div>
         <div class="grand-summary-item">
-          <div class="grand-summary-label">Annuale</div>
+          <div class="grand-summary-label">Saldo annuale netto</div>
           <div class="grand-summary-value" id="grand-annual">€ 0</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);">
+        <div style="text-align:center;">
+          <div style="font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;opacity:.75;">Entrate mensili</div>
+          <div style="font-size:.88rem;font-weight:700;margin-top:3px;" id="grand-entrate">€ 0</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;opacity:.75;">Uscite mensili</div>
+          <div style="font-size:.88rem;font-weight:700;margin-top:3px;" id="grand-uscite">€ 0</div>
         </div>
       </div>
     </div>
@@ -325,7 +369,14 @@
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title" id="modal-expense-title">Nuova spesa</div>
-      <div class="form-group"><label>Titolo spesa</label><input id="exp-title" placeholder="es. Netflix, Affitto, Veterinario…"/></div>
+      <div class="form-group"><label>Titolo</label><input id="exp-title" placeholder="es. Netflix, Affitto, Stipendio…"/></div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Tipo</label>
+        <div class="radio-group">
+          <div class="radio-chip"><input type="radio" name="exp-tipo" id="tipo-uscita" value="uscita" checked><label for="tipo-uscita">💸 Uscita</label></div>
+          <div class="radio-chip"><input type="radio" name="exp-tipo" id="tipo-entrata" value="entrata"><label for="tipo-entrata">💰 Entrata</label></div>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group" style="margin-bottom:0;">
           <label>Importo (€)</label>
@@ -605,31 +656,93 @@
     function monthly(exp) {
       return exp.freq === 'annual' ? (exp.amount || 0) / 12 : (exp.amount || 0);
     }
+    // Valore con segno: entrate positive, uscite negative
+    function monthlyNet(exp) {
+      const m = monthly(exp);
+      return exp.tipo === 'entrata' ? m : -m;
+    }
 
-    /* ── render accounts ── */
+    /* ── render accounts (espandibili con dettaglio per conto) ── */
     function renderAccounts() {
       const el = document.getElementById('accounts-list');
       if (!accounts.length) {
         el.innerHTML = '<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:8px 0 12px;letter-spacing:.08em;">Nessun conto aggiunto</div>';
         return;
       }
-      el.innerHTML = accounts.map(a => `
-        <div class="account-card">
-          <div class="account-icon">🏦</div>
-          <div class="account-info">
-            <div class="account-name">${a.name}</div>
-            <div class="account-meta">${a.holder || ''}${a.iban ? ' · ' + a.iban : ''}</div>
-          </div>
-          <div style="display:flex;gap:4px;flex-shrink:0;">
-            <button class="icon-btn" onclick="openEditAcc('${a._docId}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
-            </button>
-            <button class="icon-btn del" onclick="doDelAcc('${a._docId}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
-            </button>
-          </div>
-        </div>`).join('');
+      el.innerHTML = accounts.map(a => {
+        const accExps = expenses.filter(e => e.accountId === a._docId);
+        const entrate = accExps.filter(e => e.tipo === 'entrata');
+        const uscite  = accExps.filter(e => e.tipo !== 'entrata'); // default uscita
+        const totEntM = entrate.reduce((s, e) => s + monthly(e), 0);
+        const totUscM = uscite.reduce((s, e) => s + monthly(e), 0);
+        const saldoM  = totEntM - totUscM;
+        const saldoA  = saldoM * 12;
+        const balCls  = saldoM >= 0 ? 'pos' : 'neg';
+
+        const expItemsHtml = accExps.length ? accExps.map(exp => {
+          const isEnt = exp.tipo === 'entrata';
+          const m = monthly(exp);
+          return `<div class="account-exp-item">
+            <span class="account-exp-title">${exp.title}</span>
+            <span class="account-exp-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
+            <span class="account-exp-amount ${isEnt ? 'pos' : 'neg'}">${isEnt ? '+' : '-'}${fmtEur(m)}</span>
+          </div>`;
+        }).join('') : '<div style="font-size:.66rem;color:var(--muted);padding:4px 0;">Nessuna voce associata</div>';
+
+        const docId = a._docId;
+        return `
+          <div class="account-card" id="acc-card-${docId}">
+            <div class="account-card-header" onclick="toggleAccDetail('${docId}')">
+              <div class="account-icon">🏦</div>
+              <div class="account-info">
+                <div class="account-name">${a.name}</div>
+                <div class="account-meta">${a.holder || ''}${a.iban ? ' · ' + a.iban : ''}</div>
+              </div>
+              <div class="account-balance">
+                <div class="account-balance-val ${balCls}">${saldoM >= 0 ? '+' : ''}${fmtEur(saldoM)}</div>
+                <div class="account-balance-label">saldo/mese</div>
+              </div>
+              <div class="account-chevron" id="chev-${docId}">▼</div>
+            </div>
+            <div class="account-detail" id="detail-${docId}">
+              <div class="account-detail-row">
+                <span class="account-detail-label">Entrate mensili</span>
+                <span class="account-detail-value pos">+${fmtEur(totEntM)}</span>
+              </div>
+              <div class="account-detail-row">
+                <span class="account-detail-label">Uscite mensili</span>
+                <span class="account-detail-value neg">-${fmtEur(totUscM)}</span>
+              </div>
+              <div class="account-detail-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;">
+                <span class="account-detail-label">Saldo mensile</span>
+                <span class="account-detail-value ${balCls}">${saldoM >= 0 ? '+' : ''}${fmtEur(saldoM)}</span>
+              </div>
+              <div class="account-detail-row">
+                <span class="account-detail-label">Saldo annuale</span>
+                <span class="account-detail-value ${balCls}">${saldoA >= 0 ? '+' : ''}${fmtEur(saldoA)}</span>
+              </div>
+              <div class="account-exp-list">${expItemsHtml}</div>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button class="icon-btn" style="flex:1;border:1px solid var(--border);border-radius:10px;gap:6px;font-size:.7rem;color:var(--muted);padding:7px;" onclick="openEditAcc('${docId}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+                  Modifica
+                </button>
+                <button class="icon-btn del" style="flex:1;border:1px solid var(--red);border-radius:10px;gap:6px;font-size:.7rem;padding:7px;" onclick="doDelAcc('${docId}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+                  Elimina
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
     }
+
+    window.toggleAccDetail = function(docId) {
+      const det  = document.getElementById('detail-' + docId);
+      const chev = document.getElementById('chev-' + docId);
+      const open = det.classList.toggle('open');
+      chev.classList.toggle('open', open);
+    };
 
     /* ── render categories + expenses ── */
     function renderCategories() {
@@ -642,21 +755,27 @@
       let html = '';
       categories.forEach(cat => {
         const exps = expenses.filter(e => e.catId === cat._docId);
-        const catMonthly = exps.reduce((s, e) => s + monthly(e), 0);
-        const catAnnual  = catMonthly * 12;
+        // netto categoria: entrate +, uscite -
+        const catNetM  = exps.reduce((s, e) => s + monthlyNet(e), 0);
+        const catNetA  = catNetM * 12;
+        const catCls   = catNetM >= 0 ? '#22a85e' : 'var(--red)';
 
         const expsHtml = exps.length ? exps.map(exp => {
           const accName = (accounts.find(a => a._docId === exp.accountId) || {}).name || '';
           const m = monthly(exp);
+          const isEnt = exp.tipo === 'entrata';
           return `
             <div class="expense-row">
               <div class="expense-info">
-                <div class="expense-title-text">${exp.title}</div>
+                <div class="expense-title-text">
+                  ${exp.title}
+                  <span class="tipo-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
+                </div>
                 <div class="expense-meta">${accName ? accName + ' · ' : ''}${exp.year || ''}${exp.freq === 'annual' ? ' · annuale' : ''}</div>
               </div>
               <div class="expense-right">
-                <div class="expense-amount">${fmtEur(m)}<span style="font-size:.52rem;font-weight:400;color:var(--muted)">/mese</span></div>
-                ${exp.freq === 'annual' ? `<div class="expense-sub">${fmtEur(exp.amount)}/anno</div>` : ''}
+                <div class="expense-amount" style="color:${isEnt ? '#22a85e' : 'var(--red)'};">${isEnt ? '+' : '-'}${fmtEur(m)}<span style="font-size:.52rem;font-weight:400;color:var(--muted)">/mese</span></div>
+                ${exp.freq === 'annual' ? `<div class="expense-sub">${isEnt ? '+' : '-'}${fmtEur(exp.amount)}/anno</div>` : ''}
               </div>
               <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
                 <button class="icon-btn" onclick="openEditExp('${exp._docId}')">
@@ -667,14 +786,14 @@
                 </button>
               </div>
             </div>`;
-        }).join('') : '<div style="font-size:.66rem;color:var(--muted);padding:6px 0 8px;letter-spacing:.06em;">Nessuna spesa — premi + per aggiungere</div>';
+        }).join('') : '<div style="font-size:.66rem;color:var(--muted);padding:6px 0 8px;letter-spacing:.06em;">Nessuna voce — premi + per aggiungere</div>';
 
         html += `
           <div class="cat-block">
             <div class="cat-block-header">
               <div class="cat-block-name">📁 ${cat.name}</div>
               <div class="cat-block-actions">
-                <button class="icon-btn" title="Aggiungi spesa" onclick="openNewExp('${cat._docId}')">
+                <button class="icon-btn" title="Aggiungi voce" onclick="openNewExp('${cat._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </button>
                 <button class="icon-btn" title="Modifica categoria" onclick="openEditCat('${cat._docId}')">
@@ -687,10 +806,10 @@
             </div>
             ${expsHtml}
             <div class="cat-totals">
-              <span class="cat-total-label">Totale ${cat.name}</span>
+              <span class="cat-total-label">Netto ${cat.name}</span>
               <div style="text-align:right;">
-                <div class="cat-total-value">${fmtEur(catMonthly)}<span style="font-size:.58rem;font-weight:400;color:var(--muted)">/mese</span></div>
-                <div style="font-size:.6rem;color:var(--muted);">${fmtEur(catAnnual)}/anno</div>
+                <div class="cat-total-value" style="color:${catCls};">${catNetM >= 0 ? '+' : ''}${fmtEur(catNetM)}<span style="font-size:.58rem;font-weight:400;color:var(--muted)">/mese</span></div>
+                <div style="font-size:.6rem;color:var(--muted);">${catNetA >= 0 ? '+' : ''}${fmtEur(catNetA)}/anno</div>
               </div>
             </div>
           </div>`;
@@ -700,9 +819,18 @@
     }
 
     function updateGrandSummary() {
-      const totalMonthly = expenses.reduce((s, e) => s + monthly(e), 0);
-      document.getElementById('grand-monthly').textContent = fmtEur(totalMonthly);
-      document.getElementById('grand-annual').textContent  = fmtEur(totalMonthly * 12);
+      const netMonthly  = expenses.reduce((s, e) => s + monthlyNet(e), 0);
+      const totEntrate  = expenses.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
+      const totUscite   = expenses.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
+      const cls = netMonthly >= 0 ? '#22a85e' : 'var(--red)';
+      document.getElementById('grand-monthly').textContent = (netMonthly >= 0 ? '+' : '') + fmtEur(netMonthly);
+      document.getElementById('grand-annual').textContent  = (netMonthly >= 0 ? '+' : '') + fmtEur(netMonthly * 12);
+      // aggiorna colore saldo netto
+      document.getElementById('grand-monthly').style.color = cls;
+      document.getElementById('grand-annual').style.color  = cls;
+      // dettaglio entrate/uscite nel summary
+      document.getElementById('grand-entrate').textContent = '+' + fmtEur(totEntrate);
+      document.getElementById('grand-uscite').textContent  = '-' + fmtEur(totUscite);
     }
 
     function populateExpSelects(catId) {
@@ -787,28 +915,30 @@
     window.openNewExp = function(catId) {
       editExpDocId = null;
       newExpCatId  = catId;
-      document.getElementById('modal-expense-title').textContent = 'Nuova spesa';
+      document.getElementById('modal-expense-title').textContent = 'Nuova voce';
       document.getElementById('exp-title').value  = '';
       document.getElementById('exp-amount').value = '';
       document.getElementById('exp-year').value   = new Date().getFullYear();
       document.getElementById('freq-monthly').checked = true;
+      document.getElementById('tipo-uscita').checked  = true;
       populateExpSelects(catId);
       document.getElementById('modal-expense').classList.add('open');
     };
     window.openEditExp = function(docId) {
       editExpDocId = docId;
       const exp = expenses.find(e => e._docId === docId);
-      document.getElementById('modal-expense-title').textContent = 'Modifica spesa';
+      document.getElementById('modal-expense-title').textContent = 'Modifica voce';
       document.getElementById('exp-title').value  = exp.title  || '';
       document.getElementById('exp-amount').value = exp.amount || '';
       document.getElementById('exp-year').value   = exp.year   || new Date().getFullYear();
       document.querySelector(`input[name="exp-freq"][value="${exp.freq || 'monthly'}"]`).checked = true;
+      document.querySelector(`input[name="exp-tipo"][value="${exp.tipo || 'uscita'}"]`).checked  = true;
       populateExpSelects(exp.catId);
       document.getElementById('exp-account').value = exp.accountId || '';
       document.getElementById('modal-expense').classList.add('open');
     };
     window.doDelExp = async function(docId) {
-      if (!confirm('Eliminare questa spesa?')) return;
+      if (!confirm('Eliminare questa voce?')) return;
       await deleteFinanzaExpense(docId);
     };
 
@@ -817,14 +947,15 @@
       const title     = document.getElementById('exp-title').value.trim();
       const amount    = parseFloat(document.getElementById('exp-amount').value);
       const freq      = document.querySelector('input[name="exp-freq"]:checked').value;
+      const tipo      = document.querySelector('input[name="exp-tipo"]:checked').value;
       const catId     = document.getElementById('exp-category').value;
       const accountId = document.getElementById('exp-account').value;
       const year      = document.getElementById('exp-year').value;
       if (!title || isNaN(amount) || amount <= 0 || !catId) return;
       if (editExpDocId) {
-        await updateFinanzaExpense(editExpDocId, { title, amount, freq, catId, accountId, year });
+        await updateFinanzaExpense(editExpDocId, { title, amount, freq, tipo, catId, accountId, year });
       } else {
-        await addFinanzaExpense({ title, amount, freq, catId, accountId, year });
+        await addFinanzaExpense({ title, amount, freq, tipo, catId, accountId, year });
       }
       closeModal('modal-expense');
     });
