@@ -696,3 +696,86 @@ export async function deleteMediaDoc(docId) {
   if (!ref) return;
   await deleteDoc(ref);
 }
+
+// ─── Finanza ──────────────────────────────────────────────────────────────────
+
+export function subscribeFinanzaAccounts(callback) {
+  const col = userCol('finanza_accounts');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addFinanzaAccount(data) {
+  const col = userCol('finanza_accounts');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateFinanzaAccount(docId, fields) {
+  const ref = userDoc('finanza_accounts', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteFinanzaAccount(docId) {
+  const ref = userDoc('finanza_accounts', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+export function subscribeFinanzaCategories(callback) {
+  const col = userCol('finanza_categories');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addFinanzaCategory(data) {
+  const col = userCol('finanza_categories');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateFinanzaCategory(docId, fields) {
+  const ref = userDoc('finanza_categories', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteFinanzaCategory(docId) {
+  const ref = userDoc('finanza_categories', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+export function subscribeFinanzaExpenses(callback) {
+  const col = userCol('finanza_expenses');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addFinanzaExpense(data) {
+  const col = userCol('finanza_expenses');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateFinanzaExpense(docId, fields) {
+  const ref = userDoc('finanza_expenses', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteFinanzaExpense(docId) {
+  const ref = userDoc('finanza_expenses', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}

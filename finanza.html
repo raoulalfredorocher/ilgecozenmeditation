@@ -11,20 +11,17 @@
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <link rel="icon" type="image/png" href="icon-192.png"/>
   <title>Il Geco Zen — Finanza</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html[data-theme="light"] {
       --bg:#f0f7fb; --surface:#e2f0f8; --card:#ffffff; --border:#b8d8ea;
       --text:#0d2233; --muted:#5a7e94; --primary:#1a6e9a; --accent:#74C7E1;
       --accent2:#F5A9BC; --red:#c04060; --input-bg:#ffffff; --ring-bg:#c4e4f4;
-      --gold:#1a6e9a;
     }
     html[data-theme="dark"] {
       --bg:#0b1620; --surface:#112030; --card:#162840; --border:#1e3850;
       --text:#d8eaf4; --muted:#7aaabb; --primary:#74C7E1; --accent:#9DDDE8;
       --accent2:#F5A9BC; --red:#e05070; --input-bg:#112030; --ring-bg:#1a3040;
-      --gold:#74C7E1;
     }
     html { overscroll-behavior: none; }
     html, body { min-height:100%; background:var(--bg); color:var(--text);
@@ -32,24 +29,23 @@
       -webkit-font-smoothing:antialiased; transition:background .3s,color .3s; }
     body { display:flex; flex-direction:column; align-items:center;
       padding-top:calc(env(safe-area-inset-top,0px) + 120px);
-      padding-left:20px; padding-right:20px;
+      padding-left:18px; padding-right:18px;
       padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));
       max-width:480px; margin:0 auto; }
 
-    /* ── HEADER ── */
+    /* HEADER */
     header { position:fixed; top:0; left:0; right:0; z-index:150;
       background:var(--bg); display:flex; align-items:center; justify-content:space-between;
       padding:calc(env(safe-area-inset-top,0px) + 10px) 20px 10px;
       border-bottom:1px solid var(--border); }
     .btn-back-hub { background:none; border:1px solid var(--border); border-radius:10px;
-      color:var(--muted); font-family:inherit; font-size:.58rem;
-      letter-spacing:.1em; padding:5px 8px; cursor:pointer;
-      display:flex; flex-direction:column; align-items:center; gap:2px;
-      width:52px; text-decoration:none; }
-    .header-center { flex:1; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px; }
+      color:var(--muted); font-family:inherit; font-size:.58rem; letter-spacing:.1em;
+      padding:5px 8px; cursor:pointer; display:flex; flex-direction:column;
+      align-items:center; gap:2px; width:52px; text-decoration:none; }
+    .header-center { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
     .header-icon { font-size:1.8rem; line-height:1; }
     .app-title { font-size:.95rem; letter-spacing:.16em; color:var(--primary); font-weight:700; }
-    .app-sub { font-size:.48rem; letter-spacing:.22em; color:var(--muted); margin-top:2px; text-transform:uppercase; }
+    .app-sub { font-size:.48rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; }
     .theme-toggle { background:none; border:1.5px solid var(--border); border-radius:20px;
       cursor:pointer; width:52px; height:28px; position:relative; flex-shrink:0; }
     .theme-toggle .knob { position:absolute; top:3px; left:3px; width:20px; height:20px;
@@ -57,7 +53,7 @@
       display:flex; align-items:center; justify-content:center; font-size:.7rem; }
     html[data-theme="dark"] .theme-toggle .knob { transform:translateX(24px); }
 
-    /* ── TAB BAR ── */
+    /* TAB BAR */
     .tab-bar { position:fixed; bottom:0; left:0; right:0;
       height:calc(58px + env(safe-area-inset-bottom,0px));
       padding-bottom:env(safe-area-inset-bottom,0px);
@@ -70,15 +66,15 @@
       padding:8px 4px; height:100%; -webkit-tap-highlight-color:transparent; }
     .tab-btn.tab-active { color:var(--primary); }
     .tab-icon { width:22px; height:22px; flex-shrink:0; }
-    .tab-label { font-size:.44rem; letter-spacing:.12em; text-transform:uppercase; font-family:inherit; line-height:1; }
+    .tab-label { font-size:.44rem; letter-spacing:.12em; text-transform:uppercase; font-family:inherit; }
 
-    /* ── SCREENS ── */
+    /* SCREENS */
     .screen { width:100%; display:none; flex-direction:column; align-items:center; }
     .screen.active { display:flex; }
     .section-title { width:100%; font-size:.54rem; letter-spacing:.28em;
       color:var(--muted); text-transform:uppercase; margin-bottom:12px; text-align:center; }
 
-    /* ── FORMS / INPUTS ── */
+    /* FORMS */
     input, select { background:var(--input-bg); border:1.5px solid var(--border);
       border-radius:12px; color:var(--text); font-family:inherit; font-size:.82rem;
       padding:10px 14px; width:100%; outline:none; transition:border-color .2s; }
@@ -87,29 +83,35 @@
       display:block; margin-bottom:4px; }
     .form-group { width:100%; margin-bottom:14px; }
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-    .form-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px; }
     .btn-primary { background:var(--primary); color:#fff; border:none; border-radius:24px;
       font-family:inherit; font-size:.82rem; letter-spacing:.12em;
-      padding:12px 28px; cursor:pointer; transition:background .2s; width:100%; }
+      padding:12px 28px; cursor:pointer; width:100%; }
     .btn-primary:active { opacity:.8; }
     .btn-outline { background:none; border:1.5px solid var(--border); border-radius:24px;
       color:var(--text); font-family:inherit; font-size:.78rem; letter-spacing:.1em;
       padding:10px 22px; cursor:pointer; }
     .btn-add { width:100%; background:var(--card); border:1.5px dashed var(--border);
       border-radius:12px; color:var(--primary); font-size:.82rem; letter-spacing:.12em;
-      padding:13px; cursor:pointer; font-family:inherit; margin-bottom:12px; }
+      padding:13px; cursor:pointer; font-family:inherit; margin-bottom:14px; }
     .icon-btn { background:none; border:none; cursor:pointer; color:var(--muted);
       padding:6px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
     .icon-btn.del { color:var(--red); }
     .icon-btn svg { width:16px; height:16px; }
+    .radio-group { display:flex; gap:8px; }
+    .radio-chip { flex:1; }
+    .radio-chip input { display:none; }
+    .radio-chip label { display:block; text-align:center; padding:8px; border-radius:12px;
+      border:1.5px solid var(--border); font-size:.72rem; cursor:pointer;
+      color:var(--muted); background:var(--card); transition:.15s; text-transform:none; letter-spacing:.06em; }
+    .radio-chip input:checked + label { border-color:var(--primary); color:var(--primary); background:var(--surface); }
 
-    /* ── MODAL ── */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500;
+    /* MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500;
       display:none; align-items:flex-end; justify-content:center; }
     .modal-overlay.open { display:flex; }
     .modal-sheet { background:var(--card); border-radius:22px 22px 0 0; width:100%;
       max-width:480px; padding:24px 20px calc(env(safe-area-inset-bottom,0px) + 24px);
-      max-height:90vh; overflow-y:auto; }
+      max-height:92vh; overflow-y:auto; }
     .modal-handle { width:36px; height:4px; background:var(--border); border-radius:4px; margin:0 auto 18px; }
     .modal-title { font-size:.9rem; font-weight:700; letter-spacing:.1em; color:var(--text); margin-bottom:18px; text-align:center; }
     .modal-actions { display:flex; gap:10px; margin-top:18px; }
@@ -117,75 +119,75 @@
     .modal-actions .btn-outline { flex:1; }
 
     /* ── ANDAMENTO ── */
-    .filter-row { display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; width:100%; }
+    .filter-row { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; padding-bottom:2px; width:100%; }
     .filter-chip { flex-shrink:0; background:var(--card); border:1.5px solid var(--border);
-      border-radius:20px; padding:5px 12px; font-size:.62rem; letter-spacing:.1em;
+      border-radius:20px; padding:5px 14px; font-size:.62rem; letter-spacing:.1em;
       color:var(--muted); cursor:pointer; font-family:inherit; }
     .filter-chip.active { background:var(--primary); border-color:var(--primary); color:#fff; }
     .asset-card { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:18px; padding:16px; margin-bottom:14px; }
-    .asset-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:4px; }
+      border-radius:18px; padding:16px; margin-bottom:12px; }
+    .asset-header { display:flex; align-items:flex-start; justify-content:space-between; }
     .asset-name { font-size:.88rem; font-weight:700; color:var(--text); }
-    .asset-ticker { font-size:.58rem; color:var(--muted); letter-spacing:.1em; }
-    .asset-price { font-size:1.1rem; font-weight:700; color:var(--text); text-align:right; }
-    .asset-change { font-size:.68rem; font-weight:600; text-align:right; }
+    .asset-ticker { font-size:.58rem; color:var(--muted); letter-spacing:.1em; margin-top:2px; }
+    .asset-type-badge { display:inline-block; font-size:.46rem; letter-spacing:.12em;
+      text-transform:uppercase; background:var(--surface); color:var(--muted);
+      border-radius:6px; padding:2px 6px; margin-left:6px; vertical-align:middle; }
+    .asset-right { text-align:right; }
+    .asset-price { font-size:1.1rem; font-weight:700; color:var(--text); }
+    .asset-change { font-size:.68rem; font-weight:600; }
     .asset-change.pos { color:#22a85e; }
     .asset-change.neg { color:var(--red); }
     .asset-change.neu { color:var(--muted); }
-    .chart-wrap { width:100%; height:100px; margin-top:10px; position:relative; }
-    .asset-type-badge { display:inline-block; font-size:.48rem; letter-spacing:.14em;
-      text-transform:uppercase; background:var(--surface); color:var(--muted);
-      border-radius:6px; padding:2px 6px; margin-left:6px; }
-    .last-updated { font-size:.5rem; color:var(--muted); text-align:center; margin-bottom:16px; letter-spacing:.1em; }
+    .chart-wrap { width:100%; height:90px; margin-top:10px; }
+    .chart-wrap canvas { width:100% !important; }
+    .status-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width:100%; }
+    .last-updated { font-size:.52rem; color:var(--muted); letter-spacing:.08em; }
     .refresh-btn { background:none; border:1px solid var(--border); border-radius:20px;
       color:var(--primary); font-family:inherit; font-size:.6rem; letter-spacing:.1em;
-      padding:5px 14px; cursor:pointer; margin-bottom:16px; }
+      padding:5px 14px; cursor:pointer; }
+    .loading-pulse { opacity:.5; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:.4; } 50% { opacity:.9; } }
 
-    /* ── PLANNING SPESA ── */
+    /* ── PLANNING ── */
+    .grand-summary { width:100%; background:var(--primary); border-radius:20px;
+      padding:18px 20px; margin-bottom:18px; color:#fff; }
+    .grand-summary-title { font-size:.52rem; letter-spacing:.28em; text-transform:uppercase;
+      opacity:.8; margin-bottom:12px; text-align:center; }
+    .grand-summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .grand-summary-item { text-align:center; }
+    .grand-summary-label { font-size:.5rem; letter-spacing:.14em; text-transform:uppercase; opacity:.75; }
+    .grand-summary-value { font-size:1.18rem; font-weight:700; margin-top:4px; }
+
     .account-card { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:16px; padding:14px; margin-bottom:10px; display:flex; align-items:center; gap:12px; }
-    .account-icon { font-size:1.6rem; flex-shrink:0; }
+      border-radius:16px; padding:14px; margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+    .account-icon { font-size:1.5rem; flex-shrink:0; }
     .account-info { flex:1; min-width:0; }
-    .account-name { font-size:.88rem; font-weight:600; color:var(--text); }
-    .account-meta { font-size:.58rem; color:var(--muted); margin-top:2px; letter-spacing:.06em; }
-    .account-actions { display:flex; gap:6px; flex-shrink:0; }
-    .cat-section { width:100%; margin-bottom:18px; }
-    .cat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-    .cat-name { font-size:.76rem; font-weight:700; color:var(--primary); letter-spacing:.08em; }
-    .cat-total { font-size:.72rem; color:var(--muted); }
-    .expense-row { background:var(--surface); border:1px solid var(--border);
-      border-radius:12px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
-    .expense-info { flex:1; min-width:0; }
-    .expense-title { font-size:.82rem; font-weight:600; color:var(--text); }
-    .expense-meta { font-size:.58rem; color:var(--muted); margin-top:2px; letter-spacing:.06em; }
-    .expense-amount { font-size:.88rem; font-weight:700; color:var(--text); flex-shrink:0; }
-    .expense-monthly { font-size:.54rem; color:var(--muted); text-align:right; }
-    .planning-summary { width:100%; background:var(--card); border:1.5px solid var(--border);
-      border-radius:18px; padding:18px; margin-bottom:18px; }
-    .planning-summary-row { display:flex; justify-content:space-between; align-items:center;
-      padding:5px 0; border-bottom:1px solid var(--border); }
-    .planning-summary-row:last-child { border-bottom:none; }
-    .planning-summary-label { font-size:.7rem; color:var(--muted); letter-spacing:.08em; }
-    .planning-summary-value { font-size:.82rem; font-weight:700; color:var(--text); }
+    .account-name { font-size:.86rem; font-weight:600; color:var(--text); }
+    .account-meta { font-size:.57rem; color:var(--muted); margin-top:2px; letter-spacing:.05em; }
 
-    /* ── PATRIMONIO ── */
+    .cat-block { width:100%; background:var(--card); border:1.5px solid var(--border);
+      border-radius:18px; padding:16px; margin-bottom:14px; }
+    .cat-block-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .cat-block-name { flex:1; font-size:.88rem; font-weight:700; color:var(--primary); }
+    .cat-block-actions { display:flex; gap:4px; }
+    .expense-row { background:var(--surface); border-radius:12px; padding:11px 12px;
+      margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+    .expense-info { flex:1; min-width:0; }
+    .expense-title-text { font-size:.82rem; font-weight:600; color:var(--text);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .expense-meta { font-size:.56rem; color:var(--muted); margin-top:2px; }
+    .expense-right { text-align:right; flex-shrink:0; }
+    .expense-amount { font-size:.86rem; font-weight:700; color:var(--text); }
+    .expense-sub { font-size:.52rem; color:var(--muted); margin-top:1px; }
+    .cat-totals { display:flex; justify-content:space-between; align-items:center;
+      border-top:1px solid var(--border); margin-top:10px; padding-top:10px; }
+    .cat-total-label { font-size:.58rem; color:var(--muted); letter-spacing:.08em; }
+    .cat-total-value { font-size:.82rem; font-weight:700; color:var(--primary); }
+
+    /* PATRIMONIO */
     .patrimonio-empty { width:100%; text-align:center; padding:60px 20px; }
     .patrimonio-empty-icon { font-size:3rem; margin-bottom:16px; }
-    .patrimonio-empty-text { font-size:.78rem; color:var(--muted); letter-spacing:.08em; line-height:1.7; }
-
-    /* ── RADIO GROUP ── */
-    .radio-group { display:flex; gap:8px; margin-bottom:4px; }
-    .radio-chip { flex:1; position:relative; }
-    .radio-chip input { display:none; }
-    .radio-chip label { display:block; text-align:center; padding:8px; border-radius:12px;
-      border:1.5px solid var(--border); font-size:.72rem; cursor:pointer;
-      color:var(--muted); background:var(--card); transition:.15s; text-transform:none; letter-spacing:.06em; }
-    .radio-chip input:checked + label { border-color:var(--primary); color:var(--primary); background:var(--surface); }
-
-    /* ── COLLAPSIBLE ── */
-    .collapse-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
-    .collapse-arrow { font-size:.7rem; transition:transform .2s; }
-    .collapse-arrow.open { transform:rotate(90deg); }
+    .patrimonio-empty-text { font-size:.78rem; color:var(--muted); line-height:1.8; }
   </style>
   <script>
     window.__FIREBASE_CONFIG__ = {
@@ -202,8 +204,8 @@
   <script type="module" src="js/auth-guard.js"></script>
 
   <!-- HEADER -->
-  <header id="main-header">
-    <a class="btn-back-hub" href="passioni.html" aria-label="Torna alle passioni" style="text-decoration:none;">
+  <header>
+    <a class="btn-back-hub" href="passioni.html" style="text-decoration:none;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       <span>Passioni</span>
     </a>
@@ -217,33 +219,36 @@
     </button>
   </header>
 
-  <!-- SCREEN 1 — ANDAMENTO -->
+  <!-- ═══ SCREEN: ANDAMENTO ═══ -->
   <div class="screen active" id="screen-andamento">
-    <div class="section-title" style="margin-top:8px;">Mercati</div>
+    <div class="section-title" style="margin-top:6px;">Mercati in tempo reale</div>
     <div class="filter-row" id="filter-row">
       <button class="filter-chip active" data-filter="all">Tutti</button>
       <button class="filter-chip" data-filter="azione">Azioni</button>
       <button class="filter-chip" data-filter="etf">ETF</button>
     </div>
-    <div style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div class="status-row">
       <button class="refresh-btn" id="btn-refresh">↻ Aggiorna</button>
-      <div class="last-updated" id="last-updated-label" style="margin:0;"></div>
+      <div class="last-updated" id="last-updated-label"></div>
     </div>
     <div id="assets-container" style="width:100%;"></div>
   </div>
 
-  <!-- SCREEN 2 — PLANNING SPESA -->
+  <!-- ═══ SCREEN: PLANNING SPESA ═══ -->
   <div class="screen" id="screen-planning">
-    <!-- RIEPILOGO -->
-    <div class="section-title" style="margin-top:8px;">Riepilogo mensile</div>
-    <div class="planning-summary" id="planning-summary">
-      <div class="planning-summary-row">
-        <span class="planning-summary-label">Totale mensile</span>
-        <span class="planning-summary-value" id="summary-total">€ 0,00</span>
-      </div>
-      <div class="planning-summary-row">
-        <span class="planning-summary-label">Totale annuale</span>
-        <span class="planning-summary-value" id="summary-annual">€ 0,00</span>
+
+    <!-- RIEPILOGO GLOBALE -->
+    <div class="grand-summary" id="grand-summary" style="margin-top:6px;">
+      <div class="grand-summary-title">Riepilogo totale</div>
+      <div class="grand-summary-grid">
+        <div class="grand-summary-item">
+          <div class="grand-summary-label">Mensile</div>
+          <div class="grand-summary-value" id="grand-monthly">€ 0</div>
+        </div>
+        <div class="grand-summary-item">
+          <div class="grand-summary-label">Annuale</div>
+          <div class="grand-summary-value" id="grand-annual">€ 0</div>
+        </div>
       </div>
     </div>
 
@@ -252,19 +257,19 @@
     <div id="accounts-list" style="width:100%;"></div>
     <button class="btn-add" id="btn-add-account">+ Aggiungi conto</button>
 
-    <!-- CATEGORIE & SPESE -->
+    <!-- CATEGORIE E SPESE -->
     <div class="section-title">Categorie di spesa</div>
     <div id="categories-list" style="width:100%;"></div>
     <button class="btn-add" id="btn-add-category">+ Aggiungi categoria</button>
   </div>
 
-  <!-- SCREEN 3 — PATRIMONIO -->
+  <!-- ═══ SCREEN: PATRIMONIO ═══ -->
   <div class="screen" id="screen-patrimonio">
     <div class="patrimonio-empty">
       <div class="patrimonio-empty-icon">🏦</div>
       <div class="patrimonio-empty-text">
-        Il modulo Patrimonio<br/>è in arrivo.<br/><br/>
-        Qui potrai aggregare conti,<br/>investimenti e asset per<br/>avere una visione completa<br/>del tuo patrimonio netto.
+        Il modulo Patrimonio è in arrivo.<br/><br/>
+        Qui potrai aggregare conti,<br/>investimenti e asset per<br/>una visione completa<br/>del tuo patrimonio netto.
       </div>
     </div>
   </div>
@@ -272,30 +277,22 @@
   <!-- TAB BAR -->
   <nav class="tab-bar">
     <button class="tab-btn tab-active" data-tab="andamento">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span class="tab-label">Andamento</span>
     </button>
     <button class="tab-btn" data-tab="planning">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="18" rx="3"/>
-        <line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/>
-      </svg>
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
       <span class="tab-label">Planning</span>
     </button>
     <button class="tab-btn" data-tab="patrimonio">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-      </svg>
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span class="tab-label">Patrimonio</span>
     </button>
   </nav>
 
-  <!-- MODALS -->
+  <!-- ═══ MODALS ═══ -->
 
-  <!-- Modal: Aggiungi Conto -->
+  <!-- Modal Conto -->
   <div class="modal-overlay" id="modal-account">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -310,12 +307,12 @@
     </div>
   </div>
 
-  <!-- Modal: Aggiungi Categoria -->
+  <!-- Modal Categoria -->
   <div class="modal-overlay" id="modal-category">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Nuova categoria</div>
-      <div class="form-group"><label>Nome categoria</label><input id="cat-name-input" placeholder="es. Abbonamenti, Casa, Alimentari…"/></div>
+      <div class="modal-title" id="modal-cat-title">Nuova categoria</div>
+      <div class="form-group"><label>Nome categoria</label><input id="cat-name-input" placeholder="es. Animali, Casa, Abbonamenti…"/></div>
       <div class="modal-actions">
         <button class="btn-outline" id="btn-cat-cancel">Annulla</button>
         <button class="btn-primary" id="btn-cat-save">Salva</button>
@@ -323,33 +320,36 @@
     </div>
   </div>
 
-  <!-- Modal: Aggiungi Spesa -->
+  <!-- Modal Spesa -->
   <div class="modal-overlay" id="modal-expense">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title" id="modal-expense-title">Nuova spesa</div>
-      <div class="form-group"><label>Titolo spesa</label><input id="exp-title" placeholder="es. Netflix, Affitto…"/></div>
+      <div class="form-group"><label>Titolo spesa</label><input id="exp-title" placeholder="es. Netflix, Affitto, Veterinario…"/></div>
       <div class="form-row">
-        <div><label>Importo (€)</label><input id="exp-amount" type="number" min="0" step="0.01" placeholder="0,00"/></div>
-        <div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Importo (€)</label>
+          <input id="exp-amount" type="number" min="0" step="0.01" placeholder="0,00"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
           <label>Frequenza</label>
-          <div class="radio-group" style="margin-top:4px;">
+          <div class="radio-group" style="margin-top:6px;">
             <div class="radio-chip"><input type="radio" name="exp-freq" id="freq-monthly" value="monthly" checked><label for="freq-monthly">Mensile</label></div>
             <div class="radio-chip"><input type="radio" name="exp-freq" id="freq-annual" value="annual"><label for="freq-annual">Annuale</label></div>
           </div>
         </div>
       </div>
       <div class="form-row">
-        <div>
+        <div class="form-group" style="margin-bottom:0;">
           <label>Categoria</label>
           <select id="exp-category"><option value="">-- seleziona --</option></select>
         </div>
-        <div>
+        <div class="form-group" style="margin-bottom:0;">
           <label>Conto</label>
-          <select id="exp-account"><option value="">-- seleziona --</option></select>
+          <select id="exp-account"><option value="">-- nessuno --</option></select>
         </div>
       </div>
-      <div class="form-group"><label>Anno</label><input id="exp-year" type="number" min="2020" max="2099" placeholder="es. 2025"/></div>
+      <div class="form-group" style="margin-top:14px;"><label>Anno</label><input id="exp-year" type="number" min="2020" max="2099" placeholder="2025"/></div>
       <div class="modal-actions">
         <button class="btn-outline" id="btn-exp-cancel">Annulla</button>
         <button class="btn-primary" id="btn-exp-save">Salva</button>
@@ -357,15 +357,28 @@
     </div>
   </div>
 
+  <!-- Chart.js lazy loaded -->
+  <script>
+    (function(){
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js';
+      s.onload = function(){ window._chartjsReady = true; document.dispatchEvent(new Event('chartjsready')); };
+      document.head.appendChild(s);
+    })();
+  </script>
+
   <script type="module">
     import { waitForAuth } from './js/firebase-config.js';
+    import {
+      subscribeFinanzaAccounts, addFinanzaAccount, updateFinanzaAccount, deleteFinanzaAccount,
+      subscribeFinanzaCategories, addFinanzaCategory, updateFinanzaCategory, deleteFinanzaCategory,
+      subscribeFinanzaExpenses, addFinanzaExpense, updateFinanzaExpense, deleteFinanzaExpense,
+    } from './js/firebase-config.js';
 
-    /* ══════════════════════════════════════
-       THEME
-    ══════════════════════════════════════ */
-    const htmlEl   = document.documentElement;
+    /* ══ THEME ══ */
+    const htmlEl = document.documentElement;
     const btnTheme = document.getElementById('theme-toggle');
-    const knob     = document.getElementById('theme-knob');
+    const knob = document.getElementById('theme-knob');
     let isDark = localStorage.getItem('zen_theme') === 'dark';
     function applyTheme() {
       htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
@@ -376,158 +389,193 @@
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-    /* ══════════════════════════════════════
-       TAB NAVIGATION
-    ══════════════════════════════════════ */
-    const tabs = document.querySelectorAll('.tab-btn');
-    const screens = { andamento:'screen-andamento', planning:'screen-planning', patrimonio:'screen-patrimonio' };
-    tabs.forEach(btn => {
+    /* ══ TAB NAV ══ */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.dataset.tab;
-        tabs.forEach(b => b.classList.toggle('tab-active', b === btn));
-        Object.values(screens).forEach(s => {
-          const el = document.getElementById(s);
-          el.classList.remove('active');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('tab-active', b === btn));
+        ['andamento','planning','patrimonio'].forEach(id => {
+          document.getElementById('screen-' + id).classList.toggle('active', btn.dataset.tab === id);
         });
-        document.getElementById(screens[id]).classList.add('active');
       });
     });
 
-    /* ══════════════════════════════════════
-       ANDAMENTO — MARKET DATA
-       Usa Yahoo Finance via allorigins CORS proxy (gratuito, no API key)
-    ══════════════════════════════════════ */
+    /* ══════════════════════════════════════════
+       TAB 1 — ANDAMENTO
+       Dati via Yahoo Finance (CORS-friendly v8 endpoint)
+       Fallback a dati demo se la rete blocca il fetch
+    ══════════════════════════════════════════ */
     const ASSETS = [
-      // Azioni
-      { ticker:'IBM',   name:'IBM',         type:'azione' },
-      { ticker:'MSFT',  name:'Microsoft',   type:'azione' },
-      { ticker:'AAPL',  name:'Apple',       type:'azione' },
-      { ticker:'GOOGL', name:'Alphabet / Google', type:'azione' },
-      // ETF
-      { ticker:'IUIT.L', name:'ETF AI Infrastructure USD (Acc)',     type:'etf' },
-      { ticker:'ISPY.L', name:'ETF Cyber Security USD (Acc)',         type:'etf' },
-      { ticker:'HWWD.L', name:'ETF MSCI World Health Core USD',       type:'etf' },
-      { ticker:'CSPX.L', name:'ETF Core S&P 500 USD (Acc)',          type:'etf' },
-      { ticker:'VWRL.L', name:'ETF FTSE All World USD',              type:'etf' },
-      { ticker:'CXSE',   name:'ETF MSCI China USD',                  type:'etf' },
-      { ticker:'AGED.L', name:'ETF Aging Population USD',            type:'etf' },
-      { ticker:'VAPX.L', name:'ETF FTSE Dev Asia & Pacific Ex Japan', type:'etf' },
+      { ticker:'IBM',    name:'IBM',                          type:'azione' },
+      { ticker:'MSFT',   name:'Microsoft',                    type:'azione' },
+      { ticker:'AAPL',   name:'Apple',                        type:'azione' },
+      { ticker:'GOOGL',  name:'Alphabet / Google',            type:'azione' },
+      { ticker:'IUIT.L', name:'AI Infrastructure USD (Acc)',  type:'etf'    },
+      { ticker:'ISPY.L', name:'Cyber Security USD (Acc)',     type:'etf'    },
+      { ticker:'HWWD.L', name:'MSCI World Health Core USD',   type:'etf'    },
+      { ticker:'CSPX.L', name:'Core S&P 500 USD (Acc)',       type:'etf'    },
+      { ticker:'VWRL.L', name:'FTSE All World USD',           type:'etf'    },
+      { ticker:'CXSE',   name:'MSCI China USD',               type:'etf'    },
+      { ticker:'AGED.L', name:'Aging Population USD',         type:'etf'    },
+      { ticker:'VAPX.L', name:'FTSE Dev Asia & Pac Ex Japan', type:'etf'    },
     ];
+
+    /* Seed deterministico per demo prezzi realistici */
+    const DEMO_BASE = {
+      'IBM':226,'MSFT':460,'AAPL':215,'GOOGL':170,
+      'IUIT.L':9.8,'ISPY.L':21.5,'HWWD.L':7.6,'CSPX.L':570,
+      'VWRL.L':118,'CXSE':28,'AGED.L':12.4,'VAPX.L':32,
+    };
+
+    function demoData(ticker) {
+      const base = DEMO_BASE[ticker] || 100;
+      const spark = [];
+      let p = base * 0.94;
+      for (let i = 0; i < 30; i++) {
+        p = p * (1 + (Math.random() - 0.48) * 0.012);
+        spark.push(+p.toFixed(3));
+      }
+      spark[spark.length - 1] = base;
+      const prev = spark[spark.length - 2];
+      return {
+        price: base, currency: ticker.endsWith('.L') ? 'GBP' : 'USD',
+        changeDay: +((base - prev) / prev * 100).toFixed(2),
+        change7d:  +((base - spark[spark.length - 8]) / spark[spark.length - 8] * 100).toFixed(2),
+        sparkline: spark, demo: true,
+      };
+    }
+
+    async function fetchYahoo(ticker) {
+      // Yahoo Finance v8 chart — funziona direttamente nel browser (no proxy) per molti ticker
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1mo&includePrePost=false`;
+      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      const res = j?.chart?.result?.[0];
+      if (!res) throw new Error('no result');
+      const meta   = res.meta;
+      const closes = (res.indicators?.quote?.[0]?.close || []).filter(v => v != null);
+      if (closes.length < 2) throw new Error('not enough data');
+      const price   = meta.regularMarketPrice ?? closes.at(-1);
+      const prev    = meta.chartPreviousClose  ?? closes.at(-2);
+      const c7start = closes.at(-8) ?? closes[0];
+      return {
+        price,
+        currency: meta.currency ?? 'USD',
+        changeDay: +((price - prev) / prev * 100).toFixed(2),
+        change7d:  +((price - c7start) / c7start * 100).toFixed(2),
+        sparkline: closes.slice(-30),
+        demo: false,
+      };
+    }
 
     let assetData = {};
     let activeFilter = 'all';
     const chartInstances = {};
 
-    const container = document.getElementById('assets-container');
-    const lastUpdatedLabel = document.getElementById('last-updated-label');
-
-    // Genera dati sparkline simulati a partire dal prezzo corrente
-    function fakeSparkline(price, change7d) {
-      const pts = [];
-      const start = price / (1 + change7d / 100);
-      for (let i = 0; i <= 14; i++) {
-        const noise = (Math.random() - 0.5) * Math.abs(price) * 0.012;
-        pts.push(start + (price - start) * (i / 14) + noise);
-      }
-      pts[pts.length - 1] = price;
-      return pts;
+    function fmtPrice(price, currency) {
+      try {
+        return new Intl.NumberFormat('it-IT', { style:'currency', currency,
+          minimumFractionDigits:2, maximumFractionDigits:2 }).format(price);
+      } catch { return price.toFixed(2) + ' ' + currency; }
     }
 
-    async function fetchAsset(ticker) {
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1mo`;
-      const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-      const res = await fetch(proxy);
-      const json = await res.json();
-      const data = JSON.parse(json.contents);
-      const meta = data.chart.result[0].meta;
-      const closes = data.chart.result[0].indicators.quote[0].close.filter(v => v != null);
-      const price = meta.regularMarketPrice ?? closes[closes.length - 1];
-      const prev  = meta.chartPreviousClose ?? closes[closes.length - 2];
-      const changeDay = prev ? ((price - prev) / prev) * 100 : 0;
-      const change7d  = closes.length >= 7
-        ? ((price - closes[closes.length - 7]) / closes[closes.length - 7]) * 100 : 0;
-      const sparkline = closes.length >= 14 ? closes.slice(-14) : fakeSparkline(price, change7d);
-      const currency  = meta.currency ?? 'USD';
-      return { price, changeDay, change7d, sparkline, currency };
-    }
-
-    function fmtPrice(p, currency) {
-      return new Intl.NumberFormat('it-IT', { style:'currency', currency, minimumFractionDigits:2, maximumFractionDigits:2 }).format(p);
+    function buildChart(canvasId, sparkline) {
+      // wait for Chart.js
+      const tryBuild = () => {
+        if (!window.Chart) { setTimeout(tryBuild, 200); return; }
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (chartInstances[canvasId]) { chartInstances[canvasId].destroy(); delete chartInstances[canvasId]; }
+        const isUp = sparkline.at(-1) >= sparkline[0];
+        const color = isUp ? '#22a85e' : '#e05070';
+        const grad = ctx.createLinearGradient(0, 0, 0, 90);
+        grad.addColorStop(0, isUp ? 'rgba(34,168,94,.22)' : 'rgba(224,80,112,.22)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        chartInstances[canvasId] = new window.Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: sparkline.map((_, i) => i),
+            datasets: [{ data: sparkline, borderColor: color, borderWidth: 2,
+              pointRadius: 0, fill: true, backgroundColor: grad, tension: 0.3 }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false, animation: false,
+            plugins: { legend: { display:false }, tooltip: { enabled:false } },
+            scales: { x: { display:false }, y: { display:false } }
+          }
+        });
+      };
+      tryBuild();
     }
 
     function renderAssets() {
-      container.innerHTML = '';
+      const container = document.getElementById('assets-container');
       const filtered = ASSETS.filter(a => activeFilter === 'all' || a.type === activeFilter);
+      container.innerHTML = '';
       filtered.forEach(asset => {
         const d = assetData[asset.ticker];
+        const id = asset.ticker.replace(/\./g, '_');
         const card = document.createElement('div');
         card.className = 'asset-card';
-        card.id = `card-${asset.ticker.replace('.', '_')}`;
 
-        const priceStr  = d ? fmtPrice(d.price, d.currency) : '—';
-        const chDay     = d ? d.changeDay : 0;
-        const chDayCls  = !d ? 'neu' : chDay > 0 ? 'pos' : chDay < 0 ? 'neg' : 'neu';
-        const chDayStr  = d ? `${chDay >= 0 ? '+' : ''}${chDay.toFixed(2)}% oggi` : '—';
-        const ch7dStr   = d ? `${d.change7d >= 0 ? '+' : ''}${d.change7d.toFixed(2)}% 7gg` : '';
-        const typeBadge = asset.type === 'etf' ? '<span class="asset-type-badge">ETF</span>' : '<span class="asset-type-badge">Stock</span>';
-
-        card.innerHTML = `
-          <div class="asset-header">
-            <div>
-              <span class="asset-name">${asset.name}</span>${typeBadge}
-              <div class="asset-ticker">${asset.ticker}</div>
+        if (!d) {
+          card.innerHTML = `
+            <div class="asset-header">
+              <div>
+                <span class="asset-name loading-pulse">${asset.name}</span>
+                <span class="asset-type-badge">${asset.type === 'etf' ? 'ETF' : 'Stock'}</span>
+                <div class="asset-ticker">${asset.ticker}</div>
+              </div>
+              <div class="asset-right">
+                <div class="asset-price loading-pulse" style="font-size:.82rem;color:var(--muted);">Caricamento…</div>
+              </div>
             </div>
-            <div>
-              <div class="asset-price">${d ? priceStr : '<span style="font-size:.7rem;color:var(--muted)">Caricamento…</span>'}</div>
-              <div class="asset-change ${chDayCls}">${chDayStr}</div>
-              ${d ? `<div class="asset-change ${d.change7d >= 0 ? 'pos' : 'neg'}" style="font-size:.56rem;">${ch7dStr}</div>` : ''}
+            <div class="chart-wrap" style="opacity:.3;background:var(--surface);border-radius:8px;"></div>`;
+        } else {
+          const chDayCls = d.changeDay > 0 ? 'pos' : d.changeDay < 0 ? 'neg' : 'neu';
+          const ch7Cls   = d.change7d  > 0 ? 'pos' : d.change7d  < 0 ? 'neg' : 'neu';
+          card.innerHTML = `
+            <div class="asset-header">
+              <div>
+                <span class="asset-name">${asset.name}</span>
+                <span class="asset-type-badge">${asset.type === 'etf' ? 'ETF' : 'Stock'}</span>
+                <div class="asset-ticker">${asset.ticker}${d.demo ? ' <span style="color:var(--muted);font-size:.46rem;">(demo)</span>' : ''}</div>
+              </div>
+              <div class="asset-right">
+                <div class="asset-price">${fmtPrice(d.price, d.currency)}</div>
+                <div class="asset-change ${chDayCls}">${d.changeDay >= 0 ? '+' : ''}${d.changeDay}% oggi</div>
+                <div class="asset-change ${ch7Cls}" style="font-size:.56rem;">${d.change7d >= 0 ? '+' : ''}${d.change7d}% 7gg</div>
+              </div>
             </div>
-          </div>
-          <div class="chart-wrap"><canvas id="chart-${asset.ticker.replace('.','_')}"></canvas></div>
-        `;
-        container.appendChild(card);
-
-        if (d) {
-          const canvasId = `chart-${asset.ticker.replace('.', '_')}`;
-          const ctx = document.getElementById(canvasId).getContext('2d');
-          if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
-          const isUp = d.sparkline[d.sparkline.length - 1] >= d.sparkline[0];
-          const color = isUp ? '#22a85e' : '#c04060';
-          const gradient = ctx.createLinearGradient(0, 0, 0, 100);
-          gradient.addColorStop(0, isUp ? 'rgba(34,168,94,.25)' : 'rgba(192,64,96,.25)');
-          gradient.addColorStop(1, 'rgba(0,0,0,0)');
-          chartInstances[canvasId] = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: d.sparkline.map((_, i) => i),
-              datasets: [{ data: d.sparkline, borderColor: color, borderWidth: 2,
-                pointRadius: 0, fill: true, backgroundColor: gradient, tension: 0.35 }]
-            },
-            options: {
-              responsive: true, maintainAspectRatio: false, animation: false,
-              plugins: { legend: { display: false }, tooltip: { enabled: false } },
-              scales: { x: { display: false }, y: { display: false } }
-            }
-          });
+            <div class="chart-wrap"><canvas id="ch-${id}" height="90"></canvas></div>`;
         }
+        container.appendChild(card);
+        if (d) buildChart(`ch-${id}`, d.sparkline);
       });
     }
 
     async function loadAllAssets() {
-      lastUpdatedLabel.textContent = 'Aggiornamento in corso…';
-      renderAssets();
-      const results = await Promise.allSettled(ASSETS.map(a =>
-        fetchAsset(a.ticker).then(d => ({ ticker: a.ticker, ...d }))
-      ));
-      results.forEach(r => {
-        if (r.status === 'fulfilled') assetData[r.value.ticker] = r.value;
+      const label = document.getElementById('last-updated-label');
+      label.textContent = 'Aggiornamento…';
+      document.getElementById('btn-refresh').disabled = true;
+      renderAssets(); // mostra skeleton
+      const jobs = ASSETS.map(async a => {
+        try {
+          const d = await fetchYahoo(a.ticker);
+          assetData[a.ticker] = d;
+        } catch {
+          // fallback demo se Yahoo è bloccato (CORS mobile o rete)
+          assetData[a.ticker] = demoData(a.ticker);
+        }
+        renderAssets(); // aggiorna card appena arriva
       });
+      await Promise.allSettled(jobs);
       const now = new Date();
-      lastUpdatedLabel.textContent = `Aggiornato alle ${now.toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' })}`;
-      renderAssets();
+      label.textContent = `Aggiornato ${now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
+      document.getElementById('btn-refresh').disabled = false;
     }
 
-    // Filtri
     document.getElementById('filter-row').addEventListener('click', e => {
       const chip = e.target.closest('.filter-chip');
       if (!chip) return;
@@ -536,245 +584,277 @@
       activeFilter = chip.dataset.filter;
       renderAssets();
     });
-
     document.getElementById('btn-refresh').addEventListener('click', loadAllAssets);
 
-    /* ══════════════════════════════════════
-       PLANNING SPESA — LOCAL STORAGE
-    ══════════════════════════════════════ */
-    const STORAGE_ACCOUNTS   = 'fin_accounts_v1';
-    const STORAGE_CATEGORIES = 'fin_categories_v1';
-    const STORAGE_EXPENSES   = 'fin_expenses_v1';
+    /* ══════════════════════════════════════════
+       TAB 2 — PLANNING SPESA (Firestore sync)
+    ══════════════════════════════════════════ */
+    let accounts   = [];
+    let categories = [];
+    let expenses   = [];
 
-    let accounts   = JSON.parse(localStorage.getItem(STORAGE_ACCOUNTS)   || '[]');
-    let categories = JSON.parse(localStorage.getItem(STORAGE_CATEGORIES) || '[]');
-    let expenses   = JSON.parse(localStorage.getItem(STORAGE_EXPENSES)   || '[]');
-    let editingAccId  = null;
-    let editingCatExpData = null; // { catId }
+    // editing state
+    let editAccDocId = null;
+    let editCatDocId = null;
+    let editExpDocId = null;
+    let newExpCatId  = null;  // categoria target per nuova spesa
 
-    function saveAll() {
-      localStorage.setItem(STORAGE_ACCOUNTS,   JSON.stringify(accounts));
-      localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(categories));
-      localStorage.setItem(STORAGE_EXPENSES,   JSON.stringify(expenses));
+    function fmtEur(n) {
+      return '€\u202f' + (n || 0).toLocaleString('it-IT', { minimumFractionDigits:2, maximumFractionDigits:2 });
+    }
+    function monthly(exp) {
+      return exp.freq === 'annual' ? (exp.amount || 0) / 12 : (exp.amount || 0);
     }
 
-    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-
-    /* ── Conti ── */
+    /* ── render accounts ── */
     function renderAccounts() {
-      const list = document.getElementById('accounts-list');
+      const el = document.getElementById('accounts-list');
       if (!accounts.length) {
-        list.innerHTML = '<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:10px 0;letter-spacing:.08em;">Nessun conto aggiunto</div>';
+        el.innerHTML = '<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:8px 0 12px;letter-spacing:.08em;">Nessun conto aggiunto</div>';
         return;
       }
-      list.innerHTML = accounts.map(acc => `
+      el.innerHTML = accounts.map(a => `
         <div class="account-card">
           <div class="account-icon">🏦</div>
           <div class="account-info">
-            <div class="account-name">${acc.name}</div>
-            <div class="account-meta">${acc.holder} · <span style="letter-spacing:.06em;">${acc.iban}</span></div>
+            <div class="account-name">${a.name}</div>
+            <div class="account-meta">${a.holder || ''}${a.iban ? ' · ' + a.iban : ''}</div>
           </div>
-          <div class="account-actions">
-            <button class="icon-btn" onclick="openEditAccount('${acc.id}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button class="icon-btn" onclick="openEditAcc('${a._docId}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
             </button>
-            <button class="icon-btn del" onclick="deleteAccount('${acc.id}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            <button class="icon-btn del" onclick="doDelAcc('${a._docId}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
             </button>
           </div>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
 
-    window.openEditAccount = function(id) {
-      editingAccId = id;
-      const acc = accounts.find(a => a.id === id);
+    /* ── render categories + expenses ── */
+    function renderCategories() {
+      const el = document.getElementById('categories-list');
+      if (!categories.length) {
+        el.innerHTML = '<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:8px 0 12px;letter-spacing:.08em;">Nessuna categoria aggiunta</div>';
+        updateGrandSummary();
+        return;
+      }
+      let html = '';
+      categories.forEach(cat => {
+        const exps = expenses.filter(e => e.catId === cat._docId);
+        const catMonthly = exps.reduce((s, e) => s + monthly(e), 0);
+        const catAnnual  = catMonthly * 12;
+
+        const expsHtml = exps.length ? exps.map(exp => {
+          const accName = (accounts.find(a => a._docId === exp.accountId) || {}).name || '';
+          const m = monthly(exp);
+          return `
+            <div class="expense-row">
+              <div class="expense-info">
+                <div class="expense-title-text">${exp.title}</div>
+                <div class="expense-meta">${accName ? accName + ' · ' : ''}${exp.year || ''}${exp.freq === 'annual' ? ' · annuale' : ''}</div>
+              </div>
+              <div class="expense-right">
+                <div class="expense-amount">${fmtEur(m)}<span style="font-size:.52rem;font-weight:400;color:var(--muted)">/mese</span></div>
+                ${exp.freq === 'annual' ? `<div class="expense-sub">${fmtEur(exp.amount)}/anno</div>` : ''}
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+                <button class="icon-btn" onclick="openEditExp('${exp._docId}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+                </button>
+                <button class="icon-btn del" onclick="doDelExp('${exp._docId}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
+              </div>
+            </div>`;
+        }).join('') : '<div style="font-size:.66rem;color:var(--muted);padding:6px 0 8px;letter-spacing:.06em;">Nessuna spesa — premi + per aggiungere</div>';
+
+        html += `
+          <div class="cat-block">
+            <div class="cat-block-header">
+              <div class="cat-block-name">📁 ${cat.name}</div>
+              <div class="cat-block-actions">
+                <button class="icon-btn" title="Aggiungi spesa" onclick="openNewExp('${cat._docId}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <button class="icon-btn" title="Modifica categoria" onclick="openEditCat('${cat._docId}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+                </button>
+                <button class="icon-btn del" title="Elimina categoria" onclick="doDelCat('${cat._docId}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
+              </div>
+            </div>
+            ${expsHtml}
+            <div class="cat-totals">
+              <span class="cat-total-label">Totale ${cat.name}</span>
+              <div style="text-align:right;">
+                <div class="cat-total-value">${fmtEur(catMonthly)}<span style="font-size:.58rem;font-weight:400;color:var(--muted)">/mese</span></div>
+                <div style="font-size:.6rem;color:var(--muted);">${fmtEur(catAnnual)}/anno</div>
+              </div>
+            </div>
+          </div>`;
+      });
+      el.innerHTML = html;
+      updateGrandSummary();
+    }
+
+    function updateGrandSummary() {
+      const totalMonthly = expenses.reduce((s, e) => s + monthly(e), 0);
+      document.getElementById('grand-monthly').textContent = fmtEur(totalMonthly);
+      document.getElementById('grand-annual').textContent  = fmtEur(totalMonthly * 12);
+    }
+
+    function populateExpSelects(catId) {
+      const catSel = document.getElementById('exp-category');
+      const accSel = document.getElementById('exp-account');
+      catSel.innerHTML = '<option value="">-- seleziona --</option>' +
+        categories.map(c => `<option value="${c._docId}">${c.name}</option>`).join('');
+      accSel.innerHTML = '<option value="">-- nessuno --</option>' +
+        accounts.map(a => `<option value="${a._docId}">${a.name}</option>`).join('');
+      if (catId) catSel.value = catId;
+    }
+
+    /* ── Account handlers ── */
+    window.openEditAcc = function(docId) {
+      editAccDocId = docId;
+      const a = accounts.find(x => x._docId === docId);
       document.getElementById('modal-account-title').textContent = 'Modifica conto';
-      document.getElementById('acc-name').value   = acc.name;
-      document.getElementById('acc-holder').value = acc.holder;
-      document.getElementById('acc-iban').value   = acc.iban;
+      document.getElementById('acc-name').value   = a.name   || '';
+      document.getElementById('acc-holder').value = a.holder || '';
+      document.getElementById('acc-iban').value   = a.iban   || '';
       document.getElementById('modal-account').classList.add('open');
     };
-    window.deleteAccount = function(id) {
-      if (!confirm('Eliminare questo conto? Le spese associate rimarranno.')) return;
-      accounts = accounts.filter(a => a.id !== id);
-      saveAll(); renderAccounts(); populateExpenseSelects();
+    window.doDelAcc = async function(docId) {
+      if (!confirm('Eliminare questo conto?')) return;
+      await deleteFinanzaAccount(docId);
     };
 
     document.getElementById('btn-add-account').addEventListener('click', () => {
-      editingAccId = null;
+      editAccDocId = null;
       document.getElementById('modal-account-title').textContent = 'Nuovo conto corrente';
-      document.getElementById('acc-name').value = '';
-      document.getElementById('acc-holder').value = '';
-      document.getElementById('acc-iban').value = '';
+      ['acc-name','acc-holder','acc-iban'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('modal-account').classList.add('open');
     });
-    document.getElementById('btn-acc-cancel').addEventListener('click', () => {
-      document.getElementById('modal-account').classList.remove('open');
-    });
-    document.getElementById('btn-acc-save').addEventListener('click', () => {
+    document.getElementById('btn-acc-cancel').addEventListener('click', () => closeModal('modal-account'));
+    document.getElementById('btn-acc-save').addEventListener('click', async () => {
       const name   = document.getElementById('acc-name').value.trim();
       const holder = document.getElementById('acc-holder').value.trim();
       const iban   = document.getElementById('acc-iban').value.trim();
       if (!name) { document.getElementById('acc-name').focus(); return; }
-      if (editingAccId) {
-        const acc = accounts.find(a => a.id === editingAccId);
-        acc.name = name; acc.holder = holder; acc.iban = iban;
+      if (editAccDocId) {
+        await updateFinanzaAccount(editAccDocId, { name, holder, iban });
       } else {
-        accounts.push({ id: uid(), name, holder, iban });
+        await addFinanzaAccount({ name, holder, iban });
       }
-      saveAll(); renderAccounts(); populateExpenseSelects();
-      document.getElementById('modal-account').classList.remove('open');
+      closeModal('modal-account');
     });
 
-    /* ── Categorie ── */
-    function renderCategories() {
-      const list = document.getElementById('categories-list');
-      if (!categories.length) {
-        list.innerHTML = '<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:10px 0;letter-spacing:.08em;">Nessuna categoria aggiunta</div>';
-        return;
-      }
-      list.innerHTML = categories.map(cat => {
-        const catExpenses = expenses.filter(e => e.catId === cat.id);
-        const totalMonthly = catExpenses.reduce((s, e) => s + monthlyAmount(e), 0);
-        const expHtml = catExpenses.length ? catExpenses.map(exp => {
-          const monthly = monthlyAmount(exp);
-          const accName = (accounts.find(a => a.id === exp.accountId) || {}).name || '—';
-          return `
-            <div class="expense-row">
-              <div class="expense-info">
-                <div class="expense-title">${exp.title}</div>
-                <div class="expense-meta">${accName} · ${exp.year || '—'}</div>
-              </div>
-              <div>
-                <div class="expense-amount">${fmtEur(monthly)}<span style="font-size:.6rem;color:var(--muted)">/mese</span></div>
-                ${exp.freq === 'annual' ? `<div class="expense-monthly">${fmtEur(exp.amount)}/anno</div>` : ''}
-              </div>
-              <button class="icon-btn del" onclick="deleteExpense('${exp.id}')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-              </button>
-            </div>
-          `;
-        }).join('') : '<div style="font-size:.68rem;color:var(--muted);padding:8px 0;letter-spacing:.06em;">Nessuna spesa</div>';
-
-        return `
-          <div class="cat-section">
-            <div class="cat-header">
-              <span class="cat-name">📁 ${cat.name}</span>
-              <span class="cat-total">${fmtEur(totalMonthly)}/mese</span>
-              <div style="display:flex;gap:4px;">
-                <button class="icon-btn" onclick="openAddExpense('${cat.id}')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
-                <button class="icon-btn del" onclick="deleteCategory('${cat.id}')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                </button>
-              </div>
-            </div>
-            ${expHtml}
-          </div>
-        `;
-      }).join('');
-    }
-
-    window.deleteCategory = function(id) {
+    /* ── Category handlers ── */
+    window.openEditCat = function(docId) {
+      editCatDocId = docId;
+      const c = categories.find(x => x._docId === docId);
+      document.getElementById('modal-cat-title').textContent = 'Modifica categoria';
+      document.getElementById('cat-name-input').value = c.name || '';
+      document.getElementById('modal-category').classList.add('open');
+    };
+    window.doDelCat = async function(docId) {
       if (!confirm('Eliminare questa categoria e tutte le sue spese?')) return;
-      categories = categories.filter(c => c.id !== id);
-      expenses   = expenses.filter(e => e.catId !== id);
-      saveAll(); renderCategories(); updateSummary();
+      const expsToDelete = expenses.filter(e => e.catId === docId);
+      await Promise.all(expsToDelete.map(e => deleteFinanzaExpense(e._docId)));
+      await deleteFinanzaCategory(docId);
     };
 
     document.getElementById('btn-add-category').addEventListener('click', () => {
+      editCatDocId = null;
+      document.getElementById('modal-cat-title').textContent = 'Nuova categoria';
       document.getElementById('cat-name-input').value = '';
       document.getElementById('modal-category').classList.add('open');
     });
-    document.getElementById('btn-cat-cancel').addEventListener('click', () => {
-      document.getElementById('modal-category').classList.remove('open');
-    });
-    document.getElementById('btn-cat-save').addEventListener('click', () => {
+    document.getElementById('btn-cat-cancel').addEventListener('click', () => closeModal('modal-category'));
+    document.getElementById('btn-cat-save').addEventListener('click', async () => {
       const name = document.getElementById('cat-name-input').value.trim();
       if (!name) { document.getElementById('cat-name-input').focus(); return; }
-      categories.push({ id: uid(), name });
-      saveAll(); renderCategories(); populateExpenseSelects();
-      document.getElementById('modal-category').classList.remove('open');
+      if (editCatDocId) {
+        await updateFinanzaCategory(editCatDocId, { name });
+      } else {
+        await addFinanzaCategory({ name });
+      }
+      closeModal('modal-category');
     });
 
-    /* ── Spese ── */
-    function monthlyAmount(exp) {
-      return exp.freq === 'annual' ? exp.amount / 12 : exp.amount;
-    }
-
-    function fmtEur(n) {
-      return '€\u202f' + n.toLocaleString('it-IT', { minimumFractionDigits:2, maximumFractionDigits:2 });
-    }
-
-    function updateSummary() {
-      const totalMonthly = expenses.reduce((s, e) => s + monthlyAmount(e), 0);
-      document.getElementById('summary-total').textContent  = fmtEur(totalMonthly);
-      document.getElementById('summary-annual').textContent = fmtEur(totalMonthly * 12);
-    }
-
-    function populateExpenseSelects() {
-      const catSel = document.getElementById('exp-category');
-      const accSel = document.getElementById('exp-account');
-      const currentCat = catSel.value;
-      const currentAcc = accSel.value;
-      catSel.innerHTML = '<option value="">-- seleziona --</option>' +
-        categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      accSel.innerHTML = '<option value="">-- nessuno --</option>' +
-        accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-      catSel.value = currentCat;
-      accSel.value = currentAcc;
-    }
-
-    window.openAddExpense = function(catId) {
-      editingCatExpData = { catId };
+    /* ── Expense handlers ── */
+    window.openNewExp = function(catId) {
+      editExpDocId = null;
+      newExpCatId  = catId;
       document.getElementById('modal-expense-title').textContent = 'Nuova spesa';
       document.getElementById('exp-title').value  = '';
       document.getElementById('exp-amount').value = '';
       document.getElementById('exp-year').value   = new Date().getFullYear();
       document.getElementById('freq-monthly').checked = true;
-      populateExpenseSelects();
-      document.getElementById('exp-category').value = catId;
+      populateExpSelects(catId);
       document.getElementById('modal-expense').classList.add('open');
     };
-
-    window.deleteExpense = function(id) {
-      expenses = expenses.filter(e => e.id !== id);
-      saveAll(); renderCategories(); updateSummary();
+    window.openEditExp = function(docId) {
+      editExpDocId = docId;
+      const exp = expenses.find(e => e._docId === docId);
+      document.getElementById('modal-expense-title').textContent = 'Modifica spesa';
+      document.getElementById('exp-title').value  = exp.title  || '';
+      document.getElementById('exp-amount').value = exp.amount || '';
+      document.getElementById('exp-year').value   = exp.year   || new Date().getFullYear();
+      document.querySelector(`input[name="exp-freq"][value="${exp.freq || 'monthly'}"]`).checked = true;
+      populateExpSelects(exp.catId);
+      document.getElementById('exp-account').value = exp.accountId || '';
+      document.getElementById('modal-expense').classList.add('open');
+    };
+    window.doDelExp = async function(docId) {
+      if (!confirm('Eliminare questa spesa?')) return;
+      await deleteFinanzaExpense(docId);
     };
 
-    document.getElementById('btn-exp-cancel').addEventListener('click', () => {
-      document.getElementById('modal-expense').classList.remove('open');
-    });
-    document.getElementById('btn-exp-save').addEventListener('click', () => {
-      const title  = document.getElementById('exp-title').value.trim();
-      const amount = parseFloat(document.getElementById('exp-amount').value);
-      const freq   = document.querySelector('input[name="exp-freq"]:checked').value;
-      const catId  = document.getElementById('exp-category').value;
-      const accId  = document.getElementById('exp-account').value;
-      const year   = document.getElementById('exp-year').value;
+    document.getElementById('btn-exp-cancel').addEventListener('click', () => closeModal('modal-expense'));
+    document.getElementById('btn-exp-save').addEventListener('click', async () => {
+      const title     = document.getElementById('exp-title').value.trim();
+      const amount    = parseFloat(document.getElementById('exp-amount').value);
+      const freq      = document.querySelector('input[name="exp-freq"]:checked').value;
+      const catId     = document.getElementById('exp-category').value;
+      const accountId = document.getElementById('exp-account').value;
+      const year      = document.getElementById('exp-year').value;
       if (!title || isNaN(amount) || amount <= 0 || !catId) return;
-      expenses.push({ id: uid(), title, amount, freq, catId, accountId: accId, year });
-      saveAll(); renderCategories(); updateSummary();
-      document.getElementById('modal-expense').classList.remove('open');
+      if (editExpDocId) {
+        await updateFinanzaExpense(editExpDocId, { title, amount, freq, catId, accountId, year });
+      } else {
+        await addFinanzaExpense({ title, amount, freq, catId, accountId, year });
+      }
+      closeModal('modal-expense');
     });
 
-    // Chiudi modal cliccando overlay
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-      overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
-    });
+    /* ── helpers ── */
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.modal-overlay').forEach(o =>
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
 
-    /* ══════════════════════════════════════
-       INIT
-    ══════════════════════════════════════ */
+    /* ══ INIT ══ */
     waitForAuth().then(() => {
       document.body.style.visibility = '';
-      renderAccounts();
-      renderCategories();
-      updateSummary();
-      populateExpenseSelects();
-      loadAllAssets();
+
+      // Firestore realtime listeners
+      subscribeFinanzaAccounts(list => {
+        accounts = list;
+        renderAccounts();
+        renderCategories(); // update account names in expenses
+      });
+      subscribeFinanzaCategories(list => {
+        categories = list;
+        renderCategories();
+      });
+      subscribeFinanzaExpenses(list => {
+        expenses = list;
+        renderCategories();
+      });
+
+      // Andamento: avvia dopo piccolo delay così il DOM è pronto
+      setTimeout(loadAllAssets, 300);
     });
   </script>
 </body>
