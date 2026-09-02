@@ -1644,9 +1644,16 @@
     document.getElementById('day-modal-title').textContent = 'Modifica — ' + day.name;
     document.getElementById('dm-type').value = day.type;
     day.meals.forEach(m => addDayMealSlot(m));
-    // carica supplements esistenti
-    const suppArr = Array.isArray(day.supplements) ? day.supplements : (day.supplements ? [day.supplements] : []);
-    suppArr.forEach(s => addSupplementRow(s));
+    // carica supplements esistenti — normalizza qualsiasi formato (array, array-like, stringa)
+    let suppArr = [];
+    if (Array.isArray(day.supplements)) {
+      suppArr = day.supplements;
+    } else if (day.supplements && typeof day.supplements === 'object') {
+      suppArr = Object.values(day.supplements).filter(v => typeof v === 'string');
+    } else if (typeof day.supplements === 'string' && day.supplements.trim()) {
+      suppArr = [day.supplements];
+    }
+    suppArr.forEach(s => { if (s && typeof s === 'string' && s.trim()) addSupplementRow(s); });
     document.getElementById('day-modal').classList.add('open');
   }
   function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }

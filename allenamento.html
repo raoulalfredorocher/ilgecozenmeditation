@@ -140,10 +140,20 @@
     .modal-actions .btn-outline { flex:1; }
     .inline-form { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
     .inline-form-title { font-size:.7rem; font-weight:600; letter-spacing:.1em; color:var(--primary); margin-bottom:12px; }
-    .esercizio-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:8px; }
-    .esercizio-card-title { font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:6px; }
-    .esercizio-card-meta { font-size:.68rem; color:var(--muted); line-height:1.7; }
-    .esercizio-card-actions { display:flex; gap:6px; margin-top:8px; justify-content:flex-end; }
+    .esercizio-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:12px 10px 10px; margin-bottom:6px; display:flex; align-items:center; gap:8px; cursor:grab; touch-action:none; }
+    .esercizio-card.dragging { opacity:.35; }
+    .esercizio-card.drag-over-top { border-top:2px solid var(--primary); }
+    .esercizio-card.drag-over-bottom { border-bottom:2px solid var(--primary); }
+    .esercizio-card-body { flex:1; min-width:0; }
+    .esercizio-card-title { font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:4px; }
+    .esercizio-card-meta { font-size:.62rem; color:var(--muted); line-height:1.6; }
+    .esercizio-card-actions { display:flex; gap:4px; flex-shrink:0; }
+    .drag-handle { cursor:grab; color:var(--muted); padding:4px 5px; flex-shrink:0; display:flex; align-items:center; }
+    .drag-handle svg { width:14px; height:14px; pointer-events:none; }
+    /* schede drag */
+    .item-row.dragging { opacity:.35; }
+    .item-row.drag-over-top { border-top:2px solid var(--primary); }
+    .item-row.drag-over-bottom { border-bottom:2px solid var(--primary); }
 
     /* ── SETUP WIZARD ── */
     .setup-step { width:100%; }
@@ -490,36 +500,41 @@
       <div class="modal-divider"></div>
       <div class="modal-subtitle">Esercizi</div>
       <div id="modal-esercizi-list"></div>
-      <div class="inline-form" id="form-esercizio" style="display:none">
-        <div class="inline-form-title" id="form-ex-label">Nuovo Esercizio</div>
-        <input type="hidden" id="edit-ex-idx" value=""/>
-        <div class="form-group"><label>Gruppo Muscolare</label>
-          <select id="new-ex-gruppo">
-            <option>Petto</option><option>Schiena</option><option>Spalle</option>
-            <option>Bicipiti</option><option>Tricipiti</option><option>Gambe</option>
-            <option>Glutei</option><option>Addome</option><option>Cardio</option><option>Altro</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Nome Esercizio</label><input id="new-ex-nome" placeholder="es. Panca Piana"/></div>
-        <div class="form-row3">
-          <div class="form-group"><label>Serie</label><input id="new-ex-serie" type="number" placeholder="3"/></div>
-          <div class="form-group"><label>Rep</label><input id="new-ex-rep" type="number" placeholder="8"/></div>
-          <div class="form-group"><label>Kg</label><input id="new-ex-kg" placeholder="80"/></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label id="lbl-ex-tempo">Tempo (sec)</label><input id="new-ex-tempo" type="number" placeholder="40"/></div>
-          <div class="form-group"><label>Recupero (sec)</label><input id="new-ex-recupero" type="number" placeholder="90"/></div>
-        </div>
-        <div class="form-group"><label>Note tecniche</label><textarea id="new-ex-desc" placeholder="Note..."></textarea></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-outline" style="flex:1" id="btn-cancel-ex">Annulla</button>
-          <button class="btn-primary" style="flex:1" id="btn-save-new-ex">Salva</button>
-        </div>
-      </div>
       <button class="btn-add" id="btn-new-esercizio">＋ Aggiungi Esercizio</button>
       <div class="modal-actions">
         <button class="btn-danger" id="btn-delete-scheda">Elimina Scheda</button>
         <button class="btn-outline" id="btn-close-scheda-detail">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: form esercizio (nuovo / modifica) -->
+  <div class="modal-overlay" id="modal-esercizio-form" style="z-index:600;">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="form-ex-label">Nuovo Esercizio</div>
+      <input type="hidden" id="edit-ex-idx" value=""/>
+      <div class="form-group"><label>Gruppo Muscolare</label>
+        <select id="new-ex-gruppo">
+          <option>Petto</option><option>Schiena</option><option>Spalle</option>
+          <option>Bicipiti</option><option>Tricipiti</option><option>Gambe</option>
+          <option>Glutei</option><option>Addome</option><option>Cardio</option><option>Altro</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Nome Esercizio</label><input id="new-ex-nome" placeholder="es. Panca Piana"/></div>
+      <div class="form-row3">
+        <div class="form-group"><label>Serie</label><input id="new-ex-serie" type="number" placeholder="3"/></div>
+        <div class="form-group"><label>Rep</label><input id="new-ex-rep" type="number" placeholder="8"/></div>
+        <div class="form-group"><label>Kg</label><input id="new-ex-kg" placeholder="80"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label id="lbl-ex-tempo">Tempo (sec)</label><input id="new-ex-tempo" type="number" placeholder="40"/></div>
+        <div class="form-group"><label>Recupero (sec)</label><input id="new-ex-recupero" type="number" placeholder="90"/></div>
+      </div>
+      <div class="form-group"><label>Note tecniche</label><textarea id="new-ex-desc" placeholder="Note..."></textarea></div>
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-cancel-ex">Annulla</button>
+        <button class="btn-primary" id="btn-save-new-ex">Salva</button>
       </div>
     </div>
   </div>
@@ -559,9 +574,9 @@
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title">Esporta Allenamenti</div>
-      <div class="form-row">
-        <div class="form-group"><label>Da</label><input type="date" id="export-from"/></div>
-        <div class="form-group"><label>A</label><input type="date" id="export-to"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div class="form-group" style="margin-bottom:0;"><label>Da</label><input type="date" id="export-from"/></div>
+        <div class="form-group" style="margin-bottom:0;"><label>A</label><input type="date" id="export-to"/></div>
       </div>
       <button class="btn-primary" style="width:100%;margin-bottom:10px" id="btn-export-range">Esporta periodo</button>
       <button class="btn-outline" style="width:100%;margin-bottom:4px" id="btn-export-all">Esporta tutto</button>
@@ -624,12 +639,64 @@
     // ── SVG icons ──
     const SVG_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     const SVG_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
-    const SVG_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`;
-    const SVG_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+    const SVG_DRAG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="19" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="19" r="1" fill="currentColor" stroke="none"/></svg>`;
 
     // ── Modal helpers ──
     function openModal(id)  { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // ── Backdrop click per tutti i modal ──
+    ['modal-allenamento-detail','modal-scheda-detail','modal-esercizio-form',
+     'modal-new-allenamento','modal-session-detail','modal-export'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', e => { if (e.target === el) closeModal(id); });
+    });
+
+    // ── Drag helpers generici ──
+    function makeDragList(listEl, getDragClass, onReorder) {
+      let dragSrc = null;
+      function initRow(row) {
+        row.addEventListener('dragstart', e => { dragSrc = row; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+        row.addEventListener('dragend',   () => { dragSrc=null; row.classList.remove('dragging'); listEl.querySelectorAll('[class]').forEach(r=>{r.classList.remove('drag-over-top','drag-over-bottom');}); });
+        row.addEventListener('dragover',  e => { if(!dragSrc||dragSrc===row)return; e.preventDefault(); const mid=row.getBoundingClientRect().top+row.getBoundingClientRect().height/2; listEl.querySelectorAll('[class]').forEach(r=>r.classList.remove('drag-over-top','drag-over-bottom')); row.classList.add(e.clientY<mid?'drag-over-top':'drag-over-bottom'); });
+        row.addEventListener('dragleave', () => row.classList.remove('drag-over-top','drag-over-bottom'));
+        row.addEventListener('drop', e => {
+          e.preventDefault(); row.classList.remove('drag-over-top','drag-over-bottom');
+          if(!dragSrc||dragSrc===row)return;
+          const mid=row.getBoundingClientRect().top+row.getBoundingClientRect().height/2;
+          if(e.clientY<mid) listEl.insertBefore(dragSrc,row); else listEl.insertBefore(dragSrc,row.nextSibling);
+          onReorder([...listEl.children]);
+        });
+        // touch
+        let tClone=null, tStartY=0;
+        row.addEventListener('touchstart', e=>{
+          e.stopPropagation();
+          tStartY=e.touches[0].clientY; dragSrc=row; row.classList.add('dragging');
+          tClone=row.cloneNode(true);
+          const r=row.getBoundingClientRect();
+          tClone.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;opacity:.85;pointer-events:none;z-index:9999;`;
+          document.body.appendChild(tClone);
+        },{passive:true});
+        row.addEventListener('touchmove', e=>{
+          if(!dragSrc||!tClone)return; e.preventDefault();
+          const dy=e.touches[0].clientY-tStartY; tClone.style.transform=`translateY(${dy}px)`;
+          listEl.querySelectorAll('[class]').forEach(r=>r.classList.remove('drag-over-top','drag-over-bottom'));
+          const el2=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);
+          const tr=el2?el2.closest(`.${getDragClass()}`):null;
+          if(tr&&tr!==row){const mid2=tr.getBoundingClientRect().top+tr.getBoundingClientRect().height/2; tr.classList.add(e.touches[0].clientY<mid2?'drag-over-top':'drag-over-bottom');}
+        },{passive:false});
+        row.addEventListener('touchend', e=>{
+          if(tClone){tClone.remove();tClone=null;}
+          listEl.querySelectorAll('[class]').forEach(r=>r.classList.remove('drag-over-top','drag-over-bottom','dragging'));
+          const t=e.changedTouches[0];
+          const el2=document.elementFromPoint(t.clientX,t.clientY);
+          const tr=el2?el2.closest(`.${getDragClass()}`):null;
+          if(tr&&tr!==row){const mid2=tr.getBoundingClientRect().top+tr.getBoundingClientRect().height/2; if(t.clientY<mid2)listEl.insertBefore(row,tr);else listEl.insertBefore(row,tr.nextSibling); onReorder([...listEl.children]);}
+          dragSrc=null;
+        });
+      }
+      return { initRow };
+    }
 
     // ── Firestore state ──
     let allenamentiList = [];
@@ -743,48 +810,33 @@
     function renderSchedeInModal(all) {
       const list = document.getElementById('modal-schede-list');
       list.innerHTML = '';
-      const totalSchede = (all.schede || []).length;
+      const dragger = makeDragList(list, () => 'item-row', async rows => {
+        const a = allenamentiList.find(a => a._docId === currentAllDocId);
+        const newSchede = rows.map(r => a.schede[parseInt(r.dataset.idx)]);
+        a.schede = newSchede;
+        rows.forEach((r, i) => r.dataset.idx = i);
+        await updateAllenamentoDoc(currentAllDocId, { schede: newSchede });
+      });
       (all.schede || []).forEach((sch, idx) => {
         const exCount = (all.schede[idx]?.esercizi || []).length;
         const div = document.createElement('div');
         div.className = 'item-row';
+        div.dataset.idx = idx;
+        div.setAttribute('draggable', 'true');
         div.innerHTML = `
+          <div class="drag-handle" title="Trascina">${SVG_DRAG}</div>
           <div class="item-row-icon" style="cursor:pointer">📋</div>
           <div class="item-row-info" style="cursor:pointer">
             <div class="item-row-name">${sch.nome}</div>
             <div class="item-row-meta">${exCount} esercizi</div>
           </div>
           <div class="item-row-actions">
-            <button class="icon-btn move-up" title="Sposta su" ${idx === 0 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_UP}</button>
-            <button class="icon-btn move-down" title="Sposta giù" ${idx === totalSchede - 1 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_DOWN}</button>
-            <button class="icon-btn edit" title="Modifica">${SVG_EDIT}</button>
+            <button class="icon-btn edit" title="Apri">${SVG_EDIT}</button>
             <button class="icon-btn del" title="Elimina">${SVG_TRASH}</button>
           </div>`;
         const openDetail = () => { closeModal('modal-allenamento-detail'); openSchedaDetail(currentAllDocId, idx); };
         div.querySelector('.item-row-info').addEventListener('click', openDetail);
         div.querySelector('.item-row-icon').addEventListener('click', openDetail);
-        if (idx > 0) {
-          div.querySelector('.icon-btn.move-up').addEventListener('click', async e => {
-            e.stopPropagation();
-            const a = allenamentiList.find(a => a._docId === currentAllDocId);
-            const schede = [...a.schede];
-            [schede[idx - 1], schede[idx]] = [schede[idx], schede[idx - 1]];
-            a.schede = schede;
-            renderSchedeInModal(a);
-            await updateAllenamentoDoc(currentAllDocId, { schede });
-          });
-        }
-        if (idx < totalSchede - 1) {
-          div.querySelector('.icon-btn.move-down').addEventListener('click', async e => {
-            e.stopPropagation();
-            const a = allenamentiList.find(a => a._docId === currentAllDocId);
-            const schede = [...a.schede];
-            [schede[idx], schede[idx + 1]] = [schede[idx + 1], schede[idx]];
-            a.schede = schede;
-            renderSchedeInModal(a);
-            await updateAllenamentoDoc(currentAllDocId, { schede });
-          });
-        }
         div.querySelector('.icon-btn.edit').addEventListener('click', e => { e.stopPropagation(); openDetail(); });
         div.querySelector('.icon-btn.del').addEventListener('click', async e => {
           e.stopPropagation();
@@ -795,6 +847,7 @@
           renderSchedeInModal(a);
           await updateAllenamentoDoc(currentAllDocId, { schede });
         });
+        dragger.initRow(div);
         list.appendChild(div);
       });
     }
@@ -853,50 +906,32 @@
     function renderEserciziInModal(all, idx) {
       const list = document.getElementById('modal-esercizi-list');
       list.innerHTML = '';
-      const totalEx = (all.schede[idx]?.esercizi || []).length;
+      const dragger = makeDragList(list, () => 'esercizio-card', async rows => {
+        const a = allenamentiList.find(a => a._docId === currentAllDocId);
+        const schede = JSON.parse(JSON.stringify(a.schede));
+        schede[currentSchedaIdx].esercizi = rows.map(r => schede[currentSchedaIdx].esercizi[parseInt(r.dataset.eidx)]);
+        rows.forEach((r, i) => r.dataset.eidx = i);
+        a.schede = schede;
+        await updateAllenamentoDoc(currentAllDocId, { schede });
+      });
       (all.schede[idx]?.esercizi || []).forEach((ex, eidx) => {
         const div = document.createElement('div');
         div.className = 'esercizio-card';
+        div.dataset.eidx = eidx;
+        div.setAttribute('draggable', 'true');
         div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-            <div class="esercizio-card-title" style="margin-bottom:0">${ex.gruppo} — ${ex.nome}</div>
-            <div style="display:flex; gap:4px; flex-shrink:0;">
-              <button class="icon-btn move-up" title="Sposta su" ${eidx === 0 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_UP}</button>
-              <button class="icon-btn move-down" title="Sposta giù" ${eidx === totalEx - 1 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>${SVG_DOWN}</button>
-            </div>
-          </div>
-          <div class="esercizio-card-meta" style="margin-top:6px;">
-            ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+(ex.gruppo==='Cardio' ? Math.round(ex.tempo/60)+' min' : ex.tempo+'s') : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}<br>
-            ${ex.desc||''}
+          <div class="drag-handle" title="Trascina">${SVG_DRAG}</div>
+          <div class="esercizio-card-body">
+            <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
+            <div class="esercizio-card-meta">${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+(ex.gruppo==='Cardio' ? Math.round(ex.tempo/60)+' min' : ex.tempo+'s') : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}${ex.desc ? '<br>'+ex.desc : ''}</div>
           </div>
           <div class="esercizio-card-actions">
             <button class="icon-btn edit" title="Modifica">${SVG_EDIT}</button>
             <button class="icon-btn del" title="Elimina">${SVG_TRASH}</button>
           </div>`;
-        if (eidx > 0) {
-          div.querySelector('.icon-btn.move-up').addEventListener('click', async () => {
-            const a = allenamentiList.find(a => a._docId === currentAllDocId);
-            const schede = JSON.parse(JSON.stringify(a.schede));
-            const arr = schede[currentSchedaIdx].esercizi;
-            [arr[eidx - 1], arr[eidx]] = [arr[eidx], arr[eidx - 1]];
-            a.schede = schede;
-            renderEserciziInModal(a, currentSchedaIdx);
-            await updateAllenamentoDoc(currentAllDocId, { schede });
-          });
-        }
-        if (eidx < totalEx - 1) {
-          div.querySelector('.icon-btn.move-down').addEventListener('click', async () => {
-            const a = allenamentiList.find(a => a._docId === currentAllDocId);
-            const schede = JSON.parse(JSON.stringify(a.schede));
-            const arr = schede[currentSchedaIdx].esercizi;
-            [arr[eidx], arr[eidx + 1]] = [arr[eidx + 1], arr[eidx]];
-            a.schede = schede;
-            renderEserciziInModal(a, currentSchedaIdx);
-            await updateAllenamentoDoc(currentAllDocId, { schede });
-          });
-        }
-        div.querySelector('.icon-btn.edit').addEventListener('click', () => openEditEsercizio(eidx, ex));
-        div.querySelector('.icon-btn.del').addEventListener('click', async () => {
+        div.querySelector('.icon-btn.edit').addEventListener('click', e => { e.stopPropagation(); openEditEsercizio(eidx, ex); });
+        div.querySelector('.icon-btn.del').addEventListener('click', async e => {
+          e.stopPropagation();
           if (!confirm(`Eliminare "${ex.nome}"?`)) return;
           const a = allenamentiList.find(a => a._docId === currentAllDocId);
           const schede = JSON.parse(JSON.stringify(a.schede));
@@ -905,6 +940,7 @@
           renderEserciziInModal(a, currentSchedaIdx);
           await updateAllenamentoDoc(currentAllDocId, { schede });
         });
+        dragger.initRow(div);
         list.appendChild(div);
       });
     }
@@ -925,14 +961,12 @@
       document.getElementById('new-ex-serie').value = ex.serie || '';
       document.getElementById('new-ex-rep').value = ex.rep || '';
       document.getElementById('new-ex-kg').value = ex.kg || '';
-      // se cardio, mostra in minuti (il valore è salvato in secondi)
       document.getElementById('new-ex-tempo').value = ex.tempo
         ? (isCardio(ex.gruppo) ? Math.round(ex.tempo / 60) : ex.tempo)
         : '';
       document.getElementById('new-ex-recupero').value = ex.recupero || '';
       document.getElementById('new-ex-desc').value = ex.desc || '';
-      document.getElementById('form-esercizio').style.display = 'block';
-      document.getElementById('btn-new-esercizio').style.display = 'none';
+      openModal('modal-esercizio-form');
     }
     document.getElementById('btn-close-scheda-detail').addEventListener('click', () => {
       closeModal('modal-scheda-detail'); openModal('modal-allenamento-detail');
@@ -952,12 +986,10 @@
         .forEach(id => document.getElementById(id).value = '');
       document.getElementById('new-ex-gruppo').selectedIndex = 0;
       updateTempoLabel();
-      document.getElementById('form-esercizio').style.display = 'block';
-      document.getElementById('btn-new-esercizio').style.display = 'none';
+      openModal('modal-esercizio-form');
     });
     document.getElementById('btn-cancel-ex').addEventListener('click', () => {
-      document.getElementById('form-esercizio').style.display = 'none';
-      document.getElementById('btn-new-esercizio').style.display = 'block';
+      closeModal('modal-esercizio-form');
     });
     document.getElementById('btn-save-new-ex').addEventListener('click', () => {
       // --- Validazione con evidenziazione rosso ---
@@ -1002,8 +1034,7 @@
         sch.esercizi.push(exData);
       }
       renderEserciziInModal(all, currentSchedaIdx);
-      document.getElementById('form-esercizio').style.display = 'none';
-      document.getElementById('btn-new-esercizio').style.display = 'block';
+      closeModal('modal-esercizio-form');
       updateAllenamentoDoc(currentAllDocId, { schede: all.schede });
     });
 
