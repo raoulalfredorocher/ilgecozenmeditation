@@ -489,6 +489,8 @@
     .diary-meal-desc { font-size: .60rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
     .diary-meal-kcal { font-size: .72rem; font-weight: 600; color: var(--primary); }
     .diary-meal-kcal span { font-size: .48rem; color: var(--muted); font-weight: 400; }
+    .diary-meal-edit { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: .7rem; padding: 3px 7px; -webkit-tap-highlight-color: transparent; transition: color .2s, border-color .2s; }
+    .diary-meal-edit:active { color: var(--primary); border-color: var(--primary); }
     .diary-meal-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .9rem; padding: 4px; -webkit-tap-highlight-color: transparent; }
     .btn-add-diary-meal {
       width: 100%; background: var(--card); border: 1.5px dashed var(--border);
@@ -641,6 +643,27 @@
   </header>
 
   <!-- ══════════════════════════════  SCREEN 1: DIETA  ══════════════════════════════ -->
+  <!-- MODAL: Profili Macros -->
+  <div class="modal-overlay" id="macros-profile-modal" style="z-index:510;">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="macros-profile-modal-title">Profili Macros</div>
+      <div id="macros-profiles-list" style="margin-bottom:12px;"></div>
+      <div style="background:var(--surface);border-radius:12px;padding:12px;margin-bottom:10px;">
+        <div style="font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);font-weight:600;margin-bottom:8px;" id="macros-profile-form-title">Nuovo profilo</div>
+        <input class="form-input" id="mp-name" type="text" placeholder="Nome profilo (es. Cut 2025)" style="margin-bottom:8px;"/>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+          <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Kcal</div><input class="form-input" id="mp-kcal" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
+          <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Prot</div><input class="form-input" id="mp-prot" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
+          <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Carbo</div><input class="form-input" id="mp-carb" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
+          <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Grassi</div><input class="form-input" id="mp-fat" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
+        </div>
+        <button class="btn-primary" style="margin-top:4px;" onclick="saveMacroProfile()">Salva profilo</button>
+      </div>
+      <button class="btn-cancel" onclick="document.getElementById('macros-profile-modal').classList.remove('open')">Chiudi</button>
+    </div>
+  </div>
+
   <div class="screen active" id="screen-dieta">
     <div class="section-title">piano alimentare settimanale</div>
     <div class="diet-toolbar" style="justify-content:center;">
@@ -706,7 +729,15 @@
     </div>
     <!-- Macros di riferimento -->
     <div class="macros-target-box">
-      <div class="macros-target-title">Macros di riferimento</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div class="macros-target-title" style="margin-bottom:0;">Macros di riferimento</div>
+        <button style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.60rem;padding:4px 9px;cursor:pointer;font-family:inherit;" onclick="openMacrosProfileModal()">⚙️ Profili</button>
+      </div>
+      <div style="margin-bottom:8px;">
+        <select class="macros-target-input" id="macros-profile-select" style="padding:6px 4px;font-size:.68rem;" onchange="applyMacroProfile()">
+          <option value="">— Nessun profilo attivo —</option>
+        </select>
+      </div>
       <div class="macros-target-grid">
         <div class="macros-target-item">
           <div class="macros-target-label">Kcal</div>
@@ -810,8 +841,8 @@
     </div>
     <div class="diary-meal-list" id="diary-meal-list"></div>
     <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <button class="btn-add-diary-meal" style="margin-bottom:0;flex:1;" onclick="openDiaryMealModal()">＋ Aggiungi pasto</button>
-      <button class="btn-add-diary-meal" style="margin-bottom:0;flex:0 0 auto;font-size:.68rem;padding:10px 14px;background:var(--surface);" onclick="openDiaryAutocomplete()" title="Carica dieta del giorno">📋 Dieta</button>
+      <button class="btn-add-diary-meal" style="margin-bottom:0;flex:1;font-size:.78rem;padding:12px;" onclick="openDiaryMealModal()">＋ Aggiungi pasto</button>
+      <button class="btn-add-diary-meal" style="margin-bottom:0;flex:1;font-size:.78rem;padding:12px;background:var(--surface);" onclick="openDiaryAutocomplete()" title="Carica dieta del giorno">📋 Dieta</button>
     </div>
     <div class="page-footer">
       <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> &nbsp;·&nbsp; Il Geco Zen
@@ -1016,6 +1047,13 @@
       <div class="form-group" style="margin-bottom:6px;"><label class="form-label">Pasti (descrizione + macros)</label></div>
       <div id="dm-meals-list"></div>
       <button class="btn-add-item" type="button" onclick="addDayMealSlot()">＋ Aggiungi pasto</button>
+      <div style="margin-top:12px;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <label class="form-label" style="margin:0;">💊 Integratori giorno</label>
+          <button type="button" class="btn-add-item" style="width:auto;padding:5px 10px;margin:0;" onclick="openAddSupplementModal()">＋ Aggiungi</button>
+        </div>
+        <div id="dm-supplements-list"></div>
+      </div>
       <button class="btn-primary" style="margin-top:14px;" onclick="saveDay()">Salva</button>
       <button class="btn-cancel" onclick="closeDayModal()">Annulla</button>
     </div>
@@ -1036,11 +1074,11 @@
   </div>
 
 
-  <!-- ══════════════════════════════  MODAL: AGGIUNGI PASTO DIARIO  ══════════════════════════════ -->
+  <!-- ══════════════════════════════  MODAL: AGGIUNGI/MODIFICA PASTO DIARIO  ══════════════════════════════ -->
   <div class="modal-overlay" id="diary-modal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">Aggiungi pasto</div>
+      <div class="modal-title" id="diary-modal-title">Aggiungi pasto</div>
       <div class="form-group">
         <label class="form-label">Tipo pasto <span class="req">*</span></label>
         <select class="form-select" id="diary-meal-type">
@@ -1065,7 +1103,7 @@
         <div class="form-group"><label class="form-label">Grassi</label><input class="form-input" id="diary-meal-fat" type="number" min="0" placeholder="—"/></div>
       </div>
       <div style="font-size:.52rem;color:var(--muted);letter-spacing:.10em;margin-bottom:6px;">* Obbligatorio &nbsp;·&nbsp; kcal e macros facoltativi</div>
-      <button class="btn-primary" onclick="saveDiaryMeal()">Aggiungi</button>
+      <button class="btn-primary" id="diary-modal-save-btn" onclick="saveDiaryMeal()">Aggiungi</button>
       <button class="btn-cancel" onclick="closeDiaryModal()">Annulla</button>
     </div>
   </div>
@@ -1371,6 +1409,110 @@
   window.saveTdeeForm       = saveTdeeForm;
   window.renderDietAnalytics = renderDietAnalytics;
 
+  /* ════════════ PROFILI MACROS ════════════ */
+  let macroProfiles = [];
+  let editingMacroProfileIdx = null;
+
+  function loadMacroProfiles() {
+    try { macroProfiles = JSON.parse(localStorage.getItem('zen_macro_profiles') || '[]'); } catch { macroProfiles = []; }
+  }
+  function saveMacroProfilesStorage() {
+    localStorage.setItem('zen_macro_profiles', JSON.stringify(macroProfiles));
+  }
+  function renderMacroProfileSelect() {
+    const sel = document.getElementById('macros-profile-select');
+    const active = localStorage.getItem('zen_active_macro_profile') || '';
+    sel.innerHTML = '<option value="">— Nessun profilo attivo —</option>';
+    macroProfiles.forEach((p, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = p.name;
+      if (active === String(i)) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+  function applyMacroProfile() {
+    const sel = document.getElementById('macros-profile-select');
+    const idx = sel.value;
+    localStorage.setItem('zen_active_macro_profile', idx);
+    if (idx === '' || !macroProfiles[idx]) {
+      // non resettare i valori manuali, mantieni
+      return;
+    }
+    const p = macroProfiles[parseInt(idx)];
+    document.getElementById('target-kcal').value = p.kcal || '';
+    document.getElementById('target-prot').value = p.prot || '';
+    document.getElementById('target-carb').value = p.carb || '';
+    document.getElementById('target-fat').value  = p.fat  || '';
+    saveTargets(); renderDayCard();
+  }
+  function openMacrosProfileModal() {
+    editingMacroProfileIdx = null;
+    document.getElementById('mp-name').value = '';
+    document.getElementById('mp-kcal').value = '';
+    document.getElementById('mp-prot').value = '';
+    document.getElementById('mp-carb').value = '';
+    document.getElementById('mp-fat').value  = '';
+    document.getElementById('macros-profile-form-title').textContent = 'Nuovo profilo';
+    renderMacroProfilesList();
+    document.getElementById('macros-profile-modal').classList.add('open');
+  }
+  function renderMacroProfilesList() {
+    const wrap = document.getElementById('macros-profiles-list');
+    if (!macroProfiles.length) { wrap.innerHTML = '<div style="font-size:.68rem;color:var(--muted);text-align:center;padding:8px 0;">Nessun profilo. Creane uno qui sotto.</div>'; return; }
+    wrap.innerHTML = macroProfiles.map((p, i) => `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <div style="flex:1;">
+          <div style="font-size:.76rem;font-weight:600;color:var(--text);">${p.name}</div>
+          <div style="font-size:.50rem;color:var(--muted);margin-top:2px;">${p.kcal||0} kcal · P ${p.prot||0}g · C ${p.carb||0}g · F ${p.fat||0}g</div>
+        </div>
+        <button style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.68rem;padding:3px 7px;cursor:pointer;" onclick="editMacroProfile(${i})">✏️</button>
+        <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:3px 5px;" onclick="deleteMacroProfile(${i})">🗑️</button>
+      </div>`).join('');
+  }
+  function editMacroProfile(idx) {
+    editingMacroProfileIdx = idx;
+    const p = macroProfiles[idx];
+    document.getElementById('mp-name').value = p.name;
+    document.getElementById('mp-kcal').value = p.kcal || '';
+    document.getElementById('mp-prot').value = p.prot || '';
+    document.getElementById('mp-carb').value = p.carb || '';
+    document.getElementById('mp-fat').value  = p.fat  || '';
+    document.getElementById('macros-profile-form-title').textContent = 'Modifica profilo';
+  }
+  function deleteMacroProfile(idx) {
+    if (!confirm(`Eliminare il profilo "${macroProfiles[idx].name}"?`)) return;
+    macroProfiles.splice(idx, 1);
+    saveMacroProfilesStorage();
+    renderMacroProfilesList();
+    renderMacroProfileSelect();
+  }
+  function saveMacroProfile() {
+    const name = document.getElementById('mp-name').value.trim();
+    if (!name) { document.getElementById('mp-name').classList.add('err'); return; }
+    document.getElementById('mp-name').classList.remove('err');
+    const p = {
+      name,
+      kcal: parseInt(document.getElementById('mp-kcal').value) || 0,
+      prot: parseInt(document.getElementById('mp-prot').value) || 0,
+      carb: parseInt(document.getElementById('mp-carb').value) || 0,
+      fat:  parseInt(document.getElementById('mp-fat').value)  || 0,
+    };
+    if (editingMacroProfileIdx !== null) macroProfiles[editingMacroProfileIdx] = p;
+    else macroProfiles.push(p);
+    saveMacroProfilesStorage();
+    editingMacroProfileIdx = null;
+    document.getElementById('mp-name').value = '';
+    document.getElementById('mp-kcal').value = '';
+    document.getElementById('mp-prot').value = '';
+    document.getElementById('mp-carb').value = '';
+    document.getElementById('mp-fat').value  = '';
+    document.getElementById('macros-profile-form-title').textContent = 'Nuovo profilo';
+    renderMacroProfilesList();
+    renderMacroProfileSelect();
+  }
+  document.getElementById('macros-profile-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+
   function saveTargets() {
     const t = {
       kcal: document.getElementById('target-kcal').value,
@@ -1381,6 +1523,8 @@
     localStorage.setItem('zen_macros_target', JSON.stringify(t));
   }
   function loadTargets() {
+    loadMacroProfiles();
+    renderMacroProfileSelect();
     try {
       const t = JSON.parse(localStorage.getItem('zen_macros_target') || '{}');
       if (t.kcal) document.getElementById('target-kcal').value = t.kcal;
@@ -1388,6 +1532,12 @@
       if (t.carb) document.getElementById('target-carb').value = t.carb;
       if (t.fat)  document.getElementById('target-fat').value  = t.fat;
     } catch {}
+    // applica profilo attivo se presente
+    const active = localStorage.getItem('zen_active_macro_profile');
+    if (active !== '' && active !== null && macroProfiles[parseInt(active)]) {
+      document.getElementById('macros-profile-select').value = active;
+      applyMacroProfile();
+    }
   }
   function getTargets() {
     return {
@@ -1488,13 +1638,19 @@
     dayMealCount = 0;
     const mealsList = document.getElementById('dm-meals-list');
     mealsList.innerHTML = '';
+    const suppList = document.getElementById('dm-supplements-list');
+    suppList.innerHTML = '';
     const day = diet.find(d => d.id === id);
     document.getElementById('day-modal-title').textContent = 'Modifica — ' + day.name;
     document.getElementById('dm-type').value = day.type;
     day.meals.forEach(m => addDayMealSlot(m));
+    // carica supplements esistenti
+    const suppArr = Array.isArray(day.supplements) ? day.supplements : (day.supplements ? [day.supplements] : []);
+    suppArr.forEach(s => addSupplementRow(s));
     document.getElementById('day-modal').classList.add('open');
   }
   function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
+  document.getElementById('day-modal').addEventListener('click', function(e){ if(e.target===this) closeDayModal(); });
 
   function addSupplementRow(name) {
     const el = document.createElement('div');
@@ -1586,6 +1742,9 @@
       carb: parseInt(el.querySelector('[data-role=carb]').value)||0,
       fat:  parseInt(el.querySelector('[data-role=fat]').value)||0,
     })).filter(m => m.desc);
+    // salva supplements del giorno
+    const suppInputs = document.querySelectorAll('#dm-supplements-list [data-role=supp]');
+    day.supplements = Array.from(suppInputs).map(i => i.value.trim()).filter(Boolean);
     await saveDiet(); renderDayPills(); renderDayCard(); closeDayModal();
   }
 
@@ -1913,7 +2072,10 @@
         <div class="diary-meal-icon">${icon}</div>
         <div class="diary-meal-info"><div class="diary-meal-name">${nm}</div><div class="diary-meal-desc">${m.desc||''}</div></div>
         <div class="diary-meal-kcal">${m.kcal||0} <span>kcal</span></div>
-        <button class="diary-meal-del" onclick="deleteDiaryMeal(${i})">✕</button>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <button class="diary-meal-edit" onclick="openEditDiaryMealModal(${i})">✏️</button>
+          <button class="diary-meal-del" onclick="deleteDiaryMeal(${i})">✕</button>
+        </div>
       </div>`;
     }).join('');
   }
@@ -1925,14 +2087,39 @@
   }
 
   /* Diary meal modal */
+  let editingDiaryMealIdx = null;
+
   function openDiaryMealModal() {
+    editingDiaryMealIdx = null;
+    document.getElementById('diary-modal-title').textContent = 'Aggiungi pasto';
+    document.getElementById('diary-modal-save-btn').textContent = 'Aggiungi';
     document.getElementById('diary-meal-type').value = '🥣 Colazione';
     const descEl = document.getElementById('diary-meal-desc');
     descEl.value = ''; descEl.classList.remove('err');
     ['diary-meal-kcal','diary-meal-prot','diary-meal-carb','diary-meal-fat'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('diary-modal').classList.add('open');
   }
-  function closeDiaryModal(){ document.getElementById('diary-modal').classList.remove('open'); }
+
+  function openEditDiaryMealModal(idx) {
+    const meal = (diary[selectedDate]||[])[idx];
+    if (!meal) return;
+    editingDiaryMealIdx = idx;
+    document.getElementById('diary-modal-title').textContent = 'Modifica pasto';
+    document.getElementById('diary-modal-save-btn').textContent = 'Salva';
+    document.getElementById('diary-meal-type').value = meal.type;
+    const descEl = document.getElementById('diary-meal-desc');
+    descEl.value = meal.desc || ''; descEl.classList.remove('err');
+    document.getElementById('diary-meal-kcal').value = meal.kcal || '';
+    document.getElementById('diary-meal-prot').value = meal.prot || '';
+    document.getElementById('diary-meal-carb').value = meal.carb || '';
+    document.getElementById('diary-meal-fat').value  = meal.fat  || '';
+    document.getElementById('diary-modal').classList.add('open');
+  }
+
+  function closeDiaryModal(){
+    document.getElementById('diary-modal').classList.remove('open');
+    editingDiaryMealIdx = null;
+  }
   document.getElementById('diary-modal').addEventListener('click',function(e){if(e.target===this)closeDiaryModal();});
   document.getElementById('diary-autocomplete-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 
@@ -1981,18 +2168,21 @@
     const descEl = document.getElementById('diary-meal-desc');
     const desc   = descEl.value.trim();
     let ok = true;
-    // tipo pasto: deve essere selezionato (sempre lo è, ha default)
-    // descrizione: obbligatoria
     if (!desc) { descEl.classList.add('err'); ok = false; } else { descEl.classList.remove('err'); }
     if (!ok) { descEl.focus(); return; }
     if (!diary[selectedDate]) diary[selectedDate] = [];
-    diary[selectedDate].push({
+    const mealData = {
       type: typeEl.value, desc,
       kcal: parseInt(document.getElementById('diary-meal-kcal').value) || 0,
       prot: parseInt(document.getElementById('diary-meal-prot').value) || 0,
       carb: parseInt(document.getElementById('diary-meal-carb').value) || 0,
       fat:  parseInt(document.getElementById('diary-meal-fat').value)  || 0,
-    });
+    };
+    if (editingDiaryMealIdx !== null && editingDiaryMealIdx >= 0) {
+      diary[selectedDate][editingDiaryMealIdx] = mealData;
+    } else {
+      diary[selectedDate].push(mealData);
+    }
     await saveDiaryDay(selectedDate, diary[selectedDate]);
     closeDiaryModal(); renderCalendar(); renderDiaryDay();
   }
@@ -2193,6 +2383,7 @@
     document.getElementById('export-to').value=today;
     document.getElementById('export-diary-modal').classList.add('open');
   }
+  document.getElementById('export-diary-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
   function exportDiaryAll(){ exportDiaryCSV(Object.keys(diary)); document.getElementById('export-diary-modal').classList.remove('open'); }
   function exportDiaryRange(){
     const from=document.getElementById('export-from').value;
@@ -2336,6 +2527,7 @@
   window.openExportDiaryModal    = openExportDiaryModal;
   window.openAnalytics           = openAnalytics;
   window.openDiaryMealModal      = openDiaryMealModal;
+  window.openEditDiaryMealModal  = openEditDiaryMealModal;
   window.switchAnalytics         = switchAnalytics;
   window.closeRecipePopup        = closeRecipePopup;
   window.addIngredient           = addIngredient;
@@ -2363,6 +2555,11 @@
   window.deleteSavedDiet         = deleteSavedDiet;
   window.exportSavedDietCSV      = exportSavedDietCSV;
   window.saveTargets             = saveTargets;
+  window.openMacrosProfileModal  = openMacrosProfileModal;
+  window.saveMacroProfile        = saveMacroProfile;
+  window.editMacroProfile        = editMacroProfile;
+  window.deleteMacroProfile      = deleteMacroProfile;
+  window.applyMacroProfile       = applyMacroProfile;
   window.openDayModal            = openDayModal;
   window.showRecipePopup         = showRecipePopup;
   window.editRecipe              = editRecipe;
@@ -2450,9 +2647,12 @@
     .store-item-qty { font-size: .60rem; color: var(--muted); margin-top: 1px; }
     .store-item-cat-badge { font-size: .55rem; color: var(--primary); background: rgba(59,130,212,0.1); padding: 1px 5px; border-radius: 4px; display: inline-block; margin-right: 4px; }
     .store-item-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-    .store-item-move { background: none; border: none; color: var(--muted); cursor: pointer; padding: 3px 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
-    .store-item-move:disabled { opacity: 0.25; cursor: default; }
-    .store-item-move svg { width: 14px; height: 14px; }
+    .store-item-drag-handle { cursor: grab; color: var(--muted); padding: 4px 6px; touch-action: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; -webkit-tap-highlight-color: transparent; border-radius: 4px; }
+    .store-item-drag-handle:active { cursor: grabbing; }
+    .store-item-drag-handle svg { width: 14px; height: 14px; pointer-events: none; }
+    .store-item.dragging { opacity: .35; background: var(--surface); }
+    .store-item.drag-over-top { border-top: 2px solid var(--primary); }
+    .store-item.drag-over-bottom { border-bottom: 2px solid var(--primary); }
     .store-item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; padding: 3px 5px; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
     .store-item-del:active { color: var(--red); }
 
@@ -2555,8 +2755,10 @@
     waitForAuth().then(user => { if (!user) return; initShoppingApp(); });
     function initShoppingApp() {
 
-    const SVG_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`;
-    const SVG_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+    const SVG_DRAG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="19" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="19" r="1" fill="currentColor" stroke="none"/></svg>`;
+    /* ── drag-and-drop state spesa ── */
+    let spesaDragSrc = null;
+    let spesaDragStoreId = null;
 
     /* ── stato ── */
     let stores = [];
@@ -2817,9 +3019,15 @@
         return;
       }
 
-      filtered.forEach((item, fIdx) => {
+      filtered.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'store-item' + (item.bought ? ' bought' : '');
+        row.dataset.docid = item._docId;
+
+        const handle = document.createElement('div');
+        handle.className = 'store-item-drag-handle';
+        handle.title = 'Trascina per riordinare';
+        handle.innerHTML = SVG_DRAG;
 
         const chk = document.createElement('button');
         chk.className = 'store-item-check' + (item.bought ? ' checked' : '');
@@ -2833,64 +3041,118 @@
         const actions = document.createElement('div');
         actions.className = 'store-item-actions';
 
-        const btnUp = document.createElement('button');
-        btnUp.className = 'store-item-move';
-        btnUp.title = 'Sposta su';
-        btnUp.innerHTML = SVG_UP;
-        if (fIdx === 0) btnUp.disabled = true;
-        else {
-          btnUp.addEventListener('click', async () => {
-            const prevItem = filtered[fIdx - 1];
-            // Trova indici o ordini
-            const curIdxInAll = items.findIndex(i => i._docId === item._docId);
-            const prevIdxInAll = items.findIndex(i => i._docId === prevItem._docId);
-            if (curIdxInAll !== -1 && prevIdxInAll !== -1) {
-              const order1 = prevItem.order !== undefined ? prevItem.order : (prevItem.createdAt || prevIdxInAll);
-              const order2 = item.order !== undefined ? item.order : (item.createdAt || curIdxInAll);
-              // se uguali o invertiti, assegniamo valori distinti
-              const targetOrderPrev = (order1 === order2) ? order1 + 1 : order2;
-              const targetOrderCur = (order1 === order2) ? order1 : order1;
-              await updateShoppingItem(storeDocId, item._docId, { order: targetOrderCur });
-              await updateShoppingItem(storeDocId, prevItem._docId, { order: targetOrderPrev });
-            }
-          });
-        }
-
-        const btnDown = document.createElement('button');
-        btnDown.className = 'store-item-move';
-        btnDown.title = 'Sposta giù';
-        btnDown.innerHTML = SVG_DOWN;
-        if (fIdx === filtered.length - 1) btnDown.disabled = true;
-        else {
-          btnDown.addEventListener('click', async () => {
-            const nextItem = filtered[fIdx + 1];
-            const curIdxInAll = items.findIndex(i => i._docId === item._docId);
-            const nextIdxInAll = items.findIndex(i => i._docId === nextItem._docId);
-            if (curIdxInAll !== -1 && nextIdxInAll !== -1) {
-              const order1 = item.order !== undefined ? item.order : (item.createdAt || curIdxInAll);
-              const order2 = nextItem.order !== undefined ? nextItem.order : (nextItem.createdAt || nextIdxInAll);
-              const targetOrderNext = (order1 === order2) ? order1 : order1;
-              const targetOrderCur = (order1 === order2) ? order1 + 1 : order2;
-              await updateShoppingItem(storeDocId, item._docId, { order: targetOrderCur });
-              await updateShoppingItem(storeDocId, nextItem._docId, { order: targetOrderNext });
-            }
-          });
-        }
-
         const del = document.createElement('button');
         del.className = 'store-item-del';
         del.title = 'Elimina';
         del.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>`;
         del.addEventListener('click', () => deleteShoppingItem(storeDocId, item._docId));
 
-        actions.appendChild(btnUp);
-        actions.appendChild(btnDown);
         actions.appendChild(del);
 
+        row.appendChild(handle);
         row.appendChild(chk);
         row.appendChild(info);
         row.appendChild(actions);
         storeItemsList.appendChild(row);
+
+        /* ── drag-and-drop (mouse) ── */
+        handle.addEventListener('mousedown', e => {
+          row.setAttribute('draggable', 'true');
+        });
+        row.addEventListener('dragstart', e => {
+          spesaDragSrc = row;
+          spesaDragStoreId = storeDocId;
+          row.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        row.addEventListener('dragend', () => {
+          row.removeAttribute('draggable');
+          row.classList.remove('dragging');
+          document.querySelectorAll('.store-item').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
+          spesaDragSrc = null;
+        });
+        row.addEventListener('dragover', e => {
+          if (!spesaDragSrc || spesaDragSrc === row) return;
+          e.preventDefault();
+          const rect = row.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          document.querySelectorAll('.store-item').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
+          row.classList.add(e.clientY < midY ? 'drag-over-top' : 'drag-over-bottom');
+        });
+        row.addEventListener('dragleave', () => {
+          row.classList.remove('drag-over-top','drag-over-bottom');
+        });
+        row.addEventListener('drop', async e => {
+          e.preventDefault();
+          row.classList.remove('drag-over-top','drag-over-bottom');
+          if (!spesaDragSrc || spesaDragSrc === row) return;
+          const allRows = [...storeItemsList.querySelectorAll('.store-item')];
+          const srcIdx = allRows.indexOf(spesaDragSrc);
+          const tgtIdx = allRows.indexOf(row);
+          if (srcIdx === -1 || tgtIdx === -1) return;
+          const rect = row.getBoundingClientRect();
+          const insertBefore = e.clientY < rect.top + rect.height / 2;
+          // riordina DOM
+          if (insertBefore) storeItemsList.insertBefore(spesaDragSrc, row);
+          else storeItemsList.insertBefore(spesaDragSrc, row.nextSibling);
+          // aggiorna ordini su Firestore
+          const newOrder = [...storeItemsList.querySelectorAll('.store-item')].map((r,i) => ({ docId: r.dataset.docid, order: (i+1)*10 }));
+          for (const { docId, order } of newOrder) {
+            await updateShoppingItem(storeDocId, docId, { order });
+          }
+        });
+
+        /* ── touch drag ── */
+        let touchDragClone = null, touchStartY = 0, touchRowH = 0;
+        handle.addEventListener('touchstart', e => {
+          e.preventDefault();
+          const touch = e.touches[0];
+          touchStartY = touch.clientY;
+          touchRowH = row.getBoundingClientRect().height;
+          spesaDragSrc = row;
+          spesaDragStoreId = storeDocId;
+          row.classList.add('dragging');
+          touchDragClone = row.cloneNode(true);
+          touchDragClone.style.cssText = `position:fixed;left:${row.getBoundingClientRect().left}px;top:${row.getBoundingClientRect().top}px;width:${row.getBoundingClientRect().width}px;opacity:.85;pointer-events:none;z-index:9999;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.22);`;
+          document.body.appendChild(touchDragClone);
+        }, { passive: false });
+        handle.addEventListener('touchmove', e => {
+          if (!spesaDragSrc || !touchDragClone) return;
+          e.preventDefault();
+          const touch = e.touches[0];
+          const dy = touch.clientY - touchStartY;
+          touchDragClone.style.transform = `translateY(${dy}px)`;
+          // evidenzia target
+          document.querySelectorAll('.store-item').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
+          const el = document.elementFromPoint(touch.clientX, touch.clientY);
+          const targetRow = el ? el.closest('.store-item') : null;
+          if (targetRow && targetRow !== row) {
+            const rect = targetRow.getBoundingClientRect();
+            targetRow.classList.add(touch.clientY < rect.top + rect.height/2 ? 'drag-over-top' : 'drag-over-bottom');
+          }
+        }, { passive: false });
+        handle.addEventListener('touchend', async e => {
+          if (!spesaDragSrc || !touchDragClone) return;
+          if (touchDragClone.parentNode) touchDragClone.parentNode.removeChild(touchDragClone);
+          touchDragClone = null;
+          const touch = e.changedTouches[0];
+          const el = document.elementFromPoint(touch.clientX, touch.clientY);
+          const targetRow = el ? el.closest('.store-item') : null;
+          document.querySelectorAll('.store-item').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom','dragging'));
+          if (targetRow && targetRow !== row) {
+            const rect = targetRow.getBoundingClientRect();
+            const insertBefore = touch.clientY < rect.top + rect.height / 2;
+            if (insertBefore) storeItemsList.insertBefore(row, targetRow);
+            else storeItemsList.insertBefore(row, targetRow.nextSibling);
+            const newOrder = [...storeItemsList.querySelectorAll('.store-item')].map((r,i) => ({ docId: r.dataset.docid, order: (i+1)*10 }));
+            for (const { docId, order } of newOrder) {
+              await updateShoppingItem(storeDocId, docId, { order });
+            }
+          } else {
+            row.classList.remove('dragging');
+          }
+          spesaDragSrc = null;
+        });
       });
     }
 

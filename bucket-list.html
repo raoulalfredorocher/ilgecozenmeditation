@@ -467,6 +467,15 @@
       width: 0%;
     }
 
+    /* ── Filtri bucket list ── */
+    .bl-filter-btn {
+      flex: 1; padding: 6px 8px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: var(--card); color: var(--muted); font-size: .64rem; font-family: inherit;
+      cursor: pointer; font-weight: 500; transition: all .2s; text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bl-filter-btn.active { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 600; }
+
     /* ── Tab bar ── */
     .tab-bar {
       position: fixed;
@@ -536,15 +545,32 @@
   <!-- SCHERMATA LISTA -->
   <div id="screen-list" class="active">
     <div class="section-divider" style="margin-bottom:4px;">I Tuoi Sogni</div>
+    <!-- Barra ricerca + filtri -->
+    <div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
+      <input type="search" id="list-search" placeholder="🔍 Cerca per titolo…" autocomplete="off"
+        style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 14px;font-family:inherit;font-size:.80rem;color:var(--text);outline:none;transition:border-color .2s;"
+        oninput="applyListFilters()" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"/>
+      <div style="display:flex;gap:6px;">
+        <button class="bl-filter-btn active" id="bl-filter-all"       onclick="setListFilter('all')">Tutti</button>
+        <button class="bl-filter-btn"         id="bl-filter-todo"      onclick="setListFilter('todo')">Non realizzati</button>
+        <button class="bl-filter-btn"         id="bl-filter-done"      onclick="setListFilter('done')">Realizzati</button>
+      </div>
+    </div>
     <div class="dreams-grid" id="dreams-grid"></div>
     <div class="empty-dreams visible" id="empty-dreams">
       Nessun sogno ancora.<br>Tocca ＋ per aggiungerne uno ✨
+    </div>
+    <div class="empty-dreams" id="empty-search-results" style="display:none;">
+      Nessun risultato per la ricerca.
     </div>
   </div>
 
   <!-- SCHERMATA COMPLETATI -->
   <div id="screen-completed">
     <div class="section-divider">Sogni Realizzati</div>
+    <input type="search" id="completed-search" placeholder="🔍 Cerca nei completati…" autocomplete="off"
+      style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 14px;font-family:inherit;font-size:.80rem;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:10px;"
+      oninput="applyCompletedSearch()" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"/>
     <div id="completed-list" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
@@ -581,6 +607,20 @@
       <button class="btn-save-dream" id="btn-save-dream">Salva sogno</button>
       <button class="btn-cancel-modal" id="btn-cancel-modal">Annulla</button>
       <button class="btn-delete-dream" id="btn-delete-dream" style="display:none;">🗑 Elimina</button>
+    </div>
+  </div>
+
+  <!-- MODAL modifica data completamento -->
+  <div class="modal-overlay" id="edit-done-date-modal">
+    <div class="modal-sheet" style="gap:10px;">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Modifica data completamento</div>
+      <div class="form-group">
+        <div class="form-label">Data</div>
+        <input class="form-input" id="edit-done-date-input" type="date"/>
+      </div>
+      <button class="btn-save-dream" id="edit-done-date-save">Salva</button>
+      <button class="btn-cancel-modal" id="edit-done-date-cancel">Annulla</button>
     </div>
   </div>
 
@@ -648,9 +688,11 @@
     function initApp() {
 
     /* ── Stato ── */
-    let items      = [];   // array sincronizzato da Firestore
-    let pendingImg = null; // data URL in attesa nel form
-    let editingId  = null; // id (numerico) del goal in modifica (null = nuovo)
+    let items      = [];
+    let pendingImg = null;
+    let editingId  = null;
+    let listFilter = 'all';   // 'all' | 'todo' | 'done'
+    let editingDoneDateId = null;
 
     /* ── Elementi DOM ── */
     const dreamsGrid      = document.getElementById('dreams-grid');
@@ -662,6 +704,9 @@
     const tabCompleted    = document.getElementById('tab-completed');
     const tabHomeBtn      = document.getElementById('tab-home-btn');
     const fabAdd          = document.getElementById('fab-add');
+    const listSearch      = document.getElementById('list-search');
+    const completedSearch = document.getElementById('completed-search');
+    const emptySearchRes  = document.getElementById('empty-search-results');
     const modalOverlay    = document.getElementById('modal-overlay');
     const fTitle          = document.getElementById('f-title');
     const fDesc           = document.getElementById('f-desc');
@@ -739,6 +784,7 @@
       pendingImg = null;
     }
     btnCancel.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', e => { if(e.target===modalOverlay) closeModal(); });
 
     btnDelete.addEventListener('click', async () => {
       if (editingId === null) return;
@@ -841,16 +887,47 @@
       await updateBucketItem(item._docId, { done: false, doneDate: null });
     }
 
+    /* ── Filtri e ricerca lista ── */
+    function setListFilter(f) {
+      listFilter = f;
+      ['all','todo','done'].forEach(k => {
+        document.getElementById('bl-filter-'+k).classList.toggle('active', k === f);
+      });
+      applyListFilters();
+    }
+    function applyListFilters() {
+      const q = (listSearch.value || '').trim().toLowerCase();
+      let visible = items;
+      if (listFilter === 'todo') visible = visible.filter(i => !i.done);
+      else if (listFilter === 'done') visible = visible.filter(i => i.done);
+      if (q) visible = visible.filter(i => i.title.toLowerCase().includes(q));
+      renderGrid(visible);
+    }
+    window.applyListFilters = applyListFilters;
+    window.setListFilter = setListFilter;
+
+    function applyCompletedSearch() {
+      renderCompleted();
+    }
+    window.applyCompletedSearch = applyCompletedSearch;
+
     /* ── Render griglia lista ── */
-    function renderGrid() {
+    function renderGrid(subset) {
+      const visibleItems = subset || items;
       dreamsGrid.innerHTML = '';
       if (items.length === 0) {
         emptyDreams.classList.add('visible');
+        emptySearchRes.style.display = 'none';
         return;
       }
       emptyDreams.classList.remove('visible');
+      if (visibleItems.length === 0) {
+        emptySearchRes.style.display = 'block';
+        return;
+      }
+      emptySearchRes.style.display = 'none';
 
-      items.forEach((item, index) => {
+      visibleItems.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'dream-card' + (item.done ? ' done' : '');
         card.dataset.id = item.id;
@@ -892,10 +969,49 @@
       });
     }
 
+    /* ── Modal modifica data completamento ── */
+    const editDoneDateModal  = document.getElementById('edit-done-date-modal');
+    const editDoneDateInput  = document.getElementById('edit-done-date-input');
+    const editDoneDateSave   = document.getElementById('edit-done-date-save');
+    const editDoneDateCancel = document.getElementById('edit-done-date-cancel');
+
+    function openEditDoneDateModal(id) {
+      editingDoneDateId = id;
+      const item = items.find(i => i.id === id);
+      // converte la data leggibile in formato YYYY-MM-DD per l'input
+      let dateVal = '';
+      if (item && item.doneDate) {
+        // tenta di parsare la data (es "15 maggio 2025" → 2025-05-15)
+        try {
+          const d = new Date(item.doneDate);
+          if (!isNaN(d)) dateVal = d.toISOString().slice(0,10);
+        } catch {}
+      }
+      editDoneDateInput.value = dateVal;
+      editDoneDateModal.classList.add('open');
+    }
+    editDoneDateSave.addEventListener('click', async () => {
+      if (!editingDoneDateId) return;
+      const item = items.find(i => i.id === editingDoneDateId);
+      if (!item) return;
+      const raw = editDoneDateInput.value;
+      const formatted = raw ? new Date(raw + 'T12:00:00').toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' }) : item.doneDate;
+      await updateBucketItem(item._docId, { doneDate: formatted });
+      editDoneDateModal.classList.remove('open');
+      editingDoneDateId = null;
+    });
+    editDoneDateCancel.addEventListener('click', () => {
+      editDoneDateModal.classList.remove('open');
+      editingDoneDateId = null;
+    });
+    editDoneDateModal.addEventListener('click', e => { if(e.target===editDoneDateModal){ editDoneDateModal.classList.remove('open'); editingDoneDateId=null; } });
+
     /* ── Render completati ── */
     function renderCompleted() {
       completedList.innerHTML = '';
-      const done = items.filter(i => i.done).reverse();
+      const q = (completedSearch ? completedSearch.value : '').trim().toLowerCase();
+      let done = items.filter(i => i.done).reverse();
+      if (q) done = done.filter(i => i.title.toLowerCase().includes(q));
       const total = items.length;
 
       if (done.length === 0) {
@@ -918,7 +1034,10 @@
           <img class="completed-img" src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy"/>
           <div class="completed-info">
             <div class="completed-title"><span style="color:var(--muted);font-size:.75em;margin-right:3px;">${index + 1}.</span>${esc(item.title)}</div>
-            <div class="completed-date">✓ ${esc(item.doneDate || '')}</div>
+            <div class="completed-date" style="cursor:pointer;display:flex;align-items:center;gap:4px;" title="Clicca per modificare la data">
+              ✓ ${esc(item.doneDate || '')}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5;flex-shrink:0;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </div>
           </div>
           <div class="completed-actions">
             <button class="btn-uncheck" data-id="${item.id}" aria-label="Deseleziona">
@@ -927,7 +1046,7 @@
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </button>
-            <button class="btn-edit-completed" data-id="${item.id}" aria-label="Modifica">
+            <button class="btn-edit-completed" data-id="${item.id}" aria-label="Modifica sogno">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -936,8 +1055,9 @@
             </button>
           </div>`;
 
-        el.querySelector('.btn-uncheck').addEventListener('click',      () => undoDone(item.id));
+        el.querySelector('.btn-uncheck').addEventListener('click', () => undoDone(item.id));
         el.querySelector('.btn-edit-completed').addEventListener('click', () => openModal(item.id));
+        el.querySelector('.completed-date').addEventListener('click', () => openEditDoneDateModal(item.id));
 
         completedList.appendChild(el);
       });
@@ -967,7 +1087,7 @@
     subscribeBucketList(newItems => {
       items = newItems;
       updateProgressBar();
-      renderGrid();
+      applyListFilters();
       if (screenCompleted.classList.contains('active')) renderCompleted();
     });
     } // fine initApp()
