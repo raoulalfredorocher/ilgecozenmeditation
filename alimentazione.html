@@ -652,11 +652,34 @@
       <div style="background:var(--surface);border-radius:12px;padding:12px;margin-bottom:10px;">
         <div style="font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);font-weight:600;margin-bottom:8px;" id="macros-profile-form-title">Nuovo profilo</div>
         <input class="form-input" id="mp-name" type="text" placeholder="Nome profilo (es. Cut 2025)" style="margin-bottom:8px;"/>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+        <div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;margin-top:2px;">Macros target</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
           <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Kcal</div><input class="form-input" id="mp-kcal" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
           <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Prot</div><input class="form-input" id="mp-prot" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
           <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Carbo</div><input class="form-input" id="mp-carb" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
           <div><div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Grassi</div><input class="form-input" id="mp-fat" type="number" min="0" placeholder="—" style="padding:7px 6px;text-align:center;"/></div>
+        </div>
+        <div style="font-size:.40rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Dati TDEE (opzionali)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          <div><div style="font-size:.40rem;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Peso (kg)</div><input class="form-input" id="mp-peso" type="number" min="1" placeholder="—" style="padding:7px 6px;"/></div>
+          <div><div style="font-size:.40rem;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Altezza (cm)</div><input class="form-input" id="mp-altezza" type="number" min="1" placeholder="—" style="padding:7px 6px;"/></div>
+          <div><div style="font-size:.40rem;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Età</div><input class="form-input" id="mp-eta" type="number" min="1" placeholder="—" style="padding:7px 6px;"/></div>
+          <div><div style="font-size:.40rem;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">% Grassi (opz.)</div><input class="form-input" id="mp-bf" type="number" min="0" max="60" placeholder="—" style="padding:7px 6px;"/></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+          <div><div style="font-size:.40rem;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Sesso</div>
+            <select class="form-input" id="mp-sesso" style="padding:6px 4px;">
+              <option value="M">Uomo</option><option value="F">Donna</option>
+            </select>
+          </div>
+          <div><div style="font-size:.40rem;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;">Attività</div>
+            <select class="form-input" id="mp-lavoro" style="padding:6px 4px;">
+              <option value="1.2">Sedentario</option>
+              <option value="1.375">Leggero</option>
+              <option value="1.55">Moderato</option>
+              <option value="1.725">Molto attivo</option>
+            </select>
+          </div>
         </div>
         <button class="btn-primary" style="margin-top:4px;" onclick="saveMacroProfile()">Salva profilo</button>
       </div>
@@ -1155,6 +1178,7 @@
     subscribeDiary,   saveDiaryDay,
     subscribeDiet,    saveDietDoc,
     subscribeSavedDiets, addSavedDietDoc, deleteSavedDietDoc,
+    subscribeMacrosProfiles, saveMacrosProfiles,
     waitForAuth,
   } from './js/firebase-config.js';
 
@@ -1289,21 +1313,40 @@
     });
   }
 
-  /* ── TDEE persist ── */
+  /* ── TDEE persist (sincrona su Firestore via profilo attivo) ── */
   function saveTdeeForm() {
-    const f = { peso: document.getElementById('tdee-peso').value, altezza: document.getElementById('tdee-altezza').value, eta: document.getElementById('tdee-eta').value, bf: document.getElementById('tdee-bf').value, sesso: document.getElementById('tdee-sesso').value, lavoro: document.getElementById('tdee-lavoro').value };
+    // salva localmente per aggiornamento in tempo reale; il flush su Firestore avviene
+    // solo quando l'utente salva il profilo esplicitamente
+    const f = getTdeeFormValues();
     localStorage.setItem('zen_tdee_form', JSON.stringify(f));
   }
+  function getTdeeFormValues() {
+    return {
+      peso:    document.getElementById('tdee-peso').value,
+      altezza: document.getElementById('tdee-altezza').value,
+      eta:     document.getElementById('tdee-eta').value,
+      bf:      document.getElementById('tdee-bf').value,
+      sesso:   document.getElementById('tdee-sesso').value,
+      lavoro:  document.getElementById('tdee-lavoro').value,
+    };
+  }
+  function applyTdeeForm(f) {
+    if (!f) return;
+    if (f.peso)    document.getElementById('tdee-peso').value    = f.peso;
+    if (f.altezza) document.getElementById('tdee-altezza').value = f.altezza;
+    if (f.eta)     document.getElementById('tdee-eta').value     = f.eta;
+    if (f.bf)      document.getElementById('tdee-bf').value      = f.bf;
+    if (f.sesso)   document.getElementById('tdee-sesso').value   = f.sesso;
+    if (f.lavoro)  document.getElementById('tdee-lavoro').value  = f.lavoro;
+  }
   function loadTdeeForm() {
-    try {
-      const f = JSON.parse(localStorage.getItem('zen_tdee_form') || '{}');
-      if (f.peso)    document.getElementById('tdee-peso').value    = f.peso;
-      if (f.altezza) document.getElementById('tdee-altezza').value = f.altezza;
-      if (f.eta)     document.getElementById('tdee-eta').value     = f.eta;
-      if (f.bf)      document.getElementById('tdee-bf').value      = f.bf;
-      if (f.sesso)   document.getElementById('tdee-sesso').value   = f.sesso;
-      if (f.lavoro)  document.getElementById('tdee-lavoro').value  = f.lavoro;
-    } catch {}
+    // Prima prova profilo attivo (ha TDEE embedded), poi fallback localStorage
+    const activeIdx = _macrosActiveIdx;
+    if (activeIdx !== null && macroProfiles[activeIdx]?.tdee) {
+      applyTdeeForm(macroProfiles[activeIdx].tdee);
+    } else {
+      try { applyTdeeForm(JSON.parse(localStorage.getItem('zen_tdee_form') || '{}')); } catch {}
+    }
   }
   function calcTdee() {
     const peso = parseFloat(document.getElementById('tdee-peso').value);
@@ -1409,50 +1452,58 @@
   window.saveTdeeForm       = saveTdeeForm;
   window.renderDietAnalytics = renderDietAnalytics;
 
-  /* ════════════ PROFILI MACROS ════════════ */
+  /* ════════════ PROFILI MACROS (Firestore — sync cross-device) ════════════ */
   let macroProfiles = [];
+  let _macrosActiveIdx = null;
   let editingMacroProfileIdx = null;
 
-  function loadMacroProfiles() {
-    try { macroProfiles = JSON.parse(localStorage.getItem('zen_macro_profiles') || '[]'); } catch { macroProfiles = []; }
+  function _persistMacros() {
+    // salva su Firestore: profili + indice attivo + dati TDEE del form corrente
+    saveMacrosProfiles(macroProfiles, _macrosActiveIdx, getTdeeFormValues());
   }
-  function saveMacroProfilesStorage() {
-    localStorage.setItem('zen_macro_profiles', JSON.stringify(macroProfiles));
-  }
+
   function renderMacroProfileSelect() {
     const sel = document.getElementById('macros-profile-select');
-    const active = localStorage.getItem('zen_active_macro_profile') || '';
     sel.innerHTML = '<option value="">— Nessun profilo attivo —</option>';
     macroProfiles.forEach((p, i) => {
       const opt = document.createElement('option');
       opt.value = i;
       opt.textContent = p.name;
-      if (active === String(i)) opt.selected = true;
+      if (_macrosActiveIdx === i) opt.selected = true;
       sel.appendChild(opt);
     });
   }
   function applyMacroProfile() {
     const sel = document.getElementById('macros-profile-select');
-    const idx = sel.value;
-    localStorage.setItem('zen_active_macro_profile', idx);
-    if (idx === '' || !macroProfiles[idx]) {
-      // non resettare i valori manuali, mantieni
+    const val = sel.value;
+    _macrosActiveIdx = (val === '' || val === null) ? null : parseInt(val);
+    if (_macrosActiveIdx === null || !macroProfiles[_macrosActiveIdx]) {
+      _persistMacros();
       return;
     }
-    const p = macroProfiles[parseInt(idx)];
+    const p = macroProfiles[_macrosActiveIdx];
     document.getElementById('target-kcal').value = p.kcal || '';
     document.getElementById('target-prot').value = p.prot || '';
     document.getElementById('target-carb').value = p.carb || '';
     document.getElementById('target-fat').value  = p.fat  || '';
+    // ripopola il form TDEE con i dati del profilo
+    if (p.tdee) applyTdeeForm(p.tdee);
     saveTargets(); renderDayCard();
+    _persistMacros();
   }
   function openMacrosProfileModal() {
     editingMacroProfileIdx = null;
-    document.getElementById('mp-name').value = '';
-    document.getElementById('mp-kcal').value = '';
-    document.getElementById('mp-prot').value = '';
-    document.getElementById('mp-carb').value = '';
-    document.getElementById('mp-fat').value  = '';
+    document.getElementById('mp-name').value    = '';
+    document.getElementById('mp-kcal').value    = '';
+    document.getElementById('mp-prot').value    = '';
+    document.getElementById('mp-carb').value    = '';
+    document.getElementById('mp-fat').value     = '';
+    document.getElementById('mp-peso').value    = '';
+    document.getElementById('mp-altezza').value = '';
+    document.getElementById('mp-eta').value     = '';
+    document.getElementById('mp-bf').value      = '';
+    document.getElementById('mp-sesso').value   = 'M';
+    document.getElementById('mp-lavoro').value  = '1.2';
     document.getElementById('macros-profile-form-title').textContent = 'Nuovo profilo';
     renderMacroProfilesList();
     document.getElementById('macros-profile-modal').classList.add('open');
@@ -1460,30 +1511,49 @@
   function renderMacroProfilesList() {
     const wrap = document.getElementById('macros-profiles-list');
     if (!macroProfiles.length) { wrap.innerHTML = '<div style="font-size:.68rem;color:var(--muted);text-align:center;padding:8px 0;">Nessun profilo. Creane uno qui sotto.</div>'; return; }
-    wrap.innerHTML = macroProfiles.map((p, i) => `
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+    wrap.innerHTML = macroProfiles.map((p, i) => {
+      const tdeeStr = p.tdee && p.tdee.peso ? ` · TDEE ~${calcTdeeFrom(p.tdee)} kcal` : '';
+      return `<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
         <div style="flex:1;">
           <div style="font-size:.76rem;font-weight:600;color:var(--text);">${p.name}</div>
-          <div style="font-size:.50rem;color:var(--muted);margin-top:2px;">${p.kcal||0} kcal · P ${p.prot||0}g · C ${p.carb||0}g · F ${p.fat||0}g</div>
+          <div style="font-size:.50rem;color:var(--muted);margin-top:2px;">${p.kcal||0} kcal · P ${p.prot||0}g · C ${p.carb||0}g · F ${p.fat||0}g${tdeeStr}</div>
         </div>
         <button style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.68rem;padding:3px 7px;cursor:pointer;" onclick="editMacroProfile(${i})">✏️</button>
         <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:3px 5px;" onclick="deleteMacroProfile(${i})">🗑️</button>
-      </div>`).join('');
+      </div>`;
+    }).join('');
+  }
+  function calcTdeeFrom(f) {
+    if (!f || !f.peso || !f.altezza || !f.eta) return 0;
+    const peso = parseFloat(f.peso), alt = parseFloat(f.altezza), eta = parseFloat(f.eta);
+    const bf = parseFloat(f.bf), sesso = f.sesso || 'M', lavoro = parseFloat(f.lavoro) || 1.2;
+    let bmr;
+    if (bf > 0) { bmr = 370 + 21.6 * peso * (1 - bf / 100); }
+    else { bmr = sesso === 'M' ? (10*peso + 6.25*alt - 5*eta + 5) : (10*peso + 6.25*alt - 5*eta - 161); }
+    return Math.round(bmr * lavoro);
   }
   function editMacroProfile(idx) {
     editingMacroProfileIdx = idx;
     const p = macroProfiles[idx];
-    document.getElementById('mp-name').value = p.name;
-    document.getElementById('mp-kcal').value = p.kcal || '';
-    document.getElementById('mp-prot').value = p.prot || '';
-    document.getElementById('mp-carb').value = p.carb || '';
-    document.getElementById('mp-fat').value  = p.fat  || '';
+    document.getElementById('mp-name').value    = p.name;
+    document.getElementById('mp-kcal').value    = p.kcal || '';
+    document.getElementById('mp-prot').value    = p.prot || '';
+    document.getElementById('mp-carb').value    = p.carb || '';
+    document.getElementById('mp-fat').value     = p.fat  || '';
+    document.getElementById('mp-peso').value    = p.tdee?.peso    || '';
+    document.getElementById('mp-altezza').value = p.tdee?.altezza || '';
+    document.getElementById('mp-eta').value     = p.tdee?.eta     || '';
+    document.getElementById('mp-bf').value      = p.tdee?.bf      || '';
+    document.getElementById('mp-sesso').value   = p.tdee?.sesso   || 'M';
+    document.getElementById('mp-lavoro').value  = p.tdee?.lavoro  || '1.2';
     document.getElementById('macros-profile-form-title').textContent = 'Modifica profilo';
   }
   function deleteMacroProfile(idx) {
     if (!confirm(`Eliminare il profilo "${macroProfiles[idx].name}"?`)) return;
     macroProfiles.splice(idx, 1);
-    saveMacroProfilesStorage();
+    if (_macrosActiveIdx === idx) _macrosActiveIdx = null;
+    else if (_macrosActiveIdx > idx) _macrosActiveIdx--;
+    _persistMacros();
     renderMacroProfilesList();
     renderMacroProfileSelect();
   }
@@ -1491,22 +1561,37 @@
     const name = document.getElementById('mp-name').value.trim();
     if (!name) { document.getElementById('mp-name').classList.add('err'); return; }
     document.getElementById('mp-name').classList.remove('err');
+    const tdee = {
+      peso:    document.getElementById('mp-peso').value,
+      altezza: document.getElementById('mp-altezza').value,
+      eta:     document.getElementById('mp-eta').value,
+      bf:      document.getElementById('mp-bf').value,
+      sesso:   document.getElementById('mp-sesso').value,
+      lavoro:  document.getElementById('mp-lavoro').value,
+    };
     const p = {
       name,
       kcal: parseInt(document.getElementById('mp-kcal').value) || 0,
       prot: parseInt(document.getElementById('mp-prot').value) || 0,
       carb: parseInt(document.getElementById('mp-carb').value) || 0,
       fat:  parseInt(document.getElementById('mp-fat').value)  || 0,
+      tdee,
     };
     if (editingMacroProfileIdx !== null) macroProfiles[editingMacroProfileIdx] = p;
     else macroProfiles.push(p);
-    saveMacroProfilesStorage();
+    _persistMacros();
     editingMacroProfileIdx = null;
-    document.getElementById('mp-name').value = '';
-    document.getElementById('mp-kcal').value = '';
-    document.getElementById('mp-prot').value = '';
-    document.getElementById('mp-carb').value = '';
-    document.getElementById('mp-fat').value  = '';
+    document.getElementById('mp-name').value    = '';
+    document.getElementById('mp-kcal').value    = '';
+    document.getElementById('mp-prot').value    = '';
+    document.getElementById('mp-carb').value    = '';
+    document.getElementById('mp-fat').value     = '';
+    document.getElementById('mp-peso').value    = '';
+    document.getElementById('mp-altezza').value = '';
+    document.getElementById('mp-eta').value     = '';
+    document.getElementById('mp-bf').value      = '';
+    document.getElementById('mp-sesso').value   = 'M';
+    document.getElementById('mp-lavoro').value  = '1.2';
     document.getElementById('macros-profile-form-title').textContent = 'Nuovo profilo';
     renderMacroProfilesList();
     renderMacroProfileSelect();
@@ -1523,8 +1608,8 @@
     localStorage.setItem('zen_macros_target', JSON.stringify(t));
   }
   function loadTargets() {
-    loadMacroProfiles();
-    renderMacroProfileSelect();
+    // i profili vengono caricati via subscribeMacrosProfiles (Firestore real-time)
+    // qui carichiamo solo i target manuali dal localStorage come fallback iniziale
     try {
       const t = JSON.parse(localStorage.getItem('zen_macros_target') || '{}');
       if (t.kcal) document.getElementById('target-kcal').value = t.kcal;
@@ -1532,12 +1617,6 @@
       if (t.carb) document.getElementById('target-carb').value = t.carb;
       if (t.fat)  document.getElementById('target-fat').value  = t.fat;
     } catch {}
-    // applica profilo attivo se presente
-    const active = localStorage.getItem('zen_active_macro_profile');
-    if (active !== '' && active !== null && macroProfiles[parseInt(active)]) {
-      document.getElementById('macros-profile-select').value = active;
-      applyMacroProfile();
-    }
   }
   function getTargets() {
     return {
@@ -2521,6 +2600,24 @@
 
   subscribeSavedDiets(newSaved => {
     savedDiets = newSaved;
+  });
+
+  subscribeMacrosProfiles((profiles, activeIdx, tdeeForm) => {
+    macroProfiles = profiles;
+    _macrosActiveIdx = activeIdx;
+    renderMacroProfileSelect();
+    // se c'è un profilo attivo, applica macros + TDEE
+    if (activeIdx !== null && macroProfiles[activeIdx]) {
+      const p = macroProfiles[activeIdx];
+      document.getElementById('target-kcal').value = p.kcal || '';
+      document.getElementById('target-prot').value = p.prot || '';
+      document.getElementById('target-carb').value = p.carb || '';
+      document.getElementById('target-fat').value  = p.fat  || '';
+      if (p.tdee) applyTdeeForm(p.tdee);
+    } else if (tdeeForm && tdeeForm.peso) {
+      applyTdeeForm(tdeeForm);
+    }
+    saveTargets(); renderDayCard();
   });
 
   initCalendar();

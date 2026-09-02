@@ -211,6 +211,26 @@ export async function deleteSavedDietDoc(docId) {
   await deleteDoc(ref);
 }
 
+// ─── Macros Profiles ─────────────────────────────────────────────────────────
+
+export function subscribeMacrosProfiles(callback) {
+  if (!db || !auth?.currentUser) { callback([]); return () => {}; }
+  return onSnapshot(doc(db, 'users', auth.currentUser.uid, 'macros', 'profiles'), snap => {
+    if (snap.exists()) {
+      const d = snap.data();
+      callback(d.profiles || [], d.activeIdx ?? null, d.tdeeForm || {});
+    } else {
+      callback([], null, {});
+    }
+  });
+}
+export async function saveMacrosProfiles(profiles, activeIdx, tdeeForm) {
+  if (!db || !auth?.currentUser) return;
+  await setDoc(doc(db, 'users', auth.currentUser.uid, 'macros', 'profiles'), {
+    profiles, activeIdx: activeIdx ?? null, tdeeForm: tdeeForm || {}
+  });
+}
+
 // ─── Allenamento ─────────────────────────────────────────────────────────────
 
 export function subscribeAllenamenti(callback) {

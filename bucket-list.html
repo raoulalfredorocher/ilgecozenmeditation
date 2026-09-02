@@ -574,8 +574,7 @@
     <div id="completed-list" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
-  <!-- FAB ＋ (solo nella lista) -->
-  <button class="fab-add" id="fab-add" aria-label="Aggiungi sogno">＋</button>
+  <!-- FAB ＋ ora è nel tab-bar al centro (vedi sotto) -->
 
   <!-- MODAL FORM -->
   <div class="modal-overlay" id="modal-overlay">
@@ -624,7 +623,7 @@
     </div>
   </div>
 
-  <!-- TAB BAR: Lista (sinistra) | Home (centro) | Completati (destra) -->
+  <!-- TAB BAR: Lista (sinistra) | ＋ Aggiungi (centro) | Completati (destra) -->
   <nav class="tab-bar" id="tab-bar">
 
     <!-- Sinistra: Lista -->
@@ -641,12 +640,10 @@
       <span class="tab-label">Lista</span>
     </button>
 
-    <!-- Centro: Home (cerchio con logo) -->
-    <button class="tab-btn tab-center" id="tab-home-btn" aria-label="Torna alla home">
-      <div class="tab-center-circle">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
-      </div>
-      <span class="tab-label">Home</span>
+    <!-- Centro: Aggiungi sogno -->
+    <button class="tab-btn tab-center" id="tab-add-btn" aria-label="Aggiungi sogno">
+      <div class="tab-center-circle" style="font-size:1.6rem;color:#fff;line-height:1;display:flex;align-items:center;justify-content:center;">＋</div>
+      <span class="tab-label">Aggiungi</span>
     </button>
 
     <!-- Destra: Completati -->
@@ -702,8 +699,7 @@
     const screenCompleted = document.getElementById('screen-completed');
     const tabList         = document.getElementById('tab-list');
     const tabCompleted    = document.getElementById('tab-completed');
-    const tabHomeBtn      = document.getElementById('tab-home-btn');
-    const fabAdd          = document.getElementById('fab-add');
+    const tabAddBtn       = document.getElementById('tab-add-btn');
     const listSearch      = document.getElementById('list-search');
     const completedSearch = document.getElementById('completed-search');
     const emptySearchRes  = document.getElementById('empty-search-results');
@@ -725,22 +721,17 @@
         screenCompleted.classList.remove('active');
         tabList.classList.add('tab-active');
         tabCompleted.classList.remove('tab-active');
-        fabAdd.classList.remove('hidden');
       } else {
         screenList.classList.remove('active');
         screenCompleted.classList.add('active');
         tabCompleted.classList.add('tab-active');
         tabList.classList.remove('tab-active');
-        fabAdd.classList.add('hidden');
         renderCompleted();
       }
     }
     tabList.addEventListener('click',      () => showScreen('list'));
     tabCompleted.addEventListener('click', () => showScreen('completed'));
-    tabHomeBtn.addEventListener('click',   () => { window.location.href = 'index.html'; });
-
-    /* ── FAB → apri modal nuovo sogno ── */
-    fabAdd.addEventListener('click', () => openModal(null));
+    tabAddBtn.addEventListener('click',    () => { showScreen('list'); openModal(null); });
 
     /* ── Modal: apri ── */
     function openModal(id) {
