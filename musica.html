@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Musica"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Musica, Video e Podcast</title>
+  <link rel="stylesheet" href="styles/theme.css?v=8"/>
+  <link rel="stylesheet" href="styles/layout.css?v=8"/>
+  <style>
+    .app-sub-music { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+    
+    #screen-musica, #screen-accordi, #screen-media {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    #screen-musica.active, #screen-accordi.active, #screen-media.active { display: flex; }
+
+    .section-divider {
+      width: 100%;
+      font-size: .52rem;
+      letter-spacing: .26em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: center;
+      padding: 2px 0 4px;
+    }
+
+    /* ── Tab 1: Spotify Playlists ── */
+    .playlist-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .spotify-card {
+      width: 100%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+    }
+    .spotify-card iframe {
+      display: block;
+      width: 100%;
+      border: none;
+    }
+
+    /* ── Tab 2: Canzoni e Accordi ── */
+    .accordi-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .song-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 13px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color .2s, transform .12s;
+    }
+    .song-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .song-title {
+      font-size: .84rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: .02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .song-author {
+      font-size: .64rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .song-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-accordi {
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: .68rem;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: .06em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37,115,158,.25);
+      transition: opacity .15s;
+    }
+    .btn-accordi:active { opacity: .85; }
+    .btn-icon-sm {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      font-family: inherit;
+      transition: color .2s, border-color .2s;
+    }
+    .btn-icon-sm:active { color: var(--gold); border-color: var(--gold); }
+    .btn-icon-sm.del:active { color: var(--red); border-color: var(--red); }
+
+    /* ── Tab 3: Video e Podcast ── */
+    .media-category-block {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .media-category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 6px;
+      border-bottom: 2px solid var(--gold);
+      margin-bottom: 10px;
+    }
+    .media-category-title {
+      font-size: .65rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .media-category-count {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1px 7px;
+      font-size: .54rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .media-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .media-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color .2s;
+    }
+    .media-thumb-wrap {
+      position: relative;
+      width: 80px;
+      height: 52px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .media-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .media-thumb-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .media-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .media-title {
+      font-size: .80rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: .02em;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .media-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .60rem;
+      color: var(--muted);
+    }
+    .media-duration {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .media-cat-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: .52rem;
+      letter-spacing: .04em;
+    }
+    .media-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-yt {
+      background: #ff0000;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 6px 10px;
+      font-size: .62rem;
+      font-weight: 600;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .btn-yt:active { opacity: .85; }
+
+    /* ── FAB & Modali ── */
+    .fab-add {
+      position: fixed;
+      bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(37,115,158,.35);
+      z-index: 100;
+      transition: transform .12s;
+    }
+    .fab-add:active { transform: scale(.91); }
+    .fab-add.hidden { display: none; }
+
+    .empty-st {
+      width: 100%;
+      text-align: center;
+      padding: 40px 0 12px;
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+      line-height: 1.8;
+      display: none;
+    }
+    .empty-st.visible { display: block; }
+
+    .mo {
+      position: fixed;
+      inset: 0;
+      background: rgba(30,42,56,.52);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 300;
+      padding-bottom: env(safe-area-inset-bottom,0px);
+    }
+    .mo.open { display: flex; }
+    .ms {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+    .mh { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 4px; flex-shrink: 0; }
+    .mt { font-size: .72rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; text-align: center; flex-shrink: 0; }
+    .fl { font-size: .56rem; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
+    .fg { display: flex; flex-direction: column; gap: 4px; }
+    .fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fi {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: .82rem;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .fi:focus { border-color: var(--gold); }
+    .fi.err { border-color: var(--red); }
+    .fs {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: .82rem;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      appearance: none;
+    }
+    .fs:focus { border-color: var(--gold); }
+    .bs {
+      width: 100%;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: .8rem;
+      font-family: inherit;
+      letter-spacing: .14em;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .bs:active { opacity: .85; }
+    .bc {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      font-size: .76rem;
+      font-family: inherit;
+      color: var(--muted);
+      letter-spacing: .12em;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .bd {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--red);
+      border-radius: 14px;
+      padding: 10px;
+      font-size: .76rem;
+      font-family: inherit;
+      color: var(--red);
+      letter-spacing: .12em;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .2s, color .2s;
+    }
+    .bd:active { background: var(--red); color: #fff; }
+
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 200;
+      overflow: visible;
+    }
+  </style>
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+</head>
+<body style="visibility:hidden">
+  <script type="module" src="js/auth-guard.js"></script>
+
+  <header id="main-header">
+    <div style="display:flex;flex-direction:row;gap:6px;align-items:center;">
+      <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        <span>TAO</span>
+      </a>
+    </div>
+    <div class="header-center">
+      <a href="passioni.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:inherit;">
+        <div style="font-size:1.8rem;line-height:1;">🎵</div>
+        <div class="app-title" style="font-size:.92rem;letter-spacing:.16em;color:var(--gold);font-weight:700;">MUSICA & MEDIA</div>
+        <div class="app-sub-music">IL GECO ZEN · PASSIONI</div>
+      </a>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema"><div class="knob" id="theme-knob">☀️</div></button>
+  </header>
+
+  <!-- Schermata 1: Musica (Playlist Spotify) -->
+  <div id="screen-musica" class="active">
+    <div class="section-divider">Playlist Spotify</div>
+    <div class="playlist-list">
+      <div class="spotify-card">
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/450jCqgY0RmUDztCyO1EwZ?utm_source=generator&si=e3a8457f57824b09" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+      <div class="spotify-card">
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6MnZOtcOrMg5jgwL54lInX?utm_source=generator&si=14604be59e4e4dbd" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schermata 2: Accordi -->
+  <div id="screen-accordi">
+    <div class="section-divider">Repertorio & Accordi</div>
+    <div class="accordi-list" id="accordi-list"></div>
+    <div class="empty-st visible" id="empty-accordi">Nessun brano salvato.<br>Tocca ＋ per aggiungere una canzone e i suoi accordi 🎸</div>
+  </div>
+
+  <!-- Schermata 3: Video & Podcast -->
+  <div id="screen-media">
+    <div class="section-divider">Video & Podcast</div>
+    <div id="media-categories-container" style="width:100%;display:flex;flex-direction:column;gap:14px;"></div>
+    <div class="empty-st visible" id="empty-media">Nessun video o podcast inserito.<br>Tocca ＋ per aggiungere un contenuto 🎬</div>
+  </div>
+
+  <!-- FAB Aggiunta -->
+  <button class="fab-add hidden" id="fab-add">＋</button>
+
+  <!-- Modal Accordi -->
+  <div class="mo" id="modal-accordi">
+    <div class="ms">
+      <div class="mh"></div>
+      <div class="mt" id="modal-accordi-title">Nuova Canzone</div>
+      <div class="fg">
+        <div class="fl">Titolo Canzone *</div>
+        <input class="fi" id="f-song-title" type="text" placeholder="Es. Let It Be" maxlength="70" autocomplete="off"/>
+      </div>
+      <div class="fg">
+        <div class="fl">Autore / Artista *</div>
+        <input class="fi" id="f-song-author" type="text" placeholder="Es. The Beatles" maxlength="60" autocomplete="off"/>
+      </div>
+      <div class="fg">
+        <div class="fl">Link Accordi (URL) *</div>
+        <input class="fi" id="f-song-link" type="url" placeholder="https://tabs.ultimate-guitar.com/..." autocomplete="off"/>
+      </div>
+      <button class="bs" id="btn-save-accordo">Salva Canzone</button>
+      <button class="bc" id="btn-cancel-accordo">Annulla</button>
+      <button class="bd" id="btn-delete-accordo" style="display:none;">🗑 Elimina</button>
+    </div>
+  </div>
+
+  <!-- Modal Video & Podcast -->
+  <div class="mo" id="modal-media">
+    <div class="ms">
+      <div class="mh"></div>
+      <div class="mt" id="modal-media-title">Nuovo Video / Podcast</div>
+      <div class="fg">
+        <div class="fl">Titolo *</div>
+        <input class="fi" id="f-media-title" type="text" placeholder="Es. Huberman Lab - Focus & Productivity" maxlength="100" autocomplete="off"/>
+      </div>
+      <div class="fr2">
+        <div class="fg">
+          <div class="fl">Durata</div>
+          <input class="fi" id="f-media-duration" type="text" placeholder="Es. 45 min o 1h 20m" maxlength="30" autocomplete="off"/>
+        </div>
+        <div class="fg">
+          <div class="fl">Categoria *</div>
+          <input class="fi" id="f-media-category" type="text" placeholder="Es. Filosofia, Podcast, Musica" maxlength="40" autocomplete="off" list="media-cat-suggestions"/>
+          <datalist id="media-cat-suggestions">
+            <option value="Podcast">
+            <option value="Crescita Personale">
+            <option value="Musica">
+            <option value="Filosofia & Zen">
+            <option value="Scienza & Tech">
+            <option value="Documentari">
+          </datalist>
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fl">Link YouTube (URL) *</div>
+        <input class="fi" id="f-media-link" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off"/>
+      </div>
+      <button class="bs" id="btn-save-media">Salva Contenuto</button>
+      <button class="bc" id="btn-cancel-media">Annulla</button>
+      <button class="bd" id="btn-delete-media" style="display:none;">🗑 Elimina</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav Tabs -->
+  <nav class="tab-bar">
+    <button class="tab-btn tab-active" id="tab-musica">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="5.5" cy="17.5" r="3.5"/>
+        <circle cx="17.5" cy="15.5" r="3.5"/>
+        <path d="M9 17.5V5l12-2v12.5"/>
+      </svg>
+      <span class="tab-label">Musica</span>
+    </button>
+    <button class="tab-btn" id="tab-accordi">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18V5l12-2v13"/>
+        <circle cx="6" cy="18" r="3"/>
+        <circle cx="18" cy="16" r="3"/>
+        <path d="M3 9h18"/>
+      </svg>
+      <span class="tab-label">Accordi</span>
+    </button>
+    <button class="tab-btn" id="tab-media">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"/>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      </svg>
+      <span class="tab-label">Video e Podcast</span>
+    </button>
+  </nav>
+
+  <script type="module">
+    import { 
+      subscribeAccordi, addAccordoDoc, updateAccordoDoc, deleteAccordoDoc,
+      subscribeMedia, addMediaDoc, updateMediaDoc, deleteMediaDoc,
+      waitForAuth 
+    } from './js/firebase-config.js';
+
+    // Theme setup
+    const htmlEl = document.documentElement;
+    const btnTheme = document.getElementById('theme-toggle');
+    const knob = document.getElementById('theme-knob');
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
+    function applyTheme() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      const m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.content = isDark ? '#111820' : '#f7f4f9';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    applyTheme();
+    btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+    waitForAuth().then(user => {
+      if (!user) return;
+      initApp();
+    });
+
+    function initApp() {
+      let currentScreen = 'musica';
+      let accordiListItems = [];
+      let mediaListItems = [];
+      let editingAccordoId = null;
+      let editingMediaId = null;
+
+      // DOM Elements - Screens & Tabs
+      const sMusica = document.getElementById('screen-musica');
+      const sAccordi = document.getElementById('screen-accordi');
+      const sMedia = document.getElementById('screen-media');
+      const tMusica = document.getElementById('tab-musica');
+      const tAccordi = document.getElementById('tab-accordi');
+      const tMedia = document.getElementById('tab-media');
+      const fabAdd = document.getElementById('fab-add');
+
+      // Containers
+      const accordiList = document.getElementById('accordi-list');
+      const emptyAccordi = document.getElementById('empty-accordi');
+      const mediaCatContainer = document.getElementById('media-categories-container');
+      const emptyMedia = document.getElementById('empty-media');
+
+      // Modals
+      const moAccordi = document.getElementById('modal-accordi');
+      const moMedia = document.getElementById('modal-media');
+      const modalAccordiTitle = document.getElementById('modal-accordi-title');
+      const modalMediaTitle = document.getElementById('modal-media-title');
+
+      // Inputs Accordi
+      const fSongTitle = document.getElementById('f-song-title');
+      const fSongAuthor = document.getElementById('f-song-author');
+      const fSongLink = document.getElementById('f-song-link');
+      const btnSaveAccordo = document.getElementById('btn-save-accordo');
+      const btnCancelAccordo = document.getElementById('btn-cancel-accordo');
+      const btnDeleteAccordo = document.getElementById('btn-delete-accordo');
+
+      // Inputs Media
+      const fMediaTitle = document.getElementById('f-media-title');
+      const fMediaDuration = document.getElementById('f-media-duration');
+      const fMediaCategory = document.getElementById('f-media-category');
+      const fMediaLink = document.getElementById('f-media-link');
+      const btnSaveMedia = document.getElementById('btn-save-media');
+      const btnCancelMedia = document.getElementById('btn-cancel-media');
+      const btnDeleteMedia = document.getElementById('btn-delete-media');
+
+      // Navigation
+      function showScreen(w) {
+        currentScreen = w;
+        [sMusica, sAccordi, sMedia].forEach(s => s.classList.remove('active'));
+        [tMusica, tAccordi, tMedia].forEach(t => t.classList.remove('tab-active'));
+
+        if (w === 'musica') {
+          sMusica.classList.add('active');
+          tMusica.classList.add('tab-active');
+          fabAdd.classList.add('hidden');
+        } else if (w === 'accordi') {
+          sAccordi.classList.add('active');
+          tAccordi.classList.add('tab-active');
+          fabAdd.classList.remove('hidden');
+        } else if (w === 'media') {
+          sMedia.classList.add('active');
+          tMedia.classList.add('tab-active');
+          fabAdd.classList.remove('hidden');
+        }
+      }
+
+      tMusica.addEventListener('click', () => showScreen('musica'));
+      tAccordi.addEventListener('click', () => showScreen('accordi'));
+      tMedia.addEventListener('click', () => showScreen('media'));
+
+      // FAB Click
+      fabAdd.addEventListener('click', () => {
+        if (currentScreen === 'accordi') {
+          openAccordoModal();
+        } else if (currentScreen === 'media') {
+          openMediaModal();
+        }
+      });
+
+      // ─── ACCORDI LOGIC ─────────────────────────────────────────────────
+      function openAccordoModal(item = null) {
+        if (item) {
+          editingAccordoId = item._docId;
+          modalAccordiTitle.textContent = 'Modifica Canzone';
+          fSongTitle.value = item.title || '';
+          fSongAuthor.value = item.author || '';
+          fSongLink.value = item.link || '';
+          btnDeleteAccordo.style.display = 'block';
+        } else {
+          editingAccordoId = null;
+          modalAccordiTitle.textContent = 'Nuova Canzone';
+          fSongTitle.value = '';
+          fSongAuthor.value = '';
+          fSongLink.value = '';
+          btnDeleteAccordo.style.display = 'none';
+        }
+        fSongTitle.classList.remove('err');
+        fSongAuthor.classList.remove('err');
+        fSongLink.classList.remove('err');
+        moAccordi.classList.add('open');
+      }
+
+      function closeAccordoModal() {
+        moAccordi.classList.remove('open');
+        editingAccordoId = null;
+      }
+
+      btnCancelAccordo.addEventListener('click', closeAccordoModal);
+      moAccordi.addEventListener('click', e => { if (e.target === moAccordi) closeAccordoModal(); });
+
+      btnSaveAccordo.addEventListener('click', async () => {
+        const title = fSongTitle.value.trim();
+        const author = fSongAuthor.value.trim();
+        let link = fSongLink.value.trim();
+
+        let valid = true;
+        if (!title) { fSongTitle.classList.add('err'); valid = false; } else fSongTitle.classList.remove('err');
+        if (!author) { fSongAuthor.classList.add('err'); valid = false; } else fSongAuthor.classList.remove('err');
+        if (!link) { fSongLink.classList.add('err'); valid = false; } else fSongLink.classList.remove('err');
+
+        if (!valid) return;
+        if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
+          link = 'https://' + link;
+        }
+
+        const data = { title, author, link };
+        btnSaveAccordo.disabled = true;
+        try {
+          if (editingAccordoId) {
+            await updateAccordoDoc(editingAccordoId, data);
+          } else {
+            await addAccordoDoc(data);
+          }
+          closeAccordoModal();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          btnSaveAccordo.disabled = false;
+        }
+      });
+
+      btnDeleteAccordo.addEventListener('click', async () => {
+        if (!editingAccordoId) return;
+        if (!confirm('Vuoi eliminare questa canzone?')) return;
+        btnDeleteAccordo.disabled = true;
+        try {
+          await deleteAccordoDoc(editingAccordoId);
+          closeAccordoModal();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          btnDeleteAccordo.disabled = false;
+        }
+      });
+
+      function renderAccordi() {
+        accordiList.innerHTML = '';
+        if (accordiListItems.length === 0) {
+          emptyAccordi.classList.add('visible');
+          return;
+        }
+        emptyAccordi.classList.remove('visible');
+
+        accordiListItems.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'song-card';
+
+          const info = document.createElement('div');
+          info.className = 'song-info';
+          info.innerHTML = `
+            <div class="song-title">${escapeHtml(item.title || 'Senza Titolo')}</div>
+            <div class="song-author">${escapeHtml(item.author || 'Artista sconosciuto')}</div>
+          `;
+
+          const actions = document.createElement('div');
+          actions.className = 'song-actions';
+
+          const btnLink = document.createElement('a');
+          btnLink.className = 'btn-accordi';
+          btnLink.href = item.link || '#';
+          btnLink.target = '_blank';
+          btnLink.rel = 'noopener noreferrer';
+          btnLink.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Accordi
+          `;
+
+          const btnEdit = document.createElement('button');
+          btnEdit.className = 'btn-icon-sm';
+          btnEdit.title = 'Modifica';
+          btnEdit.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          `;
+          btnEdit.addEventListener('click', () => openAccordoModal(item));
+
+          actions.appendChild(btnLink);
+          actions.appendChild(btnEdit);
+
+          card.appendChild(info);
+          card.appendChild(actions);
+          accordiList.appendChild(card);
+        });
+      }
+
+      // ─── VIDEO & PODCAST LOGIC ─────────────────────────────────────────
+      function getYouTubeVideoId(url) {
+        if (!url) return null;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+      }
+
+      function openMediaModal(item = null) {
+        if (item) {
+          editingMediaId = item._docId;
+          modalMediaTitle.textContent = 'Modifica Video/Podcast';
+          fMediaTitle.value = item.title || '';
+          fMediaDuration.value = item.duration || '';
+          fMediaCategory.value = item.category || '';
+          fMediaLink.value = item.link || '';
+          btnDeleteMedia.style.display = 'block';
+        } else {
+          editingMediaId = null;
+          modalMediaTitle.textContent = 'Nuovo Video / Podcast';
+          fMediaTitle.value = '';
+          fMediaDuration.value = '';
+          fMediaCategory.value = '';
+          fMediaLink.value = '';
+          btnDeleteMedia.style.display = 'none';
+        }
+        fMediaTitle.classList.remove('err');
+        fMediaCategory.classList.remove('err');
+        fMediaLink.classList.remove('err');
+        moMedia.classList.add('open');
+      }
+
+      function closeMediaModal() {
+        moMedia.classList.remove('open');
+        editingMediaId = null;
+      }
+
+      btnCancelMedia.addEventListener('click', closeMediaModal);
+      moMedia.addEventListener('click', e => { if (e.target === moMedia) closeMediaModal(); });
+
+      btnSaveMedia.addEventListener('click', async () => {
+        const title = fMediaTitle.value.trim();
+        const duration = fMediaDuration.value.trim();
+        let category = fMediaCategory.value.trim() || 'Altro';
+        let link = fMediaLink.value.trim();
+
+        let valid = true;
+        if (!title) { fMediaTitle.classList.add('err'); valid = false; } else fMediaTitle.classList.remove('err');
+        if (!link) { fMediaLink.classList.add('err'); valid = false; } else fMediaLink.classList.remove('err');
+
+        if (!valid) return;
+        if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
+          link = 'https://' + link;
+        }
+
+        const data = { title, duration, category, link };
+        btnSaveMedia.disabled = true;
+        try {
+          if (editingMediaId) {
+            await updateMediaDoc(editingMediaId, data);
+          } else {
+            await addMediaDoc(data);
+          }
+          closeMediaModal();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          btnSaveMedia.disabled = false;
+        }
+      });
+
+      btnDeleteMedia.addEventListener('click', async () => {
+        if (!editingMediaId) return;
+        if (!confirm('Vuoi eliminare questo video/podcast?')) return;
+        btnDeleteMedia.disabled = true;
+        try {
+          await deleteMediaDoc(editingMediaId);
+          closeMediaModal();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          btnDeleteMedia.disabled = false;
+        }
+      });
+
+      function renderMedia() {
+        mediaCatContainer.innerHTML = '';
+        if (mediaListItems.length === 0) {
+          emptyMedia.classList.add('visible');
+          return;
+        }
+        emptyMedia.classList.remove('visible');
+
+        // Raggruppa per categoria
+        const groups = {};
+        mediaListItems.forEach(item => {
+          const cat = (item.category && item.category.trim()) || 'Generale';
+          if (!groups[cat]) groups[cat] = [];
+          groups[cat].push(item);
+        });
+
+        const sortedCategories = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+
+        sortedCategories.forEach(cat => {
+          const items = groups[cat];
+          const block = document.createElement('div');
+          block.className = 'media-category-block';
+
+          const header = document.createElement('div');
+          header.className = 'media-category-header';
+          header.innerHTML = `
+            <div class="media-category-title">
+              <span>📁</span> ${escapeHtml(cat)}
+            </div>
+            <span class="media-category-count">${items.length} ${items.length === 1 ? 'contenuto' : 'contenuti'}</span>
+          `;
+
+          const grid = document.createElement('div');
+          grid.className = 'media-grid';
+
+          items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'media-card';
+
+            const ytId = getYouTubeVideoId(item.link);
+            const thumbHtml = ytId
+              ? `<img class="media-thumb" src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" alt="${escapeHtml(item.title)}" loading="lazy"/>`
+              : `<div class="media-thumb-ph">▶️</div>`;
+
+            card.innerHTML = `
+              <div class="media-thumb-wrap">${thumbHtml}</div>
+              <div class="media-info">
+                <div class="media-title">${escapeHtml(item.title || 'Senza Titolo')}</div>
+                <div class="media-meta-row">
+                  ${item.duration ? `<span class="media-duration">⏱ ${escapeHtml(item.duration)}</span>` : ''}
+                </div>
+              </div>
+            `;
+
+            const actions = document.createElement('div');
+            actions.className = 'media-actions';
+
+            const btnYt = document.createElement('a');
+            btnYt.className = 'btn-yt';
+            btnYt.href = item.link || '#';
+            btnYt.target = '_blank';
+            btnYt.rel = 'noopener noreferrer';
+            btnYt.innerHTML = `
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              Apri
+            `;
+
+            const btnEdit = document.createElement('button');
+            btnEdit.className = 'btn-icon-sm';
+            btnEdit.title = 'Modifica';
+            btnEdit.innerHTML = `
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            `;
+            btnEdit.addEventListener('click', () => openMediaModal(item));
+
+            actions.appendChild(btnYt);
+            actions.appendChild(btnEdit);
+            card.appendChild(actions);
+
+            grid.appendChild(card);
+          });
+
+          block.appendChild(header);
+          block.appendChild(grid);
+          mediaCatContainer.appendChild(block);
+        });
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // Subscribe to Firestore collections
+      subscribeAccordi(data => {
+        accordiListItems = data;
+        renderAccordi();
+      });
+
+      subscribeMedia(data => {
+        mediaListItems = data;
+        renderMedia();
+      });
+    }
+  </script>
+</body>
+</html>

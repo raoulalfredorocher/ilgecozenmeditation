@@ -638,3 +638,61 @@ export async function deleteTripDoc(countryCode, tripDocId) {
   if (!db || !uid) return;
   await deleteDoc(doc(db, 'users', uid, 'countries', countryCode, 'trips', tripDocId));
 }
+
+// ─── Musica: Accordi & Video/Podcast ──────────────────────────────────────────
+
+export function subscribeAccordi(callback) {
+  const col = userCol('musica_accordi');
+  if (!col) { callback([]); return () => {}; }
+  const q = query(col, orderBy('createdAt', 'desc'));
+  return onSnapshot(q, snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  }, () => callback([]));
+}
+
+export async function addAccordoDoc(data) {
+  const col = userCol('musica_accordi');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateAccordoDoc(docId, fields) {
+  const ref = userDoc('musica_accordi', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteAccordoDoc(docId) {
+  const ref = userDoc('musica_accordi', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+export function subscribeMedia(callback) {
+  const col = userCol('musica_media');
+  if (!col) { callback([]); return () => {}; }
+  const q = query(col, orderBy('createdAt', 'desc'));
+  return onSnapshot(q, snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  }, () => callback([]));
+}
+
+export async function addMediaDoc(data) {
+  const col = userCol('musica_media');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateMediaDoc(docId, fields) {
+  const ref = userDoc('musica_media', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteMediaDoc(docId) {
+  const ref = userDoc('musica_media', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
