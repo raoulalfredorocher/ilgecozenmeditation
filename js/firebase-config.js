@@ -779,3 +779,90 @@ export async function deleteFinanzaExpense(docId) {
   if (!ref) return;
   await deleteDoc(ref);
 }
+
+// ─── Personal Brand — Guardaroba ─────────────────────────────────────────────
+
+export function subscribeGuardaroba(callback) {
+  const col = userCol('guardaroba');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addGuardarobaItem(data) {
+  const col = userCol('guardaroba');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateGuardarobaItem(docId, fields) {
+  const ref = userDoc('guardaroba', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteGuardarobaItem(docId) {
+  const ref = userDoc('guardaroba', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+// ─── Personal Brand — Igiene ──────────────────────────────────────────────────
+
+export function subscribeIgieneActions(callback) {
+  const col = userCol('igiene_actions');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('date', 'desc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addIgieneAction(data) {
+  const col = userCol('igiene_actions');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateIgieneAction(docId, fields) {
+  const ref = userDoc('igiene_actions', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteIgieneAction(docId) {
+  const ref = userDoc('igiene_actions', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}
+
+// ─── Personal Brand — Ispirazione ────────────────────────────────────────────
+
+export function subscribeIspirazione(callback) {
+  const col = userCol('ispirazione');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('createdAt', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addIspirazioneItem(data) {
+  const col = userCol('ispirazione');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateIspirazioneItem(docId, fields) {
+  const ref = userDoc('ispirazione', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteIspirazioneItem(docId) {
+  const ref = userDoc('ispirazione', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}

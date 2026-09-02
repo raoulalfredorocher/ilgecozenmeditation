@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Personal Brand"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Personal Brand</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html[data-theme="light"] {
+      --bg:#f7f4f9; --surface:#ede8f4; --card:#ffffff; --border:#d4cee0;
+      --text:#1e2a38; --muted:#876a6a; --primary:#7c5cd8; --accent:#c8a0f0;
+      --accent2:#F5A9BC; --red:#c04060; --input-bg:#ffffff; --green:#22a85e;
+    }
+    html[data-theme="dark"] {
+      --bg:#111820; --surface:#1a2230; --card:#1e2a38; --border:#2e3f52;
+      --text:#e8eef4; --muted:#a89090; --primary:#b07ef8; --accent:#c8a0f0;
+      --accent2:#F5A9BC; --red:#e05070; --input-bg:#1a2230; --green:#3dc870;
+    }
+    html { overscroll-behavior: none; }
+    html, body { min-height:100%; background:var(--bg); color:var(--text);
+      font-family:-apple-system,"Segoe UI",system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased; transition:background .3s,color .3s; }
+    body { display:flex; flex-direction:column; align-items:center;
+      padding-top:calc(env(safe-area-inset-top,0px) + 120px);
+      padding-left:18px; padding-right:18px;
+      padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));
+      max-width:480px; margin:0 auto; }
+
+    /* ── HEADER ── */
+    header { position:fixed; top:0; left:0; right:0; z-index:150;
+      background:var(--bg); display:flex; align-items:center; justify-content:space-between;
+      padding:calc(env(safe-area-inset-top,0px) + 10px) 20px 10px;
+      border-bottom:1px solid var(--border); }
+    .btn-header { background:none; border:1px solid var(--border); border-radius:10px;
+      color:var(--muted); font-family:inherit; font-size:.58rem; letter-spacing:.1em;
+      padding:5px 8px; cursor:pointer; display:flex; flex-direction:column;
+      align-items:center; gap:2px; width:52px; text-decoration:none; }
+    .header-center { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .header-icon { font-size:1.8rem; line-height:1; }
+    .app-title { font-size:.95rem; letter-spacing:.16em; color:var(--primary); font-weight:700; }
+    .app-sub { font-size:.48rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; }
+    .theme-toggle { background:none; border:1.5px solid var(--border); border-radius:20px;
+      cursor:pointer; width:52px; height:28px; position:relative; flex-shrink:0; }
+    .theme-toggle .knob { position:absolute; top:3px; left:3px; width:20px; height:20px;
+      border-radius:50%; background:var(--accent); transition:transform .3s;
+      display:flex; align-items:center; justify-content:center; font-size:.7rem; }
+    html[data-theme="dark"] .theme-toggle .knob { transform:translateX(24px); }
+    /* CSV button — solo visibile su tab igiene */
+    #btn-csv { display:none; }
+    body.tab-igiene #btn-csv { display:flex; }
+    body.tab-igiene #btn-tao { display:none; }
+
+    /* ── TAB BAR ── */
+    .tab-bar { position:fixed; bottom:0; left:0; right:0;
+      height:calc(58px + env(safe-area-inset-bottom,0px));
+      padding-bottom:env(safe-area-inset-bottom,0px);
+      background:var(--card); border-top:1px solid var(--border);
+      border-radius:22px 22px 0 0;
+      display:flex; align-items:center; justify-content:space-around; z-index:200; }
+    .tab-btn { flex:1; background:none; border:none;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:4px; cursor:pointer; color:var(--muted); transition:color .2s;
+      padding:8px 4px; height:100%; -webkit-tap-highlight-color:transparent; }
+    .tab-btn.tab-active { color:var(--primary); }
+    .tab-icon { width:22px; height:22px; flex-shrink:0; }
+    .tab-label { font-size:.44rem; letter-spacing:.12em; text-transform:uppercase; font-family:inherit; }
+
+    /* ── SCREENS ── */
+    .screen { width:100%; display:none; flex-direction:column; align-items:center; }
+    .screen.active { display:flex; }
+    .section-title { width:100%; font-size:.54rem; letter-spacing:.28em;
+      color:var(--muted); text-transform:uppercase; margin-bottom:10px; text-align:center; }
+
+    /* ── SHARED FORMS ── */
+    input, select, textarea { background:var(--input-bg); border:1.5px solid var(--border);
+      border-radius:12px; color:var(--text); font-family:inherit; font-size:.82rem;
+      padding:10px 14px; width:100%; outline:none; transition:border-color .2s; }
+    input:focus, select:focus, textarea:focus { border-color:var(--primary); }
+    textarea { resize:vertical; min-height:64px; }
+    label { font-size:.58rem; letter-spacing:.14em; color:var(--muted); text-transform:uppercase;
+      display:block; margin-bottom:4px; }
+    .form-group { width:100%; margin-bottom:14px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+    .btn-primary { background:var(--primary); color:#fff; border:none; border-radius:24px;
+      font-family:inherit; font-size:.82rem; letter-spacing:.12em;
+      padding:12px 28px; cursor:pointer; width:100%; }
+    .btn-primary:active { opacity:.8; }
+    .btn-outline { background:none; border:1.5px solid var(--border); border-radius:24px;
+      color:var(--text); font-family:inherit; font-size:.78rem; letter-spacing:.1em;
+      padding:10px 22px; cursor:pointer; }
+    .btn-danger { background:none; border:1.5px solid var(--red); border-radius:24px;
+      color:var(--red); font-family:inherit; font-size:.74rem; letter-spacing:.1em;
+      padding:8px 18px; cursor:pointer; }
+    .icon-btn { background:none; border:none; cursor:pointer; color:var(--muted);
+      padding:6px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .icon-btn.del { color:var(--red); }
+    .icon-btn svg { width:16px; height:16px; }
+    .fab { position:fixed; bottom:calc(68px + env(safe-area-inset-bottom,0px)); right:22px;
+      width:52px; height:52px; border-radius:50%; background:var(--primary); border:none;
+      color:#fff; font-size:1.6rem; cursor:pointer; display:flex; align-items:center;
+      justify-content:center; z-index:190; box-shadow:0 4px 18px rgba(124,92,216,.5); }
+    .fab:active { transform:scale(.92); }
+
+    /* ── MODAL ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500;
+      display:none; align-items:flex-end; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal-sheet { background:var(--card); border-radius:22px 22px 0 0; width:100%;
+      max-width:480px; padding:24px 20px calc(env(safe-area-inset-bottom,0px) + 24px);
+      max-height:92vh; overflow-y:auto; }
+    .modal-handle { width:36px; height:4px; background:var(--border); border-radius:4px; margin:0 auto 18px; }
+    .modal-title { font-size:.9rem; font-weight:700; letter-spacing:.1em; color:var(--text); margin-bottom:18px; text-align:center; }
+    .modal-actions { display:flex; gap:10px; margin-top:18px; }
+    .modal-actions .btn-primary { flex:1; }
+    .modal-actions .btn-outline { flex:1; }
+    .modal-subtitle { font-size:.52rem; letter-spacing:.22em; color:var(--muted);
+      text-transform:uppercase; margin:14px 0 8px; }
+
+    /* ═══════════════════════════════
+       TAB 1 — GUARDAROBA
+    ═══════════════════════════════ */
+    .search-bar { width:100%; position:relative; margin-bottom:12px; }
+    .search-bar input { padding-left:36px; }
+    .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%);
+      color:var(--muted); pointer-events:none; }
+    .filters-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; width:100%; }
+    .filter-select { font-size:.72rem; padding:8px 10px; }
+    .capi-grid { width:100%; display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px; }
+    .capo-card { background:var(--card); border:1.5px solid var(--border); border-radius:16px;
+      overflow:hidden; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .capo-card:active { opacity:.8; }
+    .capo-photo { width:100%; aspect-ratio:1; object-fit:cover; background:var(--surface);
+      display:flex; align-items:center; justify-content:center; font-size:2.8rem; }
+    .capo-photo img { width:100%; height:100%; object-fit:cover; }
+    .capo-info { padding:10px; }
+    .capo-name { font-size:.82rem; font-weight:700; color:var(--text);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .capo-meta { font-size:.56rem; color:var(--muted); margin-top:3px; }
+    .stars-row { display:flex; gap:2px; margin-top:4px; }
+    .star { font-size:.7rem; }
+    .empty-state { width:100%; text-align:center; padding:40px 20px; }
+    .empty-icon { font-size:2.8rem; margin-bottom:12px; }
+    .empty-text { font-size:.76rem; color:var(--muted); line-height:1.7; }
+
+    /* stars input */
+    .stars-input { display:flex; gap:6px; }
+    .star-btn { background:none; border:none; font-size:1.4rem; cursor:pointer; padding:2px; }
+
+    /* outfit suggest box */
+    .outfit-result { width:100%; background:var(--surface); border:1.5px solid var(--border);
+      border-radius:16px; padding:16px; margin-top:14px; }
+    .outfit-result-title { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase;
+      color:var(--primary); margin-bottom:10px; }
+    .outfit-result-text { font-size:.82rem; color:var(--text); line-height:1.7; }
+
+    /* ═══════════════════════════════
+       TAB 2 — IGIENE
+    ═══════════════════════════════ */
+    .cal-nav { display:flex; align-items:center; justify-content:space-between;
+      width:100%; margin-bottom:10px; }
+    .cal-month { font-size:.88rem; font-weight:700; color:var(--text); letter-spacing:.06em; }
+    .cal-arrow { background:none; border:1px solid var(--border); border-radius:8px;
+      color:var(--muted); cursor:pointer; padding:5px 10px; font-size:.8rem; }
+    .cal-grid { width:100%; display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:14px; }
+    .cal-dow { font-size:.46rem; letter-spacing:.12em; text-transform:uppercase;
+      color:var(--muted); text-align:center; padding:4px 0; }
+    .cal-day { aspect-ratio:1; display:flex; flex-direction:column; align-items:center;
+      justify-content:flex-start; padding-top:4px; border-radius:10px; cursor:pointer;
+      background:var(--card); border:1px solid transparent; position:relative;
+      -webkit-tap-highlight-color:transparent; }
+    .cal-day:active { background:var(--surface); }
+    .cal-day.today { border-color:var(--primary); }
+    .cal-day.selected { background:var(--primary); color:#fff; }
+    .cal-day.selected .cal-day-num { color:#fff; }
+    .cal-day.other-month { opacity:.35; }
+    .cal-day.has-events::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%);
+      width:4px; height:4px; border-radius:50%; background:var(--accent); }
+    .cal-day.selected.has-events::after { background:#fff; }
+    .cal-day-num { font-size:.7rem; font-weight:600; color:var(--text); }
+    .day-actions-panel { width:100%; background:var(--card); border:1.5px solid var(--border);
+      border-radius:18px; padding:14px; margin-bottom:14px; }
+    .day-actions-header { font-size:.56rem; letter-spacing:.2em; text-transform:uppercase;
+      color:var(--muted); margin-bottom:10px; }
+    .action-row { background:var(--surface); border-radius:12px; padding:11px 12px;
+      margin-bottom:6px; display:flex; align-items:flex-start; gap:10px; }
+    .action-icon { font-size:1.3rem; flex-shrink:0; margin-top:1px; }
+    .action-info { flex:1; min-width:0; }
+    .action-title { font-size:.82rem; font-weight:600; color:var(--text); }
+    .action-cat { font-size:.55rem; color:var(--primary); letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
+    .action-desc { font-size:.68rem; color:var(--muted); margin-top:3px; line-height:1.5; }
+    .action-time { font-size:.52rem; color:var(--muted); margin-top:3px; }
+    .action-btns { display:flex; flex-direction:column; gap:2px; flex-shrink:0; }
+
+    /* ═══════════════════════════════
+       TAB 3 — ISPIRAZIONE
+    ═══════════════════════════════ */
+    .insp-section { width:100%; margin-bottom:20px; }
+    .insp-section-header { display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:10px; }
+    .insp-section-title { font-size:.82rem; font-weight:700; color:var(--primary); letter-spacing:.06em; }
+    .insp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .insp-item { aspect-ratio:1; border-radius:12px; overflow:hidden; position:relative;
+      background:var(--surface); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .insp-item img { width:100%; height:100%; object-fit:cover; }
+    .insp-item-overlay { position:absolute; inset:0; background:rgba(0,0,0,.45);
+      display:none; align-items:center; justify-content:center; gap:8px; }
+    .insp-item:active .insp-item-overlay { display:flex; }
+    .insp-item-info { position:absolute; bottom:0; left:0; right:0;
+      background:linear-gradient(transparent, rgba(0,0,0,.6)); padding:6px 6px 5px;
+      font-size:.54rem; color:#fff; letter-spacing:.06em; }
+    .insp-add-btn { aspect-ratio:1; border-radius:12px; border:1.5px dashed var(--border);
+      background:var(--card); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--primary); font-size:1.6rem;
+      -webkit-tap-highlight-color:transparent; }
+    .insp-add-btn:active { background:var(--surface); }
+  </style>
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+</head>
+<body style="visibility:hidden">
+  <script type="module" src="js/auth-guard.js"></script>
+
+  <!-- HEADER -->
+  <header>
+    <!-- TAO (default) -->
+    <a class="btn-header" id="btn-tao" href="index.html" aria-label="Torna al Qui e Ora" style="text-decoration:none;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      <span>TAO</span>
+    </a>
+    <!-- CSV (solo tab igiene) -->
+    <button class="btn-header" id="btn-csv" aria-label="Esporta CSV">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>CSV</span>
+    </button>
+    <div class="header-center">
+      <div class="header-icon">🌟</div>
+      <div class="app-title">Personal Brand</div>
+      <div class="app-sub">il geco zen</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
+
+  <!-- ═══ SCREEN: GUARDAROBA ═══ -->
+  <div class="screen active" id="screen-guardaroba">
+    <div class="search-bar">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search-input" placeholder="Cerca per nome…"/>
+    </div>
+    <div class="filters-grid">
+      <select id="filter-cat" class="filter-select">
+        <option value="">Tutte le categorie</option>
+        <option>Pantaloncini corti</option><option>Pantaloni</option><option>Camicie</option>
+        <option>Magliette</option><option>Polo</option><option>Giacche</option>
+        <option>Felpe</option><option>Scarpe</option><option>Intimo</option>
+        <option>Maglioni</option><option>Maglie Eleganti</option>
+        <option>Abbigliamento Tecnico</option><option>Accessori</option>
+      </select>
+      <select id="filter-color" class="filter-select">
+        <option value="">Tutti i colori</option>
+        <option>Bianco</option><option>Nero</option><option>Grigio</option>
+        <option>Blu</option><option>Verde</option><option>Rosso</option>
+        <option>Giallo</option><option>Arancione</option><option>Rosa</option>
+        <option>Viola</option><option>Marrone</option><option>Beige</option>
+        <option>Multicolore</option>
+      </select>
+      <select id="filter-style" class="filter-select">
+        <option value="">Tutti gli stili</option>
+        <option>Minimal</option><option>Sportivo</option><option>Americano</option>
+        <option>Giapponese</option><option>Streetwear</option><option>Elegante</option>
+        <option>Casual</option><option>Outdoor</option>
+      </select>
+      <button class="filter-select" id="btn-consiglio" style="background:var(--primary);color:#fff;border-color:var(--primary);font-size:.72rem;cursor:pointer;font-family:inherit;border-radius:12px;border-width:1.5px;">
+        🎯 Consiglio outfit
+      </button>
+    </div>
+    <div id="capi-grid" class="capi-grid"></div>
+    <button class="fab" id="fab-capo" aria-label="Aggiungi capo">+</button>
+  </div>
+
+  <!-- ═══ SCREEN: IGIENE ═══ -->
+  <div class="screen" id="screen-igiene">
+    <div class="cal-nav">
+      <button class="cal-arrow" id="cal-prev">‹</button>
+      <div class="cal-month" id="cal-month-label"></div>
+      <button class="cal-arrow" id="cal-next">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="day-actions-panel" id="day-panel">
+      <div class="day-actions-header" id="day-panel-label">Seleziona un giorno</div>
+      <div id="day-actions-list"></div>
+      <button class="btn-add" id="btn-add-action" style="width:100%;background:var(--card);border:1.5px dashed var(--border);border-radius:12px;color:var(--primary);font-size:.82rem;letter-spacing:.12em;padding:13px;cursor:pointer;font-family:inherit;margin-top:6px;">+ Aggiungi azione</button>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN: ISPIRAZIONE ═══ -->
+  <div class="screen" id="screen-ispirazione">
+    <div id="insp-container" style="width:100%;"></div>
+  </div>
+
+  <!-- TAB BAR -->
+  <nav class="tab-bar">
+    <button class="tab-btn tab-active" data-tab="guardaroba">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+      <span class="tab-label">Guardaroba</span>
+    </button>
+    <button class="tab-btn" data-tab="igiene">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="tab-label">Igiene</span>
+    </button>
+    <button class="tab-btn" data-tab="ispirazione">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span class="tab-label">Ispirazione</span>
+    </button>
+  </nav>
+
+  <!-- ═══ MODALS ═══ -->
+
+  <!-- Modal: Capo (add/edit) -->
+  <div class="modal-overlay" id="modal-capo">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-capo-title">Nuovo capo</div>
+      <div class="form-group"><label>Nome</label><input id="capo-nome" placeholder="es. Camicia Oxford Bianca"/></div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label>Categoria</label>
+          <select id="capo-cat">
+            <option value="">-- seleziona --</option>
+            <option>Pantaloncini corti</option><option>Pantaloni</option><option>Camicie</option>
+            <option>Magliette</option><option>Polo</option><option>Giacche</option>
+            <option>Felpe</option><option>Scarpe</option><option>Intimo</option>
+            <option>Maglioni</option><option>Maglie Eleganti</option>
+            <option>Abbigliamento Tecnico</option><option>Accessori</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0"><label>Marca</label><input id="capo-marca" placeholder="es. Zara"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label>Taglia / N° Scarpe</label><input id="capo-taglia" placeholder="es. M / 42"/></div>
+        <div class="form-group" style="margin-bottom:0"><label>Vestibilità</label>
+          <select id="capo-vestibilita">
+            <option value="">--</option>
+            <option>Slim</option><option>Regular</option><option>Oversize</option><option>Loose</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label>Colore</label>
+          <select id="capo-color">
+            <option value="">--</option>
+            <option>Bianco</option><option>Nero</option><option>Grigio</option>
+            <option>Blu</option><option>Verde</option><option>Rosso</option>
+            <option>Giallo</option><option>Arancione</option><option>Rosa</option>
+            <option>Viola</option><option>Marrone</option><option>Beige</option><option>Multicolore</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0"><label>Stile</label>
+          <select id="capo-stile">
+            <option value="">--</option>
+            <option>Minimal</option><option>Sportivo</option><option>Americano</option>
+            <option>Giapponese</option><option>Streetwear</option><option>Elegante</option>
+            <option>Casual</option><option>Outdoor</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label>Anno acquisto</label><input id="capo-anno" type="number" min="2000" max="2099" placeholder="2024"/></div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Valutazione</label>
+          <div class="stars-input" id="stars-input">
+            <button class="star-btn" data-v="1">☆</button>
+            <button class="star-btn" data-v="2">☆</button>
+            <button class="star-btn" data-v="3">☆</button>
+            <button class="star-btn" data-v="4">☆</button>
+            <button class="star-btn" data-v="5">☆</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:4px;">
+        <label>Foto (URL oppure carica)</label>
+        <input id="capo-foto-url" placeholder="https://… oppure usa il pulsante sotto"/>
+        <input type="file" id="capo-foto-file" accept="image/*" style="margin-top:8px;padding:6px;font-size:.72rem;"/>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-capo-cancel">Annulla</button>
+        <button class="btn-primary" id="btn-capo-save">Salva</button>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:center;">
+        <button class="btn-danger" id="btn-capo-delete" style="display:none;">Elimina capo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Dettaglio capo -->
+  <div class="modal-overlay" id="modal-capo-detail">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div id="detail-photo" style="width:100%;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:4rem;margin-bottom:14px;"></div>
+      <div class="modal-title" id="detail-nome" style="margin-bottom:6px;"></div>
+      <div class="stars-row" id="detail-stars" style="justify-content:center;margin-bottom:14px;"></div>
+      <div id="detail-body" style="font-size:.8rem;color:var(--text);line-height:2;"></div>
+      <div class="modal-actions" style="margin-top:18px;">
+        <button class="btn-outline" id="btn-detail-close">Chiudi</button>
+        <button class="btn-primary" id="btn-detail-edit">Modifica</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Consiglio outfit -->
+  <div class="modal-overlay" id="modal-outfit">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🎯 Consiglio outfit</div>
+      <div class="form-group">
+        <label>Temperatura (°C)</label>
+        <input id="outfit-temp" type="number" min="-20" max="45" placeholder="es. 22"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label>Stagione</label>
+          <select id="outfit-stagione">
+            <option>Primavera</option><option>Estate</option><option>Autunno</option><option>Inverno</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0"><label>Stile preferito</label>
+          <select id="outfit-stile">
+            <option value="">Qualsiasi</option>
+            <option>Minimal</option><option>Sportivo</option><option>Americano</option>
+            <option>Giapponese</option><option>Streetwear</option><option>Elegante</option>
+            <option>Casual</option><option>Outdoor</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Colori preferiti (opzionale)</label>
+        <input id="outfit-colori" placeholder="es. Nero, Bianco"/>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-outfit-cancel">Annulla</button>
+        <button class="btn-primary" id="btn-outfit-go">Suggerisci</button>
+      </div>
+      <div class="outfit-result" id="outfit-result" style="display:none;">
+        <div class="outfit-result-title">✨ Il tuo outfit</div>
+        <div class="outfit-result-text" id="outfit-result-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Azione igiene (add/edit) -->
+  <div class="modal-overlay" id="modal-action">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-action-title">Nuova azione</div>
+      <div class="form-group"><label>Titolo</label><input id="act-title" placeholder="es. Scrub viso"/></div>
+      <div class="form-group"><label>Categoria</label>
+        <select id="act-cat">
+          <option value="">-- seleziona --</option>
+          <option>Pulizia Mani</option><option>Pulizia Viso</option><option>Pulizia Piedi</option>
+          <option>Taglio Barba</option><option>Taglio Capelli</option>
+          <option>Pulizia Denti</option><option>Tagliare i peli</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Descrizione</label><textarea id="act-desc" placeholder="Note, prodotti usati…"></textarea></div>
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-act-cancel">Annulla</button>
+        <button class="btn-primary" id="btn-act-save">Salva</button>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:center;">
+        <button class="btn-danger" id="btn-act-delete" style="display:none;">Elimina</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Ispirazione item (add/edit) -->
+  <div class="modal-overlay" id="modal-insp">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-insp-title">Nuova ispirazione</div>
+      <div class="form-group"><label>Titolo</label><input id="insp-title-inp" placeholder="es. Look estate 2025"/></div>
+      <div class="form-group"><label>Descrizione</label><textarea id="insp-desc-inp" placeholder="Note…"></textarea></div>
+      <div class="form-group">
+        <label>Foto — scatta o carica</label>
+        <input type="file" id="insp-file" accept="image/*" capture="environment" style="padding:6px;font-size:.72rem;"/>
+        <input id="insp-url" placeholder="oppure incolla URL…" style="margin-top:8px;"/>
+      </div>
+      <input type="hidden" id="insp-section"/>
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-insp-cancel">Annulla</button>
+        <button class="btn-primary" id="btn-insp-save">Salva</button>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:center;">
+        <button class="btn-danger" id="btn-insp-delete" style="display:none;">Elimina</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { waitForAuth } from './js/firebase-config.js';
+    import {
+      subscribeGuardaroba, addGuardarobaItem, updateGuardarobaItem, deleteGuardarobaItem,
+      subscribeIgieneActions, addIgieneAction, updateIgieneAction, deleteIgieneAction,
+      subscribeIspirazione, addIspirazioneItem, updateIspirazioneItem, deleteIspirazioneItem,
+    } from './js/firebase-config.js';
+
+    /* ══ THEME ══ */
+    const htmlEl = document.documentElement;
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
+    const knob = document.getElementById('theme-knob');
+    function applyTheme() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    applyTheme();
+    document.getElementById('theme-toggle').addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+
+    /* ══ TAB NAV ══ */
+    const TABS = ['guardaroba','igiene','ispirazione'];
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('tab-active', b === btn));
+        TABS.forEach(t => document.getElementById('screen-' + t).classList.toggle('active', t === id));
+        // CSV button visibility
+        document.body.className = 'tab-' + id;
+        if (id === 'guardaroba') document.getElementById('fab-capo').style.display = '';
+        else document.getElementById('fab-capo').style.display = 'none';
+      });
+    });
+
+    /* ══════════════════════════════════
+       HELPERS
+    ══════════════════════════════════ */
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    document.querySelectorAll('.modal-overlay').forEach(o =>
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+    /* Converte file in base64 */
+    function fileToBase64(file) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result);
+        r.onerror = rej;
+        r.readAsDataURL(file);
+      });
+    }
+
+    /* ══════════════════════════════════
+       TAB 1 — GUARDAROBA
+    ══════════════════════════════════ */
+    let capi = [];
+    let editCapoDocId = null;
+    let selectedStars = 0;
+
+    const CAT_EMOJI = {
+      'Pantaloncini corti':'🩳','Pantaloni':'👖','Camicie':'👔','Magliette':'👕','Polo':'🧵',
+      'Giacche':'🧥','Felpe':'🫗','Scarpe':'👟','Intimo':'🩲','Maglioni':'🧶',
+      'Maglie Eleganti':'👘','Abbigliamento Tecnico':'⚡','Accessori':'👜',
+    };
+
+    function starsHtml(v, filled = '★', empty = '☆') {
+      return [1,2,3,4,5].map(i => `<span class="star">${i <= v ? filled : empty}</span>`).join('');
+    }
+
+    function renderCapi() {
+      const search = document.getElementById('search-input').value.trim().toLowerCase();
+      const cat    = document.getElementById('filter-cat').value;
+      const color  = document.getElementById('filter-color').value;
+      const style  = document.getElementById('filter-style').value;
+      const grid   = document.getElementById('capi-grid');
+
+      let list = capi;
+      if (search)  list = list.filter(c => c.nome?.toLowerCase().includes(search));
+      if (cat)     list = list.filter(c => c.categoria === cat);
+      if (color)   list = list.filter(c => c.colore === color);
+      if (style)   list = list.filter(c => c.stile === style);
+
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-icon">👗</div>
+          <div class="empty-text">Nessun capo trovato.<br/>Premi + per aggiungerne uno.</div>
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(c => {
+        const emoji = CAT_EMOJI[c.categoria] || '👕';
+        const photoHtml = c.foto
+          ? `<div class="capo-photo"><img src="${c.foto}" alt="${c.nome}" loading="lazy"/></div>`
+          : `<div class="capo-photo">${emoji}</div>`;
+        return `
+          <div class="capo-card" onclick="openCapoDetail('${c._docId}')">
+            ${photoHtml}
+            <div class="capo-info">
+              <div class="capo-name">${c.nome}</div>
+              <div class="capo-meta">${c.categoria || ''} ${c.colore ? '· ' + c.colore : ''}</div>
+              <div class="stars-row">${starsHtml(c.stelle || 0)}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* Stars input */
+    function setStars(v) {
+      selectedStars = v;
+      document.querySelectorAll('#stars-input .star-btn').forEach(b => {
+        b.textContent = parseInt(b.dataset.v) <= v ? '★' : '☆';
+      });
+    }
+    document.querySelectorAll('#stars-input .star-btn').forEach(b =>
+      b.addEventListener('click', () => setStars(parseInt(b.dataset.v))));
+
+    /* FAB → aggiungi capo */
+    document.getElementById('fab-capo').addEventListener('click', () => {
+      editCapoDocId = null;
+      document.getElementById('modal-capo-title').textContent = 'Nuovo capo';
+      ['capo-nome','capo-marca','capo-taglia','capo-anno','capo-foto-url'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('capo-cat').value = '';
+      document.getElementById('capo-vestibilita').value = '';
+      document.getElementById('capo-color').value = '';
+      document.getElementById('capo-stile').value = '';
+      document.getElementById('capo-foto-file').value = '';
+      setStars(0);
+      document.getElementById('btn-capo-delete').style.display = 'none';
+      openModal('modal-capo');
+    });
+
+    window.openCapoDetail = function(docId) {
+      const c = capi.find(x => x._docId === docId);
+      if (!c) return;
+      const emoji = CAT_EMOJI[c.categoria] || '👕';
+      const photoEl = document.getElementById('detail-photo');
+      photoEl.innerHTML = c.foto ? `<img src="${c.foto}" style="width:100%;height:100%;object-fit:cover;" alt="${c.nome}"/>` : emoji;
+      document.getElementById('detail-nome').textContent = c.nome;
+      document.getElementById('detail-stars').innerHTML = starsHtml(c.stelle || 0);
+      document.getElementById('detail-body').innerHTML = [
+        ['Categoria', c.categoria],['Marca', c.marca],['Taglia', c.taglia],
+        ['Vestibilità', c.vestibilita],['Colore', c.colore],['Stile', c.stile],
+        ['Anno acquisto', c.anno],
+      ].filter(([,v]) => v).map(([k,v]) => `<b>${k}:</b> ${v}`).join('<br/>');
+      document.getElementById('btn-detail-edit').onclick = () => { closeModal('modal-capo-detail'); openEditCapo(docId); };
+      openModal('modal-capo-detail');
+    };
+
+    function openEditCapo(docId) {
+      const c = capi.find(x => x._docId === docId);
+      editCapoDocId = docId;
+      document.getElementById('modal-capo-title').textContent = 'Modifica capo';
+      document.getElementById('capo-nome').value    = c.nome    || '';
+      document.getElementById('capo-marca').value   = c.marca   || '';
+      document.getElementById('capo-taglia').value  = c.taglia  || '';
+      document.getElementById('capo-anno').value    = c.anno    || '';
+      document.getElementById('capo-foto-url').value = c.foto   || '';
+      document.getElementById('capo-cat').value         = c.categoria   || '';
+      document.getElementById('capo-vestibilita').value = c.vestibilita || '';
+      document.getElementById('capo-color').value       = c.colore      || '';
+      document.getElementById('capo-stile').value       = c.stile       || '';
+      setStars(c.stelle || 0);
+      document.getElementById('btn-capo-delete').style.display = '';
+      openModal('modal-capo');
+    }
+
+    document.getElementById('btn-capo-cancel').addEventListener('click', () => closeModal('modal-capo'));
+    document.getElementById('btn-detail-close').addEventListener('click', () => closeModal('modal-capo-detail'));
+
+    document.getElementById('btn-capo-delete').addEventListener('click', async () => {
+      if (!confirm('Eliminare questo capo?')) return;
+      await deleteGuardarobaItem(editCapoDocId);
+      closeModal('modal-capo');
+    });
+
+    document.getElementById('btn-capo-save').addEventListener('click', async () => {
+      const nome = document.getElementById('capo-nome').value.trim();
+      if (!nome) { document.getElementById('capo-nome').focus(); return; }
+      let foto = document.getElementById('capo-foto-url').value.trim();
+      const file = document.getElementById('capo-foto-file').files[0];
+      if (file) foto = await fileToBase64(file);
+      const data = {
+        nome, foto,
+        categoria:  document.getElementById('capo-cat').value,
+        marca:      document.getElementById('capo-marca').value.trim(),
+        taglia:     document.getElementById('capo-taglia').value.trim(),
+        vestibilita:document.getElementById('capo-vestibilita').value,
+        colore:     document.getElementById('capo-color').value,
+        stile:      document.getElementById('capo-stile').value,
+        anno:       document.getElementById('capo-anno').value,
+        stelle:     selectedStars,
+      };
+      if (editCapoDocId) await updateGuardarobaItem(editCapoDocId, data);
+      else await addGuardarobaItem(data);
+      closeModal('modal-capo');
+    });
+
+    /* filtri live */
+    ['search-input','filter-cat','filter-color','filter-style'].forEach(id =>
+      document.getElementById(id).addEventListener('input', renderCapi));
+
+    /* ── CONSIGLIO OUTFIT ── */
+    document.getElementById('btn-consiglio').addEventListener('click', () => {
+      // imposta stagione in base al mese corrente
+      const m = new Date().getMonth();
+      const stagioni = ['Inverno','Inverno','Primavera','Primavera','Primavera','Estate','Estate','Estate','Autunno','Autunno','Autunno','Inverno'];
+      document.getElementById('outfit-stagione').value = stagioni[m];
+      document.getElementById('outfit-result').style.display = 'none';
+      openModal('modal-outfit');
+    });
+    document.getElementById('btn-outfit-cancel').addEventListener('click', () => closeModal('modal-outfit'));
+    document.getElementById('btn-outfit-go').addEventListener('click', () => {
+      const temp     = parseFloat(document.getElementById('outfit-temp').value) || 18;
+      const stagione = document.getElementById('outfit-stagione').value;
+      const stile    = document.getElementById('outfit-stile').value;
+      const colori   = document.getElementById('outfit-colori').value.trim();
+
+      // logica smart basata su temperatura
+      const isCaldo  = temp >= 25;
+      const isMite   = temp >= 15 && temp < 25;
+      const isFreddo = temp >= 5  && temp < 15;
+      const isGelido = temp < 5;
+
+      // candidati dal guardaroba filtrati per stile e temperatura
+      function peso(cat) {
+        const pesanti = ['Maglioni','Giacche','Felpe','Abbigliamento Tecnico'];
+        const leggeri = ['Magliette','Polo','Pantaloncini corti','Camicie'];
+        if (pesanti.includes(cat)) return 'pesante';
+        if (leggeri.includes(cat)) return 'leggero';
+        return 'neutro';
+      }
+      let candidati = capi.filter(c => !stile || c.stile === stile || !c.stile);
+      if (colori) {
+        const cc = colori.split(',').map(s => s.trim().toLowerCase());
+        const byColor = candidati.filter(c => cc.some(cl => (c.colore||'').toLowerCase().includes(cl)));
+        if (byColor.length >= 2) candidati = byColor;
+      }
+
+      // selezione per fascia termica
+      function best(tipo) {
+        const matching = candidati.filter(c => peso(c.categoria) === tipo);
+        if (!matching.length) return null;
+        return matching.sort((a,b) => (b.stelle||0) - (a.stelle||0))[0];
+      }
+
+      let suggeriti = [];
+      if (isCaldo) {
+        suggeriti = [best('leggero'), best('neutro')].filter(Boolean);
+        // escludi pesanti
+        const scarpe = candidati.find(c => c.categoria === 'Scarpe');
+        if (scarpe) suggeriti.push(scarpe);
+      } else if (isMite) {
+        suggeriti = [best('neutro') || best('leggero'), best('neutro')].filter(Boolean);
+        const scarpe = candidati.find(c => c.categoria === 'Scarpe');
+        if (scarpe) suggeriti.push(scarpe);
+      } else if (isFreddo) {
+        suggeriti = [best('pesante'), best('neutro'), best('pesante')].filter(Boolean);
+        const scarpe = candidati.find(c => c.categoria === 'Scarpe');
+        if (scarpe) suggeriti.push(scarpe);
+      } else {
+        suggeriti = [best('pesante'), best('pesante'), best('neutro')].filter(Boolean);
+        const scarpe = candidati.find(c => c.categoria === 'Scarpe');
+        if (scarpe) suggeriti.push(scarpe);
+      }
+      // dedup
+      suggeriti = [...new Map(suggeriti.map(c => [c._docId, c])).values()];
+
+      let txt = '';
+      if (!suggeriti.length) {
+        txt = `Con ${temp}°C in ${stagione} non ho trovato capi adatti nel guardaroba. Aggiungi prima qualche capo!`;
+      } else {
+        const tempDesc = isCaldo ? 'molto caldo' : isMite ? 'mite' : isFreddo ? 'fresco' : 'freddo';
+        txt = `Con ${temp}°C (${tempDesc}) in ${stagione}${stile ? ', stile ' + stile : ''}, ti consiglio:\n\n`;
+        txt += suggeriti.map(c => `• <b>${c.nome}</b>${c.categoria ? ' (' + c.categoria + ')' : ''}${c.colore ? ' — ' + c.colore : ''}`).join('\n');
+        if (colori) txt += `\n\nColori scelti: ${colori}`;
+      }
+      document.getElementById('outfit-result-text').innerHTML = txt.replace(/\n/g, '<br/>');
+      document.getElementById('outfit-result').style.display = '';
+    });
+
+    /* ══════════════════════════════════
+       TAB 2 — IGIENE
+    ══════════════════════════════════ */
+    let igieneActions = [];
+    let calYear  = new Date().getFullYear();
+    let calMonth = new Date().getMonth(); // 0-based
+    let selectedDate = null; // 'YYYY-MM-DD'
+    let editActDocId = null;
+
+    const MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+                       'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+    const DOW_IT = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+    const CAT_IGIENE_EMOJI = {
+      'Pulizia Mani':'🤲','Pulizia Viso':'🧖','Pulizia Piedi':'🦶',
+      'Taglio Barba':'✂️','Taglio Capelli':'💈','Pulizia Denti':'🦷','Tagliare i peli':'🪒',
+    };
+
+    function dateKey(y, m, d) {
+      return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    }
+
+    function renderCalendar() {
+      document.getElementById('cal-month-label').textContent = `${MONTHS_IT[calMonth]} ${calYear}`;
+      const grid = document.getElementById('cal-grid');
+      // DOW headers
+      let html = DOW_IT.map(d => `<div class="cal-dow">${d}</div>`).join('');
+      // first day (0=Mon...6=Sun)
+      const first = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+      const startOffset = (first + 6) % 7; // shift to Mon=0
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = new Date();
+      const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+      // prev month fill
+      const prevDays = new Date(calYear, calMonth, 0).getDate();
+      for (let i = startOffset - 1; i >= 0; i--) {
+        const d = prevDays - i;
+        const key = dateKey(calYear, calMonth - 1, d);
+        const hasDot = igieneActions.some(a => a.date === key);
+        html += `<div class="cal-day other-month${hasDot ? ' has-events' : ''}" onclick="selectDate('${key}')"><span class="cal-day-num">${d}</span></div>`;
+      }
+      // current month
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = dateKey(calYear, calMonth, d);
+        const isToday = key === todayKey;
+        const isSel   = key === selectedDate;
+        const hasDot  = igieneActions.some(a => a.date === key);
+        html += `<div class="cal-day${isToday ? ' today' : ''}${isSel ? ' selected' : ''}${hasDot ? ' has-events' : ''}" onclick="selectDate('${key}')"><span class="cal-day-num">${d}</span></div>`;
+      }
+      // next month fill
+      const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+      for (let d = 1; d <= totalCells - startOffset - daysInMonth; d++) {
+        const key = dateKey(calYear, calMonth + 1, d);
+        const hasDot = igieneActions.some(a => a.date === key);
+        html += `<div class="cal-day other-month${hasDot ? ' has-events' : ''}" onclick="selectDate('${key}')"><span class="cal-day-num">${d}</span></div>`;
+      }
+      grid.innerHTML = html;
+    }
+
+    window.selectDate = function(key) {
+      selectedDate = key;
+      renderCalendar();
+      renderDayActions();
+    };
+
+    function renderDayActions() {
+      const panel = document.getElementById('day-panel-label');
+      const list  = document.getElementById('day-actions-list');
+      if (!selectedDate) { panel.textContent = 'Seleziona un giorno'; list.innerHTML = ''; return; }
+      const [y, m, d] = selectedDate.split('-');
+      panel.textContent = `${parseInt(d)} ${MONTHS_IT[parseInt(m) - 1]} ${y}`;
+      const acts = igieneActions.filter(a => a.date === selectedDate)
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      if (!acts.length) {
+        list.innerHTML = '<div style="font-size:.7rem;color:var(--muted);padding:6px 0 8px;letter-spacing:.06em;">Nessuna azione — premi + per aggiungerne una</div>';
+        return;
+      }
+      list.innerHTML = acts.map(a => {
+        const emoji = CAT_IGIENE_EMOJI[a.categoria] || '✅';
+        const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}) : '';
+        return `
+          <div class="action-row">
+            <div class="action-icon">${emoji}</div>
+            <div class="action-info">
+              <div class="action-title">${a.title}</div>
+              <div class="action-cat">${a.categoria || ''}</div>
+              ${a.desc ? `<div class="action-desc">${a.desc}</div>` : ''}
+              ${time ? `<div class="action-time">${time}</div>` : ''}
+            </div>
+            <div class="action-btns">
+              <button class="icon-btn" onclick="openEditAction('${a._docId}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+              </button>
+              <button class="icon-btn del" onclick="doDelAction('${a._docId}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    document.getElementById('cal-prev').addEventListener('click', () => {
+      calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    });
+    document.getElementById('cal-next').addEventListener('click', () => {
+      calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    });
+
+    document.getElementById('btn-add-action').addEventListener('click', () => {
+      if (!selectedDate) { alert('Seleziona prima un giorno'); return; }
+      editActDocId = null;
+      document.getElementById('modal-action-title').textContent = 'Nuova azione';
+      document.getElementById('act-title').value = '';
+      document.getElementById('act-cat').value = '';
+      document.getElementById('act-desc').value = '';
+      document.getElementById('btn-act-delete').style.display = 'none';
+      openModal('modal-action');
+    });
+
+    window.openEditAction = function(docId) {
+      const a = igieneActions.find(x => x._docId === docId);
+      editActDocId = docId;
+      document.getElementById('modal-action-title').textContent = 'Modifica azione';
+      document.getElementById('act-title').value = a.title  || '';
+      document.getElementById('act-cat').value   = a.categoria || '';
+      document.getElementById('act-desc').value  = a.desc   || '';
+      document.getElementById('btn-act-delete').style.display = '';
+      openModal('modal-action');
+    };
+
+    window.doDelAction = async function(docId) {
+      if (!confirm('Eliminare questa azione?')) return;
+      await deleteIgieneAction(docId);
+    };
+
+    document.getElementById('btn-act-cancel').addEventListener('click', () => closeModal('modal-action'));
+    document.getElementById('btn-act-delete').addEventListener('click', async () => {
+      if (!confirm('Eliminare?')) return;
+      await deleteIgieneAction(editActDocId);
+      closeModal('modal-action');
+    });
+    document.getElementById('btn-act-save').addEventListener('click', async () => {
+      const title = document.getElementById('act-title').value.trim();
+      const cat   = document.getElementById('act-cat').value;
+      const desc  = document.getElementById('act-desc').value.trim();
+      if (!title || !cat) return;
+      const data = { title, categoria: cat, desc, date: selectedDate };
+      if (editActDocId) await updateIgieneAction(editActDocId, data);
+      else await addIgieneAction(data);
+      closeModal('modal-action');
+    });
+
+    /* CSV export */
+    document.getElementById('btn-csv').addEventListener('click', () => {
+      const rows = [['Data','Ora','Titolo','Categoria','Descrizione']];
+      igieneActions.forEach(a => {
+        const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}) : '';
+        rows.push([a.date || '', time, a.title || '', a.categoria || '', (a.desc || '').replace(/\n/g,' ')]);
+      });
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      a.download = `igiene_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click(); URL.revokeObjectURL(url);
+    });
+
+    /* ══════════════════════════════════
+       TAB 3 — ISPIRAZIONE
+    ══════════════════════════════════ */
+    const INSP_SECTIONS = ['Capelli','Barba','Vestiti & Accessori','Tatuaggio','Igiene'];
+    let ispItems = [];
+    let editInspDocId = null;
+    let currentInspSection = '';
+
+    function renderIspirazione() {
+      const container = document.getElementById('insp-container');
+      container.innerHTML = INSP_SECTIONS.map(sec => {
+        const items = ispItems.filter(i => i.section === sec);
+        const imgsHtml = items.map(item => `
+          <div class="insp-item" onclick="openEditInsp('${item._docId}')">
+            ${item.foto ? `<img src="${item.foto}" alt="${item.title||''}" loading="lazy"/>` : `<div style="font-size:2rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">🖼️</div>`}
+            ${item.title ? `<div class="insp-item-info">${item.title}</div>` : ''}
+          </div>`).join('');
+        return `
+          <div class="insp-section">
+            <div class="insp-section-header">
+              <div class="insp-section-title">${sec}</div>
+            </div>
+            <div class="insp-grid">
+              ${imgsHtml}
+              <div class="insp-add-btn" onclick="openNewInsp('${sec}')">+</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    window.openNewInsp = function(sec) {
+      currentInspSection = sec;
+      editInspDocId = null;
+      document.getElementById('modal-insp-title').textContent = `Nuova ispirazione — ${sec}`;
+      document.getElementById('insp-title-inp').value = '';
+      document.getElementById('insp-desc-inp').value = '';
+      document.getElementById('insp-url').value = '';
+      document.getElementById('insp-file').value = '';
+      document.getElementById('insp-section').value = sec;
+      document.getElementById('btn-insp-delete').style.display = 'none';
+      openModal('modal-insp');
+    };
+
+    window.openEditInsp = function(docId) {
+      const item = ispItems.find(i => i._docId === docId);
+      editInspDocId = docId;
+      currentInspSection = item.section;
+      document.getElementById('modal-insp-title').textContent = `Modifica — ${item.section}`;
+      document.getElementById('insp-title-inp').value = item.title || '';
+      document.getElementById('insp-desc-inp').value = item.desc  || '';
+      document.getElementById('insp-url').value = item.foto || '';
+      document.getElementById('insp-file').value = '';
+      document.getElementById('insp-section').value = item.section;
+      document.getElementById('btn-insp-delete').style.display = '';
+      openModal('modal-insp');
+    };
+
+    document.getElementById('btn-insp-cancel').addEventListener('click', () => closeModal('modal-insp'));
+    document.getElementById('btn-insp-delete').addEventListener('click', async () => {
+      if (!confirm('Eliminare questa ispirazione?')) return;
+      await deleteIspirazioneItem(editInspDocId);
+      closeModal('modal-insp');
+    });
+    document.getElementById('btn-insp-save').addEventListener('click', async () => {
+      const title = document.getElementById('insp-title-inp').value.trim();
+      const desc  = document.getElementById('insp-desc-inp').value.trim();
+      const sec   = document.getElementById('insp-section').value;
+      let foto    = document.getElementById('insp-url').value.trim();
+      const file  = document.getElementById('insp-file').files[0];
+      if (file) foto = await fileToBase64(file);
+      const data = { title, desc, foto, section: sec };
+      if (editInspDocId) await updateIspirazioneItem(editInspDocId, data);
+      else await addIspirazioneItem(data);
+      closeModal('modal-insp');
+    });
+
+    /* ══ INIT ══ */
+    waitForAuth().then(() => {
+      document.body.style.visibility = '';
+      document.body.className = 'tab-guardaroba';
+
+      subscribeGuardaroba(list => { capi = list; renderCapi(); });
+      subscribeIgieneActions(list => {
+        igieneActions = list;
+        renderCalendar();
+        renderDayActions();
+      });
+      subscribeIspirazione(list => { ispItems = list; renderIspirazione(); });
+
+      // select today
+      const t = new Date();
+      selectedDate = dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+      renderCalendar();
+      renderDayActions();
+    });
+  </script>
+</body>
+</html>
