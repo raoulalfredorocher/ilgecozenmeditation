@@ -1032,15 +1032,13 @@
       star.addEventListener('click', async e => {
         e.stopPropagation();
         const newVal = !c.besties;
-        // aggiorna ottimisticamente in locale
+        // aggiorna subito solo la stella visivamente, senza ricostruire il DOM
+        c.besties = newVal;
         const live = contacts.find(x => x._docId === c._docId);
         if (live) live.besties = newVal;
-        c.besties = newVal;
         star.classList.toggle('active', newVal);
         star.title = newVal ? 'Rimuovi dai Besties' : 'Aggiungi ai Besties';
-        // ridisegna entrambe le liste
-        renderContacts(document.getElementById('search-input').value);
-        // scrivi su Firestore
+        // scrivi su Firestore — il listener Firebase aggiornerà entrambe le liste
         await updateContactDoc(c._docId, { besties: newVal });
       });
 
