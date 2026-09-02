@@ -1202,25 +1202,48 @@
     let spPlayer = null;
     let spIsPlaying = false;
 
-    // Check hash for OAuth redirect token
-    if (window.location.hash) {
-      const p = new URLSearchParams(window.location.hash.substring(1));
-      const tok = p.get('access_token');
-      const exp = p.get('expires_in');
-      if (tok) {
-        spToken = tok;
-        localStorage.setItem('spotify_access_token', tok);
-        if (exp) localStorage.setItem('spotify_token_exp', Date.now() + parseInt(exp) * 1000);
-        window.location.hash = '';
+    async function getValidSpotifyToken() {
+      const exp = localStorage.getItem('spotify_token_exp');
+      let tok = localStorage.getItem('spotify_access_token');
+      const refTok = localStorage.getItem('spotify_refresh_token');
+
+      if (exp && Date.now() > parseInt(exp) && refTok) {
+        try {
+          const res = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              client_id: SPOTIFY_CLIENT_ID,
+              grant_type: 'refresh_token',
+              refresh_token: refTok,
+            }),
+          });
+          const data = await res.json();
+          if (data.access_token) {
+            tok = data.access_token;
+            localStorage.setItem('spotify_access_token', data.access_token);
+            if (data.expires_in) {
+              localStorage.setItem('spotify_token_exp', Date.now() + parseInt(data.expires_in) * 1000);
+            }
+          }
+        } catch (e) {
+          console.error('Refresh in workout error', e);
+        }
       }
+      return tok;
     }
 
-    function initSpotifyInWorkout() {
+    async function initSpotifyInWorkout() {
+      spToken = await getValidSpotifyToken();
       if (!spToken) return;
+
       window.onSpotifyWebPlaybackSDKReady = () => {
         spPlayer = new Spotify.Player({
           name: 'Il Geco Zen Workout Player',
-          getOAuthToken: cb => { cb(spToken); },
+          getOAuthToken: async cb => {
+            const currentTok = await getValidSpotifyToken();
+            cb(currentTok);
+          },
           volume: 0.8
         });
 
