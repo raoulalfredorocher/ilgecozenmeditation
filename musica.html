@@ -722,7 +722,7 @@
           <span class="playlist-card-icon">🎸</span>
           <div style="min-width:0;">
             <div class="playlist-card-title">Playlist Rock</div>
-            <div style="font-size:.60rem;color:var(--muted);">Spotify Playlist</div>
+            <div style="font-size:.60rem;color:var(--muted);">Summer Rock 26</div>
           </div>
         </div>
         <button class="btn-play-pl">▶ Riproduci</button>
@@ -1035,7 +1035,7 @@
           console.log('Ready with Device ID', device_id);
           spotifyDeviceId = device_id;
           document.getElementById('p-status').innerHTML = '<span class="status-dot"></span> Player Connesso';
-          loadUserPlaylists();
+          bindPlaylistEvents();
         });
 
         spotifyPlayer.addListener('not_ready', ({ device_id }) => {
@@ -1154,70 +1154,6 @@
     document.getElementById('btn-spotify-login').addEventListener('click', () => {
       redirectToSpotifyAuth();
     });
-
-    async function loadUserPlaylists() {
-      const container = document.getElementById('spotify-playlists-container');
-      if (!container || !spotifyToken) return;
-
-      try {
-        const res = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
-          headers: { 'Authorization': `Bearer ${spotifyToken}` }
-        });
-
-        if (res.status === 401) {
-          const fresh = await refreshSpotifyToken();
-          if (fresh) return loadUserPlaylists();
-        }
-
-        const data = await res.json();
-        const items = data.items || [];
-
-        if (items.length > 0) {
-          container.innerHTML = '';
-          items.forEach(pl => {
-            const card = document.createElement('div');
-            card.className = 'playlist-card-item';
-            card.setAttribute('data-uri', pl.uri);
-
-            let displayName = pl.name;
-            let iconHtml = '<span class="playlist-card-icon">🎵</span>';
-
-            if (pl.id === '450jCqgY0RmUDztCyO1EwZ' || pl.name.toLowerCase().includes('summer rock')) {
-              displayName = 'Playlist Rock';
-              iconHtml = '<span class="playlist-card-icon">🎸</span>';
-            } else if (pl.id === '6MnZOtcOrMg5jgwL54lInX' || pl.name.toLowerCase().includes('natale')) {
-              displayName = 'Playlist Natale';
-              iconHtml = '<span class="playlist-card-icon">🎄</span>';
-            } else if (pl.images && pl.images[0]) {
-              iconHtml = `<img src="${pl.images[0].url}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);" loading="lazy"/>`;
-            }
-
-            card.innerHTML = `
-              <div class="playlist-card-info">
-                ${iconHtml}
-                <div style="min-width:0;">
-                  <div class="playlist-card-title">${escapeHtml(displayName)}</div>
-                  <div style="font-size:.60rem;color:var(--muted);">${pl.tracks?.total || 0} brani</div>
-                </div>
-              </div>
-              <button class="btn-play-pl">▶ Riproduci</button>
-            `;
-
-            card.addEventListener('click', () => {
-              document.querySelectorAll('.playlist-card-item').forEach(c => c.classList.remove('active'));
-              card.classList.add('active');
-              playSpotifyUri(pl.uri);
-            });
-
-            container.appendChild(card);
-          });
-          return;
-        }
-      } catch (err) {
-        console.error('Error loading playlists', err);
-      }
-      bindPlaylistEvents();
-    }
 
     function bindPlaylistEvents() {
       document.querySelectorAll('.playlist-card-item').forEach(card => {
