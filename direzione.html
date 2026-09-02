@@ -546,13 +546,64 @@
        DATI DEFAULT
     ═══════════════════════════════════════════ */
     const DEFAULT_DATA = [
-      { id: 'sec-salute-fisica',  icon: '💪', title: 'Salute Fisica',            goal: '', areas: [] },
-      { id: 'sec-salute-mentale', icon: '🧘', title: 'Salute Mentale',           goal: '', areas: [] },
-      { id: 'sec-relazioni',      icon: '❤️', title: 'Relazioni',                goal: '', areas: [] },
-      { id: 'sec-contributo',     icon: '🌍', title: 'Contributo al Mondo',      goal: '', areas: [] },
-      { id: 'sec-connessione',    icon: '☯️', title: 'Connessione con il Tutto', goal: '', areas: [] },
-      { id: 'sec-passioni',       icon: '✨', title: 'Passioni e Anima',          goal: '', areas: [] },
-      { id: 'sec-note',           icon: '🔭', title: 'Note per il Futuro',       goal: '', areas: [] },
+      {
+        id: 'sec-salute-fisica', icon: '💪', title: 'Salute Fisica', goal: '',
+        areas: [
+          { name: 'Allenamento',    label: 'direction', text: '' },
+          { name: 'Alimentazione',  label: 'direction', text: '' },
+          { name: 'Sonno',          label: 'direction', text: '' },
+          { name: 'Check-up Medico',label: 'direction', text: '' },
+        ]
+      },
+      {
+        id: 'sec-salute-mentale', icon: '🧘', title: 'Salute Mentale', goal: '',
+        areas: [
+          { name: 'Benessere Psicologico',   label: 'direction', text: '' },
+          { name: 'Gestione delle Emozioni', label: 'direction', text: '' },
+          { name: 'Journaling',              label: 'direction', text: '' },
+        ]
+      },
+      {
+        id: 'sec-relazioni', icon: '❤️', title: 'Relazioni', goal: '',
+        areas: [
+          { name: 'Raoul',          label: 'direction', text: '' },
+          { name: 'Michela',        label: 'direction', text: '' },
+          { name: 'Emma',           label: 'direction', text: '' },
+          { name: 'Animali',        label: 'direction', text: '' },
+          { name: 'Mamma e Papà',   label: 'direction', text: '' },
+          { name: 'Amici & Network',label: 'direction', text: '' },
+        ]
+      },
+      {
+        id: 'sec-contributo', icon: '🌍', title: 'Contributo al Mondo', goal: '',
+        areas: [
+          { name: 'IBM',        label: 'direction', text: '' },
+          { name: 'Il Geco Zen',label: 'direction', text: '' },
+          { name: 'Finanza',    label: 'direction', text: '' },
+          { name: 'Competenze', label: 'direction', text: '' },
+        ]
+      },
+      {
+        id: 'sec-connessione', icon: '☯️', title: 'Connessione con il Tutto', goal: '',
+        areas: [
+          { name: 'Buddismo',    label: 'direction', text: '' },
+          { name: 'Meditazione', label: 'direction', text: '' },
+        ]
+      },
+      {
+        id: 'sec-passioni', icon: '✨', title: 'Passioni & Anima', goal: '',
+        areas: [
+          { name: 'Nutrimento dell\'anima', label: 'direction', text: '' },
+        ]
+      },
+      {
+        id: 'sec-note', icon: '🔭', title: 'Note per il Futuro', goal: '',
+        areas: [
+          { name: 'Difesa del Perimetro',           label: 'memento', text: '' },
+          { name: 'Non Attaccamento alla Serenità', label: 'memento', text: '' },
+          { name: 'Purezza dell\'Impatto',           label: 'memento', text: '' },
+        ]
+      },
     ];
 
     /* ═══════════════════════════════════════════
@@ -891,11 +942,30 @@
     /* ═══════════════════════════════════════════
        INIT
     ═══════════════════════════════════════════ */
+    // Merge: per ogni sezione remota con areas:[] ripristina le aree dal DEFAULT_DATA (testo vuoto)
+    function mergeDefaultAreas(remote) {
+      return remote.map(sec => {
+        if (!sec.areas || sec.areas.length === 0) {
+          const def = DEFAULT_DATA.find(d => d.id === sec.id);
+          if (def && def.areas.length > 0) {
+            return { ...sec, areas: JSON.parse(JSON.stringify(def.areas)) };
+          }
+        }
+        return sec;
+      });
+    }
+
     // Init: attende auth poi carica da Firestore (o usa DEFAULT_DATA)
     (async () => {
       await waitForAuth();
       const remote = await _loadRemote();
-      if (remote && Array.isArray(remote)) DATA = remote;
+      if (remote && Array.isArray(remote)) {
+        const merged = mergeDefaultAreas(remote);
+        // se il merge ha aggiunto aree, salva subito su Firestore
+        const changed = JSON.stringify(merged) !== JSON.stringify(remote);
+        DATA = merged;
+        if (changed) saveData(DATA);
+      }
       renderAll();
     })();
   </script>
