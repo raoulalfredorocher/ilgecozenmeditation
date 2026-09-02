@@ -11,6 +11,7 @@
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <link rel="icon" type="image/png" href="icon-192.png"/>
   <title>Il Geco Zen — Allenamento</title>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html[data-theme="light"] {
@@ -363,9 +364,42 @@
           <label>Programma</label>
           <select id="avvia-select-allenamento"></select>
         </div>
-        <div class="form-group" style="margin-bottom:0">
+        <div class="form-group" style="margin-bottom:10px">
           <label>Scheda</label>
           <select id="avvia-select-scheda"></select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Playlist</label>
+          <select id="avvia-select-playlist">
+            <option value="spotify:playlist:450jCqgY0RmUDztCyO1EwZ">🎵 Summer Rock 26</option>
+            <option value="">Nessuna playlist</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Mini Player Spotify per l'allenamento -->
+      <div id="workout-spotify-banner" style="display:none;width:100%;margin-bottom:14px;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:12px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <div id="w-sp-icon" style="font-size:1.4rem;line-height:1;flex-shrink:0;">🎧</div>
+            <img id="w-sp-art" style="width:38px;height:38px;border-radius:8px;object-fit:cover;display:none;flex-shrink:0;border:1px solid var(--border);"/>
+            <div style="min-width:0;flex:1;">
+              <div id="w-sp-title" style="font-size:.76rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Spotify Ready</div>
+              <div id="w-sp-artist" style="font-size:.60rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Summer Rock 26</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <button id="w-sp-prev" style="background:none;border:none;cursor:pointer;color:var(--text);padding:4px;display:flex;align-items:center;" title="Precedente">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+            <button id="w-sp-play-pause" style="width:34px;height:34px;border-radius:50%;background:#1DB954;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Play / Pausa">
+              <svg id="w-sp-play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg id="w-sp-pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button id="w-sp-next" style="background:none;border:none;cursor:pointer;color:var(--text);padding:4px;display:flex;align-items:center;" title="Successivo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -382,6 +416,32 @@
     </div>
 
     <div id="avvia-timer" style="width:100%;display:none">
+      <!-- Mini Player Spotify durante il timer dell'allenamento -->
+      <div id="workout-timer-spotify-banner" style="display:none;width:100%;margin-bottom:12px;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:10px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <div id="wt-sp-icon" style="font-size:1.3rem;line-height:1;flex-shrink:0;">🎧</div>
+            <img id="wt-sp-art" style="width:34px;height:34px;border-radius:8px;object-fit:cover;display:none;flex-shrink:0;border:1px solid var(--border);"/>
+            <div style="min-width:0;flex:1;">
+              <div id="wt-sp-title" style="font-size:.74rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Summer Rock 26</div>
+              <div id="wt-sp-artist" style="font-size:.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Spotify Active</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <button id="wt-sp-prev" style="background:none;border:none;cursor:pointer;color:var(--text);padding:4px;display:flex;align-items:center;" title="Precedente">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+            <button id="wt-sp-play-pause" style="width:32px;height:32px;border-radius:50%;background:#1DB954;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Play / Pausa">
+              <svg id="wt-sp-play-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg id="wt-sp-pause-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button id="wt-sp-next" style="background:none;border:none;cursor:pointer;color:var(--text);padding:4px;display:flex;align-items:center;" title="Successivo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="timer-screen">
         <div class="timer-phase-label" id="timer-phase-label">—</div>
         <div class="timer-ex-label" id="timer-ex-label"></div>
@@ -1135,10 +1195,115 @@
       document.getElementById('timer-serie-label').textContent = serieLabel;
     }
 
+    // --- SPOTIFY INTEGRATION IN ALLENAMENTO ---
+    const SPOTIFY_CLIENT_ID = '1e5dca09f1ae43f5a27a3fe95a82ba14';
+    let spToken = localStorage.getItem('spotify_access_token');
+    let spDeviceId = null;
+    let spPlayer = null;
+    let spIsPlaying = false;
+
+    // Check hash for OAuth redirect token
+    if (window.location.hash) {
+      const p = new URLSearchParams(window.location.hash.substring(1));
+      const tok = p.get('access_token');
+      const exp = p.get('expires_in');
+      if (tok) {
+        spToken = tok;
+        localStorage.setItem('spotify_access_token', tok);
+        if (exp) localStorage.setItem('spotify_token_exp', Date.now() + parseInt(exp) * 1000);
+        window.location.hash = '';
+      }
+    }
+
+    function initSpotifyInWorkout() {
+      if (!spToken) return;
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        spPlayer = new Spotify.Player({
+          name: 'Il Geco Zen Workout Player',
+          getOAuthToken: cb => { cb(spToken); },
+          volume: 0.8
+        });
+
+        spPlayer.addListener('ready', ({ device_id }) => {
+          spDeviceId = device_id;
+          document.getElementById('workout-spotify-banner').style.display = 'block';
+        });
+
+        spPlayer.addListener('player_state_changed', state => {
+          if (!state) return;
+          const track = state.track_window.current_track;
+          spIsPlaying = !state.paused;
+
+          const title = track ? track.name : 'Summer Rock 26';
+          const artist = track ? track.artists.map(a => a.name).join(', ') : 'Spotify Player';
+          const imgUrl = (track?.album?.images && track.album.images[0]) ? track.album.images[0].url : '';
+
+          ['w-sp', 'wt-sp'].forEach(prefix => {
+            const tEl = document.getElementById(`${prefix}-title`);
+            const aEl = document.getElementById(`${prefix}-artist`);
+            const imgEl = document.getElementById(`${prefix}-art`);
+            const iconEl = document.getElementById(`${prefix}-icon`);
+            const pI = document.getElementById(`${prefix}-play-icon`);
+            const paI = document.getElementById(`${prefix}-pause-icon`);
+
+            if (tEl) tEl.textContent = title;
+            if (aEl) aEl.textContent = artist;
+            if (imgEl && iconEl) {
+              if (imgUrl) {
+                imgEl.src = imgUrl; imgEl.style.display = 'block'; iconEl.style.display = 'none';
+              } else {
+                imgEl.style.display = 'none'; iconEl.style.display = 'block';
+              }
+            }
+            if (pI && paI) {
+              pI.style.display = spIsPlaying ? 'none' : 'block';
+              paI.style.display = spIsPlaying ? 'block' : 'none';
+            }
+          });
+        });
+
+        spPlayer.connect();
+      };
+
+      if (window.Spotify && window.Spotify.Player) {
+        window.onSpotifyWebPlaybackSDKReady();
+      }
+    }
+
+    async function playSpotifyWorkout(uri) {
+      if (!spDeviceId || !spToken || !uri) return;
+      try {
+        await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${spDeviceId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${spToken}`
+          },
+          body: JSON.stringify({ context_uri: uri })
+        });
+      } catch (err) {
+        console.error('Spotify play error', err);
+      }
+    }
+
+    // Attach Spotify player controls
+    ['w-sp', 'wt-sp'].forEach(prefix => {
+      const ppBtn = document.getElementById(`${prefix}-play-pause`);
+      const prBtn = document.getElementById(`${prefix}-prev`);
+      const nxBtn = document.getElementById(`${prefix}-next`);
+      if (ppBtn) ppBtn.addEventListener('click', () => { if (spPlayer) spPlayer.togglePlay(); });
+      if (prBtn) prBtn.addEventListener('click', () => { if (spPlayer) spPlayer.previousTrack(); });
+      if (nxBtn) nxBtn.addEventListener('click', () => { if (spPlayer) spPlayer.nextTrack(); });
+    });
+
+    initSpotifyInWorkout();
+
     // --- AVVIA ---
     document.getElementById('btn-avvia-go').addEventListener('click', () => {
       const allId  = document.getElementById('avvia-select-allenamento').value;
       const schIdx = document.getElementById('avvia-select-scheda').value;
+      const plUri  = document.getElementById('avvia-select-playlist')?.value;
+
       if (!allId || schIdx === '') { alert('Seleziona programma e scheda'); return; }
       sessionAllId = allId; sessionSchId = parseInt(schIdx);
       const all = allenamentiList.find(a => a._docId === allId);
@@ -1147,6 +1312,12 @@
       sessExercises = sch.esercizi;
       sessIdx = 0; sessSerie = 0;
       sessionStartTime = Date.now();
+
+      // Avvia la playlist selezionata senza interrompere il timer
+      if (plUri) {
+        playSpotifyWorkout(plUri);
+        document.getElementById('workout-timer-spotify-banner').style.display = 'block';
+      }
 
       // costruisci coda fasi
       phaseQueue = [];
