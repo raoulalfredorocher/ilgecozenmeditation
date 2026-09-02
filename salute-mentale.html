@@ -1030,7 +1030,8 @@
       if (!col) { renderDiary(); return; }
       if (diaryUnsub) { diaryUnsub(); diaryUnsub = null; }
       const q = query(col, orderBy('createdAt', 'desc'));
-      diaryUnsub = onSnapshot(q, snap => {
+      diaryUnsub = onSnapshot(q, { includeMetadataChanges: false }, snap => {
+        if (snap.metadata.fromCache && snap.docs.length === 0 && diaryEntries.length > 0) return;
         diaryEntries = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
         renderDiary();
       }, err => {
