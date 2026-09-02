@@ -1180,6 +1180,14 @@
         const tempId = '_temp_' + Date.now();
         diaryEntries.unshift({ _docId: tempId, ...payload, createdAt: nowTs });
         addDoc(col, { ...payload, createdAt: nowTs })
+          .then(ref => {
+            // sostituisce la entry temporanea con il vero id
+            const idx = diaryEntries.findIndex(e => e._docId === tempId);
+            if (idx !== -1) {
+              diaryEntries[idx]._docId = ref.id;
+              renderDiary();
+            }
+          })
           .catch(err => console.warn('Errore inserimento diario:', err));
       }
       renderDiary();
