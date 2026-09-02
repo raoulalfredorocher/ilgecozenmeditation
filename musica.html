@@ -13,6 +13,7 @@
   <title>Il Geco Zen — Musica, Accordi, Video e Podcast</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <link rel="stylesheet" href="styles/layout.css?v=8"/>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <style>
     .app-sub-music { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
     
@@ -35,34 +36,228 @@
       padding: 2px 0 4px;
     }
 
-    /* ── Tab 1: Spotify Playlists ── */
-    .playlist-list {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .spotify-card {
+    /* ── Spotify Native Player ── */
+    .spotify-auth-card {
       width: 100%;
       background: var(--card);
       border: 1.5px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+      border-radius: 20px;
+      padding: 24px 18px;
       display: flex;
       flex-direction: column;
-    }
-    .spotify-card iframe {
-      display: block;
-      width: 100%;
-      border: none;
-    }
-    .spotify-hint {
-      font-size: .62rem;
-      color: var(--muted);
+      align-items: center;
       text-align: center;
-      line-height: 1.5;
-      padding: 4px 8px 10px;
+      gap: 12px;
+    }
+    .btn-spotify-connect {
+      background: #1DB954;
+      color: #fff;
+      font-weight: 700;
+      font-size: .82rem;
+      letter-spacing: .08em;
+      padding: 12px 24px;
+      border-radius: 24px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      transition: transform .12s, opacity .15s;
+    }
+    .btn-spotify-connect:active { transform: scale(.96); opacity: .9; }
+
+    .player-card {
+      width: 100%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    }
+    .player-track-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .player-album-art {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: var(--surface);
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .player-album-art-ph {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .player-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .player-title {
+      font-size: .90rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-artist {
+      font-size: .68rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-status-badge {
+      font-size: .52rem;
+      letter-spacing: .08em;
+      color: #1DB954;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1DB954;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--surface);
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold);
+      border-radius: 3px;
+      transition: width .2s linear;
+    }
+    .progress-times {
+      display: flex;
+      justify-content: space-between;
+      font-size: .58rem;
+      color: var(--muted);
+    }
+
+    /* Player Controls */
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .btn-ctrl {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 50%;
+      transition: color .2s, transform .12s;
+    }
+    .btn-ctrl:active { color: var(--gold); transform: scale(.9); }
+    .btn-ctrl-play {
+      width: 48px;
+      height: 48px;
+      background: var(--gold);
+      color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37,115,158,.35);
+    }
+    .btn-ctrl-play:active { transform: scale(.92); }
+
+    /* Playlist Selector Cards */
+    .playlists-picker {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .playlist-card-item {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .playlist-card-item:hover, .playlist-card-item.active {
+      border-color: #1DB954;
+      background: rgba(29, 185, 84, 0.04);
+    }
+    .playlist-card-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .playlist-card-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .playlist-card-title {
+      font-size: .80rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-play-pl {
+      background: #1DB954;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: .66rem;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: .06em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
     /* ── Tab 2: Canzoni e Accordi ── */
@@ -296,7 +491,7 @@
     }
     .btn-yt:active { opacity: .85; }
 
-    /* ── FAB & Modali (stile coerente) ── */
+    /* ── FAB & Modali ── */
     .fab-add {
       position: fixed;
       bottom: calc(68px + env(safe-area-inset-bottom, 0px));
@@ -373,19 +568,6 @@
     }
     .fi:focus { border-color: var(--gold); }
     .fi.err { border-color: var(--red); }
-    .fs {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      font-size: .82rem;
-      font-family: inherit;
-      color: var(--text);
-      outline: none;
-      appearance: none;
-    }
-    .fs:focus { border-color: var(--gold); }
     .bs {
       width: 100%;
       background: var(--gold);
@@ -475,17 +657,87 @@
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema"><div class="knob" id="theme-knob">☀️</div></button>
   </header>
 
-  <!-- Schermata 1: Musica (Playlist Spotify) -->
+  <!-- Schermata 1: Musica (Spotify Native Player) -->
   <div id="screen-musica" class="active">
-    <div class="section-divider">Playlist Spotify</div>
-    <div class="playlist-list">
-      <div class="spotify-card">
-        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/450jCqgY0RmUDztCyO1EwZ?utm_source=generator&si=e3a8457f57824b09" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <div class="section-divider">Player Spotify</div>
+
+    <!-- Se non connesso -->
+    <div class="spotify-auth-card" id="spotify-login-card">
+      <div style="font-size:2.4rem;">🎧</div>
+      <div style="font-size:.88rem;font-weight:700;color:var(--text);">Ascolta la tua musica</div>
+      <div style="font-size:.66rem;color:var(--muted);max-width:280px;line-height:1.6;">
+        Connettiti con il tuo account Spotify per riprodurre e controllare i brani completi direttamente nell'app.
       </div>
-      <div class="spotify-card">
-        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6MnZOtcOrMg5jgwL54lInX?utm_source=generator&si=14604be59e4e4dbd" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <button class="btn-spotify-connect" id="btn-spotify-login">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.308c-.22.36-.684.475-1.044.255-2.862-1.748-6.465-2.144-10.708-1.174-.41.094-.816-.16-.91-.57-.094-.41.16-.816.57-.91 4.646-1.062 8.628-.612 11.837 1.355.36.22.475.684.255 1.044zm1.48-3.29c-.277.45-.867.595-1.317.318-3.277-2.014-8.273-2.598-12.15-1.42-.508.154-1.04-.136-1.194-.644-.154-.508.136-1.04.644-1.194 4.43-1.344 9.946-.69 13.699 1.623.45.277.595.867.318 1.317zm.128-3.41c-3.93-2.334-10.418-2.55-14.184-1.406-.602.183-1.242-.16-1.425-.762-.183-.602.16-1.242.762-1.425 4.333-1.316 11.492-1.065 16.012 1.618.54.32.716 1.02.396 1.56-.32.54-1.02.716-1.56.396z"/></svg>
+        Connetti Spotify
+      </button>
+    </div>
+
+    <!-- Se connesso: Player attivo -->
+    <div class="player-card" id="spotify-player-card" style="display:none;">
+      <div class="player-track-info">
+        <img class="player-album-art" id="p-album-art" src="" alt="Album" style="display:none;"/>
+        <div class="player-album-art-ph" id="p-album-ph">🎵</div>
+        <div class="player-text">
+          <div class="player-title" id="p-title">Seleziona una playlist</div>
+          <div class="player-artist" id="p-artist">Il Geco Zen Player</div>
+          <div class="player-status-badge" id="p-status">
+            <span class="status-dot"></span> Spotify Ready
+          </div>
+        </div>
       </div>
-      <div class="spotify-hint">💡 Clicca sul titolo o sul logo di Spotify nell'embed per aprire e riprodurre l'intera traccia/playlist direttamente nell'app Spotify.</div>
+
+      <!-- Barra di avanzamento -->
+      <div class="progress-container">
+        <div class="progress-bar-bg" id="progress-bar-wrap">
+          <div class="progress-bar-fill" id="p-progress-fill"></div>
+        </div>
+        <div class="progress-times">
+          <span id="p-current-time">0:00</span>
+          <span id="p-duration-time">0:00</span>
+        </div>
+      </div>
+
+      <!-- Controlli Player -->
+      <div class="player-controls">
+        <button class="btn-ctrl" id="btn-prev" title="Precedente">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="btn-ctrl btn-ctrl-play" id="btn-play-pause" title="Play / Pausa">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="play-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="pause-icon" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <button class="btn-ctrl" id="btn-next" title="Successivo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Selezione Playlist -->
+    <div class="section-divider" style="margin-top:6px;">Le tue Playlist</div>
+    <div class="playlists-picker">
+      <div class="playlist-card-item" data-uri="spotify:playlist:450jCqgY0RmUDztCyO1EwZ" id="pl-1">
+        <div class="playlist-card-info">
+          <span class="playlist-card-icon">🔥</span>
+          <div>
+            <div class="playlist-card-title">Playlist Zen 1</div>
+            <div style="font-size:.60rem;color:var(--muted);">spotify:playlist:450jCqgY0RmUDztCyO1EwZ</div>
+          </div>
+        </div>
+        <button class="btn-play-pl">▶ Riproduci</button>
+      </div>
+
+      <div class="playlist-card-item" data-uri="spotify:playlist:6MnZOtcOrMg5jgwL54lInX" id="pl-2">
+        <div class="playlist-card-info">
+          <span class="playlist-card-icon">🌿</span>
+          <div>
+            <div class="playlist-card-title">Playlist Zen 2</div>
+            <div style="font-size:.60rem;color:var(--muted);">spotify:playlist:6MnZOtcOrMg5jgwL54lInX</div>
+          </div>
+        </div>
+        <button class="btn-play-pl">▶ Riproduci</button>
+      </div>
     </div>
   </div>
 
@@ -611,20 +863,233 @@
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
+    // ─── SPOTIFY WEB PLAYBACK SDK CONFIG ────────────────────────────────
+    const SPOTIFY_CLIENT_ID = '1e5dca09f1ae43f5a27a3fe95a82ba14';
+    const SPOTIFY_REDIRECT_URI = window.location.origin + window.location.pathname;
+    const SPOTIFY_SCOPES = [
+      'streaming',
+      'user-read-email',
+      'user-read-private',
+      'user-modify-playback-state',
+      'user-read-playback-state'
+    ].join(' ');
+
+    let spotifyToken = localStorage.getItem('spotify_access_token');
+    let spotifyDeviceId = null;
+    let spotifyPlayer = null;
+    let isPlaying = false;
+    let currentTrackDuration = 0;
+    let currentTrackPosition = 0;
+    let progressTimer = null;
+
+    // Handle OAuth Callback from Hash or Query
+    function handleSpotifyCallback() {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const token = params.get('access_token');
+      const expiresIn = params.get('expires_in');
+
+      if (token) {
+        spotifyToken = token;
+        localStorage.setItem('spotify_access_token', token);
+        if (expiresIn) {
+          localStorage.setItem('spotify_token_exp', Date.now() + parseInt(expiresIn) * 1000);
+        }
+        window.location.hash = '';
+      }
+    }
+    handleSpotifyCallback();
+
+    function checkTokenValidity() {
+      const exp = localStorage.getItem('spotify_token_exp');
+      if (exp && Date.now() > parseInt(exp)) {
+        localStorage.removeItem('spotify_access_token');
+        spotifyToken = null;
+        return false;
+      }
+      return !!spotifyToken;
+    }
+
+    function initSpotifySDK() {
+      const hasToken = checkTokenValidity();
+      const loginCard = document.getElementById('spotify-login-card');
+      const playerCard = document.getElementById('spotify-player-card');
+
+      if (!hasToken) {
+        loginCard.style.display = 'flex';
+        playerCard.style.display = 'none';
+        return;
+      }
+
+      loginCard.style.display = 'none';
+      playerCard.style.display = 'flex';
+
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        spotifyPlayer = new Spotify.Player({
+          name: 'Il Geco Zen Web Player',
+          getOAuthToken: cb => { cb(spotifyToken); },
+          volume: 0.8
+        });
+
+        spotifyPlayer.addListener('ready', ({ device_id }) => {
+          console.log('Ready with Device ID', device_id);
+          spotifyDeviceId = device_id;
+          document.getElementById('p-status').innerHTML = '<span class="status-dot"></span> Player Connesso';
+        });
+
+        spotifyPlayer.addListener('not_ready', ({ device_id }) => {
+          console.log('Device ID has gone offline', device_id);
+          document.getElementById('p-status').innerHTML = '⚠️ Player Offline';
+        });
+
+        spotifyPlayer.addListener('player_state_changed', state => {
+          if (!state) return;
+          updatePlayerUI(state);
+        });
+
+        spotifyPlayer.addListener('initialization_error', ({ message }) => console.error(message));
+        spotifyPlayer.addListener('authentication_error', () => {
+          localStorage.removeItem('spotify_access_token');
+          loginCard.style.display = 'flex';
+          playerCard.style.display = 'none';
+        });
+        spotifyPlayer.addListener('account_error', ({ message }) => {
+          document.getElementById('p-status').innerHTML = '⚠️ Richiede Spotify Premium';
+        });
+
+        spotifyPlayer.connect();
+      };
+
+      if (window.Spotify && window.Spotify.Player) {
+        window.onSpotifyWebPlaybackSDKReady();
+      }
+    }
+
+    function updatePlayerUI(state) {
+      const track = state.track_window.current_track;
+      isPlaying = !state.paused;
+
+      const pTitle = document.getElementById('p-title');
+      const pArtist = document.getElementById('p-artist');
+      const pArt = document.getElementById('p-album-art');
+      const pArtPh = document.getElementById('p-album-ph');
+      const playIcon = document.getElementById('play-icon');
+      const pauseIcon = document.getElementById('pause-icon');
+
+      if (track) {
+        pTitle.textContent = track.name;
+        pArtist.textContent = track.artists.map(a => a.name).join(', ');
+        if (track.album.images && track.album.images[0]) {
+          pArt.src = track.album.images[0].url;
+          pArt.style.display = 'block';
+          pArtPh.style.display = 'none';
+        }
+      }
+
+      if (isPlaying) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+      } else {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+
+      currentTrackDuration = state.duration;
+      currentTrackPosition = state.position;
+      renderProgress();
+
+      if (isPlaying) {
+        startProgressTimer();
+      } else {
+        stopProgressTimer();
+      }
+    }
+
+    function formatTime(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const min = Math.floor(totalSec / 60);
+      const sec = totalSec % 60;
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function renderProgress() {
+      const pct = currentTrackDuration > 0 ? (currentTrackPosition / currentTrackDuration) * 100 : 0;
+      document.getElementById('p-progress-fill').style.width = pct + '%';
+      document.getElementById('p-current-time').textContent = formatTime(currentTrackPosition);
+      document.getElementById('p-duration-time').textContent = formatTime(currentTrackDuration);
+    }
+
+    function startProgressTimer() {
+      stopProgressTimer();
+      progressTimer = setInterval(() => {
+        if (isPlaying && currentTrackPosition < currentTrackDuration) {
+          currentTrackPosition += 1000;
+          renderProgress();
+        }
+      }, 1000);
+    }
+
+    function stopProgressTimer() {
+      if (progressTimer) clearInterval(progressTimer);
+    }
+
+    async function playSpotifyUri(contextUri) {
+      if (!spotifyDeviceId || !spotifyToken) return;
+      try {
+        await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${spotifyDeviceId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${spotifyToken}`
+          },
+          body: JSON.stringify({ context_uri: contextUri })
+        });
+      } catch (err) {
+        console.error('Play error', err);
+      }
+    }
+
+    // Spotify Login Click (Implicit Grant Flow)
+    document.getElementById('btn-spotify-login').addEventListener('click', () => {
+      const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(SPOTIFY_REDIRECT_URI)}&scope=${encodeURIComponent(SPOTIFY_SCOPES)}`;
+      window.location.href = authUrl;
+    });
+
+    // Controls
+    document.getElementById('btn-play-pause').addEventListener('click', () => {
+      if (spotifyPlayer) spotifyPlayer.togglePlay();
+    });
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if (spotifyPlayer) spotifyPlayer.previousTrack();
+    });
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if (spotifyPlayer) spotifyPlayer.nextTrack();
+    });
+
+    // Playlist buttons
+    document.querySelectorAll('.playlist-card-item').forEach(card => {
+      card.addEventListener('click', () => {
+        const uri = card.getAttribute('data-uri');
+        document.querySelectorAll('.playlist-card-item').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        playSpotifyUri(uri);
+      });
+    });
+
     waitForAuth().then(user => {
       if (!user) return;
       initApp();
+      initSpotifySDK();
     });
 
     function initApp() {
       let currentScreen = 'musica';
       let accordiListItems = [];
       let mediaListItems = [];
-      let openCategories = new Set(); // tiene traccia delle sezioni aperte
+      let openCategories = new Set();
       let editingAccordoId = null;
       let editingMediaId = null;
 
-      // DOM Elements - Screens & Tabs
       const sMusica = document.getElementById('screen-musica');
       const sAccordi = document.getElementById('screen-accordi');
       const sMedia = document.getElementById('screen-media');
@@ -633,19 +1098,16 @@
       const tMedia = document.getElementById('tab-media');
       const fabAdd = document.getElementById('fab-add');
 
-      // Containers
       const accordiList = document.getElementById('accordi-list');
       const emptyAccordi = document.getElementById('empty-accordi');
       const mediaCatContainer = document.getElementById('media-categories-container');
       const emptyMedia = document.getElementById('empty-media');
 
-      // Modals
       const moAccordi = document.getElementById('modal-accordi');
       const moMedia = document.getElementById('modal-media');
       const modalAccordiTitle = document.getElementById('modal-accordi-title');
       const modalMediaTitle = document.getElementById('modal-media-title');
 
-      // Inputs Accordi
       const fSongTitle = document.getElementById('f-song-title');
       const fSongAuthor = document.getElementById('f-song-author');
       const fSongLink = document.getElementById('f-song-link');
@@ -653,7 +1115,6 @@
       const btnCancelAccordo = document.getElementById('btn-cancel-accordo');
       const btnDeleteAccordo = document.getElementById('btn-delete-accordo');
 
-      // Inputs Media
       const fMediaTitle = document.getElementById('f-media-title');
       const fMediaDuration = document.getElementById('f-media-duration');
       const fMediaCategory = document.getElementById('f-media-category');
@@ -662,7 +1123,6 @@
       const btnCancelMedia = document.getElementById('btn-cancel-media');
       const btnDeleteMedia = document.getElementById('btn-delete-media');
 
-      // Navigation
       function showScreen(w) {
         currentScreen = w;
         [sMusica, sAccordi, sMedia].forEach(s => s.classList.remove('active'));
@@ -687,16 +1147,12 @@
       tAccordi.addEventListener('click', () => showScreen('accordi'));
       tMedia.addEventListener('click', () => showScreen('media'));
 
-      // FAB Click
       fabAdd.addEventListener('click', () => {
-        if (currentScreen === 'accordi') {
-          openAccordoModal();
-        } else if (currentScreen === 'media') {
-          openMediaModal();
-        }
+        if (currentScreen === 'accordi') openAccordoModal();
+        else if (currentScreen === 'media') openMediaModal();
       });
 
-      // ─── ACCORDI LOGIC ─────────────────────────────────────────────────
+      // ─── ACCORDI ───
       function openAccordoModal(item = null) {
         if (item) {
           editingAccordoId = item._docId;
@@ -745,11 +1201,8 @@
         const data = { title, author, link };
         btnSaveAccordo.disabled = true;
         try {
-          if (editingAccordoId) {
-            await updateAccordoDoc(editingAccordoId, data);
-          } else {
-            await addAccordoDoc(data);
-          }
+          if (editingAccordoId) await updateAccordoDoc(editingAccordoId, data);
+          else await addAccordoDoc(data);
           closeAccordoModal();
         } catch (err) {
           console.error(err);
@@ -821,7 +1274,7 @@
         });
       }
 
-      // ─── VIDEO & PODCAST LOGIC ─────────────────────────────────────────
+      // ─── VIDEO & PODCAST ───
       function getYouTubeVideoId(url) {
         if (!url) return null;
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -879,11 +1332,8 @@
         const data = { title, duration, category, link };
         btnSaveMedia.disabled = true;
         try {
-          if (editingMediaId) {
-            await updateMediaDoc(editingMediaId, data);
-          } else {
-            await addMediaDoc(data);
-          }
+          if (editingMediaId) await updateMediaDoc(editingMediaId, data);
+          else await addMediaDoc(data);
           closeMediaModal();
         } catch (err) {
           console.error(err);
@@ -914,7 +1364,6 @@
         }
         emptyMedia.classList.remove('visible');
 
-        // Raggruppa per categoria
         const groups = {};
         mediaListItems.forEach(item => {
           const cat = (item.category && item.category.trim()) || 'Generale';
@@ -923,8 +1372,6 @@
         });
 
         const sortedCategories = Object.keys(groups).sort((a, b) => a.localeCompare(b));
-
-        // Se è la prima volta, apri tutte le categorie di default
         if (openCategories.size === 0) {
           sortedCategories.forEach(c => openCategories.add(c));
         }
@@ -1026,7 +1473,6 @@
           .replace(/'/g, '&#039;');
       }
 
-      // Subscribe to Firestore collections
       subscribeAccordi(data => {
         accordiListItems = data;
         renderAccordi();
