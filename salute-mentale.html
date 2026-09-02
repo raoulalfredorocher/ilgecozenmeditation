@@ -1031,8 +1031,6 @@
       if (diaryUnsub) { diaryUnsub(); diaryUnsub = null; }
       const q = query(col, orderBy('createdAt', 'desc'));
       diaryUnsub = onSnapshot(q, snap => {
-        // ignora snapshot locali/pendenti: aggiorna solo quando il server conferma
-        if (snap.metadata.hasPendingWrites) return;
         diaryEntries = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
         renderDiary();
       }, err => {
@@ -1102,7 +1100,9 @@
       btnDel.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
       btnDel.addEventListener('click', () => {
         if (!confirm('Eliminare questo journal?')) return;
-        // fire-and-forget: onSnapshot aggiorna il DOM non appena Firestore conferma
+        // rimuovi subito da diaryEntries e ridisegna, poi scrivi su Firestore
+        diaryEntries = diaryEntries.filter(e => e._docId !== entry._docId);
+        renderDiary();
         deleteDoc(doc(_db, 'users', _uid(), 'mental_diary', entry._docId))
           .catch(err => console.warn('Errore eliminazione diario:', err));
       });
@@ -1170,21 +1170,23 @@
       saveBtn.disabled = true;
       saveBtn.style.opacity = '0.6';
 
-      try {
-        if (editingDiaryId) {
-          await updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload);
-        } else {
-          await addDoc(col, { ...payload, createdAt: nowTs });
-        }
-      } catch (err) {
-        // errore rete: Firestore sincronizzerà appena possibile, nessun alert
-        console.warn('Salvataggio diario in coda (offline?):', err);
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.style.opacity = '1';
-        switchTab(1);
-        closeDiaryModal();
+      // aggiorna subito diaryEntries e ridisegna senza aspettare Firestore
+      if (editingDiaryId) {
+        const idx = diaryEntries.findIndex(e => e._docId === editingDiaryId);
+        if (idx !== -1) diaryEntries[idx] = { ...diaryEntries[idx], ...payload };
+        updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload)
+          .catch(err => console.warn('Errore aggiornamento diario:', err));
+      } else {
+        const tempId = '_temp_' + Date.now();
+        diaryEntries.unshift({ _docId: tempId, ...payload, createdAt: nowTs });
+        addDoc(col, { ...payload, createdAt: nowTs })
+          .catch(err => console.warn('Errore inserimento diario:', err));
       }
+      renderDiary();
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '1';
+      switchTab(1);
+      closeDiaryModal();
     });
 
     /* CSV export */
