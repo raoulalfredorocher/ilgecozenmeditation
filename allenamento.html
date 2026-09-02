@@ -889,8 +889,6 @@
       const sch = all.schede[idx];
       document.getElementById('modal-scheda-title').textContent = sch.nome;
       document.getElementById('edit-scheda-nome').value = sch.nome;
-      document.getElementById('form-esercizio').style.display = 'none';
-      document.getElementById('btn-new-esercizio').style.display = 'block';
       renderEserciziInModal(all, idx);
       openModal('modal-scheda-detail');
     }
