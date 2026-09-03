@@ -1105,7 +1105,6 @@
 
     /* ─────────────────────── STATE ─────────────────────── */
     let contacts = [];      // array in real-time da Firebase
-    let skipNextRender = false;
     const bestiesOverride = {};   // docId → true/false, fonte di verità locale per besties
     let unsubNotes = {};    // docId → unsub
     let notesCache = {};    // docId → array note
@@ -1177,8 +1176,6 @@
     }
 
     function renderContacts(filter = '') {
-      if (skipNextRender) { skipNextRender = false; return; }
-
       const list = document.getElementById('person-list');
       const bestiesList = document.getElementById('besties-list');
       const empty = document.getElementById('empty-state');
@@ -1188,9 +1185,12 @@
       const q = filter.trim().toLowerCase();
       const filtered = sortAZ(q
         ? contacts.filter(c =>
-            `${c.nome} ${c.cognome}`.toLowerCase().includes(q) ||
+            `${c.nome || ''} ${c.cognome || ''}`.toLowerCase().includes(q) ||
             (c.telefono || '').includes(q) ||
-            (c.gruppo || '').toLowerCase().includes(q)
+            (c.gruppo || '').toLowerCase().includes(q) ||
+            (c.lavora || '').toLowerCase().includes(q) ||
+            (c.azienda || '').toLowerCase().includes(q) ||
+            (c.email || '').toLowerCase().includes(q)
           )
         : contacts);
 
