@@ -677,7 +677,7 @@
       { btn: document.getElementById('tab-registro'), screen: 'screen-registro'},
     ];
     const btnHeaderExport = document.getElementById('btn-header-export');
-    btnHeaderExport.addEventListener('click', () => openModal('modal-export'));
+    if (btnHeaderExport) btnHeaderExport.addEventListener('click', () => openModal('modal-export'));
 
     function switchTab(id) {
       TABS.forEach(t => {
