@@ -122,30 +122,53 @@
     }
     html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
 
-    .placeholder-card {
+    .contrib-grid {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .contrib-card {
       width: 100%;
       background: var(--card);
-      border: 1.5px dashed var(--border);
+      border: 1.5px solid var(--border);
       border-radius: 22px;
-      padding: 42px 24px;
+      padding: 28px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-align: center;
+      min-height: 130px;
     }
-    .placeholder-icon { font-size: 3rem; }
-    .placeholder-title {
-      font-size: .94rem;
-      letter-spacing: .08em;
+    .contrib-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contrib-icon { font-size: 2.2rem; line-height: 1; }
+    .contrib-logo-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e91e8c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contrib-logo-badge svg { width: 16px; height: 16px; }
+    .contrib-title {
+      font-size: .88rem;
+      letter-spacing: .1em;
       font-weight: 700;
       color: var(--text);
     }
-    .placeholder-sub {
-      font-size: .68rem;
-      color: var(--muted);
-      line-height: 1.7;
-      letter-spacing: .04em;
+    .contrib-empty {
+      font-size: .62rem;
+      color: var(--border);
+      letter-spacing: .1em;
+      text-transform: uppercase;
     }
   </style>
   <script>
@@ -164,7 +187,7 @@
   <header>
     <a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>QUI E ORA</span>
+      <span>TAO</span>
     </a>
     <div class="header-center">
       <div class="app-title">Contributo al mondo</div>
@@ -175,11 +198,40 @@
     </button>
   </header>
 
-  <section class="placeholder-card">
-    <div class="placeholder-icon">🌍</div>
-    <div class="placeholder-title">Contributo al mondo</div>
-    <div class="placeholder-sub">Spazio pronto per raccogliere lavoro, impatto e direzione del tuo contributo.</div>
-  </section>
+  <div class="contrib-grid">
+
+    <!-- 1 · IT & AI -->
+    <section class="contrib-card">
+      <div class="contrib-card-header">
+        <div class="contrib-icon">💻</div>
+        <div class="contrib-title">IT &amp; AI</div>
+      </div>
+    </section>
+
+    <!-- 2 · Il Geco Zen -->
+    <section class="contrib-card">
+      <div class="contrib-card-header">
+        <div class="contrib-icon">🦎</div>
+        <div class="contrib-title">Il Geco Zen</div>
+        <!-- logo badge rosa -->
+        <div class="contrib-logo-badge" aria-label="Il Geco Zen logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z"/>
+            <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4Z"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Volontariato -->
+    <section class="contrib-card">
+      <div class="contrib-card-header">
+        <div class="contrib-icon">🤝</div>
+        <div class="contrib-title">Volontariato</div>
+      </div>
+    </section>
+
+  </div>
 
   <script>
     const htmlEl = document.documentElement;
