@@ -1105,6 +1105,7 @@
 
     /* ─────────────────────── STATE ─────────────────────── */
     let contacts = [];      // array in real-time da Firebase
+    let skipNextRender = false;
     let unsubNotes = {};    // docId → unsub
     let notesCache = {};    // docId → array note
 
@@ -1160,7 +1161,23 @@
       });
     }
 
+    function renderBestiesOnly() {
+      const bestiesList = document.getElementById('besties-list');
+      const bestiesEmpty = document.getElementById('besties-empty');
+      bestiesList.innerHTML = '';
+      const besties = sortAZ(contacts.filter(c => c.besties));
+      if (besties.length === 0) {
+        bestiesEmpty.style.display = 'block';
+        bestiesList.appendChild(bestiesEmpty);
+      } else {
+        bestiesEmpty.style.display = 'none';
+        besties.forEach(c => bestiesList.appendChild(buildCard(c, 'besties')));
+      }
+    }
+
     function renderContacts(filter = '') {
+      if (skipNextRender) { skipNextRender = false; return; }
+
       const list = document.getElementById('person-list');
       const bestiesList = document.getElementById('besties-list');
       const empty = document.getElementById('empty-state');
@@ -1242,13 +1259,17 @@
       star.addEventListener('click', async e => {
         e.stopPropagation();
         const newVal = !c.besties;
-        // aggiorna subito solo la stella visivamente, senza ricostruire il DOM
+        // aggiorna dato locale
         c.besties = newVal;
         const live = contacts.find(x => x._docId === c._docId);
         if (live) live.besties = newVal;
+        // colora solo la stellina, NON toccare la lista persone
         star.classList.toggle('active', newVal);
         star.title = newVal ? 'Rimuovi dai Besties' : 'Aggiungi ai Besties';
-        // scrivi su Firestore — il listener Firebase aggiornerà entrambe le liste
+        // aggiorna solo la tab besties
+        renderBestiesOnly();
+        // blocca il re-render completo che verrebbe dal listener Firestore
+        skipNextRender = true;
         await updateContactDoc(c._docId, { besties: newVal });
       });
 
@@ -1491,18 +1512,18 @@
 
       // bind actions
       detailBody.querySelector('.btn-star-toggle').addEventListener('click', async function () {
-        // Legge lo stato attuale dal bottone stesso (evita closure stale su c)
         const btn = this;
         const isNowBesties = btn.textContent.includes('Rimuovi');
         const newVal = !isNowBesties;
-        // Aggiorna ottimisticamente l'oggetto in contacts[]
+        // aggiorna dato locale
         const live = contacts.find(x => x._docId === c._docId);
         if (live) live.besties = newVal;
-        // Aggiorna il testo del bottone subito
+        // aggiorna testo bottone nel modal
         btn.textContent = newVal ? '★ Rimuovi Besties' : '☆ Besties';
-        // Ridisegna le liste (persone + besties)
-        renderContacts(document.getElementById('search-input').value);
-        // Scrivi su Firestore (il subscriber aggiornerà contacts[] definitivamente)
+        // aggiorna solo la tab besties, NON tutta la lista persone
+        renderBestiesOnly();
+        // blocca il re-render completo dal listener Firestore
+        skipNextRender = true;
         await updateContactDoc(c._docId, { besties: newVal });
       });
 
