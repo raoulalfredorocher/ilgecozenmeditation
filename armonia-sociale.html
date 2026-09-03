@@ -1106,6 +1106,7 @@
     /* ─────────────────────── STATE ─────────────────────── */
     let contacts = [];      // array in real-time da Firebase
     let skipNextRender = false;
+    const bestiesOverride = {};   // docId → true/false, fonte di verità locale per besties
     let unsubNotes = {};    // docId → unsub
     let notesCache = {};    // docId → array note
 
@@ -1259,18 +1260,18 @@
       star.addEventListener('click', async e => {
         e.stopPropagation();
         const newVal = !c.besties;
-        // aggiorna dato locale
+        // salva override locale — resiste ai re-render del listener
+        bestiesOverride[c._docId] = newVal;
         c.besties = newVal;
         const live = contacts.find(x => x._docId === c._docId);
         if (live) live.besties = newVal;
-        // colora solo la stellina, NON toccare la lista persone
         star.classList.toggle('active', newVal);
         star.title = newVal ? 'Rimuovi dai Besties' : 'Aggiungi ai Besties';
-        // aggiorna solo la tab besties
         renderBestiesOnly();
-        // blocca il re-render completo che verrebbe dal listener Firestore
-        skipNextRender = true;
+        // scrivi su Firestore
         await updateContactDoc(c._docId, { besties: newVal });
+        // ora Firestore ha il valore corretto, rimuovi override
+        delete bestiesOverride[c._docId];
       });
 
       card.appendChild(av);
@@ -1283,13 +1284,10 @@
 
     /* ─────────────────────── FIREBASE SUBSCRIBE ─────────────────────── */
     subscribeCRM(list => {
-      if (skipNextRender) {
-        // Aggiorna contacts[] preservando i valori locali già modificati (es. besties)
-        list.forEach(incoming => {
-          const local = contacts.find(x => x._docId === incoming._docId);
-          if (local) Object.assign(incoming, { besties: local.besties });
-        });
-      }
+      // Applica sempre i valori locali di besties (override rispetto a Firestore)
+      list.forEach(c => {
+        if (c._docId in bestiesOverride) c.besties = bestiesOverride[c._docId];
+      });
       contacts = list;
       renderContacts(document.getElementById('search-input').value);
       // Se il modal dettaglio è aperto aggiorna solo l'header del nome
@@ -1523,16 +1521,13 @@
         const btn = this;
         const isNowBesties = btn.textContent.includes('Rimuovi');
         const newVal = !isNowBesties;
-        // aggiorna dato locale
+        bestiesOverride[c._docId] = newVal;
         const live = contacts.find(x => x._docId === c._docId);
         if (live) live.besties = newVal;
-        // aggiorna testo bottone nel modal
         btn.textContent = newVal ? '★ Rimuovi Besties' : '☆ Besties';
-        // aggiorna solo la tab besties, NON tutta la lista persone
         renderBestiesOnly();
-        // blocca il re-render completo dal listener Firestore
-        skipNextRender = true;
         await updateContactDoc(c._docId, { besties: newVal });
+        delete bestiesOverride[c._docId];
       });
 
       detailBody.querySelector('.btn-edit-action').addEventListener('click', () => {
