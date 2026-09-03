@@ -219,9 +219,20 @@
     .interaction-item {
       font-size: .68rem; line-height: 1.4; color: var(--text);
       background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-      padding: 6px 8px; position: relative;
+      padding: 6px 8px; position: relative; display: flex; flex-direction: column; gap: 3px;
     }
-    .interaction-date { font-size: .54rem; color: var(--muted); margin-bottom: 2px; }
+    .interaction-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .interaction-date { font-size: .54rem; color: var(--muted); }
+    .interaction-acts { display: flex; gap: 6px; }
+    .btn-entry-act {
+      background: none; border: none; font-size: .65rem; cursor: pointer;
+      color: var(--muted); padding: 1px 4px; border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .btn-entry-act:hover { background: var(--surface); color: var(--text); }
+    .btn-entry-act.del:hover { color: var(--red); }
 
     .card-actions {
       display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border);
@@ -496,11 +507,11 @@
     </div>
   </div>
 
-  <!-- MODAL: AGGIUNGI INTERAZIONE / NOTA -->
+  <!-- MODAL: AGGIUNGI / MODIFICA INTERAZIONE -->
   <div class="modal-overlay" id="interaction-modal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">NUOVA INTERAZIONE / SCOPERTA</div>
+      <div class="modal-title" id="interaction-modal-title">NUOVA INTERAZIONE / SCOPERTA</div>
       <div style="font-size:.72rem; color:var(--muted); text-align:center;" id="interaction-contact-name"></div>
 
       <div class="form-group">
@@ -550,6 +561,7 @@
     let allContacts = [];
     let currentEditId = null;
     let currentInteractionContactId = null;
+    let currentInteractionEntryId = null;
     let tempTags = [];
     let tempAvatarBase64 = '';
     let currentScreen = 'crm'; // 'crm' | 'besties'
@@ -786,12 +798,15 @@
     });
 
     // ─── MODALE INTERAZIONI / MEMORIE ─────────────────────────────────────────
+    const interactionModalTitle = document.getElementById('interaction-modal-title');
     btnCloseInteraction.addEventListener('click', () => interactionModal.classList.remove('open'));
 
-    function openInteractionModal(contact) {
+    function openInteractionModal(contact, entry = null) {
       currentInteractionContactId = contact._docId;
-      interactionContactName.textContent = `Per: ${contact.nome} ${contact.cognome || ''}`;
-      inpInteractionText.value = '';
+      currentInteractionEntryId = entry ? entry.id : null;
+      interactionModalTitle.textContent = entry ? 'MODIFICA MEMORIA' : 'NUOVA INTERAZIONE / SCOPERTA';
+      interactionContactName.textContent = `Per: ${contact.nome} ${contact.cognome || ''}`.trim();
+      inpInteractionText.value = entry ? entry.testo : '';
       interactionModal.classList.add('open');
       inpInteractionText.focus();
     }
@@ -806,22 +821,49 @@
       const contact = allContacts.find(c => c._docId === currentInteractionContactId);
       if (!contact) return;
 
-      const interazioni = Array.isArray(contact.interazioni) ? [...contact.interazioni] : [];
-      interazioni.unshift({
-        id: Date.now().toString(),
-        data: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' }),
-        testo: text
-      });
+      let interazioni = Array.isArray(contact.interazioni) ? [...contact.interazioni] : [];
+
+      if (currentInteractionEntryId) {
+        // Modifica entry esistente
+        interazioni = interazioni.map(it => {
+          if (it.id === currentInteractionEntryId) {
+            return { ...it, testo: text };
+          }
+          return it;
+        });
+      } else {
+        // Nuova entry
+        interazioni.unshift({
+          id: Date.now().toString(),
+          data: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' }),
+          testo: text
+        });
+      }
 
       try {
         await updateContactDoc(currentInteractionContactId, { interazioni });
-        showToast('Memoria salvata!');
+        showToast(currentInteractionEntryId ? 'Memoria aggiornata!' : 'Memoria salvata!');
         interactionModal.classList.remove('open');
       } catch (err) {
         console.error(err);
-        showToast('Errore nel salvare la memoria');
+        showToast('Errore nel salvataggio della memoria');
       }
     });
+
+    async function deleteInteractionEntry(contactId, entryId) {
+      if (!confirm('Vuoi eliminare questa memoria?')) return;
+      const contact = allContacts.find(c => c._docId === contactId);
+      if (!contact) return;
+
+      const interazioni = (contact.interazioni || []).filter(it => it.id !== entryId);
+      try {
+        await updateContactDoc(contactId, { interazioni });
+        showToast('Memoria eliminata');
+      } catch (err) {
+        console.error(err);
+        showToast('Errore durante l\'eliminazione');
+      }
+    }
 
     // ─── STELLINA BESTIES (MAX 10) ────────────────────────────────────────────
     async function toggleBestie(contactId) {
@@ -999,11 +1041,17 @@
         });
       }
 
-      // Ordinamento alfabetico per cognome, poi per nome
+      // Ordinamento alfabetico per nome completo (o cognome se presente)
       filtered.sort((a, b) => {
-        const nameA = `${(a.cognome || '').trim()} ${(a.nome || '').trim()}`.toLowerCase();
-        const nameB = `${(b.cognome || '').trim()} ${(b.nome || '').trim()}`.toLowerCase();
-        return nameA.localeCompare(nameB, 'it', { sensitivity: 'base' });
+        const cognomeA = (a.cognome || '').trim().toLowerCase();
+        const nomeA = (a.nome || '').trim().toLowerCase();
+        const keyA = cognomeA ? `${cognomeA} ${nomeA}` : nomeA;
+
+        const cognomeB = (b.cognome || '').trim().toLowerCase();
+        const nomeB = (b.nome || '').trim().toLowerCase();
+        const keyB = cognomeB ? `${cognomeB} ${nomeB}` : nomeB;
+
+        return keyA.localeCompare(keyB, 'it', { sensitivity: 'base' });
       });
 
       return filtered;
@@ -1066,13 +1114,19 @@
              <div class="interaction-title">
                <span>Memorie &amp; Scoperte (${interazioni.length})</span>
              </div>
-             ${interazioni.slice(0, 3).map(it => `
-               <div class="interaction-item">
-                 <div class="interaction-date">📅 ${escapeHtml(it.data)}</div>
-                 <div>${escapeHtml(it.testo)}</div>
+             ${interazioni.slice(0, 5).map(it => `
+               <div class="interaction-item" data-entry-id="${escapeHtml(it.id)}">
+                 <div class="interaction-header">
+                   <div class="interaction-date">📅 ${escapeHtml(it.data || '')}</div>
+                   <div class="interaction-acts">
+                     <button class="btn-entry-act" data-entry-action="edit" title="Modifica memoria">✏️</button>
+                     <button class="btn-entry-act del" data-entry-action="delete" title="Elimina memoria">🗑️</button>
+                   </div>
+                 </div>
+                 <div class="interaction-text">${escapeHtml(it.testo || '')}</div>
                </div>
              `).join('')}
-             ${interazioni.length > 3 ? `<div style="font-size:.56rem;color:var(--muted);text-align:center;">+ altre ${interazioni.length - 3} note</div>` : ''}
+             ${interazioni.length > 5 ? `<div style="font-size:.56rem;color:var(--muted);text-align:center;">+ altre ${interazioni.length - 5} note</div>` : ''}
            </div>`
         : '';
 
@@ -1129,6 +1183,28 @@
       card.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
         e.stopPropagation();
         deleteContact(contact._docId, fullName);
+      });
+
+      // Event Listeners sulle singole entry/memorie
+      card.querySelectorAll('.interaction-item').forEach(itemEl => {
+        const entryId = itemEl.getAttribute('data-entry-id');
+        const entry = interazioni.find(it => it.id === entryId);
+
+        const btnEditEntry = itemEl.querySelector('[data-entry-action="edit"]');
+        if (btnEditEntry && entry) {
+          btnEditEntry.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openInteractionModal(contact, entry);
+          });
+        }
+
+        const btnDeleteEntry = itemEl.querySelector('[data-entry-action="delete"]');
+        if (btnDeleteEntry && entry) {
+          btnDeleteEntry.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteInteractionEntry(contact._docId, entry.id);
+          });
+        }
       });
 
       return card;
