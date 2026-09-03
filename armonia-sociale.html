@@ -1537,8 +1537,14 @@
 
       detailBody.querySelector('.btn-delete').addEventListener('click', async () => {
         if (!confirm(`Eliminare ${c.nome || c.cognome}?`)) return;
-        await deleteContactDoc(c._docId);
+        // rimuovi subito dalla lista locale senza aspettare Firestore
+        const idx = contacts.findIndex(x => x._docId === c._docId);
+        if (idx !== -1) contacts.splice(idx, 1);
+        renderContacts(document.getElementById('search-input').value);
         closeDetail();
+        // blocca il re-render del listener (la lista è già aggiornata)
+        skipNextRender = true;
+        await deleteContactDoc(c._docId);
       });
 
       detailBody.querySelector('.btn-note-save').addEventListener('click', () => saveNote(c._docId));
