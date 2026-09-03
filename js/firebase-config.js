@@ -793,3 +793,32 @@ export async function deleteIspirazioneItem(docId) {
   if (!ref) return;
   await deleteDoc(ref);
 }
+
+// ─── Armonia Sociale (Contatti & CRM) ─────────────────────────────────────────
+
+export function subscribeContacts(callback) {
+  const col = userCol('crm_contacts');
+  if (!col) { callback([]); return () => {}; }
+  return onSnapshot(query(col, orderBy('cognome', 'asc')), snap => {
+    callback(snap.docs.map(d => ({ _docId: d.id, ...d.data() })));
+  });
+}
+
+export async function addContactDoc(data) {
+  const col = userCol('crm_contacts');
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+
+export async function updateContactDoc(docId, fields) {
+  const ref = userDoc('crm_contacts', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+export async function deleteContactDoc(docId) {
+  const ref = userDoc('crm_contacts', docId);
+  if (!ref) return;
+  await deleteDoc(ref);
+}

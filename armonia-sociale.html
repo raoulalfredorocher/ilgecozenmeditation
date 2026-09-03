@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Armonia Sociale"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Armonia Sociale</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html[data-theme="light"] {
+      --bg:       #f7f4f9;
+      --surface:  #ede8f4;
+      --card:     #ffffff;
+      --border:   #d4cee0;
+      --text:     #1e2a38;
+      --muted:    #876a6a;
+      --gold:     #25739E;
+      --primary:  #e05080;
+      --accent:   #F5A9BC;   /* rosa icona + */
+      --accent2:  #74C7E1;
+      --red:      #c04060;
+      --star:     #f59e0b;
+      --input-bg: #ffffff;
+    }
+    html[data-theme="dark"] {
+      --bg:       #111820;
+      --surface:  #1a2230;
+      --card:     #1e2a38;
+      --border:   #2e3f52;
+      --text:     #e8eef4;
+      --muted:    #a89090;
+      --gold:     #74C7E1;
+      --primary:  #f8719d;
+      --accent:   #F5A9BC;
+      --accent2:  #9DDDE8;
+      --red:      #e05070;
+      --star:     #fbbf24;
+      --input-bg: #1a2230;
+    }
+
+    html { overscroll-behavior: none; }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex; flex-direction: column; align-items: center;
+      padding-top: calc(env(safe-area-inset-top, 0px) + 115px);
+      padding-left: 16px; padding-right: 16px;
+      padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
+      max-width: 440px; margin: 0 auto; min-height: 100dvh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-left { display: flex; align-items: center; gap: 6px; }
+    .btn-header {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .55rem;
+      letter-spacing: .1em; padding: 5px 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      width: 50px; text-decoration: none; transition: color .2s, border-color .2s;
+    }
+    .btn-header:active { color: var(--gold); border-color: var(--gold); }
+    .header-center {
+      flex: 1; text-align: center; display: flex; flex-direction: column;
+      align-items: center; gap: 2px;
+    }
+    .header-icon { font-size: 1.6rem; line-height: 1; }
+    .app-title { font-size: .92rem; letter-spacing: .14em; color: var(--primary); font-weight: 700; }
+    .app-sub { font-size: .46rem; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+    .theme-toggle {
+      background: none; border: 1.5px solid var(--border); border-radius: 20px;
+      cursor: pointer; width: 52px; height: 28px; position: relative; flex-shrink: 0;
+    }
+    .theme-toggle .knob {
+      position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent); transition: transform .3s;
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+
+    /* ── TAB BAR ── */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--card); border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 200; overflow: visible;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; color: var(--muted); transition: color .2s;
+      padding: 8px 4px; height: 100%; font-family: inherit;
+      font-size: .46rem; letter-spacing: .12em; text-transform: uppercase;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.tab-active { color: var(--primary); font-weight: 700; }
+    .tab-icon { width: 22px; height: 22px; flex-shrink: 0; }
+    .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1; }
+
+    /* Central Pink Add Button */
+    .tab-center {
+      flex: 1.1; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 8px; gap: 4px; overflow: visible; position: relative;
+    }
+    .tab-center-circle {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transform: translateY(-24px);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(245, 169, 188, .6);
+      transition: background .2s, transform .12s; border: none; cursor: pointer;
+    }
+    .tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
+
+    /* ── SCREENS ── */
+    .screen { width: 100%; display: none; flex-direction: column; gap: 14px; }
+    .screen.active { display: flex; }
+
+    /* ── SEARCH BAR & STATS ── */
+    .search-box {
+      width: 100%; position: relative; display: flex; align-items: center;
+    }
+    .search-input {
+      width: 100%; background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 11px 40px 11px 14px;
+      font-size: .84rem; font-family: inherit; color: var(--text); outline: none;
+      transition: border-color .2s;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .search-icon-right {
+      position: absolute; right: 14px; color: var(--muted); pointer-events: none;
+    }
+    .sub-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .62rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase;
+      padding: 0 4px;
+    }
+
+    /* ── CONTACT CARD ── */
+    .contact-list { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .contact-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column;
+      gap: 10px; transition: border-color .2s, transform .12s; position: relative;
+    }
+    .contact-card.is-bestie { border-color: var(--star); background: rgba(245, 158, 11, .03); }
+    .contact-header { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 52px; height: 52px; border-radius: 50%; object-fit: cover;
+      background: var(--surface); border: 1.5px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 700; color: var(--primary);
+    }
+    .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .contact-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .contact-name {
+      font-size: .92rem; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 6px; line-height: 1.2;
+    }
+    .contact-sub {
+      font-size: .66rem; color: var(--muted); line-height: 1.3;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .btn-star {
+      background: none; border: none; font-size: 1.45rem; cursor: pointer;
+      color: var(--border); transition: transform .15s, color .2s;
+      display: flex; align-items: center; justify-content: center; padding: 4px;
+    }
+    .btn-star.active { color: var(--star); }
+    .btn-star:active { transform: scale(1.25); }
+
+    .tags-row { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag-badge {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2px 8px; font-size: .56rem;
+      color: var(--text); font-weight: 500;
+    }
+
+    .contact-details {
+      background: var(--surface); border-radius: 10px; padding: 8px 10px;
+      display: flex; flex-direction: column; gap: 4px; font-size: .68rem;
+    }
+    .detail-item { display: flex; align-items: center; gap: 6px; color: var(--text); }
+    .detail-item a { color: var(--gold); text-decoration: none; word-break: break-all; }
+    .detail-label { color: var(--muted); font-size: .58rem; text-transform: uppercase; width: 68px; flex-shrink: 0; }
+
+    /* Interaction Log accordion / timeline */
+    .interactions-box {
+      border-top: 1px dashed var(--border); padding-top: 8px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .interaction-title {
+      font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .interaction-item {
+      font-size: .68rem; line-height: 1.4; color: var(--text);
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 6px 8px; position: relative;
+    }
+    .interaction-date { font-size: .54rem; color: var(--muted); margin-bottom: 2px; }
+
+    .card-actions {
+      display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border);
+    }
+    .btn-act {
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); font-family: inherit; font-size: .62rem; padding: 4px 10px;
+      cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color .2s, border-color .2s;
+    }
+    .btn-act:active { color: var(--gold); border-color: var(--gold); }
+    .btn-act.danger:active { color: var(--red); border-color: var(--red); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 40px 10px; color: var(--muted);
+      font-size: .75rem; letter-spacing: .08em; line-height: 1.8;
+    }
+
+    /* ── MODALS (BottomSheet) ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(30, 42, 56, .55);
+      display: none; align-items: flex-end; justify-content: center;
+      z-index: 300; padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-sheet {
+      width: 100%; max-width: 440px; background: var(--card);
+      border-radius: 24px 24px 0 0; padding: 20px 18px 28px;
+      display: flex; flex-direction: column; gap: 12px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-handle {
+      width: 36px; height: 4px; border-radius: 2px;
+      background: var(--border); margin: 0 auto 4px; flex-shrink: 0;
+    }
+    .modal-title {
+      font-size: .78rem; letter-spacing: .2em; color: var(--primary);
+      text-transform: uppercase; text-align: center; font-weight: 700;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-label { font-size: .56rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .form-input {
+      width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 12px; font-size: .82rem;
+      font-family: inherit; color: var(--text); outline: none;
+    }
+    .form-input:focus { border-color: var(--primary); }
+
+    /* Tag Input Component */
+    .tag-container {
+      display: flex; flex-wrap: wrap; gap: 6px; background: var(--input-bg);
+      border: 1px solid var(--border); border-radius: 10px; padding: 6px 8px; min-height: 40px;
+    }
+    .tag-container .tag-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 2px 7px; font-size: .65rem;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .tag-item .tag-del { cursor: pointer; color: var(--muted); font-size: .75rem; font-weight: bold; }
+    .tag-input-inline {
+      border: none; outline: none; background: transparent; font-size: .78rem;
+      font-family: inherit; color: var(--text); flex: 1; min-width: 80px;
+    }
+
+    /* Photo Upload */
+    .avatar-upload-wrap { display: flex; align-items: center; gap: 14px; margin: 4px 0; }
+    .avatar-preview {
+      width: 62px; height: 62px; border-radius: 50%; object-fit: cover;
+      background: var(--surface); border: 1.5px dashed var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: var(--muted); flex-shrink: 0; overflow: hidden;
+    }
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-upload-btn {
+      flex: 1; background: none; border: 1.5px dashed var(--border);
+      border-radius: 10px; color: var(--muted); font-size: .7rem;
+      font-family: inherit; padding: 10px; cursor: pointer; text-align: center;
+    }
+    .avatar-upload-btn:active { border-color: var(--primary); color: var(--primary); }
+    #avatar-file-input, #vcard-file-input { display: none; }
+
+    .btn-submit {
+      width: 100%; background: var(--primary); color: #fff;
+      border: none; border-radius: 14px; padding: 13px; font-size: .82rem;
+      font-family: inherit; letter-spacing: .14em; cursor: pointer; font-weight: 600;
+      margin-top: 6px;
+    }
+    .btn-submit:active { opacity: .88; }
+    .btn-cancel {
+      width: 100%; background: none; border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px; font-size: .76rem;
+      font-family: inherit; color: var(--muted); letter-spacing: .1em; cursor: pointer;
+    }
+
+    /* VCard Import Box in Header/Modal */
+    .banner-vcard {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 12px; display: flex;
+      align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .banner-text { font-size: .65rem; color: var(--text); }
+    .banner-btn {
+      background: var(--gold); color: #fff; border: none;
+      border-radius: 8px; padding: 6px 10px; font-size: .62rem;
+      cursor: pointer; font-family: inherit; letter-spacing: .06em; flex-shrink: 0;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed; top: 75px; left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1.5px solid var(--primary);
+      box-shadow: 0 4px 14px rgba(0,0,0,.15); border-radius: 20px;
+      padding: 8px 16px; font-size: .72rem; color: var(--text);
+      z-index: 500; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(5px); }
+  </style>
+
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
+</head>
+<body style="visibility:hidden">
+  <script type="module" src="js/auth-guard.js"></script>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <a class="btn-header" href="index.html" aria-label="Torna indietro al TAO">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/>
+          <path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/>
+          <circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/>
+          <circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>TAO</span>
+      </a>
+      <button class="btn-header" id="btn-import-vcard" title="Importa file .vcf da iPhone">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>VCARD</span>
+      </button>
+      <input type="file" id="vcard-file-input" accept=".vcf,text/vcard"/>
+    </div>
+
+    <div class="header-center">
+      <div class="header-icon">🤝</div>
+      <div class="app-title">ARMONIA SOCIALE</div>
+      <div class="app-sub">CRM PERSONALE &amp; BESTIES</div>
+    </div>
+
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast">Notifica</div>
+
+  <!-- SCREEN 1: CRM PERSONALE -->
+  <section class="screen active" id="screen-crm">
+    <!-- Cerca Contatti -->
+    <div class="search-box">
+      <input type="text" id="search-input" class="search-input" placeholder="Cerca per nome o cognome (es. 'al')..." autocomplete="off"/>
+      <svg class="search-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </div>
+
+    <div class="sub-bar">
+      <span id="contacts-count">0 CONTATTI</span>
+      <span>ORDINE ALFABETICO</span>
+    </div>
+
+    <div class="contact-list" id="crm-contact-list">
+      <!-- Cards renderizzate dinamicamente -->
+    </div>
+    <div id="crm-empty" class="empty-state" style="display:none;">
+      Nessun contatto trovato.<br/>Tocca <strong>+</strong> al centro in basso per crearne uno o importa un file vCard.
+    </div>
+  </section>
+
+  <!-- SCREEN 2: BESTIES (Max 10) -->
+  <section class="screen" id="screen-besties">
+    <div class="sub-bar">
+      <span id="besties-count">0 / 10 BESTIES</span>
+      <span>⭐ I TUOI PIÙ CARI</span>
+    </div>
+
+    <div class="contact-list" id="besties-contact-list">
+      <!-- Cards renderizzate dinamicamente -->
+    </div>
+    <div id="besties-empty" class="empty-state" style="display:none;">
+      Nessun Bestie selezionato.<br/>Tocca la stellina ⭐ su qualsiasi contatto nel CRM per aggiungerlo qui (fino a 10).
+    </div>
+  </section>
+
+  <!-- MODAL: CREA / MODIFICA CONTATTO -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-title">NUOVO CONTATTO</div>
+
+      <!-- Avatar Photo -->
+      <div class="avatar-upload-wrap">
+        <div class="avatar-preview" id="modal-avatar-preview">👤</div>
+        <button type="button" class="avatar-upload-btn" id="btn-upload-photo">📷 Carica Foto Contatto</button>
+        <input type="file" id="avatar-file-input" accept="image/*"/>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nome *</label>
+          <input type="text" id="inp-nome" class="form-input" placeholder="es. Marco" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cognome</label>
+          <input type="text" id="inp-cognome" class="form-input" placeholder="es. Rossi"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Cellulare</label>
+          <input type="tel" id="inp-cell" class="form-input" placeholder="+39 333 ..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Compleanno</label>
+          <input type="date" id="inp-compleanno" class="form-input"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="inp-mail" class="form-input" placeholder="m.rossi@email.com"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Paese di residenza</label>
+        <input type="text" id="inp-paese" class="form-input" placeholder="es. Italia, Milano"/>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Instagram (@)</label>
+          <input type="text" id="inp-instagram" class="form-input" placeholder="username"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">LinkedIn</label>
+          <input type="text" id="inp-linkedin" class="form-input" placeholder="profilo/link"/>
+        </div>
+      </div>
+
+      <!-- Interessi / Tag -->
+      <div class="form-group">
+        <label class="form-label">Interessi (scrivi e premi Invio)</label>
+        <div class="tag-container" id="modal-tags-container">
+          <input type="text" id="inp-tag" class="tag-input-inline" placeholder="+ Aggiungi interesse..."/>
+        </div>
+      </div>
+
+      <button type="button" class="btn-submit" id="btn-save-contact">SALVA CONTATTO</button>
+      <button type="button" class="btn-cancel" id="btn-close-modal">ANNULLA</button>
+    </div>
+  </div>
+
+  <!-- MODAL: AGGIUNGI INTERAZIONE / NOTA -->
+  <div class="modal-overlay" id="interaction-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">NUOVA INTERAZIONE / SCOPERTA</div>
+      <div style="font-size:.72rem; color:var(--muted); text-align:center;" id="interaction-contact-name"></div>
+
+      <div class="form-group">
+        <label class="form-label">Cosa hai scoperto o condiviso?</label>
+        <textarea id="inp-interaction-text" class="form-input" style="min-height:90px; resize:none;" placeholder="es. Ama il tè matcha, ha iniziato un corso di scacchi..."></textarea>
+      </div>
+
+      <button type="button" class="btn-submit" id="btn-save-interaction">SALVA MEMORIA</button>
+      <button type="button" class="btn-cancel" id="btn-close-interaction">ANNULLA</button>
+    </div>
+  </div>
+
+  <!-- TAB BAR BOTTOM -->
+  <nav class="tab-bar">
+    <!-- 1: CRM Personale -->
+    <button class="tab-btn tab-active" id="tab-crm" data-screen="crm">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span class="tab-label">CRM Personale</span>
+    </button>
+
+    <!-- Centro: Icona Rosa con + -->
+    <div class="tab-center">
+      <button class="tab-center-circle" id="btn-open-create" aria-label="Aggiungi nuovo contatto">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </button>
+      <span class="tab-label" style="color:var(--muted)">Nuovo</span>
+    </div>
+
+    <!-- 3: Besties -->
+    <button class="tab-btn" id="tab-besties" data-screen="besties">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+      <span class="tab-label">Besties</span>
+    </button>
+  </nav>
+
+  <!-- SCRIPT FIREBASE E LOGICA CRM -->
+  <script type="module">
+    import { waitForAuth, subscribeContacts, addContactDoc, updateContactDoc, deleteContactDoc } from './js/firebase-config.js';
+
+    // ─── STATO LOCALE ──────────────────────────────────────────────────────────
+    let allContacts = [];
+    let currentEditId = null;
+    let currentInteractionContactId = null;
+    let tempTags = [];
+    let tempAvatarBase64 = '';
+    let currentScreen = 'crm'; // 'crm' | 'besties'
+
+    // ─── ELEMENTI DOM ──────────────────────────────────────────────────────────
+    const searchInput = document.getElementById('search-input');
+    const crmListEl = document.getElementById('crm-contact-list');
+    const bestiesListEl = document.getElementById('besties-contact-list');
+    const crmEmptyEl = document.getElementById('crm-empty');
+    const bestiesEmptyEl = document.getElementById('besties-empty');
+    const contactsCountEl = document.getElementById('contacts-count');
+    const bestiesCountEl = document.getElementById('besties-count');
+
+    // Modale Contatto
+    const contactModal = document.getElementById('contact-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const inpNome = document.getElementById('inp-nome');
+    const inpCognome = document.getElementById('inp-cognome');
+    const inpCell = document.getElementById('inp-cell');
+    const inpCompleanno = document.getElementById('inp-compleanno');
+    const inpMail = document.getElementById('inp-mail');
+    const inpPaese = document.getElementById('inp-paese');
+    const inpInstagram = document.getElementById('inp-instagram');
+    const inpLinkedin = document.getElementById('inp-linkedin');
+    const modalAvatarPreview = document.getElementById('modal-avatar-preview');
+    const avatarFileInput = document.getElementById('avatar-file-input');
+    const btnUploadPhoto = document.getElementById('btn-upload-photo');
+    const modalTagsContainer = document.getElementById('modal-tags-container');
+    const inpTag = document.getElementById('inp-tag');
+    const btnSaveContact = document.getElementById('btn-save-contact');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+
+    // Modale Interazione
+    const interactionModal = document.getElementById('interaction-modal');
+    const interactionContactName = document.getElementById('interaction-contact-name');
+    const inpInteractionText = document.getElementById('inp-interaction-text');
+    const btnSaveInteraction = document.getElementById('btn-save-interaction');
+    const btnCloseInteraction = document.getElementById('btn-close-interaction');
+
+    // VCard
+    const btnImportVcard = document.getElementById('btn-import-vcard');
+    const vcardFileInput = document.getElementById('vcard-file-input');
+
+    // Tabs
+    const tabCrm = document.getElementById('tab-crm');
+    const tabBesties = document.getElementById('tab-besties');
+    const btnOpenCreate = document.getElementById('btn-open-create');
+    const screenCrm = document.getElementById('screen-crm');
+    const screenBesties = document.getElementById('screen-besties');
+
+    // Toast
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    // ─── TEMA LIGHT / DARK ─────────────────────────────────────────────────────
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeKnob = document.getElementById('theme-knob');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
+
+    function applyTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      themeKnob.textContent = t === 'dark' ? '🌙' : '☀️';
+      localStorage.setItem('theme', t);
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // ─── GESTIONE TABS ─────────────────────────────────────────────────────────
+    tabCrm.addEventListener('click', () => switchScreen('crm'));
+    tabBesties.addEventListener('click', () => switchScreen('besties'));
+
+    function switchScreen(screen) {
+      currentScreen = screen;
+      if (screen === 'crm') {
+        tabCrm.classList.add('tab-active');
+        tabBesties.classList.remove('tab-active');
+        screenCrm.classList.add('active');
+        screenBesties.classList.remove('active');
+      } else {
+        tabBesties.classList.add('tab-active');
+        tabCrm.classList.remove('tab-active');
+        screenBesties.classList.add('active');
+        screenCrm.classList.remove('active');
+      }
+      render();
+    }
+
+    // ─── TAGS INPUT COMPONENT ──────────────────────────────────────────────────
+    function renderTags() {
+      // Rimuovi tag esistenti tranne l'input inline
+      const items = modalTagsContainer.querySelectorAll('.tag-item');
+      items.forEach(el => el.remove());
+
+      tempTags.forEach((tag, idx) => {
+        const span = document.createElement('span');
+        span.className = 'tag-item';
+        span.innerHTML = `${escapeHtml(tag)} <span class="tag-del" data-idx="${idx}">&times;</span>`;
+        modalTagsContainer.insertBefore(span, inpTag);
+      });
+    }
+
+    modalTagsContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('tag-del')) {
+        const idx = parseInt(e.target.getAttribute('data-idx'), 10);
+        tempTags.splice(idx, 1);
+        renderTags();
+      } else {
+        inpTag.focus();
+      }
+    });
+
+    inpTag.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const val = inpTag.value.trim().replace(/^,|,$/g, '');
+        if (val && !tempTags.includes(val)) {
+          tempTags.push(val);
+          renderTags();
+        }
+        inpTag.value = '';
+      }
+    });
+
+    // ─── FOTO AVATAR UPLOAD CON COMPRESSIONE ──────────────────────────────────
+    btnUploadPhoto.addEventListener('click', () => avatarFileInput.click());
+    avatarFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 180;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          tempAvatarBase64 = canvas.toDataURL('image/jpeg', 0.75);
+          modalAvatarPreview.innerHTML = `<img src="${tempAvatarBase64}" alt="Foto"/>`;
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ─── MODALE APERTURA / CHIUSURA ───────────────────────────────────────────
+    btnOpenCreate.addEventListener('click', () => openContactModal());
+    btnCloseModal.addEventListener('click', () => contactModal.classList.remove('open'));
+
+    function openContactModal(contact = null) {
+      currentEditId = contact ? contact._docId : null;
+      modalTitle.textContent = contact ? 'MODIFICA CONTATTO' : 'NUOVO CONTATTO';
+
+      inpNome.value = contact?.nome || '';
+      inpCognome.value = contact?.cognome || '';
+      inpCell.value = contact?.cellulare || '';
+      inpCompleanno.value = contact?.compleanno || '';
+      inpMail.value = contact?.email || '';
+      inpPaese.value = contact?.paese || '';
+      inpInstagram.value = contact?.instagram || '';
+      inpLinkedin.value = contact?.linkedin || '';
+
+      tempTags = Array.isArray(contact?.interessi) ? [...contact.interessi] : [];
+      renderTags();
+
+      tempAvatarBase64 = contact?.foto || '';
+      if (tempAvatarBase64) {
+        modalAvatarPreview.innerHTML = `<img src="${tempAvatarBase64}" alt="Foto"/>`;
+      } else {
+        modalAvatarPreview.innerHTML = '👤';
+      }
+
+      contactModal.classList.add('open');
+      inpNome.focus();
+    }
+
+    // ─── SALVATAGGIO CONTATTO (FIREBASE) ──────────────────────────────────────
+    btnSaveContact.addEventListener('click', async () => {
+      const nome = inpNome.value.trim();
+      const cognome = inpCognome.value.trim();
+
+      if (!nome) {
+        showToast('Inserisci almeno il nome!');
+        inpNome.focus();
+        return;
+      }
+
+      const contactData = {
+        nome,
+        cognome,
+        cellulare: inpCell.value.trim(),
+        compleanno: inpCompleanno.value,
+        email: inpMail.value.trim(),
+        paese: inpPaese.value.trim(),
+        instagram: inpInstagram.value.trim().replace(/^@/, ''),
+        linkedin: inpLinkedin.value.trim(),
+        interessi: tempTags,
+        foto: tempAvatarBase64,
+        updatedAt: Date.now()
+      };
+
+      try {
+        if (currentEditId) {
+          await updateContactDoc(currentEditId, contactData);
+          showToast('Contatto aggiornato con successo');
+        } else {
+          contactData.isBestie = false;
+          contactData.interazioni = [];
+          await addContactDoc(contactData);
+          showToast('Contatto aggiunto al CRM');
+        }
+        contactModal.classList.remove('open');
+      } catch (err) {
+        console.error('Errore salvataggio contatto:', err);
+        showToast('Errore durante il salvataggio');
+      }
+    });
+
+    // ─── MODALE INTERAZIONI / MEMORIE ─────────────────────────────────────────
+    btnCloseInteraction.addEventListener('click', () => interactionModal.classList.remove('open'));
+
+    function openInteractionModal(contact) {
+      currentInteractionContactId = contact._docId;
+      interactionContactName.textContent = `Per: ${contact.nome} ${contact.cognome || ''}`;
+      inpInteractionText.value = '';
+      interactionModal.classList.add('open');
+      inpInteractionText.focus();
+    }
+
+    btnSaveInteraction.addEventListener('click', async () => {
+      const text = inpInteractionText.value.trim();
+      if (!text) {
+        showToast('Scrivi una nota o una memoria');
+        return;
+      }
+
+      const contact = allContacts.find(c => c._docId === currentInteractionContactId);
+      if (!contact) return;
+
+      const interazioni = Array.isArray(contact.interazioni) ? [...contact.interazioni] : [];
+      interazioni.unshift({
+        id: Date.now().toString(),
+        data: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' }),
+        testo: text
+      });
+
+      try {
+        await updateContactDoc(currentInteractionContactId, { interazioni });
+        showToast('Memoria salvata!');
+        interactionModal.classList.remove('open');
+      } catch (err) {
+        console.error(err);
+        showToast('Errore nel salvare la memoria');
+      }
+    });
+
+    // ─── STELLINA BESTIES (MAX 10) ────────────────────────────────────────────
+    async function toggleBestie(contactId) {
+      const contact = allContacts.find(c => c._docId === contactId);
+      if (!contact) return;
+
+      const currentlyBestie = !!contact.isBestie;
+      if (!currentlyBestie) {
+        const bestiesCount = allContacts.filter(c => c.isBestie).length;
+        if (bestiesCount >= 10) {
+          showToast('Hai raggiunto il limite massimo di 10 Besties ⭐');
+          return;
+        }
+      }
+
+      try {
+        await updateContactDoc(contactId, { isBestie: !currentlyBestie });
+        showToast(!currentlyBestie ? '⭐ Aggiunto ai Besties!' : 'Rimosso dai Besties');
+      } catch (err) {
+        console.error(err);
+        showToast('Errore aggiornamento');
+      }
+    }
+
+    // ─── ELIMINA CONTATTO ─────────────────────────────────────────────────────
+    async function deleteContact(contactId, fullName) {
+      if (!confirm(`Sei sicuro di voler eliminare ${fullName}?`)) return;
+      try {
+        await deleteContactDoc(contactId);
+        showToast('Contatto eliminato');
+      } catch (err) {
+        console.error(err);
+        showToast('Errore durante l\'eliminazione');
+      }
+    }
+
+    // ─── VCARD (.VCF) PARSER IPHONE EXPORT ────────────────────────────────────
+    btnImportVcard.addEventListener('click', () => vcardFileInput.click());
+    vcardFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        const vcardContent = evt.target.result;
+        const parsedContacts = parseVCardString(vcardContent);
+        if (!parsedContacts.length) {
+          showToast('Nessun contatto valido trovato nel file vCard');
+          return;
+        }
+
+        let added = 0;
+        for (const c of parsedContacts) {
+          if (c.nome || c.cognome) {
+            await addContactDoc({
+              nome: c.nome || '',
+              cognome: c.cognome || '',
+              cellulare: c.cellulare || '',
+              email: c.email || '',
+              paese: c.paese || '',
+              compleanno: c.compleanno || '',
+              instagram: c.instagram || '',
+              linkedin: c.linkedin || '',
+              interessi: c.interessi || [],
+              foto: c.foto || '',
+              isBestie: false,
+              interazioni: [],
+              createdAt: Date.now()
+            });
+            added++;
+          }
+        }
+        showToast(`Importati con successo ${added} contatti!`);
+        vcardFileInput.value = '';
+      };
+      reader.readAsText(file);
+    });
+
+    function parseVCardString(vcfText) {
+      const rawCards = vcfText.split(/BEGIN:VCARD/i);
+      const results = [];
+
+      for (const card of rawCards) {
+        if (!card.includes('END:VCARD')) continue;
+
+        const lines = card.split(/\r\n|\r|\n/);
+        let nome = '';
+        let cognome = '';
+        let cellulare = '';
+        let email = '';
+        let paese = '';
+        let compleanno = '';
+        let instagram = '';
+        let linkedin = '';
+        let foto = '';
+        let note = '';
+
+        for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].trim();
+          // Gestione linee wrapped (vCard multiline)
+          while (i + 1 < lines.length && (lines[i+1].startsWith(' ') || lines[i+1].startsWith('\t'))) {
+            i++;
+            line += lines[i].trim();
+          }
+
+          if (/^N([;:].*)/i.test(line)) {
+            const val = line.substring(line.indexOf(':') + 1);
+            const parts = val.split(';');
+            cognome = (parts[0] || '').trim();
+            nome = (parts[1] || '').trim();
+          } else if (/^FN([;:].*)/i.test(line) && !nome && !cognome) {
+            const val = line.substring(line.indexOf(':') + 1).trim();
+            const parts = val.split(' ');
+            nome = parts[0] || '';
+            cognome = parts.slice(1).join(' ') || '';
+          } else if (/^TEL/i.test(line)) {
+            if (!cellulare) cellulare = line.substring(line.indexOf(':') + 1).trim();
+          } else if (/^EMAIL/i.test(line)) {
+            if (!email) email = line.substring(line.indexOf(':') + 1).trim();
+          } else if (/^BDAY/i.test(line)) {
+            let b = line.substring(line.indexOf(':') + 1).trim();
+            if (b.length === 8 && /^\d{8}$/.test(b)) {
+              b = `${b.substring(0,4)}-${b.substring(4,6)}-${b.substring(6,8)}`;
+            }
+            compleanno = b;
+          } else if (/^ADR/i.test(line)) {
+            const val = line.substring(line.indexOf(':') + 1);
+            const parts = val.split(';');
+            const city = (parts[3] || '').trim();
+            const country = (parts[6] || '').trim();
+            paese = [city, country].filter(Boolean).join(', ');
+          } else if (/^PHOTO.*ENCODING=b.*:(.*)/i.test(line) || /^PHOTO.*BASE64.*:(.*)/i.test(line)) {
+            const base64Data = line.substring(line.indexOf(':') + 1).trim();
+            foto = base64Data.startsWith('data:') ? base64Data : `data:image/jpeg;base64,${base64Data}`;
+          } else if (/^NOTE/i.test(line)) {
+            note = line.substring(line.indexOf(':') + 1).trim();
+          } else if (/^URL/i.test(line)) {
+            const u = line.substring(line.indexOf(':') + 1).trim();
+            if (u.includes('instagram.com')) instagram = u.split('instagram.com/')[1]?.replace(/\/$/, '') || '';
+            if (u.includes('linkedin.com')) linkedin = u;
+          }
+        }
+
+        if (nome || cognome) {
+          results.push({
+            nome,
+            cognome,
+            cellulare,
+            email,
+            paese,
+            compleanno,
+            instagram,
+            linkedin,
+            foto,
+            interessi: note ? [note] : []
+          });
+        }
+      }
+      return results;
+    }
+
+    // ─── RICERCA E ORDINAMENTO ALFABETICO ─────────────────────────────────────
+    searchInput.addEventListener('input', () => render());
+
+    function getSortedAndFilteredContacts(list, queryStr) {
+      let filtered = [...list];
+
+      // Filtro ricerca su nome e cognome
+      if (queryStr) {
+        const q = queryStr.toLowerCase().trim();
+        filtered = filtered.filter(c => {
+          const fn = (c.nome || '').toLowerCase();
+          const ln = (c.cognome || '').toLowerCase();
+          return fn.includes(q) || ln.includes(q);
+        });
+      }
+
+      // Ordinamento alfabetico per cognome, poi per nome
+      filtered.sort((a, b) => {
+        const nameA = `${(a.cognome || '').trim()} ${(a.nome || '').trim()}`.toLowerCase();
+        const nameB = `${(b.cognome || '').trim()} ${(b.nome || '').trim()}`.toLowerCase();
+        return nameA.localeCompare(nameB, 'it', { sensitivity: 'base' });
+      });
+
+      return filtered;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ─── RENDER DELLE CARDS ───────────────────────────────────────────────────
+    function render() {
+      const q = searchInput.value;
+      const sortedContacts = getSortedAndFilteredContacts(allContacts, q);
+      const bestiesContacts = getSortedAndFilteredContacts(allContacts.filter(c => c.isBestie), q);
+
+      contactsCountEl.textContent = `${allContacts.length} CONTATTI`;
+      bestiesCountEl.textContent = `${allContacts.filter(c => c.isBestie).length} / 10 BESTIES`;
+
+      // 1. RENDER CRM
+      crmListEl.innerHTML = '';
+      if (sortedContacts.length === 0) {
+        crmEmptyEl.style.display = 'block';
+      } else {
+        crmEmptyEl.style.display = 'none';
+        sortedContacts.forEach(c => crmListEl.appendChild(createContactCardElement(c)));
+      }
+
+      // 2. RENDER BESTIES
+      bestiesListEl.innerHTML = '';
+      if (bestiesContacts.length === 0) {
+        bestiesEmptyEl.style.display = 'block';
+      } else {
+        bestiesEmptyEl.style.display = 'none';
+        bestiesContacts.forEach(c => bestiesListEl.appendChild(createContactCardElement(c)));
+      }
+    }
+
+    function createContactCardElement(contact) {
+      const card = document.createElement('div');
+      card.className = `contact-card ${contact.isBestie ? 'is-bestie' : ''}`;
+
+      const fullName = `${escapeHtml(contact.nome || '')} ${escapeHtml(contact.cognome || '')}`.trim();
+      const initials = `${(contact.nome || '')[0] || ''}${(contact.cognome || '')[0] || ''}`.toUpperCase() || '👤';
+
+      // Avatar HTML
+      const avatarHtml = contact.foto
+        ? `<div class="avatar"><img src="${contact.foto}" alt="${fullName}"/></div>`
+        : `<div class="avatar">${initials}</div>`;
+
+      // Tags HTML
+      const tagsHtml = Array.isArray(contact.interessi) && contact.interessi.length > 0
+        ? `<div class="tags-row">${contact.interessi.map(t => `<span class="tag-badge">🏷️ ${escapeHtml(t)}</span>`).join('')}</div>`
+        : '';
+
+      // Interazioni / Memorie
+      const interazioni = Array.isArray(contact.interazioni) ? contact.interazioni : [];
+      const interazioniHtml = interazioni.length > 0
+        ? `<div class="interactions-box">
+             <div class="interaction-title">
+               <span>Memorie &amp; Scoperte (${interazioni.length})</span>
+             </div>
+             ${interazioni.slice(0, 3).map(it => `
+               <div class="interaction-item">
+                 <div class="interaction-date">📅 ${escapeHtml(it.data)}</div>
+                 <div>${escapeHtml(it.testo)}</div>
+               </div>
+             `).join('')}
+             ${interazioni.length > 3 ? `<div style="font-size:.56rem;color:var(--muted);text-align:center;">+ altre ${interazioni.length - 3} note</div>` : ''}
+           </div>`
+        : '';
+
+      card.innerHTML = `
+        <div class="contact-header">
+          ${avatarHtml}
+          <div class="contact-main">
+            <div class="contact-name">
+              <span>${fullName}</span>
+            </div>
+            ${contact.paese ? `<div class="contact-sub">📍 ${escapeHtml(contact.paese)}</div>` : ''}
+            ${contact.compleanno ? `<div class="contact-sub">🎂 ${escapeHtml(contact.compleanno)}</div>` : ''}
+          </div>
+          <button class="btn-star ${contact.isBestie ? 'active' : ''}" data-action="star" title="Aggiungi o rimuovi dai Besties (max 10)">
+            ${contact.isBestie ? '★' : '☆'}
+          </button>
+        </div>
+
+        ${(contact.cellulare || contact.email || contact.instagram || contact.linkedin) ? `
+          <div class="contact-details">
+            ${contact.cellulare ? `<div class="detail-item"><span class="detail-label">Cell:</span> <a href="tel:${escapeHtml(contact.cellulare)}">${escapeHtml(contact.cellulare)}</a></div>` : ''}
+            ${contact.email ? `<div class="detail-item"><span class="detail-label">Mail:</span> <a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a></div>` : ''}
+            ${contact.instagram ? `<div class="detail-item"><span class="detail-label">IG:</span> <a href="https://instagram.com/${escapeHtml(contact.instagram)}" target="_blank">@${escapeHtml(contact.instagram)}</a></div>` : ''}
+            ${contact.linkedin ? `<div class="detail-item"><span class="detail-label">In:</span> <a href="${escapeHtml(contact.linkedin.startsWith('http') ? contact.linkedin : 'https://' + contact.linkedin)}" target="_blank">LinkedIn</a></div>` : ''}
+          </div>
+        ` : ''}
+
+        ${tagsHtml}
+        ${interazioniHtml}
+
+        <div class="card-actions">
+          <button class="btn-act" data-action="memory">💡 + Memoria</button>
+          <button class="btn-act" data-action="edit">✏️ Modifica</button>
+          <button class="btn-act danger" data-action="delete">🗑️ Elimina</button>
+        </div>
+      `;
+
+      // Event Listeners sulla singola card
+      card.querySelector('[data-action="star"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleBestie(contact._docId);
+      });
+
+      card.querySelector('[data-action="memory"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openInteractionModal(contact);
+      });
+
+      card.querySelector('[data-action="edit"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openContactModal(contact);
+      });
+
+      card.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteContact(contact._docId, fullName);
+      });
+
+      return card;
+    }
+
+    // ─── INIZIALIZZAZIONE & SOTTOSCRIZIONE FIREBASE ────────────────────────────
+    async function init() {
+      const user = await waitForAuth();
+      if (!user) return; // auth-guard effettua il redirect a login.html se necessario
+
+      subscribeContacts((contacts) => {
+        allContacts = contacts || [];
+        render();
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
