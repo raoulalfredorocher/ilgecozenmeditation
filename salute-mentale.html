@@ -1,1424 +1,1413 @@
 <!DOCTYPE html>
 <html lang="it" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Il Geco Zen — Salute mentale"/>
-<meta name="theme-color" content="#f7f4f9"/>
-<link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="icon-192.png"/>
-<link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Il Geco Zen — Salute mentale</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Salute mentale"/>
+  <meta name="theme-color" content="#f7f4f9"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <title>Il Geco Zen — Salute mentale</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-```
-html[data-theme="light"] {
-  --bg:      #f7f4f9;
-  --surface: #ede8f4;
-  --card:    #ffffff;
-  --border:  #d4cee0;
-  --text:    #1e2a38;
-  --muted:   #876a6a;
-  --gold:    #7c5cd8;
-  --accent:  #c8a0f0;
-  --primary: #7c5cd8;
-}
-html[data-theme="dark"] {
-  --bg:      #111820;
-  --surface: #1a2230;
-  --card:    #1e2a38;
-  --border:  #2e3f52;
-  --text:    #e8eef4;
-  --muted:   #a89090;
-  --gold:    #c8a0f0;
-  --accent:  #7c5cd8;
-  --primary: #c8a0f0;
-}
+    html[data-theme="light"] {
+      --bg:      #f7f4f9;
+      --surface: #ede8f4;
+      --card:    #ffffff;
+      --border:  #d4cee0;
+      --text:    #1e2a38;
+      --muted:   #876a6a;
+      --gold:    #7c5cd8;
+      --accent:  #c8a0f0;
+      --primary: #7c5cd8;
+    }
+    html[data-theme="dark"] {
+      --bg:      #111820;
+      --surface: #1a2230;
+      --card:    #1e2a38;
+      --border:  #2e3f52;
+      --text:    #e8eef4;
+      --muted:   #a89090;
+      --gold:    #c8a0f0;
+      --accent:  #7c5cd8;
+      --primary: #c8a0f0;
+    }
 
-html { overscroll-behavior: none; }
-html, body {
-  min-height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  transition: background .3s, color .3s;
-}
-body {
-  display: flex; flex-direction: column; align-items: center;
-  padding: calc(env(safe-area-inset-top, 0px) + 100px) 0 100px;
-  max-width: 420px; margin: 0 auto; min-height: 100dvh;
-}
+    html { overscroll-behavior: none; }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex; flex-direction: column; align-items: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 100px) 0 100px;
+      max-width: 420px; margin: 0 auto; min-height: 100dvh;
+    }
 
-/* ── HEADER ── */
-header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
-  border-bottom: 1px solid var(--border);
-}
-.btn-back {
-  background: none; border: 1px solid var(--border); border-radius: 10px;
-  color: var(--muted); font-family: inherit; font-size: .58rem;
-  letter-spacing: .1em; padding: 5px 8px; text-decoration: none;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  width: 52px; flex-shrink: 0;
-}
-.btn-csv {
-  background: none; border: 1px solid var(--border); border-radius: 10px;
-  color: var(--muted); font-family: inherit; font-size: .52rem;
-  letter-spacing: .1em; padding: 5px 8px; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  width: 44px; flex-shrink: 0; margin-left: 6px;
-  transition: color .2s, border-color .2s;
-}
-.btn-csv:active { color: var(--gold); border-color: var(--gold); }
-.header-left { display: flex; align-items: center; gap: 0; }
-.header-center { flex: 1; text-align: center; }
-.app-title { font-size: .95rem; letter-spacing: .16em; color: var(--primary); font-weight: 700; }
-.app-sub { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
-.theme-toggle {
-  background: none; border: 1.5px solid var(--border); border-radius: 20px;
-  cursor: pointer; width: 52px; height: 28px; position: relative; flex-shrink: 0;
-}
-.theme-toggle .knob {
-  position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
-  border-radius: 50%; background: var(--accent); transition: transform .3s;
-  display: flex; align-items: center; justify-content: center; font-size: .7rem;
-}
-html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn-back {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .58rem;
+      letter-spacing: .1em; padding: 5px 8px; text-decoration: none;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      width: 52px; flex-shrink: 0;
+    }
+    .btn-csv {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--muted); font-family: inherit; font-size: .52rem;
+      letter-spacing: .1em; padding: 5px 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      width: 44px; flex-shrink: 0; margin-left: 6px;
+      transition: color .2s, border-color .2s;
+    }
+    .btn-csv:active { color: var(--gold); border-color: var(--gold); }
+    .header-left { display: flex; align-items: center; gap: 0; }
+    .header-center { flex: 1; text-align: center; }
+    .app-title { font-size: .95rem; letter-spacing: .16em; color: var(--primary); font-weight: 700; }
+    .app-sub { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+    .theme-toggle {
+      background: none; border: 1.5px solid var(--border); border-radius: 20px;
+      cursor: pointer; width: 52px; height: 28px; position: relative; flex-shrink: 0;
+    }
+    .theme-toggle .knob {
+      position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent); transition: transform .3s;
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
+    }
+    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
 
-/* ── TAB BAR ── */
-.tab-bar {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: calc(58px + env(safe-area-inset-bottom, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: var(--card); border-top: 1px solid var(--border);
-  border-radius: 22px 22px 0 0;
-  display: flex; align-items: center; justify-content: space-around;
-  z-index: 200; overflow: visible;
-}
-.tab-btn {
-  flex: 1; background: none; border: none;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; cursor: pointer; color: var(--muted); transition: color .2s;
-  padding: 8px 4px; height: 100%; font-family: inherit;
-  font-size: .44rem; letter-spacing: .12em; text-transform: uppercase;
-  -webkit-tap-highlight-color: transparent;
-}
-.tab-btn.active { color: var(--primary); }
-.tab-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
-.tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1; }
-.tab-center {
-  flex: 1.1; display: flex; flex-direction: column;
-  align-items: center; justify-content: flex-end;
-  padding-bottom: 8px; gap: 4px; overflow: visible; position: relative;
-}
-.tab-center-circle {
-  width: 58px; height: 58px; border-radius: 50%; background: var(--accent);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  transform: translateY(-24px);
-  box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(200,160,240,.6);
-  transition: background .2s, transform .12s;
-}
-.tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
-.tab-center-gecko { width: 38px; height: 38px; object-fit: contain; }
-.tab-center .tab-label { margin-top: -20px; }
+    /* ── TAB BAR ── */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--card); border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 200; overflow: visible;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; color: var(--muted); transition: color .2s;
+      padding: 8px 4px; height: 100%; font-family: inherit;
+      font-size: .44rem; letter-spacing: .12em; text-transform: uppercase;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.active { color: var(--primary); }
+    .tab-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1; }
+    .tab-center {
+      flex: 1.1; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 8px; gap: 4px; overflow: visible; position: relative;
+    }
+    .tab-center-circle {
+      width: 58px; height: 58px; border-radius: 50%; background: var(--accent);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transform: translateY(-24px);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(200,160,240,.6);
+      transition: background .2s, transform .12s;
+    }
+    .tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
+    .tab-center-gecko { width: 38px; height: 38px; object-fit: contain; }
+    .tab-center .tab-label { margin-top: -20px; }
 
-/* ── SCREENS ── */
-.screen { display: none; width: 100%; padding: 0 20px; }
-.screen.active { display: block; }
+    /* ── SCREENS ── */
+    .screen { display: none; width: 100%; padding: 0 20px; }
+    .screen.active { display: block; }
 
-/* ── MACRO SECTION ── */
-.macro-section { width: 100%; margin-bottom: 12px; }
-.macro-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 13px 16px; border: 1.5px solid var(--border);
-  border-radius: 16px; background: var(--card); cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: background .2s, border-color .2s; user-select: none;
-}
-.macro-header.open {
-  border-radius: 16px 16px 0 0; border-bottom-color: transparent; background: var(--surface);
-}
-.macro-icon { font-size: 1.5rem; flex-shrink: 0; }
-.macro-title {
-  font-size: .80rem; letter-spacing: .16em; font-weight: 700;
-  color: var(--gold); text-transform: uppercase; flex: 1;
-}
-.macro-chevron { font-size: .7rem; color: var(--muted); transition: transform .25s; flex-shrink: 0; }
-.macro-header.open .macro-chevron { transform: rotate(180deg); }
-.macro-body {
-  display: none; flex-direction: column; gap: 0;
-  border: 1.5px solid var(--border); border-top: none; border-bottom: none;
-}
-.macro-body.open { display: flex; }
-.macro-body-footer {
-  display: none; border: 1.5px solid var(--border); border-top: none;
-  border-radius: 0 0 16px 16px; height: 6px; background: var(--card); margin-bottom: 4px;
-}
-.macro-body.open + .macro-body-footer { display: block; }
+    /* ── MACRO SECTION ── */
+    .macro-section { width: 100%; margin-bottom: 12px; }
+    .macro-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 16px; border: 1.5px solid var(--border);
+      border-radius: 16px; background: var(--card); cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .2s, border-color .2s; user-select: none;
+    }
+    .macro-header.open {
+      border-radius: 16px 16px 0 0; border-bottom-color: transparent; background: var(--surface);
+    }
+    .macro-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .macro-title {
+      font-size: .80rem; letter-spacing: .16em; font-weight: 700;
+      color: var(--gold); text-transform: uppercase; flex: 1;
+    }
+    .macro-chevron { font-size: .7rem; color: var(--muted); transition: transform .25s; flex-shrink: 0; }
+    .macro-header.open .macro-chevron { transform: rotate(180deg); }
+    .macro-body {
+      display: none; flex-direction: column; gap: 0;
+      border: 1.5px solid var(--border); border-top: none; border-bottom: none;
+    }
+    .macro-body.open { display: flex; }
+    .macro-body-footer {
+      display: none; border: 1.5px solid var(--border); border-top: none;
+      border-radius: 0 0 16px 16px; height: 6px; background: var(--card); margin-bottom: 4px;
+    }
+    .macro-body.open + .macro-body-footer { display: block; }
 
-/* area card interna */
-.area-card { width: 100%; background: var(--card); padding: 14px 16px; }
+    /* area card interna */
+    .area-card { width: 100%; background: var(--card); padding: 14px 16px; }
 
-/* btn pencil */
-.btn-pencil {
-  background: none; border: none; cursor: pointer; color: var(--border);
-  padding: 2px 4px; font-size: .7rem; flex-shrink: 0;
-  transition: color .2s; line-height: 1;
-}
-.btn-pencil:active, .btn-pencil:hover { color: var(--gold); }
+    /* btn pencil */
+    .btn-pencil {
+      background: none; border: none; cursor: pointer; color: var(--border);
+      padding: 2px 4px; font-size: .7rem; flex-shrink: 0;
+      transition: color .2s; line-height: 1;
+    }
+    .btn-pencil:active, .btn-pencil:hover { color: var(--gold); }
 
-/* btn cestino rosso */
-.btn-trash {
-  background: none; border: none; cursor: pointer; color: #d64545;
-  padding: 2px 4px; font-size: .7rem; flex-shrink: 0;
-  transition: color .2s; line-height: 1; opacity: .7;
-}
-.btn-trash:active, .btn-trash:hover { opacity: 1; }
+    /* btn cestino rosso */
+    .btn-trash {
+      background: none; border: none; cursor: pointer; color: #d64545;
+      padding: 2px 4px; font-size: .7rem; flex-shrink: 0;
+      transition: color .2s; line-height: 1; opacity: .7;
+    }
+    .btn-trash:active, .btn-trash:hover { opacity: 1; }
 
-/* ── STORIA entries ── */
-.storia-entries { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-.storia-entry-item {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px;
-}
-.storia-entry-num {
-  font-size: .58rem; font-weight: 700; color: var(--gold); min-width: 18px;
-  letter-spacing: .04em; padding-top: 2px;
-}
-.storia-entry-text {
-  flex: 1; font-size: .78rem; color: var(--text); line-height: 1.65;
-  white-space: pre-wrap; word-break: break-word;
-}
-.storia-entry-actions { display: flex; gap: 4px; flex-shrink: 0; }
-.storia-entry-btn {
-  background: none; border: 1px solid var(--border); border-radius: 7px;
-  color: var(--muted); cursor: pointer; width: 26px; height: 26px;
-  display: flex; align-items: center; justify-content: center;
-  transition: color .2s, border-color .2s; -webkit-tap-highlight-color: transparent;
-}
-.storia-entry-btn:active { color: var(--gold); border-color: var(--gold); }
-.storia-entry-btn.del:active { color: #d64545; border-color: #d6454555; }
-.storia-add-row {
-  display: flex; gap: 8px; align-items: flex-end; margin-top: 6px;
-}
-.storia-add-textarea {
-  flex: 1; background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 12px; padding: 9px 12px; font-family: inherit;
-  font-size: .80rem; color: var(--text); resize: none; outline: none;
-  min-height: 60px; transition: border-color .2s;
-}
-.storia-add-textarea:focus { border-color: var(--gold); }
-.storia-add-btn {
-  background: var(--gold); color: #fff; border: none; border-radius: 12px;
-  padding: 9px 14px; font-family: inherit; font-size: .78rem; font-weight: 700;
-  cursor: pointer; flex-shrink: 0; align-self: flex-end; transition: opacity .2s;
-}
-.storia-add-btn:active { opacity: .8; }
+    /* ── STORIA entries ── */
+    .storia-entries { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .storia-entry-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px;
+    }
+    .storia-entry-num {
+      font-size: .58rem; font-weight: 700; color: var(--gold); min-width: 18px;
+      letter-spacing: .04em; padding-top: 2px;
+    }
+    .storia-entry-text {
+      flex: 1; font-size: .78rem; color: var(--text); line-height: 1.65;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .storia-entry-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .storia-entry-btn {
+      background: none; border: 1px solid var(--border); border-radius: 7px;
+      color: var(--muted); cursor: pointer; width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color .2s, border-color .2s; -webkit-tap-highlight-color: transparent;
+    }
+    .storia-entry-btn:active { color: var(--gold); border-color: var(--gold); }
+    .storia-entry-btn.del:active { color: #d64545; border-color: #d6454555; }
+    .storia-add-row {
+      display: flex; gap: 8px; align-items: flex-end; margin-top: 6px;
+    }
+    .storia-add-textarea {
+      flex: 1; background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 9px 12px; font-family: inherit;
+      font-size: .80rem; color: var(--text); resize: none; outline: none;
+      min-height: 60px; transition: border-color .2s;
+    }
+    .storia-add-textarea:focus { border-color: var(--gold); }
+    .storia-add-btn {
+      background: var(--gold); color: #fff; border: none; border-radius: 12px;
+      padding: 9px 14px; font-family: inherit; font-size: .78rem; font-weight: 700;
+      cursor: pointer; flex-shrink: 0; align-self: flex-end; transition: opacity .2s;
+    }
+    .storia-add-btn:active { opacity: .8; }
 
-/* bottone aggiungi nuovo titolo */
-.btn-add-section {
-  width: 100%; background: none; border: 1.5px dashed var(--border);
-  border-radius: 16px; padding: 12px; color: var(--muted);
-  font-family: inherit; font-size: .76rem; letter-spacing: .08em;
-  cursor: pointer; transition: border-color .2s, color .2s;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  margin-bottom: 12px;
-}
-.btn-add-section:active { border-color: var(--gold); color: var(--gold); }
+    /* bottone aggiungi nuovo titolo */
+    .btn-add-section {
+      width: 100%; background: none; border: 1.5px dashed var(--border);
+      border-radius: 16px; padding: 12px; color: var(--muted);
+      font-family: inherit; font-size: .76rem; letter-spacing: .08em;
+      cursor: pointer; transition: border-color .2s, color .2s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-bottom: 12px;
+    }
+    .btn-add-section:active { border-color: var(--gold); color: var(--gold); }
 
-/* ── DIARIO ── */
-.diary-list { display: flex; flex-direction: column; gap: 10px; }
-.diary-entry {
-  background: var(--card); border: 1.5px solid var(--border); border-radius: 18px;
-  padding: 14px 16px; transition: border-color .2s;
-}
-.diary-entry-header { display: flex; align-items: flex-start; gap: 10px; }
-.diary-entry-info { flex: 1; min-width: 0; }
-.diary-entry-title {
-  font-size: .9rem; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.diary-entry-date { font-size: .62rem; color: var(--muted); margin-top: 3px; }
-.diary-entry-preview {
-  font-size: .72rem; color: var(--muted); margin-top: 6px;
-  line-height: 1.6; display: -webkit-box;
-  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.diary-entry-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.diary-icon-btn {
-  background: none; border: 1px solid var(--border); border-radius: 8px;
-  color: var(--muted); cursor: pointer; width: 30px; height: 30px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: .8rem; transition: color .2s, border-color .2s;
-  -webkit-tap-highlight-color: transparent; flex-shrink: 0;
-}
-.diary-icon-btn:active { color: var(--gold); border-color: var(--gold); }
-.diary-icon-btn.del { color: #d64545; }
-.diary-icon-btn.del:active { border-color: #d6454555; }
+    /* ── DIARIO ── */
+    .diary-list { display: flex; flex-direction: column; gap: 10px; }
+    .diary-entry {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: 18px;
+      padding: 14px 16px; transition: border-color .2s;
+    }
+    .diary-entry-header { display: flex; align-items: flex-start; gap: 10px; }
+    .diary-entry-info { flex: 1; min-width: 0; }
+    .diary-entry-title {
+      font-size: .9rem; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .diary-entry-date { font-size: .62rem; color: var(--muted); margin-top: 3px; }
+    .diary-entry-preview {
+      font-size: .72rem; color: var(--muted); margin-top: 6px;
+      line-height: 1.6; display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .diary-entry-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .diary-icon-btn {
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); cursor: pointer; width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; transition: color .2s, border-color .2s;
+      -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    }
+    .diary-icon-btn:active { color: var(--gold); border-color: var(--gold); }
+    .diary-icon-btn.del { color: #d64545; }
+    .diary-icon-btn.del:active { border-color: #d6454555; }
 
-.btn-add-fab {
-  position: fixed; bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 16px);
-  right: calc(50% - 210px + 20px); width: 46px; height: 46px;
-  border-radius: 50%; background: var(--primary); border: none;
-  color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer;
-  display: none; align-items: center; justify-content: center;
-  box-shadow: 0 4px 16px rgba(124,92,216,.4); z-index: 100;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform .12s, opacity .2s;
-}
-.btn-add-fab.visible { display: flex; }
-.btn-add-fab:active { transform: scale(.91); }
-@media (max-width: 420px) { .btn-add-fab { right: 20px; } }
+    .btn-add-fab {
+      position: fixed; bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 16px);
+      right: calc(50% - 210px + 20px); width: 46px; height: 46px;
+      border-radius: 50%; background: var(--primary); border: none;
+      color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(124,92,216,.4); z-index: 100;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s, opacity .2s;
+    }
+    .btn-add-fab.visible { display: flex; }
+    .btn-add-fab:active { transform: scale(.91); }
+    @media (max-width: 420px) { .btn-add-fab { right: 20px; } }
 
-.empty-state {
-  text-align: center; padding: 42px 0 20px; color: var(--muted);
-  font-size: .76rem; letter-spacing: .06em;
-}
+    .empty-state {
+      text-align: center; padding: 42px 0 20px; color: var(--muted);
+      font-size: .76rem; letter-spacing: .06em;
+    }
 
-/* ── EMOZIONI — struttura a toggle per emozione singola ── */
-.emo-section { width: 100%; margin-bottom: 10px; }
-.emo-section-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 13px 16px; border: 1.5px solid var(--border);
-  border-radius: 16px; background: var(--card); cursor: pointer;
-  -webkit-tap-highlight-color: transparent; user-select: none;
-  transition: background .2s;
-}
-.emo-section-header.open {
-  border-radius: 16px 16px 0 0; border-bottom-color: transparent; background: var(--surface);
-}
-.emo-section-icon { font-size: 1.4rem; flex-shrink: 0; }
-.emo-section-title { font-size: .80rem; letter-spacing: .14em; font-weight: 700; color: var(--gold); flex: 1; }
-.emo-section-chevron { font-size: .7rem; color: var(--muted); transition: transform .25s; }
-.emo-section-header.open .emo-section-chevron { transform: rotate(180deg); }
-.emo-section-body {
-  display: none; border: 1.5px solid var(--border); border-top: none;
-  border-radius: 0 0 16px 16px; background: var(--card);
-  padding: 10px 12px 14px; margin-bottom: 12px;
-}
-.emo-section-body.open { display: block; }
+    /* ── EMOZIONI — struttura a toggle per emozione singola ── */
+    .emo-section { width: 100%; margin-bottom: 10px; }
+    .emo-section-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 16px; border: 1.5px solid var(--border);
+      border-radius: 16px; background: var(--card); cursor: pointer;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+      transition: background .2s;
+    }
+    .emo-section-header.open {
+      border-radius: 16px 16px 0 0; border-bottom-color: transparent; background: var(--surface);
+    }
+    .emo-section-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .emo-section-title { font-size: .80rem; letter-spacing: .14em; font-weight: 700; color: var(--gold); flex: 1; }
+    .emo-section-chevron { font-size: .7rem; color: var(--muted); transition: transform .25s; }
+    .emo-section-header.open .emo-section-chevron { transform: rotate(180deg); }
+    .emo-section-body {
+      display: none; border: 1.5px solid var(--border); border-top: none;
+      border-radius: 0 0 16px 16px; background: var(--card);
+      padding: 10px 12px 14px; margin-bottom: 12px;
+    }
+    .emo-section-body.open { display: block; }
 
-/* singola emozione toggle */
-.emo-item { margin-bottom: 8px; }
-.emo-item-header {
-  display: flex; align-items: center; gap: 8px; padding: 9px 12px;
-  background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
-  cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
-  transition: background .15s;
-}
-.emo-item-header.open { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
-.emo-item-emoji { font-size: 1.1rem; flex-shrink: 0; }
-.emo-item-name { flex: 1; font-size: .78rem; font-weight: 600; color: var(--text); }
-.emo-item-count { font-size: .60rem; color: var(--muted); margin-right: 4px; }
-.emo-item-chevron { font-size: .6rem; color: var(--muted); transition: transform .2s; }
-.emo-item-header.open .emo-item-chevron { transform: rotate(180deg); }
-.emo-item-body {
-  display: none; border: 1.5px solid var(--border); border-top: none;
-  border-radius: 0 0 12px 12px; background: var(--card); padding: 10px 12px;
-  margin-bottom: 4px;
-}
-.emo-item-body.open { display: block; }
+    /* singola emozione toggle */
+    .emo-item { margin-bottom: 8px; }
+    .emo-item-header {
+      display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
+      transition: background .15s;
+    }
+    .emo-item-header.open { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+    .emo-item-emoji { font-size: 1.1rem; flex-shrink: 0; }
+    .emo-item-name { flex: 1; font-size: .78rem; font-weight: 600; color: var(--text); }
+    .emo-item-count { font-size: .60rem; color: var(--muted); margin-right: 4px; }
+    .emo-item-chevron { font-size: .6rem; color: var(--muted); transition: transform .2s; }
+    .emo-item-header.open .emo-item-chevron { transform: rotate(180deg); }
+    .emo-item-body {
+      display: none; border: 1.5px solid var(--border); border-top: none;
+      border-radius: 0 0 12px 12px; background: var(--card); padding: 10px 12px;
+      margin-bottom: 4px;
+    }
+    .emo-item-body.open { display: block; }
 
-/* entries dentro emozione */
-.emo-entries { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-.emo-entry-row {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-  padding: 8px 10px; display: flex; align-items: flex-start; gap: 6px;
-}
-.emo-entry-num { font-size: .58rem; font-weight: 700; color: var(--gold); min-width: 16px; padding-top: 2px; }
-.emo-entry-text { flex: 1; font-size: .76rem; color: var(--text); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
-.emo-entry-btns { display: flex; gap: 3px; flex-shrink: 0; }
-.emo-entry-btn {
-  background: none; border: 1px solid var(--border); border-radius: 6px;
-  color: var(--muted); cursor: pointer; width: 24px; height: 24px;
-  display: flex; align-items: center; justify-content: center;
-  transition: color .2s, border-color .2s;
-}
-.emo-entry-btn:active { color: var(--gold); border-color: var(--gold); }
-.emo-entry-btn.del { color: #d64545; }
-.emo-entry-btn.del:active { border-color: #d6454555; }
-.emo-add-row { display: flex; gap: 6px; align-items: flex-end; }
-.emo-add-textarea {
-  flex: 1; background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 10px; padding: 8px 10px; font-family: inherit;
-  font-size: .78rem; color: var(--text); resize: none; outline: none;
-  min-height: 54px; transition: border-color .2s;
-}
-.emo-add-textarea:focus { border-color: var(--gold); }
-.emo-add-btn {
-  background: var(--gold); color: #fff; border: none; border-radius: 10px;
-  padding: 8px 12px; font-family: inherit; font-size: .76rem; font-weight: 700;
-  cursor: pointer; align-self: flex-end; flex-shrink: 0; transition: opacity .2s;
-}
-.emo-add-btn:active { opacity: .8; }
+    /* entries dentro emozione */
+    .emo-entries { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .emo-entry-row {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 10px; display: flex; align-items: flex-start; gap: 6px;
+    }
+    .emo-entry-num { font-size: .58rem; font-weight: 700; color: var(--gold); min-width: 16px; padding-top: 2px; }
+    .emo-entry-text { flex: 1; font-size: .76rem; color: var(--text); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .emo-entry-btns { display: flex; gap: 3px; flex-shrink: 0; }
+    .emo-entry-btn {
+      background: none; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); cursor: pointer; width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color .2s, border-color .2s;
+    }
+    .emo-entry-btn:active { color: var(--gold); border-color: var(--gold); }
+    .emo-entry-btn.del { color: #d64545; }
+    .emo-entry-btn.del:active { border-color: #d6454555; }
+    .emo-add-row { display: flex; gap: 6px; align-items: flex-end; }
+    .emo-add-textarea {
+      flex: 1; background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 8px 10px; font-family: inherit;
+      font-size: .78rem; color: var(--text); resize: none; outline: none;
+      min-height: 54px; transition: border-color .2s;
+    }
+    .emo-add-textarea:focus { border-color: var(--gold); }
+    .emo-add-btn {
+      background: var(--gold); color: #fff; border: none; border-radius: 10px;
+      padding: 8px 12px; font-family: inherit; font-size: .76rem; font-weight: 700;
+      cursor: pointer; align-self: flex-end; flex-shrink: 0; transition: opacity .2s;
+    }
+    .emo-add-btn:active { opacity: .8; }
 
-/* ── MODAL OVERLAY ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.46); z-index: 500;
-  display: flex; align-items: flex-end; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity .22s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: auto; }
-.modal-sheet {
-  width: 100%; max-width: 420px; background: var(--card);
-  border-radius: 26px 26px 0 0; padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 24px);
-  max-height: 92dvh; overflow-y: auto;
-  transform: translateY(100%); transition: transform .28s cubic-bezier(.32,1.28,.5,1);
-}
-.modal-overlay.open .modal-sheet { transform: translateY(0); }
-.modal-handle { width: 42px; height: 4px; border-radius: 999px; background: var(--border); margin: 12px auto 0; }
-.modal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px 12px; border-bottom: 1px solid var(--border);
-}
-.modal-title { font-size: .9rem; font-weight: 700; letter-spacing: .06em; color: var(--text); }
-.btn-modal-close { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.3rem; line-height: 1; }
-.modal-body { padding: 16px 20px 0; }
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.46); z-index: 500;
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .22s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-sheet {
+      width: 100%; max-width: 420px; background: var(--card);
+      border-radius: 26px 26px 0 0; padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 24px);
+      max-height: 92dvh; overflow-y: auto;
+      transform: translateY(100%); transition: transform .28s cubic-bezier(.32,1.28,.5,1);
+    }
+    .modal-overlay.open .modal-sheet { transform: translateY(0); }
+    .modal-handle { width: 42px; height: 4px; border-radius: 999px; background: var(--border); margin: 12px auto 0; }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 12px; border-bottom: 1px solid var(--border);
+    }
+    .modal-title { font-size: .9rem; font-weight: 700; letter-spacing: .06em; color: var(--text); }
+    .btn-modal-close { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.3rem; line-height: 1; }
+    .modal-body { padding: 16px 20px 0; }
 
-/* form diario */
-.form-group { margin-bottom: 12px; }
-.form-label { display: block; font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-.form-input, .form-textarea {
-  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 12px; padding: 10px 12px; font-family: inherit;
-  font-size: .86rem; color: var(--text); outline: none;
-}
-.form-input:focus, .form-textarea:focus { border-color: var(--primary); }
-.form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
-.form-textarea { resize: vertical; min-height: 90px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.form-file-label {
-  display: flex; align-items: center; gap: 8px; padding: 9px 12px;
-  background: var(--surface); border: 1.5px dashed var(--border); border-radius: 12px;
-  color: var(--muted); font-size: .76rem; cursor: pointer; transition: border-color .2s;
-}
-.form-file-label:hover { border-color: var(--primary); }
-.form-file-name { font-size: .70rem; color: var(--muted); margin-top: 4px; }
-.btn-save {
-  width: 100%; background: var(--primary); border: none; border-radius: 16px;
-  padding: 14px; color: #fff; font-family: inherit; font-size: .9rem;
-  font-weight: 700; letter-spacing: .08em; cursor: pointer; margin-top: 18px;
-}
+    /* form diario */
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .form-input, .form-textarea {
+      width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 10px 12px; font-family: inherit;
+      font-size: .86rem; color: var(--text); outline: none;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--primary); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-file-label {
+      display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+      background: var(--surface); border: 1.5px dashed var(--border); border-radius: 12px;
+      color: var(--muted); font-size: .76rem; cursor: pointer; transition: border-color .2s;
+    }
+    .form-file-label:hover { border-color: var(--primary); }
+    .form-file-name { font-size: .70rem; color: var(--muted); margin-top: 4px; }
+    .btn-save {
+      width: 100%; background: var(--primary); border: none; border-radius: 16px;
+      padding: 14px; color: #fff; font-family: inherit; font-size: .9rem;
+      font-weight: 700; letter-spacing: .08em; cursor: pointer; margin-top: 18px;
+    }
 
-/* ── DETAIL / EDIT OVERLAY ── */
-.edit-overlay {
-  display: none; position: fixed; inset: 0; z-index: 600;
-  background: rgba(0,0,0,.45); align-items: flex-end; justify-content: center;
-}
-.edit-overlay.open { display: flex; }
-.edit-sheet {
-  background: var(--card); border-radius: 22px 22px 0 0;
-  padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
-  width: 100%; max-width: 420px; max-height: 92dvh; overflow-y: auto;
-}
-.edit-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 16px; }
-.edit-label { font-size: .52rem; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
-.edit-input {
-  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 12px; color: var(--text); font-family: inherit;
-  font-size: .82rem; padding: 10px 14px; resize: none; outline: none; transition: border-color .2s;
-}
-.edit-input:focus { border-color: var(--gold); }
-.edit-actions { display: flex; gap: 10px; margin-top: 14px; }
-.btn-edit-save {
-  flex: 1; background: var(--gold); color: var(--card); border: none;
-  border-radius: 14px; padding: 12px; font-family: inherit; font-size: .78rem;
-  font-weight: 700; letter-spacing: .1em; cursor: pointer;
-}
-.btn-edit-cancel {
-  flex: 1; background: none; color: var(--muted); border: 1.5px solid var(--border);
-  border-radius: 14px; padding: 12px; font-family: inherit; font-size: .78rem; cursor: pointer;
-}
+    /* ── DETAIL / EDIT OVERLAY ── */
+    .edit-overlay {
+      display: none; position: fixed; inset: 0; z-index: 600;
+      background: rgba(0,0,0,.45); align-items: flex-end; justify-content: center;
+    }
+    .edit-overlay.open { display: flex; }
+    .edit-sheet {
+      background: var(--card); border-radius: 22px 22px 0 0;
+      padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+      width: 100%; max-width: 420px; max-height: 92dvh; overflow-y: auto;
+    }
+    .edit-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 16px; }
+    .edit-label { font-size: .52rem; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+    .edit-input {
+      width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text); font-family: inherit;
+      font-size: .82rem; padding: 10px 14px; resize: none; outline: none; transition: border-color .2s;
+    }
+    .edit-input:focus { border-color: var(--gold); }
+    .edit-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .btn-edit-save {
+      flex: 1; background: var(--gold); color: var(--card); border: none;
+      border-radius: 14px; padding: 12px; font-family: inherit; font-size: .78rem;
+      font-weight: 700; letter-spacing: .1em; cursor: pointer;
+    }
+    .btn-edit-cancel {
+      flex: 1; background: none; color: var(--muted); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 12px; font-family: inherit; font-size: .78rem; cursor: pointer;
+    }
 
-/* view detail */
-.detail-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-.detail-date { font-size: .62rem; color: var(--muted); margin-bottom: 12px; }
-.detail-body { font-size: .82rem; color: var(--text); line-height: 1.75; white-space: pre-wrap; }
-.detail-attach { margin-top: 12px; }
-.detail-attach a { font-size: .76rem; color: var(--primary); text-decoration: underline; }
+    /* view detail */
+    .detail-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .detail-date { font-size: .62rem; color: var(--muted); margin-bottom: 12px; }
+    .detail-body { font-size: .82rem; color: var(--text); line-height: 1.75; white-space: pre-wrap; }
+    .detail-attach { margin-top: 12px; }
+    .detail-attach a { font-size: .76rem; color: var(--primary); text-decoration: underline; }
 
-/* lightbox */
-.plutchik-lightbox {
-  display: none; position: fixed; inset: 0; z-index: 800;
-  background: rgba(0,0,0,.8); align-items: center; justify-content: center;
-}
-.plutchik-lightbox.open { display: flex; }
-.plutchik-lightbox img { max-width: 95vw; max-height: 90dvh; border-radius: 12px; }
-.plutchik-lightbox-close {
-  position: absolute; top: 20px; right: 20px; background: none; border: none;
-  color: #fff; font-size: 2rem; cursor: pointer;
-}
+    /* lightbox */
+    .plutchik-lightbox {
+      display: none; position: fixed; inset: 0; z-index: 800;
+      background: rgba(0,0,0,.8); align-items: center; justify-content: center;
+    }
+    .plutchik-lightbox.open { display: flex; }
+    .plutchik-lightbox img { max-width: 95vw; max-height: 90dvh; border-radius: 12px; }
+    .plutchik-lightbox-close {
+      position: absolute; top: 20px; right: 20px; background: none; border: none;
+      color: #fff; font-size: 2rem; cursor: pointer;
+    }
 
-/* ruota placeholder */
-.wheel-placeholder {
-  background: var(--card); border: 1.5px solid var(--border); border-radius: 18px;
-  padding: 20px 16px; margin-bottom: 12px; text-align: center;
-}
-.wheel-placeholder-title {
-  font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 10px;
-}
-.wheel-img-wrap { width: 100%; max-width: 340px; margin: 0 auto; }
-.wheel-img-wrap img { width: 100%; height: auto; display: block; }
-```
-
-</style>
-<script>
-window.**FIREBASE_CONFIG** = {
-apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-projectId:  'ilgecozen-b2df7',
-storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-messagingSenderId: '956821191073',
-appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-};
-</script>
+    /* ruota placeholder */
+    .wheel-placeholder {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: 18px;
+      padding: 20px 16px; margin-bottom: 12px; text-align: center;
+    }
+    .wheel-placeholder-title {
+      font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .wheel-img-wrap { width: 100%; max-width: 340px; margin: 0 auto; }
+    .wheel-img-wrap img { width: 100%; height: auto; display: block; }
+  </style>
+  <script>
+    window.__FIREBASE_CONFIG__ = {
+      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
+      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
+      projectId:  'ilgecozen-b2df7',
+      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
+      messagingSenderId: '956821191073',
+      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+    };
+  </script>
 </head>
 <body style="visibility:hidden">
-<script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/auth-guard.js"></script>
 
-<header>
-<div class="header-left">
-<a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
-<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-<span>TAO</span>
-</a>
-<button class="btn-csv" id="btn-csv" title="Esporta diario CSV" style="display:none">
-<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-<span>CSV</span>
-</button>
-</div>
-<div class="header-center">
-<div style="font-size:1.8rem;line-height:1;">🧠</div>
-<div class="app-title">Salute mentale</div>
-<div class="app-sub">IL GECO ZEN</div>
-</div>
-<button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-<div class="knob" id="theme-knob">☀️</div>
-</button>
-</header>
+  <header>
+    <div class="header-left">
+      <a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        <span>TAO</span>
+      </a>
+      <button class="btn-csv" id="btn-csv" title="Esporta diario CSV" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>CSV</span>
+      </button>
+    </div>
+    <div class="header-center">
+      <div style="font-size:1.8rem;line-height:1;">🧠</div>
+      <div class="app-title">Salute mentale</div>
+      <div class="app-sub">IL GECO ZEN</div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+      <div class="knob" id="theme-knob">☀️</div>
+    </button>
+  </header>
 
-<!-- ── TAB STORIA ── -->
-<section class="screen active" id="screen-storia">
-<div id="storia-container"></div>
-<button class="btn-add-section" id="btn-add-section">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-Aggiungi nuovo titolo
-</button>
-</section>
+  <!-- ── TAB STORIA ── -->
+  <section class="screen active" id="screen-storia">
+    <div id="storia-container"></div>
+    <button class="btn-add-section" id="btn-add-section">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Aggiungi nuovo titolo
+    </button>
+  </section>
 
-<!-- ── TAB DIARIO ── -->
-<section class="screen" id="screen-diario">
-<div class="diary-list" id="diary-list">
-<div class="empty-state" id="diary-empty">Nessun journal ancora. Tocca ＋ per aggiungere.</div>
-</div>
-</section>
+  <!-- ── TAB DIARIO ── -->
+  <section class="screen" id="screen-diario">
+    <div class="diary-list" id="diary-list">
+      <div class="empty-state" id="diary-empty">Nessun journal ancora. Tocca ＋ per aggiungere.</div>
+    </div>
+  </section>
 
-<!-- ── TAB EMOZIONI ── -->
-<section class="screen" id="screen-emozioni">
+  <!-- ── TAB EMOZIONI ── -->
+  <section class="screen" id="screen-emozioni">
 
-```
-<!-- Ruota delle emozioni -->
-<div class="wheel-placeholder">
-  <div class="wheel-placeholder-title">Ruota delle emozioni — Robert Plutchik</div>
-  <div class="wheel-img-wrap" id="wheel-img-wrap" style="cursor:pointer;" title="Clicca per ingrandire">
-    <img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" id="wheel-img"/>
+    <!-- Ruota delle emozioni -->
+    <div class="wheel-placeholder">
+      <div class="wheel-placeholder-title">Ruota delle emozioni — Robert Plutchik</div>
+      <div class="wheel-img-wrap" id="wheel-img-wrap" style="cursor:pointer;" title="Clicca per ingrandire">
+        <img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" id="wheel-img"/>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+        <button id="btn-wheel-zoom" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;">🔍 Visualizza</button>
+        <a href="Ruotadelleemozioni.webp" download="ruota-emozioni.webp" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;text-decoration:none;display:inline-flex;align-items:center;">⬇ Scarica</a>
+      </div>
+    </div>
+
+    <!-- Emozioni primarie -->
+    <div class="emo-section">
+      <div class="emo-section-header" id="esh-primarie">
+        <span class="emo-section-icon">🌈</span>
+        <span class="emo-section-title">Emozioni primarie</span>
+        <span class="emo-section-chevron">▼</span>
+      </div>
+      <div class="emo-section-body" id="esb-primarie" id="esb-primarie">
+        <!-- generato da JS -->
+      </div>
+    </div>
+
+    <!-- Emozioni secondarie -->
+    <div class="emo-section">
+      <div class="emo-section-header" id="esh-secondarie">
+        <span class="emo-section-icon">🌊</span>
+        <span class="emo-section-title">Emozioni secondarie</span>
+        <span class="emo-section-chevron">▼</span>
+      </div>
+      <div class="emo-section-body" id="esb-secondarie">
+        <!-- generato da JS -->
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── FAB diario ── -->
+  <button class="btn-add-fab" id="btn-add-fab" aria-label="Nuovo Journal">＋</button>
+
+  <!-- ── BOTTOM TAB BAR ── -->
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" id="tab-storia" role="tab" aria-selected="true" aria-controls="screen-storia">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <span class="tab-label">storia</span>
+    </button>
+    <button class="tab-btn tab-center" id="tab-diario" role="tab" aria-selected="false" aria-controls="screen-diario">
+      <div class="tab-center-circle">
+        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
+      </div>
+      <span class="tab-label">diario</span>
+    </button>
+    <button class="tab-btn" id="tab-emozioni" role="tab" aria-selected="false" aria-controls="screen-emozioni">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <span class="tab-label">emozioni</span>
+    </button>
+  </nav>
+
+  <!-- ── MODAL DIARIO ── -->
+  <div class="modal-overlay" id="modal-diary-overlay">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <span class="modal-title" id="modal-diary-title">Nuovo Journal</span>
+        <button class="btn-modal-close" id="btn-diary-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="d-titolo">Titolo</label>
+          <input class="form-input" id="d-titolo" type="text" placeholder="Di cosa vuoi parlare?" autocomplete="off"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="d-testo">Raccontami</label>
+          <textarea class="form-textarea" id="d-testo" rows="5" placeholder="Scrivi liberamente…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="d-data">Data</label>
+            <input class="form-input" id="d-data" type="date"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="d-ora">Ora</label>
+            <input class="form-input" id="d-ora" type="time"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Allegato (opzionale)</label>
+          <label class="form-file-label" for="d-file">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            Scegli foto o documento
+            <input type="file" id="d-file" accept="image/*,.pdf,.doc,.docx" style="display:none"/>
+          </label>
+          <div class="form-file-name" id="d-file-name"></div>
+        </div>
+        <button class="btn-save" id="btn-diary-save">Salva</button>
+      </div>
+    </div>
   </div>
-  <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
-    <button id="btn-wheel-zoom" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;">🔍 Visualizza</button>
-    <a href="Ruotadelleemozioni.webp" download="ruota-emozioni.webp" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;text-decoration:none;display:inline-flex;align-items:center;">⬇ Scarica</a>
+
+  <!-- ── MODAL AGGIUNGI SEZIONE STORIA ── -->
+  <div class="modal-overlay" id="modal-section-overlay">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <span class="modal-title">Nuovo titolo</span>
+        <button class="btn-modal-close" id="btn-section-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="sec-icon">Emoji icona</label>
+          <input class="form-input" id="sec-icon" type="text" placeholder="📝" maxlength="4" autocomplete="off"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="sec-title">Titolo sezione</label>
+          <input class="form-input" id="sec-title" type="text" placeholder="Es. Le mie riflessioni" autocomplete="off"/>
+        </div>
+        <button class="btn-save" id="btn-section-save">Crea sezione</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- Emozioni primarie -->
-<div class="emo-section">
-  <div class="emo-section-header" id="esh-primarie">
-    <span class="emo-section-icon">🌈</span>
-    <span class="emo-section-title">Emozioni primarie</span>
-    <span class="emo-section-chevron">▼</span>
+  <!-- ── EDIT OVERLAY ── -->
+  <div class="edit-overlay" id="edit-overlay">
+    <div class="edit-sheet" id="edit-sheet-inner">
+      <div class="edit-handle"></div>
+      <div class="edit-label" id="edit-label">Modifica</div>
+      <div id="edit-content"></div>
+      <div class="edit-actions" id="edit-actions">
+        <button class="btn-edit-cancel" id="edit-cancel">Annulla</button>
+        <button class="btn-edit-save" id="edit-save">Salva</button>
+      </div>
+    </div>
   </div>
-  <div class="emo-section-body" id="esb-primarie" id="esb-primarie">
-    <!-- generato da JS -->
+
+  <!-- lightbox non usata ma tenuta per compat -->
+  <div class="plutchik-lightbox" id="plutchik-lightbox">
+    <button class="plutchik-lightbox-close" id="plutchik-lb-close">✕</button>
+    <div id="plutchik-lb-content" style="width:90vw;max-width:480px;"></div>
   </div>
-</div>
 
-<!-- Emozioni secondarie -->
-<div class="emo-section">
-  <div class="emo-section-header" id="esh-secondarie">
-    <span class="emo-section-icon">🌊</span>
-    <span class="emo-section-title">Emozioni secondarie</span>
-    <span class="emo-section-chevron">▼</span>
-  </div>
-  <div class="emo-section-body" id="esb-secondarie">
-    <!-- generato da JS -->
-  </div>
-</div>
-```
 
-</section>
+  <script type="module">
+    import { waitForAuth } from './js/firebase-config.js';
+    import { getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+    import {
+      getFirestore, doc, getDoc, setDoc,
+      collection, addDoc, onSnapshot, query, orderBy, deleteDoc, updateDoc,
+    } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
 
-<!-- ── FAB diario ── -->
-<button class="btn-add-fab" id="btn-add-fab" aria-label="Nuovo Journal">＋</button>
+    const _app  = getApps()[0];
+    const _db   = _app ? getFirestore(_app) : null;
+    const _auth = _app ? getAuth(_app) : null;
 
-<!-- ── BOTTOM TAB BAR ── -->
-<nav class="tab-bar" role="tablist">
-<button class="tab-btn active" id="tab-storia" role="tab" aria-selected="true" aria-controls="screen-storia">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-<span class="tab-label">storia</span>
-</button>
-<button class="tab-btn tab-center" id="tab-diario" role="tab" aria-selected="false" aria-controls="screen-diario">
-<div class="tab-center-circle">
-<img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
-</div>
-<span class="tab-label">diario</span>
-</button>
-<button class="tab-btn" id="tab-emozioni" role="tab" aria-selected="false" aria-controls="screen-emozioni">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-<span class="tab-label">emozioni</span>
-</button>
-</nav>
-
-<!-- ── MODAL DIARIO ── -->
-<div class="modal-overlay" id="modal-diary-overlay">
-<div class="modal-sheet">
-<div class="modal-handle"></div>
-<div class="modal-header">
-<span class="modal-title" id="modal-diary-title">Nuovo Journal</span>
-<button class="btn-modal-close" id="btn-diary-close">✕</button>
-</div>
-<div class="modal-body">
-<div class="form-group">
-<label class="form-label" for="d-titolo">Titolo</label>
-<input class="form-input" id="d-titolo" type="text" placeholder="Di cosa vuoi parlare?" autocomplete="off"/>
-</div>
-<div class="form-group">
-<label class="form-label" for="d-testo">Raccontami</label>
-<textarea class="form-textarea" id="d-testo" rows="5" placeholder="Scrivi liberamente…"></textarea>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label class="form-label" for="d-data">Data</label>
-<input class="form-input" id="d-data" type="date"/>
-</div>
-<div class="form-group">
-<label class="form-label" for="d-ora">Ora</label>
-<input class="form-input" id="d-ora" type="time"/>
-</div>
-</div>
-<div class="form-group">
-<label class="form-label">Allegato (opzionale)</label>
-<label class="form-file-label" for="d-file">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-Scegli foto o documento
-<input type="file" id="d-file" accept="image/*,.pdf,.doc,.docx" style="display:none"/>
-</label>
-<div class="form-file-name" id="d-file-name"></div>
-</div>
-<button class="btn-save" id="btn-diary-save">Salva</button>
-</div>
-</div>
-</div>
-
-<!-- ── MODAL AGGIUNGI SEZIONE STORIA ── -->
-<div class="modal-overlay" id="modal-section-overlay">
-<div class="modal-sheet">
-<div class="modal-handle"></div>
-<div class="modal-header">
-<span class="modal-title">Nuovo titolo</span>
-<button class="btn-modal-close" id="btn-section-close">✕</button>
-</div>
-<div class="modal-body">
-<div class="form-group">
-<label class="form-label" for="sec-icon">Emoji icona</label>
-<input class="form-input" id="sec-icon" type="text" placeholder="📝" maxlength="4" autocomplete="off"/>
-</div>
-<div class="form-group">
-<label class="form-label" for="sec-title">Titolo sezione</label>
-<input class="form-input" id="sec-title" type="text" placeholder="Es. Le mie riflessioni" autocomplete="off"/>
-</div>
-<button class="btn-save" id="btn-section-save">Crea sezione</button>
-</div>
-</div>
-</div>
-
-<!-- ── EDIT OVERLAY ── -->
-<div class="edit-overlay" id="edit-overlay">
-<div class="edit-sheet" id="edit-sheet-inner">
-<div class="edit-handle"></div>
-<div class="edit-label" id="edit-label">Modifica</div>
-<div id="edit-content"></div>
-<div class="edit-actions" id="edit-actions">
-<button class="btn-edit-cancel" id="edit-cancel">Annulla</button>
-<button class="btn-edit-save" id="edit-save">Salva</button>
-</div>
-</div>
-</div>
-
-<!-- lightbox non usata ma tenuta per compat -->
-<div class="plutchik-lightbox" id="plutchik-lightbox">
-<button class="plutchik-lightbox-close" id="plutchik-lb-close">✕</button>
-<div id="plutchik-lb-content" style="width:90vw;max-width:480px;"></div>
-</div>
-
-<script type="module">
-import { waitForAuth } from './js/firebase-config.js';
-import { getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
-import {
-getFirestore, doc, getDoc, setDoc,
-collection, addDoc, onSnapshot, query, orderBy, deleteDoc, updateDoc,
-} from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
-import { getAuth } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-
-```
-const _app  = getApps()[0];
-const _db   = _app ? getFirestore(_app) : null;
-const _auth = _app ? getAuth(_app) : null;
-
-function _uid() { return _auth?.currentUser?.uid || null; }
-function _storiaDoc() {
-  const uid = _uid(); if (!_db || !uid) return null;
-  return doc(_db, 'users', uid, 'salute_mentale', 'storia');
-}
-function _diaryCol() {
-  const uid = _uid(); if (!_db || !uid) return null;
-  return collection(_db, 'users', uid, 'mental_diary');
-}
-function _emozioniCol(emoName) {
-  const uid = _uid(); if (!_db || !uid) return null;
-  const safe = emoName.replace(/[^a-zA-Z0-9_\u00C0-\u024F]/g, '_');
-  return collection(_db, 'users', uid, 'emozioni_entries', safe, 'log');
-}
-
-/* ═══════════ TEMA ═══════════ */
-const htmlEl = document.documentElement;
-const themeBtn = document.getElementById('theme-toggle');
-const knob     = document.getElementById('theme-knob');
-let isDark = localStorage.getItem('zen_theme') === 'dark';
-function applyTheme() {
-  htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  knob.textContent = isDark ? '🌙' : '☀️';
-  document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-  localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-}
-applyTheme();
-themeBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
-
-/* ═══════════ TABS ═══════════ */
-const tabs = [
-  { btn: document.getElementById('tab-storia'),   screen: document.getElementById('screen-storia') },
-  { btn: document.getElementById('tab-diario'),   screen: document.getElementById('screen-diario') },
-  { btn: document.getElementById('tab-emozioni'), screen: document.getElementById('screen-emozioni') },
-];
-const fab    = document.getElementById('btn-add-fab');
-const csvBtn = document.getElementById('btn-csv');
-function switchTab(idx) {
-  tabs.forEach((t, i) => {
-    t.btn.classList.toggle('active', i === idx);
-    t.btn.setAttribute('aria-selected', String(i === idx));
-    t.screen.classList.toggle('active', i === idx);
-  });
-  fab.classList.toggle('visible', idx === 1);
-  csvBtn.style.display = idx === 1 ? 'flex' : 'none';
-}
-tabs.forEach((t, i) => t.btn.addEventListener('click', () => switchTab(i)));
-
-/* ═══════════ EDIT MODAL GENERICO ═══════════ */
-const editOverlay = document.getElementById('edit-overlay');
-const editLabel   = document.getElementById('edit-label');
-const editContent = document.getElementById('edit-content');
-const editActions = document.getElementById('edit-actions');
-const editSave    = document.getElementById('edit-save');
-const editCancel  = document.getElementById('edit-cancel');
-let _onEditSave = null;
-
-function openEdit(label, currentVal, rows, onSave) {
-  editLabel.textContent = label;
-  editContent.innerHTML = `<textarea class="edit-input" id="edit-textarea" rows="${rows}">${esc(currentVal)}</textarea>`;
-  editActions.style.display = 'flex';
-  editSave.style.display = '';
-  _onEditSave = onSave;
-  editOverlay.classList.add('open');
-  setTimeout(() => {
-    const ta = document.getElementById('edit-textarea');
-    ta?.focus();
-    ta?.setSelectionRange(ta.value.length, ta.value.length);
-  }, 80);
-}
-
-function openDetailView(title, dateStr, body, attachName, attachData) {
-  editLabel.textContent = '📖 Journal';
-  let attachHtml = '';
-  if (attachName) {
-    if (attachData && attachData.startsWith('data:image')) {
-      attachHtml = `<div class="detail-attach"><img src="${attachData}" style="max-width:100%;border-radius:10px;margin-top:8px;" alt="allegato"/></div>`;
-    } else if (attachData) {
-      attachHtml = `<div class="detail-attach"><a href="${attachData}" download="${esc(attachName)}">📎 ${esc(attachName)}</a></div>`;
+    function _uid() { return _auth?.currentUser?.uid || null; }
+    function _storiaDoc() {
+      const uid = _uid(); if (!_db || !uid) return null;
+      return doc(_db, 'users', uid, 'salute_mentale', 'storia');
     }
-  }
-  editContent.innerHTML = `
-    <div class="detail-title">${esc(title)}</div>
-    <div class="detail-date">${esc(dateStr)}</div>
-    <div class="detail-body">${esc(body)}</div>
-    ${attachHtml}`;
-  editActions.style.display = 'none';
-  editSave.style.display = 'none';
-  _onEditSave = null;
-  editOverlay.classList.add('open');
-}
-
-function closeEdit() { editOverlay.classList.remove('open'); _onEditSave = null; }
-editSave.addEventListener('click', () => {
-  const val = document.getElementById('edit-textarea')?.value.trim();
-  if (!val) return;
-  if (_onEditSave) _onEditSave(val);
-  closeEdit();
-});
-editCancel.addEventListener('click', closeEdit);
-editOverlay.addEventListener('click', e => { if (e.target === editOverlay) closeEdit(); });
-
-/* ═══════════ UTILS ═══════════ */
-const PENCIL_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-const TRASH_SVG  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
-const EYE_SVG    = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-
-function esc(str) {
-  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function nowDate() { return new Date().toISOString().slice(0,10); }
-function nowTime() {
-  const d = new Date();
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-function fmtDatetime(d, t) {
-  if (!d) return '—';
-  const [y,m,day] = d.split('-');
-  return `${day}/${m}/${y}${t ? ' · ' + t : ''}`;
-}
-function uid4() { return Math.random().toString(36).slice(2,10); }
-
-/* ═══════════════════════════════════════════
-   STORIA — sezioni con entries multiple
-═══════════════════════════════════════════ */
-const DEFAULT_STORIA = [
-  { id: 's1', icon: '📖', title: 'La mia storia',        entries: [] },
-  { id: 's2', icon: '🏆', title: 'I miei successi',      entries: [] },
-  { id: 's3', icon: '🪞', title: 'I miei errori',        entries: [] },
-  { id: 's4', icon: '🧠', title: 'Mindset',              entries: [] },
-  { id: 's5', icon: '🔍', title: 'Conosci te stesso',    entries: [] },
-  { id: 's6', icon: '✍️', title: 'Storie da raccontare', entries: [] },
-];
-let STORIA = JSON.parse(JSON.stringify(DEFAULT_STORIA));
-
-async function loadStoria() {
-  const ref = _storiaDoc(); if (!ref) return;
-  try {
-    const snap = await getDoc(ref);
-    if (snap.exists() && snap.data().sections) {
-      const saved = snap.data().sections;
-      // Migrazione: se le sezioni salvate hanno "text" invece di "entries", converto
-      STORIA = saved.map(s => ({
-        ...s,
-        entries: s.entries || (s.text ? [{ id: uid4(), text: s.text, ts: 0 }] : []),
-      }));
+    function _diaryCol() {
+      const uid = _uid(); if (!_db || !uid) return null;
+      return collection(_db, 'users', uid, 'mental_diary');
     }
-  } catch(e) { console.error(e); }
-}
+    function _emozioniCol(emoName) {
+      const uid = _uid(); if (!_db || !uid) return null;
+      const safe = emoName.replace(/[^a-zA-Z0-9_\u00C0-\u024F]/g, '_');
+      return collection(_db, 'users', uid, 'emozioni_entries', safe, 'log');
+    }
 
-async function saveStoria() {
-  const ref = _storiaDoc(); if (!ref) return;
-  try { await setDoc(ref, { sections: STORIA }); } catch(e) { console.error(e); }
-}
+    /* ═══════════ TEMA ═══════════ */
+    const htmlEl = document.documentElement;
+    const themeBtn = document.getElementById('theme-toggle');
+    const knob     = document.getElementById('theme-knob');
+    let isDark = localStorage.getItem('zen_theme') === 'dark';
+    function applyTheme() {
+      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      knob.textContent = isDark ? '🌙' : '☀️';
+      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
+      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    }
+    applyTheme();
+    themeBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-function renderStoria() {
-  const openIds = new Set(
-    Array.from(document.querySelectorAll('#storia-container .macro-body.open'))
-      .map(el => el.dataset.sid).filter(Boolean)
-  );
-  const container = document.getElementById('storia-container');
-  container.innerHTML = '';
+    /* ═══════════ TABS ═══════════ */
+    const tabs = [
+      { btn: document.getElementById('tab-storia'),   screen: document.getElementById('screen-storia') },
+      { btn: document.getElementById('tab-diario'),   screen: document.getElementById('screen-diario') },
+      { btn: document.getElementById('tab-emozioni'), screen: document.getElementById('screen-emozioni') },
+    ];
+    const fab    = document.getElementById('btn-add-fab');
+    const csvBtn = document.getElementById('btn-csv');
+    function switchTab(idx) {
+      tabs.forEach((t, i) => {
+        t.btn.classList.toggle('active', i === idx);
+        t.btn.setAttribute('aria-selected', String(i === idx));
+        t.screen.classList.toggle('active', i === idx);
+      });
+      fab.classList.toggle('visible', idx === 1);
+      csvBtn.style.display = idx === 1 ? 'flex' : 'none';
+    }
+    tabs.forEach((t, i) => t.btn.addEventListener('click', () => switchTab(i)));
 
-  STORIA.forEach((sec, si) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'macro-section';
+    /* ═══════════ EDIT MODAL GENERICO ═══════════ */
+    const editOverlay = document.getElementById('edit-overlay');
+    const editLabel   = document.getElementById('edit-label');
+    const editContent = document.getElementById('edit-content');
+    const editActions = document.getElementById('edit-actions');
+    const editSave    = document.getElementById('edit-save');
+    const editCancel  = document.getElementById('edit-cancel');
+    let _onEditSave = null;
 
-    /* Header */
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'macro-header';
-    headerDiv.innerHTML = `<div class="macro-icon">${esc(sec.icon)}</div><div class="macro-title">${esc(sec.title)}</div>`;
+    function openEdit(label, currentVal, rows, onSave) {
+      editLabel.textContent = label;
+      editContent.innerHTML = `<textarea class="edit-input" id="edit-textarea" rows="${rows}">${esc(currentVal)}</textarea>`;
+      editActions.style.display = 'flex';
+      editSave.style.display = '';
+      _onEditSave = onSave;
+      editOverlay.classList.add('open');
+      setTimeout(() => {
+        const ta = document.getElementById('edit-textarea');
+        ta?.focus();
+        ta?.setSelectionRange(ta.value.length, ta.value.length);
+      }, 80);
+    }
 
-    // Matita titolo
-    const pencilTitle = document.createElement('button');
-    pencilTitle.className = 'btn-pencil';
-    pencilTitle.title = 'Modifica titolo';
-    pencilTitle.innerHTML = PENCIL_SVG;
-    pencilTitle.addEventListener('click', e => {
-      e.stopPropagation();
-      openEdit('Titolo', sec.title, 1, val => { STORIA[si].title = val; saveStoria(); renderStoria(); });
+    function openDetailView(title, dateStr, body, attachName, attachData) {
+      editLabel.textContent = '📖 Journal';
+      let attachHtml = '';
+      if (attachName) {
+        if (attachData && attachData.startsWith('data:image')) {
+          attachHtml = `<div class="detail-attach"><img src="${attachData}" style="max-width:100%;border-radius:10px;margin-top:8px;" alt="allegato"/></div>`;
+        } else if (attachData) {
+          attachHtml = `<div class="detail-attach"><a href="${attachData}" download="${esc(attachName)}">📎 ${esc(attachName)}</a></div>`;
+        }
+      }
+      editContent.innerHTML = `
+        <div class="detail-title">${esc(title)}</div>
+        <div class="detail-date">${esc(dateStr)}</div>
+        <div class="detail-body">${esc(body)}</div>
+        ${attachHtml}`;
+      editActions.style.display = 'none';
+      editSave.style.display = 'none';
+      _onEditSave = null;
+      editOverlay.classList.add('open');
+    }
+
+    function closeEdit() { editOverlay.classList.remove('open'); _onEditSave = null; }
+    editSave.addEventListener('click', () => {
+      const val = document.getElementById('edit-textarea')?.value.trim();
+      if (!val) return;
+      if (_onEditSave) _onEditSave(val);
+      closeEdit();
     });
+    editCancel.addEventListener('click', closeEdit);
+    editOverlay.addEventListener('click', e => { if (e.target === editOverlay) closeEdit(); });
 
-    // Cestino sezione (rosso)
-    const trashSec = document.createElement('button');
-    trashSec.className = 'btn-trash';
-    trashSec.title = 'Elimina sezione';
-    trashSec.innerHTML = TRASH_SVG;
-    trashSec.addEventListener('click', e => {
-      e.stopPropagation();
-      if (!confirm(`Eliminare la sezione "${sec.title}"?`)) return;
-      STORIA.splice(si, 1);
-      saveStoria();
-      renderStoria();
-    });
+    /* ═══════════ UTILS ═══════════ */
+    const PENCIL_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const TRASH_SVG  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+    const EYE_SVG    = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 
-    const chevron = document.createElement('span');
-    chevron.className = 'macro-chevron';
-    chevron.textContent = '▼';
+    function esc(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function nowDate() { return new Date().toISOString().slice(0,10); }
+    function nowTime() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+    function fmtDatetime(d, t) {
+      if (!d) return '—';
+      const [y,m,day] = d.split('-');
+      return `${day}/${m}/${y}${t ? ' · ' + t : ''}`;
+    }
+    function uid4() { return Math.random().toString(36).slice(2,10); }
 
-    headerDiv.appendChild(pencilTitle);
-    headerDiv.appendChild(trashSec);
-    headerDiv.appendChild(chevron);
-    headerDiv.addEventListener('click', () => {
-      const isOpen = bodyDiv.classList.contains('open');
-      bodyDiv.classList.toggle('open', !isOpen);
-      headerDiv.classList.toggle('open', !isOpen);
-      footerDiv.style.display = isOpen ? 'none' : 'block';
-    });
+    /* ═══════════════════════════════════════════
+       STORIA — sezioni con entries multiple
+    ═══════════════════════════════════════════ */
+    const DEFAULT_STORIA = [
+      { id: 's1', icon: '📖', title: 'La mia storia',        entries: [] },
+      { id: 's2', icon: '🏆', title: 'I miei successi',      entries: [] },
+      { id: 's3', icon: '🪞', title: 'I miei errori',        entries: [] },
+      { id: 's4', icon: '🧠', title: 'Mindset',              entries: [] },
+      { id: 's5', icon: '🔍', title: 'Conosci te stesso',    entries: [] },
+      { id: 's6', icon: '✍️', title: 'Storie da raccontare', entries: [] },
+    ];
+    let STORIA = JSON.parse(JSON.stringify(DEFAULT_STORIA));
 
-    /* Body */
-    const bodyDiv = document.createElement('div');
-    bodyDiv.className = 'macro-body';
-    bodyDiv.dataset.sid = sec.id;
+    async function loadStoria() {
+      const ref = _storiaDoc(); if (!ref) return;
+      try {
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().sections) {
+          const saved = snap.data().sections;
+          // Migrazione: se le sezioni salvate hanno "text" invece di "entries", converto
+          STORIA = saved.map(s => ({
+            ...s,
+            entries: s.entries || (s.text ? [{ id: uid4(), text: s.text, ts: 0 }] : []),
+          }));
+        }
+      } catch(e) { console.error(e); }
+    }
 
-    const card = document.createElement('div');
-    card.className = 'area-card';
+    async function saveStoria() {
+      const ref = _storiaDoc(); if (!ref) return;
+      try { await setDoc(ref, { sections: STORIA }); } catch(e) { console.error(e); }
+    }
 
-    // Lista entries
-    function renderEntries() {
-      card.innerHTML = '';
-      const listDiv = document.createElement('div');
-      listDiv.className = 'storia-entries';
+    function renderStoria() {
+      const openIds = new Set(
+        Array.from(document.querySelectorAll('#storia-container .macro-body.open'))
+          .map(el => el.dataset.sid).filter(Boolean)
+      );
+      const container = document.getElementById('storia-container');
+      container.innerHTML = '';
 
-      sec.entries.forEach((entry, ei) => {
-        const row = document.createElement('div');
-        row.className = 'storia-entry-item';
-        row.innerHTML = `
-          <span class="storia-entry-num">${ei + 1}.</span>
-          <span class="storia-entry-text">${esc(entry.text)}</span>`;
+      STORIA.forEach((sec, si) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'macro-section';
 
-        const acts = document.createElement('div');
-        acts.className = 'storia-entry-actions';
+        /* Header */
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'macro-header';
+        headerDiv.innerHTML = `<div class="macro-icon">${esc(sec.icon)}</div><div class="macro-title">${esc(sec.title)}</div>`;
 
-        const btnView = document.createElement('button');
-        btnView.className = 'storia-entry-btn';
-        btnView.title = 'Visualizza';
-        btnView.innerHTML = EYE_SVG;
-        btnView.addEventListener('click', () => {
-          openDetailView(sec.title + ' #' + (ei+1), '', entry.text, null, null);
+        // Matita titolo
+        const pencilTitle = document.createElement('button');
+        pencilTitle.className = 'btn-pencil';
+        pencilTitle.title = 'Modifica titolo';
+        pencilTitle.innerHTML = PENCIL_SVG;
+        pencilTitle.addEventListener('click', e => {
+          e.stopPropagation();
+          openEdit('Titolo', sec.title, 1, val => { STORIA[si].title = val; saveStoria(); renderStoria(); });
         });
 
-        const btnEdit = document.createElement('button');
-        btnEdit.className = 'storia-entry-btn';
-        btnEdit.title = 'Modifica';
-        btnEdit.innerHTML = PENCIL_SVG;
-        btnEdit.addEventListener('click', () => {
-          openEdit('Modifica entry', entry.text, 5, val => {
-            STORIA[si].entries[ei].text = val;
+        // Cestino sezione (rosso)
+        const trashSec = document.createElement('button');
+        trashSec.className = 'btn-trash';
+        trashSec.title = 'Elimina sezione';
+        trashSec.innerHTML = TRASH_SVG;
+        trashSec.addEventListener('click', e => {
+          e.stopPropagation();
+          if (!confirm(`Eliminare la sezione "${sec.title}"?`)) return;
+          STORIA.splice(si, 1);
+          saveStoria();
+          renderStoria();
+        });
+
+        const chevron = document.createElement('span');
+        chevron.className = 'macro-chevron';
+        chevron.textContent = '▼';
+
+        headerDiv.appendChild(pencilTitle);
+        headerDiv.appendChild(trashSec);
+        headerDiv.appendChild(chevron);
+        headerDiv.addEventListener('click', () => {
+          const isOpen = bodyDiv.classList.contains('open');
+          bodyDiv.classList.toggle('open', !isOpen);
+          headerDiv.classList.toggle('open', !isOpen);
+          footerDiv.style.display = isOpen ? 'none' : 'block';
+        });
+
+        /* Body */
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'macro-body';
+        bodyDiv.dataset.sid = sec.id;
+
+        const card = document.createElement('div');
+        card.className = 'area-card';
+
+        // Lista entries
+        function renderEntries() {
+          card.innerHTML = '';
+          const listDiv = document.createElement('div');
+          listDiv.className = 'storia-entries';
+
+          sec.entries.forEach((entry, ei) => {
+            const row = document.createElement('div');
+            row.className = 'storia-entry-item';
+            row.innerHTML = `
+              <span class="storia-entry-num">${ei + 1}.</span>
+              <span class="storia-entry-text">${esc(entry.text)}</span>`;
+
+            const acts = document.createElement('div');
+            acts.className = 'storia-entry-actions';
+
+            const btnView = document.createElement('button');
+            btnView.className = 'storia-entry-btn';
+            btnView.title = 'Visualizza';
+            btnView.innerHTML = EYE_SVG;
+            btnView.addEventListener('click', () => {
+              openDetailView(sec.title + ' #' + (ei+1), '', entry.text, null, null);
+            });
+
+            const btnEdit = document.createElement('button');
+            btnEdit.className = 'storia-entry-btn';
+            btnEdit.title = 'Modifica';
+            btnEdit.innerHTML = PENCIL_SVG;
+            btnEdit.addEventListener('click', () => {
+              openEdit('Modifica entry', entry.text, 5, val => {
+                STORIA[si].entries[ei].text = val;
+                saveStoria();
+                renderEntries();
+              });
+            });
+
+            const btnDel = document.createElement('button');
+            btnDel.className = 'storia-entry-btn del';
+            btnDel.title = 'Elimina';
+            btnDel.innerHTML = TRASH_SVG;
+            btnDel.addEventListener('click', () => {
+              if (!confirm('Eliminare questa entry?')) return;
+              STORIA[si].entries.splice(ei, 1);
+              saveStoria();
+              renderEntries();
+            });
+
+            acts.appendChild(btnView);
+            acts.appendChild(btnEdit);
+            acts.appendChild(btnDel);
+            row.appendChild(acts);
+            listDiv.appendChild(row);
+          });
+
+          if (sec.entries.length === 0) {
+            const empty = document.createElement('div');
+            empty.style.cssText = 'font-size:.72rem;color:var(--muted);font-style:italic;padding:6px 0 4px;';
+            empty.textContent = 'Nessuna entry ancora. Scrivi qui sotto e premi Aggiungi.';
+            listDiv.appendChild(empty);
+          }
+
+          // Textarea aggiungi
+          const addRow = document.createElement('div');
+          addRow.className = 'storia-add-row';
+          const ta = document.createElement('textarea');
+          ta.className = 'storia-add-textarea';
+          ta.placeholder = 'Scrivi qualcosa…';
+          const addBtn = document.createElement('button');
+          addBtn.className = 'storia-add-btn';
+          addBtn.textContent = 'Aggiungi';
+          addBtn.addEventListener('click', () => {
+            const val = ta.value.trim();
+            if (!val) return;
+            STORIA[si].entries.push({ id: uid4(), text: val, ts: Date.now() });
+            ta.value = '';
             saveStoria();
             renderEntries();
           });
+          // Invio da textarea con Ctrl+Enter
+          ta.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { addBtn.click(); }
+          });
+          addRow.appendChild(ta);
+          addRow.appendChild(addBtn);
+
+          card.appendChild(listDiv);
+          card.appendChild(addRow);
+        }
+
+        renderEntries();
+        bodyDiv.appendChild(card);
+
+        const footerDiv = document.createElement('div');
+        footerDiv.className = 'macro-body-footer';
+        footerDiv.style.display = 'none';
+
+        wrap.appendChild(headerDiv);
+        wrap.appendChild(bodyDiv);
+        wrap.appendChild(footerDiv);
+        container.appendChild(wrap);
+
+        if (openIds.has(sec.id)) {
+          bodyDiv.classList.add('open');
+          headerDiv.classList.add('open');
+          footerDiv.style.display = 'block';
+        }
+      });
+    }
+
+    /* modal aggiungi sezione */
+    const secOverlay = document.getElementById('modal-section-overlay');
+    document.getElementById('btn-add-section').addEventListener('click', () => secOverlay.classList.add('open'));
+    document.getElementById('btn-section-close').addEventListener('click', () => secOverlay.classList.remove('open'));
+    secOverlay.addEventListener('click', e => { if (e.target === secOverlay) secOverlay.classList.remove('open'); });
+    document.getElementById('btn-section-save').addEventListener('click', () => {
+      const icon  = document.getElementById('sec-icon').value.trim() || '📝';
+      const title = document.getElementById('sec-title').value.trim();
+      if (!title) { alert('Inserisci un titolo.'); return; }
+      STORIA.push({ id: uid4(), icon, title, entries: [] });
+      saveStoria();
+      renderStoria();
+      document.getElementById('sec-icon').value  = '';
+      document.getElementById('sec-title').value = '';
+      secOverlay.classList.remove('open');
+    });
+
+    /* ═══════════════════════════════════════════
+       DIARIO — Firestore real-time
+    ═══════════════════════════════════════════ */
+    let diaryEntries = [];
+    let diaryUnsub   = null;
+
+    function subscribeDiary() {
+      const col = _diaryCol();
+      if (!col) { renderDiary(); return; }
+      if (diaryUnsub) { diaryUnsub(); diaryUnsub = null; }
+      const q = query(col, orderBy('createdAt', 'desc'));
+      diaryUnsub = onSnapshot(q, snap => {
+        diaryEntries = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+        renderDiary();
+      }, err => {
+        console.warn('Errore snapshot diario:', err);
+      });
+    }
+
+    function renderDiary() {
+      const list  = document.getElementById('diary-list');
+      const empty = document.getElementById('diary-empty');
+      list.innerHTML = '';
+      if (diaryEntries.length === 0) {
+        empty.style.display = 'block';
+        list.appendChild(empty);
+        return;
+      }
+      empty.style.display = 'none';
+      diaryEntries.forEach(entry => list.appendChild(buildEntryCard(entry)));
+    }
+
+    function buildEntryCard(entry) {
+      const div = document.createElement('div');
+      div.className = 'diary-entry';
+
+      const header = document.createElement('div');
+      header.className = 'diary-entry-header';
+
+      const info = document.createElement('div');
+      info.className = 'diary-entry-info';
+      const titleEl = document.createElement('div');
+      titleEl.className = 'diary-entry-title';
+      titleEl.textContent = entry.titolo || '(senza titolo)';
+      const dateEl = document.createElement('div');
+      dateEl.className = 'diary-entry-date';
+      dateEl.textContent = fmtDatetime(entry.data, entry.ora);
+      const preview = document.createElement('div');
+      preview.className = 'diary-entry-preview';
+      preview.textContent = entry.testo || '';
+      info.appendChild(titleEl);
+      info.appendChild(dateEl);
+      info.appendChild(preview);
+
+      const actions = document.createElement('div');
+      actions.className = 'diary-entry-actions';
+
+      const btnView = document.createElement('button');
+      btnView.className = 'diary-icon-btn';
+      btnView.title = 'Visualizza';
+      btnView.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`;
+      btnView.addEventListener('click', () => openDetailView(
+        entry.titolo || '(senza titolo)',
+        fmtDatetime(entry.data, entry.ora),
+        entry.testo || '',
+        entry.attachName || null,
+        entry.attachData || null
+      ));
+
+      const btnEdit = document.createElement('button');
+      btnEdit.className = 'diary-icon-btn';
+      btnEdit.title = 'Modifica';
+      btnEdit.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+      btnEdit.addEventListener('click', () => openDiaryModal(entry));
+
+      const btnDel = document.createElement('button');
+      btnDel.className = 'diary-icon-btn del';
+      btnDel.title = 'Elimina';
+      btnDel.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+      btnDel.addEventListener('click', async () => {
+        if (!confirm('Eliminare questo journal?')) return;
+        await deleteDoc(doc(_db, 'users', _uid(), 'mental_diary', entry._docId));
+      });
+
+      actions.appendChild(btnView);
+      actions.appendChild(btnEdit);
+      actions.appendChild(btnDel);
+      header.appendChild(info);
+      header.appendChild(actions);
+      div.appendChild(header);
+      return div;
+    }
+
+    /* modal diario */
+    let editingDiaryId = null;
+    const diaryOverlay = document.getElementById('modal-diary-overlay');
+    let _pendingAttach = null; // { name, dataUrl }
+
+    document.getElementById('d-file').addEventListener('change', function() {
+      const file = this.files[0];
+      const nameEl = document.getElementById('d-file-name');
+      if (!file) { _pendingAttach = null; nameEl.textContent = ''; return; }
+      nameEl.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = e => { _pendingAttach = { name: file.name, dataUrl: e.target.result }; };
+      reader.readAsDataURL(file);
+    });
+
+    function openDiaryModal(entry = null) {
+      editingDiaryId = entry ? entry._docId : null;
+      _pendingAttach = null;
+      document.getElementById('modal-diary-title').textContent = entry ? 'Modifica Journal' : 'Nuovo Journal';
+      document.getElementById('d-titolo').value = entry?.titolo || '';
+      document.getElementById('d-testo').value  = entry?.testo  || '';
+      document.getElementById('d-data').value   = entry?.data   || nowDate();
+      document.getElementById('d-ora').value    = entry?.ora    || nowTime();
+      document.getElementById('d-file').value   = '';
+      document.getElementById('d-file-name').textContent = entry?.attachName ? `📎 ${entry.attachName}` : '';
+      diaryOverlay.classList.add('open');
+    }
+    function closeDiaryModal() { diaryOverlay.classList.remove('open'); }
+
+    fab.addEventListener('click', () => openDiaryModal());
+    document.getElementById('btn-diary-close').addEventListener('click', closeDiaryModal);
+    diaryOverlay.addEventListener('click', e => { if (e.target === diaryOverlay) closeDiaryModal(); });
+
+    document.getElementById('btn-diary-save').addEventListener('click', async () => {
+      const saveBtn = document.getElementById('btn-diary-save');
+      const titolo = document.getElementById('d-titolo').value.trim();
+      const testo  = document.getElementById('d-testo').value.trim();
+      const data   = document.getElementById('d-data').value;
+      const ora    = document.getElementById('d-ora').value;
+      if (!titolo) { alert('Inserisci un titolo.'); return; }
+
+      const col = _diaryCol();
+      if (!col) { alert('Errore di sessione. Riprova tra un istante.'); return; }
+
+      const nowTs = Date.now();
+      const payload = { titolo, testo, data, ora };
+      if (_pendingAttach) {
+        payload.attachName = _pendingAttach.name;
+        payload.attachData = _pendingAttach.dataUrl;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = '0.6';
+
+      try {
+        if (editingDiaryId) {
+          await updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload);
+          const idx = diaryEntries.findIndex(e => e._docId === editingDiaryId);
+          if (idx !== -1) {
+            diaryEntries[idx] = { ...diaryEntries[idx], ...payload };
+          }
+        } else {
+          const docRef = await addDoc(col, { ...payload, createdAt: nowTs });
+          // Inserimento immediato ottimistico in cima alla lista
+          const newEntry = { _docId: docRef.id, ...payload, createdAt: nowTs };
+          if (!diaryEntries.some(e => e._docId === docRef.id)) {
+            diaryEntries.unshift(newEntry);
+          }
+        }
+        renderDiary();
+        switchTab(1); // Passa / assicura la vista sul tab Diario
+        closeDiaryModal();
+      } catch (err) {
+        console.error('Errore salvataggio diario:', err);
+        alert('Errore durante il salvataggio. Controlla la connessione.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
+      }
+    });
+
+    /* CSV export */
+    csvBtn.addEventListener('click', () => {
+      if (diaryEntries.length === 0) { alert('Nessun journal da esportare.'); return; }
+      const rows = [['Data', 'Ora', 'Titolo', 'Testo']];
+      diaryEntries.forEach(e => {
+        rows.push([e.data||'', e.ora||'', `"${(e.titolo||'').replace(/"/g,'""')}"`, `"${(e.testo||'').replace(/"/g,'""')}"`]);
+      });
+      const csv  = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = 'diario-mentale.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    /* ═══════════════════════════════════════════
+       EMOZIONI — toggle per emozione, entries multiple
+    ═══════════════════════════════════════════ */
+    const PRIMARIE = [
+      { key: 'gioia',      emoji: '😄', label: 'Gioia' },
+      { key: 'tristezza',  emoji: '😢', label: 'Tristezza' },
+      { key: 'paura',      emoji: '😨', label: 'Paura' },
+      { key: 'rabbia',     emoji: '😡', label: 'Rabbia' },
+      { key: 'disgusto',   emoji: '🤢', label: 'Disgusto' },
+      { key: 'sorpresa',   emoji: '😲', label: 'Sorpresa' },
+    ];
+    const SECONDARIE = [
+      { key: 'vergogna',     emoji: '😳', label: 'Vergogna' },
+      { key: 'senso_colpa',  emoji: '😞', label: 'Senso di Colpa' },
+      { key: 'gelosia',      emoji: '😒', label: 'Gelosia' },
+      { key: 'invidia',      emoji: '😤', label: 'Invidia' },
+      { key: 'orgoglio',     emoji: '🦁', label: 'Orgoglio' },
+      { key: 'ansia',        emoji: '😰', label: 'Ansia' },
+      { key: 'rimpianto',    emoji: '😔', label: 'Rimpianto' },
+      { key: 'compassione',  emoji: '🤍', label: 'Compassione' },
+      { key: 'speranza',     emoji: '🌱', label: 'Speranza' },
+      { key: 'noia',         emoji: '😑', label: 'Noia' },
+      { key: 'meraviglia',   emoji: '🤩', label: 'Meraviglia' },
+      { key: 'serenita',     emoji: '☮️', label: 'Serenità' },
+      { key: 'fiducia',      emoji: '🤝', label: 'Fiducia' },
+      { key: 'anticipazione', emoji: '🌟', label: 'Anticipazione' },
+    ];
+
+    // Map emoName → array locale di entries (sync da Firestore)
+    const emoEntriesCache = {};
+    const emoUnsubMap = {};
+
+    function subscribeEmozione(emoKey) {
+      if (emoUnsubMap[emoKey]) return; // già sottoscritto
+      const col = _emozioniCol(emoKey);
+      if (!col) return;
+      const q = query(col, orderBy('ts', 'asc'));
+      emoUnsubMap[emoKey] = onSnapshot(q, snap => {
+        emoEntriesCache[emoKey] = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+        // aggiorna contatore nell'header se aperto
+        const countEl = document.getElementById(`emo-count-${emoKey}`);
+        if (countEl) countEl.textContent = emoEntriesCache[emoKey].length > 0 ? `(${emoEntriesCache[emoKey].length})` : '';
+        // aggiorna body se aperto
+        const bodyEl = document.getElementById(`emo-body-${emoKey}`);
+        if (bodyEl && bodyEl.classList.contains('open')) renderEmoBody(emoKey, bodyEl);
+      });
+    }
+
+    function renderEmoBody(emoKey, bodyEl) {
+      const entries = emoEntriesCache[emoKey] || [];
+      bodyEl.innerHTML = '';
+
+      const listDiv = document.createElement('div');
+      listDiv.className = 'emo-entries';
+
+      entries.forEach((entry, ei) => {
+        const row = document.createElement('div');
+        row.className = 'emo-entry-row';
+        row.innerHTML = `<span class="emo-entry-num">${ei+1}.</span><span class="emo-entry-text">${esc(entry.text)}</span>`;
+        const btns = document.createElement('div');
+        btns.className = 'emo-entry-btns';
+
+        const bView = document.createElement('button');
+        bView.className = 'emo-entry-btn';
+        bView.title = 'Visualizza';
+        bView.innerHTML = EYE_SVG;
+        bView.addEventListener('click', () => openDetailView(`${entry.emoji||''} ${entry.label||''}`.trim(), '', entry.text, null, null));
+
+        const bEdit = document.createElement('button');
+        bEdit.className = 'emo-entry-btn';
+        bEdit.title = 'Modifica';
+        bEdit.innerHTML = PENCIL_SVG;
+        bEdit.addEventListener('click', () => {
+          openEdit('Modifica', entry.text, 4, async val => {
+            const col = _emozioniCol(emoKey); if (!col) return;
+            await updateDoc(doc(_db, 'users', _uid(), 'emozioni_entries', emoKey, 'log', entry._docId), { text: val });
+          });
         });
 
-        const btnDel = document.createElement('button');
-        btnDel.className = 'storia-entry-btn del';
-        btnDel.title = 'Elimina';
-        btnDel.innerHTML = TRASH_SVG;
-        btnDel.addEventListener('click', () => {
+        const bDel = document.createElement('button');
+        bDel.className = 'emo-entry-btn del';
+        bDel.title = 'Elimina';
+        bDel.innerHTML = TRASH_SVG;
+        bDel.addEventListener('click', async () => {
           if (!confirm('Eliminare questa entry?')) return;
-          STORIA[si].entries.splice(ei, 1);
-          saveStoria();
-          renderEntries();
+          const col = _emozioniCol(emoKey); if (!col) return;
+          await deleteDoc(doc(_db, 'users', _uid(), 'emozioni_entries', emoKey, 'log', entry._docId));
         });
 
-        acts.appendChild(btnView);
-        acts.appendChild(btnEdit);
-        acts.appendChild(btnDel);
-        row.appendChild(acts);
+        btns.appendChild(bView);
+        btns.appendChild(bEdit);
+        btns.appendChild(bDel);
+        row.appendChild(btns);
         listDiv.appendChild(row);
       });
 
-      if (sec.entries.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:.72rem;color:var(--muted);font-style:italic;padding:6px 0 4px;';
-        empty.textContent = 'Nessuna entry ancora. Scrivi qui sotto e premi Aggiungi.';
-        listDiv.appendChild(empty);
+      if (entries.length === 0) {
+        const e = document.createElement('div');
+        e.style.cssText = 'font-size:.70rem;color:var(--muted);font-style:italic;padding:4px 0;';
+        e.textContent = 'Scrivi quando hai vissuto o provato questa emozione…';
+        listDiv.appendChild(e);
       }
 
-      // Textarea aggiungi
       const addRow = document.createElement('div');
-      addRow.className = 'storia-add-row';
+      addRow.className = 'emo-add-row';
       const ta = document.createElement('textarea');
-      ta.className = 'storia-add-textarea';
-      ta.placeholder = 'Scrivi qualcosa…';
+      ta.className = 'emo-add-textarea';
+      ta.placeholder = 'Cosa è per te questa emozione? Quando l\'hai provata?';
       const addBtn = document.createElement('button');
-      addBtn.className = 'storia-add-btn';
+      addBtn.className = 'emo-add-btn';
       addBtn.textContent = 'Aggiungi';
-      addBtn.addEventListener('click', () => {
+      addBtn.addEventListener('click', async () => {
         const val = ta.value.trim();
         if (!val) return;
-        STORIA[si].entries.push({ id: uid4(), text: val, ts: Date.now() });
+        const col = _emozioniCol(emoKey); if (!col) return;
+        await addDoc(col, { text: val, ts: Date.now() });
         ta.value = '';
-        saveStoria();
-        renderEntries();
       });
-      // Invio da textarea con Ctrl+Enter
-      ta.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { addBtn.click(); }
-      });
+      ta.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addBtn.click(); });
+
       addRow.appendChild(ta);
       addRow.appendChild(addBtn);
-
-      card.appendChild(listDiv);
-      card.appendChild(addRow);
+      bodyEl.appendChild(listDiv);
+      bodyEl.appendChild(addRow);
     }
 
-    renderEntries();
-    bodyDiv.appendChild(card);
+    function buildEmoItem(emo) {
+      const item = document.createElement('div');
+      item.className = 'emo-item';
 
-    const footerDiv = document.createElement('div');
-    footerDiv.className = 'macro-body-footer';
-    footerDiv.style.display = 'none';
+      const hdr = document.createElement('div');
+      hdr.className = 'emo-item-header';
+      hdr.id = `emo-hdr-${emo.key}`;
+      hdr.innerHTML = `
+        <span class="emo-item-emoji">${emo.emoji}</span>
+        <span class="emo-item-name">${esc(emo.label)}</span>
+        <span class="emo-item-count" id="emo-count-${emo.key}"></span>
+        <span class="emo-item-chevron">▼</span>`;
 
-    wrap.appendChild(headerDiv);
-    wrap.appendChild(bodyDiv);
-    wrap.appendChild(footerDiv);
-    container.appendChild(wrap);
+      const body = document.createElement('div');
+      body.className = 'emo-item-body';
+      body.id = `emo-body-${emo.key}`;
 
-    if (openIds.has(sec.id)) {
-      bodyDiv.classList.add('open');
-      headerDiv.classList.add('open');
-      footerDiv.style.display = 'block';
-    }
-  });
-}
-
-/* modal aggiungi sezione */
-const secOverlay = document.getElementById('modal-section-overlay');
-document.getElementById('btn-add-section').addEventListener('click', () => secOverlay.classList.add('open'));
-document.getElementById('btn-section-close').addEventListener('click', () => secOverlay.classList.remove('open'));
-secOverlay.addEventListener('click', e => { if (e.target === secOverlay) secOverlay.classList.remove('open'); });
-document.getElementById('btn-section-save').addEventListener('click', () => {
-  const icon  = document.getElementById('sec-icon').value.trim() || '📝';
-  const title = document.getElementById('sec-title').value.trim();
-  if (!title) { alert('Inserisci un titolo.'); return; }
-  STORIA.push({ id: uid4(), icon, title, entries: [] });
-  saveStoria();
-  renderStoria();
-  document.getElementById('sec-icon').value  = '';
-  document.getElementById('sec-title').value = '';
-  secOverlay.classList.remove('open');
-});
-
-/* ═══════════════════════════════════════════
-   DIARIO — Firestore real-time
-═══════════════════════════════════════════ */
-let diaryEntries = [];
-let diaryUnsub   = null;
-
-function subscribeDiary() {
-  const col = _diaryCol();
-  if (!col) { renderDiary(); return; }
-  if (diaryUnsub) { diaryUnsub(); diaryUnsub = null; }
-  const q = query(col, orderBy('createdAt', 'desc'));
-  diaryUnsub = onSnapshot(q, snap => {
-    diaryEntries = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    renderDiary();
-  }, err => {
-    console.warn('Errore snapshot diario:', err);
-  });
-}
-
-function renderDiary() {
-  const list  = document.getElementById('diary-list');
-  const empty = document.getElementById('diary-empty');
-  // rimuove solo le card, non il nodo empty
-  Array.from(list.children).forEach(c => { if (c !== empty) c.remove(); });
-  if (diaryEntries.length === 0) {
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-  diaryEntries.forEach(entry => list.appendChild(buildEntryCard(entry)));
-}
-
-function buildEntryCard(entry) {
-  const div = document.createElement('div');
-  div.className = 'diary-entry';
-
-  const header = document.createElement('div');
-  header.className = 'diary-entry-header';
-
-  const info = document.createElement('div');
-  info.className = 'diary-entry-info';
-  const titleEl = document.createElement('div');
-  titleEl.className = 'diary-entry-title';
-  titleEl.textContent = entry.titolo || '(senza titolo)';
-  const dateEl = document.createElement('div');
-  dateEl.className = 'diary-entry-date';
-  dateEl.textContent = fmtDatetime(entry.data, entry.ora);
-  const preview = document.createElement('div');
-  preview.className = 'diary-entry-preview';
-  preview.textContent = entry.testo || '';
-  info.appendChild(titleEl);
-  info.appendChild(dateEl);
-  info.appendChild(preview);
-
-  const actions = document.createElement('div');
-  actions.className = 'diary-entry-actions';
-
-  const btnView = document.createElement('button');
-  btnView.className = 'diary-icon-btn';
-  btnView.title = 'Visualizza';
-  btnView.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`;
-  btnView.addEventListener('click', () => openDetailView(
-    entry.titolo || '(senza titolo)',
-    fmtDatetime(entry.data, entry.ora),
-    entry.testo || '',
-    entry.attachName || null,
-    entry.attachData || null
-  ));
-
-  const btnEdit = document.createElement('button');
-  btnEdit.className = 'diary-icon-btn';
-  btnEdit.title = 'Modifica';
-  btnEdit.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-  btnEdit.addEventListener('click', () => openDiaryModal(entry));
-
-  const btnDel = document.createElement('button');
-  btnDel.className = 'diary-icon-btn del';
-  btnDel.title = 'Elimina';
-  btnDel.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
-  btnDel.addEventListener('click', () => {
-    if (!confirm('Eliminare questo journal?')) return;
-    // rimuovi subito da diaryEntries e ridisegna, poi scrivi su Firestore
-    diaryEntries = diaryEntries.filter(e => e._docId !== entry._docId);
-    renderDiary();
-    deleteDoc(doc(_db, 'users', _uid(), 'mental_diary', entry._docId))
-      .catch(err => console.warn('Errore eliminazione diario:', err));
-  });
-
-  actions.appendChild(btnView);
-  actions.appendChild(btnEdit);
-  actions.appendChild(btnDel);
-  header.appendChild(info);
-  header.appendChild(actions);
-  div.appendChild(header);
-  return div;
-}
-
-/* modal diario */
-let editingDiaryId = null;
-const diaryOverlay = document.getElementById('modal-diary-overlay');
-let _pendingAttach = null; // { name, dataUrl }
-
-document.getElementById('d-file').addEventListener('change', function() {
-  const file = this.files[0];
-  const nameEl = document.getElementById('d-file-name');
-  if (!file) { _pendingAttach = null; nameEl.textContent = ''; return; }
-  nameEl.textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = e => { _pendingAttach = { name: file.name, dataUrl: e.target.result }; };
-  reader.readAsDataURL(file);
-});
-
-function openDiaryModal(entry = null) {
-  editingDiaryId = entry ? entry._docId : null;
-  _pendingAttach = null;
-  document.getElementById('modal-diary-title').textContent = entry ? 'Modifica Journal' : 'Nuovo Journal';
-  document.getElementById('d-titolo').value = entry?.titolo || '';
-  document.getElementById('d-testo').value  = entry?.testo  || '';
-  document.getElementById('d-data').value   = entry?.data   || nowDate();
-  document.getElementById('d-ora').value    = entry?.ora    || nowTime();
-  document.getElementById('d-file').value   = '';
-  document.getElementById('d-file-name').textContent = entry?.attachName ? `📎 ${entry.attachName}` : '';
-  diaryOverlay.classList.add('open');
-}
-function closeDiaryModal() { diaryOverlay.classList.remove('open'); }
-
-fab.addEventListener('click', () => openDiaryModal());
-document.getElementById('btn-diary-close').addEventListener('click', closeDiaryModal);
-diaryOverlay.addEventListener('click', e => { if (e.target === diaryOverlay) closeDiaryModal(); });
-
-document.getElementById('btn-diary-save').addEventListener('click', async () => {
-  const saveBtn = document.getElementById('btn-diary-save');
-  const titolo = document.getElementById('d-titolo').value.trim();
-  const testo  = document.getElementById('d-testo').value.trim();
-  const data   = document.getElementById('d-data').value;
-  const ora    = document.getElementById('d-ora').value;
-  if (!titolo) { alert('Inserisci un titolo.'); return; }
-
-  const col = _diaryCol();
-  if (!col) { alert('Errore di sessione. Riprova tra un istante.'); return; }
-
-  const nowTs = Date.now();
-  const payload = { titolo, testo, data, ora };
-  if (_pendingAttach) {
-    payload.attachName = _pendingAttach.name;
-    payload.attachData = _pendingAttach.dataUrl;
-  }
-
-  saveBtn.disabled = true;
-  saveBtn.style.opacity = '0.6';
-
-  // aggiorna subito diaryEntries e ridisegna senza aspettare Firestore
-  if (editingDiaryId) {
-    const idx = diaryEntries.findIndex(e => e._docId === editingDiaryId);
-    if (idx !== -1) diaryEntries[idx] = { ...diaryEntries[idx], ...payload };
-    updateDoc(doc(_db, 'users', _uid(), 'mental_diary', editingDiaryId), payload)
-      .catch(err => console.warn('Errore aggiornamento diario:', err));
-  } else {
-    const tempId = '_temp_' + Date.now();
-    diaryEntries.unshift({ _docId: tempId, ...payload, createdAt: nowTs });
-    addDoc(col, { ...payload, createdAt: nowTs })
-      .then(ref => {
-        // sostituisce la entry temporanea con il vero id
-        const idx = diaryEntries.findIndex(e => e._docId === tempId);
-        if (idx !== -1) {
-          diaryEntries[idx]._docId = ref.id;
-          renderDiary();
+      hdr.addEventListener('click', () => {
+        const isOpen = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        hdr.classList.toggle('open', !isOpen);
+        if (!isOpen) {
+          subscribeEmozione(emo.key);
+          renderEmoBody(emo.key, body);
         }
-      })
-      .catch(err => console.warn('Errore inserimento diario:', err));
-  }
-  renderDiary();
-  saveBtn.disabled = false;
-  saveBtn.style.opacity = '1';
-  switchTab(1);
-  closeDiaryModal();
-});
+      });
 
-/* CSV export */
-csvBtn.addEventListener('click', () => {
-  if (diaryEntries.length === 0) { alert('Nessun journal da esportare.'); return; }
-  const rows = [['Data', 'Ora', 'Titolo', 'Testo']];
-  diaryEntries.forEach(e => {
-    rows.push([e.data||'', e.ora||'', `"${(e.titolo||'').replace(/"/g,'""')}"`, `"${(e.testo||'').replace(/"/g,'""')}"`]);
-  });
-  const csv  = rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = 'diario-mentale.csv'; a.click();
-  URL.revokeObjectURL(url);
-});
+      item.appendChild(hdr);
+      item.appendChild(body);
+      return item;
+    }
 
-/* ═══════════════════════════════════════════
-   EMOZIONI — toggle per emozione, entries multiple
-═══════════════════════════════════════════ */
-const PRIMARIE = [
-  { key: 'gioia',      emoji: '😄', label: 'Gioia' },
-  { key: 'tristezza',  emoji: '😢', label: 'Tristezza' },
-  { key: 'paura',      emoji: '😨', label: 'Paura' },
-  { key: 'rabbia',     emoji: '😡', label: 'Rabbia' },
-  { key: 'disgusto',   emoji: '🤢', label: 'Disgusto' },
-  { key: 'sorpresa',   emoji: '😲', label: 'Sorpresa' },
-];
-const SECONDARIE = [
-  { key: 'vergogna',     emoji: '😳', label: 'Vergogna' },
-  { key: 'senso_colpa',  emoji: '😞', label: 'Senso di Colpa' },
-  { key: 'gelosia',      emoji: '😒', label: 'Gelosia' },
-  { key: 'invidia',      emoji: '😤', label: 'Invidia' },
-  { key: 'orgoglio',     emoji: '🦁', label: 'Orgoglio' },
-  { key: 'ansia',        emoji: '😰', label: 'Ansia' },
-  { key: 'rimpianto',    emoji: '😔', label: 'Rimpianto' },
-  { key: 'compassione',  emoji: '🤍', label: 'Compassione' },
-  { key: 'speranza',     emoji: '🌱', label: 'Speranza' },
-  { key: 'noia',         emoji: '😑', label: 'Noia' },
-  { key: 'meraviglia',   emoji: '🤩', label: 'Meraviglia' },
-  { key: 'serenita',     emoji: '☮️', label: 'Serenità' },
-  { key: 'fiducia',      emoji: '🤝', label: 'Fiducia' },
-  { key: 'anticipazione', emoji: '🌟', label: 'Anticipazione' },
-];
+    function buildEmoSection(containerId, emotions) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      emotions.forEach(emo => container.appendChild(buildEmoItem(emo)));
+    }
 
-// Map emoName → array locale di entries (sync da Firestore)
-const emoEntriesCache = {};
-const emoUnsubMap = {};
-
-function subscribeEmozione(emoKey) {
-  if (emoUnsubMap[emoKey]) return; // già sottoscritto
-  const col = _emozioniCol(emoKey);
-  if (!col) return;
-  const q = query(col, orderBy('ts', 'asc'));
-  emoUnsubMap[emoKey] = onSnapshot(q, snap => {
-    emoEntriesCache[emoKey] = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    // aggiorna contatore nell'header se aperto
-    const countEl = document.getElementById(`emo-count-${emoKey}`);
-    if (countEl) countEl.textContent = emoEntriesCache[emoKey].length > 0 ? `(${emoEntriesCache[emoKey].length})` : '';
-    // aggiorna body se aperto
-    const bodyEl = document.getElementById(`emo-body-${emoKey}`);
-    if (bodyEl && bodyEl.classList.contains('open')) renderEmoBody(emoKey, bodyEl);
-  });
-}
-
-function renderEmoBody(emoKey, bodyEl) {
-  const entries = emoEntriesCache[emoKey] || [];
-  bodyEl.innerHTML = '';
-
-  const listDiv = document.createElement('div');
-  listDiv.className = 'emo-entries';
-
-  entries.forEach((entry, ei) => {
-    const row = document.createElement('div');
-    row.className = 'emo-entry-row';
-    row.innerHTML = `<span class="emo-entry-num">${ei+1}.</span><span class="emo-entry-text">${esc(entry.text)}</span>`;
-    const btns = document.createElement('div');
-    btns.className = 'emo-entry-btns';
-
-    const bView = document.createElement('button');
-    bView.className = 'emo-entry-btn';
-    bView.title = 'Visualizza';
-    bView.innerHTML = EYE_SVG;
-    bView.addEventListener('click', () => openDetailView(`${entry.emoji||''} ${entry.label||''}`.trim(), '', entry.text, null, null));
-
-    const bEdit = document.createElement('button');
-    bEdit.className = 'emo-entry-btn';
-    bEdit.title = 'Modifica';
-    bEdit.innerHTML = PENCIL_SVG;
-    bEdit.addEventListener('click', () => {
-      openEdit('Modifica', entry.text, 4, async val => {
-        const col = _emozioniCol(emoKey); if (!col) return;
-        await updateDoc(doc(_db, 'users', _uid(), 'emozioni_entries', emoKey, 'log', entry._docId), { text: val });
+    /* toggle sezioni emozioni principali */
+    ['primarie', 'secondarie'].forEach(k => {
+      const hdr  = document.getElementById(`esh-${k}`);
+      const body = document.getElementById(`esb-${k}`);
+      hdr.addEventListener('click', () => {
+        const open = body.classList.contains('open');
+        body.classList.toggle('open', !open);
+        hdr.classList.toggle('open', !open);
       });
     });
 
-    const bDel = document.createElement('button');
-    bDel.className = 'emo-entry-btn del';
-    bDel.title = 'Elimina';
-    bDel.innerHTML = TRASH_SVG;
-    bDel.addEventListener('click', async () => {
-      if (!confirm('Eliminare questa entry?')) return;
-      const col = _emozioniCol(emoKey); if (!col) return;
-      await deleteDoc(doc(_db, 'users', _uid(), 'emozioni_entries', emoKey, 'log', entry._docId));
-    });
-
-    btns.appendChild(bView);
-    btns.appendChild(bEdit);
-    btns.appendChild(bDel);
-    row.appendChild(btns);
-    listDiv.appendChild(row);
-  });
-
-  if (entries.length === 0) {
-    const e = document.createElement('div');
-    e.style.cssText = 'font-size:.70rem;color:var(--muted);font-style:italic;padding:4px 0;';
-    e.textContent = 'Scrivi quando hai vissuto o provato questa emozione…';
-    listDiv.appendChild(e);
-  }
-
-  const addRow = document.createElement('div');
-  addRow.className = 'emo-add-row';
-  const ta = document.createElement('textarea');
-  ta.className = 'emo-add-textarea';
-  ta.placeholder = 'Cosa è per te questa emozione? Quando l\'hai provata?';
-  const addBtn = document.createElement('button');
-  addBtn.className = 'emo-add-btn';
-  addBtn.textContent = 'Aggiungi';
-  addBtn.addEventListener('click', async () => {
-    const val = ta.value.trim();
-    if (!val) return;
-    const col = _emozioniCol(emoKey); if (!col) return;
-    await addDoc(col, { text: val, ts: Date.now() });
-    ta.value = '';
-  });
-  ta.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addBtn.click(); });
-
-  addRow.appendChild(ta);
-  addRow.appendChild(addBtn);
-  bodyEl.appendChild(listDiv);
-  bodyEl.appendChild(addRow);
-}
-
-function buildEmoItem(emo) {
-  const item = document.createElement('div');
-  item.className = 'emo-item';
-
-  const hdr = document.createElement('div');
-  hdr.className = 'emo-item-header';
-  hdr.id = `emo-hdr-${emo.key}`;
-  hdr.innerHTML = `
-    <span class="emo-item-emoji">${emo.emoji}</span>
-    <span class="emo-item-name">${esc(emo.label)}</span>
-    <span class="emo-item-count" id="emo-count-${emo.key}"></span>
-    <span class="emo-item-chevron">▼</span>`;
-
-  const body = document.createElement('div');
-  body.className = 'emo-item-body';
-  body.id = `emo-body-${emo.key}`;
-
-  hdr.addEventListener('click', () => {
-    const isOpen = body.classList.contains('open');
-    body.classList.toggle('open', !isOpen);
-    hdr.classList.toggle('open', !isOpen);
-    if (!isOpen) {
-      subscribeEmozione(emo.key);
-      renderEmoBody(emo.key, body);
+    /* ═══════════════════════════════════════════
+       RUOTA lightbox
+    ═══════════════════════════════════════════ */
+    const wheelLb = document.getElementById('plutchik-lightbox');
+    const wheelLbContent = document.getElementById('plutchik-lb-content');
+    function openWheelLb() {
+      wheelLbContent.innerHTML = '<img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" style="width:100%;height:auto;border-radius:12px;"/>';
+      wheelLb.classList.add('open');
     }
-  });
+    document.getElementById('btn-wheel-zoom').addEventListener('click', openWheelLb);
+    document.getElementById('wheel-img-wrap').addEventListener('click', openWheelLb);
+    document.getElementById('plutchik-lb-close').addEventListener('click', () => wheelLb.classList.remove('open'));
+    wheelLb.addEventListener('click', e => { if (e.target === wheelLb) wheelLb.classList.remove('open'); });
 
-  item.appendChild(hdr);
-  item.appendChild(body);
-  return item;
-}
-
-function buildEmoSection(containerId, emotions) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  emotions.forEach(emo => container.appendChild(buildEmoItem(emo)));
-}
-
-/* toggle sezioni emozioni principali */
-['primarie', 'secondarie'].forEach(k => {
-  const hdr  = document.getElementById(`esh-${k}`);
-  const body = document.getElementById(`esb-${k}`);
-  hdr.addEventListener('click', () => {
-    const open = body.classList.contains('open');
-    body.classList.toggle('open', !open);
-    hdr.classList.toggle('open', !open);
-  });
-});
-
-/* ═══════════════════════════════════════════
-   RUOTA lightbox
-═══════════════════════════════════════════ */
-const wheelLb = document.getElementById('plutchik-lightbox');
-const wheelLbContent = document.getElementById('plutchik-lb-content');
-function openWheelLb() {
-  wheelLbContent.innerHTML = '<img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" style="width:100%;height:auto;border-radius:12px;"/>';
-  wheelLb.classList.add('open');
-}
-document.getElementById('btn-wheel-zoom').addEventListener('click', openWheelLb);
-document.getElementById('wheel-img-wrap').addEventListener('click', openWheelLb);
-document.getElementById('plutchik-lb-close').addEventListener('click', () => wheelLb.classList.remove('open'));
-wheelLb.addEventListener('click', e => { if (e.target === wheelLb) wheelLb.classList.remove('open'); });
-
-/* ═══════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════ */
-(async () => {
-  await waitForAuth();
-  await loadStoria();
-  renderStoria();
-  subscribeDiary();
-  buildEmoSection('esb-primarie',   PRIMARIE);
-  buildEmoSection('esb-secondarie', SECONDARIE);
-})();
-```
-
-</script>
+    /* ═══════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════ */
+    (async () => {
+      await waitForAuth();
+      await loadStoria();
+      renderStoria();
+      subscribeDiary();
+      buildEmoSection('esb-primarie',   PRIMARIE);
+      buildEmoSection('esb-secondarie', SECONDARIE);
+    })();
+  </script>
 </body>
 </html>
