@@ -1411,6 +1411,7 @@
       if (!data.nome && !data.cognome) { alert('Inserisci almeno un nome.'); return; }
 
       if (editingId) {
+        skipNextRender = true;
         await updateContactDoc(editingId, data);
       } else {
         data.besties = false;
