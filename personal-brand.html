@@ -42,6 +42,7 @@
       color:var(--muted); font-family:inherit; font-size:.58rem; letter-spacing:.1em;
       padding:5px 8px; cursor:pointer; display:flex; flex-direction:column;
       align-items:center; gap:2px; width:52px; text-decoration:none; }
+    .header-actions { display:flex; gap:6px; }
     .header-center { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
     .header-icon { font-size:1.8rem; line-height:1; }
     .app-title { font-size:.95rem; letter-spacing:.16em; color:var(--primary); font-weight:700; }
@@ -52,10 +53,6 @@
       border-radius:50%; background:var(--accent); transition:transform .3s;
       display:flex; align-items:center; justify-content:center; font-size:.7rem; }
     html[data-theme="dark"] .theme-toggle .knob { transform:translateX(24px); }
-    /* CSV button — solo visibile su tab igiene */
-    #btn-csv { display:none; }
-    body.tab-igiene #btn-csv { display:flex; }
-    body.tab-igiene #btn-tao { display:none; }
 
     /* ── TAB BAR ── */
     .tab-bar { position:fixed; bottom:0; left:0; right:0;
@@ -226,6 +223,9 @@
       cursor:pointer; color:var(--primary); font-size:1.6rem;
       -webkit-tap-highlight-color:transparent; }
     .insp-add-btn:active { background:var(--surface); }
+    .insp-view-image { width:100%; max-height:60vh; object-fit:contain; border-radius:14px; background:var(--surface); }
+    .insp-view-notes { display:none; margin-top:14px; padding:12px; border-radius:12px;
+      background:var(--surface); color:var(--text); font-size:.78rem; line-height:1.6; white-space:pre-wrap; }
   </style>
   <script>
     window.__FIREBASE_CONFIG__ = {
@@ -243,16 +243,16 @@
 
   <!-- HEADER -->
   <header>
-    <!-- TAO (default) -->
-    <a class="btn-header" id="btn-tao" href="index.html" aria-label="Torna al Qui e Ora" style="text-decoration:none;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>TAO</span>
-    </a>
-    <!-- CSV (solo tab igiene) -->
-    <button class="btn-header" id="btn-csv" aria-label="Esporta CSV">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span>CSV</span>
-    </button>
+    <div class="header-actions">
+      <a class="btn-header" id="btn-tao" href="index.html" aria-label="Torna al Qui e Ora">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        <span>TAO</span>
+      </a>
+      <button class="btn-header" id="btn-csv" aria-label="Esporta CSV">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>CSV</span>
+      </button>
+    </div>
     <div class="header-center">
       <div class="header-icon">🌟</div>
       <div class="app-title">Personal Brand</div>
@@ -508,6 +508,24 @@
     </div>
   </div>
 
+  <!-- Modal: Visualizza ispirazione -->
+  <div class="modal-overlay" id="modal-insp-view">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="insp-view-title"></div>
+      <img class="insp-view-image" id="insp-view-image" alt=""/>
+      <div class="insp-view-notes" id="insp-view-notes"></div>
+      <div class="modal-actions">
+        <button class="btn-outline" id="btn-insp-notes">Titolo e note</button>
+        <button class="btn-primary" id="btn-insp-view-edit">Modifica</button>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:center;gap:10px;">
+        <button class="btn-outline" id="btn-insp-view-close">Chiudi</button>
+        <button class="btn-danger" id="btn-insp-view-delete">Elimina</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Ispirazione item (add/edit) -->
   <div class="modal-overlay" id="modal-insp">
     <div class="modal-sheet">
@@ -564,9 +582,11 @@
 
     /* ══ TAB NAV ══ */
     const TABS = ['guardaroba','igiene','ispirazione'];
+    let activeTab = 'guardaroba';
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.tab;
+        activeTab = id;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('tab-active', b === btn));
         TABS.forEach(t => document.getElementById('screen-' + t).classList.toggle('active', t === id));
         // CSV button visibility
@@ -991,18 +1011,24 @@
       closeModal('modal-action');
     });
 
-    /* CSV export */
+    /* CSV export contestuale */
     document.getElementById('btn-csv').addEventListener('click', () => {
-      const rows = [['Data','Ora','Titolo','Categoria','Descrizione']];
-      igieneActions.forEach(a => {
-        const time = a.createdAt ? new Date(a.createdAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}) : '';
-        rows.push([a.date || '', time, a.title || '', a.categoria || '', (a.desc || '').replace(/\n/g,' ')]);
-      });
-      const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+      let rows;
+      if (activeTab === 'guardaroba') {
+        rows = [['Nome','Categoria','Marca','Taglia','Vestibilità','Colore','Stile','Anno','Stelle','Foto']];
+        capi.forEach(c => rows.push([c.nome,c.categoria,c.marca,c.taglia,c.vestibilita,c.colore,c.stile,c.anno,c.stelle,c.foto]));
+      } else if (activeTab === 'igiene') {
+        rows = [['Data','Ora','Titolo','Categoria','Descrizione']];
+        igieneActions.forEach(a => rows.push([a.date, a.createdAt ? new Date(a.createdAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}) : '', a.title, a.categoria, a.desc]));
+      } else {
+        rows = [['Sezione','Titolo','Note','Foto']];
+        ispItems.forEach(i => rows.push([i.section,i.title,i.desc,i.foto]));
+      }
+      const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""').replace(/\n/g,' ')}"`).join(',')).join('\n');
       const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url;
-      a.download = `igiene_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `${activeTab}_${new Date().toISOString().slice(0,10)}.csv`;
       a.click(); URL.revokeObjectURL(url);
     });
 
@@ -1019,7 +1045,7 @@
       container.innerHTML = INSP_SECTIONS.map(sec => {
         const items = ispItems.filter(i => i.section === sec);
         const imgsHtml = items.map(item => `
-          <div class="insp-item" onclick="openEditInsp('${item._docId}')">
+          <div class="insp-item" onclick="openViewInsp('${item._docId}')">
             ${item.foto ? `<img src="${item.foto}" alt="${item.title||''}" loading="lazy"/>` : `<div style="font-size:2rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">🖼️</div>`}
             ${item.title ? `<div class="insp-item-info">${item.title}</div>` : ''}
           </div>`).join('');
@@ -1069,6 +1095,36 @@
       showInspPreview(null);
       openModal('modal-insp');
     };
+
+    let viewInspDocId = null;
+    window.openViewInsp = function(docId) {
+      const item = ispItems.find(i => i._docId === docId);
+      if (!item) return;
+      viewInspDocId = docId;
+      document.getElementById('insp-view-title').textContent = item.title || 'Ispirazione';
+      const image = document.getElementById('insp-view-image');
+      image.src = item.foto || '';
+      image.alt = item.title || 'Ispirazione';
+      image.style.display = item.foto ? '' : 'none';
+      const notes = document.getElementById('insp-view-notes');
+      notes.textContent = item.desc || 'Nessuna nota';
+      notes.style.display = 'none';
+      openModal('modal-insp-view');
+    };
+    document.getElementById('btn-insp-notes').addEventListener('click', () => {
+      const notes = document.getElementById('insp-view-notes');
+      notes.style.display = notes.style.display === 'none' ? '' : 'none';
+    });
+    document.getElementById('btn-insp-view-close').addEventListener('click', () => closeModal('modal-insp-view'));
+    document.getElementById('btn-insp-view-edit').addEventListener('click', () => {
+      closeModal('modal-insp-view');
+      openEditInsp(viewInspDocId);
+    });
+    document.getElementById('btn-insp-view-delete').addEventListener('click', async () => {
+      if (!confirm('Eliminare questa ispirazione?')) return;
+      await deleteIspirazioneItem(viewInspDocId);
+      closeModal('modal-insp-view');
+    });
 
     window.openEditInsp = function(docId) {
       const item = ispItems.find(i => i._docId === docId);
