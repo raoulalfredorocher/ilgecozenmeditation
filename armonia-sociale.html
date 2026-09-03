@@ -241,6 +241,55 @@
       box-shadow: 0 2px 8px rgba(213,107,145,.3);
       -webkit-tap-highlight-color: transparent;
     }
+    .btn-import-vcf {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: .58rem;
+      letter-spacing: .08em;
+      padding: 5px 10px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-import-vcf svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ── IMPORT PREVIEW MODAL ── */
+    #modal-import-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 600;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    #modal-import-overlay.open { display: flex; }
+    #modal-import-sheet {
+      background: var(--card);
+      border-radius: 22px 22px 0 0;
+      width: 100%; max-width: 420px;
+      padding: 0 20px calc(env(safe-area-inset-bottom,0px) + 24px);
+      max-height: 80dvh; overflow-y: auto;
+    }
+    .import-chip-list { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+    .import-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: .76rem;
+      color: var(--text);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .import-chip-name { font-weight: 600; }
+    .import-chip-meta { font-size: .6rem; color: var(--muted); }
+    .import-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .import-actions .btn-save { flex: 1; }
+    .btn-import-cancel {
+      flex: 1; background: none; border: 1.5px solid var(--border);
+      border-radius: 20px; color: var(--text); font-family: inherit;
+      font-size: .78rem; padding: 12px; cursor: pointer;
+    }
 
     /* ── PERSON CARD ── */
     .person-list { display: flex; flex-direction: column; gap: 10px; }
@@ -712,7 +761,14 @@
     </div>
     <div class="row-between">
       <span class="section-label" id="persone-count">Persone</span>
-      <button class="btn-add-person" id="btn-add-person" aria-label="Aggiungi persona">＋</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label class="btn-import-vcf" for="vcf-file-input" aria-label="Importa vCard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Importa vCard
+        </label>
+        <input type="file" id="vcf-file-input" accept=".vcf,text/vcard" style="display:none"/>
+        <button type="button" class="btn-add-person" id="btn-add-person" aria-label="Aggiungi persona">＋</button>
+      </div>
     </div>
     <div class="person-list" id="person-list">
       <div class="empty-state" id="empty-state">Nessun contatto ancora. Tocca ＋ per aggiungere.</div>
@@ -873,12 +929,167 @@
     </div>
   </div>
 
+  <!-- ── IMPORT vCard MODAL ── -->
+  <div id="modal-import-overlay">
+    <div id="modal-import-sheet">
+      <div class="modal-handle" style="margin:12px auto 0;"></div>
+      <div class="modal-header" style="padding:16px 0 12px;">
+        <span class="modal-title" id="import-modal-title">Importa contatti</span>
+        <button type="button" class="btn-modal-close" id="btn-import-close" aria-label="Chiudi">✕</button>
+      </div>
+      <div id="import-chip-list" class="import-chip-list"></div>
+      <div class="import-actions">
+        <button type="button" class="btn-import-cancel" id="btn-import-cancel">Annulla</button>
+        <button type="button" class="btn-save" id="btn-import-confirm">Importa tutti</button>
+      </div>
+    </div>
+  </div>
+
     <script type="module">
     import {
       subscribeCRM, addContactDoc, updateContactDoc, deleteContactDoc,
       addNoteDoc, deleteNoteDoc, subscribeNotes,
       isFirebaseConfigured, waitForAuth,
     } from './js/firebase-config.js';
+
+    /* ─────────────────────── vCARD IMPORT ─────────────────────── */
+    let vcfParsed = [];
+
+    function parseVcf(text) {
+      const results = [];
+      // Splitta su BEGIN:VCARD
+      const blocks = text.split(/BEGIN:VCARD/i).filter(b => b.trim());
+      for (const block of blocks) {
+        const lines = block
+          .replace(/\r\n[ \t]/g, '')  // unfold
+          .replace(/\r\n/g, '\n')
+          .replace(/\r/g, '\n')
+          .split('\n');
+
+        const get = (prefix) => {
+          const re = new RegExp('^' + prefix + '[^:]*:(.*)', 'i');
+          for (const l of lines) { const m = l.match(re); if (m) return m[1].trim(); }
+          return '';
+        };
+        const getAll = (prefix) => {
+          const re = new RegExp('^' + prefix + '[^:]*:(.*)', 'i');
+          return lines.filter(l => re.test(l)).map(l => l.match(re)[1].trim());
+        };
+
+        // Nome
+        const fn = get('FN');
+        const nRaw = get('N');
+        let nome = '', cognome = '';
+        if (nRaw) {
+          const parts = nRaw.split(';');
+          cognome = (parts[0] || '').replace(/\\/g, '').trim();
+          nome    = (parts[1] || '').replace(/\\/g, '').trim();
+        } else if (fn) {
+          const sp = fn.trim().split(' ');
+          nome    = sp.slice(0, -1).join(' ');
+          cognome = sp[sp.length - 1] || '';
+        }
+        if (!nome && !cognome) continue;
+
+        // Telefono — prende il primo TEL
+        const telRaw = get('TEL');
+        const telefono = telRaw.replace(/[^\d+\s\-()]/g, '').trim();
+
+        // Email
+        const email = get('EMAIL');
+
+        // Birthday: BDAY:YYYYMMDD o YYYY-MM-DD
+        let birthday = '';
+        const bdRaw = get('BDAY');
+        if (bdRaw) {
+          const m = bdRaw.match(/(\d{4})-?(\d{2})-?(\d{2})/);
+          if (m) birthday = `${m[1]}-${m[2]}-${m[3]}`;
+        }
+
+        // Indirizzo — ADR: poBox;ext;street;city;region;postal;country
+        let abita = '';
+        const adrRaw = get('ADR');
+        if (adrRaw) {
+          const parts = adrRaw.split(';');
+          abita = [parts[3], parts[4], parts[6]].filter(Boolean).join(', ');
+        }
+
+        // Azienda
+        const azienda = get('ORG').split(';')[0].trim();
+
+        // Job title / lavora (usiamo TITLE come "dove lavora" in mancanza di sede)
+        const lavora = get('TITLE');
+
+        // Social — campi X- non standard
+        const instagram = get('X-INSTAGRAM') || get('X-SOCIALPROFILE;type=instagram') || '';
+        const tiktok    = get('X-TIKTOK')    || '';
+        const linkedin  = get('X-LINKEDIN')  || get('X-SOCIALPROFILE;type=linkedin') || '';
+
+        // Gruppo — NOTE come fallback gruppo
+        const gruppo = '';
+
+        // Interessi — CATEGORIES
+        const catRaw = get('CATEGORIES');
+        const interessi = catRaw ? catRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+        results.push({ nome, cognome, telefono, email, birthday, abita, lavora, azienda, instagram, tiktok, linkedin, gruppo, interessi, fotoUrl: null, besties: false });
+      }
+      return results;
+    }
+
+    function openImportModal(parsed) {
+      vcfParsed = parsed;
+      const list = document.getElementById('import-chip-list');
+      document.getElementById('import-modal-title').textContent = `${parsed.length} contatt${parsed.length === 1 ? 'o' : 'i'} trovati`;
+      list.innerHTML = parsed.map((c, i) => `
+        <div class="import-chip">
+          <div>
+            <div class="import-chip-name">${c.nome} ${c.cognome}</div>
+            <div class="import-chip-meta">${[c.telefono, c.email].filter(Boolean).join(' · ') || '—'}</div>
+          </div>
+          <button type="button" class="btn-modal-close" data-idx="${i}" style="font-size:.8rem;padding:4px 6px;" title="Rimuovi">✕</button>
+        </div>`).join('');
+      list.querySelectorAll('[data-idx]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          vcfParsed.splice(+btn.dataset.idx, 1);
+          openImportModal(vcfParsed);
+        });
+      });
+      document.getElementById('modal-import-overlay').classList.add('open');
+    }
+
+    function closeImportModal() {
+      document.getElementById('modal-import-overlay').classList.remove('open');
+      vcfParsed = [];
+    }
+
+    document.getElementById('vcf-file-input').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const parsed = parseVcf(ev.target.result);
+        if (!parsed.length) { alert('Nessun contatto trovato nel file vCard.'); return; }
+        openImportModal(parsed);
+      };
+      reader.readAsText(file);
+      e.target.value = ''; // reset per poter reimportare
+    });
+
+    document.getElementById('btn-import-close').addEventListener('click', closeImportModal);
+    document.getElementById('btn-import-cancel').addEventListener('click', closeImportModal);
+
+    document.getElementById('btn-import-confirm').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-import-confirm');
+      btn.textContent = 'Importazione…';
+      btn.disabled = true;
+      for (const c of vcfParsed) {
+        await addContactDoc({ ...c, createdAt: Date.now() });
+      }
+      closeImportModal();
+      btn.textContent = 'Importa tutti';
+      btn.disabled = false;
+    });
 
     /* ─────────────────────── UTILS ─────────────────────── */
     function initials(nome, cognome) {
