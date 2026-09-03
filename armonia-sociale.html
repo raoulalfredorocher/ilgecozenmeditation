@@ -1154,8 +1154,8 @@
     /* ─────────────────────── RENDER ─────────────────────── */
     function sortAZ(arr) {
       return [...arr].sort((a, b) => {
-        const ka = `${a.cognome || ''} ${a.nome || ''}`.trim().toLowerCase();
-        const kb = `${b.cognome || ''} ${b.nome || ''}`.trim().toLowerCase();
+        const ka = `${a.nome || ''} ${a.cognome || ''}`.trim().toLowerCase();
+        const kb = `${b.nome || ''} ${b.cognome || ''}`.trim().toLowerCase();
         return ka.localeCompare(kb, 'it');
       });
     }
