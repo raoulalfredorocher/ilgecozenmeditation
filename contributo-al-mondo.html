@@ -23,6 +23,7 @@
       --muted: #876a6a;
       --primary: #25739E;
       --accent: #74C7E1;
+      --accent2: #F5A9BC;
     }
     html[data-theme="dark"] {
       --bg: #111820;
@@ -33,8 +34,10 @@
       --muted: #a89090;
       --primary: #74C7E1;
       --accent: #25739E;
+      --accent2: #F5A9BC;
     }
 
+    html { overscroll-behavior: none; }
     html, body {
       min-height: 100%;
       background: var(--bg);
@@ -46,16 +49,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 120px) 20px 32px;
+      padding: calc(env(safe-area-inset-top, 0px) + 90px) 20px calc(72px + env(safe-area-inset-bottom, 0px));
       max-width: 420px;
       margin: 0 auto;
     }
 
     header {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       z-index: 20;
       background: var(--bg);
       display: flex;
@@ -80,96 +81,92 @@
       gap: 2px;
       width: 52px;
     }
-    .header-center {
-      flex: 1;
-      text-align: center;
-    }
-    .app-title {
-      font-size: .95rem;
-      letter-spacing: .16em;
-      color: var(--primary);
-      font-weight: 700;
-    }
-    .app-sub {
-      font-size: .48rem;
-      letter-spacing: .22em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
+    .header-center { flex: 1; text-align: center; }
+    .app-title { font-size: .95rem; letter-spacing: .16em; color: var(--primary); font-weight: 700; }
+    .app-sub { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
     .theme-toggle {
       background: none;
       border: 1.5px solid var(--border);
       border-radius: 20px;
       cursor: pointer;
-      width: 52px;
-      height: 28px;
+      width: 52px; height: 28px;
       position: relative;
     }
     .theme-toggle .knob {
       position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 20px;
-      height: 20px;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
       border-radius: 50%;
       background: var(--accent);
       transition: transform .3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: .7rem;
     }
     html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
 
-    .contrib-grid {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .contrib-card {
-      width: 100%;
+    /* ── Tab bar ── */
+    .tab-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: calc(58px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 28px 20px;
+      border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 200;
+      overflow: visible;
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      text-align: center;
-      min-height: 130px;
-    }
-    .contrib-card-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .contrib-icon { font-size: 2.2rem; line-height: 1; }
-    .contrib-logo-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #e91e8c;
-      display: flex;
       align-items: center;
       justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: color .2s;
+      padding: 8px 4px;
+      height: 100%;
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.active { color: var(--primary); }
+    .tab-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1; }
+    .tab-center {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 8px;
+      gap: 4px;
+      overflow: visible;
+      position: relative;
+    }
+    .tab-center-circle {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: var(--accent2);
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      transform: translateY(-24px);
+      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(245,169,188,.6);
+      transition: background .2s, transform .12s;
     }
-    .contrib-logo-badge svg { width: 16px; height: 16px; }
-    .contrib-title {
-      font-size: .88rem;
-      letter-spacing: .1em;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .contrib-empty {
-      font-size: .62rem;
-      color: var(--border);
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
+    .tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
+    .tab-center-gecko { width: 38px; height: 38px; object-fit: contain; }
+    .tab-center .tab-label { margin-top: -20px; }
+
+    /* ── Screens ── */
+    .screen { display: none; width: 100%; }
+    .screen.active { display: block; }
   </style>
   <script>
     window.__FIREBASE_CONFIG__ = {
@@ -184,70 +181,75 @@
 </head>
 <body style="visibility:hidden">
   <script type="module" src="js/auth-guard.js"></script>
+
   <header>
-    <a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
+    <a class="btn-back" href="index.html" aria-label="Torna al TAO">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
       <span>TAO</span>
     </a>
     <div class="header-center">
       <div class="app-title">Contributo al mondo</div>
-      <div class="app-sub">pagina in costruzione</div>
+      <div class="app-sub">il geco zen</div>
     </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
       <div class="knob" id="theme-knob">☀️</div>
     </button>
   </header>
 
-  <div class="contrib-grid">
+  <!-- Screen IT & AI -->
+  <section class="screen active" id="screen-itai"></section>
 
-    <!-- 1 · IT & AI -->
-    <section class="contrib-card">
-      <div class="contrib-card-header">
-        <div class="contrib-icon">💻</div>
-        <div class="contrib-title">IT &amp; AI</div>
+  <!-- Screen Il Geco Zen -->
+  <section class="screen" id="screen-geco"></section>
+
+  <!-- Screen Volontariato -->
+  <section class="screen" id="screen-volontariato"></section>
+
+  <!-- Tab bar -->
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" id="tab-itai" role="tab" aria-selected="true" aria-controls="screen-itai">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span class="tab-label">IT &amp; AI</span>
+    </button>
+    <button class="tab-btn tab-center" id="tab-geco" role="tab" aria-selected="false" aria-controls="screen-geco">
+      <div class="tab-center-circle">
+        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
       </div>
-    </section>
-
-    <!-- 2 · Il Geco Zen -->
-    <section class="contrib-card">
-      <div class="contrib-card-header">
-        <div class="contrib-icon">🦎</div>
-        <div class="contrib-title">Il Geco Zen</div>
-        <!-- logo badge rosa -->
-        <div class="contrib-logo-badge" aria-label="Il Geco Zen logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z"/>
-            <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4Z"/>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3 · Volontariato -->
-    <section class="contrib-card">
-      <div class="contrib-card-header">
-        <div class="contrib-icon">🤝</div>
-        <div class="contrib-title">Volontariato</div>
-      </div>
-    </section>
-
-  </div>
+      <span class="tab-label">Geco Zen</span>
+    </button>
+    <button class="tab-btn" id="tab-volontariato" role="tab" aria-selected="false" aria-controls="screen-volontariato">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="tab-label">Volontariato</span>
+    </button>
+  </nav>
 
   <script>
     const htmlEl = document.documentElement;
-    const btn = document.getElementById('theme-toggle');
+    const themeBtn = document.getElementById('theme-toggle');
     const knob = document.getElementById('theme-knob');
     let isDark = localStorage.getItem('zen_theme') === 'dark';
-
-    function apply() {
+    function applyTheme() {
       htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
       knob.textContent = isDark ? '🌙' : '☀️';
       document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
       localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
     }
+    applyTheme();
+    themeBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
-    apply();
-    btn.addEventListener('click', () => { isDark = !isDark; apply(); });
+    const tabs = [
+      { btn: document.getElementById('tab-itai'),         screen: document.getElementById('screen-itai') },
+      { btn: document.getElementById('tab-geco'),         screen: document.getElementById('screen-geco') },
+      { btn: document.getElementById('tab-volontariato'), screen: document.getElementById('screen-volontariato') },
+    ];
+    tabs.forEach((t, i) => {
+      t.btn.addEventListener('click', () => {
+        tabs.forEach(x => { x.btn.classList.remove('active'); x.btn.setAttribute('aria-selected','false'); x.screen.classList.remove('active'); });
+        t.btn.classList.add('active');
+        t.btn.setAttribute('aria-selected','true');
+        t.screen.classList.add('active');
+      });
+    });
   </script>
 </body>
 </html>
