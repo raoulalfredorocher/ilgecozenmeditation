@@ -335,6 +335,10 @@
       background: var(--gold); border: 4px solid var(--card);
       cursor: pointer;
     }
+    .compass-edit {
+      position: absolute; top: -2px; right: 4px;
+      color: var(--muted);
+    }
     .ikigai-popup {
       position: absolute; left: 50%; bottom: calc(100% + 14px);
       transform: translateX(-50%); width: 220px;
@@ -345,6 +349,7 @@
     }
     .ikigai-popup.visible { opacity: 1; pointer-events: auto; }
     .ikigai-popup-title {
+      display: flex; align-items: center; justify-content: center; gap: 4px;
       font-size: .56rem; letter-spacing: .18em;
       text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
     }
@@ -427,15 +432,15 @@
   <section class="compass-section" aria-label="Bussola dei valori">
     <div class="compass-section-title">Bussola dei valori</div>
     <div class="compass">
-      <div class="compass-point north"><strong>Nord</strong>Gentilezza</div>
-      <div class="compass-point east"><strong>Est</strong>Serenità</div>
-      <div class="compass-point south"><strong>Sud</strong>Salute</div>
-      <div class="compass-point west"><strong>Ovest</strong>Prosperità</div>
+      <div class="compass-point north"><strong>Nord</strong><span id="compass-north">Gentilezza</span><button class="btn-pencil compass-edit" data-compass="north" title="Modifica valore Nord" aria-label="Modifica valore Nord"></button></div>
+      <div class="compass-point east"><strong>Est</strong><span id="compass-east">Serenità</span><button class="btn-pencil compass-edit" data-compass="east" title="Modifica valore Est" aria-label="Modifica valore Est"></button></div>
+      <div class="compass-point south"><strong>Sud</strong><span id="compass-south">Salute</span><button class="btn-pencil compass-edit" data-compass="south" title="Modifica valore Sud" aria-label="Modifica valore Sud"></button></div>
+      <div class="compass-point west"><strong>Ovest</strong><span id="compass-west">Prosperità</span><button class="btn-pencil compass-edit" data-compass="west" title="Modifica valore Ovest" aria-label="Modifica valore Ovest"></button></div>
       <div class="compass-center-wrap" id="ikigai-trigger-wrap">
         <button class="compass-center" id="ikigai-trigger" type="button" aria-label="Mostra la mia missione" aria-expanded="false"></button>
         <div class="ikigai-popup" id="ikigai-popup" role="dialog" aria-label="La mia missione">
-          <div class="ikigai-popup-title">La mia missione</div>
-          <div class="ikigai-popup-text">Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
+          <div class="ikigai-popup-title">La mia missione <button class="btn-pencil" id="mission-edit" title="Modifica missione" aria-label="Modifica missione"></button></div>
+          <div class="ikigai-popup-text" id="mission-text">Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
         </div>
       </div>
     </div>
@@ -485,15 +490,15 @@
       if (!ref) return null;
       try {
         const snap = await getDoc(ref);
-        if (snap.exists()) return snap.data().sections || null;
+        if (snap.exists()) return snap.data();
       } catch (e) { console.error('loadData error', e); }
       return null;
     }
 
-    async function _saveRemote(data) {
+    async function _saveRemote() {
       const ref = _directionDoc();
       if (!ref) return;
-      try { await setDoc(ref, { sections: data }); }
+      try { await setDoc(ref, { sections: DATA, compass: COMPASS, mission: MISSION }); }
       catch (e) { console.error('saveData error', e); }
     }
 
@@ -609,11 +614,18 @@
     /* ═══════════════════════════════════════════
        PERSISTENZA
     ═══════════════════════════════════════════ */
+    const DEFAULT_COMPASS = {
+      north: 'Gentilezza', east: 'Serenità', south: 'Salute', west: 'Prosperità'
+    };
+    const DEFAULT_MISSION = 'Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.';
+
     let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    let COMPASS = { ...DEFAULT_COMPASS };
+    let MISSION = DEFAULT_MISSION;
 
     // saveData è sync per il codice di rendering, ma salva su Firestore in background
-    function saveData(data) {
-      _saveRemote(data);
+    function saveData() {
+      _saveRemote();
     }
 
     /* ═══════════════════════════════════════════
@@ -939,6 +951,37 @@
     editCancel.addEventListener('click', closeEdit);
     overlay.addEventListener('click', e => { if (e.target === overlay) closeEdit(); });
 
+    function renderCompass() {
+      Object.entries(COMPASS).forEach(([direction, value]) => {
+        document.getElementById(`compass-${direction}`).textContent = value;
+      });
+      document.getElementById('mission-text').textContent = MISSION;
+    }
+
+    document.querySelectorAll('[data-compass]').forEach(button => {
+      button.innerHTML = PENCIL_SVG;
+      button.addEventListener('click', e => {
+        e.stopPropagation();
+        const direction = button.dataset.compass;
+        openEdit(`Valore ${direction}`, COMPASS[direction], 1, value => {
+          COMPASS[direction] = value;
+          renderCompass();
+          saveData();
+        });
+      });
+    });
+
+    const missionEdit = document.getElementById('mission-edit');
+    missionEdit.innerHTML = PENCIL_SVG;
+    missionEdit.addEventListener('click', e => {
+      e.stopPropagation();
+      openEdit('La mia missione', MISSION, 6, value => {
+        MISSION = value;
+        renderCompass();
+        saveData();
+      });
+    });
+
     /* ═══════════════════════════════════════════
        INIT
     ═══════════════════════════════════════════ */
@@ -955,17 +998,22 @@
       });
     }
 
-    // Init: attende auth poi carica da Firestore (o usa DEFAULT_DATA)
+    // Init: attende auth poi carica da Firestore (o usa i dati di default)
     (async () => {
       await waitForAuth();
       const remote = await _loadRemote();
-      if (remote && Array.isArray(remote)) {
-        const merged = mergeDefaultAreas(remote);
-        // se il merge ha aggiunto aree, salva subito su Firestore
-        const changed = JSON.stringify(merged) !== JSON.stringify(remote);
-        DATA = merged;
-        if (changed) saveData(DATA);
+      if (remote) {
+        COMPASS = { ...DEFAULT_COMPASS, ...remote.compass };
+        if (typeof remote.mission === 'string' && remote.mission.trim()) MISSION = remote.mission;
+        if (Array.isArray(remote.sections)) {
+          const merged = mergeDefaultAreas(remote.sections);
+          // se il merge ha aggiunto aree, salva subito su Firestore
+          const changed = JSON.stringify(merged) !== JSON.stringify(remote.sections);
+          DATA = merged;
+          if (changed) saveData();
+        }
       }
+      renderCompass();
       renderAll();
     })();
   </script>
