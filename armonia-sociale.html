@@ -1283,6 +1283,13 @@
 
     /* ─────────────────────── FIREBASE SUBSCRIBE ─────────────────────── */
     subscribeCRM(list => {
+      if (skipNextRender) {
+        // Aggiorna contacts[] preservando i valori locali già modificati (es. besties)
+        list.forEach(incoming => {
+          const local = contacts.find(x => x._docId === incoming._docId);
+          if (local) Object.assign(incoming, { besties: local.besties });
+        });
+      }
       contacts = list;
       renderContacts(document.getElementById('search-input').value);
       // Se il modal dettaglio è aperto aggiorna solo l'header del nome
