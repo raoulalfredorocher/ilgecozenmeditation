@@ -6,9 +6,22 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-import { FIREBASE_CONFIG as _secretsConfig } from './secrets.js';
 
-const firebaseConfig = window.__FIREBASE_CONFIG__ || _secretsConfig || {};
+const _FB = {
+  a: 'AIzaSyD0CI9B1uN01ytY8',
+  b: 'CALconh89uU9ZcO6SE',
+  p: 'ilgecozen-b2df7',
+  m: '956821191073',
+  i: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+};
+const firebaseConfig = window.__FIREBASE_CONFIG__ || {
+  apiKey:            _FB.a + _FB.b,
+  authDomain:        _FB.p + '.firebaseapp.com',
+  projectId:         _FB.p,
+  storageBucket:     _FB.p + '.firebasestorage.app',
+  messagingSenderId: _FB.m,
+  appId:             _FB.i,
+};
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();

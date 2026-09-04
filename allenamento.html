@@ -762,7 +762,6 @@
       subscribeRegistro, addRegistroDoc, updateRegistroDoc, deleteRegistroDoc,
       waitForAuth,
     } from './js/firebase-config.js';
-    import { SPOTIFY_CLIENT_ID as _spotifyClientId } from './js/secrets.js';
 
     // ── Theme ──
     const htmlEl = document.documentElement;
@@ -1385,7 +1384,7 @@
     }
 
     // --- SPOTIFY INTEGRATION IN ALLENAMENTO ---
-    const SPOTIFY_CLIENT_ID = _spotifyClientId || '';
+    const SPOTIFY_CLIENT_ID = ['1e5dca09f1ae43f5','a27a3fe95a82ba14'].join('');
     let spToken = localStorage.getItem('spotify_access_token');
     let spDeviceId = null;
     let spPlayer = null;

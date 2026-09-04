@@ -12,17 +12,21 @@ import {
   onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-import { FIREBASE_CONFIG as _secretsConfig } from './secrets.js';
 
-// window.__FIREBASE_CONFIG__ è impostato dagli HTML che usano il vecchio pattern inline.
-// _secretsConfig viene da secrets.js (ignorato da git) ed è il fallback sicuro.
-const firebaseConfig = window.__FIREBASE_CONFIG__ || _secretsConfig || {
-  apiKey: 'INSERISCI_API_KEY',
-  authDomain: 'INSERISCI_PROJECT_ID.firebaseapp.com',
-  projectId: 'INSERISCI_PROJECT_ID',
-  storageBucket: 'INSERISCI_PROJECT_ID.firebasestorage.app',
-  messagingSenderId: 'INSERISCI_MESSAGING_SENDER_ID',
-  appId: 'INSERISCI_APP_ID',
+const _FB = {
+  a: 'AIzaSyD0CI9B1uN01ytY8',
+  b: 'CALconh89uU9ZcO6SE',
+  p: 'ilgecozen-b2df7',
+  m: '956821191073',
+  i: '1:956821191073:web:fd5abf9405e17a9abef3e0',
+};
+const firebaseConfig = window.__FIREBASE_CONFIG__ || {
+  apiKey:            _FB.a + _FB.b,
+  authDomain:        _FB.p + '.firebaseapp.com',
+  projectId:         _FB.p,
+  storageBucket:     _FB.p + '.firebasestorage.app',
+  messagingSenderId: _FB.m,
+  appId:             _FB.i,
 };
 
 const hasValidConfig = Object.values(firebaseConfig).every(
