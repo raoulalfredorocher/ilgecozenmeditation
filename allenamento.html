@@ -520,6 +520,7 @@
           <button class="btn-t btn-t-next"  id="btn-t-next"  style="display:none">Avanti →</button>
         </div>
         <div class="skip-btns" id="skip-btns" style="display:none">
+          <button class="btn-skip" id="btn-skip-serie">↩ Skip serie</button>
           <button class="btn-skip" id="btn-skip-esercizio">⏭ Skip esercizio</button>
           <button class="btn-skip" id="btn-skip-recupero">⏩ Skip recupero</button>
         </div>
@@ -1354,8 +1355,9 @@
     const btnStart  = document.getElementById('btn-t-start');
     const btnStop   = document.getElementById('btn-t-stop');
     const btnNext   = document.getElementById('btn-t-next');
-    const skipBtns  = document.getElementById('skip-btns');
-    const btnSkipEx = document.getElementById('btn-skip-esercizio');
+    const skipBtns   = document.getElementById('skip-btns');
+    const btnSkipSerie = document.getElementById('btn-skip-serie');
+    const btnSkipEx  = document.getElementById('btn-skip-esercizio');
     const btnSkipRec = document.getElementById('btn-skip-recupero');
 
     function suonaCampanello() {
@@ -1375,13 +1377,14 @@
       if (recTimer)  { clearInterval(recTimer);  recTimer  = null; }
     }
 
-    function showBtns({ start=false, stop=false, next=false, skipEx=false, skipRec=false }) {
-      btnStart.style.display = start ? 'inline-block' : 'none';
-      btnStop.style.display  = stop  ? 'inline-block' : 'none';
-      btnNext.style.display  = next  ? 'inline-block' : 'none';
-      btnSkipEx.style.display  = skipEx  ? 'inline-block' : 'none';
-      btnSkipRec.style.display = skipRec ? 'inline-block' : 'none';
-      skipBtns.style.display = (skipEx || skipRec) ? 'flex' : 'none';
+    function showBtns({ start=false, stop=false, next=false, skipSerie=false, skipEx=false, skipRec=false }) {
+      btnStart.style.display   = start    ? 'inline-block' : 'none';
+      btnStop.style.display    = stop     ? 'inline-block' : 'none';
+      btnNext.style.display    = next     ? 'inline-block' : 'none';
+      btnSkipSerie.style.display = skipSerie ? 'inline-block' : 'none';
+      btnSkipEx.style.display  = skipEx   ? 'inline-block' : 'none';
+      btnSkipRec.style.display = skipRec  ? 'inline-block' : 'none';
+      skipBtns.style.display = (skipSerie || skipEx || skipRec) ? 'flex' : 'none';
     }
 
     function setClockUI(time, phase, exLabel='', exMeta='', serieLabel='') {
@@ -1641,6 +1644,10 @@
     let sessionDetails = []; // accumula { nome, serie, esecuzione, recupero }
 
     function loadEsercizio() {
+      // reset sempre disabled/opacity prima di tutto
+      btnStart.disabled = false;
+      btnStart.style.opacity = '';
+
       if (sessIdx >= sessExercises.length) {
         // tutti gli esercizi finiti → vai alle fasi restanti (stretching o fine)
         nextPhase();
@@ -1656,19 +1663,18 @@
       const hasTempo = ex.tempo && ex.tempo > 0;
       const exMeta  = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${hasTempo ? ' · '+ex.tempo+'s' : ''}`;
       const serieLabel = `Serie ${sessSerie + 1} / ${ex.serie}`;
-      // cerchio: nome esercizio inside, meta+serie sopra
       document.getElementById('timer-ex-label').textContent = '';
       document.getElementById('timer-ex-meta').textContent = exMeta;
       document.getElementById('timer-serie-label').textContent = serieLabel;
       document.getElementById('clock-phase').textContent = ex.nome;
       document.getElementById('timer-phase-label').textContent = 'Esercizio';
       document.getElementById('clock-time').textContent = hasTempo ? fmtTime(ex.tempo) : '00:00';
-      showBtns({ start: true, skipEx: true });
+      showBtns({ start: true, skipEx: true, skipSerie: true });
       btnStart.textContent = 'Start';
 
       btnStart.onclick = () => {
         exStartTime = Date.now();
-        showBtns({ stop: true, skipEx: true });
+        showBtns({ stop: true, skipSerie: true, skipEx: true });
         if (hasTempo) {
           // countdown dal tempo dell'esercizio
           mainSeconds = ex.tempo;
@@ -1701,6 +1707,13 @@
         clearInterval(mainTimer); mainTimer = null;
         exElapsed = exStartTime ? Math.round((Date.now() - exStartTime) / 1000) : mainSeconds;
         advanceSerie(ex, false);
+      };
+
+      // Skip serie singola: logga la serie corrente come skippata e va al recupero
+      btnSkipSerie.onclick = () => {
+        stopAllTimers();
+        exElapsed = exStartTime ? Math.round((Date.now() - exStartTime) / 1000) : 0;
+        advanceSerie(ex, true); // true = skipped
       };
 
       // Skip esercizio intero: salta tutte le serie rimanenti
@@ -1772,6 +1785,9 @@
       // Skip recupero: interrompe il countdown e va direttamente al prossimo esercizio
       btnSkipRec.onclick = () => {
         stopAllTimers();
+        // resetta disabled PRIMA di loadEsercizio
+        btnStart.disabled = false;
+        btnStart.style.opacity = '';
         // marca l'ultimo dettaglio con skip recupero
         if (sessionDetails.length) {
           sessionDetails[sessionDetails.length - 1].skipRecupero = true;
@@ -1824,15 +1840,17 @@
       const sch = all?.schede?.[sessionSchId];
       const durata = Math.round((Date.now() - (sessionStartTime || Date.now())) / 60000);
       const oggi = new Date().toISOString().slice(0, 10);
+      // copia dettagli prima di resettare
+      const dettagliSalvati = [...sessionDetails];
+      sessionDetails = [];
       addRegistroDoc({
         data: oggi,
         allenamentoId: sessionAllId,
         allenamentoNome: all?.nome || '—',
         schedaNome: sch?.nome || '—',
         durata, feedback: null, note: '',
-        dettagli: sessionDetails,
+        dettagli: dettagliSalvati,
       });
-      sessionDetails = [];
       // prima mostra overlay stop smartwatch, poi celebrazione
       _pendingCelebrationDurata = durata;
       document.getElementById('overlay-smartwatch-stop').classList.add('show');
