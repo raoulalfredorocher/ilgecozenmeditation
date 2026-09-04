@@ -6,8 +6,9 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+import { FIREBASE_CONFIG as _secretsConfig } from './secrets.js';
 
-const firebaseConfig = window.__FIREBASE_CONFIG__ || {};
+const firebaseConfig = window.__FIREBASE_CONFIG__ || _secretsConfig || {};
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();

@@ -339,7 +339,6 @@
     window.addEventListener('resize', checkOrientation);
     window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
   </script>
-  <script type="module" src="js/app-config.js"></script>
   <script type="module" src="js/auth-guard.js"></script>
 
 
@@ -763,6 +762,7 @@
       subscribeRegistro, addRegistroDoc, updateRegistroDoc, deleteRegistroDoc,
       waitForAuth,
     } from './js/firebase-config.js';
+    import { SPOTIFY_CLIENT_ID as _spotifyClientId } from './js/secrets.js';
 
     // ── Theme ──
     const htmlEl = document.documentElement;
@@ -1385,7 +1385,7 @@
     }
 
     // --- SPOTIFY INTEGRATION IN ALLENAMENTO ---
-    const SPOTIFY_CLIENT_ID = window.__SPOTIFY_CLIENT_ID__ || '';
+    const SPOTIFY_CLIENT_ID = _spotifyClientId || '';
     let spToken = localStorage.getItem('spotify_access_token');
     let spDeviceId = null;
     let spPlayer = null;

@@ -12,8 +12,11 @@ import {
   onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+import { FIREBASE_CONFIG as _secretsConfig } from './secrets.js';
 
-const firebaseConfig = window.__FIREBASE_CONFIG__ || {
+// window.__FIREBASE_CONFIG__ è impostato dagli HTML che usano il vecchio pattern inline.
+// _secretsConfig viene da secrets.js (ignorato da git) ed è il fallback sicuro.
+const firebaseConfig = window.__FIREBASE_CONFIG__ || _secretsConfig || {
   apiKey: 'INSERISCI_API_KEY',
   authDomain: 'INSERISCI_PROJECT_ID.firebaseapp.com',
   projectId: 'INSERISCI_PROJECT_ID',
