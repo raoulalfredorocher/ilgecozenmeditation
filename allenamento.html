@@ -24,7 +24,7 @@
       --text:#e0f0e0; --muted:#80a880; --primary:#5aba7a; --accent:#6cbf8a;
       --accent2:#f5c842; --red:#e05060; --input-bg:#182018; --ring-bg:#1a2e1a;
     }
-    @media screen and (orientation: landscape) {
+    @media screen and (orientation: landscape) and (hover: none) and (pointer: coarse) {
       body::before {
         content: 'Ruota il dispositivo in verticale 📱';
         position: fixed; inset: 0; z-index: 9999;
@@ -321,18 +321,9 @@
       font-family:inherit; font-size:.84rem; letter-spacing:.12em; font-weight:600;
       padding:12px 32px; cursor:pointer; }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
+  <script type="module" src="js/app-config.js"></script>
   <script type="module" src="js/auth-guard.js"></script>
 
 
@@ -1378,7 +1369,7 @@
     }
 
     // --- SPOTIFY INTEGRATION IN ALLENAMENTO ---
-    const SPOTIFY_CLIENT_ID = '1e5dca09f1ae43f5a27a3fe95a82ba14';
+    const SPOTIFY_CLIENT_ID = window.__SPOTIFY_CLIENT_ID__ || '';
     let spToken = localStorage.getItem('spotify_access_token');
     let spDeviceId = null;
     let spPlayer = null;
