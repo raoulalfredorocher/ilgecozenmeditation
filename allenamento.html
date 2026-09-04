@@ -2,7 +2,7 @@
 <html lang="it" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, orientation=portrait"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Allenamento"/>
@@ -24,6 +24,17 @@
       --text:#e0f0e0; --muted:#80a880; --primary:#5aba7a; --accent:#6cbf8a;
       --accent2:#f5c842; --red:#e05060; --input-bg:#182018; --ring-bg:#1a2e1a;
     }
+    @media screen and (orientation: landscape) {
+      body::before {
+        content: 'Ruota il dispositivo in verticale 📱';
+        position: fixed; inset: 0; z-index: 9999;
+        background: var(--bg); color: var(--text);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; letter-spacing: .1em; text-align: center;
+        padding: 40px;
+      }
+      body > * { visibility: hidden; }
+    }
     html { overscroll-behavior: none; }
     html, body { min-height:100%; background:var(--bg); color:var(--text);
       font-family:-apple-system,"Segoe UI",system-ui,sans-serif;
@@ -36,13 +47,13 @@
     header { position:fixed; top:0; left:0; right:0; z-index:150;
       background:var(--bg); display:flex; align-items:center; justify-content:space-between;
       padding:calc(env(safe-area-inset-top,0px) + 10px) 20px 10px;
-      border-bottom:1px solid var(--border); }
+      border-bottom:1px solid var(--border); max-width:100%; }
     .btn-back-hub { background:none; border:1px solid var(--border); border-radius:10px;
       color:var(--muted); font-family:inherit; font-size:.58rem;
       letter-spacing:.1em; padding:5px 8px; cursor:pointer;
       display:flex; flex-direction:column; align-items:center; gap:2px;
       width:52px; text-decoration:none; }
-    .header-center { flex:1; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .header-center { flex:1; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
     .header-icon { font-size:1.8rem; line-height:1; }
     .app-title { font-size:.95rem; letter-spacing:.16em; color:var(--primary); font-weight:700; }
     .app-sub { font-size:.48rem; letter-spacing:.22em; color:var(--muted); margin-top:2px; text-transform:uppercase; }
@@ -287,6 +298,28 @@
     .session-phase-row:last-child { border-bottom:none; }
     .session-phase-label { color:var(--muted); letter-spacing:.06em; }
     .session-phase-val { color:var(--text); font-weight:600; }
+
+    /* ── Skip buttons ── */
+    .skip-btns { display:flex; gap:8px; justify-content:center; margin-bottom:12px; }
+    .btn-skip { background:none; border:1.5px solid var(--border); border-radius:24px;
+      color:var(--muted); font-family:inherit; font-size:.72rem; letter-spacing:.1em;
+      padding:8px 18px; cursor:pointer; transition:border-color .2s,color .2s; }
+    .btn-skip:active { border-color:var(--accent2); color:var(--accent2); }
+
+    /* ── Overlay notifiche (smartwatch / bevi / skip) ── */
+    .workout-overlay { position:fixed; inset:0; z-index:800;
+      display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.55); backdrop-filter:blur(4px); }
+    .workout-overlay.show { display:flex; }
+    .workout-overlay-card { background:var(--card); border:1.5px solid var(--border);
+      border-radius:22px; padding:28px 24px; max-width:320px; width:90%;
+      text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; }
+    .workout-overlay-icon { font-size:3rem; line-height:1; }
+    .workout-overlay-title { font-size:1rem; font-weight:700; color:var(--text); letter-spacing:.08em; }
+    .workout-overlay-sub { font-size:.72rem; color:var(--muted); letter-spacing:.08em; line-height:1.5; }
+    .workout-overlay-btn { background:var(--primary); color:#fff; border:none; border-radius:24px;
+      font-family:inherit; font-size:.84rem; letter-spacing:.12em; font-weight:600;
+      padding:12px 32px; cursor:pointer; }
   </style>
   <script>
     window.__FIREBASE_CONFIG__ = {
@@ -470,6 +503,10 @@
           <button class="btn-t btn-t-stop"  id="btn-t-stop"  style="display:none">Stop</button>
           <button class="btn-t btn-t-next"  id="btn-t-next"  style="display:none">Avanti →</button>
         </div>
+        <div class="skip-btns" id="skip-btns" style="display:none">
+          <button class="btn-skip" id="btn-skip-esercizio">⏭ Skip esercizio</button>
+          <button class="btn-skip" id="btn-skip-recupero">⏩ Skip recupero</button>
+        </div>
         <button class="btn-t-outline" id="btn-abbandona">Abbandona sessione</button>
       </div>
     </div>
@@ -486,6 +523,36 @@
     </div>
     <div class="cal-grid" id="cal-grid"></div>
     <div id="registro-selected-list"></div>
+  </div>
+
+  <!-- ══ OVERLAY: Avvia smartwatch ══ -->
+  <div class="workout-overlay" id="overlay-smartwatch-start">
+    <div class="workout-overlay-card">
+      <div class="workout-overlay-icon">⌚</div>
+      <div class="workout-overlay-title">Avvia l'allenamento</div>
+      <div class="workout-overlay-sub">Prima di iniziare, avvia l'allenamento dallo smartwatch per tracciare frequenza cardiaca e calorie.</div>
+      <button class="workout-overlay-btn" id="btn-overlay-smartwatch-start-ok">Fatto, inizia! ▶</button>
+    </div>
+  </div>
+
+  <!-- ══ OVERLAY: Stoppa smartwatch ══ -->
+  <div class="workout-overlay" id="overlay-smartwatch-stop">
+    <div class="workout-overlay-card">
+      <div class="workout-overlay-icon">⌚</div>
+      <div class="workout-overlay-title">Stoppa lo smartwatch</div>
+      <div class="workout-overlay-sub">Allenamento terminato! Ricordati di stoppare la sessione dallo smartwatch prima di continuare.</div>
+      <button class="workout-overlay-btn" id="btn-overlay-smartwatch-stop-ok">Ok, ho stoppato ✓</button>
+    </div>
+  </div>
+
+  <!-- ══ OVERLAY: Bevi acqua ══ -->
+  <div class="workout-overlay" id="overlay-bevi">
+    <div class="workout-overlay-card">
+      <div class="workout-overlay-icon">💧</div>
+      <div class="workout-overlay-title">Idratati!</div>
+      <div class="workout-overlay-sub">Sono passati 15 minuti — prenditi un momento per bere dell'acqua. I tuoi timer continuano a girare.</div>
+      <button class="workout-overlay-btn" id="btn-overlay-bevi-ok">Ok, ho bevuto 💧</button>
+    </div>
   </div>
 
   <!-- TAB BAR -->
@@ -624,7 +691,44 @@
       <div class="modal-subtitle" id="msd-meta" style="font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-top:-8px;margin-bottom:12px;"></div>
       <div id="msd-body"></div>
       <div class="modal-actions" style="margin-top:12px">
+        <button class="btn-outline" style="flex:1" id="btn-edit-session-detail">✏️ Modifica</button>
         <button class="btn-outline" style="flex:1" id="btn-close-session-detail">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: modifica sessione -->
+  <div class="modal-overlay" id="modal-session-edit">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Modifica Sessione</div>
+      <div class="form-group">
+        <label>Allenamento</label>
+        <input id="mse-allenamento" placeholder="Nome allenamento"/>
+      </div>
+      <div class="form-group">
+        <label>Scheda</label>
+        <input id="mse-scheda" placeholder="Nome scheda"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="mse-data"/>
+        </div>
+        <div class="form-group">
+          <label>Durata (min)</label>
+          <input type="number" id="mse-durata" placeholder="45"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Note</label>
+        <textarea id="mse-note" placeholder="Note..."></textarea>
+      </div>
+      <div class="modal-subtitle" style="margin-bottom:8px">Dettagli esercizi</div>
+      <div id="mse-esercizi-list"></div>
+      <div class="modal-actions" style="margin-top:8px">
+        <button class="btn-outline" id="btn-cancel-session-edit">Annulla</button>
+        <button class="btn-primary" id="btn-save-session-edit">Salva</button>
       </div>
     </div>
   </div>
@@ -667,6 +771,22 @@
     applyTheme();
     btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
 
+    // ── Wake Lock ──
+    let wakeLock = null;
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+          wakeLock.addEventListener('release', () => { wakeLock = null; });
+        } catch (e) {}
+      }
+    }
+    requestWakeLock();
+    // ri-acquisisce il wake lock quando la pagina torna visibile
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && wakeLock === null) requestWakeLock();
+    });
+
     waitForAuth().then(user => { if (!user) return; initApp(); });
     function initApp() {
 
@@ -707,7 +827,7 @@
 
     // ── Backdrop click per tutti i modal ──
     ['modal-allenamento-detail','modal-scheda-detail','modal-esercizio-form',
-     'modal-new-allenamento','modal-session-detail','modal-export'].forEach(id => {
+     'modal-new-allenamento','modal-session-detail','modal-session-edit','modal-export'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('click', e => { if (e.target === el) closeModal(id); });
     });
@@ -1158,10 +1278,69 @@
     let currentPhase = null;
     let phaseQueue = []; // sequenza di fasi da eseguire
 
+    // ── Avviso "bevi" ogni 15 minuti ──
+    let drinkAlertTimer = null;
+    const DRINK_INTERVAL_MS = 15 * 60 * 1000;
+    function startDrinkAlert() {
+      stopDrinkAlert();
+      drinkAlertTimer = setTimeout(function triggerDrink() {
+        document.getElementById('overlay-bevi').classList.add('show');
+        drinkAlertTimer = setTimeout(triggerDrink, DRINK_INTERVAL_MS);
+      }, DRINK_INTERVAL_MS);
+    }
+    function stopDrinkAlert() {
+      if (drinkAlertTimer) { clearTimeout(drinkAlertTimer); drinkAlertTimer = null; }
+    }
+    document.getElementById('btn-overlay-bevi-ok').addEventListener('click', () => {
+      document.getElementById('overlay-bevi').classList.remove('show');
+    });
+
+    // ── Overlay smartwatch ──
+    document.getElementById('btn-overlay-smartwatch-stop-ok').addEventListener('click', () => {
+      document.getElementById('overlay-smartwatch-stop').classList.remove('show');
+      // dopo conferma stop smartwatch → mostra celebrazione
+      _doShowCelebration();
+    });
+
+    // variabile per tenere la durata in sospeso
+    let _pendingCelebrationDurata = 0;
+    function _doShowCelebration() {
+      showCelebration(_pendingCelebrationDurata);
+    }
+
+    // ── Visibilitychange: timer continua in background ──
+    // I setInterval continuano a girare normalmente in background su mobile.
+    // Il visibilitychange serve solo per ri-sincronizzare il display
+    // quando l'utente torna sull'app dopo una pausa.
+    let _hiddenAt = null;
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        _hiddenAt = Date.now();
+      } else {
+        if (_hiddenAt !== null) {
+          const elapsed = Math.round((Date.now() - _hiddenAt) / 1000);
+          _hiddenAt = null;
+          // aggiorna i secondi di conseguenza per riallineare i timer
+          if (currentPhase === 'warmup' && mainTimer) {
+            mainSeconds += elapsed;
+          } else if (currentPhase === 'esercizio' && mainTimer) {
+            // countdown: sottrai; conta in su: aggiungi
+            // mainSeconds aggiornato da setInterval, ma per sicurezza sincronizziamo
+          } else if (currentPhase === 'recupero' && recTimer) {
+            recSeconds = Math.max(0, recSeconds - elapsed);
+            document.getElementById('clock-time').textContent = fmtTime(Math.max(0, recSeconds));
+          }
+        }
+      }
+    });
+
     // pulsanti timer (riferimenti fissi)
     const btnStart  = document.getElementById('btn-t-start');
     const btnStop   = document.getElementById('btn-t-stop');
     const btnNext   = document.getElementById('btn-t-next');
+    const skipBtns  = document.getElementById('skip-btns');
+    const btnSkipEx = document.getElementById('btn-skip-esercizio');
+    const btnSkipRec = document.getElementById('btn-skip-recupero');
 
     function suonaCampanello() {
       try {
@@ -1180,10 +1359,13 @@
       if (recTimer)  { clearInterval(recTimer);  recTimer  = null; }
     }
 
-    function showBtns({ start=false, stop=false, next=false }) {
+    function showBtns({ start=false, stop=false, next=false, skipEx=false, skipRec=false }) {
       btnStart.style.display = start ? 'inline-block' : 'none';
       btnStop.style.display  = stop  ? 'inline-block' : 'none';
       btnNext.style.display  = next  ? 'inline-block' : 'none';
+      btnSkipEx.style.display  = skipEx  ? 'inline-block' : 'none';
+      btnSkipRec.style.display = skipRec ? 'inline-block' : 'none';
+      skipBtns.style.display = (skipEx || skipRec) ? 'flex' : 'none';
     }
 
     function setClockUI(time, phase, exLabel='', exMeta='', serieLabel='') {
@@ -1322,17 +1504,32 @@
     initSpotifyInWorkout();
 
     // --- AVVIA ---
+    // Dati sessione in sospeso (prima della conferma smartwatch)
+    let _pendingSessionData = null;
+
     document.getElementById('btn-avvia-go').addEventListener('click', () => {
       const allId  = document.getElementById('avvia-select-allenamento').value;
       const schIdx = document.getElementById('avvia-select-scheda').value;
       const plUri  = document.getElementById('avvia-select-playlist')?.value;
 
       if (!allId || schIdx === '') { alert('Seleziona programma e scheda'); return; }
-      sessionAllId = allId; sessionSchId = parseInt(schIdx);
       const all = allenamentiList.find(a => a._docId === allId);
-      const sch = all?.schede?.[sessionSchId];
+      const sch = all?.schede?.[parseInt(schIdx)];
       if (!sch?.esercizi?.length) { alert('Nessun esercizio in questa scheda'); return; }
-      sessExercises = sch.esercizi;
+
+      // Salva i dati in sospeso e mostra overlay smartwatch
+      _pendingSessionData = { allId, schIdx: parseInt(schIdx), plUri, esercizi: sch.esercizi };
+      document.getElementById('overlay-smartwatch-start').classList.add('show');
+    });
+
+    document.getElementById('btn-overlay-smartwatch-start-ok').addEventListener('click', () => {
+      document.getElementById('overlay-smartwatch-start').classList.remove('show');
+      if (!_pendingSessionData) return;
+      const { allId, schIdx, plUri, esercizi } = _pendingSessionData;
+      _pendingSessionData = null;
+
+      sessionAllId = allId; sessionSchId = schIdx;
+      sessExercises = esercizi;
       sessIdx = 0; sessSerie = 0;
       sessionStartTime = Date.now();
 
@@ -1352,6 +1549,7 @@
       document.getElementById('avvia-timer').style.display = 'block';
       document.getElementById('rec-box').style.display = 'none';
       setRingProgress(0);
+      startDrinkAlert();
       nextPhase();
     });
 
@@ -1388,7 +1586,7 @@
       btnStart.onclick = () => {
         if (mainTimer) return;
         btnStart.textContent = 'Start';
-        showBtns({ stop: true, next: true });
+        showBtns({ stop: true, next: true, skipEx: true });
         mainTimer = setInterval(() => {
           mainSeconds++;
           document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
@@ -1401,7 +1599,7 @@
         btnStart.textContent = 'Start';
         showBtns({ start: true, next: true });
         btnStart.onclick = () => {
-          showBtns({ stop: true, next: true });
+          showBtns({ stop: true, next: true, skipEx: true });
           mainTimer = setInterval(() => {
             mainSeconds++;
             document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
@@ -1412,6 +1610,11 @@
       btnNext.onclick = () => {
         // salva durata warmup
         sessionDetails.push({ tipo: currentWarmupTipo, nome: currentWarmupLabel, durata: mainSeconds });
+        stopAllTimers();
+        nextPhase();
+      };
+      btnSkipEx.onclick = () => {
+        sessionDetails.push({ tipo: currentWarmupTipo, nome: currentWarmupLabel, durata: mainSeconds, skip: true });
         stopAllTimers();
         nextPhase();
       };
@@ -1444,12 +1647,12 @@
       document.getElementById('clock-phase').textContent = ex.nome;
       document.getElementById('timer-phase-label').textContent = 'Esercizio';
       document.getElementById('clock-time').textContent = hasTempo ? fmtTime(ex.tempo) : '00:00';
-      showBtns({ start: true });
+      showBtns({ start: true, skipEx: true });
       btnStart.textContent = 'Start';
 
       btnStart.onclick = () => {
         exStartTime = Date.now();
-        showBtns({ stop: true });
+        showBtns({ stop: true, skipEx: true });
         if (hasTempo) {
           // countdown dal tempo dell'esercizio
           mainSeconds = ex.tempo;
@@ -1462,7 +1665,7 @@
               clearInterval(mainTimer); mainTimer = null;
               suonaCampanello();
               exElapsed = ex.tempo;
-              advanceSerie(ex);
+              advanceSerie(ex, false);
             }
           }, 1000);
         } else {
@@ -1481,14 +1684,26 @@
         if (!mainTimer) return;
         clearInterval(mainTimer); mainTimer = null;
         exElapsed = exStartTime ? Math.round((Date.now() - exStartTime) / 1000) : mainSeconds;
-        advanceSerie(ex);
+        advanceSerie(ex, false);
+      };
+
+      // Skip esercizio intero: salta tutte le serie rimanenti
+      btnSkipEx.onclick = () => {
+        stopAllTimers();
+        const remaining = ex.serie - sessSerie;
+        for (let i = 0; i < remaining; i++) {
+          sessionDetails.push({ nome: ex.nome, serie: sessSerie + i + 1, esecuzione: 0, recupero: 0, skip: 'esercizio' });
+        }
+        sessSerie = 0; sessIdx++;
+        document.getElementById('rec-box').style.display = 'none';
+        loadEsercizio();
       };
     }
 
-    function advanceSerie(ex) {
+    function advanceSerie(ex, skipped = false) {
       sessSerie++;
       const recSec = parseInt(ex.recupero) || 90;
-      sessionDetails.push({ nome: ex.nome, serie: sessSerie, esecuzione: exElapsed, recupero: recSec });
+      sessionDetails.push({ nome: ex.nome, serie: sessSerie, esecuzione: skipped ? 0 : exElapsed, recupero: recSec, skip: skipped ? 'serie' : undefined });
       if (sessSerie >= ex.serie) { sessSerie = 0; sessIdx++; }
       startRecupero(ex);
     }
@@ -1516,7 +1731,7 @@
       btnStart.textContent = 'Prossimo esercizio';
       btnStart.disabled = true;
       btnStart.style.opacity = '0.4';
-      showBtns({ start: true });
+      showBtns({ start: true, skipEx: true, skipRec: true });
 
       recTimer = setInterval(() => {
         recSeconds--;
@@ -1534,6 +1749,32 @@
       btnStart.onclick = () => {
         if (btnStart.disabled) return;
         stopAllTimers();
+        document.getElementById('rec-box').style.display = 'none';
+        loadEsercizio();
+      };
+
+      // Skip recupero: interrompe il countdown e va direttamente al prossimo esercizio
+      btnSkipRec.onclick = () => {
+        stopAllTimers();
+        // marca l'ultimo dettaglio con skip recupero
+        if (sessionDetails.length) {
+          sessionDetails[sessionDetails.length - 1].skipRecupero = true;
+          sessionDetails[sessionDetails.length - 1].recupero = recSec - Math.max(0, recSeconds);
+        }
+        document.getElementById('rec-box').style.display = 'none';
+        loadEsercizio();
+      };
+
+      // Skip esercizio durante recupero: salta il prossimo esercizio completo
+      btnSkipEx.onclick = () => {
+        if (sessIdx >= sessExercises.length) { stopAllTimers(); loadEsercizio(); return; }
+        const nextEx = sessExercises[sessIdx];
+        stopAllTimers();
+        for (let i = 0; i < nextEx.serie; i++) {
+          sessionDetails.push({ nome: nextEx.nome, serie: i + 1, esecuzione: 0, recupero: 0, skip: 'esercizio' });
+        }
+        sessIdx++;
+        sessSerie = 0;
         document.getElementById('rec-box').style.display = 'none';
         loadEsercizio();
       };
@@ -1562,6 +1803,7 @@
     // --- Fine sessione COMPLETATA (salva nel registro) ---
     function endSessioneCompleta() {
       stopAllTimers();
+      stopDrinkAlert();
       const all = allenamentiList.find(a => a._docId === sessionAllId);
       const sch = all?.schede?.[sessionSchId];
       const durata = Math.round((Date.now() - (sessionStartTime || Date.now())) / 60000);
@@ -1575,7 +1817,9 @@
         dettagli: sessionDetails,
       });
       sessionDetails = [];
-      showCelebration(durata);
+      // prima mostra overlay stop smartwatch, poi celebrazione
+      _pendingCelebrationDurata = durata;
+      document.getElementById('overlay-smartwatch-stop').classList.add('show');
     }
 
     document.getElementById('btn-cele-ok').addEventListener('click', () => {
@@ -1588,6 +1832,7 @@
     document.getElementById('btn-abbandona').addEventListener('click', () => {
       if (!confirm('Abbandonare la sessione? Non verrà salvata.')) return;
       stopAllTimers();
+      stopDrinkAlert();
       resetTimerUI();
     });
 
@@ -1599,6 +1844,7 @@
       document.getElementById('rec-box').style.display = 'none';
       showBtns({ start: true });
       sessIdx = 0; sessSerie = 0; mainSeconds = 0; recSeconds = 0;
+      currentPhase = null;
     }
 
     // ── REGISTRO / CALENDARIO ──
@@ -1735,7 +1981,101 @@
     // ── Modal dettaglio sessione ──
     document.getElementById('btn-close-session-detail').addEventListener('click', () => closeModal('modal-session-detail'));
 
+    // ── Modifica sessione ──
+    let _editingRegistroDoc = null;
+
+    document.getElementById('btn-edit-session-detail').addEventListener('click', () => {
+      if (!_editingRegistroDoc) return;
+      openSessionEdit(_editingRegistroDoc);
+    });
+
+    document.getElementById('btn-cancel-session-edit').addEventListener('click', () => {
+      closeModal('modal-session-edit');
+      if (_editingRegistroDoc) openSessionDetail(_editingRegistroDoc);
+    });
+
+    document.getElementById('btn-save-session-edit').addEventListener('click', async () => {
+      if (!_editingRegistroDoc) return;
+      const nome = document.getElementById('mse-allenamento').value.trim();
+      const scheda = document.getElementById('mse-scheda').value.trim();
+      const data = document.getElementById('mse-data').value;
+      const durata = parseInt(document.getElementById('mse-durata').value) || 0;
+      const note = document.getElementById('mse-note').value.trim();
+
+      // raccogli dettagli esercizi modificati
+      const rows = document.querySelectorAll('#mse-esercizi-list .mse-ex-row');
+      const dettagli = Array.from(rows).map(row => {
+        const orig = _editingRegistroDoc.dettagli[parseInt(row.dataset.idx)];
+        return {
+          ...orig,
+          nome: row.querySelector('.mse-ex-nome').value.trim() || orig.nome,
+          serie: parseInt(row.querySelector('.mse-ex-serie')?.value) || orig.serie,
+          esecuzione: parseInt(row.querySelector('.mse-ex-esec')?.value) || orig.esecuzione,
+          recupero: parseInt(row.querySelector('.mse-ex-rec')?.value) || orig.recupero,
+        };
+      });
+
+      const updates = { allenamentoNome: nome, schedaNome: scheda, data, durata, note, dettagli };
+      await updateRegistroDoc(_editingRegistroDoc._docId, updates);
+      // aggiorna il riferimento locale
+      Object.assign(_editingRegistroDoc, updates);
+      closeModal('modal-session-edit');
+      renderCalendar();
+      if (selectedDate) renderRegistroForDate(selectedDate);
+    });
+
+    function openSessionEdit(r) {
+      _editingRegistroDoc = r;
+      document.getElementById('mse-allenamento').value = r.allenamentoNome || '';
+      document.getElementById('mse-scheda').value = r.schedaNome || '';
+      document.getElementById('mse-data').value = r.data || '';
+      document.getElementById('mse-durata').value = r.durata || '';
+      document.getElementById('mse-note').value = r.note || '';
+
+      // costruisci lista esercizi editabili
+      const list = document.getElementById('mse-esercizi-list');
+      list.innerHTML = '';
+      (r.dettagli || []).forEach((d, idx) => {
+        if (d.tipo) {
+          // warmup/stretching: solo nome e durata
+          const div = document.createElement('div');
+          div.className = 'mse-ex-row';
+          div.dataset.idx = idx;
+          div.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px;';
+          div.innerHTML = `
+            <div style="font-size:.58rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px">${d.tipo === 'warmup' ? '🔥 Riscaldamento' : '🧘 Stretching'}</div>
+            <div class="form-row" style="margin-bottom:0">
+              <div class="form-group" style="margin-bottom:0"><label>Nome</label><input class="mse-ex-nome" value="${d.nome||''}"/></div>
+              <div class="form-group" style="margin-bottom:0"><label>Durata (s)</label><input class="mse-ex-esec" type="number" value="${d.durata||0}"/></div>
+            </div>`;
+          list.appendChild(div);
+        } else {
+          // esercizio normale
+          const div = document.createElement('div');
+          div.className = 'mse-ex-row';
+          div.dataset.idx = idx;
+          div.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px;';
+          const skipLabel = d.skip ? ` <span style="color:var(--accent2);font-size:.55rem">[skip]</span>` : '';
+          div.innerHTML = `
+            <div style="font-size:.58rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px">💪 Serie ${d.serie}${skipLabel}</div>
+            <div class="form-row" style="margin-bottom:6px">
+              <div class="form-group" style="margin-bottom:0"><label>Esercizio</label><input class="mse-ex-nome" value="${d.nome||''}"/></div>
+              <div class="form-group" style="margin-bottom:0"><label>Serie #</label><input class="mse-ex-serie" type="number" value="${d.serie||1}"/></div>
+            </div>
+            <div class="form-row" style="margin-bottom:0">
+              <div class="form-group" style="margin-bottom:0"><label>Esec (s)</label><input class="mse-ex-esec" type="number" value="${d.esecuzione||0}"/></div>
+              <div class="form-group" style="margin-bottom:0"><label>Rec (s)</label><input class="mse-ex-rec" type="number" value="${d.recupero||0}"/></div>
+            </div>`;
+          list.appendChild(div);
+        }
+      });
+
+      closeModal('modal-session-detail');
+      openModal('modal-session-edit');
+    }
+
     function openSessionDetail(r) {
+      _editingRegistroDoc = r;
       document.getElementById('msd-title').textContent = r.allenamentoNome;
       const fbEmoji = r.feedback==='pos'?'😊':r.feedback==='neu'?'😐':r.feedback==='neg'?'😞':'';
       document.getElementById('msd-meta').textContent = `${r.schedaNome} · ${r.durata||'?'} min · ${r.data}`;
@@ -1786,8 +2126,9 @@
           h += `<div class="session-phase-row" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:8px">
             <span class="session-phase-label" style="font-weight:600;color:var(--text)">${nome} <span style="font-weight:400;color:var(--muted)">(${serie.length} ser.)</span></span>`;
           serie.forEach(s => {
+            const skipTxt = s.skip === 'esercizio' ? ' 🚫 skip' : (s.skipRecupero ? ' ⏩ rec. skip' : '');
             h += `<span class="session-phase-val" style="font-size:.6rem;font-weight:400">
-              Serie ${s.serie}: ${fmtTempoEx(s.esecuzione)} esec. · ${fmtDurata(s.recupero)} rec.
+              Serie ${s.serie}: ${fmtTempoEx(s.esecuzione)} esec. · ${fmtDurata(s.recupero)} rec.${skipTxt}
             </span>`;
           });
           h += `</div>`;
