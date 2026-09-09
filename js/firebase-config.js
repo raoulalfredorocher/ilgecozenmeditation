@@ -4,12 +4,14 @@ import {
   collection,
   addDoc,
   getDocs,
+  getDoc,
   query,
   orderBy,
   deleteDoc,
   doc,
   setDoc,
   onSnapshot,
+  writeBatch,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
 
@@ -285,7 +287,80 @@ export async function updateRegistroDoc(docId, fields) {
 export async function deleteRegistroDoc(docId) {
   const ref = userDoc('allenamenti_registro', docId);
   if (!ref) return;
+  // elimina anche i chunk dei dettagli (sotto-collezione)
+  try {
+    const chunkCol = collection(ref, 'dettagli_chunks');
+    const snap = await getDocs(chunkCol);
+    if (!snap.empty) {
+      const batch = writeBatch(db);
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+    }
+  } catch (_) {}
   await deleteDoc(ref);
+}
+
+/**
+ * Salva un doc nel registro in modo sicuro.
+ * I dettagli (potenzialmente molto grandi) vengono salvati in una
+ * sotto-collezione "dettagli_chunks" in batch da max 400 voci ciascuno,
+ * così non si supera mai il limite di 1 MB per documento Firestore.
+ */
+export async function addRegistroDocSafe(data) {
+  const col = userCol('allenamenti_registro');
+  if (!col) return null;
+  const { dettagli, ...mainData } = data;
+  // Il documento principale NON contiene i dettagli
+  mainData.hasDettagli = !!(dettagli && dettagli.length);
+  let docId;
+  try {
+    const ref = await addDoc(col, { ...mainData, createdAt: Date.now() });
+    docId = ref.id;
+  } catch (e) {
+    console.error('addRegistroDocSafe: errore salvataggio principale', e);
+    return null;
+  }
+  // Salva i dettagli in chunk nella sotto-collezione
+  if (dettagli && dettagli.length) {
+    try {
+      const chunkSize = 400; // max voci per documento Firestore (< 1MB)
+      const chunks = [];
+      for (let i = 0; i < dettagli.length; i += chunkSize) {
+        chunks.push(dettagli.slice(i, i + chunkSize));
+      }
+      const batch = writeBatch(db);
+      const docRef = userDoc('allenamenti_registro', docId);
+      chunks.forEach((chunk, idx) => {
+        const chunkRef = doc(collection(docRef, 'dettagli_chunks'), String(idx).padStart(4, '0'));
+        batch.set(chunkRef, { items: chunk, chunkIdx: idx });
+      });
+      await batch.commit();
+    } catch (e) {
+      console.error('addRegistroDocSafe: errore salvataggio dettagli', e);
+      // Il doc principale è già salvato — i dettagli mancano ma la sessione è registrata
+    }
+  }
+  return docId;
+}
+
+/**
+ * Carica i dettagli di una sessione dal registro (sotto-collezione dettagli_chunks).
+ * Restituisce l'array di dettagli ricostruito, o [] se non presenti.
+ */
+export async function loadRegistroDettagli(docId) {
+  try {
+    const docRef = userDoc('allenamenti_registro', docId);
+    if (!docRef) return [];
+    const chunkCol = collection(docRef, 'dettagli_chunks');
+    const snap = await getDocs(query(chunkCol, orderBy('chunkIdx', 'asc')));
+    if (snap.empty) return [];
+    let all = [];
+    snap.docs.forEach(d => { all = all.concat(d.data().items || []); });
+    return all;
+  } catch (e) {
+    console.error('loadRegistroDettagli error', e);
+    return [];
+  }
 }
 // ─── Lista della spesa ────────────────────────────────────────────────────────
 

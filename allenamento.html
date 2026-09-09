@@ -300,6 +300,25 @@
       padding:8px 18px; cursor:pointer; transition:border-color .2s,color .2s; }
     .btn-skip:active { border-color:var(--accent2); color:var(--accent2); }
 
+    /* ── Foto ricordo ── */
+    #modal-photo .modal-sheet { max-height:85vh; }
+    .photo-preview-wrap { width:100%; aspect-ratio:4/3; background:var(--surface);
+      border:1.5px solid var(--border); border-radius:14px; overflow:hidden;
+      display:flex; align-items:center; justify-content:center; margin-bottom:14px; position:relative; }
+    .photo-preview-wrap img { width:100%; height:100%; object-fit:cover; }
+    .photo-placeholder-inner { color:var(--muted); font-size:.72rem; letter-spacing:.1em;
+      display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
+    .photo-placeholder-inner svg { width:40px; height:40px; opacity:.4; }
+    .photo-saved-list { width:100%; display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+    .photo-saved-item { display:flex; align-items:center; gap:10px; background:var(--surface);
+      border:1px solid var(--border); border-radius:12px; padding:8px 10px; }
+    .photo-saved-thumb { width:52px; height:52px; border-radius:8px; object-fit:cover;
+      flex-shrink:0; border:1px solid var(--border); cursor:pointer; }
+    .photo-saved-meta { flex:1; min-width:0; font-size:.66rem; color:var(--muted);
+      letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .photo-saved-del { background:none; border:none; cursor:pointer; color:var(--red); padding:6px; display:flex; align-items:center; }
+    .photo-saved-del svg { width:14px; height:14px; }
+
     /* ── Overlay notifiche (smartwatch / bevi / skip) ── */
     .workout-overlay { position:fixed; inset:0; z-index:800;
       display:none; align-items:center; justify-content:center;
@@ -770,7 +789,8 @@
     <script type="module">
     import {
       subscribeAllenamenti, addAllenamentoDoc, updateAllenamentoDoc, deleteAllenamentoDoc,
-      subscribeRegistro, addRegistroDoc, updateRegistroDoc, deleteRegistroDoc,
+      subscribeRegistro, addRegistroDocSafe, updateRegistroDoc, deleteRegistroDoc,
+      loadRegistroDettagli,
       waitForAuth,
     } from './js/firebase-config.js';
 
@@ -1838,18 +1858,27 @@
       stopDrinkAlert();
       const all = allenamentiList.find(a => a._docId === sessionAllId);
       const sch = all?.schede?.[sessionSchId];
-      const durata = Math.round((Date.now() - (sessionStartTime || Date.now())) / 60000);
+      const durata = Math.max(1, Math.round((Date.now() - (sessionStartTime || Date.now())) / 60000));
       const oggi = new Date().toISOString().slice(0, 10);
       // copia dettagli prima di resettare
       const dettagliSalvati = [...sessionDetails];
       sessionDetails = [];
-      addRegistroDoc({
+      // Usa addRegistroDocSafe: salva doc principale + dettagli in sotto-collezione
+      // così non si supera mai il limite di 1 MB per documento Firestore
+      addRegistroDocSafe({
         data: oggi,
         allenamentoId: sessionAllId,
         allenamentoNome: all?.nome || '—',
         schedaNome: sch?.nome || '—',
         durata, feedback: null, note: '',
         dettagli: dettagliSalvati,
+      }).then(docId => {
+        if (!docId) {
+          console.error('endSessioneCompleta: salvataggio fallito');
+          alert('⚠️ Errore nel salvataggio della sessione. Riprova dal registro.');
+        }
+      }).catch(e => {
+        console.error('endSessioneCompleta: errore inatteso', e);
       });
       // prima mostra overlay stop smartwatch, poi celebrazione
       _pendingCelebrationDurata = durata;
@@ -1953,6 +1982,9 @@
         const fbPos = r.feedback==='pos', fbNeu = r.feedback==='neu', fbNeg = r.feedback==='neg';
         const hasFb = fbPos || fbNeu || fbNeg;
         const SVG_SEARCH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
+        const SVG_CAMERA = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+        // La lente si mostra se ci sono dettagli nel documento oppure nella sotto-collezione
+        const hasDetailData = (r.dettagli && r.dettagli.length) || r.hasDettagli;
 
         card.innerHTML = `
           <div class="registro-detail-header">
@@ -1961,7 +1993,8 @@
               <div class="registro-detail-meta">${r.schedaNome} · ${r.durata||'?'} min</div>
             </div>
             <div style="display:flex;gap:6px;align-items:center">
-              ${r.dettagli && r.dettagli.length ? `<button class="icon-btn reg-detail-btn" title="Dettagli">${SVG_SEARCH}</button>` : ''}
+              ${hasDetailData ? `<button class="icon-btn reg-detail-btn" title="Dettagli">${SVG_SEARCH}</button>` : ''}
+              <button class="icon-btn reg-photo-btn" title="Foto ricordo" style="color:var(--muted)">${SVG_CAMERA}</button>
               <button class="icon-btn del reg-del-btn">${SVG_TRASH}</button>
             </div>
           </div>
@@ -1985,10 +2018,23 @@
           await deleteRegistroDoc(r._docId);
         });
 
-        // lente → modal dettaglio
+        // lente → modal dettaglio (carica dettagli dalla sotto-collezione se necessario)
         const detBtn = card.querySelector('.reg-detail-btn');
         if (detBtn) {
-          detBtn.addEventListener('click', () => openSessionDetail(r));
+          detBtn.addEventListener('click', async () => {
+            if (r.hasDettagli && (!r.dettagli || !r.dettagli.length)) {
+              detBtn.style.opacity = '0.4';
+              r.dettagli = await loadRegistroDettagli(r._docId);
+              detBtn.style.opacity = '';
+            }
+            openSessionDetail(r);
+          });
+        }
+
+        // fotocamera → scatta/allega foto ricordo
+        const photoBtn = card.querySelector('.reg-photo-btn');
+        if (photoBtn) {
+          photoBtn.addEventListener('click', () => openPhotoModal(r, card));
         }
 
         if (!hasFb) {
