@@ -312,10 +312,12 @@ export async function addRegistroDocSafe(data) {
   const { dettagli, ...mainData } = data;
   // Il documento principale NON contiene i dettagli
   mainData.hasDettagli = !!(dettagli && dettagli.length);
+  console.log('[registro] dettagli da salvare:', dettagli?.length ?? 0, 'voci, hasDettagli:', mainData.hasDettagli);
   let docId;
   try {
     const ref = await addDoc(col, { ...mainData, createdAt: Date.now() });
     docId = ref.id;
+    console.log('[registro] doc principale salvato:', docId);
   } catch (e) {
     console.error('addRegistroDocSafe: errore salvataggio principale', e);
     return null;
@@ -323,7 +325,7 @@ export async function addRegistroDocSafe(data) {
   // Salva i dettagli in chunk nella sotto-collezione
   if (dettagli && dettagli.length) {
     try {
-      const chunkSize = 400; // max voci per documento Firestore (< 1MB)
+      const chunkSize = 400;
       const chunks = [];
       for (let i = 0; i < dettagli.length; i += chunkSize) {
         chunks.push(dettagli.slice(i, i + chunkSize));
@@ -335,9 +337,9 @@ export async function addRegistroDocSafe(data) {
         batch.set(chunkRef, { items: chunk, chunkIdx: idx });
       });
       await batch.commit();
+      console.log('[registro] chunk salvati:', chunks.length);
     } catch (e) {
       console.error('addRegistroDocSafe: errore salvataggio dettagli', e);
-      // Il doc principale è già salvato — i dettagli mancano ma la sessione è registrata
     }
   }
   return docId;
