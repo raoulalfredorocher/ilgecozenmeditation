@@ -786,6 +786,35 @@
     </div>
   </div>
 
+  <!-- Modal: foto ricordo -->
+  <div class="modal-overlay" id="modal-photo">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">📸 Foto ricordo</div>
+      <div id="photo-modal-allenamento-label" style="font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-align:center;margin-top:-10px;margin-bottom:14px;"></div>
+      <!-- Lista foto già salvate -->
+      <div id="photo-saved-list" class="photo-saved-list"></div>
+      <!-- Anteprima nuova foto -->
+      <div class="photo-preview-wrap" id="photo-preview-wrap">
+        <div class="photo-placeholder-inner" id="photo-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Tocca per scattare o scegliere una foto
+        </div>
+        <img id="photo-preview-img" style="display:none;width:100%;height:100%;object-fit:cover;" alt="Anteprima foto"/>
+      </div>
+      <!-- Input nascosto per la fotocamera / galleria -->
+      <input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none"/>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <button class="btn-outline" style="flex:1" id="btn-photo-camera">📷 Fotocamera</button>
+        <button class="btn-outline" style="flex:1" id="btn-photo-gallery">🖼️ Galleria</button>
+      </div>
+      <div class="modal-actions" style="margin-top:0">
+        <button class="btn-outline" style="flex:1" id="btn-photo-cancel">Annulla</button>
+        <button class="btn-primary" style="flex:1" id="btn-photo-save">Salva foto</button>
+      </div>
+    </div>
+  </div>
+
     <script type="module">
     import {
       subscribeAllenamenti, addAllenamentoDoc, updateAllenamentoDoc, deleteAllenamentoDoc,
@@ -2259,6 +2288,140 @@
       if (!registroList.length) { alert('Nessun allenamento nel registro'); return; }
       exportRegistro(registroList); closeModal('modal-export');
     });
+    // ── FOTO RICORDO ──────────────────────────────────────────────────────────
+    // Le foto vengono compresse con Canvas (max 800px, JPEG q=0.72) e salvate
+    // come array `photos` nel documento registro via updateRegistroDoc.
+    // Ogni foto base64 compressa pesa ~80-150 KB, abbondantemente sotto 1 MB.
+
+    let _photoRecord = null;   // doc registro aperto nel modal foto
+    let _photoDataUrl = null;  // anteprima corrente (base64 già compressa)
+    const _photoFileInp = document.getElementById('photo-file-input');
+
+    // backdrop click
+    const _mPhoto = document.getElementById('modal-photo');
+    if (_mPhoto) _mPhoto.addEventListener('click', e => { if (e.target === _mPhoto) { _photoDataUrl=null; closeModal('modal-photo'); } });
+
+    document.getElementById('btn-photo-cancel').addEventListener('click', () => {
+      _photoDataUrl = null; closeModal('modal-photo');
+    });
+
+    // Fotocamera
+    document.getElementById('btn-photo-camera').addEventListener('click', () => {
+      _photoFileInp.setAttribute('capture', 'environment'); _photoFileInp.click();
+    });
+    // Galleria
+    document.getElementById('btn-photo-gallery').addEventListener('click', () => {
+      _photoFileInp.removeAttribute('capture'); _photoFileInp.click();
+    });
+    // Click sull'area anteprima → galleria
+    document.getElementById('photo-preview-wrap').addEventListener('click', () => {
+      _photoFileInp.removeAttribute('capture'); _photoFileInp.click();
+    });
+
+    // Selezione file: comprimi e mostra anteprima
+    _photoFileInp.addEventListener('change', async e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      e.target.value = '';
+      try {
+        document.getElementById('photo-placeholder').style.display = 'none';
+        _photoDataUrl = await compressImage(file, 800, 0.72);
+        const previewImg = document.getElementById('photo-preview-img');
+        previewImg.src = _photoDataUrl; previewImg.style.display = 'block';
+      } catch (err) { console.error('compressImage error', err); alert('Errore caricamento foto'); }
+    });
+
+    // Salva foto nel documento registro
+    document.getElementById('btn-photo-save').addEventListener('click', async () => {
+      if (!_photoDataUrl) { alert('Seleziona prima una foto'); return; }
+      const btn = document.getElementById('btn-photo-save');
+      btn.textContent = 'Salvataggio…'; btn.disabled = true;
+      try {
+        const now = new Date();
+        const label = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        const existing = Array.isArray(_photoRecord.photos) ? _photoRecord.photos : [];
+        const updated = [...existing, { url: _photoDataUrl, date: _photoRecord.data, label }];
+        await updateRegistroDoc(_photoRecord._docId, { photos: updated });
+        _photoRecord.photos = updated;
+        _photoDataUrl = null;
+        document.getElementById('photo-preview-img').style.display = 'none';
+        document.getElementById('photo-placeholder').style.display = 'flex';
+        _photoFileInp.value = '';
+        _renderPhotoList(updated);
+        // aggiorna card nel calendario
+        renderRegistroForDate(_photoRecord.data);
+      } catch (err) {
+        console.error('Errore salvataggio foto', err);
+        alert('Errore nel salvataggio. Riprova.');
+      } finally { btn.textContent = 'Salva foto'; btn.disabled = false; }
+    });
+
+    function openPhotoModal(r) {
+      _photoRecord = r;
+      _photoDataUrl = null;
+      document.getElementById('photo-modal-allenamento-label').textContent =
+        `${r.allenamentoNome} · ${r.schedaNome} · ${r.data}`;
+      document.getElementById('photo-preview-img').style.display = 'none';
+      document.getElementById('photo-placeholder').style.display = 'flex';
+      _photoFileInp.value = '';
+      _renderPhotoList(r.photos || []);
+      openModal('modal-photo');
+    }
+
+    function _renderPhotoList(photos) {
+      const list = document.getElementById('photo-saved-list');
+      list.innerHTML = '';
+      if (!photos || !photos.length) return;
+      photos.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'photo-saved-item';
+        item.innerHTML = `
+          <img class="photo-saved-thumb" src="${p.url}" alt="Foto ${idx+1}"/>
+          <span class="photo-saved-meta">${p.label || ('Foto '+(idx+1))} — ${p.date || ''}</span>
+          <button class="photo-saved-del" title="Elimina">${SVG_TRASH}</button>`;
+        // zoom thumbnail
+        item.querySelector('.photo-saved-thumb').addEventListener('click', () => {
+          const win = window.open('', '_blank');
+          if (win) { win.document.write(`<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="${p.url}" style="max-width:100%;max-height:100vh;object-fit:contain"/></body></html>`); win.document.close(); }
+        });
+        // elimina
+        item.querySelector('.photo-saved-del').addEventListener('click', async () => {
+          if (!confirm('Eliminare questa foto?')) return;
+          const newPhotos = (_photoRecord.photos || []).filter((_, i) => i !== idx);
+          await updateRegistroDoc(_photoRecord._docId, { photos: newPhotos });
+          _photoRecord.photos = newPhotos;
+          _renderPhotoList(newPhotos);
+          renderRegistroForDate(_photoRecord.data);
+        });
+        list.appendChild(item);
+      });
+    }
+
+    // Compressione immagine su canvas
+    function compressImage(file, maxSide, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = ev => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            let w = img.naturalWidth, h = img.naturalHeight;
+            if (w > maxSide || h > maxSide) {
+              if (w >= h) { h = Math.round(h * maxSide / w); w = maxSide; }
+              else        { w = Math.round(w * maxSide / h); h = maxSide; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     } // fine initApp()
   </script>
 </body>
