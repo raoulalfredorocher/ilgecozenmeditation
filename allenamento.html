@@ -2052,7 +2052,8 @@
         const detBtn = card.querySelector('.reg-detail-btn');
         if (detBtn) {
           detBtn.addEventListener('click', async () => {
-            if (r.hasDettagli && (!r.dettagli || !r.dettagli.length)) {
+            // prova sempre a caricare dalla sotto-collezione se non già in memoria
+            if (!r.dettagli || !r.dettagli.length) {
               detBtn.style.opacity = '0.4';
               r.dettagli = await loadRegistroDettagli(r._docId);
               detBtn.style.opacity = '';
