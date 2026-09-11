@@ -1344,6 +1344,33 @@
     let currentPhase = null;
     let phaseQueue = []; // sequenza di fasi da eseguire
 
+    // ── Timestamp-based timer: immune al throttling iOS in background ──
+    // Ogni fase che parte salva il suo "epoch di riferimento" qui.
+    // I setInterval leggono Date.now() invece di contare tick.
+    let _phaseStartEpoch   = null;  // epoch quando la fase è partita
+    let _phaseBaseSeconds  = 0;     // secondi già accumulati prima del resume
+    let _phaseTotalSeconds = 0;     // durata target (0 = conta in avanti)
+    let _recStartEpoch     = null;  // epoch per il recupero
+    let _recBaseSec        = 0;     // secondi già scalati prima del resume
+
+    function _saveTimerState() {
+      try {
+        sessionStorage.setItem('zen_timer', JSON.stringify({
+          phase: currentPhase,
+          phaseStartEpoch:  _phaseStartEpoch,
+          phaseBaseSeconds: _phaseBaseSeconds,
+          phaseTotalSeconds:_phaseTotalSeconds,
+          recStartEpoch:    _recStartEpoch,
+          recBaseSec:       _recBaseSec,
+          sessIdx, sessSerie,
+          mainSeconds, recSeconds,
+        }));
+      } catch {}
+    }
+    function _clearTimerState() {
+      try { sessionStorage.removeItem('zen_timer'); } catch {}
+    }
+
     // ── Avviso "bevi" ogni 15 minuti ──
     let drinkAlertTimer = null;
     const DRINK_INTERVAL_MS = 15 * 60 * 1000;
@@ -1374,29 +1401,37 @@
       showCelebration(_pendingCelebrationDurata);
     }
 
-    // ── Visibilitychange: timer continua in background ──
-    // I setInterval continuano a girare normalmente in background su mobile.
-    // Il visibilitychange serve solo per ri-sincronizzare il display
-    // quando l'utente torna sull'app dopo una pausa.
-    let _hiddenAt = null;
+    // ── Visibilitychange: ri-sincronizza display usando epoch reale ──
+    // Su iOS, setInterval viene sospeso in background quando l'utente usa audio/video.
+    // La correzione: ogni tick usa Date.now() per calcolare i secondi reali trascorsi,
+    // NON un contatore incrementato dai tick. Al ritorno in foreground il display
+    // viene riallineato immediatamente senza aspettare il prossimo tick.
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        _hiddenAt = Date.now();
-      } else {
-        if (_hiddenAt !== null) {
-          const elapsed = Math.round((Date.now() - _hiddenAt) / 1000);
-          _hiddenAt = null;
-          // aggiorna i secondi di conseguenza per riallineare i timer
-          if (currentPhase === 'warmup' && mainTimer) {
-            mainSeconds += elapsed;
-          } else if (currentPhase === 'esercizio' && mainTimer) {
-            // countdown: sottrai; conta in su: aggiungi
-            // mainSeconds aggiornato da setInterval, ma per sicurezza sincronizziamo
-          } else if (currentPhase === 'recupero' && recTimer) {
-            recSeconds = Math.max(0, recSeconds - elapsed);
-            document.getElementById('clock-time').textContent = fmtTime(Math.max(0, recSeconds));
+      if (!document.hidden) {
+        // Riallinea display al momento del ritorno
+        const now = Date.now();
+        if ((currentPhase === 'warmup' || currentPhase === 'stretching') && _phaseStartEpoch) {
+          mainSeconds = _phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000);
+          document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+          setRingProgress((mainSeconds % 300) / 300);
+        } else if (currentPhase === 'esercizio' && _phaseStartEpoch) {
+          if (_phaseTotalSeconds > 0) {
+            // countdown
+            mainSeconds = Math.max(0, _phaseTotalSeconds - (_phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000)));
+            document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+            setRingCountdown(mainSeconds / _phaseTotalSeconds);
+          } else {
+            // count-up
+            mainSeconds = _phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000);
+            document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+            setRingProgress((mainSeconds % 60) / 60);
           }
+        } else if (currentPhase === 'recupero' && _recStartEpoch) {
+          recSeconds = Math.max(0, _recBaseSec - Math.round((now - _recStartEpoch) / 1000));
+          document.getElementById('clock-time').textContent = fmtTime(recSeconds);
+          setRingCountdown(recSeconds / (_recBaseSec || 1));
         }
+        _saveTimerState();
       }
     });
 
@@ -1424,6 +1459,8 @@
     function stopAllTimers() {
       if (mainTimer) { clearInterval(mainTimer); mainTimer = null; }
       if (recTimer)  { clearInterval(recTimer);  recTimer  = null; }
+      _phaseStartEpoch = null;
+      _recStartEpoch   = null;
     }
 
     function showBtns({ start=false, stop=false, next=false, skipSerie=false, skipEx=false, skipRec=false }) {
@@ -1656,24 +1693,33 @@
         if (mainTimer) return;
         btnStart.textContent = 'Start';
         showBtns({ stop: true, next: true, skipEx: true });
+        _phaseBaseSeconds = mainSeconds;
+        _phaseStartEpoch  = Date.now();
+        _phaseTotalSeconds = 0;
         mainTimer = setInterval(() => {
-          mainSeconds++;
+          mainSeconds = _phaseBaseSeconds + Math.round((Date.now() - _phaseStartEpoch) / 1000);
           document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
           setRingProgress((mainSeconds % 300) / 300);
-        }, 1000);
+          _saveTimerState();
+        }, 500);
       };
       btnStop.onclick = () => {
         if (!mainTimer) return;
         clearInterval(mainTimer); mainTimer = null;
+        _phaseStartEpoch = null;
         btnStart.textContent = 'Start';
         showBtns({ start: true, next: true });
         btnStart.onclick = () => {
           showBtns({ stop: true, next: true, skipEx: true });
+          _phaseBaseSeconds = mainSeconds;
+          _phaseStartEpoch  = Date.now();
+          _phaseTotalSeconds = 0;
           mainTimer = setInterval(() => {
-            mainSeconds++;
+            mainSeconds = _phaseBaseSeconds + Math.round((Date.now() - _phaseStartEpoch) / 1000);
             document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
             setRingProgress((mainSeconds % 300) / 300);
-          }, 1000);
+            _saveTimerState();
+          }, 500);
         };
       };
       btnNext.onclick = () => {
@@ -1726,29 +1772,39 @@
         exStartTime = Date.now();
         showBtns({ stop: true, skipSerie: true, skipEx: true });
         if (hasTempo) {
-          // countdown dal tempo dell'esercizio
+          // countdown dal tempo dell'esercizio — usa Date.now() come sorgente di verità
           mainSeconds = ex.tempo;
+          _phaseTotalSeconds = ex.tempo;
+          _phaseBaseSeconds  = 0;          // secondi già "consumati" = 0 all'avvio
+          _phaseStartEpoch   = Date.now();
           setRingCountdown(1);
           mainTimer = setInterval(() => {
-            mainSeconds--;
-            document.getElementById('clock-time').textContent = fmtTime(Math.max(0, mainSeconds));
-            setRingCountdown(mainSeconds / ex.tempo);
+            const elapsed = Math.round((Date.now() - _phaseStartEpoch) / 1000);
+            mainSeconds = Math.max(0, _phaseTotalSeconds - (_phaseBaseSeconds + elapsed));
+            document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+            setRingCountdown(mainSeconds / _phaseTotalSeconds);
+            _saveTimerState();
             if (mainSeconds <= 0) {
               clearInterval(mainTimer); mainTimer = null;
+              _phaseStartEpoch = null;
               suonaCampanello();
               exElapsed = ex.tempo;
               advanceSerie(ex, false);
             }
-          }, 1000);
+          }, 500);
         } else {
-          // conta in avanti (rep libere)
+          // conta in avanti (rep libere) — usa Date.now()
           mainSeconds = 0;
+          _phaseTotalSeconds = 0;
+          _phaseBaseSeconds  = 0;
+          _phaseStartEpoch   = Date.now();
           setRingProgress(0);
           mainTimer = setInterval(() => {
-            mainSeconds++;
+            mainSeconds = _phaseBaseSeconds + Math.round((Date.now() - _phaseStartEpoch) / 1000);
             document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
             setRingProgress((mainSeconds % 60) / 60);
-          }, 1000);
+            _saveTimerState();
+          }, 500);
         }
       };
 
@@ -1792,6 +1848,9 @@
       stopAllTimers();
       const recSec = parseInt(ex.recupero) || 90;
       recSeconds = recSec;
+      // epoch per recupero — usa Date.now() come sorgente di verità
+      _recBaseSec    = recSec;
+      _recStartEpoch = Date.now();
 
       // cerchio: countdown recupero — stesso font del timer esercizio
       document.getElementById('clock-time').textContent = fmtTime(recSeconds);
@@ -1813,17 +1872,19 @@
       showBtns({ start: true, skipEx: true, skipRec: true });
 
       recTimer = setInterval(() => {
-        recSeconds--;
-        const t = Math.max(0, recSeconds);
+        const t = Math.max(0, _recBaseSec - Math.round((Date.now() - _recStartEpoch) / 1000));
+        recSeconds = t;
         document.getElementById('clock-time').textContent = fmtTime(t);
-        setRingCountdown(t / recSec);
-        if (recSeconds <= 0) {
+        setRingCountdown(t / _recBaseSec);
+        _saveTimerState();
+        if (t <= 0) {
           clearInterval(recTimer); recTimer = null;
+          _recStartEpoch = null;
           suonaCampanello();
           btnStart.disabled = false;
           btnStart.style.opacity = '';
         }
-      }, 1000);
+      }, 500);
 
       btnStart.onclick = () => {
         if (btnStart.disabled) return;
@@ -1885,6 +1946,7 @@
     // --- Fine sessione COMPLETATA (salva nel registro) ---
     function endSessioneCompleta() {
       stopAllTimers();
+      _clearTimerState();
       stopDrinkAlert();
       const all = allenamentiList.find(a => a._docId === sessionAllId);
       const sch = all?.schede?.[sessionSchId];
