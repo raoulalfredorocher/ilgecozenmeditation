@@ -1355,7 +1355,7 @@
 
     function _saveTimerState() {
       try {
-        sessionStorage.setItem('zen_timer', JSON.stringify({
+        localStorage.setItem('zen_timer', JSON.stringify({
           phase: currentPhase,
           phaseStartEpoch:  _phaseStartEpoch,
           phaseBaseSeconds: _phaseBaseSeconds,
@@ -1364,11 +1364,165 @@
           recBaseSec:       _recBaseSec,
           sessIdx, sessSerie,
           mainSeconds, recSeconds,
+          sessionAllId, sessionSchId,
+          sessExercises: sessExercises,
+          sessionStartTime,
+          phaseQueue,
+          currentWarmupLabel,
+          savedAt: Date.now(),
         }));
       } catch {}
     }
     function _clearTimerState() {
-      try { sessionStorage.removeItem('zen_timer'); } catch {}
+      try { localStorage.removeItem('zen_timer'); } catch {}
+    }
+    function _restoreTimerState() {
+      try {
+        const raw = localStorage.getItem('zen_timer');
+        if (!raw) return false;
+        const s = JSON.parse(raw);
+        // Scarta se salvato più di 4 ore fa (allenamento chiaramente finito)
+        if (!s.savedAt || Date.now() - s.savedAt > 4 * 60 * 60 * 1000) {
+          _clearTimerState(); return false;
+        }
+        if (!s.phase || !s.sessExercises || !s.sessExercises.length) return false;
+
+        // Ripristina variabili sessione
+        sessionAllId      = s.sessionAllId;
+        sessionSchId      = s.sessionSchId;
+        sessExercises     = s.sessExercises;
+        sessIdx           = s.sessIdx;
+        sessSerie         = s.sessSerie;
+        sessionStartTime  = s.sessionStartTime;
+        currentWarmupLabel= s.currentWarmupLabel || '';
+        phaseQueue        = s.phaseQueue || [];
+        _phaseStartEpoch  = s.phaseStartEpoch;
+        _phaseBaseSeconds = s.phaseBaseSeconds;
+        _phaseTotalSeconds= s.phaseTotalSeconds;
+        _recStartEpoch    = s.recStartEpoch;
+        _recBaseSec       = s.recBaseSec;
+        currentPhase      = s.phase;
+
+        // Mostra schermata timer
+        document.getElementById('avvia-setup').style.display = 'none';
+        document.getElementById('avvia-timer').style.display = 'block';
+        document.getElementById('rec-box').style.display = 'none';
+        startDrinkAlert();
+
+        const now = Date.now();
+
+        if ((currentPhase === 'warmup' || currentPhase === 'stretching') && _phaseStartEpoch) {
+          mainSeconds = _phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000);
+          const label = currentWarmupLabel || (currentPhase === 'stretching' ? '🧘 Stretching' : '🔥 Riscaldamento');
+          setClockUI(fmtTime(mainSeconds), label, '', '', '');
+          setRingProgress((mainSeconds % 300) / 300);
+          showBtns({ stop: true, next: true, skipEx: true });
+          mainTimer = setInterval(() => {
+            mainSeconds = _phaseBaseSeconds + Math.round((Date.now() - _phaseStartEpoch) / 1000);
+            document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+            setRingProgress((mainSeconds % 300) / 300);
+            _saveTimerState();
+          }, 500);
+          btnStop.onclick = () => {
+            if (!mainTimer) return;
+            clearInterval(mainTimer); mainTimer = null;
+            _phaseStartEpoch = null;
+            showBtns({ start: true, next: true });
+          };
+          btnNext.onclick = () => { stopAllTimers(); nextPhase(); };
+
+        } else if (currentPhase === 'esercizio' && _phaseStartEpoch) {
+          const ex = sessExercises[sessIdx];
+          if (!ex) { _clearTimerState(); return false; }
+          const exMeta = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo ? ' · '+ex.tempo+'s' : ''}`;
+          const serieLabel = `Serie ${sessSerie + 1} / ${ex.serie}`;
+          if (_phaseTotalSeconds > 0) {
+            const elapsed = _phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000);
+            mainSeconds = Math.max(0, _phaseTotalSeconds - elapsed);
+            setClockUI(fmtTime(mainSeconds), ex.nome, '', exMeta, serieLabel);
+            setRingCountdown(mainSeconds / _phaseTotalSeconds);
+            showBtns({ stop: true, skipSerie: true, skipEx: true });
+            if (mainSeconds > 0) {
+              mainTimer = setInterval(() => {
+                const e2 = _phaseBaseSeconds + Math.round((Date.now() - _phaseStartEpoch) / 1000);
+                mainSeconds = Math.max(0, _phaseTotalSeconds - e2);
+                document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+                setRingCountdown(mainSeconds / _phaseTotalSeconds);
+                _saveTimerState();
+                if (mainSeconds <= 0) {
+                  clearInterval(mainTimer); mainTimer = null;
+                  _phaseStartEpoch = null;
+                  suonaCampanello();
+                  exElapsed = _phaseTotalSeconds;
+                  advanceSerie(ex, false);
+                }
+              }, 500);
+            } else {
+              suonaCampanello();
+              advanceSerie(ex, false);
+            }
+          } else {
+            mainSeconds = _phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000);
+            setClockUI(fmtTime(mainSeconds), ex.nome, '', exMeta, serieLabel);
+            setRingProgress((mainSeconds % 60) / 60);
+            showBtns({ stop: true, skipSerie: true, skipEx: true });
+            mainTimer = setInterval(() => {
+              mainSeconds = _phaseBaseSeconds + Math.round((Date.now() - _phaseStartEpoch) / 1000);
+              document.getElementById('clock-time').textContent = fmtTime(mainSeconds);
+              setRingProgress((mainSeconds % 60) / 60);
+              _saveTimerState();
+            }, 500);
+          }
+          btnStop.onclick = () => {
+            if (!mainTimer) return;
+            clearInterval(mainTimer); mainTimer = null;
+            exElapsed = exStartTime ? Math.round((Date.now() - exStartTime) / 1000) : mainSeconds;
+            advanceSerie(ex, false);
+          };
+
+        } else if (currentPhase === 'recupero' && _recStartEpoch) {
+          const ex = sessExercises[Math.max(0, sessIdx - 1)] || sessExercises[sessIdx];
+          recSeconds = Math.max(0, _recBaseSec - Math.round((now - _recStartEpoch) / 1000));
+          const nextInfo = sessSerie === 0
+            ? (sessIdx < sessExercises.length ? 'Prossimo: ' + sessExercises[sessIdx].nome : 'Fine allenamento!')
+            : (ex ? `Serie ${sessSerie + 1} / ${ex.serie}` : '');
+          setClockUI(fmtTime(recSeconds), 'Recupero', '', nextInfo, '');
+          setRingCountdown(recSeconds / (_recBaseSec || 1));
+          btnStart.textContent = 'Prossimo esercizio';
+          if (recSeconds > 0) {
+            btnStart.disabled = true; btnStart.style.opacity = '0.4';
+            showBtns({ start: true, skipEx: true, skipRec: true });
+            recTimer = setInterval(() => {
+              const t = Math.max(0, _recBaseSec - Math.round((Date.now() - _recStartEpoch) / 1000));
+              recSeconds = t;
+              document.getElementById('clock-time').textContent = fmtTime(t);
+              setRingCountdown(t / _recBaseSec);
+              _saveTimerState();
+              if (t <= 0) {
+                clearInterval(recTimer); recTimer = null;
+                _recStartEpoch = null;
+                suonaCampanello();
+                btnStart.disabled = false; btnStart.style.opacity = '';
+              }
+            }, 500);
+          } else {
+            btnStart.disabled = false; btnStart.style.opacity = '';
+            showBtns({ start: true, skipEx: true, skipRec: true });
+            suonaCampanello();
+          }
+          btnStart.onclick = () => {
+            if (btnStart.disabled) return;
+            stopAllTimers();
+            document.getElementById('rec-box').style.display = 'none';
+            loadEsercizio();
+          };
+        } else {
+          _clearTimerState(); return false;
+        }
+        return true;
+      } catch(e) {
+        _clearTimerState(); return false;
+      }
     }
 
     // ── Avviso "bevi" ogni 15 minuti ──
@@ -2049,6 +2203,7 @@
     });
 
     function resetTimerUI() {
+      _clearTimerState();
       document.getElementById('avvia-timer').style.display = 'none';
       document.getElementById('avvia-setup').style.display = 'block';
       setRingProgress(0);
@@ -2058,6 +2213,11 @@
       sessIdx = 0; sessSerie = 0; mainSeconds = 0; recSeconds = 0;
       currentPhase = null;
     }
+
+    // ── Ripristino automatico al caricamento (pagina ricaricata da iOS/Chrome) ──
+    // Chiamato dopo che tutte le funzioni sono definite.
+    // Se c'era un allenamento attivo salvato in localStorage lo riprende subito.
+    setTimeout(() => { _restoreTimerState(); }, 200);
 
     // ── REGISTRO / CALENDARIO ──
     const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
