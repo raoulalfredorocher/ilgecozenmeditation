@@ -3284,6 +3284,16 @@
         const actions = document.createElement('div');
         actions.className = 'store-item-actions';
 
+        // ⭐ bottone flag — seleziona item per "Selezionati" / WhatsApp
+        const flagBtn = document.createElement('button');
+        flagBtn.className = 'store-item-edit';
+        flagBtn.title = item.bought ? 'Rimuovi dalla selezione' : 'Aggiungi alla selezione';
+        flagBtn.innerHTML = item.bought
+          ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+          : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+        flagBtn.style.color = item.bought ? 'var(--primary)' : '';
+        flagBtn.addEventListener('click', () => updateShoppingItem(storeDocId, item._docId, { bought: !item.bought }));
+
         // ✏️ bottone edit
         const editBtn = document.createElement('button');
         editBtn.className = 'store-item-edit';
