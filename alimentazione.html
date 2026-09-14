@@ -3028,7 +3028,7 @@
 
     /* ── WhatsApp: invia lista selezionati ── */
     btnWhatsapp.addEventListener('click', () => {
-      const flagged = currentItems.filter(it => it.flagged);
+      const flagged = currentItems.filter(it => it.bought);
       if (!flagged.length) { alert('Nessun prodotto selezionato.'); return; }
       const storeName = currentStoreObj ? currentStoreObj.name : 'Spesa';
       let text = `🛒 *Lista della spesa – ${storeName}*\n\n`;
@@ -3249,7 +3249,7 @@
       if (selectedCategoryFilter === 'ALL') {
         filtered = items;
       } else if (selectedCategoryFilter === '__FLAGGED__') {
-        filtered = items.filter(it => it.flagged);
+        filtered = items.filter(it => it.bought);
       } else {
         filtered = items.filter(it => (it.category || 'Generale') === selectedCategoryFilter);
       }
