@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0d0d1a"/>
+    </radialGradient>
+    <!-- Popcorn kernel gradient - yellow -->
+    <radialGradient id="kernelYellow" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" style="stop-color:#fff176"/>
+      <stop offset="60%" style="stop-color:#ffd600"/>
+      <stop offset="100%" style="stop-color:#f9a825"/>
+    </radialGradient>
+    <!-- Popcorn kernel gradient - white/cream -->
+    <radialGradient id="kernelCream" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" style="stop-color:#fffde7"/>
+      <stop offset="60%" style="stop-color:#fff8e1"/>
+      <stop offset="100%" style="stop-color:#ffecb3"/>
+    </radialGradient>
+    <!-- Cup gradient -->
+    <linearGradient id="cupGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#b71c1c"/>
+      <stop offset="50%" style="stop-color:#e53935"/>
+      <stop offset="100%" style="stop-color:#b71c1c"/>
+    </linearGradient>
+    <!-- Cup stripe gradient -->
+    <linearGradient id="stripeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffd600;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#ffd600;stop-opacity:0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="500" fill="url(#bgGrad)" rx="20"/>
+
+  <!-- Stars in background -->
+  <circle cx="30" cy="40" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="80" cy="20" r="1" fill="white" opacity="0.4"/>
+  <circle cx="150" cy="35" r="1.5" fill="white" opacity="0.5"/>
+  <circle cx="250" cy="15" r="1" fill="white" opacity="0.6"/>
+  <circle cx="320" cy="50" r="1.5" fill="white" opacity="0.4"/>
+  <circle cx="370" cy="25" r="1" fill="white" opacity="0.5"/>
+  <circle cx="50" cy="120" r="1" fill="white" opacity="0.3"/>
+  <circle cx="360" cy="110" r="1.5" fill="white" opacity="0.4"/>
+
+  <!-- ===== POPCORN KERNELS - back row ===== -->
+  <!-- back left -->
+  <ellipse cx="105" cy="235" rx="32" ry="28" fill="url(#kernelYellow)" opacity="0.85"/>
+  <ellipse cx="98" cy="227" rx="14" ry="11" fill="#fff9c4" opacity="0.6"/>
+  <!-- back center-left -->
+  <ellipse cx="158" cy="222" rx="30" ry="27" fill="url(#kernelCream)" opacity="0.85"/>
+  <ellipse cx="151" cy="214" rx="12" ry="10" fill="white" opacity="0.5"/>
+  <!-- back center-right -->
+  <ellipse cx="242" cy="222" rx="30" ry="27" fill="url(#kernelYellow)" opacity="0.85"/>
+  <ellipse cx="235" cy="214" rx="12" ry="10" fill="#fff9c4" opacity="0.5"/>
+  <!-- back right -->
+  <ellipse cx="295" cy="235" rx="32" ry="28" fill="url(#kernelCream)" opacity="0.85"/>
+  <ellipse cx="288" cy="227" rx="14" ry="11" fill="white" opacity="0.6"/>
+
+  <!-- ===== POPCORN KERNELS - front row ===== -->
+  <!-- front left -->
+  <ellipse cx="118" cy="265" rx="35" ry="30" fill="url(#kernelCream)"/>
+  <ellipse cx="109" cy="255" rx="16" ry="13" fill="white" opacity="0.55"/>
+  <!-- front center -->
+  <ellipse cx="200" cy="255" rx="38" ry="33" fill="url(#kernelYellow)"/>
+  <ellipse cx="190" cy="244" rx="17" ry="14" fill="#fff9c4" opacity="0.6"/>
+  <!-- front right -->
+  <ellipse cx="282" cy="265" rx="35" ry="30" fill="url(#kernelCream)"/>
+  <ellipse cx="273" cy="255" rx="16" ry="13" fill="white" opacity="0.55"/>
+
+  <!-- Extra small kernels peeking -->
+  <ellipse cx="75" cy="258" rx="22" ry="19" fill="url(#kernelYellow)" opacity="0.9"/>
+  <ellipse cx="325" cy="258" rx="22" ry="19" fill="url(#kernelYellow)" opacity="0.9"/>
+  <ellipse cx="70" cy="252" rx="9" ry="7" fill="#fff9c4" opacity="0.5"/>
+  <ellipse cx="320" cy="252" rx="9" ry="7" fill="#fff9c4" opacity="0.5"/>
+
+  <!-- ===== POPCORN CUP ===== -->
+  <!-- Cup body (trapezoid) -->
+  <polygon points="110,285 290,285 270,420 130,420" fill="url(#cupGrad)"/>
+  <!-- Cup top rim -->
+  <rect x="107" y="278" width="186" height="14" fill="#c62828" rx="3"/>
+  <!-- Cup stripes (vertical) -->
+  <polygon points="138,285 150,285 136,420 124,420" fill="url(#stripeGrad)" opacity="0.8"/>
+  <polygon points="193,285 205,285 199,420 187,420" fill="url(#stripeGrad)" opacity="0.8"/>
+  <polygon points="248,285 260,285 262,420 250,420" fill="url(#stripeGrad)" opacity="0.8"/>
+
+  <!-- Cup shadow/fold line -->
+  <line x1="200" y1="285" x2="200" y2="420" stroke="#b71c1c" stroke-width="1" opacity="0.4"/>
+
+  <!-- ===== IBM BOB LOGO on cup ===== -->
+  <!-- Bob face circle - white background -->
+  <circle cx="200" cy="350" r="38" fill="white"/>
+  <circle cx="200" cy="350" r="35" fill="#1f70c1"/>
+
+  <!-- IBM Bob stylized "B" face -->
+  <!-- Head outline / visor -->
+  <circle cx="200" cy="350" r="28" fill="#1565c0"/>
+
+  <!-- Eyes - white with pupils -->
+  <ellipse cx="188" cy="344" rx="9" ry="10" fill="white"/>
+  <ellipse cx="212" cy="344" rx="9" ry="10" fill="white"/>
+  <circle cx="190" cy="345" r="5" fill="#0d47a1"/>
+  <circle cx="214" cy="345" r="5" fill="#0d47a1"/>
+  <circle cx="192" cy="343" r="2" fill="white"/>
+  <circle cx="216" cy="343" r="2" fill="white"/>
+
+  <!-- Smile -->
+  <path d="M 186 360 Q 200 373 214 360" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- Antenna -->
+  <line x1="200" y1="322" x2="200" y2="308" stroke="white" stroke-width="2.5"/>
+  <circle cx="200" cy="305" r="5" fill="#ffd600"/>
+
+  <!-- "BOBcorn" text label -->
+  <text x="200" y="460" font-family="'Arial Black', Arial, sans-serif" font-size="32" font-weight="900" text-anchor="middle" fill="#ffd600" letter-spacing="3">BOBcorn</text>
+  <text x="200" y="485" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#90caf9" letter-spacing="2">IBM Bob Edition</text>
+
+  <!-- Sparkle decorations -->
+  <g fill="#ffd600" opacity="0.9">
+    <!-- top-left sparkle -->
+    <polygon points="55,80 58,70 61,80 71,83 61,86 58,96 55,86 45,83" />
+    <!-- top-right sparkle -->
+    <polygon points="340,65 342,58 344,65 351,67 344,69 342,76 340,69 333,67" />
+    <!-- small dots -->
+    <circle cx="45" cy="180" r="4" fill="#ffd600" opacity="0.6"/>
+    <circle cx="355" cy="175" r="4" fill="#ffd600" opacity="0.6"/>
+    <circle cx="40" cy="320" r="3" fill="#ffd600" opacity="0.4"/>
+    <circle cx="360" cy="315" r="3" fill="#ffd600" opacity="0.4"/>
+  </g>
+</svg>
