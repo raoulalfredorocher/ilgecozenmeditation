@@ -1476,8 +1476,23 @@
           btnStop.onclick = () => {
             if (!mainTimer) return;
             clearInterval(mainTimer); mainTimer = null;
-            exElapsed = exStartTime ? Math.round((Date.now() - exStartTime) / 1000) : mainSeconds;
+            exElapsed = mainSeconds;
             advanceSerie(ex, false);
+          };
+          btnSkipSerie.onclick = () => {
+            stopAllTimers();
+            exElapsed = mainSeconds;
+            advanceSerie(ex, true);
+          };
+          btnSkipEx.onclick = () => {
+            stopAllTimers();
+            const remaining = ex.serie - sessSerie;
+            for (let i = 0; i < remaining; i++) {
+              sessionDetails.push({ nome: ex.nome, serie: sessSerie + i + 1, esecuzione: 0, recupero: 0, skip: 'esercizio' });
+            }
+            sessSerie = 0; sessIdx++;
+            document.getElementById('rec-box').style.display = 'none';
+            loadEsercizio();
           };
 
         } else if (currentPhase === 'recupero' && _recStartEpoch) {
