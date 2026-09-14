@@ -1404,6 +1404,7 @@
         currentPhase      = s.phase;
 
         // Mostra schermata timer
+        switchTab('screen-avvia');
         document.getElementById('avvia-setup').style.display = 'none';
         document.getElementById('avvia-timer').style.display = 'block';
         document.getElementById('rec-box').style.display = 'none';
@@ -1528,6 +1529,23 @@
           btnStart.onclick = () => {
             if (btnStart.disabled) return;
             stopAllTimers();
+            document.getElementById('rec-box').style.display = 'none';
+            loadEsercizio();
+          };
+          btnSkipRec.onclick = () => {
+            stopAllTimers();
+            btnStart.disabled = false; btnStart.style.opacity = '';
+            document.getElementById('rec-box').style.display = 'none';
+            loadEsercizio();
+          };
+          btnSkipEx.onclick = () => {
+            if (sessIdx >= sessExercises.length) { stopAllTimers(); loadEsercizio(); return; }
+            const nextEx = sessExercises[sessIdx];
+            stopAllTimers();
+            for (let i = 0; i < nextEx.serie; i++) {
+              sessionDetails.push({ nome: nextEx.nome, serie: i + 1, esecuzione: 0, recupero: 0, skip: 'esercizio' });
+            }
+            sessIdx++; sessSerie = 0;
             document.getElementById('rec-box').style.display = 'none';
             loadEsercizio();
           };
