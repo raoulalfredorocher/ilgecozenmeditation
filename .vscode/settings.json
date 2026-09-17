@@ -1,1 +1,13 @@
-{}
+{
+  "files.associations": {
+    "*.abap": "sql"
+  },
+  "editor.tokenColorCustomizations": {
+    "comments": "#6A9955",
+    "keywords": "#C586C0",
+    "strings": "#CE9178",
+    "numbers": "#B5CEA8",
+    "types": "#4EC9B0",
+    "functions": "#DCDCAAA"
+  }
+}
