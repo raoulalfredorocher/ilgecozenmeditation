@@ -1,0 +1,12 @@
+agent:
+  name: "sap_abap_sql_agent"
+  title: "SAP ABAP Open SQL Agent"
+  description: "External A2A Agent ospitato su SAP backend che interpreta richieste in linguaggio naturale ed estrae dati dal DB SAP tramite Open SQL."
+  kind: "external"
+  provider: "external_chat/A2A/0.3.0"
+  api_url: "https://<TUO_HOST_SAP>:<PORTA>/sap/bc/z_ai_sql_a2a"
+  auth_scheme: "BEARER_TOKEN"
+  # Oppure "API_KEY" / "BASIC" in base alla configurazione di sicurezza SAP SICF
+  config:
+    hidden: false
+    enable_cot: true
