@@ -6,11 +6,17 @@ Implementa tre tool che l'agente può invocare:
   2. describe_table         → restituisce i metadati (colonne, tipi, commenti) di una tabella
   3. execute_sql_query      → esegue una SELECT su Databricks SQL Warehouse
                               con whitelist e limite righe come protezioni di sicurezza
+
+Ogni tool emette uno Span Langfuse figlio tramite record_tool_span() per il
+tracing granulare (latenza, input SQL, righe restituite, errori).
+Il trace_id padre viene passato tramite la variabile di contesto _current_trace_id
+impostata da invoke_with_tracing() in agent.py.
 """
 
 from __future__ import annotations
 
 import re
+from contextvars import ContextVar
 from typing import Annotated
 
 from databricks import sql as dbsql
@@ -23,6 +29,11 @@ from databricks_config import (
     MAX_ROWS_DEFAULT,
     TABLE_WHITELIST,
 )
+from observability import record_tool_span
+
+# ContextVar thread-safe: contiene il trace_id Langfuse del run corrente.
+# Viene impostato da invoke_with_tracing() prima di chiamare l'agente.
+_current_trace_id: ContextVar[str | None] = ContextVar("langfuse_trace_id", default=None)
 
 
 # ---------------------------------------------------------------------------

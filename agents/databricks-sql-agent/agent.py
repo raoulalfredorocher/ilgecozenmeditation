@@ -20,9 +20,9 @@ from __future__ import annotations
 import mlflow
 from langchain_community.chat_models import ChatDatabricks
 from langgraph.prebuilt import create_react_agent
-from mlflow.langchain.langchain_tracer import MlflowLangchainTracer
 
 from databricks_config import DATABRICKS_LLM_ENDPOINT
+from observability import flush, get_langfuse_callback, score_trace, trace_agent_run
 from tools import describe_table, execute_sql_query, list_available_tables
 
 # ---------------------------------------------------------------------------
@@ -89,6 +89,52 @@ def build_agent():
     return agent
 
 
+def invoke_with_tracing(
+    agent,
+    user_input: str,
+    session_id: str | None = None,
+    user_id: str | None = None,
+    tags: list[str] | None = None,
+) -> dict:
+    """
+    Esegue l'agente avvolgendo l'invocazione con un trace Langfuse completo.
+
+    Restituisce un dict con:
+      - "answer"    (str): risposta finale dell'agente
+      - "trace_id"  (str): ID trace Langfuse (utile per scoring successivo)
+      - "messages"  (list): tutti i messaggi della conversazione
+
+    Esempio:
+        agent = build_agent()
+        result = invoke_with_tracing(agent, "Quanti ordini abbiamo?", user_id="u42")
+        print(result["answer"])
+        # Feedback positivo:
+        score_trace(result["trace_id"], score_value=1.0, comment="Perfetto!")
+    """
+    with trace_agent_run(
+        user_input=user_input,
+        session_id=session_id,
+        user_id=user_id,
+        tags=tags or ["databricks-sql-agent", "production"],
+    ) as ctx:
+        result = agent.invoke(
+            {"messages": [{"role": "user", "content": user_input}]},
+            config={"callbacks": [ctx["callback"]]},
+        )
+        answer = result["messages"][-1].content
+        ctx["set_output"](
+            answer,
+            tool_calls=len([m for m in result["messages"] if hasattr(m, "tool_calls") and m.tool_calls]),
+            total_messages=len(result["messages"]),
+        )
+
+    return {
+        "answer": answer,
+        "trace_id": ctx["trace_id"],
+        "messages": result["messages"],
+    }
+
+
 # ---------------------------------------------------------------------------
 # MLflow pyfunc wrapper — necessario per il deploy su Databricks Model Serving
 # ---------------------------------------------------------------------------
@@ -112,6 +158,7 @@ class DatabricksSQLAgentModel(mlflow.pyfunc.PythonModel):
     def predict(self, context, model_input, params=None):
         """
         Riceve l'input dall'endpoint REST e restituisce la risposta dell'agente.
+        Ogni invocazione genera un trace completo su Langfuse + un run MLflow.
 
         Supporta due formati di input:
         - dict con chiave 'messages'
@@ -129,17 +176,29 @@ class DatabricksSQLAgentModel(mlflow.pyfunc.PythonModel):
 
         # Converti in formato LangGraph
         if isinstance(messages_raw, str):
+            user_input = messages_raw
             messages = [{"role": "user", "content": messages_raw}]
         else:
             messages = list(messages_raw)
+            user_input = next(
+                (m["content"] for m in reversed(messages) if m.get("role") == "user"),
+                str(messages),
+            )
 
-        # Esecuzione con tracing MLflow (visibile nell'UI Databricks → Experiments)
+        # Esecuzione con tracing Langfuse + span MLflow
         with mlflow.start_span(name="databricks_sql_agent") as span:
             span.set_inputs({"messages": messages})
-            result = self.agent.invoke({"messages": messages})
-            answer = result["messages"][-1].content
-            span.set_outputs({"response": answer})
 
+            result = invoke_with_tracing(
+                self.agent,
+                user_input=user_input,
+                tags=["databricks-sql-agent", "model-serving"],
+            )
+            answer = result["answer"]
+            span.set_outputs({"response": answer, "langfuse_trace_id": result["trace_id"]})
+
+        # Flush garantito prima che l'endpoint restituisca la risposta
+        flush()
         return answer
 
 
@@ -198,7 +257,7 @@ if __name__ == "__main__":
     agent = build_agent()
 
     print("=" * 60)
-    print("  Databricks SQL Agent — Test interattivo")
+    print("  Databricks SQL Agent — Test interattivo con Langfuse")
     print("  (digita 'exit' per uscire)")
     print("=" * 60)
 
@@ -215,5 +274,8 @@ if __name__ == "__main__":
         if not user_input:
             continue
 
-        result = agent.invoke({"messages": [{"role": "user", "content": user_input}]})
-        print(f"\nAgente: {result['messages'][-1].content}")
+        result = invoke_with_tracing(agent, user_input, user_id="local-dev")
+        print(f"\nAgente: {result['answer']}")
+        print(f"[Langfuse trace: {result['trace_id']}]")
+
+    flush()
