@@ -61,3 +61,26 @@ MAX_ROWS_DEFAULT: int = int(os.getenv("AGENT_MAX_ROWS", "50"))
 # ---------------------------------------------------------------------------
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST", "")
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN", "")
+
+# ---------------------------------------------------------------------------
+# Langfuse — Observability & Tracing
+#
+# Imposta queste variabili d'ambiente prima di avviare l'agente:
+#
+#   export LANGFUSE_PUBLIC_KEY="pk-lf-..."
+#   export LANGFUSE_SECRET_KEY="sk-lf-..."
+#   export LANGFUSE_HOST="https://cloud.langfuse.com"   # default
+#
+# Oppure su Databricks tramite Secrets:
+#   dbutils.secrets.put(scope="ai-agent", key="langfuse_public_key", string_value="pk-lf-...")
+#   dbutils.secrets.put(scope="ai-agent", key="langfuse_secret_key", string_value="sk-lf-...")
+#
+# Self-hosted Langfuse (es. Docker Compose locale o k8s):
+#   export LANGFUSE_HOST="http://localhost:3000"
+# ---------------------------------------------------------------------------
+LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "")
+LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "")
+LANGFUSE_HOST = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
+
+# Tag release per differenziare le versioni nei trace Langfuse (es. "v1.0.0", "staging")
+LANGFUSE_RELEASE = os.getenv("LANGFUSE_RELEASE", "")

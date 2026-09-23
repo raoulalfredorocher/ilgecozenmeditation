@@ -22,8 +22,8 @@ from langchain_community.chat_models import ChatDatabricks
 from langgraph.prebuilt import create_react_agent
 
 from databricks_config import DATABRICKS_LLM_ENDPOINT
-from observability import flush, get_langfuse_callback, score_trace, trace_agent_run
-from tools import describe_table, execute_sql_query, list_available_tables
+from observability import flush, get_langfuse_callback, score_trace, trace_agent_run  # noqa: F401
+from tools import _current_trace_id, describe_table, execute_sql_query, list_available_tables
 
 # ---------------------------------------------------------------------------
 # Istruzioni di sistema dell'agente
@@ -117,10 +117,16 @@ def invoke_with_tracing(
         user_id=user_id,
         tags=tags or ["databricks-sql-agent", "production"],
     ) as ctx:
-        result = agent.invoke(
-            {"messages": [{"role": "user", "content": user_input}]},
-            config={"callbacks": [ctx["callback"]]},
-        )
+        # Propaga il trace_id ai tool tramite ContextVar (thread-safe, no globals)
+        token = _current_trace_id.set(ctx["trace_id"])
+        try:
+            result = agent.invoke(
+                {"messages": [{"role": "user", "content": user_input}]},
+                config={"callbacks": [ctx["callback"]]},
+            )
+        finally:
+            _current_trace_id.reset(token)
+
         answer = result["messages"][-1].content
         ctx["set_output"](
             answer,

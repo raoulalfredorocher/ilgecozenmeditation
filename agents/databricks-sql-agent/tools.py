@@ -106,8 +106,15 @@ def list_available_tables() -> str:
     con nome completo (catalog.schema.table) e descrizione.
     Chiama questo tool SEMPRE come primo passo prima di costruire una query SQL.
     """
+    trace_id = _current_trace_id.get()
+    span_ctx = record_tool_span(trace_id, "list_available_tables", {}) if trace_id else None
+
     if not TABLE_WHITELIST:
-        return "Nessuna tabella configurata nella whitelist."
+        result = "Nessuna tabella configurata nella whitelist."
+        if span_ctx:
+            with span_ctx:
+                span_ctx["set_output"](result)
+        return result
 
     conn = _get_connection()
     parts: list[str] = []
@@ -117,7 +124,7 @@ def list_available_tables() -> str:
             for full_table in TABLE_WHITELIST:
                 segments = full_table.split(".")
                 if len(segments) == 3:
-                    catalog, schema, table = segments
+                    catalog, schema, table = segments  # noqa: F841
                     try:
                         cursor.execute(f"DESCRIBE TABLE {full_table}")
                         cols = cursor.fetchall()
@@ -130,7 +137,11 @@ def list_available_tables() -> str:
     finally:
         conn.close()
 
-    return "### Tabelle disponibili\n\n" + "\n".join(parts)
+    output = "### Tabelle disponibili\n\n" + "\n".join(parts)
+    if span_ctx:
+        with span_ctx:
+            span_ctx["set_output"](output, tables_count=len(TABLE_WHITELIST))
+    return output
 
 
 # ---------------------------------------------------------------------------
@@ -146,6 +157,8 @@ def describe_table(
     Usa questo tool per conoscere i nomi esatti delle colonne prima di scrivere la query SQL.
     La tabella deve essere presente nella whitelist autorizzata.
     """
+    trace_id = _current_trace_id.get()
+
     if not _is_safe_identifier(table_name):
         return f"Errore di sicurezza: nome tabella non valido → '{table_name}'"
 
@@ -168,9 +181,17 @@ def describe_table(
                 continue
             lines.append(f"| {col} | {dtype} | {comment} |")
 
-        return f"### Schema di `{table_name}`\n\n" + "\n".join(lines)
+        output = f"### Schema di `{table_name}`\n\n" + "\n".join(lines)
+        if trace_id:
+            with record_tool_span(trace_id, "describe_table", {"table_name": table_name}) as sc:
+                sc["set_output"](output, columns_count=len(lines) - 2)
+        return output
     except Exception as exc:
-        return f"Errore durante la lettura dello schema di '{table_name}': {exc}"
+        error_msg = f"Errore durante la lettura dello schema di '{table_name}': {exc}"
+        if trace_id:
+            with record_tool_span(trace_id, "describe_table", {"table_name": table_name}) as sc:
+                sc["set_output"](error_msg)
+        return error_msg
     finally:
         conn.close()
 
@@ -201,6 +222,8 @@ def execute_sql_query(
     - Il numero di righe è limitato a max 500
     - Solo le tabelle nella whitelist possono essere referenziate
     """
+    trace_id = _current_trace_id.get()
+
     # --- Validazione: solo SELECT ---
     stripped = sql_query.strip().upper()
     if not stripped.startswith("SELECT") and not stripped.startswith("WITH"):
@@ -229,6 +252,7 @@ def execute_sql_query(
     if "LIMIT" not in stripped:
         sql_query = sql_query.rstrip(";") + f"\nLIMIT {safe_max}"
 
+    span_input = {"sql_query": sql_query, "max_rows": safe_max}
     conn = _get_connection()
     try:
         with conn.cursor() as cursor:
@@ -237,7 +261,11 @@ def execute_sql_query(
             columns = [desc[0] for desc in cursor.description] if cursor.description else []
 
         if not rows:
-            return "La query non ha prodotto risultati."
+            output = "La query non ha prodotto risultati."
+            if trace_id:
+                with record_tool_span(trace_id, "execute_sql_query", span_input) as sc:
+                    sc["set_output"](output, rows_returned=0)
+            return output
 
         # Formattazione Markdown
         header = "| " + " | ".join(columns) + " |"
@@ -248,12 +276,24 @@ def execute_sql_query(
         ]
 
         result_md = "\n".join([header, separator] + data_rows)
-        return (
+        output = (
             f"### Risultati ({len(rows)} righe)\n\n"
             f"```sql\n{sql_query}\n```\n\n"
             f"{result_md}"
         )
+        if trace_id:
+            with record_tool_span(trace_id, "execute_sql_query", span_input) as sc:
+                sc["set_output"](
+                    output,
+                    rows_returned=len(rows),
+                    columns=columns,
+                )
+        return output
     except Exception as exc:
-        return f"Errore durante l'esecuzione della query:\n{exc}\n\nQuery: {sql_query}"
+        error_msg = f"Errore durante l'esecuzione della query:\n{exc}\n\nQuery: {sql_query}"
+        if trace_id:
+            with record_tool_span(trace_id, "execute_sql_query", span_input) as sc:
+                sc["set_output"](error_msg)
+        return error_msg
     finally:
         conn.close()

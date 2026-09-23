@@ -14,5 +14,8 @@ langgraph>=0.1.0
 # --- MLflow (tracing, logging, deploy) ---
 mlflow>=2.14.0
 
+# --- Langfuse (observability & tracing) ---
+langfuse>=2.0.0
+
 # --- Utility ---
 pandas>=1.5.0
