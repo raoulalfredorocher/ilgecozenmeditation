@@ -12,6 +12,9 @@ import {
   setDoc,
   onSnapshot,
   writeBatch,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
 
@@ -38,7 +41,22 @@ const hasValidConfig = Object.values(firebaseConfig).every(
 const app = hasValidConfig
   ? (getApps().length ? getApps()[0] : initializeApp(firebaseConfig))
   : null;
-const db  = app ? getFirestore(app) : null;
+
+// Abilita la cache persistente su IndexedDB: i dati vengono serviti
+// dalla cache locale (< 50 ms) mentre la sincronizzazione avviene in background.
+// persistentMultipleTabManager permette l'uso su più tab simultanee.
+let db = null;
+if (app) {
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
+  } catch (_) {
+    // Se Firestore è già stato inizializzato (es. hot-reload), usa l'istanza esistente
+    db = getFirestore(app);
+  }
+}
+
 const auth = app ? getAuth(app) : null;
 
 // Cache dell'uid per garantire che userCol/userDoc funzionino
