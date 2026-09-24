@@ -228,18 +228,23 @@
       padding:18px 20px; margin-bottom:18px; text-align:center; color:#fff; }
     .patrimonio-total-label { font-size:.5rem; letter-spacing:.28em; text-transform:uppercase; opacity:.75; }
     .patrimonio-total-value { font-size:1.8rem; font-weight:700; margin-top:4px; }
-    .bubbles-grid { width:100%; display:flex; flex-wrap:wrap; gap:14px;
-      justify-content:center; padding-bottom:8px; }
+    /* Patrimonio SVG canvas */
+    .pat-svg-wrap { width:100%; position:relative; }
+    .pat-svg-wrap svg { width:100%; display:block; overflow:visible; }
     .bubble-btn { display:flex; flex-direction:column; align-items:center; justify-content:center;
-      width:130px; height:130px; border-radius:50%; border:none; cursor:pointer;
-      gap:4px; padding:12px; transition:transform .15s; flex-shrink:0; }
-    .bubble-btn:active { transform:scale(.93); }
-    .bubble-name { font-size:.56rem; font-weight:700; letter-spacing:.08em;
-      text-transform:uppercase; color:#fff; text-align:center; line-height:1.3;
-      max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .bubble-value { font-size:1rem; font-weight:700; color:#fff; }
-    .bubble-sub { font-size:.46rem; color:rgba(255,255,255,.75); letter-spacing:.06em; }
+      position:absolute; border-radius:50%; border:none; cursor:pointer;
+      gap:2px; padding:10px; transition:transform .15s; transform:translate(-50%,-50%);
+      background:transparent; }
+    .bubble-btn:active { transform:translate(-50%,-50%) scale(.93); }
+    .bubble-name { font-size:.52rem; font-weight:700; letter-spacing:.06em;
+      text-transform:uppercase; color:#fff; text-align:center; line-height:1.25;
+      max-width:84px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bubble-value { font-size:.88rem; font-weight:700; color:#fff; }
+    .bubble-sub { font-size:.42rem; color:rgba(255,255,255,.7); letter-spacing:.06em; }
     .patrimonio-empty-state { width:100%; text-align:center; padding:60px 20px; }
+    /* giroconto row nel modal spesa */
+    .giroconto-row { display:none; }
+    .giroconto-row.visible { display:block; }
 
     /* ── Modal dettaglio conto (patrimonio) ── */
     .pat-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45);
@@ -365,7 +370,10 @@
       <div class="patrimonio-total-label">Patrimonio totale stimato</div>
       <div class="patrimonio-total-value" id="patrimonio-total-val">€ 0</div>
     </div>
-    <div class="bubbles-grid" id="bubbles-grid"></div>
+    <div class="pat-svg-wrap" id="pat-svg-wrap">
+      <svg id="pat-svg" aria-hidden="true"></svg>
+      <div id="bubbles-overlay"></div>
+    </div>
     <div class="patrimonio-empty-state" id="patrimonio-empty-state">
       <div style="font-size:3rem;margin-bottom:16px;">🏦</div>
       <div style="font-size:.78rem;color:var(--muted);line-height:1.8;">
@@ -444,6 +452,7 @@
         <div class="radio-group">
           <div class="radio-chip"><input type="radio" name="exp-tipo" id="tipo-uscita" value="uscita" checked><label for="tipo-uscita">💸 Uscita</label></div>
           <div class="radio-chip"><input type="radio" name="exp-tipo" id="tipo-entrata" value="entrata"><label for="tipo-entrata">💰 Entrata</label></div>
+          <div class="radio-chip"><input type="radio" name="exp-tipo" id="tipo-giroconto" value="giroconto"><label for="tipo-giroconto">🔄 Giroconto</label></div>
         </div>
       </div>
       <div class="form-row">
@@ -468,6 +477,10 @@
           <label>Conto</label>
           <select id="exp-account"><option value="">-- nessuno --</option></select>
         </div>
+      </div>
+      <div class="form-group giroconto-row" id="giroconto-row" style="margin-top:4px;">
+        <label>Conto destinatario</label>
+        <select id="exp-to-account"><option value="">-- seleziona --</option></select>
       </div>
       <div class="form-group" style="margin-top:14px;"><label>Anno</label><input id="exp-year" type="number" min="2020" max="2099" placeholder="2025"/></div>
       <div class="modal-actions">
@@ -903,14 +916,24 @@
     }
 
     function populateExpSelects(catId) {
-      const catSel = document.getElementById('exp-category');
-      const accSel = document.getElementById('exp-account');
+      const catSel    = document.getElementById('exp-category');
+      const accSel    = document.getElementById('exp-account');
+      const toAccSel  = document.getElementById('exp-to-account');
+      const accOpts   = accounts.map(a => `<option value="${a._docId}">${a.name}</option>`).join('');
       catSel.innerHTML = '<option value="">-- seleziona --</option>' +
         categories.map(c => `<option value="${c._docId}">${c.name}</option>`).join('');
-      accSel.innerHTML = '<option value="">-- nessuno --</option>' +
-        accounts.map(a => `<option value="${a._docId}">${a.name}</option>`).join('');
+      accSel.innerHTML  = '<option value="">-- nessuno --</option>' + accOpts;
+      toAccSel.innerHTML = '<option value="">-- seleziona --</option>' + accOpts;
       if (catId) catSel.value = catId;
     }
+
+    // toggle visibilità riga giroconto
+    document.querySelectorAll('input[name="exp-tipo"]').forEach(r =>
+      r.addEventListener('change', () => {
+        const row = document.getElementById('giroconto-row');
+        row.classList.toggle('visible', document.querySelector('input[name="exp-tipo"]:checked').value === 'giroconto');
+      })
+    );
 
     /* ── Account handlers ── */
     window.openEditAcc = function(docId) {
@@ -990,6 +1013,7 @@
       document.getElementById('exp-year').value   = new Date().getFullYear();
       document.getElementById('freq-monthly').checked = true;
       document.getElementById('tipo-uscita').checked  = true;
+      document.getElementById('giroconto-row').classList.remove('visible');
       populateExpSelects(catId);
       document.getElementById('modal-expense').classList.add('open');
     };
@@ -1000,10 +1024,13 @@
       document.getElementById('exp-title').value  = exp.title  || '';
       document.getElementById('exp-amount').value = exp.amount || '';
       document.getElementById('exp-year').value   = exp.year   || new Date().getFullYear();
+      const tipoVal = exp.tipo === 'giroconto' ? 'giroconto' : (exp.tipo || 'uscita');
       document.querySelector(`input[name="exp-freq"][value="${exp.freq || 'monthly'}"]`).checked = true;
-      document.querySelector(`input[name="exp-tipo"][value="${exp.tipo || 'uscita'}"]`).checked  = true;
+      document.querySelector(`input[name="exp-tipo"][value="${tipoVal}"]`).checked = true;
+      document.getElementById('giroconto-row').classList.toggle('visible', tipoVal === 'giroconto');
       populateExpSelects(exp.catId);
-      document.getElementById('exp-account').value = exp.accountId || '';
+      document.getElementById('exp-account').value    = exp.accountId   || '';
+      document.getElementById('exp-to-account').value = exp.toAccountId || '';
       document.getElementById('modal-expense').classList.add('open');
     };
     window.doDelExp = async function(docId) {
@@ -1013,18 +1040,21 @@
 
     document.getElementById('btn-exp-cancel').addEventListener('click', () => closeModal('modal-expense'));
     document.getElementById('btn-exp-save').addEventListener('click', async () => {
-      const title     = document.getElementById('exp-title').value.trim();
-      const amount    = parseFloat(document.getElementById('exp-amount').value);
-      const freq      = document.querySelector('input[name="exp-freq"]:checked').value;
-      const tipo      = document.querySelector('input[name="exp-tipo"]:checked').value;
-      const catId     = document.getElementById('exp-category').value;
-      const accountId = document.getElementById('exp-account').value;
-      const year      = document.getElementById('exp-year').value;
+      const title       = document.getElementById('exp-title').value.trim();
+      const amount      = parseFloat(document.getElementById('exp-amount').value);
+      const freq        = document.querySelector('input[name="exp-freq"]:checked').value;
+      const tipo        = document.querySelector('input[name="exp-tipo"]:checked').value;
+      const catId       = document.getElementById('exp-category').value;
+      const accountId   = document.getElementById('exp-account').value;
+      const toAccountId = document.getElementById('exp-to-account').value;
+      const year        = document.getElementById('exp-year').value;
       if (!title || isNaN(amount) || amount <= 0 || !catId) return;
+      const data = { title, amount, freq, tipo, catId, accountId, year,
+                     toAccountId: tipo === 'giroconto' ? toAccountId : '' };
       if (editExpDocId) {
-        await updateFinanzaExpense(editExpDocId, { title, amount, freq, tipo, catId, accountId, year });
+        await updateFinanzaExpense(editExpDocId, data);
       } else {
-        await addFinanzaExpense({ title, amount, freq, tipo, catId, accountId, year });
+        await addFinanzaExpense(data);
       }
       closeModal('modal-expense');
     });
@@ -1038,25 +1068,30 @@
     ];
 
     function renderPatrimonio() {
-      const grid      = document.getElementById('bubbles-grid');
+      const svgEl     = document.getElementById('pat-svg');
+      const overlay   = document.getElementById('bubbles-overlay');
       const emptyEl   = document.getElementById('patrimonio-empty-state');
       const totalCard = document.getElementById('patrimonio-total-card');
       const totalVal  = document.getElementById('patrimonio-total-val');
+      const wrap      = document.getElementById('pat-svg-wrap');
 
       if (!accounts.length) {
-        grid.innerHTML = '';
-        emptyEl.style.display  = '';
+        svgEl.setAttribute('viewBox','0 0 1 1');
+        overlay.innerHTML = '';
+        emptyEl.style.display   = '';
         totalCard.style.display = 'none';
+        wrap.style.display      = 'none';
         return;
       }
       emptyEl.style.display   = 'none';
       totalCard.style.display = '';
+      wrap.style.display      = '';
 
-      // Calcola saldo mensile annualizzato per ogni conto
+      // ── Calcola dati per ogni conto ──
       const accData = accounts.map((a, i) => {
         const accExps = expenses.filter(e => e.accountId === a._docId);
         const totEntM = accExps.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
-        const totUscM = accExps.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
+        const totUscM = accExps.filter(e => e.tipo !== 'entrata' && e.tipo !== 'giroconto').reduce((s, e) => s + monthly(e), 0);
         const saldoM  = totEntM - totUscM;
         const saldoA  = saldoM * 12;
         return { a, accExps, totEntM, totUscM, saldoM, saldoA,
@@ -1066,13 +1101,109 @@
       const grandTotal = accData.reduce((s, d) => s + d.saldoA, 0);
       totalVal.textContent = fmtEur(grandTotal);
 
-      grid.innerHTML = accData.map(d => `
-        <button class="bubble-btn" style="background:${d.color};"
+      // ── Raggi proporzionali ──
+      const vals    = accData.map(d => Math.abs(d.saldoA) || 1);
+      const maxVal  = Math.max(...vals);
+      const R_MAX   = 68, R_MIN = 36;
+      const radii   = vals.map(v => R_MIN + (R_MAX - R_MIN) * Math.sqrt(v / maxVal));
+
+      // ── Posizionamento a griglia circolare ──
+      const n   = accData.length;
+      const W   = 340, PAD = 80;
+      const cx  = W / 2;
+      // Layout: 1 conto → centro; 2 → fianco a fianco; n>2 → cerchio
+      let positions;
+      if (n === 1) {
+        positions = [{ x: cx, y: PAD + radii[0] }];
+      } else if (n === 2) {
+        const gap = 14;
+        const x0  = cx - radii[0] - gap / 2;
+        const x1  = cx + radii[1] + gap / 2;
+        const y   = PAD + Math.max(radii[0], radii[1]);
+        positions = [{ x: x0, y }, { x: x1, y }];
+      } else {
+        const angleStep = (2 * Math.PI) / n;
+        const ringR     = Math.min(cx - R_MAX - 10, 110);
+        const centerY   = PAD + ringR + R_MAX;
+        positions = accData.map((_, i) => ({
+          x: cx + ringR * Math.cos(angleStep * i - Math.PI / 2),
+          y: centerY + ringR * Math.sin(angleStep * i - Math.PI / 2),
+        }));
+      }
+
+      // Altezza SVG
+      const maxY  = Math.max(...positions.map((p, i) => p.y + radii[i])) + 20;
+      const H     = maxY;
+
+      // ── Giroconti (frecce) ──
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+      const transfers = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
+
+      // Costruisce SVG
+      svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svgEl.style.height = H + 'px';
+
+      // Marker freccia
+      let svgInner = `<defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="var(--muted)" opacity=".7"/>
+        </marker>
+        <marker id="arrow-dark" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="var(--muted)" opacity=".7"/>
+        </marker>
+      </defs>`;
+
+      // Disegna cerchi
+      accData.forEach((d, i) => {
+        const { x, y } = positions[i];
+        const r = radii[i];
+        svgInner += `<circle cx="${x}" cy="${y}" r="${r}" fill="${d.color}" opacity=".92"/>`;
+      });
+
+      // Disegna frecce giroconto
+      transfers.forEach(t => {
+        const fromIdx = accounts.findIndex(a => a._docId === t.accountId);
+        const toIdx   = accounts.findIndex(a => a._docId === t.toAccountId);
+        if (fromIdx < 0 || toIdx < 0) return;
+        const from = positions[fromIdx], to = positions[toIdx];
+        const rFrom = radii[fromIdx], rTo = radii[toIdx];
+        // Calcola punto di partenza/arrivo sul bordo dei cerchi
+        const dx   = to.x - from.x, dy = to.y - from.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const ux   = dx / dist, uy = dy / dist;
+        const x1   = from.x + ux * (rFrom + 4);
+        const y1   = from.y + uy * (rFrom + 4);
+        const x2   = to.x   - ux * (rTo   + 10);
+        const y2   = to.y   - uy * (rTo   + 10);
+        const amount = fmtEur(monthly(t));
+        // midpoint per etichetta
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - 6;
+        svgInner += `
+          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+            stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"
+            marker-end="url(#arrow)" opacity=".75"/>
+          <rect x="${mx-20}" y="${my-9}" width="40" height="13" rx="4"
+            fill="var(--card)" opacity=".85"/>
+          <text x="${mx}" y="${my+1}" text-anchor="middle"
+            font-size="7" fill="var(--muted)" font-family="-apple-system,sans-serif">${amount}</text>`;
+      });
+
+      svgEl.innerHTML = svgInner;
+      wrap.style.height = H + 'px';
+
+      // ── Overlay bottoni cliccabili ──
+      overlay.innerHTML = accData.map((d, i) => {
+        const { x, y } = positions[i];
+        const r = radii[i];
+        const sz = r * 2;
+        return `<button class="bubble-btn"
+          style="left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;"
           onclick="openPatModal('${d.a._docId}')">
           <span class="bubble-name">${d.a.name}</span>
           <span class="bubble-value">${fmtEur(d.saldoA)}</span>
           <span class="bubble-sub">annuo</span>
-        </button>`).join('');
+        </button>`;
+      }).join('');
     }
 
     /* ── Apertura modal patrimonio ── */
@@ -1110,14 +1241,33 @@
           <div class="pat-kpi-value" style="color:${balCls};">${saldoA >= 0 ? '+' : ''}${fmtEur(saldoA)}</div>
         </div>`;
 
-      document.getElementById('pat-modal-list').innerHTML = accExps.length
-        ? accExps.map(exp => {
-            const isEnt = exp.tipo === 'entrata';
+      // Includi anche giroconti in uscita da questo conto
+      const giroOut = expenses.filter(e => e.tipo === 'giroconto' && e.accountId   === docId);
+      const giroIn  = expenses.filter(e => e.tipo === 'giroconto' && e.toAccountId === docId);
+      const allExps = [...accExps, ...giroIn];
+
+      document.getElementById('pat-modal-list').innerHTML = allExps.length
+        ? allExps.map(exp => {
+            const isGiro = exp.tipo === 'giroconto';
+            const isEnt  = exp.tipo === 'entrata';
             const m = monthly(exp);
+            let badgeClass = isGiro ? 'giroconto' : (isEnt ? 'entrata' : 'uscita');
+            let badgeLabel, amountCls, prefix;
+            if (isGiro) {
+              const isIn = exp.toAccountId === docId;
+              const otherAcc = accounts.find(a => a._docId === (isIn ? exp.accountId : exp.toAccountId));
+              badgeLabel = isIn ? '← giroconto' : '→ giroconto';
+              amountCls  = isIn ? 'pos' : 'neg';
+              prefix     = isIn ? '+' : '-';
+            } else {
+              badgeLabel = isEnt ? 'entrata' : 'uscita';
+              amountCls  = isEnt ? 'pos' : 'neg';
+              prefix     = isEnt ? '+' : '-';
+            }
             return `<div class="pat-exp-row">
               <span class="pat-exp-label">${exp.title}</span>
-              <span class="pat-exp-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
-              <span class="pat-exp-amount ${isEnt ? 'pos' : 'neg'}">${isEnt ? '+' : '-'}${fmtEur(m)}</span>
+              <span class="pat-exp-badge ${badgeClass}" style="${isGiro ? 'background:rgba(90,126,148,.15);color:var(--muted);' : ''}">${badgeLabel}</span>
+              <span class="pat-exp-amount ${amountCls}">${prefix}${fmtEur(m)}</span>
             </div>`;
           }).join('')
         : '<div style="font-size:.7rem;color:var(--muted);padding:8px 0;">Nessuna voce associata a questo conto.</div>';
