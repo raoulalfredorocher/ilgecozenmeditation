@@ -60,7 +60,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 80px) 24px 48px;
+      padding: calc(env(safe-area-inset-top, 0px) + 112px) 24px 48px;
       max-width: 420px;
       margin: 0 auto;
       min-height: 100dvh;
@@ -378,6 +378,32 @@
     }
     .birthday-days.today { color: #f0b36f; font-weight: 700; }
 
+    /* ── Frase del giorno ── */
+    .daily-quote-block {
+      width: 100%;
+      margin-bottom: 18px;
+      padding: 14px 18px;
+      background: var(--card);
+      border: 1.5px solid var(--accent);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .daily-quote-label {
+      font-size: .50rem;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .daily-quote-text {
+      font-size: .86rem;
+      line-height: 1.65;
+      color: var(--text);
+      font-style: italic;
+    }
+
     .footer-quote {
       width: 100%;
       margin-top: 22px;
@@ -540,6 +566,12 @@
     <div class="birthday-widget-title">🎂 Compleanni in arrivo</div>
     <div id="birthday-list"></div>
   </section>
+
+  <!-- ── Frase del giorno ── -->
+  <div class="daily-quote-block" aria-label="Frase del giorno">
+    <div class="daily-quote-label">✦ Pensiero del giorno</div>
+    <div class="daily-quote-text" id="daily-quote-text">…</div>
+  </div>
 
   <div class="hub-grid" style="margin-bottom: 18px;">
     <a class="hub-card bucket" href="bucket-list.html">
@@ -710,6 +742,12 @@
     })();
     btn.addEventListener('click', () => { isDark = !isDark; apply(); });
     window.changeCity = changeCity;
+  </script>
+
+  <script type="module">
+    import { getDailyQuote } from './js/quotes.js';
+    // Frase del giorno
+    document.getElementById('daily-quote-text').textContent = getDailyQuote();
   </script>
 
   <script type="module">
