@@ -2802,6 +2802,35 @@
       transition: opacity .2s;
     }
     .btn-whatsapp:active { opacity: .82; }
+    .btn-loyalty {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: .66rem; font-weight: 600; font-family: inherit;
+      padding: 5px 10px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-loyalty:active { border-color: var(--primary); color: var(--primary); }
+    .btn-loyalty.has-card { border-color: var(--primary); color: var(--primary); }
+
+    /* Modal carta fedeltà */
+    .loyalty-overlay {
+      display: none; position: fixed; inset: 0; z-index: 510;
+      background: rgba(0,0,0,.52); align-items: flex-end; justify-content: center;
+    }
+    .loyalty-overlay.open { display: flex; }
+    .loyalty-sheet {
+      background: var(--bg); border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 420px;
+      padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+    .loyalty-img-wrap {
+      width: 100%; border-radius: 14px; overflow: hidden;
+      background: var(--surface); min-height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .loyalty-img-wrap img { width: 100%; display: block; border-radius: 14px; }
+    .loyalty-placeholder { font-size: .76rem; color: var(--muted); text-align: center; padding: 32px 16px; }
     .selected-items-list { display: flex; flex-direction: column; gap: 5px; }
     .selected-item-row {
       background: var(--card); border: 1px solid var(--border); border-radius: 10px;
@@ -2863,6 +2892,10 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 CSV
               </button>
+              <button class="btn-loyalty" id="btn-loyalty-card" title="Carta fedeltà">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Fedeltà
+              </button>
               <button class="btn-whatsapp" id="btn-whatsapp-send" title="Invia selezionati su WhatsApp">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.115.549 4.103 1.515 5.83L.057 23.184a.75.75 0 0 0 .916.916l5.355-1.457A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.728 9.728 0 0 1-4.97-1.363l-.356-.213-3.179.865.865-3.179-.213-.356A9.728 9.728 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
                 WhatsApp
@@ -2905,6 +2938,22 @@
       </div>
       <button class="btn-primary" id="ns-save">Salva negozio</button>
       <button class="btn-cancel" id="ns-cancel">Annulla</button>
+    </div>
+  </div>
+
+  <!-- modal carta fedeltà -->
+  <div class="loyalty-overlay" id="loyalty-overlay">
+    <div class="loyalty-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="loyalty-modal-title" style="margin-bottom:16px;">Carta fedeltà</div>
+      <div class="loyalty-img-wrap" id="loyalty-img-wrap">
+        <div class="loyalty-placeholder" id="loyalty-placeholder">Nessuna carta caricata</div>
+        <img id="loyalty-img-preview" src="" alt="Carta fedeltà" style="display:none;"/>
+      </div>
+      <button class="btn-photo-upload" id="loyalty-img-btn" style="width:100%;margin-bottom:10px;">📷 Carica immagine carta</button>
+      <input type="file" id="loyalty-img-input" accept="image/*" style="display:none"/>
+      <button class="btn-cancel" id="loyalty-remove-btn" style="display:none;color:var(--red);border-color:var(--red);">🗑 Rimuovi carta</button>
+      <button class="btn-cancel" id="loyalty-close-btn">Chiudi</button>
     </div>
   </div>
 
@@ -2996,6 +3045,16 @@
     const newItemCat      = document.getElementById('new-item-cat');
     const btnAddItem      = document.getElementById('btn-add-item-confirm');
     const btnWhatsapp     = document.getElementById('btn-whatsapp-send');
+    const btnLoyaltyCard  = document.getElementById('btn-loyalty-card');
+    const loyaltyOverlay  = document.getElementById('loyalty-overlay');
+    const loyaltyModalTitle = document.getElementById('loyalty-modal-title');
+    const loyaltyImgWrap  = document.getElementById('loyalty-img-wrap');
+    const loyaltyPlaceholder = document.getElementById('loyalty-placeholder');
+    const loyaltyImgPreview = document.getElementById('loyalty-img-preview');
+    const loyaltyImgBtn   = document.getElementById('loyalty-img-btn');
+    const loyaltyImgInput = document.getElementById('loyalty-img-input');
+    const loyaltyRemoveBtn = document.getElementById('loyalty-remove-btn');
+    const loyaltyCloseBtn = document.getElementById('loyalty-close-btn');
     const editItemOverlay = document.getElementById('edit-item-overlay');
     const eiName          = document.getElementById('ei-name');
     const eiQty           = document.getElementById('ei-qty');
@@ -3037,6 +3096,53 @@
       });
       const encoded = encodeURIComponent(text.trim());
       window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    });
+
+    /* ── Carta fedeltà ── */
+    function updateLoyaltyModal(store) {
+      loyaltyModalTitle.textContent = `Carta fedeltà – ${store.name}`;
+      if (store.loyaltyCard) {
+        loyaltyImgPreview.src = store.loyaltyCard;
+        loyaltyImgPreview.style.display = 'block';
+        loyaltyPlaceholder.style.display = 'none';
+        loyaltyRemoveBtn.style.display = '';
+        btnLoyaltyCard.classList.add('has-card');
+      } else {
+        loyaltyImgPreview.style.display = 'none';
+        loyaltyImgPreview.src = '';
+        loyaltyPlaceholder.style.display = '';
+        loyaltyRemoveBtn.style.display = 'none';
+        btnLoyaltyCard.classList.remove('has-card');
+      }
+    }
+
+    btnLoyaltyCard.addEventListener('click', () => {
+      if (!currentStoreObj) return;
+      updateLoyaltyModal(currentStoreObj);
+      loyaltyOverlay.classList.add('open');
+    });
+
+    loyaltyCloseBtn.addEventListener('click', () => loyaltyOverlay.classList.remove('open'));
+    loyaltyOverlay.addEventListener('click', e => { if (e.target === loyaltyOverlay) loyaltyOverlay.classList.remove('open'); });
+
+    loyaltyImgBtn.addEventListener('click', () => loyaltyImgInput.click());
+    loyaltyImgInput.addEventListener('change', async () => {
+      const file = loyaltyImgInput.files[0];
+      if (!file) return;
+      try {
+        const dataUrl = await compressImg(file, 800, 0.85);
+        await updateShoppingStore(currentStoreId, { loyaltyCard: dataUrl });
+        currentStoreObj = { ...currentStoreObj, loyaltyCard: dataUrl };
+        updateLoyaltyModal(currentStoreObj);
+        loyaltyImgInput.value = '';
+      } catch { alert('Errore caricamento immagine. Riprova.'); }
+    });
+
+    loyaltyRemoveBtn.addEventListener('click', async () => {
+      if (!confirm('Rimuovere la carta fedeltà?')) return;
+      await updateShoppingStore(currentStoreId, { loyaltyCard: null });
+      currentStoreObj = { ...currentStoreObj, loyaltyCard: null };
+      updateLoyaltyModal(currentStoreObj);
     });
 
     /* ── apri/chiudi pannello ── */
@@ -3196,6 +3302,10 @@
       storeListView.classList.add('active');
       newItemName.value = '';
       newItemQty.value  = '';
+
+      // aggiorna icona carta fedeltà
+      if (s.loyaltyCard) btnLoyaltyCard.classList.add('has-card');
+      else btnLoyaltyCard.classList.remove('has-card');
 
       renderCategoryControls();
 
