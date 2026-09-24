@@ -222,6 +222,58 @@
     .patrimonio-empty { width:100%; text-align:center; padding:60px 20px; }
     .patrimonio-empty-icon { font-size:3rem; margin-bottom:16px; }
     .patrimonio-empty-text { font-size:.78rem; color:var(--muted); line-height:1.8; }
+
+    /* ── Patrimonio bubbles ── */
+    .patrimonio-total { width:100%; background:var(--primary); border-radius:20px;
+      padding:18px 20px; margin-bottom:18px; text-align:center; color:#fff; }
+    .patrimonio-total-label { font-size:.5rem; letter-spacing:.28em; text-transform:uppercase; opacity:.75; }
+    .patrimonio-total-value { font-size:1.8rem; font-weight:700; margin-top:4px; }
+    .bubbles-grid { width:100%; display:flex; flex-wrap:wrap; gap:14px;
+      justify-content:center; padding-bottom:8px; }
+    .bubble-btn { display:flex; flex-direction:column; align-items:center; justify-content:center;
+      width:130px; height:130px; border-radius:50%; border:none; cursor:pointer;
+      gap:4px; padding:12px; transition:transform .15s; flex-shrink:0; }
+    .bubble-btn:active { transform:scale(.93); }
+    .bubble-name { font-size:.56rem; font-weight:700; letter-spacing:.08em;
+      text-transform:uppercase; color:#fff; text-align:center; line-height:1.3;
+      max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bubble-value { font-size:1rem; font-weight:700; color:#fff; }
+    .bubble-sub { font-size:.46rem; color:rgba(255,255,255,.75); letter-spacing:.06em; }
+    .patrimonio-empty-state { width:100%; text-align:center; padding:60px 20px; }
+
+    /* ── Modal dettaglio conto (patrimonio) ── */
+    .pat-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45);
+      z-index:600; display:none; align-items:flex-end; }
+    .pat-modal-overlay.open { display:flex; }
+    .pat-modal-sheet { background:var(--card); border-radius:26px 26px 0 0;
+      width:100%; max-height:82vh; overflow-y:auto; padding:0 20px 32px;
+      touch-action:pan-y; will-change:transform; transition:transform .28s cubic-bezier(.32,1,.28,1); }
+    .pat-modal-handle { width:36px; height:4px; background:var(--border);
+      border-radius:4px; margin:12px auto 18px; }
+    .pat-modal-accent { height:5px; border-radius:4px; margin-bottom:16px; }
+    .pat-modal-title { font-size:1rem; font-weight:700; color:var(--text);
+      margin-bottom:4px; }
+    .pat-modal-sub { font-size:.58rem; color:var(--muted); letter-spacing:.06em;
+      margin-bottom:18px; }
+    .pat-modal-kpi { display:grid; grid-template-columns:1fr 1fr; gap:10px;
+      margin-bottom:18px; }
+    .pat-kpi-card { background:var(--surface); border-radius:14px; padding:12px; text-align:center; }
+    .pat-kpi-label { font-size:.46rem; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--muted); }
+    .pat-kpi-value { font-size:.92rem; font-weight:700; margin-top:4px; }
+    .pat-modal-list-title { font-size:.5rem; letter-spacing:.22em; text-transform:uppercase;
+      color:var(--muted); margin-bottom:10px; }
+    .pat-exp-row { display:flex; justify-content:space-between; align-items:center;
+      padding:9px 0; border-bottom:1px solid var(--border); }
+    .pat-exp-row:last-child { border-bottom:none; }
+    .pat-exp-label { font-size:.76rem; color:var(--text); flex:1; }
+    .pat-exp-badge { font-size:.44rem; letter-spacing:.1em; text-transform:uppercase;
+      padding:3px 7px; border-radius:20px; margin-right:8px; flex-shrink:0; }
+    .pat-exp-badge.entrata { background:rgba(34,168,94,.15); color:#22a85e; }
+    .pat-exp-badge.uscita { background:rgba(192,64,96,.12); color:var(--red); }
+    .pat-exp-amount { font-size:.78rem; font-weight:600; flex-shrink:0; }
+    .pat-exp-amount.pos { color:#22a85e; }
+    .pat-exp-amount.neg { color:var(--red); }
   </style>
   <script>
     window.__FIREBASE_CONFIG__ = {
@@ -309,12 +361,29 @@
 
   <!-- ═══ SCREEN: PATRIMONIO ═══ -->
   <div class="screen" id="screen-patrimonio">
-    <div class="patrimonio-empty">
-      <div class="patrimonio-empty-icon">🏦</div>
-      <div class="patrimonio-empty-text">
-        Il modulo Patrimonio è in arrivo.<br/><br/>
-        Qui potrai aggregare conti,<br/>investimenti e asset per<br/>una visione completa<br/>del tuo patrimonio netto.
+    <div id="patrimonio-total-card" class="patrimonio-total" style="display:none;margin-top:6px;">
+      <div class="patrimonio-total-label">Patrimonio totale stimato</div>
+      <div class="patrimonio-total-value" id="patrimonio-total-val">€ 0</div>
+    </div>
+    <div class="bubbles-grid" id="bubbles-grid"></div>
+    <div class="patrimonio-empty-state" id="patrimonio-empty-state">
+      <div style="font-size:3rem;margin-bottom:16px;">🏦</div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.8;">
+        Aggiungi dei conti nel tab<br/><strong>Planning</strong> per vedere<br/>qui il tuo patrimonio.
       </div>
+    </div>
+  </div>
+
+  <!-- Modal dettaglio conto — patrimonio -->
+  <div class="pat-modal-overlay" id="pat-modal">
+    <div class="pat-modal-sheet" id="pat-modal-sheet">
+      <div class="pat-modal-handle" id="pat-modal-handle"></div>
+      <div class="pat-modal-accent" id="pat-modal-accent"></div>
+      <div class="pat-modal-title" id="pat-modal-title"></div>
+      <div class="pat-modal-sub" id="pat-modal-sub"></div>
+      <div class="pat-modal-kpi" id="pat-modal-kpi"></div>
+      <div class="pat-modal-list-title">Voci associate</div>
+      <div id="pat-modal-list"></div>
     </div>
   </div>
 
@@ -960,6 +1029,152 @@
       closeModal('modal-expense');
     });
 
+    /* ══════════════════════════════════════════
+       TAB 3 — PATRIMONIO (bubble map)
+    ══════════════════════════════════════════ */
+    const BUBBLE_COLORS = [
+      '#3b82d4','#7c5cd8','#22a85e','#e07b39',
+      '#d43b6a','#0ea5a0','#c49b1e','#7b4f9e'
+    ];
+
+    function renderPatrimonio() {
+      const grid      = document.getElementById('bubbles-grid');
+      const emptyEl   = document.getElementById('patrimonio-empty-state');
+      const totalCard = document.getElementById('patrimonio-total-card');
+      const totalVal  = document.getElementById('patrimonio-total-val');
+
+      if (!accounts.length) {
+        grid.innerHTML = '';
+        emptyEl.style.display  = '';
+        totalCard.style.display = 'none';
+        return;
+      }
+      emptyEl.style.display   = 'none';
+      totalCard.style.display = '';
+
+      // Calcola saldo mensile annualizzato per ogni conto
+      const accData = accounts.map((a, i) => {
+        const accExps = expenses.filter(e => e.accountId === a._docId);
+        const totEntM = accExps.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
+        const totUscM = accExps.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
+        const saldoM  = totEntM - totUscM;
+        const saldoA  = saldoM * 12;
+        return { a, accExps, totEntM, totUscM, saldoM, saldoA,
+                 color: BUBBLE_COLORS[i % BUBBLE_COLORS.length] };
+      });
+
+      const grandTotal = accData.reduce((s, d) => s + d.saldoA, 0);
+      totalVal.textContent = fmtEur(grandTotal);
+
+      grid.innerHTML = accData.map(d => `
+        <button class="bubble-btn" style="background:${d.color};"
+          onclick="openPatModal('${d.a._docId}')">
+          <span class="bubble-name">${d.a.name}</span>
+          <span class="bubble-value">${fmtEur(d.saldoA)}</span>
+          <span class="bubble-sub">annuo</span>
+        </button>`).join('');
+    }
+
+    /* ── Apertura modal patrimonio ── */
+    window.openPatModal = function(docId) {
+      const idx    = accounts.findIndex(a => a._docId === docId);
+      const a      = accounts[idx];
+      const color  = BUBBLE_COLORS[idx % BUBBLE_COLORS.length];
+      const accExps = expenses.filter(e => e.accountId === docId);
+      const totEntM = accExps.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
+      const totUscM = accExps.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
+      const saldoM  = totEntM - totUscM;
+      const saldoA  = saldoM * 12;
+
+      document.getElementById('pat-modal-accent').style.background = color;
+      document.getElementById('pat-modal-title').textContent = a.name;
+      document.getElementById('pat-modal-sub').textContent =
+        (a.holder ? a.holder : '') + (a.iban ? '  ·  ' + a.iban : '');
+
+      const balCls = saldoM >= 0 ? '#22a85e' : 'var(--red)';
+      document.getElementById('pat-modal-kpi').innerHTML = `
+        <div class="pat-kpi-card">
+          <div class="pat-kpi-label">Entrate / mese</div>
+          <div class="pat-kpi-value" style="color:#22a85e;">+${fmtEur(totEntM)}</div>
+        </div>
+        <div class="pat-kpi-card">
+          <div class="pat-kpi-label">Uscite / mese</div>
+          <div class="pat-kpi-value" style="color:var(--red);">-${fmtEur(totUscM)}</div>
+        </div>
+        <div class="pat-kpi-card">
+          <div class="pat-kpi-label">Saldo mensile</div>
+          <div class="pat-kpi-value" style="color:${balCls};">${saldoM >= 0 ? '+' : ''}${fmtEur(saldoM)}</div>
+        </div>
+        <div class="pat-kpi-card">
+          <div class="pat-kpi-label">Saldo annuale</div>
+          <div class="pat-kpi-value" style="color:${balCls};">${saldoA >= 0 ? '+' : ''}${fmtEur(saldoA)}</div>
+        </div>`;
+
+      document.getElementById('pat-modal-list').innerHTML = accExps.length
+        ? accExps.map(exp => {
+            const isEnt = exp.tipo === 'entrata';
+            const m = monthly(exp);
+            return `<div class="pat-exp-row">
+              <span class="pat-exp-label">${exp.title}</span>
+              <span class="pat-exp-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
+              <span class="pat-exp-amount ${isEnt ? 'pos' : 'neg'}">${isEnt ? '+' : '-'}${fmtEur(m)}</span>
+            </div>`;
+          }).join('')
+        : '<div style="font-size:.7rem;color:var(--muted);padding:8px 0;">Nessuna voce associata a questo conto.</div>';
+
+      const overlay = document.getElementById('pat-modal');
+      const sheet   = document.getElementById('pat-modal-sheet');
+      sheet.style.transform = '';
+      overlay.classList.add('open');
+    };
+
+    /* ── Drag-to-dismiss stile iOS ── */
+    (function() {
+      const overlay = document.getElementById('pat-modal');
+      const sheet   = document.getElementById('pat-modal-sheet');
+      let startY = 0, curY = 0, dragging = false;
+
+      function close() {
+        sheet.style.transition = 'transform .28s cubic-bezier(.32,1,.28,1)';
+        sheet.style.transform  = 'translateY(110%)';
+        setTimeout(() => {
+          overlay.classList.remove('open');
+          sheet.style.transform  = '';
+          sheet.style.transition = '';
+        }, 300);
+      }
+
+      // Tap fuori dal sheet
+      overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+      // Touch drag
+      sheet.addEventListener('touchstart', e => {
+        startY   = e.touches[0].clientY;
+        curY     = startY;
+        dragging = true;
+        sheet.style.transition = 'none';
+      }, { passive: true });
+
+      sheet.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        curY       = e.touches[0].clientY;
+        const dy   = Math.max(0, curY - startY);
+        sheet.style.transform = `translateY(${dy}px)`;
+      }, { passive: true });
+
+      sheet.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        const dy = Math.max(0, curY - startY);
+        if (dy > 90) {
+          close();
+        } else {
+          sheet.style.transition = 'transform .22s cubic-bezier(.32,1,.28,1)';
+          sheet.style.transform  = '';
+        }
+      });
+    })();
+
     /* ── helpers ── */
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
     document.querySelectorAll('.modal-overlay').forEach(o =>
@@ -973,7 +1188,8 @@
       subscribeFinanzaAccounts(list => {
         accounts = list;
         renderAccounts();
-        renderCategories(); // update account names in expenses
+        renderCategories();
+        renderPatrimonio();
       });
       subscribeFinanzaCategories(list => {
         categories = list;
@@ -982,6 +1198,7 @@
       subscribeFinanzaExpenses(list => {
         expenses = list;
         renderCategories();
+        renderPatrimonio();
       });
 
       // Andamento: avvia dopo piccolo delay così il DOM è pronto
