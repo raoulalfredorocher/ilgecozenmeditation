@@ -229,18 +229,10 @@
     .patrimonio-total-label { font-size:.5rem; letter-spacing:.28em; text-transform:uppercase; opacity:.75; }
     .patrimonio-total-value { font-size:1.8rem; font-weight:700; margin-top:4px; }
     /* Patrimonio SVG canvas */
-    .pat-svg-wrap { width:100%; position:relative; }
-    .pat-svg-wrap svg { width:100%; display:block; overflow:visible; }
-    .bubble-btn { display:flex; flex-direction:column; align-items:center; justify-content:center;
-      position:absolute; border-radius:50%; border:none; cursor:pointer;
-      gap:2px; padding:10px; transition:transform .15s; transform:translate(-50%,-50%);
-      background:transparent; }
-    .bubble-btn:active { transform:translate(-50%,-50%) scale(.93); }
-    .bubble-name { font-size:.52rem; font-weight:700; letter-spacing:.06em;
-      text-transform:uppercase; color:#fff; text-align:center; line-height:1.25;
-      max-width:84px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .bubble-value { font-size:.88rem; font-weight:700; color:#fff; }
-    .bubble-sub { font-size:.42rem; color:rgba(255,255,255,.7); letter-spacing:.06em; }
+    .pat-svg-wrap { width:100%; }
+    .pat-svg-wrap svg { width:100%; display:block; cursor:pointer; }
+    .pat-svg-wrap svg circle { transition:opacity .15s; }
+    .pat-svg-wrap svg circle:hover { opacity:.75; }
     .patrimonio-empty-state { width:100%; text-align:center; padding:60px 20px; }
     /* giroconto row nel modal spesa */
     .giroconto-row { display:none; }
@@ -371,8 +363,7 @@
       <div class="patrimonio-total-value" id="patrimonio-total-val">€ 0</div>
     </div>
     <div class="pat-svg-wrap" id="pat-svg-wrap">
-      <svg id="pat-svg" aria-hidden="true"></svg>
-      <div id="bubbles-overlay"></div>
+      <svg id="pat-svg"></svg>
     </div>
     <div class="patrimonio-empty-state" id="patrimonio-empty-state">
       <div style="font-size:3rem;margin-bottom:16px;">🏦</div>
