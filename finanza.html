@@ -1060,15 +1060,13 @@
 
     function renderPatrimonio() {
       const svgEl     = document.getElementById('pat-svg');
-      const overlay   = document.getElementById('bubbles-overlay');
       const emptyEl   = document.getElementById('patrimonio-empty-state');
       const totalCard = document.getElementById('patrimonio-total-card');
       const totalVal  = document.getElementById('patrimonio-total-val');
       const wrap      = document.getElementById('pat-svg-wrap');
 
       if (!accounts.length) {
-        svgEl.setAttribute('viewBox','0 0 1 1');
-        overlay.innerHTML = '';
+        svgEl.innerHTML = '';
         emptyEl.style.display   = '';
         totalCard.style.display = 'none';
         wrap.style.display      = 'none';
@@ -1092,109 +1090,103 @@
       const grandTotal = accData.reduce((s, d) => s + d.saldoA, 0);
       totalVal.textContent = fmtEur(grandTotal);
 
-      // ── Raggi proporzionali ──
-      const vals    = accData.map(d => Math.abs(d.saldoA) || 1);
-      const maxVal  = Math.max(...vals);
-      const R_MAX   = 68, R_MIN = 36;
-      const radii   = vals.map(v => R_MIN + (R_MAX - R_MIN) * Math.sqrt(v / maxVal));
+      // ── Raggi proporzionali (sqrt per area visiva proporzionale) ──
+      const vals   = accData.map(d => Math.abs(d.saldoA) || 1);
+      const maxVal = Math.max(...vals);
+      const R_MAX  = 64, R_MIN = 38;
+      const radii  = vals.map(v => R_MIN + (R_MAX - R_MIN) * Math.sqrt(v / maxVal));
 
-      // ── Posizionamento a griglia circolare ──
-      const n   = accData.length;
-      const W   = 340, PAD = 80;
-      const cx  = W / 2;
-      // Layout: 1 conto → centro; 2 → fianco a fianco; n>2 → cerchio
+      // ── Posizionamento ──
+      const n  = accData.length;
+      const W  = 320;
+      const cx = W / 2;
       let positions;
       if (n === 1) {
-        positions = [{ x: cx, y: PAD + radii[0] }];
+        positions = [{ x: cx, y: R_MAX + 10 }];
       } else if (n === 2) {
-        const gap = 14;
-        const x0  = cx - radii[0] - gap / 2;
-        const x1  = cx + radii[1] + gap / 2;
-        const y   = PAD + Math.max(radii[0], radii[1]);
-        positions = [{ x: x0, y }, { x: x1, y }];
+        const y = R_MAX + 10;
+        positions = [
+          { x: cx - radii[0] - 8, y },
+          { x: cx + radii[1] + 8, y },
+        ];
       } else {
         const angleStep = (2 * Math.PI) / n;
-        const ringR     = Math.min(cx - R_MAX - 10, 110);
-        const centerY   = PAD + ringR + R_MAX;
+        const ringR     = Math.min(cx - R_MAX - 12, 100);
+        const cy        = ringR + R_MAX + 10;
         positions = accData.map((_, i) => ({
           x: cx + ringR * Math.cos(angleStep * i - Math.PI / 2),
-          y: centerY + ringR * Math.sin(angleStep * i - Math.PI / 2),
+          y: cy + ringR * Math.sin(angleStep * i - Math.PI / 2),
         }));
       }
 
-      // Altezza SVG
-      const maxY  = Math.max(...positions.map((p, i) => p.y + radii[i])) + 20;
-      const H     = maxY;
-
-      // ── Giroconti (frecce) ──
-      const SVG_NS = 'http://www.w3.org/2000/svg';
-      const transfers = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
-
-      // Costruisce SVG
+      const H = Math.max(...positions.map((p, i) => p.y + radii[i])) + 16;
       svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      svgEl.style.height = H + 'px';
 
-      // Marker freccia
-      let svgInner = `<defs>
-        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="var(--muted)" opacity=".7"/>
-        </marker>
-        <marker id="arrow-dark" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="var(--muted)" opacity=".7"/>
+      // ── Frecce marker ──
+      let s = `<defs>
+        <marker id="pat-arr" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+          <path d="M0,0 L0,5 L7,2.5 z" fill="#8899aa"/>
         </marker>
       </defs>`;
 
-      // Disegna cerchi
+      // ── Frecce giroconto (disegnate PRIMA dei cerchi, così stanno sotto) ──
+      const transfers = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
+      transfers.forEach(t => {
+        const fi = accounts.findIndex(a => a._docId === t.accountId);
+        const ti = accounts.findIndex(a => a._docId === t.toAccountId);
+        if (fi < 0 || ti < 0) return;
+        const fp = positions[fi], tp = positions[ti];
+        const dx = tp.x - fp.x, dy = tp.y - fp.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const ux = dx / dist, uy = dy / dist;
+        const x1 = fp.x + ux * (radii[fi] + 3);
+        const y1 = fp.y + uy * (radii[fi] + 3);
+        const x2 = tp.x - ux * (radii[ti] + 9);
+        const y2 = tp.y - uy * (radii[ti] + 9);
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        const lbl = fmtEur(monthly(t));
+        const lblW = Math.min(lbl.length * 5.2 + 8, 72);
+        s += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}"
+                    x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
+                    stroke="#8899aa" stroke-width="1.5" stroke-dasharray="5,3"
+                    marker-end="url(#pat-arr)" opacity=".8"/>
+              <rect x="${(mx - lblW/2).toFixed(1)}" y="${(my - 8).toFixed(1)}"
+                    width="${lblW}" height="14" rx="4"
+                    fill="var(--card)" stroke="#8899aa" stroke-width=".6" opacity=".9"/>
+              <text x="${mx.toFixed(1)}" y="${(my + 4).toFixed(1)}"
+                    text-anchor="middle" font-size="8"
+                    fill="var(--muted)" font-family="-apple-system,sans-serif">${lbl}</text>`;
+      });
+
+      // ── Cerchi + testo tutto in SVG ──
       accData.forEach((d, i) => {
         const { x, y } = positions[i];
-        const r = radii[i];
-        svgInner += `<circle cx="${x}" cy="${y}" r="${r}" fill="${d.color}" opacity=".92"/>`;
+        const r   = radii[i];
+        const docId = d.a._docId;
+        // Nome conto: tronca se lungo
+        const nome = d.a.name.length > 12 ? d.a.name.slice(0, 11) + '…' : d.a.name;
+        const val  = fmtEur(d.saldoA);
+        // font size scala col raggio
+        const fsNome = Math.max(7, Math.min(9, r * 0.16));
+        const fsVal  = Math.max(9, Math.min(13, r * 0.22));
+        s += `<g style="cursor:pointer" onclick="openPatModal('${docId}')">
+          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"
+                  fill="${d.color}"/>
+          <text x="${x.toFixed(1)}" y="${(y - fsVal*0.6).toFixed(1)}"
+                text-anchor="middle" dominant-baseline="middle"
+                font-size="${fsNome}" font-weight="700"
+                font-family="-apple-system,sans-serif"
+                fill="rgba(255,255,255,0.85)" letter-spacing=".04em"
+                style="text-transform:uppercase;pointer-events:none;">${nome}</text>
+          <text x="${x.toFixed(1)}" y="${(y + fsVal*0.7).toFixed(1)}"
+                text-anchor="middle" dominant-baseline="middle"
+                font-size="${fsVal}" font-weight="700"
+                font-family="-apple-system,sans-serif"
+                fill="#fff" style="pointer-events:none;">${val}</text>
+        </g>`;
       });
 
-      // Disegna frecce giroconto
-      transfers.forEach(t => {
-        const fromIdx = accounts.findIndex(a => a._docId === t.accountId);
-        const toIdx   = accounts.findIndex(a => a._docId === t.toAccountId);
-        if (fromIdx < 0 || toIdx < 0) return;
-        const from = positions[fromIdx], to = positions[toIdx];
-        const rFrom = radii[fromIdx], rTo = radii[toIdx];
-        // Calcola punto di partenza/arrivo sul bordo dei cerchi
-        const dx   = to.x - from.x, dy = to.y - from.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const ux   = dx / dist, uy = dy / dist;
-        const x1   = from.x + ux * (rFrom + 4);
-        const y1   = from.y + uy * (rFrom + 4);
-        const x2   = to.x   - ux * (rTo   + 10);
-        const y2   = to.y   - uy * (rTo   + 10);
-        const amount = fmtEur(monthly(t));
-        // midpoint per etichetta
-        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - 6;
-        svgInner += `
-          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
-            stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"
-            marker-end="url(#arrow)" opacity=".75"/>
-          <rect x="${mx-20}" y="${my-9}" width="40" height="13" rx="4"
-            fill="var(--card)" opacity=".85"/>
-          <text x="${mx}" y="${my+1}" text-anchor="middle"
-            font-size="7" fill="var(--muted)" font-family="-apple-system,sans-serif">${amount}</text>`;
-      });
-
-      svgEl.innerHTML = svgInner;
-      wrap.style.height = H + 'px';
-
-      // ── Overlay bottoni cliccabili ──
-      overlay.innerHTML = accData.map((d, i) => {
-        const { x, y } = positions[i];
-        const r = radii[i];
-        const sz = r * 2;
-        return `<button class="bubble-btn"
-          style="left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;"
-          onclick="openPatModal('${d.a._docId}')">
-          <span class="bubble-name">${d.a.name}</span>
-          <span class="bubble-value">${fmtEur(d.saldoA)}</span>
-          <span class="bubble-sub">annuo</span>
-        </button>`;
-      }).join('');
+      svgEl.innerHTML = s;
     }
 
     /* ── Apertura modal patrimonio ── */
