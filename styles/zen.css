@@ -560,3 +560,14 @@ body.zen .ipv.visible { border-radius: var(--radius-md); }
 body.zen :is(.fs, .fta) { background: var(--surface); color: var(--text); border: 1px solid transparent; border-radius: var(--radius-sm); min-height: var(--tap); padding: 10px 14px; font-size: 16px; }
 body.zen .fta { min-height: 96px; }
 body.zen :is(.center-ph, .empty-st) { color: var(--muted); }
+
+/* ─── Rifinitura generale delle pagine con struttura originale ───────────
+   Pulsanti con testo normale (niente maiuscolo spaziato), angoli morbidi
+   coerenti con il resto dell'app. */
+body.zen:not(.zen-native) main button,
+body.zen:not(.zen-native) > :not(.zen-header):not(.zen-tabbar):not(.zen-sheet-overlay) button {
+  letter-spacing: 0 !important; text-transform: none !important; font-family: var(--font);
+}
+body.zen:not(.zen-native) :is(.filter-btn, .chip-btn, .pill, .cat-chip, .tog-btn) {
+  border-radius: 999px; font-size: var(--fs-sm);
+}
