@@ -264,7 +264,7 @@
     function sendWishes(c, button) {
       const nome = (c.nome || '').trim();
       const text = `Tantissimi auguri di buon compleanno${nome ? ' ' + nome : ''}!!!! 🎉🎂🥳🎈❤️`;
-      const num = waNumber(c.telefono);
+      const num = waNumber(c.cellulare || c.telefono);
       // Apre subito WhatsApp (dentro il tocco, così il telefono non lo blocca)
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
       try { localStorage.setItem(wishKey(c), '1'); } catch { /* ignora */ }
