@@ -729,7 +729,7 @@
       inpNome.value = contact?.nome || '';
       inpCognome.value = contact?.cognome || '';
       inpCell.value = contact?.cellulare || '';
-      inpCompleanno.value = contact?.compleanno || '';
+      inpCompleanno.value = contact?.compleanno || contact?.birthday || '';
       inpMail.value = contact?.email || '';
       inpPaese.value = contact?.paese || '';
       inpInstagram.value = contact?.instagram || '';
@@ -918,7 +918,7 @@
               cellulare: c.cellulare || '',
               email: c.email || '',
               paese: c.paese || '',
-              compleanno: c.compleanno || '',
+              compleanno: c.compleanno || c.birthday || '',
               instagram: c.instagram || '',
               linkedin: c.linkedin || '',
               interessi: c.interessi || [],
@@ -1132,7 +1132,7 @@
               <span>${fullName}</span>
             </div>
             ${contact.paese ? `<div class="contact-sub">📍 ${escapeHtml(contact.paese)}</div>` : ''}
-            ${contact.compleanno ? `<div class="contact-sub">🎂 ${escapeHtml(contact.compleanno)}</div>` : ''}
+            ${(contact.compleanno || contact.birthday) ? `<div class="contact-sub">🎂 ${escapeHtml(contact.compleanno || contact.birthday)}</div>` : ''}
           </div>
           <button class="btn-star ${contact.isBestie ? 'active' : ''}" data-action="star" title="Aggiungi o rimuovi dai Besties (max 10)">
             ${contact.isBestie ? '★' : '☆'}

@@ -82,6 +82,8 @@ export async function signOutUser() {
   Object.keys(localStorage)
     .filter(key => USER_STORAGE_PREFIXES.some(prefix => key.startsWith(prefix)))
     .forEach(key => localStorage.removeItem(key));
+  // Conversazione con l'assistente (contiene dati personali)
+  sessionStorage.removeItem('zen_assistant_chat');
 }
 
 /** Restituisce l'utente corrente (o null se non loggato). */

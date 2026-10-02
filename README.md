@@ -45,6 +45,7 @@ solo i propri dati.
 │   ├── zen.css             Componenti condivisi + compatibilità per le pagine non ancora rifatte
 │   └── theme/layout/timer  CSS delle pagine con la vecchia grafica
 ├── docs/                   Documentazione tecnica
+├── functions/              Cloud Functions (assistente con Claude)
 ├── firestore.rules         Regole di sicurezza del database
 ├── firebase.json           Configurazione Firebase Hosting e header di sicurezza
 └── .github/workflows/      Pubblicazione automatica su Firebase Hosting
@@ -86,6 +87,7 @@ configurazione da solo.
 | [docs/ARCHITETTURA.md](docs/ARCHITETTURA.md) | Come è fatta l'app: pagine, moduli, dati, flusso di login |
 | [docs/SICUREZZA.md](docs/SICUREZZA.md) | Modello di sicurezza e checklist della console Firebase/Google Cloud |
 | [docs/DEPLOY.md](docs/DEPLOY.md) | Pubblicazione su Firebase Hosting e regole Firestore |
+| [docs/ASSISTENTE.md](docs/ASSISTENTE.md) | Assistente vocale con Claude: architettura, sicurezza, configurazione |
 
 ## Grafica
 

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
+  <title>Il Geco Zen — Assistente</title>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
+  <style>
+    body.zen { padding-bottom: calc(var(--safe-bottom) + 56px + 96px); }
+    .chat { display: flex; flex-direction: column; gap: var(--space-3); }
+    .msg { max-width: 85%; padding: 10px 14px; border-radius: 20px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+    .msg.user { align-self: flex-end; background: var(--text); color: var(--bg); border-bottom-right-radius: 6px; }
+    .msg.assistant { align-self: flex-start; background: var(--card); border: .5px solid var(--border); border-bottom-left-radius: 6px; }
+    .msg.error { align-self: center; background: transparent; color: var(--danger); font-size: var(--fs-sm); text-align: center; }
+    .msg.typing { color: var(--muted); }
+    .msg.typing span { display: inline-block; animation: blink 1.2s infinite; }
+    .msg.typing span:nth-child(2) { animation-delay: .2s; } .msg.typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+
+    .welcome { text-align: center; padding: var(--space-6) var(--space-2) var(--space-2); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+    .welcome img { width: 96px; height: auto; }
+    .suggestions { display: flex; flex-direction: column; gap: var(--space-2); width: 100%; }
+    .suggestions button { text-align: left; }
+
+    .composer {
+      position: fixed; left: 0; right: 0; bottom: calc(var(--safe-bottom) + 56px); z-index: 190;
+      padding: var(--space-3) var(--space-4);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+      border-top: .5px solid var(--border);
+    }
+    .composer form { max-width: 560px; margin: 0 auto; display: flex; align-items: flex-end; gap: var(--space-2); }
+    .composer textarea {
+      flex: 1; min-height: 44px; max-height: 120px; resize: none; border-radius: 22px; padding: 11px 16px; line-height: 1.4;
+    }
+    .mic {
+      width: 48px; height: 48px; border-radius: 50%; border: 0; flex-shrink: 0; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--primary); color: var(--on-primary); transition: transform .15s var(--ease), background-color .2s;
+    }
+    .mic:active { transform: scale(.92); }
+    .mic.listening { background: var(--danger); animation: pulse 1.4s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger) 45%, transparent); } 70% { box-shadow: 0 0 0 14px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+    .send { width: 44px; height: 44px; }
+  </style>
+</head>
+<!--
+  Assistente: chat testuale e vocale con Claude.
+  Logica in js/pages/assistente/main.js; risposte dalla Cloud Function "assistant" (functions/index.js).
+-->
+<body class="zen zen-native" data-title="Assistente" data-tab="assistente" style="visibility:hidden">
+  <script type="module" src="js/core/auth-guard.js"></script>
+  <template id="zen-header-actions">
+    <button class="icon-btn" type="button" id="as-voice" aria-label="Lettura delle risposte"></button>
+    <button class="icon-btn" type="button" id="as-clear" aria-label="Nuova conversazione">
+      <svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg>
+    </button>
+  </template>
+  <script type="module" src="js/ui/shell.js"></script>
+
+  <main class="zen-main">
+    <section class="welcome" id="as-welcome">
+      <img src="assets/img/geco.webp" alt=""/>
+      <h2 class="zen-h2">Ciao, chiedimi qualcosa</h2>
+      <p class="zen-muted small">Conosco il tuo piano alimentare, il diario, i compleanni, la bucket list, le ricette, la spesa e il meteo.</p>
+      <div class="suggestions">
+        <button class="btn block" type="button" data-ask="Che tempo fa oggi a Pandino?">Che tempo fa oggi a Pandino?</button>
+        <button class="btn block" type="button" data-ask="Cosa devo mangiare oggi a pranzo?">Cosa devo mangiare oggi a pranzo?</button>
+        <button class="btn block" type="button" data-ask="Chi compie gli anni nelle prossime due settimane?">Chi compie gli anni nelle prossime due settimane?</button>
+      </div>
+    </section>
+    <section class="chat" id="as-chat" aria-live="polite"></section>
+  </main>
+
+  <div class="composer">
+    <form id="as-form" novalidate>
+      <textarea class="input" id="as-input" rows="1" placeholder="Scrivi o tocca il microfono" aria-label="Messaggio"></textarea>
+      <button class="icon-btn send" type="submit" id="as-send" aria-label="Invia" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-send"/></svg>
+      </button>
+      <button class="mic" type="button" id="as-mic" aria-label="Parla">
+        <svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>
+      </button>
+    </form>
+  </div>
+
+  <script type="module" src="js/pages/assistente/main.js"></script>
+</body>
+</html>
