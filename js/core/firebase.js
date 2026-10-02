@@ -11,6 +11,7 @@
  */
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js';
 import {
   initializeFirestore,
   getFirestore,
@@ -61,6 +62,20 @@ function loadConfig() {
 export const firebaseConfig = loadConfig();
 
 export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+/**
+ * App Check: dimostra a Firebase che le richieste arrivano da questa app.
+ * Si attiva impostando APP_CHECK_V3_SITE_KEY con la chiave del sito di
+ * reCAPTCHA v3 (gratuita, google.com/recaptcha/admin) dopo aver inserito la
+ * relativa chiave segreta in Firebase Console → App Check. Vuota = disattivo.
+ * reCAPTCHA Enterprise non si usa perché richiede la fatturazione.
+ * In sviluppo locale si usa un token di debug (da registrare nella console).
+ */
+const APP_CHECK_V3_SITE_KEY = '';
+if (APP_CHECK_V3_SITE_KEY && location.hostname === 'localhost') self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+export const appCheck = APP_CHECK_V3_SITE_KEY
+  ? initializeAppCheck(app, { provider: new ReCaptchaV3Provider(APP_CHECK_V3_SITE_KEY), isTokenAutoRefreshEnabled: true })
+  : null;
 
 export const auth = getAuth(app);
 
