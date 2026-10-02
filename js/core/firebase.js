@@ -9,14 +9,14 @@
  * regole in firestore.rules e dalle restrizioni sulla chiave API impostate
  * nella Google Cloud Console (vedi docs/SICUREZZA.md).
  */
-import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
-import { getAuth } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {
   initializeFirestore,
   getFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
-} from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 /**
  * La configurazione (apiKey, projectId, ...) non è nel repository: Firebase

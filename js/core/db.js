@@ -18,8 +18,8 @@ import {
   setDoc,
   onSnapshot,
   writeBatch,
-} from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { auth, db } from './firebase.js';
 
 export { db, auth };
