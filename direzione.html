@@ -6,457 +6,211 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Direzione"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Direzione</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html[data-theme="light"] {
-      --bg:      #f7f4f9;
-      --surface: #ede8f4;
-      --card:    #ffffff;
-      --border:  #d4cee0;
-      --text:    #1e2a38;
-      --muted:   #876a6a;
-      --gold:    #25739E;
-      --accent:  #F5A9BC;
-    }
-    html[data-theme="dark"] {
-      --bg:      #111820;
-      --surface: #1a2230;
-      --card:    #1e2a38;
-      --border:  #2e3f52;
-      --text:    #e8eef4;
-      --muted:   #a89090;
-      --gold:    #74C7E1;
-      --accent:  #F5A9BC;
-    }
-
-    html { overscroll-behavior: none; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); }
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
-      -webkit-font-smoothing: antialiased;
-      transition: background .3s, color .3s;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: calc(env(safe-area-inset-top, 0px) + 130px);
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-bottom: 48px;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    /* ── Header ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 150;
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .btn-back {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-family: inherit;
-      font-size: .58rem;
-      letter-spacing: .1em;
-      padding: 5px 8px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      width: 52px;
-      flex-shrink: 0;
-      transition: color .2s, border-color .2s;
-    }
-    .btn-back:active { color: var(--gold); border-color: var(--gold); }
-    .header-center {
-      flex: 1; text-align: center;
-      display: flex; flex-direction: column; align-items: center; gap: 2px;
-    }
-    .app-title { font-size: 1.0rem; letter-spacing: .18em; color: var(--gold); font-weight: 600; }
-    .app-sub { font-size: .50rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
-    .theme-toggle {
-      background: none; border: 1.5px solid var(--border);
-      border-radius: 20px; cursor: pointer;
-      width: 52px; height: 28px;
-      position: relative; flex-shrink: 0; transition: border-color .3s;
-    }
-    .theme-toggle .knob {
-      position: absolute; top: 3px; left: 3px;
-      width: 20px; height: 20px; border-radius: 50%;
-      background: var(--accent); transition: transform .3s;
-      display: flex; align-items: center; justify-content: center; font-size: .7rem;
-    }
-    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
-
-    /* ── Macro sezione ── */
-    .macro-section { width: 100%; margin-bottom: 12px; }
-    .macro-section.dragging { opacity: .4; }
-    .macro-section.drag-over-top    { box-shadow: 0 -3px 0 var(--gold); }
-    .macro-section.drag-over-bottom { box-shadow: 0 3px 0 var(--gold); }
-    .sec-drag-handle {
-      cursor: grab; touch-action: none; flex-shrink: 0;
-      width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
-      color: var(--muted); border-radius: 6px; transition: color .2s;
-    }
-    .sec-drag-handle:active { cursor: grabbing; color: var(--gold); }
-    .macro-header {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 0; padding: 13px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 16px;
-      background: var(--card);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: background .2s, border-color .2s;
-      user-select: none;
-    }
-    .macro-header.open {
-      border-radius: 16px 16px 0 0;
-      border-bottom-color: transparent;
-      background: var(--surface);
-    }
-    .macro-icon { font-size: 1.5rem; flex-shrink: 0; }
-    .macro-title {
-      font-size: .80rem; letter-spacing: .16em;
-      font-weight: 700; color: var(--gold); text-transform: uppercase;
-      flex: 1;
-    }
-    .macro-chevron {
-      font-size: .7rem; color: var(--muted);
-      transition: transform .25s; flex-shrink: 0;
-    }
-    .macro-header.open .macro-chevron { transform: rotate(180deg); }
-
-    /* Target banner sempre visibile sotto l'header */
-    .macro-target-always {
-      border: 1.5px solid var(--border);
-      border-top: none;
-      border-radius: 0 0 16px 16px;
-      background: var(--surface);
-      padding: 10px 16px 12px;
-      display: flex; gap: 10px; align-items: flex-start;
-      margin-bottom: 0;
-    }
-    .macro-body {
-      display: none; flex-direction: column; gap: 0;
-      border: 1.5px solid var(--border);
-      border-top: none;
-      border-bottom: none;
-    }
-    .macro-body.open { display: flex; }
-    .macro-body-footer {
-      border: 1.5px solid var(--border);
-      border-top: none;
-      border-radius: 0 0 16px 16px;
-      height: 6px;
-      background: var(--card);
-      margin-bottom: 12px;
-    }
-    .macro-body.open + .macro-body-footer { display: block; }
-    .macro-body-footer { display: none; }
-
-    /* ── Area card ── */
-    .area-card {
-      width: 100%; background: var(--card);
-      padding: 14px 16px;
-    }
-    .area-name {
-      font-size: .72rem; font-weight: 700;
-      letter-spacing: .10em; color: var(--text);
-      margin-bottom: 10px;
-    }
-    .direction-quote {
-      background: var(--surface);
-      border-left: 3px solid var(--accent);
-      border-radius: 0 12px 12px 0;
-      padding: 10px 14px;
-      font-size: .70rem; color: var(--muted);
-      line-height: 1.78; letter-spacing: .03em;
-      font-style: italic;
-    }
-    .direction-label {
-      font-size: .48rem; letter-spacing: .22em;
-      color: var(--accent); text-transform: uppercase;
-      margin-bottom: 5px; font-style: normal; font-weight: 600;
-    }
-
-    .target-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-    .target-text { font-size: .67rem; color: var(--muted); line-height: 1.7; letter-spacing: .03em; flex: 1; }
-
-    /* ── Edit pencil button ── */
-    .btn-pencil {
-      background: none; border: none; cursor: pointer;
-      color: var(--border); padding: 2px 4px;
-      font-size: .7rem; flex-shrink: 0;
-      transition: color .2s;
-      line-height: 1;
-    }
-    .btn-pencil:active, .btn-pencil:hover { color: var(--gold); }
-
-    /* ── Edit modal ── */
-    .edit-overlay {
-      display: none; position: fixed; inset: 0; z-index: 300;
-      background: rgba(0,0,0,.45);
-      align-items: flex-end; justify-content: center;
-    }
-    .edit-overlay.open { display: flex; }
-    .edit-sheet {
-      background: var(--card);
-      border-radius: 22px 22px 0 0;
-      padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
-      width: 100%; max-width: 420px;
-    }
-    .edit-handle {
-      width: 36px; height: 4px; border-radius: 2px;
-      background: var(--border); margin: 0 auto 16px;
-    }
-    .edit-label {
-      font-size: .52rem; letter-spacing: .18em;
-      color: var(--gold); text-transform: uppercase;
-      margin-bottom: 8px; font-weight: 600;
-    }
-    .edit-input {
-      width: 100%; background: var(--surface);
-      border: 1.5px solid var(--border); border-radius: 12px;
-      color: var(--text); font-family: inherit;
-      font-size: .82rem; padding: 10px 14px;
-      resize: none; outline: none;
-      transition: border-color .2s;
-    }
-    .edit-input:focus { border-color: var(--gold); }
-    .edit-actions {
-      display: flex; gap: 10px; margin-top: 14px;
-    }
-    .btn-edit-save {
-      flex: 1; background: var(--gold); color: var(--card);
-      border: none; border-radius: 14px; padding: 12px;
-      font-family: inherit; font-size: .78rem;
-      font-weight: 700; letter-spacing: .1em;
-      cursor: pointer; transition: opacity .2s;
-    }
-    .btn-edit-save:active { opacity: .8; }
-    .btn-edit-cancel {
-      flex: 1; background: none; color: var(--muted);
-      border: 1.5px solid var(--border); border-radius: 14px;
-      padding: 12px; font-family: inherit; font-size: .78rem;
-      cursor: pointer; transition: border-color .2s, color .2s;
-    }
-    .btn-edit-cancel:active { border-color: var(--gold); color: var(--gold); }
-
-    /* ── Barra della vita ── */
-    .life-section {
-      width: 100%; margin-bottom: 16px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 18px;
-    }
-    .life-section-title {
-      font-size: .58rem; letter-spacing: .24em;
-      color: var(--muted); text-transform: uppercase;
-      text-align: center; margin-bottom: 12px;
-    }
-    .life-progress {
-      font-size: .74rem; color: var(--gold);
-      text-align: center; margin-bottom: 8px;
-      letter-spacing: .08em; font-weight: 700;
-    }
-    .life-labels {
-      display: flex; justify-content: space-between;
-      font-size: .62rem; color: var(--muted);
-      margin-top: 8px; letter-spacing: .04em;
-    }
-    .life-bar {
-      width: 100%; height: 14px;
-      background: var(--surface); border-radius: 999px;
-      overflow: hidden; border: 1px solid var(--border);
-      margin-bottom: 4px;
-    }
-    .life-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--gold));
-      border-radius: 999px;
-    }
-
-    /* ── Bussola dei valori ── */
-    .compass-section {
-      width: 100%; margin-bottom: 16px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 18px 20px;
-    }
-    .compass-section-title {
-      font-size: .58rem; letter-spacing: .24em;
-      color: var(--muted); text-transform: uppercase;
-      text-align: center; margin-bottom: 16px;
-    }
-    .compass {
-      position: relative; width: 100%;
-      aspect-ratio: 1 / 1; max-width: 220px;
-      margin: 6px auto 0;
-      border: 1.5px solid var(--border);
-      border-radius: 50%; background: var(--surface);
-    }
-    .compass-center-wrap {
-      position: absolute; inset: 50% auto auto 50%;
-      transform: translate(-50%, -50%);
-      display: flex; align-items: center;
-      justify-content: center; z-index: 2;
-    }
-    .compass::before, .compass::after {
-      content: ""; position: absolute;
-      background: var(--border); left: 50%; top: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .compass::before { width: 1px; height: 84%; }
-    .compass::after  { width: 84%; height: 1px; }
-    .compass-center {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: var(--gold); border: 4px solid var(--card);
-      cursor: pointer;
-    }
-    .compass-edit {
-      position: absolute; top: -2px; right: 4px;
-      color: var(--muted);
-    }
-    .ikigai-popup {
-      position: absolute; left: 50%; bottom: calc(100% + 14px);
-      transform: translateX(-50%); width: 220px;
-      background: var(--card); border: 1.5px solid var(--border);
-      border-radius: 18px; padding: 14px 14px 12px;
-      text-align: center; opacity: 0; pointer-events: none;
-      transition: opacity .2s ease; z-index: 10;
-    }
-    .ikigai-popup.visible { opacity: 1; pointer-events: auto; }
-    .ikigai-popup-title {
-      display: flex; align-items: center; justify-content: center; gap: 4px;
-      font-size: .56rem; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
-    }
-    .ikigai-popup-text { font-size: .68rem; color: var(--text); line-height: 1.6; }
-    .compass-point {
-      position: absolute; font-size: .58rem;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--text); text-align: center;
-      line-height: 1.4; width: 110px;
-    }
-    .compass-point strong {
-      display: block; color: var(--gold);
-      font-size: .52rem; letter-spacing: .2em; margin-bottom: 2px;
-    }
-    .compass-point.north { top: 14px; left: 50%; transform: translateX(-50%); }
-    .compass-point.east  { top: 50%; right: -18px; transform: translateY(-50%); }
-    .compass-point.south { bottom: 14px; left: 50%; transform: translateX(-50%); }
-    .compass-point.west  { top: 50%; left: -18px; transform: translateY(-50%); }
-    @media (max-width: 360px) {
-      .compass-point.east { right: -28px; }
-      .compass-point.west { left: -28px; }
-      .compass-point { width: 100px; font-size: .54rem; }
-    }
-
-    /* ── Footer ── */
-    .page-footer {
-      margin-top: 16px; width: 100%;
-      border-top: 1px solid var(--border); padding-top: 12px;
-      text-align: center; font-size: .52rem;
-      letter-spacing: .14em; color: var(--muted);
-    }
-    .page-footer a { color: var(--gold); text-decoration: none; }
-  </style>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
+  <style>
+    /* ── Direction: minimalismo giapponese ─────────────────────────────────
+       Molto vuoto, linee sottili, un solo accento (sakura) e il blu del geco.
+       Ogni testo è toccabile per essere modificato: niente icone di modifica. */
+
+    .dir-main { gap: var(--space-8); }
+
+    /* Pezzi toccabili: testo che si modifica con un tap */
+    .editable {
+      display: block; width: 100%; text-align: inherit;
+      background: none; border: 0; padding: 0; margin: 0; cursor: pointer;
+      color: inherit; font: inherit; letter-spacing: inherit;
+      border-radius: 10px;
+      transition: background-color .15s;
+    }
+    .editable:active { background: var(--surface); }
+    .editable.is-empty { color: var(--muted); opacity: .75; font-style: italic; }
+
+    /* ── Barra della vita ── */
+    .life { text-align: center; padding-top: var(--space-2); }
+    .life-eyebrow { margin-bottom: var(--space-3); }
+    .life-value {
+      font-size: 3.25rem; font-weight: 200; letter-spacing: -.04em; line-height: 1;
+      font-variant-numeric: tabular-nums; color: var(--text);
+    }
+    .life-value small { font-size: 1.25rem; font-weight: 300; color: var(--muted); margin-left: 2px; letter-spacing: 0; }
+    .life-sub { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; }
+    .life-track {
+      position: relative; height: 4px; border-radius: 2px;
+      background: var(--border); margin: var(--space-6) 0 var(--space-3);
+    }
+    .life-fill {
+      position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 2px;
+      background: linear-gradient(90deg, var(--geco-sky), var(--geco-blue));
+      transition: width .9s var(--ease);
+    }
+    .life-dot {
+      position: absolute; top: 50%; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+      border-radius: 50%; background: var(--sakura); border: 3px solid var(--bg);
+      box-shadow: 0 0 0 1px var(--sakura);
+      transition: left .9s var(--ease);
+    }
+    .life-scale {
+      display: flex; justify-content: space-between;
+      font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Bussola dei valori ── */
+    .compass-card { text-align: center; }
+    .compass-card .zen-eyebrow { margin-bottom: var(--space-4); }
+    .compass {
+      position: relative; width: 100%; max-width: 340px; aspect-ratio: 1 / 1; margin: 0 auto;
+      display: grid; grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+    }
+    .compass-rings { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .compass-rings .ring-line { fill: none; stroke: var(--border); stroke-width: .8; }
+    .compass-rings .ring-soft { fill: var(--geco-mist); stroke: none; opacity: .55; }
+    .compass-rings .cross { stroke: var(--border); stroke-width: .8; }
+    .compass-rings .needle { fill: var(--sakura); }
+    .compass-pt {
+      position: relative; z-index: 1; align-self: center; justify-self: center;
+      padding: var(--space-2) var(--space-3); min-width: 0; max-width: 100%;
+    }
+    .compass-pt.n { grid-area: 1 / 2; }
+    .compass-pt.w { grid-area: 2 / 1; }
+    .compass-pt.e { grid-area: 2 / 3; }
+    .compass-pt.s { grid-area: 3 / 2; }
+    .compass-pt .dir {
+      display: block; font-size: .625rem; letter-spacing: .24em; text-transform: uppercase;
+      color: var(--cat-label); margin-bottom: 2px;
+    }
+    .compass-pt .val {
+      display: block; font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 500;
+      color: var(--text); overflow-wrap: anywhere; line-height: 1.25;
+    }
+
+    .mission { margin-top: var(--space-6); padding: 0 var(--space-2); }
+    .mission .zen-eyebrow { margin-bottom: var(--space-3); }
+    .mission-text {
+      font-family: var(--font-serif); font-style: italic; font-size: var(--fs-md);
+      line-height: 1.7; color: var(--text); padding: var(--space-3) var(--space-4);
+      border-left: 2px solid var(--sakura); text-align: left; border-radius: 0 12px 12px 0;
+    }
+
+    /* ── Sezioni ── */
+    .sections { display: flex; flex-direction: column; gap: var(--space-3); }
+    .sec { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .sec-head {
+      display: flex; align-items: center; gap: var(--space-3); width: 100%;
+      padding: var(--space-4) var(--space-4) var(--space-3); background: none; border: 0; cursor: pointer; text-align: left;
+    }
+    .sec-head:active { background: var(--surface); }
+    .sec-ico { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; }
+    .sec-ico.blue   { background: var(--geco-mist);   color: var(--geco-blue); }
+    .sec-ico.sakura { background: var(--sakura-soft); color: color-mix(in srgb, var(--sakura) 70%, var(--bark)); }
+    .sec-title { flex: 1; min-width: 0; font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; }
+    .sec-count { font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+    .sec-chev { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; transition: transform .3s var(--ease); }
+    .sec.open .sec-chev { transform: rotate(180deg); }
+
+    .sec-goal { padding: 0 var(--space-4) var(--space-4); }
+    .sec-goal .editable { padding: var(--space-2) var(--space-3); font-size: var(--fs-sm); line-height: 1.6; color: var(--muted); }
+    .sec-goal .editable:not(.is-empty) { color: var(--text); }
+    .sec-goal .lbl { display: block; font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin-bottom: 2px; font-style: normal; }
+
+    .sec-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s var(--ease); }
+    .sec.open .sec-body { grid-template-rows: 1fr; }
+    .sec-body > div { overflow: hidden; min-height: 0; }
+    .area { padding: var(--space-4); border-top: .5px solid var(--border); }
+    .area-name { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.005em; padding: 2px var(--space-2); margin-bottom: var(--space-2); }
+    .area-lbl { display: block; padding: 0 var(--space-3); font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--sakura); font-weight: 600; margin-bottom: 2px; }
+    .area-text {
+      font-family: var(--font-serif); font-style: italic; font-size: var(--fs-md); line-height: 1.7;
+      padding: var(--space-2) var(--space-3); white-space: pre-wrap; overflow-wrap: anywhere;
+    }
+    .area-text.is-empty { font-family: var(--font); font-size: var(--fs-sm); }
+
+    .sec-actions { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-4) var(--space-4); border-top: .5px solid var(--border); background: var(--surface); }
+    .sec-actions button {
+      flex: 1; min-height: 38px; border-radius: 999px; border: .5px solid var(--border); background: var(--card);
+      color: var(--muted); font-size: var(--fs-sm); cursor: pointer;
+    }
+    .sec-actions button:active { transform: scale(.97); color: var(--text); }
+    .sec-actions button:disabled { opacity: .35; pointer-events: none; }
+
+    /* ── Foglio di modifica ── */
+    .edit-sheet-body { display: flex; flex-direction: column; gap: var(--space-4); }
+    .edit-sheet-body textarea { min-height: 56px; }
+
+    .dir-footer { text-align: center; font-size: var(--fs-xs); letter-spacing: .12em; color: var(--muted); }
+    .dir-footer a { color: var(--geco-blue); }
+  </style>
 </head>
-<body class="zen" data-title="Direzione" data-back="index.html">
+<body class="zen zen-native" data-title="Direction" data-back="index.html">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
+  <main class="zen-main dir-main">
 
-  <header>
-    <a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>TAO</span>
-    </a>
-    <div class="header-center">
-      <a href="index.html" aria-label="Torna al Qui e Ora" style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:inherit;">
-        <div style="font-size:1.8rem;line-height:1;">🧭</div>
-        <div class="app-title">Direction</div>
-        <div class="app-sub">IL GECO ZEN · DIRECTION</div>
-      </a>
-    </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
-  </header>
-
-  <!-- ── Barra della vita ── -->
-  <section class="life-section" aria-label="Barra della vita">
-    <div class="life-section-title">Barra della vita</div>
-    <div class="life-progress" id="life-progress-label">0%</div>
-    <div class="life-bar" aria-hidden="true">
-      <div class="life-bar-fill" id="life-bar-fill"></div>
-    </div>
-    <div class="life-labels">
-      <span>0</span>
-      <span>90</span>
-    </div>
-  </section>
-
-  <!-- ── Bussola dei valori ── -->
-  <section class="compass-section" aria-label="Bussola dei valori">
-    <div class="compass-section-title">Bussola dei valori</div>
-    <div class="compass">
-      <div class="compass-point north"><strong>Nord</strong><span id="compass-north">Gentilezza</span><button class="btn-pencil compass-edit" data-compass="north" title="Modifica valore Nord" aria-label="Modifica valore Nord"></button></div>
-      <div class="compass-point east"><strong>Est</strong><span id="compass-east">Serenità</span><button class="btn-pencil compass-edit" data-compass="east" title="Modifica valore Est" aria-label="Modifica valore Est"></button></div>
-      <div class="compass-point south"><strong>Sud</strong><span id="compass-south">Salute</span><button class="btn-pencil compass-edit" data-compass="south" title="Modifica valore Sud" aria-label="Modifica valore Sud"></button></div>
-      <div class="compass-point west"><strong>Ovest</strong><span id="compass-west">Prosperità</span><button class="btn-pencil compass-edit" data-compass="west" title="Modifica valore Ovest" aria-label="Modifica valore Ovest"></button></div>
-      <div class="compass-center-wrap" id="ikigai-trigger-wrap">
-        <button class="compass-center" id="ikigai-trigger" type="button" aria-label="Mostra la mia missione" aria-expanded="false"></button>
-        <div class="ikigai-popup" id="ikigai-popup" role="dialog" aria-label="La mia missione">
-          <div class="ikigai-popup-title">La mia missione <button class="btn-pencil" id="mission-edit" title="Modifica missione" aria-label="Modifica missione"></button></div>
-          <div class="ikigai-popup-text" id="mission-text">Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.</div>
-        </div>
+    <!-- ── Barra della vita ── -->
+    <section class="life" aria-label="Barra della vita">
+      <div class="zen-eyebrow life-eyebrow">Barra della vita</div>
+      <div class="life-value" id="life-value">0<small>%</small></div>
+      <div class="life-sub" id="life-sub"></div>
+      <div class="life-track" role="img" aria-label="Avanzamento della vita su 90 anni">
+        <div class="life-fill" id="life-fill"></div>
+        <div class="life-dot" id="life-dot"></div>
       </div>
+      <div class="life-scale"><span>0</span><span>30</span><span>60</span><span>90 anni</span></div>
+    </section>
+
+    <!-- ── Bussola dei valori ── -->
+    <section class="compass-card" aria-label="Bussola dei valori">
+      <div class="zen-eyebrow">Bussola dei valori</div>
+      <div class="compass">
+        <svg class="compass-rings" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="ring-soft" cx="50" cy="50" r="46"/>
+          <circle class="ring-line" cx="50" cy="50" r="46"/>
+          <circle class="ring-line" cx="50" cy="50" r="30"/>
+          <line class="cross" x1="50" y1="8" x2="50" y2="92"/>
+          <line class="cross" x1="8" y1="50" x2="92" y2="50"/>
+          <circle class="needle" cx="50" cy="50" r="2.4"/>
+        </svg>
+        <button class="editable compass-pt n" type="button" data-compass="north"><span class="dir">Nord</span><span class="val" id="compass-north"></span></button>
+        <button class="editable compass-pt w" type="button" data-compass="west"><span class="dir">Ovest</span><span class="val" id="compass-west"></span></button>
+        <button class="editable compass-pt e" type="button" data-compass="east"><span class="dir">Est</span><span class="val" id="compass-east"></span></button>
+        <button class="editable compass-pt s" type="button" data-compass="south"><span class="dir">Sud</span><span class="val" id="compass-south"></span></button>
+      </div>
+
+      <div class="mission">
+        <div class="zen-eyebrow">La mia missione</div>
+        <button class="editable mission-text" id="mission-text" type="button"></button>
+      </div>
+    </section>
+
+    <!-- ── Sezioni (renderizzate da JS) ── -->
+    <section class="zen-section" aria-label="Aree di vita">
+      <div class="zen-eyebrow" style="text-align:center">Aree di vita</div>
+      <div class="sections" id="sections-container"></div>
+    </section>
+
+    <div class="dir-footer">
+      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> · Il Geco Zen
     </div>
-  </section>
+  </main>
 
-  <!-- Macro-sezioni renderizzate da JS -->
-  <div id="sections-container"></div>
-
-  <div class="page-footer">
-    <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-    &nbsp;·&nbsp; Il Geco Zen
-  </div>
-
-  <!-- ── Edit modal ── -->
-  <div class="edit-overlay" id="edit-overlay">
-    <div class="edit-sheet">
-      <div class="edit-handle"></div>
-      <div class="edit-label" id="edit-label">Modifica</div>
-      <textarea class="edit-input" id="edit-input" rows="4"></textarea>
-      <div class="edit-actions">
-        <button class="btn-edit-cancel" id="edit-cancel">Annulla</button>
-        <button class="btn-edit-save"   id="edit-save">Salva</button>
+  <!-- ── Foglio di modifica ── -->
+  <div class="zen-sheet-overlay" id="edit-overlay">
+    <div class="zen-sheet" role="dialog" aria-modal="true" aria-labelledby="edit-label">
+      <div class="zen-sheet-handle"></div>
+      <div class="zen-sheet-title" id="edit-label">Modifica</div>
+      <div class="edit-sheet-body">
+        <textarea class="input" id="edit-input" rows="4"></textarea>
+        <div class="grid-2">
+          <button class="btn" type="button" id="edit-cancel">Annulla</button>
+          <button class="btn accent" type="button" id="edit-save">Salva</button>
+        </div>
       </div>
     </div>
   </div>
@@ -467,6 +221,8 @@
       doc, getDoc, setDoc,
     } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
     import { db as _db, auth as _auth } from './js/core/firebase.js';
+    import { icon } from './js/ui/icons.js';
+    import { openSheet, closeSheet } from './js/ui/shell.js';
 
     function _directionDoc() {
       const uid = _auth?.currentUser?.uid;
@@ -492,120 +248,72 @@
     }
 
     /* ═══════════════════════════════════════════
-       TEMA
-    ═══════════════════════════════════════════ */
-    const htmlEl = document.documentElement;
-    const btn    = document.getElementById('theme-toggle');
-    const knob   = document.getElementById('theme-knob');
-    let isDark   = localStorage.getItem('zen_theme') === 'dark';
-    function applyTheme() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-    }
-    applyTheme();
-    btn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
-
-    /* ═══════════════════════════════════════════
        BARRA DELLA VITA
     ═══════════════════════════════════════════ */
-    (function() {
-      const birthDate = new Date(1992, 10, 23);
+    (function () {
+      const LIFE_YEARS = 90;
+      const birth = new Date(1992, 10, 23);
       const now = new Date();
-      const monthsLived = (now.getFullYear() - birthDate.getFullYear()) * 12 + (now.getMonth() - birthDate.getMonth());
-      const currentAgeYears = monthsLived / 12;
-      const percentage = Math.min((currentAgeYears / 90) * 100, 100);
-      document.getElementById('life-bar-fill').style.width = `${percentage}%`;
-      document.getElementById('life-progress-label').textContent =
-        `${percentage.toFixed(1).replace('.', ',')}% | ${currentAgeYears.toFixed(1).replace('.', ',')} anni`;
-    })();
-
-    /* ═══════════════════════════════════════════
-       BUSSOLA (ikigai popup)
-    ═══════════════════════════════════════════ */
-    (function() {
-      const trigger  = document.getElementById('ikigai-trigger');
-      const popup    = document.getElementById('ikigai-popup');
-      const wrap     = document.getElementById('ikigai-trigger-wrap');
-      const show = () => { popup.classList.add('visible'); trigger.setAttribute('aria-expanded', 'true'); };
-      const hide = () => { popup.classList.remove('visible'); trigger.setAttribute('aria-expanded', 'false'); };
-      wrap.addEventListener('mouseenter', show);
-      wrap.addEventListener('mouseleave', hide);
-      trigger.addEventListener('click', () => { popup.classList.contains('visible') ? hide() : show(); });
-      document.addEventListener('click', e => { if (!wrap.contains(e.target)) hide(); });
+      const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+      const age = months / 12;
+      const pct = Math.min((age / LIFE_YEARS) * 100, 100);
+      const fmt = n => n.toFixed(1).replace('.', ',');
+      document.getElementById('life-value').innerHTML = `${fmt(pct)}<small>%</small>`;
+      document.getElementById('life-sub').textContent =
+        `${fmt(age)} anni vissuti · ${fmt(Math.max(LIFE_YEARS - age, 0))} davanti a te`;
+      requestAnimationFrame(() => {
+        document.getElementById('life-fill').style.width = `${pct}%`;
+        document.getElementById('life-dot').style.left = `${pct}%`;
+      });
     })();
 
     /* ═══════════════════════════════════════════
        DATI DEFAULT
     ═══════════════════════════════════════════ */
+    const SEC_STYLE = {
+      'sec-salute-fisica':  ['dumbbell',  'blue'],
+      'sec-salute-mentale': ['flower',    'sakura'],
+      'sec-relazioni':      ['heart',     'sakura'],
+      'sec-contributo':     ['globe',     'blue'],
+      'sec-connessione':    ['sparkles',  'blue'],
+      'sec-passioni':       ['star',      'sakura'],
+      'sec-note':           ['compass',   'blue'],
+    };
+
     const DEFAULT_DATA = [
-      {
-        id: 'sec-salute-fisica', icon: '💪', title: 'Salute Fisica', goal: '',
-        areas: [
-          { name: 'Allenamento',    label: 'direction', text: '' },
-          { name: 'Alimentazione',  label: 'direction', text: '' },
-          { name: 'Sonno',          label: 'direction', text: '' },
-          { name: 'Check-up Medico',label: 'direction', text: '' },
-        ]
-      },
-      {
-        id: 'sec-salute-mentale', icon: '🧘', title: 'Salute Mentale', goal: '',
-        areas: [
+      { id: 'sec-salute-fisica', icon: '💪', title: 'Salute Fisica', goal: '', areas: [
+          { name: 'Allenamento',     label: 'direction', text: '' },
+          { name: 'Alimentazione',   label: 'direction', text: '' },
+          { name: 'Sonno',           label: 'direction', text: '' },
+          { name: 'Check-up Medico', label: 'direction', text: '' } ] },
+      { id: 'sec-salute-mentale', icon: '🧘', title: 'Salute Mentale', goal: '', areas: [
           { name: 'Benessere Psicologico',   label: 'direction', text: '' },
           { name: 'Gestione delle Emozioni', label: 'direction', text: '' },
-          { name: 'Journaling',              label: 'direction', text: '' },
-        ]
-      },
-      {
-        id: 'sec-relazioni', icon: '❤️', title: 'Relazioni', goal: '',
-        areas: [
-          { name: 'Raoul',          label: 'direction', text: '' },
-          { name: 'Michela',        label: 'direction', text: '' },
-          { name: 'Emma',           label: 'direction', text: '' },
-          { name: 'Animali',        label: 'direction', text: '' },
-          { name: 'Mamma e Papà',   label: 'direction', text: '' },
-          { name: 'Amici & Network',label: 'direction', text: '' },
-        ]
-      },
-      {
-        id: 'sec-contributo', icon: '🌍', title: 'Contributo al Mondo', goal: '',
-        areas: [
-          { name: 'IBM',        label: 'direction', text: '' },
-          { name: 'Il Geco Zen',label: 'direction', text: '' },
-          { name: 'Finanza',    label: 'direction', text: '' },
-          { name: 'Competenze', label: 'direction', text: '' },
-        ]
-      },
-      {
-        id: 'sec-connessione', icon: '☯️', title: 'Connessione con il Tutto', goal: '',
-        areas: [
+          { name: 'Journaling',              label: 'direction', text: '' } ] },
+      { id: 'sec-relazioni', icon: '❤️', title: 'Relazioni', goal: '', areas: [
+          { name: 'Raoul',           label: 'direction', text: '' },
+          { name: 'Michela',         label: 'direction', text: '' },
+          { name: 'Emma',            label: 'direction', text: '' },
+          { name: 'Animali',         label: 'direction', text: '' },
+          { name: 'Mamma e Papà',    label: 'direction', text: '' },
+          { name: 'Amici & Network', label: 'direction', text: '' } ] },
+      { id: 'sec-contributo', icon: '🌍', title: 'Contributo al Mondo', goal: '', areas: [
+          { name: 'IBM',         label: 'direction', text: '' },
+          { name: 'Il Geco Zen', label: 'direction', text: '' },
+          { name: 'Finanza',     label: 'direction', text: '' },
+          { name: 'Competenze',  label: 'direction', text: '' } ] },
+      { id: 'sec-connessione', icon: '☯️', title: 'Connessione con il Tutto', goal: '', areas: [
           { name: 'Buddismo',    label: 'direction', text: '' },
-          { name: 'Meditazione', label: 'direction', text: '' },
-        ]
-      },
-      {
-        id: 'sec-passioni', icon: '✨', title: 'Passioni & Anima', goal: '',
-        areas: [
-          { name: 'Nutrimento dell\'anima', label: 'direction', text: '' },
-        ]
-      },
-      {
-        id: 'sec-note', icon: '🔭', title: 'Note per il Futuro', goal: '',
-        areas: [
+          { name: 'Meditazione', label: 'direction', text: '' } ] },
+      { id: 'sec-passioni', icon: '✨', title: 'Passioni & Anima', goal: '', areas: [
+          { name: 'Nutrimento dell\'anima', label: 'direction', text: '' } ] },
+      { id: 'sec-note', icon: '🔭', title: 'Note per il Futuro', goal: '', areas: [
           { name: 'Difesa del Perimetro',           label: 'memento', text: '' },
           { name: 'Non Attaccamento alla Serenità', label: 'memento', text: '' },
-          { name: 'Purezza dell\'Impatto',           label: 'memento', text: '' },
-        ]
-      },
+          { name: 'Purezza dell\'Impatto',          label: 'memento', text: '' } ] },
     ];
 
-    /* ═══════════════════════════════════════════
-       PERSISTENZA
-    ═══════════════════════════════════════════ */
-    const DEFAULT_COMPASS = {
-      north: 'Gentilezza', east: 'Serenità', south: 'Salute', west: 'Prosperità'
-    };
+    const DEFAULT_COMPASS = { north: 'Gentilezza', east: 'Serenità', south: 'Salute', west: 'Prosperità' };
     const DEFAULT_MISSION = 'Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.';
 
     let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -613,368 +321,183 @@
     let MISSION = DEFAULT_MISSION;
 
     // saveData è sync per il codice di rendering, ma salva su Firestore in background
-    function saveData() {
-      _saveRemote();
-    }
+    function saveData() { _saveRemote(); }
 
     /* ═══════════════════════════════════════════
-       RENDERING
-    ═══════════════════════════════════════════ */
-    const PENCIL_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-
-    function esc(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    function renderAll() {
-      /* salva quali sezioni erano aperte prima di distruggere il DOM */
-      const openIds = new Set(
-        Array.from(document.querySelectorAll('.macro-body.open'))
-          .map(el => el.closest('.macro-section')?.id)
-          .filter(Boolean)
-      );
-
-      const container = document.getElementById('sections-container');
-      container.innerHTML = '';
-
-      DATA.forEach((sec, si) => {
-        const wrap = document.createElement('div');
-        wrap.className = 'macro-section';
-        wrap.id = sec.id;
-        wrap.setAttribute('data-sec-idx', si);
-        wrap.setAttribute('draggable', 'true');
-
-        /* ── Header ── */
-        const headerDiv = document.createElement('div');
-        headerDiv.className = 'macro-header';
-        headerDiv.innerHTML = `
-          <div class="macro-icon">${esc(sec.icon)}</div>
-          <div class="macro-title" id="${esc(sec.id)}-title">${esc(sec.title)}</div>
-          <span class="macro-chevron">▼</span>`;
-
-        /* drag handle — non propaga click al toggle */
-        const dragHandle = document.createElement('span');
-        dragHandle.className = 'sec-drag-handle';
-        dragHandle.title = 'Trascina per riordinare';
-        dragHandle.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="19" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="19" r="1" fill="currentColor" stroke="none"/></svg>`;
-        dragHandle.addEventListener('click', e => e.stopPropagation());
-        headerDiv.insertBefore(dragHandle, headerDiv.firstChild);
-
-        /* matitina titolo macro — click non propaga al toggle */
-        const pencilTitle = document.createElement('button');
-        pencilTitle.className = 'btn-pencil';
-        pencilTitle.title = 'Modifica titolo';
-        pencilTitle.innerHTML = PENCIL_SVG;
-        pencilTitle.addEventListener('click', e => {
-          e.stopPropagation();
-          openEdit('Titolo sezione', sec.title, 1, val => {
-            DATA[si].title = val;
-            saveData(DATA);
-            renderAll();
-          });
-        });
-        headerDiv.insertBefore(pencilTitle, headerDiv.querySelector('.macro-chevron'));
-        headerDiv.addEventListener('click', () => toggleSection(sec.id));
-
-        /* ── Target (goal) ── */
-        const targetDiv = document.createElement('div');
-        targetDiv.className = 'macro-target-always';
-        targetDiv.innerHTML = `
-          <div class="target-icon">🎯</div>
-          <div class="target-text">${esc(sec.goal)}</div>`;
-
-        const pencilGoal = document.createElement('button');
-        pencilGoal.className = 'btn-pencil';
-        pencilGoal.title = 'Modifica obiettivo';
-        pencilGoal.innerHTML = PENCIL_SVG;
-        pencilGoal.addEventListener('click', e => {
-          e.stopPropagation();
-          openEdit('Obiettivo', sec.goal, 4, val => {
-            DATA[si].goal = val;
-            saveData(DATA);
-            renderAll();
-          });
-        });
-        targetDiv.appendChild(pencilGoal);
-
-        /* ── Body (area cards) ── */
-        const bodyDiv = document.createElement('div');
-        bodyDiv.className = 'macro-body';
-
-        sec.areas.forEach((area, ai) => {
-          const isLast = ai === sec.areas.length - 1;
-          const card = document.createElement('div');
-          card.className = 'area-card';
-          card.style.cssText = `margin-bottom:0;border-radius:0;border:none;${isLast ? '' : 'border-bottom:1px solid var(--surface);'}`;
-
-          /* ── area name row ── */
-          const nameRow = document.createElement('div');
-          nameRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:10px;';
-
-          const nameEl = document.createElement('div');
-          nameEl.className = 'area-name';
-          nameEl.style.marginBottom = '0';
-          nameEl.textContent = area.name;
-
-          const pencilName = document.createElement('button');
-          pencilName.className = 'btn-pencil';
-          pencilName.title = 'Modifica titolo area';
-          pencilName.innerHTML = PENCIL_SVG;
-          pencilName.addEventListener('click', () => {
-            openEdit('Titolo area', area.name, 1, val => {
-              DATA[si].areas[ai].name = val;
-              saveData(DATA);
-              renderAll();
-            });
-          });
-
-          nameRow.appendChild(nameEl);
-          nameRow.appendChild(pencilName);
-
-          /* ── direction quote row ── */
-          const quoteWrap = document.createElement('div');
-          quoteWrap.className = 'direction-quote';
-          quoteWrap.style.display = 'flex';
-          quoteWrap.style.flexDirection = 'column';
-
-          const labelEl = document.createElement('div');
-          labelEl.className = 'direction-label';
-          labelEl.textContent = area.label;
-
-          const textRow = document.createElement('div');
-          textRow.style.cssText = 'display:flex;align-items:flex-start;gap:6px;';
-
-          const textEl = document.createElement('span');
-          textEl.style.flex = '1';
-          textEl.textContent = area.text;
-
-          const pencilText = document.createElement('button');
-          pencilText.className = 'btn-pencil';
-          pencilText.title = 'Modifica direction';
-          pencilText.style.marginTop = '1px';
-          pencilText.innerHTML = PENCIL_SVG;
-          pencilText.addEventListener('click', () => {
-            openEdit('Testo direction', area.text, 6, val => {
-              DATA[si].areas[ai].text = val;
-              saveData(DATA);
-              renderAll();
-            });
-          });
-
-          textRow.appendChild(textEl);
-          textRow.appendChild(pencilText);
-          quoteWrap.appendChild(labelEl);
-          quoteWrap.appendChild(textRow);
-
-          card.appendChild(nameRow);
-          card.appendChild(quoteWrap);
-          bodyDiv.appendChild(card);
-        });
-
-        const footerDiv = document.createElement('div');
-        footerDiv.className = 'macro-body-footer';
-
-        wrap.appendChild(headerDiv);
-        wrap.appendChild(targetDiv);
-        wrap.appendChild(bodyDiv);
-        wrap.appendChild(footerDiv);
-        container.appendChild(wrap);
-
-        /* ripristina stato aperto se era aperto prima */
-        if (openIds.has(sec.id)) {
-          bodyDiv.classList.add('open');
-          headerDiv.classList.add('open');
-          targetDiv.style.borderRadius = '0';
-          footerDiv.style.display = 'block';
-        }
-
-        /* drag-and-drop per riordinare sezioni */
-        initSectionDrag(wrap);
-      });
-    }
-
-    /* ═══════════════════════════════════════════
-       DRAG-AND-DROP SEZIONI
-    ═══════════════════════════════════════════ */
-    let _secDragSrc = null;
-
-    function initSectionDrag(wrap) {
-      const container = document.getElementById('sections-container');
-
-      wrap.addEventListener('dragstart', e => {
-        _secDragSrc = wrap;
-        wrap.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
-      wrap.addEventListener('dragend', () => {
-        _secDragSrc = null;
-        wrap.classList.remove('dragging');
-        container.querySelectorAll('.macro-section').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
-      });
-      wrap.addEventListener('dragover', e => {
-        if (!_secDragSrc || _secDragSrc === wrap) return;
-        e.preventDefault();
-        const mid = wrap.getBoundingClientRect().top + wrap.getBoundingClientRect().height / 2;
-        container.querySelectorAll('.macro-section').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
-        wrap.classList.add(e.clientY < mid ? 'drag-over-top' : 'drag-over-bottom');
-      });
-      wrap.addEventListener('dragleave', () => wrap.classList.remove('drag-over-top','drag-over-bottom'));
-      wrap.addEventListener('drop', e => {
-        e.preventDefault();
-        wrap.classList.remove('drag-over-top','drag-over-bottom');
-        if (!_secDragSrc || _secDragSrc === wrap) return;
-        const mid = wrap.getBoundingClientRect().top + wrap.getBoundingClientRect().height / 2;
-        if (e.clientY < mid) container.insertBefore(_secDragSrc, wrap);
-        else container.insertBefore(_secDragSrc, wrap.nextSibling);
-        _reorderDataFromDOM();
-      });
-
-      // touch
-      let tClone = null, tStartY = 0;
-      const handle = wrap.querySelector('.sec-drag-handle');
-      if (handle) {
-        handle.addEventListener('touchstart', e => {
-          e.stopPropagation();
-          tStartY = e.touches[0].clientY;
-          _secDragSrc = wrap;
-          wrap.classList.add('dragging');
-          tClone = wrap.cloneNode(true);
-          const r = wrap.getBoundingClientRect();
-          tClone.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;opacity:.75;pointer-events:none;z-index:9999;`;
-          document.body.appendChild(tClone);
-        }, { passive: true });
-        handle.addEventListener('touchmove', e => {
-          if (!_secDragSrc || !tClone) return;
-          e.preventDefault();
-          const dy = e.touches[0].clientY - tStartY;
-          tClone.style.transform = `translateY(${dy}px)`;
-          container.querySelectorAll('.macro-section').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
-          const el2 = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-          const tr = el2 ? el2.closest('.macro-section') : null;
-          if (tr && tr !== wrap) {
-            const mid2 = tr.getBoundingClientRect().top + tr.getBoundingClientRect().height / 2;
-            tr.classList.add(e.touches[0].clientY < mid2 ? 'drag-over-top' : 'drag-over-bottom');
-          }
-        }, { passive: false });
-        handle.addEventListener('touchend', e => {
-          if (tClone) { tClone.remove(); tClone = null; }
-          container.querySelectorAll('.macro-section').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom','dragging'));
-          const t = e.changedTouches[0];
-          const el2 = document.elementFromPoint(t.clientX, t.clientY);
-          const tr = el2 ? el2.closest('.macro-section') : null;
-          if (tr && tr !== wrap) {
-            const mid2 = tr.getBoundingClientRect().top + tr.getBoundingClientRect().height / 2;
-            if (t.clientY < mid2) container.insertBefore(wrap, tr);
-            else container.insertBefore(wrap, tr.nextSibling);
-            _reorderDataFromDOM();
-          }
-          _secDragSrc = null;
-        });
-      }
-    }
-
-    function _reorderDataFromDOM() {
-      const container = document.getElementById('sections-container');
-      const newOrder = [...container.querySelectorAll('.macro-section')].map(el => el.id);
-      DATA = newOrder.map(id => DATA.find(d => d.id === id)).filter(Boolean);
-      saveData(DATA);
-    }
-
-    /* ═══════════════════════════════════════════
-       TOGGLE SEZIONE
-    ═══════════════════════════════════════════ */
-    function toggleSection(id) {
-      const sec    = document.getElementById(id);
-      const header = sec.querySelector('.macro-header');
-      const body   = sec.querySelector('.macro-body');
-      const target = sec.querySelector('.macro-target-always');
-      const footer = sec.querySelector('.macro-body-footer');
-      const isOpen = body.classList.contains('open');
-      if (isOpen) {
-        body.classList.remove('open');
-        header.classList.remove('open');
-        target.style.borderRadius = '0 0 16px 16px';
-        if (footer) footer.style.display = 'none';
-      } else {
-        body.classList.add('open');
-        header.classList.add('open');
-        target.style.borderRadius = '0';
-        if (footer) footer.style.display = 'block';
-      }
-    }
-
-    /* ═══════════════════════════════════════════
-       EDIT MODAL
+       FOGLIO DI MODIFICA (tocchi su qualsiasi testo)
     ═══════════════════════════════════════════ */
     const overlay    = document.getElementById('edit-overlay');
     const editLabel  = document.getElementById('edit-label');
     const editInput  = document.getElementById('edit-input');
-    const editSave   = document.getElementById('edit-save');
-    const editCancel = document.getElementById('edit-cancel');
     let _onSave = null;
+    let _allowEmpty = false;
 
-    function openEdit(label, currentValue, rows, onSave) {
-      editLabel.textContent   = label;
-      editInput.value         = currentValue;
-      editInput.rows          = rows;
-      _onSave                 = onSave;
-      overlay.classList.add('open');
-      setTimeout(() => { editInput.focus(); editInput.setSelectionRange(editInput.value.length, editInput.value.length); }, 80);
+    function openEdit(label, value, { rows = 3, allowEmpty = false, onSave }) {
+      editLabel.textContent = label;
+      editInput.value = value;
+      editInput.rows = rows;
+      _onSave = onSave;
+      _allowEmpty = allowEmpty;
+      openSheet('edit-overlay');
+      setTimeout(() => { editInput.focus(); editInput.setSelectionRange(editInput.value.length, editInput.value.length); }, 120);
     }
+    function closeEdit() { closeSheet(overlay); _onSave = null; }
 
-    function closeEdit() {
-      overlay.classList.remove('open');
-      _onSave = null;
-    }
-
-    editSave.addEventListener('click', () => {
+    document.getElementById('edit-save').addEventListener('click', () => {
       const val = editInput.value.trim();
-      if (!val) return;
-      if (_onSave) _onSave(val);
+      if (!val && !_allowEmpty) { editInput.focus(); return; }
+      const cb = _onSave;
       closeEdit();
+      if (cb) cb(val);
     });
-    editCancel.addEventListener('click', closeEdit);
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeEdit(); });
+    document.getElementById('edit-cancel').addEventListener('click', closeEdit);
+
+    /* ═══════════════════════════════════════════
+       BUSSOLA + MISSIONE
+    ═══════════════════════════════════════════ */
+    const DIR_NAMES = { north: 'Nord', east: 'Est', south: 'Sud', west: 'Ovest' };
 
     function renderCompass() {
-      Object.entries(COMPASS).forEach(([direction, value]) => {
-        document.getElementById(`compass-${direction}`).textContent = value;
+      Object.entries(COMPASS).forEach(([d, v]) => {
+        const el = document.getElementById(`compass-${d}`);
+        if (el) el.textContent = v;
       });
       document.getElementById('mission-text').textContent = MISSION;
     }
 
-    document.querySelectorAll('[data-compass]').forEach(button => {
-      button.innerHTML = PENCIL_SVG;
-      button.addEventListener('click', e => {
-        e.stopPropagation();
-        const direction = button.dataset.compass;
-        openEdit(`Valore ${direction}`, COMPASS[direction], 1, value => {
-          COMPASS[direction] = value;
-          renderCompass();
-          saveData();
+    document.querySelectorAll('[data-compass]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const d = btn.dataset.compass;
+        openEdit(`Valore · ${DIR_NAMES[d]}`, COMPASS[d], {
+          rows: 1,
+          onSave: v => { COMPASS[d] = v; renderCompass(); saveData(); },
         });
       });
     });
 
-    const missionEdit = document.getElementById('mission-edit');
-    missionEdit.innerHTML = PENCIL_SVG;
-    missionEdit.addEventListener('click', e => {
-      e.stopPropagation();
-      openEdit('La mia missione', MISSION, 6, value => {
-        MISSION = value;
-        renderCompass();
-        saveData();
+    document.getElementById('mission-text').addEventListener('click', () => {
+      openEdit('La mia missione', MISSION, {
+        rows: 6,
+        onSave: v => { MISSION = v; renderCompass(); saveData(); },
       });
     });
 
     /* ═══════════════════════════════════════════
+       SEZIONI
+    ═══════════════════════════════════════════ */
+    const CHEV = `<svg class="sec-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;
+
+    /** Crea un testo toccabile: mostra il segnaposto in grigio se è vuoto. */
+    function editable(cls, value, placeholder) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = `editable ${cls}${value ? '' : ' is-empty'}`;
+      b.textContent = value || placeholder;
+      return b;
+    }
+
+    function renderAll() {
+      const openIds = new Set(
+        [...document.querySelectorAll('.sec.open')].map(el => el.id)
+      );
+      const container = document.getElementById('sections-container');
+      container.innerHTML = '';
+
+      DATA.forEach((sec, si) => {
+        const [ico, tone] = SEC_STYLE[sec.id] || ['circle', 'blue'];
+        const wrap = document.createElement('article');
+        wrap.className = 'sec' + (openIds.has(sec.id) ? ' open' : '');
+        wrap.id = sec.id;
+
+        /* Testata: tocca per aprire/chiudere */
+        const head = document.createElement('button');
+        head.type = 'button';
+        head.className = 'sec-head';
+        head.setAttribute('aria-expanded', String(openIds.has(sec.id)));
+        head.innerHTML = `
+          <span class="sec-ico ${tone}">${icon(ico)}</span>
+          <span class="sec-title"></span>
+          <span class="sec-count">${sec.areas.length}</span>
+          ${CHEV}`;
+        head.querySelector('.sec-title').textContent = sec.title;
+        head.addEventListener('click', () => {
+          const open = wrap.classList.toggle('open');
+          head.setAttribute('aria-expanded', String(open));
+        });
+
+        /* Obiettivo: tocca per modificare */
+        const goalWrap = document.createElement('div');
+        goalWrap.className = 'sec-goal';
+        const goalBtn = editable('', sec.goal, 'Tocca per aggiungere un obiettivo');
+        goalBtn.insertAdjacentHTML('afterbegin', '<span class="lbl">Obiettivo</span>');
+        goalBtn.addEventListener('click', () => openEdit('Obiettivo', sec.goal, {
+          rows: 4, allowEmpty: true,
+          onSave: v => { DATA[si].goal = v; saveData(); renderAll(); },
+        }));
+        goalWrap.appendChild(goalBtn);
+
+        /* Aree */
+        const body = document.createElement('div');
+        body.className = 'sec-body';
+        const inner = document.createElement('div');
+        sec.areas.forEach((area, ai) => {
+          const card = document.createElement('div');
+          card.className = 'area';
+
+          const name = editable('area-name', area.name, '');
+          name.addEventListener('click', () => openEdit('Nome area', area.name, {
+            rows: 1,
+            onSave: v => { DATA[si].areas[ai].name = v; saveData(); renderAll(); },
+          }));
+
+          const lbl = document.createElement('span');
+          lbl.className = 'area-lbl';
+          lbl.textContent = area.label;
+
+          const text = editable('area-text', area.text, 'Tocca per scrivere la tua direzione');
+          text.addEventListener('click', () => openEdit(`${area.name} · ${area.label}`, area.text, {
+            rows: 6, allowEmpty: true,
+            onSave: v => { DATA[si].areas[ai].text = v; saveData(); renderAll(); },
+          }));
+
+          card.append(name, lbl, text);
+          inner.appendChild(card);
+        });
+
+        /* Azioni sulla sezione: rinomina e sposta */
+        const actions = document.createElement('div');
+        actions.className = 'sec-actions';
+        actions.innerHTML = `
+          <button type="button" data-act="rename">Rinomina</button>
+          <button type="button" data-act="up"${si === 0 ? ' disabled' : ''}>Sposta su</button>
+          <button type="button" data-act="down"${si === DATA.length - 1 ? ' disabled' : ''}>Sposta giù</button>`;
+        actions.addEventListener('click', e => {
+          const act = e.target.closest('[data-act]')?.dataset.act;
+          if (!act) return;
+          if (act === 'rename') {
+            openEdit('Nome sezione', sec.title, {
+              rows: 1,
+              onSave: v => { DATA[si].title = v; saveData(); renderAll(); },
+            });
+          } else {
+            const to = act === 'up' ? si - 1 : si + 1;
+            if (to < 0 || to >= DATA.length) return;
+            [DATA[si], DATA[to]] = [DATA[to], DATA[si]];
+            saveData(); renderAll();
+          }
+        });
+        inner.appendChild(actions);
+        body.appendChild(inner);
+
+        wrap.append(head, goalWrap, body);
+        container.appendChild(wrap);
+      });
+    }
+
+    /* ═══════════════════════════════════════════
        INIT
     ═══════════════════════════════════════════ */
-    // Merge: per ogni sezione remota con areas:[] ripristina le aree dal DEFAULT_DATA (testo vuoto)
+    // Per ogni sezione remota con areas:[] ripristina le aree dal DEFAULT_DATA (testo vuoto)
     function mergeDefaultAreas(remote) {
       return remote.map(sec => {
         if (!sec.areas || sec.areas.length === 0) {
@@ -987,7 +510,10 @@
       });
     }
 
-    // Init: attende auth poi carica da Firestore (o usa i dati di default)
+    renderCompass();
+    renderAll();
+
+    // Attende auth, poi carica da Firestore (o usa i dati di default)
     (async () => {
       await waitForAuth();
       const remote = await _loadRemote();
@@ -996,7 +522,6 @@
         if (typeof remote.mission === 'string' && remote.mission.trim()) MISSION = remote.mission;
         if (Array.isArray(remote.sections)) {
           const merged = mergeDefaultAreas(remote.sections);
-          // se il merge ha aggiunto aree, salva subito su Firestore
           const changed = JSON.stringify(merged) !== JSON.stringify(remote.sections);
           DATA = merged;
           if (changed) saveData();
