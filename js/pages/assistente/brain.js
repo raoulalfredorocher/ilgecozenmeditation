@@ -16,8 +16,13 @@ import { doc, getDoc, getDocs, collection, query, where } from 'https://www.gsta
 import { app, db, auth } from '../../core/firebase.js';
 import { getBirthdayContacts } from '../../core/db.js';
 
-/** Modelli provati in ordine: il primo disponibile viene ricordato. */
-const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+/**
+ * Modelli provati in ordine: il primo disponibile viene ricordato.
+ * Gli alias "-latest" vengono aggiornati da Google all'ultimo modello, così
+ * l'assistente non si rompe quando un modello viene ritirato. Il "lite" è
+ * scelto per la velocità (risposte in 1-3 secondi, adatte alla voce).
+ */
+const MODELS = ['gemini-flash-lite-latest', 'gemini-3.1-flash-lite-preview', 'gemini-flash-latest'];
 const TZ = 'Europe/Rome';
 const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
 const SLOT_LABELS = {
@@ -85,12 +90,22 @@ const TOOLS = {
 
   async get_upcoming_birthdays({ days = 14 }) {
     const list = await getBirthdayContacts(Math.min(60, Math.max(1, days)));
-    return list.map(c => ({ nome: `${c.nome || ''} ${c.cognome || ''}`.trim(), data: c.compleanno.slice(5), tra_giorni: c._daysUntilBirthday }));
+    return list.map(c => {
+      const when = new Date(Date.now() + c._daysUntilBirthday * 86400000);
+      return {
+        nome: `${c.nome || ''} ${c.cognome || ''}`.trim(),
+        quando: new Intl.DateTimeFormat('it-IT', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' }).format(when),
+        tra_giorni: c._daysUntilBirthday,
+      };
+    });
   },
 
   async get_bucket_list() {
     const snap = await getDocs(userColRef('bucket_list'));
-    return snap.docs.map(d => d.data()).map(x => ({ titolo: x.title, descrizione: x.desc || '', realizzato: !!x.done }));
+    const items = snap.docs.map(d => d.data()).map(x => ({ titolo: x.title, descrizione: x.desc || '', realizzato: !!x.done }));
+    const fatti = items.filter(x => x.realizzato).length;
+    // Conteggi già calcolati: il modello li riporta senza contare da solo
+    return { totale: items.length, realizzati: fatti, da_realizzare: items.length - fatti, sogni: items };
   },
 
   async search_recipes({ query: q = '' }) {
@@ -145,6 +160,7 @@ function systemInstruction() {
 Rispondi sempre in italiano, con tono caldo, calmo e diretto.
 Le risposte vengono spesso lette ad alta voce: sii breve (di solito 1-4 frasi), niente elenchi lunghi, niente markdown, niente emoji.
 Per meteo, alimentazione, compleanni, obiettivi, ricette e spesa usa gli strumenti per leggere i dati reali: non inventare.
+Riporta numeri, date e giorni della settimana esattamente come li restituiscono gli strumenti, senza ricalcolarli.
 Se un dato non c'è, dillo con semplicità. Non dare consigli medici: per dubbi di salute suggerisci un professionista.
 Oggi è ${fmt({ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} (${dateKey()}), ore ${fmt({ hour: '2-digit', minute: '2-digit' })}. Domani è ${dateKey(1)}.
 Nome dell'utente: ${auth.currentUser?.displayName || 'non noto'}.`;
@@ -172,7 +188,7 @@ export async function askAssistant(messages) {
     } catch (err) {
       lastErr = err;
       // Modello non disponibile: prova il successivo; altri errori: interrompi
-      if (!/not found|404|not supported|unavailable for/i.test(String(err.message))) throw err;
+      if (!/not found|404|not supported|no longer available|unavailable for/i.test(String(err.message))) throw err;
     }
   }
   throw lastErr;

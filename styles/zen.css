@@ -13,6 +13,8 @@
 /* 1. Base ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* L'app non scorre mai in orizzontale */
+html:has(body.zen), body.zen { overflow-x: hidden; overflow-x: clip; max-width: 100%; }
 body.zen {
   margin: 0;
   min-height: 100dvh;
@@ -433,3 +435,20 @@ body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }
 .text-danger { color: var(--danger); }
 .small { font-size: var(--fs-sm); }
 .xsmall { font-size: var(--fs-xs); }
+
+/* ─── Telefono in orizzontale ───────────────────────────────────────────
+   Come Instagram, l'app è pensata in verticale. Sui telefoni girati
+   (schermo basso + dito) copre tutto un invito a tornare in verticale.
+   Su tablet e computer non compare. Elemento creato da shell.js. */
+.zen-rotate { display: none; }
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .zen-rotate {
+    position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: var(--space-3);
+    background: var(--bg); color: var(--text); text-align: center; padding: var(--space-6);
+  }
+  .zen-rotate img { width: 88px; height: auto; animation: zen-tilt 2.4s var(--ease) infinite; }
+  .zen-rotate p { margin: 0; color: var(--muted); font-size: var(--fs-sm); }
+  html:has(.zen-rotate) { overflow: hidden; }
+}
+@keyframes zen-tilt { 0%, 30% { transform: rotate(-90deg); } 60%, 100% { transform: rotate(0deg); } }

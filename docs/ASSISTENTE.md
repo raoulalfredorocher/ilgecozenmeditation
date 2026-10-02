@@ -9,7 +9,7 @@ dati reali dell'utente.
 ```
 assistente.html → js/pages/assistente/main.js   (chat, microfono, lettura ad alta voce)
                 → js/pages/assistente/brain.js  (Gemini via Firebase AI Logic + strumenti)
-                     ├─► Gemini (gemini-2.5-flash, ripiego gemini-2.5-flash-lite)
+                     ├─► Gemini (gemini-flash-lite-latest per la velocità; ripieghi automatici)
                      └─► strumenti eseguiti nel browser: meteo (Open-Meteo), piano
                          alimentare, diario, compleanni, bucket list, ricette, spesa
 ```
