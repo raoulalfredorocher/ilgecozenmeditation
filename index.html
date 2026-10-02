@@ -74,7 +74,7 @@
     .closing .site { margin-top: var(--space-5); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; }
   </style>
 </head>
-<body class="zen zen-native" data-title="Il Geco Zen" data-subtitle="La via di mezzo per la prosperità" data-tab="home" style="visibility:hidden">
+<body class="zen zen-native" data-title="Il Geco Zen" data-subtitle="La via di mezzo per la prosperità" data-tab="home">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
@@ -110,7 +110,7 @@
       <p class="zen-quote" id="daily-quote-text">…</p>
     </section>
 
-    <!-- Compleanni (visibile solo se ce ne sono nei prossimi 7 giorni) -->
+    <!-- Compleanni (visibile solo se ce ne sono oggi o nei prossimi 2 giorni) -->
     <section class="zen-section" id="birthday-widget" hidden aria-label="Compleanni in arrivo">
       <div class="zen-eyebrow">Compleanni in arrivo</div>
       <div class="list" id="birthday-list"></div>
@@ -223,7 +223,7 @@
       const first = (user.displayName || '').split(' ')[0];
       if (first) document.getElementById('hello').textContent = `${saluto}, ${first}`;
 
-      const contacts = await getBirthdayContacts(7);
+      const contacts = await getBirthdayContacts(2);
       if (!contacts.length) return;
       document.getElementById('birthday-widget').hidden = false;
       const list = document.getElementById('birthday-list');

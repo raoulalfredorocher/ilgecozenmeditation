@@ -15,12 +15,13 @@
  *   data-back    pagina a cui torna la freccia (default index.html; "none" = nessuna)
  *   data-add     selettore del pulsante "aggiungi" della pagina: il + della
  *                barra in basso lo preme. Senza, il + non compare.
- *   data-tab     scheda attiva: home | assistente (default dal nome file)
+ *   data-tab     scheda attiva: home (default dal nome file)
  */
 import { injectIcons, icon } from './icons.js';
 import { SECTION_GROUPS } from './sections.js';
 import { waitForUser, confirmAndSignOut } from '../core/auth-guard.js';
 import { escapeHtml, safeUrl } from '../core/dom.js';
+import { openAssistant } from './assistant-sheet.js';
 
 const body = document.body;
 const page = location.pathname.split('/').pop() || 'index.html';
@@ -76,7 +77,7 @@ function buildHeader() {
 
 // ─── Barra in basso ─────────────────────────────────────────────────────
 function buildTabbar() {
-  const tab = body.dataset.tab || (isHome ? 'home' : page === 'assistente.html' ? 'assistente' : '');
+  const tab = body.dataset.tab || (isHome ? 'home' : '');
   const addSel = body.dataset.add;
   const current = name => (tab === name ? ' aria-current="page"' : '');
   const nav = document.createElement('nav');
@@ -86,10 +87,11 @@ function buildTabbar() {
     <a class="zen-tab" href="index.html" aria-label="Home"${current('home')}>${icon('home')}</a>
     <button class="zen-tab" type="button" data-open-sheet="zen-sections" aria-label="Sezioni">${icon('grid')}</button>
     ${addSel ? `<button class="zen-tab add" type="button" aria-label="Aggiungi">${icon('plus')}</button>` : ''}
-    <a class="zen-tab" href="assistente.html" aria-label="Assistente"${current('assistente')}>${icon('chat')}</a>
+    <button class="zen-tab" type="button" id="zen-tab-assistant" aria-label="Assistente">${icon('chat')}</button>
     <button class="zen-tab" type="button" data-open-sheet="zen-profile" aria-label="Profilo" id="zen-tab-profile">${icon('user')}</button>`;
   body.append(nav);
 
+  nav.querySelector('#zen-tab-assistant').addEventListener('click', openAssistant);
   nav.querySelector('.add')?.addEventListener('click', () => {
     const target = document.querySelector(addSel);
     // Se la pagina ha nascosto il suo "aggiungi" (es. scheda senza aggiunta), non fare nulla
@@ -246,8 +248,15 @@ function buildRotateHint() {
   body.append(el);
 }
 
+/** Service worker per l'apertura istantanea delle pagine (non in sviluppo locale). */
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator) || location.hostname === 'localhost') return;
+  navigator.serviceWorker.register('/sw.js').catch(() => { /* facoltativo */ });
+}
+
 // ─── Avvio ──────────────────────────────────────────────────────────────
 injectIcons();
+registerServiceWorker();
 buildRotateHint();
 buildHeader();
 if (!body.classList.contains('zen-native')) adoptLegacyPage();

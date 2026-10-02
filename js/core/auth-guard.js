@@ -11,11 +11,11 @@
  * dei dati sono le regole Firestore: senza login non si legge nulla.
  */
 import { onAuthChange, signOutUser } from './auth.js';
+import { track, layoutProbe } from './telemetry.js';
 import { safeUrl } from './dom.js';
 // Pannelli che si chiudono trascinandoli verso il basso, in tutte le pagine
 import '../ui/sheet.js';
 
-document.body.style.visibility = 'hidden';
 
 /**
  * Modalità debug: aggiungendo ?debug all'indirizzo (es. bucket-list.html?debug)
@@ -44,6 +44,7 @@ if (new URLSearchParams(location.search).has('debug')) {
 }
 
 let _resolveUser;
+let _resolved = false;
 /** Promise risolta con l'utente autenticato. */
 export const userReady = new Promise(resolve => { _resolveUser = resolve; });
 
@@ -54,10 +55,20 @@ export function waitForUser() {
 
 onAuthChange(user => {
   if (!user) {
+    try { localStorage.removeItem('zen_session'); } catch { /* ignora */ }
     window.location.replace('login.html');
     return;
   }
+  try { localStorage.setItem('zen_session', '1'); } catch { /* ignora */ }
+  document.documentElement.classList.remove('zen-guest');
   window.__debugLog?.(`login ok: ${user.email}`);
+  if (!_resolved) {
+    _resolved = true;
+    const nav = performance.getEntriesByType('navigation')[0];
+    track('timing', 'login pronto', { authMs: Math.round(performance.now()), domMs: nav ? Math.round(nav.domContentLoadedEventEnd) : null });
+    setTimeout(() => layoutProbe('dopo il caricamento'), 1200);
+    addEventListener('touchstart', () => setTimeout(() => layoutProbe('dopo il primo tocco'), 400), { once: true, passive: true });
+  }
   document.body.style.visibility = '';
   _resolveUser(user);
   injectAccountButton(user);

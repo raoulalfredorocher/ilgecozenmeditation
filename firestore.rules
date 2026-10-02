@@ -40,7 +40,9 @@ service cloud.firestore {
         // Armonia sociale, finanza, personal brand
         'crm_contacts',
         'finanza_accounts', 'finanza_categories', 'finanza_expenses',
-        'guardaroba', 'igiene_actions', 'ispirazione'
+        'guardaroba', 'igiene_actions', 'ispirazione',
+        // Diagnostica tecnica dei dispositivi (js/core/telemetry.js)
+        'debug_logs'
       ];
     }
 
