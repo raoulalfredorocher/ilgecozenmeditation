@@ -32,8 +32,8 @@ function radialLabel(text, r0, r1, aMid, spanDeg, maxFont) {
   return `<text transform="rotate(${f1(rot)}) translate(${f1(flip ? -mid : mid)} 0)" font-size="${f1(fs)}" text-anchor="middle" dominant-baseline="central">${text}</text>`;
 }
 
-const cell = (cls, key, hue, label, path, text) =>
-  `<g class="cell ${cls}" data-key="${key}" style="--h:${hue}" role="button" aria-label="${label}"><path d="${path}"/>${text}</g>`;
+const cell = (cls, key, color, label, path, text) =>
+  `<g class="cell ${cls}" data-key="${key}" style="--c:${color}" role="button" aria-label="${label}"><path d="${path}"/>${text}</g>`;
 
 const wrap = inner => `<svg class="wheel" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg" role="group">${inner}</svg>`;
 
@@ -43,7 +43,7 @@ export function primaryWheelSVG() {
   const parts = FAMILIES.map((f, i) => {
     const a0 = i * span, a1 = a0 + span, aMid = a0 + span / 2;
     const [tx, ty] = pt(112, aMid);
-    return cell('r1', f.key, f.hue, f.label, sector(34, 196, a0, a1),
+    return cell('r1', f.key, f.color, f.label, sector(34, 196, a0, a1),
       `<text x="${f1(tx)}" y="${f1(ty)}" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central">${f.label}</text>`);
   });
   return wrap(`${parts.join('')}<circle class="hub" r="32"/><circle class="hub-dot" r="4"/>`);
@@ -60,14 +60,14 @@ export function familyWheelSVG(familyKey) {
   let a = 0;
   f.kids.forEach(([l2, names]) => {
     const span = names.length * step;
-    parts.push(cell('r2', slug(l2), f.hue, l2, sector(R[0] + 2, R[1], a, a + span),
+    parts.push(cell('r2', slug(l2), f.color, l2, sector(R[0] + 2, R[1], a, a + span),
       radialLabel(l2, R[0] + 2, R[1], a + span / 2, span, 14)));
     names.forEach(l3 => {
-      parts.push(cell('r3', slug(l3), f.hue, l3, sector(R[1] + 2, R[2], a, a + step),
+      parts.push(cell('r3', slug(l3), f.color, l3, sector(R[1] + 2, R[2], a, a + step),
         radialLabel(l3, R[1] + 2, R[2], a + step / 2, step, 13)));
       a += step;
     });
   });
-  const hub = `<circle class="fhub" r="${R[0]}"/><text class="fhub-text" font-size="${f.label.length > 7 ? 11 : 13}" text-anchor="middle" dominant-baseline="central">${f.label}</text>`;
-  return wrap(`${parts.join('')}${hub}`).replace('class="wheel"', `class="wheel family" style="--h:${f.hue}"`);
+  const hub = `<circle class="fhub" r="${R[0]}"/><text class="fhub-text" font-size="${f.label.length > 7 ? 12 : 14}" text-anchor="middle" dominant-baseline="central">${f.label}</text>`;
+  return wrap(`${parts.join('')}${hub}`).replace('class="wheel"', `class="wheel family" style="--c:${f.color}"`);
 }

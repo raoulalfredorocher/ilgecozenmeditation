@@ -8,9 +8,14 @@
  * così nulla di ciò che hai già scritto si perde.
  */
 
-/** In senso orario partendo dall'alto. [secondo livello, [terzo livello, …]] */
+/**
+ * In senso orario partendo dall'alto. [secondo livello, [terzo livello, …]]
+ * Ogni famiglia ha un colore della palette Geco Zen (rosso beni, verde matcha,
+ * prugna del ramo, rosa sakura, blu del geco, oro): lo usano la ruota, le
+ * emozioni figlie e i tag degli appunti.
+ */
 export const FAMILIES = [
-  { key: 'rabbia', label: 'Rabbia', hue: 218,
+  { key: 'rabbia', label: 'Rabbia', color: '#C2475F',
     about: 'Segnala un confine violato o un’ingiustizia e dà l’energia per agire.',
     kids: [
       ['Aggressivo', ['Provocatorio', 'Ostile']],
@@ -22,7 +27,7 @@ export const FAMILIES = [
       ['Arrabbiato', ['Imbestialito', 'Furioso']],
       ['Minacciato', ['Diffidente', 'Geloso']],
     ] },
-  { key: 'disgusto', label: 'Disgusto', hue: 28,
+  { key: 'disgusto', label: 'Disgusto', color: '#6F8F5B',
     about: 'Ci protegge da ciò che è nocivo, per il corpo o per i nostri valori.',
     kids: [
       ['Sfuggevole', ['Avversione', 'Esitante']],
@@ -30,7 +35,7 @@ export const FAMILIES = [
       ['Deluso',     ['Ripugnante', 'Ribelle']],
       ['Disapprovazione', ['Giudicante', 'Disgustato']],
     ] },
-  { key: 'paura', label: 'Paura', hue: 288,
+  { key: 'paura', label: 'Paura', color: '#8B5A6B',
     about: 'Prepara a proteggersi o a fuggire davanti a un pericolo, reale o immaginato.',
     kids: [
       ['Ansioso',    ['Sopraffatto', 'Preoccupato']],
@@ -40,7 +45,7 @@ export const FAMILIES = [
       ['Impaurito',  ['Terrorizzato', 'Spaventato']],
       ['Sottomesso', ['Insignificante', 'Indifeso']],
     ] },
-  { key: 'gioia', label: 'Gioia', hue: 138,
+  { key: 'gioia', label: 'Gioia', color: '#EE9BB0',
     about: 'Segnala ciò che ci fa bene e ci spinge a cercarlo ancora.',
     kids: [
       ['Orgoglioso',  ['Importante', 'Fiducioso']],
@@ -52,7 +57,7 @@ export const FAMILIES = [
       ['Interessato', ['Curioso', 'Incuriosito']],
       ['Accettato',   ['Rispettato', 'Soddisfatto']],
     ] },
-  { key: 'tristezza', label: 'Tristezza', hue: 192,
+  { key: 'tristezza', label: 'Tristezza', color: '#25739E',
     about: 'Accompagna una perdita: invita a fermarsi, elaborare e cercare vicinanza.',
     kids: [
       ['Solo',        ['Isolato', 'Emarginato']],
@@ -62,7 +67,7 @@ export const FAMILIES = [
       ['Annoiato',    ['Indifferente', 'Apatico']],
       ['Abbandonato', ['Vittimizzato', 'Ignorato']],
     ] },
-  { key: 'sorpresa', label: 'Sorpresa', hue: 46,
+  { key: 'sorpresa', label: 'Sorpresa', color: '#D9A441',
     about: 'Interrompe tutto per portare l’attenzione su ciò che è inatteso.',
     kids: [
       ['Stupito',  ['Meravigliato', 'Sbalordito']],

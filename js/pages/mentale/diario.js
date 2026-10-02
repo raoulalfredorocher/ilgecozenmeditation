@@ -8,7 +8,7 @@
 import { MOODS, labelOf } from './data.js';
 import * as store from './store.js';
 import * as audio from './audio.js';
-import { $, esc, armedButton, dayStr, timeStr, GIORNI_BREVI, mese } from './ui.js';
+import { $, esc, armedButton, showSheet, hideSheet, dayStr, timeStr, GIORNI_BREVI, mese } from './ui.js';
 
 const DRAFT_KEY = 'zen_diary_draft';
 let entries = [];
@@ -364,24 +364,42 @@ async function pickAudioFile(file) {
   setAudio({ blob: file, mime: file.type || 'audio/mp4', dur, url: URL.createObjectURL(file) });
 }
 
-function exportCSV() {
-  if (!entries.length) return;
+async function exportCSV() {
+  if (!entries.length) return false;
   const rows = [['Data', 'Ora', 'Titolo', 'Testo', 'Emozioni', 'Audio']];
   [...entries].sort((a, b) => (sortKey(a) < sortKey(b) ? -1 : 1)).forEach(e =>
     rows.push([entryDay(e), e.ora || '', e.titolo || '', e.testo || '', (e.emozioni || []).map(labelOf).join(' | '), e.audio ? audio.fmtDur(e.audio.dur || 0) : '']));
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const file = new File(['\uFEFF' + csv], `diario-mentale-${dayStr(Date.now())}.csv`, { type: 'text/csv' });
+  if (navigator.canShare?.({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: file.name }); return true; }
+    catch (e) { if (e.name === 'AbortError') return false; /* altrimenti ripiega sul download */ }
+  }
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' }));
-  a.download = 'diario-mentale.csv'; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  a.href = URL.createObjectURL(file);
+  a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  return true;
+}
+
+/** Menu dei tre puntini in alto, quando è aperto il Diario. */
+export function openDiaryMenu() {
+  showSheet('Diario', body => {
+    body.innerHTML = `<div class="list"><button type="button" class="list-row" id="dm-export"><span class="grow">Esporta diario<span class="xsmall zen-muted" style="display:block">.csv · data, titolo, testo, emozioni e durata dell’audio</span></span></button></div>
+      <p class="note">${entries.length ? `${entries.length} ${entries.length === 1 ? 'voce' : 'voci'} nel diario.` : 'Il diario è ancora vuoto.'} Le registrazioni audio non sono nel file.</p>`;
+    $('dm-export').addEventListener('click', async () => {
+      if (!entries.length) return;
+      if (await exportCSV()) hideSheet();
+    });
+  });
 }
 
 // ─── Avvio ──────────────────────────────────────────────────────────────────
 export function initDiario() {
   $('view-diario').innerHTML = `
     <div id="j-top"></div>
-    <div id="j-list"></div>
-    <div style="text-align:center"><button type="button" class="text-btn" id="j-csv">Esporta CSV</button></div>`;
+    <div id="j-list"></div>`;
   render();
 
   $('j-list').addEventListener('click', e => {
@@ -402,7 +420,6 @@ export function initDiario() {
     try { localStorage.setItem('zen_diary_view', v); } catch { /* storage non disponibile */ }
     render();
   });
-  $('j-csv').addEventListener('click', exportCSV);
 
   // editor
   $('ed-title').addEventListener('input', e => { st.titolo = e.target.value; saveDraft(); });
