@@ -13,6 +13,7 @@ import { subscribeContacts, addContactDoc, updateContactDoc, deleteContactDoc } 
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
+import { exportContacts } from './export.js';
 
 const MAX_BESTIES = 10;
 const $ = id => document.getElementById(id);
@@ -304,9 +305,31 @@ function parseVCard(text) {
   return out;
 }
 const actionsSheet = createSheet({ title: 'Armonia sociale', body: `
-  <div class="list"><label class="list-row" for="ar-vcf" style="cursor:pointer">${icon('upload', 'sm')}<span class="grow">Importa contatti da iPhone (.vcf)</span></label></div>
-  <input type="file" id="ar-vcf" accept=".vcf,text/vcard,text/x-vcard" hidden/>
-  <p class="xsmall zen-muted">Su iPhone: app Contatti → seleziona i contatti → Condividi → salva il file .vcf e sceglilo qui.</p>` });
+  <div class="zen-section">
+    <div class="zen-eyebrow">Esporta</div>
+    <div class="list">
+      <button type="button" class="list-row" id="ar-exp-json">${icon('download', 'sm')}<span class="grow">Backup completo<span class="xsmall zen-muted" style="display:block">.json · tutti i dati, foto e memorie</span></span></button>
+      <button type="button" class="list-row" id="ar-exp-vcf">${icon('download', 'sm')}<span class="grow">Rubrica per iPhone e Google<span class="xsmall zen-muted" style="display:block">.vcf · foto, note e memorie incluse</span></span></button>
+    </div>
+    <p class="xsmall zen-muted" id="ar-exp-count"></p>
+  </div>
+  <div class="zen-section">
+    <div class="zen-eyebrow">Importa</div>
+    <div class="list"><label class="list-row" for="ar-vcf" style="cursor:pointer">${icon('upload', 'sm')}<span class="grow">Importa contatti da iPhone (.vcf)</span></label></div>
+    <input type="file" id="ar-vcf" accept=".vcf,text/vcard,text/x-vcard" hidden/>
+    <p class="xsmall zen-muted">Su iPhone: app Contatti → seleziona i contatti → Condividi → salva il file .vcf e sceglilo qui.</p>
+  </div>` });
+for (const [id, format] of [['ar-exp-json', 'json'], ['ar-exp-vcf', 'vcf']]) {
+  actionsSheet.$('#' + id).addEventListener('click', async () => {
+    if (!contacts.length) return toast('Nessun contatto da esportare');
+    try {
+      if (await exportContacts(contacts.map(view), format)) toast(`Esportati ${contacts.length} contatti`);
+    } catch (err) {
+      console.error(err);
+      toast('Esportazione non riuscita');
+    }
+  });
+}
 actionsSheet.$('#ar-vcf').addEventListener('change', async e => {
   const f = e.target.files[0];
   if (!f) return;
@@ -317,7 +340,11 @@ actionsSheet.$('#ar-vcf').addEventListener('change', async e => {
   for (const c of list) await addContactDoc({ ...c, isBestie: false, interazioni: [], createdAt: Date.now() });
   toast(`Importati ${list.length} contatti`);
 });
-$('ar-more')?.addEventListener('click', () => actionsSheet.open());
+$('ar-more')?.addEventListener('click', () => {
+  actionsSheet.$('#ar-exp-count').textContent = contacts.length
+    ? `${contacts.length} ${contacts.length === 1 ? 'contatto' : 'contatti'} da esportare.` : 'Non ci sono ancora contatti da esportare.';
+  actionsSheet.open();
+});
 
 // ─── Avvio ───────────────────────────────────────────────────────────────
 waitForUser().then(() => subscribeContacts(list => {
