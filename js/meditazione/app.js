@@ -74,14 +74,13 @@ function loadTemplates() {
 
 // ─── Stato e impostazioni ───────────────────────────────────────────────────
 const SET_KEY = 'zen_med_settings';
-const S = { mins: 20, kind: 'Meditazione', steps: [], sound: 'silence', bell: 'bowl', volume: 0.7, ...read(SET_KEY, {}) };
+const S = { mins: 20, tpl: null, sound: 'silence', bell: 'bowl', volume: 0.7, ...read(SET_KEY, {}) };
 const saveSettings = () => write(SET_KEY, S);
 let templates = loadTemplates();
-let activeTpl = null;
 let sessions = [];
 
-/** Cosa parte quando premi play: la sequenza, oppure la sola durata scelta. */
-const plan = () => (S.steps.length ? S.steps : [{ mins: S.mins, name: S.kind }]);
+/** Cosa parte quando premi play: il template scelto, oppure i minuti scelti. */
+const plan = () => templates.find(t => t.name === S.tpl)?.steps || [{ mins: S.mins, name: 'Meditazione' }];
 
 // ─── Foglio generico ────────────────────────────────────────────────────────
 function showSheet(title, build) {
@@ -106,244 +105,188 @@ function armedButton(label, onConfirm, cls = 'btn block danger') {
   return b;
 }
 
-function kindChips(selected, onPick) {
-  const wrap = document.createElement('div');
-  wrap.className = 'chips-wrap';
-  KINDS.forEach(k => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = `pill kind ${k.cls}`; b.textContent = k.label;
-    b.setAttribute('aria-pressed', String(k.name === selected));
-    b.addEventListener('click', () => {
-      wrap.querySelectorAll('.pill').forEach(x => x.setAttribute('aria-pressed', 'false'));
-      b.setAttribute('aria-pressed', 'true');
-      onPick(k.name);
-    });
-    wrap.appendChild(b);
-  });
-  return wrap;
-}
-
 // ═══════════════════════════════════════════════════════════════════════════
-// IMPOSTA
+// IMPOSTA — una schermata corta: template · minuti · suono · campana
 // ═══════════════════════════════════════════════════════════════════════════
-function renderHero() {
-  const p = plan(), total = sumMins(p);
-  const h = total >= 60 ? `${Math.floor(total / 60)}<small>h</small> ${String(total % 60).padStart(2, '0')}<small>min</small>` : `${total}<small>min</small>`;
-  const desc = p.length === 1
-    ? kindOf(p[0].name).label
-    : p.map(s => `${kindOf(s.name).label} ${s.mins}′`).join(' · ');
-  $('hero').innerHTML = `
-    <div class="hero-kanji" aria-hidden="true">禅</div>
-    <div class="hero-total">${h}</div>
-    ${bar(p)}
-    <div class="hero-desc">${escapeHtml(desc)}</div>
-    <div class="hero-hint">Premi play in basso per iniziare</div>`;
-}
+const mins = m => `${m} min`;
 
 function renderTemplates() {
   const row = $('tpl-row');
   row.innerHTML = '';
-  templates.forEach((t, i) => {
+  templates.forEach(t => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'tpl';
-    b.setAttribute('aria-pressed', String(activeTpl === t.name));
+    b.setAttribute('aria-pressed', String(S.tpl === t.name));
     b.innerHTML = `
       <div class="tpl-name">${escapeHtml(t.name)}</div>
       ${bar(t.steps, true)}
       <div class="tpl-meta">${fmtTotal(sumMins(t.steps))} · ${t.steps.length} ${t.steps.length === 1 ? 'intervallo' : 'intervalli'}</div>`;
-    b.addEventListener('click', () => openTemplate(i));
+    // un tocco sceglie; un secondo tocco sul template scelto apre i dettagli
+    b.addEventListener('click', () => {
+      if (S.tpl === t.name) { openTemplate(t); return; }
+      S.tpl = t.name; saveSettings(); renderSetup();
+    });
     row.appendChild(b);
   });
   const add = document.createElement('button');
-  add.type = 'button'; add.className = 'tpl'; add.style.cssText = 'justify-content:center;align-items:center;color:var(--muted);text-align:center';
-  add.innerHTML = `<div class="tpl-name" style="min-height:0;font-weight:500">Ripristina<br>predefiniti</div>`;
-  add.addEventListener('click', () => {
-    const have = new Set(templates.map(t => t.name));
-    const missing = DEFAULT_TEMPLATES.filter(t => !have.has(t.name));
-    templates = [...missing, ...templates];
-    write(TPL_KEY, templates); renderTemplates();
-  });
+  add.type = 'button'; add.className = 'tpl tpl-new';
+  add.innerHTML = '<span>Nuovo</span>';
+  add.addEventListener('click', () => editTemplate(null));
   row.appendChild(add);
 }
 
-function openTemplate(i) {
-  const t = templates[i];
+function renderMinutes() {
+  const grid = $('mins-grid');
+  grid.innerHTML = '';
+  [5, 10, 15, 20, 30, 45, 60].forEach(m => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'pill'; b.textContent = m;
+    b.setAttribute('aria-label', mins(m));
+    b.setAttribute('aria-pressed', String(!S.tpl && S.mins === m));
+    b.addEventListener('click', () => { S.tpl = null; S.mins = m; saveSettings(); renderSetup(); });
+    grid.appendChild(b);
+  });
+}
+
+function renderRows() {
+  const sound = audio.SOUND_GROUPS.flatMap(g => g.items).find(i => i.id === S.sound);
+  const bell = audio.BELLS.find(b => b.id === S.bell);
+  $('row-sound').querySelector('.val').textContent = sound ? sound.label : 'Silenzio';
+  $('row-bell').querySelector('.val').textContent = bell ? bell.label : '';
+}
+
+function renderSetup() { renderTemplates(); renderMinutes(); renderRows(); }
+
+function openTemplate(t) {
   showSheet(t.name, body => {
     body.insertAdjacentHTML('beforeend', `
       ${bar(t.steps)}
       <div class="list">${t.steps.map(s => `
         <div class="list-row"><span class="seq-dot ${kindOf(s.name).cls}"></span>
-        <span class="grow">${escapeHtml(kindOf(s.name).label)}</span><span class="seq-mins">${s.mins} min</span></div>`).join('')}</div>
-      <p class="note" style="text-align:center">Totale ${fmtTotal(sumMins(t.steps))}</p>`);
-    const use = document.createElement('button');
-    use.type = 'button'; use.className = 'btn accent block'; use.textContent = 'Usa questo template';
-    use.addEventListener('click', () => {
-      S.steps = t.steps.map(s => ({ ...s })); activeTpl = t.name;
+        <span class="grow">${escapeHtml(kindOf(s.name).label)}</span><span class="seq-mins">${mins(s.mins)}</span></div>`).join('')}</div>`);
+    const edit = document.createElement('button');
+    edit.type = 'button'; edit.className = 'btn block'; edit.textContent = 'Modifica';
+    edit.addEventListener('click', () => editTemplate(t));
+    body.append(edit, armedButton('Elimina template', () => {
+      templates = templates.filter(x => x !== t); write(TPL_KEY, templates);
+      if (S.tpl === t.name) S.tpl = null;
       saveSettings(); closeAppSheet(); renderSetup();
-    });
-    body.append(use, armedButton('Elimina template', () => {
-      templates.splice(i, 1); write(TPL_KEY, templates);
-      if (activeTpl === t.name) activeTpl = null;
-      closeAppSheet(); renderTemplates();
     }));
   });
 }
 
-function setMins(v) {
-  S.mins = Math.min(90, Math.max(1, Math.round(v)));
-  $('min-val').textContent = S.mins;
-  $('min-range').value = S.mins;
-  document.querySelectorAll('#quick-mins .pill').forEach(p => p.setAttribute('aria-pressed', String(+p.dataset.m === S.mins)));
-  saveSettings(); renderHero();
-}
+/** Crea o modifica un template: l'unico posto dove si compone una sequenza. */
+function editTemplate(t) {
+  const steps = t ? t.steps.map(s => ({ ...s })) : [{ mins: 20, name: 'Meditazione' }];
+  const MIN_OPTS = [...Array.from({ length: 60 }, (_, i) => i + 1), 75, 90];
+  showSheet(t ? 'Modifica template' : 'Nuovo template', body => {
+    const name = document.createElement('input');
+    name.className = 'input'; name.maxLength = 28; name.placeholder = 'Nome'; name.value = t ? t.name : '';
+    const rows = document.createElement('div');
+    rows.style.cssText = 'display:flex;flex-direction:column;gap:var(--space-2)';
 
-function renderBuilder() {
-  const quick = $('quick-mins');
-  quick.innerHTML = '';
-  [5, 10, 15, 20, 30, 45, 60].forEach(m => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'pill'; b.dataset.m = m; b.textContent = `${m}′`;
-    b.addEventListener('click', () => setMins(m));
-    quick.appendChild(b);
-  });
-  const kc = $('kind-chips');
-  kc.innerHTML = '';
-  kc.appendChild(kindChips(S.kind, k => { S.kind = k; saveSettings(); renderHero(); }));
-  setMins(S.mins);
-}
+    const draw = () => {
+      rows.innerHTML = '';
+      steps.forEach((s, i) => {
+        const r = document.createElement('div');
+        r.className = 'step-edit';
+        r.innerHTML = `
+          <select aria-label="Tipo">${KINDS.map(k => `<option value="${escapeHtml(k.name)}"${k.name === s.name ? ' selected' : ''}>${k.label}</option>`).join('')}</select>
+          <select aria-label="Minuti">${MIN_OPTS.map(m => `<option value="${m}"${m === s.mins ? ' selected' : ''}>${m} min</option>`).join('')}</select>
+          <button type="button" class="text-btn danger" ${steps.length === 1 ? 'disabled' : ''}>Togli</button>`;
+        const [kind, mn, rm] = r.children;
+        kind.addEventListener('change', () => { s.name = kind.value; });
+        mn.addEventListener('change', () => { s.mins = +mn.value; });
+        rm.addEventListener('click', () => { steps.splice(i, 1); draw(); });
+        rows.appendChild(r);
+      });
+    };
+    draw();
 
-function renderSequence() {
-  $('seq-section').hidden = !S.steps.length;
-  const list = $('seq-list');
-  list.innerHTML = '';
-  S.steps.forEach((s, i) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = `seq-row ${kindOf(s.name).cls}`;
-    b.innerHTML = `<span class="seq-dot"></span><span class="seq-name">${escapeHtml(kindOf(s.name).label)}</span><span class="seq-mins">${s.mins} min</span>`;
-    b.addEventListener('click', () => editStep(i));
-    list.appendChild(b);
-  });
-}
+    const addStep = document.createElement('button');
+    addStep.type = 'button'; addStep.className = 'text-btn'; addStep.style.alignSelf = 'flex-start';
+    addStep.textContent = 'Aggiungi intervallo';
+    addStep.addEventListener('click', () => { const last = steps[steps.length - 1]; steps.push({ mins: last ? last.mins : 10, name: last ? last.name : 'Meditazione' }); draw(); });
 
-function editStep(i) {
-  const s = S.steps[i];
-  showSheet('Intervallo', body => {
-    const wrap = document.createElement('div');
-    wrap.className = 'stepper';
-    wrap.innerHTML = `
-      <button class="round-btn" type="button" data-d="-1" aria-label="Meno un minuto"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
-      <div class="stepper-val"><span id="es-val">${s.mins}</span><small>min</small></div>
-      <button class="round-btn" type="button" data-d="1" aria-label="Più un minuto"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>`;
-    let mins = s.mins, kind = s.name;
-    wrap.addEventListener('click', e => {
-      const d = e.target.closest('[data-d]')?.dataset.d;
-      if (!d) return;
-      mins = Math.min(180, Math.max(1, mins + +d));
-      wrap.querySelector('#es-val').textContent = mins;
-    });
     const save = document.createElement('button');
     save.type = 'button'; save.className = 'btn accent block'; save.textContent = 'Salva';
     save.addEventListener('click', () => {
-      S.steps[i] = { mins, name: kind }; activeTpl = null;
-      saveSettings(); closeAppSheet(); renderSetup();
+      const n = name.value.trim();
+      if (!n) { name.focus(); return; }
+      const entry = { name: n, steps: steps.map(s => ({ ...s })) };
+      templates = t ? templates.map(x => (x === t ? entry : x)) : [entry, ...templates.filter(x => x.name !== n)];
+      write(TPL_KEY, templates);
+      S.tpl = n; saveSettings(); closeAppSheet(); renderSetup();
     });
-    const move = document.createElement('div');
-    move.className = 'sheet-row';
-    [['Sposta su', -1], ['Sposta giù', 1]].forEach(([label, d]) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'btn'; b.textContent = label;
-      b.disabled = i + d < 0 || i + d >= S.steps.length;
-      b.addEventListener('click', () => {
-        [S.steps[i], S.steps[i + d]] = [S.steps[i + d], S.steps[i]]; activeTpl = null;
-        saveSettings(); closeAppSheet(); renderSetup();
+    body.append(name, rows, addStep, save);
+
+    const have = new Set(templates.map(x => x.name));
+    if (!t && DEFAULT_TEMPLATES.some(d => !have.has(d.name))) {
+      const restore = document.createElement('button');
+      restore.type = 'button'; restore.className = 'text-btn'; restore.textContent = 'Ripristina i template predefiniti';
+      restore.addEventListener('click', () => {
+        templates = [...DEFAULT_TEMPLATES.filter(d => !have.has(d.name)), ...templates];
+        write(TPL_KEY, templates); closeAppSheet(); renderSetup();
       });
-      move.appendChild(b);
-    });
-    body.append(wrap, kindChips(kind, k => { kind = k; }), save, move,
-      armedButton('Rimuovi intervallo', () => {
-        S.steps.splice(i, 1); activeTpl = null; saveSettings(); closeAppSheet(); renderSetup();
-      }));
+      body.appendChild(restore);
+    }
+    if (!t) setTimeout(() => name.focus(), 200);
   });
 }
 
-function saveAsTemplate() {
-  showSheet('Salva come template', body => {
-    const input = document.createElement('input');
-    input.className = 'input'; input.maxLength = 28; input.placeholder = 'Nome del template';
-    const ok = document.createElement('button');
-    ok.type = 'button'; ok.className = 'btn accent block'; ok.textContent = 'Salva';
-    ok.addEventListener('click', () => {
-      const name = input.value.trim();
-      if (!name) { input.focus(); return; }
-      templates = [{ name, steps: S.steps.map(s => ({ ...s })) }, ...templates.filter(t => t.name !== name)];
-      activeTpl = name; write(TPL_KEY, templates);
-      closeAppSheet(); renderTemplates();
-    });
-    body.append(input, ok);
-    setTimeout(() => input.focus(), 150);
-  });
-}
-
-function renderSound() {
-  const wrap = $('sound-groups');
-  wrap.innerHTML = '';
-  audio.SOUND_GROUPS.forEach(g => {
-    const box = document.createElement('div');
-    box.innerHTML = `<div class="field-lbl">${escapeHtml(g.title)}</div>`;
-    const chips = document.createElement('div');
-    chips.className = 'chips-wrap';
-    g.items.forEach(it => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'pill'; b.textContent = it.label; b.dataset.sound = it.id;
-      b.setAttribute('aria-pressed', String(S.sound === it.id));
-      b.addEventListener('click', () => {
-        S.sound = it.id; saveSettings();
-        audio.initAudio();
-        it.id === 'silence' ? audio.stopAmbient() : audio.preview(it.id);
-        wrap.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.sound === S.sound)));
+function openSound() {
+  showSheet('Sottofondo', body => {
+    audio.SOUND_GROUPS.forEach(g => {
+      const box = document.createElement('div');
+      box.innerHTML = `<div class="field-lbl">${escapeHtml(g.title)}</div>`;
+      const chips = document.createElement('div');
+      chips.className = 'chips-wrap';
+      g.items.forEach(it => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'pill'; b.textContent = it.label; b.dataset.sound = it.id;
+        b.setAttribute('aria-pressed', String(S.sound === it.id));
+        b.addEventListener('click', () => {
+          S.sound = it.id; saveSettings(); renderRows();
+          audio.initAudio();
+          it.id === 'silence' ? audio.stopAmbient() : audio.preview(it.id);
+          body.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.sound === S.sound)));
+        });
+        chips.appendChild(b);
       });
-      chips.appendChild(b);
+      box.appendChild(chips);
+      body.appendChild(box);
     });
-    box.appendChild(chips);
-    wrap.appendChild(box);
-  });
-
-  const vol = $('vol-range');
-  vol.value = Math.round(S.volume * 100);
-  $('vol-val').textContent = `${vol.value}%`;
-  audio.setAmbientVolume(S.volume);
-  vol.oninput = () => {
-    S.volume = vol.value / 100; $('vol-val').textContent = `${vol.value}%`;
-    audio.setAmbientVolume(S.volume);
-  };
-  vol.onchange = saveSettings;
-
-  const bells = $('bell-chips');
-  bells.innerHTML = '';
-  audio.BELLS.forEach(b => {
-    const el = document.createElement('button');
-    el.type = 'button'; el.className = 'pill'; el.textContent = b.label; el.dataset.bell = b.id;
-    el.setAttribute('aria-pressed', String(S.bell === b.id));
-    el.addEventListener('click', () => {
-      S.bell = b.id; saveSettings();
-      audio.initAudio(); audio.ring(b.id, 1);
-      bells.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.bell === S.bell)));
-    });
-    bells.appendChild(el);
+    const vol = document.createElement('div');
+    vol.innerHTML = `<div class="field-lbl">Volume</div><input type="range" min="0" max="100" step="1" aria-label="Volume del sottofondo" value="${Math.round(S.volume * 100)}"/>`;
+    const range = vol.querySelector('input');
+    range.addEventListener('input', () => { S.volume = range.value / 100; audio.setAmbientVolume(S.volume); });
+    range.addEventListener('change', saveSettings);
+    body.appendChild(vol);
   });
 }
 
-function renderSetup() { renderHero(); renderTemplates(); renderSequence(); }
+function openBell() {
+  showSheet('Campana', body => {
+    const list = document.createElement('div');
+    list.className = 'list';
+    audio.BELLS.forEach(b => {
+      const row = document.createElement('button');
+      row.type = 'button'; row.className = 'list-row';
+      const draw = () => { row.innerHTML = `<span class="grow">${b.label}</span>${S.bell === b.id ? icon('check', 'sm') : ''}`; };
+      draw();
+      row.addEventListener('click', () => {
+        S.bell = b.id; saveSettings(); renderRows();
+        audio.initAudio(); audio.ring(b.id, 1);
+        list.querySelectorAll('.list-row').forEach((r, i) => { r.innerHTML = `<span class="grow">${audio.BELLS[i].label}</span>${S.bell === audio.BELLS[i].id ? icon('check', 'sm') : ''}`; });
+      });
+      list.appendChild(row);
+    });
+    body.appendChild(list);
+  });
+}
 
-$('min-dec').addEventListener('click', () => setMins(S.mins - 1));
-$('min-inc').addEventListener('click', () => setMins(S.mins + 1));
-$('min-range').addEventListener('input', e => setMins(+e.target.value));
-$('btn-add-step').addEventListener('click', () => {
-  S.steps.push({ mins: S.mins, name: S.kind }); activeTpl = null;
-  saveSettings(); renderSetup();
-});
-$('btn-clear').addEventListener('click', () => { S.steps = []; activeTpl = null; saveSettings(); renderSetup(); });
-$('btn-save-tpl').addEventListener('click', saveAsTemplate);
+$('row-sound').addEventListener('click', openSound);
+$('row-bell').addEventListener('click', openBell);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CALENDARIO
@@ -657,8 +600,7 @@ document.addEventListener('visibilitychange', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 // AVVIO
 // ═══════════════════════════════════════════════════════════════════════════
-renderBuilder();
-renderSound();
+audio.setAmbientVolume(S.volume);
 renderSetup();
 
 waitForAuth().then(async () => {

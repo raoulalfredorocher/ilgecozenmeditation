@@ -47,19 +47,6 @@
     .bar i { display: block; border-radius: 3px; background: var(--k, var(--geco-blue)); min-width: 6px; }
     .bar.thin { height: 4px; gap: 2px; }
 
-    /* ── Riepilogo della pratica ── */
-    .hero {
-      background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-xl);
-      padding: var(--space-6) var(--space-5); text-align: center; box-shadow: var(--shadow-sm);
-      display: flex; flex-direction: column; gap: var(--space-4); align-items: center;
-    }
-    .hero-kanji { font-family: var(--font-serif); font-size: 1.5rem; color: var(--sakura); line-height: 1; }
-    .hero-total { font-size: 3rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
-    .hero-total small { font-size: 1.1rem; font-weight: 300; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
-    .hero-desc { font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; }
-    .hero .bar { max-width: 260px; }
-    .hero-hint { font-size: var(--fs-xs); color: var(--muted); letter-spacing: .04em; }
-
     /* ── Template: carte che scorrono in orizzontale ── */
     .tpl-row {
       display: flex; gap: var(--space-3); overflow-x: auto; scrollbar-width: none;
@@ -78,45 +65,28 @@
     .tpl-name { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; line-height: 1.25; min-height: 2.5em; }
     .tpl-meta { font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
 
-    /* ── Costruttore ── */
-    .panel { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); }
-    .stepper { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-    .stepper-val { font-size: 2.5rem; font-weight: 200; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1; text-align: center; flex: 1; }
-    .stepper-val small { font-size: var(--fs-sm); color: var(--muted); font-weight: 400; margin-left: 4px; letter-spacing: 0; }
-    .round-btn {
-      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
-      background: var(--surface); border: 0; color: var(--text); display: grid; place-items: center;
-      transition: transform .12s var(--ease), background-color .2s;
-    }
-    .round-btn:active { transform: scale(.9); background: var(--border); }
-    input[type="range"] { width: 100%; accent-color: var(--geco-blue); height: 28px; margin: 0; }
-    .chips-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    /* ── Scelte ── */
+    .mins-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
     .pill {
-      height: 36px; padding: 0 var(--space-4); border-radius: 999px; cursor: pointer;
-      background: var(--surface); border: 1px solid transparent; color: var(--text);
-      font-size: var(--fs-sm); display: inline-flex; align-items: center; gap: 7px;
-      transition: background-color .2s, color .2s, border-color .2s;
+      height: 44px; padding: 0 var(--space-4); border-radius: 999px; cursor: pointer;
+      background: var(--surface); border: 0; color: var(--text); font-size: var(--fs-md);
+      font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; justify-content: center;
+      transition: background-color .2s, color .2s;
     }
+    .mins-grid .pill { padding: 0; }
     .pill:active { transform: scale(.96); }
     .pill[aria-pressed="true"] { background: var(--text); color: var(--bg); }
-    .pill.kind::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--k, var(--geco-blue)); }
-    .pill.kind[aria-pressed="true"]::before { box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 60%, transparent); }
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .chips-wrap .pill { height: 38px; font-size: var(--fs-sm); }
     .field-lbl { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin-bottom: var(--space-2); }
-
-    .seq-row {
-      display: flex; align-items: center; gap: var(--space-3); width: 100%; text-align: left;
-      background: none; border: 0; padding: var(--space-3) 0; cursor: pointer; border-top: .5px solid var(--border);
-    }
-    .seq-row:first-child { border-top: 0; }
-    .seq-row:active { opacity: .6; }
+    .list-row .val { color: var(--muted); font-size: var(--fs-sm); }
+    .hint { text-align: center; font-size: var(--fs-xs); letter-spacing: .06em; color: var(--muted); }
+    .tpl-new { flex: 0 0 96px; justify-content: center; align-items: center; color: var(--muted); border-style: dashed; box-shadow: none; background: none; font-size: var(--fs-md); }
     .seq-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--k); flex-shrink: 0; }
-    .seq-name { flex: 1; font-size: var(--fs-md); }
-    .seq-mins { font-size: var(--fs-md); color: var(--muted); font-variant-numeric: tabular-nums; }
-    .seq-actions { display: flex; justify-content: space-between; padding-top: var(--space-2); border-top: .5px solid var(--border); }
-
-    .vol { display: flex; align-items: center; gap: var(--space-3); }
-    .vol span { font-size: var(--fs-xs); color: var(--muted); width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
-    .note { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+    .seq-mins { color: var(--muted); font-variant-numeric: tabular-nums; }
+    input[type="range"] { width: 100%; accent-color: var(--geco-blue); height: 28px; margin: 0; }
+    .step-edit { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: var(--space-2); align-items: center; }
+    .step-edit select { min-height: 44px; }
 
     /* ── Calendario ── */
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
@@ -230,64 +200,22 @@
 
     <!-- ═══ Imposta ═══ -->
     <section class="view" id="view-setup">
-      <div class="hero" id="hero"></div>
-
       <div class="zen-section">
-        <div class="block-title"><div class="zen-eyebrow">Template</div></div>
+        <div class="zen-eyebrow">Template</div>
         <div class="tpl-row" id="tpl-row"></div>
       </div>
 
       <div class="zen-section">
-        <div class="block-title"><div class="zen-eyebrow">Durata</div></div>
-        <div class="panel">
-          <div class="stepper">
-            <button class="round-btn" type="button" id="min-dec" aria-label="Meno un minuto">
-              <svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg>
-            </button>
-            <div class="stepper-val"><span id="min-val">20</span><small>min</small></div>
-            <button class="round-btn" type="button" id="min-inc" aria-label="Più un minuto">
-              <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
-            </button>
-          </div>
-          <input type="range" id="min-range" min="1" max="90" step="1" aria-label="Minuti"/>
-          <div class="chips-wrap" id="quick-mins"></div>
-          <div>
-            <div class="field-lbl">Tipo</div>
-            <div class="chips-wrap" id="kind-chips"></div>
-          </div>
-          <button class="btn block" type="button" id="btn-add-step">Aggiungi alla sequenza</button>
-          <p class="note">Una sola durata? Non serve aggiungere nulla: premi play in basso. Per unire più momenti (seduta, camminata, mantra) componi una sequenza.</p>
-        </div>
+        <div class="zen-eyebrow">Oppure scegli i minuti</div>
+        <div class="mins-grid" id="mins-grid"></div>
       </div>
 
-      <div class="zen-section" id="seq-section" hidden>
-        <div class="block-title">
-          <div class="zen-eyebrow">La tua sequenza</div>
-          <button class="text-btn danger" type="button" id="btn-clear">Svuota</button>
-        </div>
-        <div class="panel" style="gap:var(--space-3)">
-          <div id="seq-list"></div>
-          <div class="seq-actions">
-            <button class="text-btn" type="button" id="btn-save-tpl">Salva come template</button>
-          </div>
-        </div>
+      <div class="list">
+        <button class="list-row" type="button" id="row-sound"><span class="grow">Sottofondo</span><span class="val"></span><svg class="icon sm chev" aria-hidden="true"><use href="#i-back"/></svg></button>
+        <button class="list-row" type="button" id="row-bell"><span class="grow">Campana</span><span class="val"></span><svg class="icon sm chev" aria-hidden="true"><use href="#i-back"/></svg></button>
       </div>
 
-      <div class="zen-section">
-        <div class="block-title"><div class="zen-eyebrow">Suono</div></div>
-        <div class="panel">
-          <div id="sound-groups" style="display:flex;flex-direction:column;gap:var(--space-4)"></div>
-          <div>
-            <div class="field-lbl">Volume del sottofondo</div>
-            <div class="vol"><input type="range" id="vol-range" min="0" max="100" step="1" aria-label="Volume del sottofondo"/><span id="vol-val"></span></div>
-          </div>
-          <div>
-            <div class="field-lbl">Campana</div>
-            <div class="chips-wrap" id="bell-chips"></div>
-          </div>
-          <p class="note">Tocca un suono per ascoltarne l'anteprima. Le onde theta funzionano con le cuffie. La campana suona all'inizio, tra gli intervalli e tre volte alla fine.</p>
-        </div>
-      </div>
+      <p class="hint">Premi play in basso per iniziare</p>
     </section>
 
     <!-- ═══ Calendario ═══ -->
