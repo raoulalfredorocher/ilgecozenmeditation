@@ -26,19 +26,27 @@ import {
  */
 const CONFIG_URL = '/__/firebase/init.json';
 
+/**
+ * Indirizzo ufficiale dell'app. È anche l'authDomain di Firebase: tenendo
+ * pagina e login sullo stesso dominio, il login con redirect funziona anche
+ * su Safari/iOS (che blocca lo storage tra domini diversi), e Google accetta
+ * l'indirizzo di ritorno perché è quello registrato di default.
+ * Chi apre l'altro indirizzo di Firebase Hosting (*.web.app) viene spostato qui.
+ */
+const APP_HOST = 'ilgecozen-b2df7.firebaseapp.com';
+
+if (location.hostname.endsWith('.web.app') && !location.hostname.includes('--')) {
+  location.replace(`https://${APP_HOST}${location.pathname}${location.search}${location.hash}`);
+  await new Promise(() => {}); // ferma il caricamento finché il browser cambia pagina
+}
+
 async function loadConfig() {
   const res = await fetch(CONFIG_URL);
   if (!res.ok) {
     throw new Error(`Configurazione Firebase non trovata (${CONFIG_URL}). ` +
       'In locale crea __/firebase/init.json come descritto nel README.');
   }
-  const config = await res.json();
-  // Sui domini di Firebase Hosting il login usa lo stesso dominio della
-  // pagina: è ciò che fa funzionare signInWithRedirect su Safari/iOS, che
-  // blocca lo storage tra domini diversi.
-  const hosted = [`${config.projectId}.web.app`, `${config.projectId}.firebaseapp.com`];
-  if (hosted.includes(location.hostname)) config.authDomain = location.hostname;
-  return config;
+  return res.json();
 }
 
 export const firebaseConfig = await loadConfig();

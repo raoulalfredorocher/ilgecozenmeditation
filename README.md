@@ -5,7 +5,7 @@ spiritualità, passioni, relazioni, finanza e altro. Funziona nel browser ed è
 installabile come app sul telefono (PWA). Ogni utente accede con Google e vede
 solo i propri dati.
 
-- **App:** https://ilgecozen-b2df7.web.app (Firebase Hosting)
+- **App:** https://ilgecozen-b2df7.firebaseapp.com (Firebase Hosting)
 - **Tecnologie:** HTML, CSS e JavaScript (moduli ES) senza build, Firebase
   Authentication (Google) e Cloud Firestore.
 

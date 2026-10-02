@@ -6,11 +6,16 @@ pubblicato così com'è (escluse le cartelle elencate in `firebase.json → igno
 ## Firebase Hosting (consigliato)
 
 Gratuito nel piano Spark (10 GB di spazio, 360 MB/giorno di traffico), HTTPS
-incluso, dominio personalizzato gratuito. URL: https://ilgecozen-b2df7.web.app
+incluso, dominio personalizzato gratuito. URL: https://ilgecozen-b2df7.firebaseapp.com
+(chi apre https://ilgecozen-b2df7.web.app viene spostato lì in automatico).
 
 Vantaggi rispetto a GitHub Pages:
 - il login Google con redirect funziona anche su Safari/iOS, perché pagina e
-  login sono sullo stesso dominio (vedi `authDomain` in `js/core/firebase.js`);
+  login sono sullo stesso dominio `firebaseapp.com` (vedi `APP_HOST` in
+  `js/core/firebase.js`). Per usare un altro dominio (es. `web.app` o un dominio
+  personalizzato) bisogna aggiungere `https://<dominio>/__/auth/handler` tra gli
+  "URI di reindirizzamento autorizzati" del client OAuth nella Google Cloud
+  Console, altrimenti Google risponde `redirect_uri_mismatch`;
 - header di sicurezza configurabili (`firebase.json`);
 - anteprima automatica di ogni pull request.
 
