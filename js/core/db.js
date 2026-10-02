@@ -197,8 +197,38 @@ export function subscribeSavedDiets(callback) {
 }
 export async function addSavedDietDoc(dietData) {
   const col = userCol('saved_diets');
-  if (!col) return;
-  await addDoc(col, { ...dietData, createdAt: Date.now() });
+  if (!col) return null;
+  const ref = await addDoc(col, { ...dietData, createdAt: Date.now() });
+  return ref.id;
+}
+export async function updateSavedDietDoc(docId, fields) {
+  const ref = userDoc('saved_diets', docId);
+  if (!ref) return;
+  await setDoc(ref, fields, { merge: true });
+}
+
+/** Dieta attiva con nome e riferimento alla raccolta delle diete: { days, name, dietId }. */
+export function subscribeDietFull(callback) {
+  if (!db || !auth?.currentUser) { callback(null); return () => {}; }
+  return onSnapshot(doc(db, 'users', auth.currentUser.uid, 'diet', 'current'), snap => {
+    callback(snap.exists() ? snap.data() : null);
+  });
+}
+export async function saveDietCurrent(data) {
+  if (!db || !auth?.currentUser) return;
+  await setDoc(doc(db, 'users', auth.currentUser.uid, 'diet', 'current'), data);
+}
+
+/** Alimenti aggiunti a mano (si sommano al database di base): macros/foods → { foods: [...] }. */
+export function subscribeCustomFoods(callback) {
+  if (!db || !auth?.currentUser) { callback([]); return () => {}; }
+  return onSnapshot(doc(db, 'users', auth.currentUser.uid, 'macros', 'foods'), snap => {
+    callback(snap.exists() ? snap.data().foods || [] : []);
+  });
+}
+export async function saveCustomFoods(foods) {
+  if (!db || !auth?.currentUser) return;
+  await setDoc(doc(db, 'users', auth.currentUser.uid, 'macros', 'foods'), { foods });
 }
 export async function deleteSavedDietDoc(docId) {
   const ref = userDoc('saved_diets', docId);
