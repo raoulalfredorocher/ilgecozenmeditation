@@ -94,8 +94,8 @@
     /* ── TAB BAR ── */
     .tab-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: calc(58px + env(safe-area-inset-bottom, 0px));
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      height: calc(58px + min(env(safe-area-inset-bottom, 0px), 34px));
+      padding-bottom: min(env(safe-area-inset-bottom, 0px), 34px);
       background: var(--card); border-top: 1px solid var(--border);
       border-radius: 22px 22px 0 0;
       display: flex; align-items: center; justify-content: space-around;
@@ -263,7 +263,7 @@
     .diary-icon-btn.del:active { border-color: #d6454555; }
 
     .btn-add-fab {
-      position: fixed; bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 16px);
+      position: fixed; bottom: calc(72px + min(env(safe-area-inset-bottom, 0px), 34px) + 16px);
       right: calc(50% - 210px + 20px); width: 46px; height: 46px;
       border-radius: 50%; background: var(--primary); border: none;
       color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer;
@@ -367,7 +367,7 @@
     .modal-overlay.open { opacity: 1; pointer-events: auto; }
     .modal-sheet {
       width: 100%; max-width: 420px; background: var(--card);
-      border-radius: 26px 26px 0 0; padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 24px);
+      border-radius: 26px 26px 0 0; padding: 0 0 calc(min(env(safe-area-inset-bottom, 0px), 34px) + 24px);
       max-height: 92dvh; overflow-y: auto;
       transform: translateY(100%); transition: transform .28s cubic-bezier(.32,1.28,.5,1);
     }
@@ -414,7 +414,7 @@
     .edit-overlay.open { display: flex; }
     .edit-sheet {
       background: var(--card); border-radius: 22px 22px 0 0;
-      padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+      padding: 20px 20px calc(min(env(safe-area-inset-bottom, 0px), 34px) + 24px);
       width: 100%; max-width: 420px; max-height: 92dvh; overflow-y: auto;
     }
     .edit-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 16px; }

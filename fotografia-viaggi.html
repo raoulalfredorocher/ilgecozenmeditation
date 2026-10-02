@@ -55,7 +55,7 @@
     }
 
     /* ── Sezione paesi ── */
-    #countries-section{padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 80px)}
+    #countries-section{padding:16px 16px calc(min(env(safe-area-inset-bottom, 0px), 34px) + 80px)}
 
     /* ── Blocco continente con accordion ── */
     .continent-block{margin-bottom:16px}
@@ -127,7 +127,7 @@
     .btn-cancel{background:none;border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-size:.72rem;font-family:inherit;color:var(--muted);cursor:pointer}
 
     /* ── Stats bar ── */
-    #stats-bar{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 68px);left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.6rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+    #stats-bar{position:fixed;bottom:calc(min(env(safe-area-inset-bottom, 0px), 34px) + 68px);left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.6rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
     .sv{color:var(--gold);font-weight:700;font-size:.72rem;margin-right:2px}
   </style>
   <script src="js/ui/theme-boot.js"></script>

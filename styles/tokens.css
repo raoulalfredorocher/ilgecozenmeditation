@@ -32,7 +32,7 @@
   --ease: cubic-bezier(.2, .8, .2, 1);
   --header-h: 56px;
   --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-bottom: min(env(safe-area-inset-bottom, 0px), 34px);
 }
 
 :root,

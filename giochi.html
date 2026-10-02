@@ -68,11 +68,11 @@
     .btn-add-partita{background:none;border:1.5px dashed var(--border);border-radius:10px;color:var(--muted);font-size:.7rem;font-family:inherit;padding:8px 14px;cursor:pointer;width:100%;text-align:center;margin-top:4px;transition:border-color .2s,color .2s;}
     .btn-add-partita:active{border-color:var(--gold);color:var(--gold);}
     /* FAB */
-    .fab-add{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px));right:20px;width:52px;height:52px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,115,158,.35);z-index:100;transition:transform .12s;}
+    .fab-add{position:fixed;bottom:calc(68px + min(env(safe-area-inset-bottom, 0px), 34px));right:20px;width:52px;height:52px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,115,158,.35);z-index:100;transition:transform .12s;}
     .fab-add:active{transform:scale(.91);}
     .fab-add.hidden{display:none;}
     /* Modali */
-    .mo,.co,.vo,.po{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);}
+    .mo,.co,.vo,.po{position:fixed;inset:0;background:rgba(30,42,56,.52);display:none;align-items:flex-end;justify-content:center;padding-bottom:min(env(safe-area-inset-bottom, 0px), 34px);}
     .mo{z-index:300;}.co{z-index:400;}.vo{z-index:350;}.po{z-index:410;}
     .mo.open,.co.open,.vo.open,.po.open{display:flex;}
     .ms,.cs,.vo-sheet,.ps{width:100%;max-width:420px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px 28px;display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow-y:auto;}
