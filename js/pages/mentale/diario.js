@@ -43,26 +43,90 @@ function splitFirstSentence(text) {
 }
 
 // ─── Elenco ─────────────────────────────────────────────────────────────────
-function render() {
-  const sorted = [...entries].sort((a, b) => (sortKey(a) < sortKey(b) ? 1 : -1));
-  const q = search.trim().toLowerCase();
-  const shown = q ? sorted.filter(e => `${e.titolo || ''} ${e.testo || ''}`.toLowerCase().includes(q)) : sorted;
+// vista scelta: elenco (predefinita) o calendario
+let view = 'list';
+try { if (localStorage.getItem('zen_diary_view') === 'cal') view = 'cal'; } catch { /* storage non disponibile */ }
+const now0 = new Date();
+let calY = now0.getFullYear(), calM = now0.getMonth(), selDay = null;
 
+function render() {
   const s = streak();
   $('j-top').innerHTML = entries.length
     ? `<div class="j-stats">${entries.length} ${entries.length === 1 ? 'voce' : 'voci'}${s > 1 ? ` · ${s} giorni di fila` : ''}</div>
-       <input class="input j-search" id="j-search" type="search" placeholder="Cerca nel diario" value="${esc(search)}" autocomplete="off"/>`
+       <div class="segmented j-views" role="group" aria-label="Vista del diario">
+         <button type="button" data-jview="list" aria-pressed="${view === 'list'}">Elenco</button>
+         <button type="button" data-jview="cal" aria-pressed="${view === 'cal'}">Calendario</button>
+       </div>
+       ${view === 'list' ? `<input class="input j-search" id="j-search" type="search" placeholder="Cerca nel diario" value="${esc(search)}" autocomplete="off"/>` : ''}`
     : '';
-  $('j-search')?.addEventListener('input', e => { search = e.target.value; renderList(shown.length, e.target); });
-
-  renderListBody(shown);
+  $('j-search')?.addEventListener('input', e => { search = e.target.value; renderList(); });
+  renderList();
 }
 
 // la ricerca ridisegna solo l'elenco, così la tastiera non si chiude
 function renderList() {
+  if (view === 'cal' && entries.length) { renderCalendar(); return; }
   const sorted = [...entries].sort((a, b) => (sortKey(a) < sortKey(b) ? 1 : -1));
   const q = search.trim().toLowerCase();
   renderListBody(q ? sorted.filter(e => `${e.titolo || ''} ${e.testo || ''}`.toLowerCase().includes(q)) : sorted);
+}
+
+/** Una voce dell'elenco (usata sia dall'elenco sia dal calendario). */
+function rowHTML(e) {
+  const d = parseDay(entryDay(e));
+  const text = (e.testo || '').trim();
+  let title = (e.titolo || '').trim(), prev = text;
+  if (!title) ({ title, rest: prev } = splitFirstSentence(text));
+  const moods = (e.emozioni || []).map(labelOf).join(' · ');
+  return `<button type="button" class="j-row" data-id="${esc(e._docId)}">
+      <span class="j-day"><b>${d.getDate()}</b><span>${GIORNI_BREVI[d.getDay()]}</span></span>
+      <span class="j-main">
+        <span class="j-title">${esc(title)}</span>
+        ${prev ? `<span class="j-prev">${esc(prev)}</span>` : ''}
+        ${moods ? `<span class="j-moods">${esc(moods)}</span>` : ''}
+      </span></button>`;
+}
+
+// ─── Vista calendario ───────────────────────────────────────────────────────
+function renderCalendar() {
+  const ym = `${calY}-${String(calM + 1).padStart(2, '0')}`;
+  const byDay = {};
+  entries.forEach(e => { const k = entryDay(e); if (k.startsWith(ym)) (byDay[k] ||= []).push(e); });
+  const offset = (new Date(calY, calM, 1).getDay() + 6) % 7;     // settimana da lunedì
+  const days = new Date(calY, calM + 1, 0).getDate();
+  const todayKey = dayStr(Date.now());
+  const DOW = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
+  if (selDay && !selDay.startsWith(ym)) selDay = null;
+
+  let grid = DOW.map(d => `<div class="jc-dow">${d}</div>`).join('') + '<div></div>'.repeat(offset);
+  for (let d = 1; d <= days; d++) {
+    const key = `${ym}-${String(d).padStart(2, '0')}`;
+    const n = (byDay[key] || []).length;
+    const cls = ['jc-day', n && 'has', key === todayKey && 'today', key === selDay && 'sel'].filter(Boolean).join(' ');
+    grid += `<button type="button" class="${cls}" data-day="${key}" aria-label="${d} ${mese(calM)}${n ? `, ${n} ${n === 1 ? 'voce' : 'voci'}` : ''}">${d}</button>`;
+  }
+
+  const sel = selDay ? (byDay[selDay] || []).sort((a, b) => (sortKey(a) < sortKey(b) ? 1 : -1)) : null;
+  let below = '';
+  if (selDay) {
+    const d = parseDay(selDay);
+    below = `<div class="j-month">${GIORNI_BREVI[d.getDay()]} ${d.getDate()} ${mese(d.getMonth())}</div>` +
+      (sel.length ? sel.map(rowHTML).join('')
+        : `<div class="j-empty" style="padding:var(--space-5) 0"><p>Nessuna voce in questo giorno.</p><button type="button" class="text-btn" data-write="${selDay}">Scrivi per questo giorno</button></div>`);
+  } else if (!Object.keys(byDay).length) {
+    below = '<div class="j-empty" style="padding:var(--space-5) 0"><p>Nessuna voce in questo mese.</p></div>';
+  } else {
+    below = '<p class="note" style="text-align:center;margin-top:var(--space-4)">Tocca un giorno per leggere le sue voci.</p>';
+  }
+
+  $('j-list').innerHTML = `
+    <div class="jc-head">
+      <button type="button" class="icon-btn" data-jmonth="-1" aria-label="Mese precedente"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
+      <div class="jc-title">${mese(calM)} ${calY}</div>
+      <button type="button" class="icon-btn next" data-jmonth="1" aria-label="Mese successivo"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
+    </div>
+    <div class="jc-grid">${grid}</div>
+    ${below}`;
 }
 
 function renderListBody(shown) {
@@ -80,17 +144,7 @@ function renderListBody(shown) {
       month = m;
       html += `<div class="j-month">${mese(d.getMonth())} ${d.getFullYear()}</div>`;
     }
-    const text = (e.testo || '').trim();
-    let title = (e.titolo || '').trim(), prev = text;
-    if (!title) ({ title, rest: prev } = splitFirstSentence(text));
-    const moods = (e.emozioni || []).map(labelOf).join(' · ');
-    html += `<button type="button" class="j-row" data-id="${esc(e._docId)}">
-      <span class="j-day"><b>${d.getDate()}</b><span>${GIORNI_BREVI[d.getDay()]}</span></span>
-      <span class="j-main">
-        <span class="j-title">${esc(title)}</span>
-        ${prev ? `<span class="j-prev">${esc(prev)}</span>` : ''}
-        ${moods ? `<span class="j-moods">${esc(moods)}</span>` : ''}
-      </span></button>`;
+    html += rowHTML(e);
   });
   host.innerHTML = html;
 }
@@ -133,14 +187,14 @@ function syncMeta() {
     : '<button type="button" class="text-btn" id="ed-photo">Aggiungi una foto</button>';
 }
 
-export function openEditor(entry = null) {
+export function openEditor(entry = null, presetDay = null) {
   editing = entry;
   const draft = entry ? null : readDraft();
   const now = Date.now();
   st = {
     titolo: entry ? entry.titolo || '' : draft?.titolo || '',
     testo: entry ? entry.testo || '' : draft?.testo || '',
-    data: entry ? entryDay(entry) : draft?.data || dayStr(now),
+    data: entry ? entryDay(entry) : presetDay || draft?.data || dayStr(now),
     ora: entry?.ora || timeStr(now),
     emozioni: [...(entry ? entry.emozioni || [] : draft?.emozioni || [])],
     attach: entry?.attachData ? { name: entry.attachName || 'allegato', data: entry.attachData, keep: true } : null,
@@ -239,9 +293,22 @@ export function initDiario() {
   render();
 
   $('j-list').addEventListener('click', e => {
+    const m = e.target.closest('[data-jmonth]');
+    if (m) { calM += +m.dataset.jmonth; if (calM < 0) { calM = 11; calY--; } if (calM > 11) { calM = 0; calY++; } selDay = null; renderCalendar(); return; }
+    const day = e.target.closest('[data-day]');
+    if (day) { selDay = selDay === day.dataset.day ? null : day.dataset.day; renderCalendar(); return; }
+    const write = e.target.closest('[data-write]');
+    if (write) { openEditor(null, write.dataset.write); return; }
     const id = e.target.closest('.j-row')?.dataset.id;
     const entry = entries.find(x => x._docId === id);
     if (entry) openEditor(entry);
+  });
+  $('j-top').addEventListener('click', e => {
+    const v = e.target.closest('[data-jview]')?.dataset.jview;
+    if (!v || v === view) return;
+    view = v;
+    try { localStorage.setItem('zen_diary_view', v); } catch { /* storage non disponibile */ }
+    render();
   });
   $('j-csv').addEventListener('click', exportCSV);
 

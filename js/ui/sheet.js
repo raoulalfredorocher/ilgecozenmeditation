@@ -120,6 +120,11 @@ function isVisible(el) {
   return s.display !== 'none' && s.visibility !== 'hidden' && el.getClientRects().length > 0;
 }
 
+/** Dopo una chiusura "a mano": se non resta nessun foglio aperto, la pagina torna a scorrere. */
+function releaseScroll() {
+  if (!document.querySelector('.zen-sheet-overlay.open')) document.documentElement.style.overflow = '';
+}
+
 /** Chiude usando la logica della pagina (tocco sull'overlay), altrimenti le classi. */
 function closeOverlay(overlay) {
   overlay.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
@@ -127,7 +132,32 @@ function closeOverlay(overlay) {
   const cls = OPEN_CLASSES.find(c => overlay.classList.contains(c));
   if (cls) overlay.classList.remove(cls);
   else overlay.style.display = 'none';
+  releaseScroll();
 }
+
+/** true se `el` ha la forma di un foglio: livello fisso a tutto schermo con un pannello ancorato in basso. */
+function isSheetOverlay(el) {
+  if (getComputedStyle(el).position !== 'fixed') return false;
+  const r = el.getBoundingClientRect();
+  if (!(r.top <= 1 && r.left <= 1 && r.bottom >= innerHeight - 1 && r.right >= innerWidth - 1)) return false;
+  return [...el.children].some(c => {
+    const cr = c.getBoundingClientRect();
+    return cr.height > 0 && cr.bottom >= r.bottom - 2 && cr.top > r.top + 24;
+  });
+}
+
+// ─── Tocco fuori dal foglio ─────────────────────────────────────────────────
+// Vale per tutti i fogli aperti tramite classe. Gira dopo la logica della
+// pagina: se la pagina ha già chiuso il foglio (classe tolta) non fa nulla.
+// Esclusi i livelli con data-no-outside-close (pratica, editor a tutto schermo).
+document.addEventListener('click', e => {
+  const overlay = e.target;
+  if (!(overlay instanceof HTMLElement) || overlay.hasAttribute('data-no-outside-close')) return;
+  const cls = OPEN_CLASSES.find(c => overlay.classList.contains(c));
+  if (!cls || !isSheetOverlay(overlay)) return;
+  overlay.classList.remove(cls);
+  releaseScroll();
+});
 
 // ─── Touch (telefono) ───────────────────────────────────────────────────────
 document.addEventListener('touchstart', e => {

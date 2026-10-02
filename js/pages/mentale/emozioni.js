@@ -1,13 +1,16 @@
 /**
- * emozioni.js — scheda Emozioni: ruota intera e toccabile, e per ogni emozione
- * una pagina di studio con i tuoi appunti e il registro di quando l'hai provata
- * (adesso o in passato).
+ * emozioni.js — scheda Emozioni.
  *
- * Su Firestore ogni voce è { kind: 'note' | 'felt', text, ts }. Le voci della
- * vecchia pagina non hanno `kind`: sono appunti (note).
+ * La ruota mostra le sei emozioni di base. Aprendone una si vede la sua
+ * pagina: la ruota con tutte le emozioni di quella famiglia e i tuoi appunti.
+ * Un appunto ha una data (oggi, o un giorno passato): serve sia per studiare
+ * l'emozione sia per ricordare quando l'hai provata.
+ *
+ * Su Firestore ogni voce è { text, ts, kind? }. Le voci delle versioni
+ * precedenti (anche kind: 'felt', "l'ho provata") si vedono tutte come appunti.
  */
-import { EMOTIONS, OTHERS, familyOf, labelOf } from './data.js';
-import { wheelSVG } from './wheel.js';
+import { EMOTIONS, familyOf, labelOf } from './data.js';
+import { primaryWheelSVG, familyWheelSVG } from './wheel.js';
 import * as store from './store.js';
 import { $, esc, showSheet, hideSheet, armedButton, fmtDay, dayStr, withDay, noonOf } from './ui.js';
 
@@ -21,190 +24,128 @@ function subscribe(key) {
   if (!col) return;
   unsubs[key] = store.onSnapshot(store.query(col, store.orderBy('ts', 'asc')), snap => {
     cache[key] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (current === key && $('sheet-a').classList.contains('open')) fill(key);
+    if (current === key && $('sheet-a').classList.contains('open')) fillNotes(key);
   }, err => console.warn('emozioni', err));
 }
 
-// ─── Pagina di studio di una emozione ───────────────────────────────────────
+// ─── Pagina di una emozione ─────────────────────────────────────────────────
 export function openEmotion(key) {
   if (!EMOTIONS[key]) return;
   current = key;
   subscribe(key);
-  showSheet(labelOf(key), () => fill(key));
+  showSheet(labelOf(key), body => {
+    const e = EMOTIONS[key], fam = familyOf(key);
+    // emozione non di base: un solo link per tornare alla famiglia
+    if (e.level > 1 && fam) {
+      const back = document.createElement('button');
+      back.type = 'button'; back.className = 'text-btn back-link'; back.textContent = `‹ ${fam.label}`;
+      back.addEventListener('click', () => openEmotion(fam.key));
+      body.appendChild(back);
+    }
+    // emozione di base: la ruota con tutte le emozioni che le appartengono
+    if (e.level === 1) {
+      const w = document.createElement('div');
+      w.className = 'family-wheel';
+      w.innerHTML = familyWheelSVG(key);
+      w.addEventListener('click', ev => {
+        const cell = ev.target.closest('.cell');
+        if (cell) openEmotion(cell.dataset.key);
+      });
+      body.appendChild(w);
+    }
+    const notes = document.createElement('div');
+    notes.id = 'emo-notes';
+    body.appendChild(notes);
+    fillNotes(key);
+  });
 }
 
-function pills(keys) {
-  return keys.map(k => `<button type="button" class="pill" data-open="${k}">${esc(labelOf(k))}</button>`).join('');
-}
+/** Appunti: schede con bordo chiaro + campo di scrittura. Si ridisegna a ogni aggiornamento. */
+function fillNotes(key) {
+  const host = $('emo-notes');
+  if (!host) return;
+  const kept = host.querySelector('textarea')?.value || '';       // non perdere ciò che stai scrivendo
+  const keptDay = host.querySelector('input[type=date]')?.value || dayStr(Date.now());
+  const entries = [...(cache[key] || [])].sort((a, b) => b.ts - a.ts);
 
-function fill(key) {
-  const body = $('sheet-a-body');
-  const kept = body.querySelector('.composer')?.value || '';   // non perdere ciò che stai scrivendo
-  const e = EMOTIONS[key], fam = familyOf(key);
-  const entries = cache[key] || [];
-  const notes = entries.filter(x => x.kind !== 'felt');
-  const felt = entries.filter(x => x.kind === 'felt').sort((a, b) => b.ts - a.ts);
-
-  const crumb = [fam && fam.label, e.parent && e.level === 3 && labelOf(e.parent)].filter(Boolean);
-  const related = [e.parent, ...e.children].filter(Boolean);
-
-  body.innerHTML = `
-    <div class="emo-head">
-      ${fam ? `<span class="fam-dot" style="--h:${fam.hue}"></span>` : ''}
-      <span class="emo-crumb">${crumb.length ? crumb.map(esc).join(' › ') + ' › ' : ''}${e.level === 0 ? 'Altre emozioni' : ['', 'Emozione di base', 'Secondo livello', 'Terzo livello'][e.level]}</span>
-    </div>
-    ${e.about ? `<p class="emo-about">${esc(e.about)}</p>` : ''}
-    ${related.length ? `<div class="chips-wrap">${pills(related)}</div>` : ''}
-
-    <div class="emo-log-actions">
-      <button type="button" class="btn accent block" id="emo-now">L’ho provata ora</button>
-      <button type="button" class="text-btn" id="emo-past">Segna un’altra data</button>
-    </div>
-
-    <div>
-      <div class="field-lbl">I miei appunti</div>
-      <div class="entries" id="emo-notes">${notes.length ? '' : '<p class="empty-line">Cos’è per te? Come la riconosci nel corpo? Scrivi qui ciò che capisci.</p>'}</div>
-      <div class="composer-row">
-        <textarea class="composer" rows="3" placeholder="Aggiungi un appunto…"></textarea>
-        <button type="button" class="text-btn" id="emo-add" hidden>Aggiungi</button>
+  host.innerHTML = `
+    <div class="field-lbl">I miei appunti${entries.length ? ` · ${entries.length}` : ''}</div>
+    <div class="note-box">
+      <textarea rows="3" placeholder="Scrivi un appunto…" aria-label="Nuovo appunto"></textarea>
+      <div class="note-box-foot">
+        <label class="date-chip"><span></span><input type="date" max="${dayStr(Date.now())}" aria-label="Data dell’appunto"/></label>
+        <button type="button" class="btn accent sm" disabled>Aggiungi</button>
       </div>
     </div>
+    <div class="note-list"></div>`;
 
-    <div>
-      <div class="field-lbl">Quando l’ho provata${felt.length ? ` · ${felt.length}` : ''}</div>
-      <div class="entries" id="emo-felt">${felt.length ? '' : '<p class="empty-line">Nessuna volta registrata. Segnala ora, oppure un momento passato.</p>'}</div>
-    </div>`;
-
-  const addEntries = (host, list, kind) => list.forEach(en => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'entry';
-    b.innerHTML = kind === 'felt'
-      ? `<span class="entry-date">${fmtDay(en.ts)}</span>${en.text ? `<span class="entry-text">${esc(en.text)}</span>` : ''}`
-      : `<span class="entry-text">${esc(en.text)}</span>${en.ts ? `<span class="entry-date">${fmtDay(en.ts)}</span>` : ''}`;
-    b.addEventListener('click', () => editEntry(key, en));
-    host.appendChild(b);
-  });
-  addEntries($('emo-notes'), notes, 'note');
-  addEntries($('emo-felt'), felt, 'felt');
-
-  const ta = body.querySelector('.composer'), add = $('emo-add');
-  ta.value = kept;
-  const sync = () => { add.hidden = !ta.value.trim(); };
-  sync();
+  const ta = host.querySelector('textarea'), date = host.querySelector('input[type=date]');
+  const chip = host.querySelector('.date-chip span'), add = host.querySelector('.btn');
+  date.value = keptDay;
+  const sync = () => {
+    chip.textContent = date.value === dayStr(Date.now()) ? 'Oggi' : fmtDay(noonOf(date.value));
+    add.disabled = !ta.value.trim();
+  };
+  ta.value = kept; sync();
   ta.addEventListener('input', sync);
+  date.addEventListener('change', sync);
   add.addEventListener('click', async () => {
     const text = ta.value.trim();
     if (!text) return;
-    add.disabled = true;
-    await store.addDoc(store.emoCol(key), { kind: 'note', text, ts: Date.now(), createdAt: Date.now() });
-    ta.value = '';
+    const ts = date.value === dayStr(Date.now()) ? Date.now() : noonOf(date.value);
+    // prima si svuota il campo: l'aggiornamento dei dati ridisegna la lista e conserva ciò che c'è scritto
+    ta.value = ''; date.value = dayStr(Date.now()); sync();
+    await store.addDoc(store.emoCol(key), { kind: 'note', text, ts, createdAt: Date.now() });
   });
 
-  $('emo-now').addEventListener('click', async ev => {
-    const btn = ev.currentTarget;
-    btn.disabled = true; btn.textContent = 'Segnata';
-    await store.addDoc(store.emoCol(key), { kind: 'felt', text: '', ts: Date.now(), createdAt: Date.now() });
+  const list = host.querySelector('.note-list');
+  entries.forEach(en => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'note-card';
+    b.innerHTML = `<span class="nc-text">${esc(en.text || (en.kind === 'felt' ? 'L’ho provata' : ''))}</span><span class="nc-date">${fmtDay(en.ts)}</span>`;
+    b.addEventListener('click', () => editEntry(key, en));
+    list.appendChild(b);
   });
-  $('emo-past').addEventListener('click', () => pastSheet(key));
-  body.querySelectorAll('[data-open]').forEach(p => p.addEventListener('click', () => {
-    current = p.dataset.open; subscribe(current);
-    $('sheet-a-title').textContent = labelOf(current);
-    fill(current);
-    $('sheet-a').querySelector('.zen-sheet').scrollTop = 0;
-  }));
 }
 
-/** "L'ho provata in un altro momento": data e, se vuoi, cosa è successo. */
-function pastSheet(key) {
-  showSheet('Quando l’hai provata?', body => {
-    const today = dayStr(Date.now());
-    body.innerHTML = `
-      <div class="field"><label for="p-date">Giorno</label><input class="input" type="date" id="p-date" value="${today}" max="${today}"/></div>
-      <div class="field"><label for="p-text">Cosa è successo? (facoltativo)</label><textarea class="input" id="p-text" rows="4" placeholder="Il contesto, che cosa l’ha fatta nascere…"></textarea></div>`;
-    const ok = document.createElement('button');
-    ok.type = 'button'; ok.className = 'btn accent block'; ok.textContent = 'Salva';
-    ok.addEventListener('click', async () => {
-      const day = $('p-date').value;
-      if (!day) return;
-      ok.disabled = true;
-      const ts = day === today ? Date.now() : noonOf(day);
-      await store.addDoc(store.emoCol(key), { kind: 'felt', text: $('p-text').value.trim(), ts, createdAt: Date.now() });
-      hideSheet('sheet-b');
-    });
-    body.appendChild(ok);
-  }, 'sheet-b');
-}
-
-/** Modifica o elimina un appunto o una volta registrata. */
+/** Modifica o elimina un appunto. */
 function editEntry(key, en) {
-  const isFelt = en.kind === 'felt';
-  showSheet(isFelt ? 'Volta registrata' : 'Appunto', body => {
+  showSheet('Appunto', body => {
     body.innerHTML = `
-      ${isFelt ? `<div class="field"><label for="e-date">Giorno</label><input class="input" type="date" id="e-date" value="${dayStr(en.ts)}" max="${dayStr(Date.now())}"/></div>` : ''}
-      <div class="field"><textarea class="input" id="e-text" rows="${isFelt ? 4 : 7}" placeholder="${isFelt ? 'Cosa è successo? (facoltativo)' : 'Scrivi…'}">${esc(en.text || '')}</textarea></div>`;
+      <div class="note-box"><textarea id="e-text" rows="6" placeholder="Scrivi…" aria-label="Testo"></textarea></div>
+      <label class="field"><span class="field-lbl">Giorno</span><input class="input" type="date" id="e-date" value="${dayStr(en.ts)}" max="${dayStr(Date.now())}"/></label>`;
+    $('e-text').value = en.text || '';
     const save = document.createElement('button');
     save.type = 'button'; save.className = 'btn accent block'; save.textContent = 'Salva';
     save.addEventListener('click', async () => {
       const text = $('e-text').value.trim();
-      if (!isFelt && !text) return;
+      if (!text && en.kind !== 'felt') return;
       const fields = { text };
-      if (isFelt && $('e-date').value) fields.ts = withDay(en.ts, $('e-date').value);
+      if ($('e-date').value) fields.ts = withDay(en.ts, $('e-date').value);
       save.disabled = true;
       await store.updateDoc(store.emoRef(key, en.id), fields);
       hideSheet('sheet-b');
     });
-    body.append(save, armedButton(isFelt ? 'Elimina questa volta' : 'Elimina appunto', async () => {
+    body.append(save, armedButton('Elimina appunto', async () => {
       await store.deleteDoc(store.emoRef(key, en.id));
       hideSheet('sheet-b');
     }));
-    if (!isFelt) setTimeout(() => { const t = $('e-text'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); }, 250);
+    setTimeout(() => { const t = $('e-text'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); }, 250);
   }, 'sheet-b');
 }
 
 // ─── Scheda Emozioni ────────────────────────────────────────────────────────
-const ZOOM = 1200;
-
-function openZoom() {
-  const view = $('wheel-zoom'), scroll = $('zoom-scroll');
-  scroll.innerHTML = wheelSVG(`${ZOOM}px`);
-  view.classList.add('on');
-  document.documentElement.style.overflow = 'hidden';
-  // leggere clientWidth forza il layout: il centro si calcola a schermata già disegnata
-  scroll.scrollLeft = (ZOOM - scroll.clientWidth) / 2;
-  scroll.scrollTop = (ZOOM - scroll.clientHeight) / 2;
-}
-function closeZoom() {
-  $('wheel-zoom').classList.remove('on');
-  document.documentElement.style.overflow = '';
-}
-
 export function initEmozioni() {
   $('view-emozioni').innerHTML = `
-    <div class="zen-section">
-      <div class="block-title"><div class="zen-eyebrow">Ruota delle emozioni</div><button class="text-btn" type="button" id="wheel-open">Ingrandisci</button></div>
-      <div class="wheel-wrap" id="wheel-wrap">${wheelSVG()}</div>
-      <p class="note">Tocca un’emozione per studiarla, scrivere i tuoi appunti e segnare quando la provi.</p>
-    </div>
-    <div class="zen-section">
-      <div class="zen-eyebrow">Altre emozioni</div>
-      <div class="chips-wrap" id="others">${OTHERS.map(o => `<button type="button" class="pill" data-open="${o.key}">${esc(o.label)}</button>`).join('')}</div>
-    </div>`;
-
+    <div class="wheel-wrap" id="wheel-wrap">${primaryWheelSVG()}</div>
+    <p class="note" style="text-align:center">Tocca un’emozione per studiarla e scrivere i tuoi appunti.</p>`;
   $('view-emozioni').addEventListener('click', e => {
-    const cell = e.target.closest('.cell');
-    if (cell) { openEmotion(cell.dataset.key); return; }
-    const pill = e.target.closest('[data-open]');
-    if (pill) { openEmotion(pill.dataset.open); return; }
-    if (e.target.closest('#wheel-open')) openZoom();
-  });
-  $('zoom-scroll').addEventListener('click', e => {
     const cell = e.target.closest('.cell');
     if (cell) openEmotion(cell.dataset.key);
   });
-  $('zoom-close').addEventListener('click', closeZoom);
 }
 
-/** Il + della barra in basso, sulla scheda Emozioni: scegli cosa senti. */
+/** Il + della barra in basso, sulla scheda Emozioni: cerca un'emozione tra tutte. */
 export function openPicker() {
   showSheet('Che emozione senti?', body => {
     body.innerHTML = '<input class="input" id="pick-q" type="search" placeholder="Cerca" autocomplete="off"/><div class="list" id="pick-list"></div>';
