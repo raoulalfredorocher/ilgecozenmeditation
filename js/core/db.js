@@ -89,7 +89,7 @@ export async function loadSessions() {
 export async function saveSessionDoc(data) {
   const col = userCol('meditation_sessions');
   if (!col) return;
-  await addDoc(col, { ts: Date.now(), totalMins: data.totalMins, steps: data.steps });
+  await addDoc(col, { ts: data.ts ?? Date.now(), totalMins: data.totalMins, steps: data.steps });
 }
 
 export async function clearSessions() {

@@ -15,6 +15,8 @@
  *   data-back    pagina a cui torna la freccia (default index.html; "none" = nessuna)
  *   data-add     selettore del pulsante "aggiungi" della pagina: il + della
  *                barra in basso lo preme. Senza, il + non compare.
+ *   data-add-icon / data-add-label  icona ed etichetta del pulsante centrale
+ *                (default: plus / Aggiungi; es. play / Avvia meditazione)
  *   data-tab     scheda attiva: home (default dal nome file)
  */
 import { injectIcons, icon } from './icons.js';
@@ -86,7 +88,7 @@ function buildTabbar() {
   nav.innerHTML = `
     <a class="zen-tab" href="index.html" aria-label="Home"${current('home')}>${icon('home')}</a>
     <button class="zen-tab" type="button" data-open-sheet="zen-sections" aria-label="Sezioni">${icon('grid')}</button>
-    ${addSel ? `<button class="zen-tab add" type="button" aria-label="Aggiungi">${icon('plus')}</button>` : ''}
+    ${addSel ? `<button class="zen-tab add" type="button" aria-label="${escapeHtml(body.dataset.addLabel || 'Aggiungi')}">${icon(body.dataset.addIcon || 'plus')}</button>` : ''}
     <button class="zen-tab" type="button" id="zen-tab-assistant" aria-label="Assistente">${icon('chat')}</button>
     <button class="zen-tab" type="button" data-open-sheet="zen-profile" aria-label="Profilo" id="zen-tab-profile">${icon('user')}</button>`;
   body.append(nav);

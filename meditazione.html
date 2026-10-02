@@ -5,215 +5,364 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Spiritualità"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" id="apple-touch-icon-link"/>
-  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png" id="favicon-link"/>
-  <title>Il Geco Zen — Timer di Meditazione</title>
-  <link rel="stylesheet" href="styles/theme.css?v=8"/>
-  <link rel="stylesheet" href="styles/layout.css?v=8"/>
-  <link rel="stylesheet" href="styles/timer.css?v=8"/>
-
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
+  <title>Il Geco Zen — Spiritualità</title>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
+  <style>
+    /* ── Spiritualità: pratica, calendario ─────────────────────────────────
+       Colori dei tipi di intervallo: blu = seduta, sakura = camminata,
+       corteccia = mantra, grigio = pausa. */
+    .med-main { gap: var(--space-6); }
+    .k-med    { --k: var(--geco-blue); }
+    .k-walk   { --k: var(--sakura); }
+    .k-mantra { --k: var(--bark); }
+    .k-rest   { --k: var(--border); }
+
+    /* Selettore delle due schermate, fisso sotto il titolo */
+    .seg-wrap {
+      position: sticky; top: calc(var(--safe-top) + var(--header-h)); z-index: 50;
+      margin: calc(-1 * var(--space-2)) 0 0; padding: var(--space-2) 0;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+    }
+    .view { display: flex; flex-direction: column; gap: var(--space-6); }
+    .view[hidden] { display: none !important; }
+
+    .block-title { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+    .block-title .zen-eyebrow { margin: 0; }
+    .text-btn {
+      background: none; border: 0; padding: 4px 2px; cursor: pointer;
+      font-size: var(--fs-sm); color: var(--geco-blue); font-weight: 500;
+    }
+    .text-btn:active { opacity: .6; }
+    .text-btn.danger { color: var(--danger); }
+
+    /* Barretta a segmenti proporzionali: la forma della pratica */
+    .bar { display: flex; gap: 3px; height: 6px; width: 100%; }
+    .bar i { display: block; border-radius: 3px; background: var(--k, var(--geco-blue)); min-width: 6px; }
+    .bar.thin { height: 4px; gap: 2px; }
+
+    /* ── Riepilogo della pratica ── */
+    .hero {
+      background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-xl);
+      padding: var(--space-6) var(--space-5); text-align: center; box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: var(--space-4); align-items: center;
+    }
+    .hero-kanji { font-family: var(--font-serif); font-size: 1.5rem; color: var(--sakura); line-height: 1; }
+    .hero-total { font-size: 3rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+    .hero-total small { font-size: 1.1rem; font-weight: 300; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+    .hero-desc { font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; }
+    .hero .bar { max-width: 260px; }
+    .hero-hint { font-size: var(--fs-xs); color: var(--muted); letter-spacing: .04em; }
+
+    /* ── Template: carte che scorrono in orizzontale ── */
+    .tpl-row {
+      display: flex; gap: var(--space-3); overflow-x: auto; scrollbar-width: none;
+      margin: 0 calc(-1 * var(--space-5)); padding: 2px var(--space-5) var(--space-2);
+      scroll-snap-type: x proximity;
+    }
+    .tpl-row::-webkit-scrollbar { display: none; }
+    .tpl {
+      flex: 0 0 168px; scroll-snap-align: start; text-align: left; cursor: pointer;
+      background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md);
+      padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3);
+      box-shadow: var(--shadow-sm); transition: transform .15s var(--ease), border-color .2s;
+    }
+    .tpl:active { transform: scale(.97); }
+    .tpl[aria-pressed="true"] { border-color: var(--geco-blue); }
+    .tpl-name { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; line-height: 1.25; min-height: 2.5em; }
+    .tpl-meta { font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    /* ── Costruttore ── */
+    .panel { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); }
+    .stepper { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .stepper-val { font-size: 2.5rem; font-weight: 200; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1; text-align: center; flex: 1; }
+    .stepper-val small { font-size: var(--fs-sm); color: var(--muted); font-weight: 400; margin-left: 4px; letter-spacing: 0; }
+    .round-btn {
+      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+      background: var(--surface); border: 0; color: var(--text); display: grid; place-items: center;
+      transition: transform .12s var(--ease), background-color .2s;
+    }
+    .round-btn:active { transform: scale(.9); background: var(--border); }
+    input[type="range"] { width: 100%; accent-color: var(--geco-blue); height: 28px; margin: 0; }
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .pill {
+      height: 36px; padding: 0 var(--space-4); border-radius: 999px; cursor: pointer;
+      background: var(--surface); border: 1px solid transparent; color: var(--text);
+      font-size: var(--fs-sm); display: inline-flex; align-items: center; gap: 7px;
+      transition: background-color .2s, color .2s, border-color .2s;
+    }
+    .pill:active { transform: scale(.96); }
+    .pill[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+    .pill.kind::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--k, var(--geco-blue)); }
+    .pill.kind[aria-pressed="true"]::before { box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 60%, transparent); }
+    .field-lbl { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin-bottom: var(--space-2); }
+
+    .seq-row {
+      display: flex; align-items: center; gap: var(--space-3); width: 100%; text-align: left;
+      background: none; border: 0; padding: var(--space-3) 0; cursor: pointer; border-top: .5px solid var(--border);
+    }
+    .seq-row:first-child { border-top: 0; }
+    .seq-row:active { opacity: .6; }
+    .seq-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--k); flex-shrink: 0; }
+    .seq-name { flex: 1; font-size: var(--fs-md); }
+    .seq-mins { font-size: var(--fs-md); color: var(--muted); font-variant-numeric: tabular-nums; }
+    .seq-actions { display: flex; justify-content: space-between; padding-top: var(--space-2); border-top: .5px solid var(--border); }
+
+    .vol { display: flex; align-items: center; gap: var(--space-3); }
+    .vol span { font-size: var(--fs-xs); color: var(--muted); width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
+    .note { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+
+    /* ── Calendario ── */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    .stat { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4) var(--space-2); text-align: center; }
+    .stat b { display: block; font-size: 1.75rem; font-weight: 300; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .stat span { font-size: .625rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    .cal-head { display: flex; align-items: center; justify-content: space-between; }
+    .cal-title { font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; text-transform: capitalize; }
+    .cal-nav .icon { width: 20px; height: 20px; }
+    .cal-nav.next .icon { transform: rotate(180deg); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 6px; text-align: center; }
+    .cal-dow { font-size: .625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-bottom: 4px; }
+    .cal-day {
+      position: relative; aspect-ratio: 1; max-width: 46px; width: 100%; margin: 0 auto; border-radius: 50%;
+      border: 0; background: none; font-size: var(--fs-md); color: var(--text); cursor: pointer;
+      font-variant-numeric: tabular-nums; transition: background-color .15s;
+    }
+    .cal-day:active { background: var(--surface); }
+    .cal-day.has { background: var(--geco-mist); color: var(--geco-blue); font-weight: 600; }
+    .cal-day.has::after { content: ''; position: absolute; left: 50%; bottom: 5px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--sakura); }
+    .cal-day.deep { background: var(--geco-blue); color: var(--on-primary); }
+    .cal-day.today { box-shadow: inset 0 0 0 1.5px var(--text); }
+    .cal-day.sel { box-shadow: 0 0 0 2px var(--sakura); }
+    .day-row { display: flex; align-items: center; gap: var(--space-4); width: 100%; background: none; border: 0; padding: var(--space-3) var(--space-4); text-align: left; cursor: pointer; }
+    .day-row + .day-row { border-top: .5px solid var(--border); }
+    .day-row:active { background: var(--surface); }
+    .day-n { width: 36px; text-align: center; }
+    .day-n b { display: block; font-size: 1.25rem; font-weight: 300; line-height: 1; }
+    .day-n span { font-size: .625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .day-info { flex: 1; min-width: 0; }
+    .day-info b { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .day-info small { display: block; color: var(--muted); font-size: var(--fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── Fogli di modifica ── */
+    .sheet-body { display: flex; flex-direction: column; gap: var(--space-4); }
+    .sheet-row { display: flex; gap: var(--space-2); }
+    .sheet-row > * { flex: 1; }
+    .btn.armed { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+    /* ── Schermata di pratica: inchiostro e silenzio ── */
+    .practice {
+      --ink: #0C171E; --paper: #E6EFF3; --faint: #8FA3AF; --glow: #8FD6EA; --blossom: #F2A9BC;
+      position: fixed; inset: 0; z-index: 300; color: var(--paper);
+      background: radial-gradient(120% 80% at 50% 38%, #12242E 0%, var(--ink) 70%);
+      display: none; flex-direction: column; align-items: center;
+      padding: calc(var(--safe-top) + var(--space-5)) var(--space-6) calc(var(--safe-bottom) + var(--space-8));
+      opacity: 0; transition: opacity .6s var(--ease);
+    }
+    .practice.on { display: flex; }
+    .practice.show { opacity: 1; }
+    .p-top { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: var(--space-4); }
+    .p-top-row { display: flex; justify-content: space-between; align-items: center; min-height: 32px; }
+    .p-eyebrow { font-size: .6875rem; letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
+    .p-end { background: none; border: 0; color: var(--faint); font-size: var(--fs-sm); padding: var(--space-2) 0 var(--space-2) var(--space-4); cursor: pointer; }
+    .p-end:active { color: var(--paper); }
+    .p-segs { display: flex; gap: 4px; }
+    .p-seg { height: 3px; border-radius: 2px; background: rgba(230, 239, 243, .14); overflow: hidden; }
+    .p-seg i { display: block; height: 100%; width: 0; background: var(--glow); }
+    .p-stage { flex: 1; display: grid; place-items: center; width: 100%; }
+    .enso { position: relative; width: min(78vw, 320px); aspect-ratio: 1; display: grid; place-items: center; }
+    .enso-glow {
+      position: absolute; inset: 14%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(143, 214, 234, .16), transparent 68%);
+      animation: breathe 9s ease-in-out infinite;
+    }
+    .practice.paused .enso-glow { animation-play-state: paused; opacity: .5; }
+    @keyframes breathe { 0%, 100% { transform: scale(.92); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
+    .enso svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .enso .track { fill: none; stroke: rgba(230, 239, 243, .13); stroke-width: 2.5; stroke-linecap: round; }
+    .enso .prog { fill: none; stroke: var(--glow); stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .25s linear; }
+    .enso .dot { fill: var(--blossom); }
+    .p-center { position: relative; text-align: center; }
+    .p-time { font-size: clamp(3.5rem, 18vw, 4.75rem); font-weight: 100; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+    .p-step { margin-top: var(--space-3); font-size: var(--fs-md); letter-spacing: .06em; color: var(--paper); }
+    .p-sub { margin-top: 4px; font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-variant-numeric: tabular-nums; }
+    .p-bottom { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+    .p-pause {
+      min-width: 168px; height: 52px; border-radius: 999px; padding: 0 var(--space-6); cursor: pointer;
+      background: transparent; color: var(--paper); border: 1px solid rgba(230, 239, 243, .28);
+      font-size: var(--fs-md); letter-spacing: .06em; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background-color .2s, transform .12s var(--ease);
+    }
+    .p-pause:active { transform: scale(.96); background: rgba(230, 239, 243, .08); }
+    .p-pause .icon { width: 18px; height: 18px; }
+    .p-done { display: none; flex-direction: column; align-items: center; text-align: center; gap: var(--space-4); }
+    .practice.done .p-stage-live, .practice.done .p-bottom, .practice.done .p-top { visibility: hidden; }
+    .practice.done .p-done { display: flex; position: absolute; inset: 0; justify-content: center; padding: var(--space-6); }
+    .p-kanji { font-family: "Hiragino Mincho ProN", "Yu Mincho", var(--font-serif); font-size: 6rem; font-weight: 300; line-height: 1; color: var(--blossom); }
+    .p-done h2 { font-size: var(--fs-xl); font-weight: 300; letter-spacing: .08em; }
+    .p-done p { color: var(--faint); font-size: var(--fs-sm); line-height: 1.6; }
+    .p-done a { color: var(--glow); }
+    .p-done .btn { margin-top: var(--space-4); min-width: 200px; background: transparent; color: var(--paper); border-color: rgba(230, 239, 243, .28); }
+    @media (prefers-reduced-motion: reduce) { .enso-glow { animation: none; } }
+  </style>
 </head>
-<body class="zen" data-title="Spiritualità" data-back="index.html">
+<body class="zen zen-native" data-title="Spiritualità" data-back="index.html"
+      data-add="#btn-add" data-add-icon="play" data-add-label="Avvia meditazione">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
+  <!-- Il + (play) della barra in basso preme questo pulsante: avvia la pratica -->
+  <button id="btn-add" type="button" hidden aria-hidden="true" tabindex="-1"></button>
 
-  <div id="bell-flash"></div>
-
-  <!-- DONE OVERLAY -->
-  <div id="done-overlay">
-    <div class="done-kanji">禅</div>
-    <div class="done-text">Sessione completata</div>
-    <div class="done-sub">三度の鐘 — tre rintocchi</div>
-    <div class="done-logo-wrap">
-      <img src="assets/img/logo.webp" alt="Il Geco Zen" class="done-logo"/>
-      <div class="done-promo">
-        Vuoi approfondire la mindfulness e la meditazione?<br>
-        Visita <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-      </div>
-    </div>
-    <button class="btn-done" id="btn-done-back">Ritorna alle Meditazioni</button>
-  </div>
-
-  <header id="main-header">
-    <!-- Pulsante "← Home" hub -->
-    <a class="btn-header-csv" id="btn-hub-home" href="index.html" aria-label="Torna alla home hub"
-       style="text-decoration:none;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>TAO</span>
-    </a>
-    <!-- Pulsante export CSV: visibile solo nella schermata cronologia -->
-    <button class="btn-header-csv" id="btn-export-csv" style="visibility:hidden" aria-label="Esporta CSV">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span>CSV</span>
-    </button>
-    <div class="header-center">
-      <a href="index.html" aria-label="Torna all'hub" style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;">
-        <img src="assets/img/logo.webp" alt="Il Geco Zen" class="header-logo"/>
-        <div class="app-title">Il Geco Zen</div>
-        <div class="app-sub">timer di meditazione</div>
-      </a>
-    </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
-  </header>
-
-  <!-- SCHERMATA HOME / CONFIGURAZIONE -->
-  <div class="screen active" id="screen-config">
-
-    <div class="picker-section">
-      <div class="picker-label">seleziona minuti</div>
-      <div class="picker-wrap" id="picker-wrap">
-        <div class="picker-highlight"></div>
-        <div class="picker-drum" id="picker-drum"></div>
+  <main class="zen-main med-main">
+    <div class="seg-wrap">
+      <div class="segmented" role="group" aria-label="Schermata">
+        <button type="button" data-view="setup" aria-pressed="true">Imposta</button>
+        <button type="button" data-view="cal" aria-pressed="false">Calendario</button>
       </div>
     </div>
 
-    <button class="btn-add-step" id="btn-add">＋ Aggiungi Intervallo</button>
+    <!-- ═══ Imposta ═══ -->
+    <section class="view" id="view-setup">
+      <div class="hero" id="hero"></div>
 
-    <div class="config-steps" id="config-steps">
-      <div class="empty-steps" id="empty-steps">Nessun intervallo aggiunto</div>
-    </div>
-
-    <!-- Input salvataggio sequenza — sopra "sequenze salvate" -->
-    <input class="save-input" id="preset-name" type="text" placeholder="Nome sequenza da salvare" maxlength="28"/>
-    <button class="btn-save-preset" id="btn-save-preset">♥ Salva sequenza corrente</button>
-
-    <div class="section-title section-title-center">sequenze salvate</div>
-    <div class="preset-grid" id="preset-grid"></div>
-
-  </div>
-
-  <!-- SCHERMATA TIMER -->
-  <div class="screen" id="screen-timer">
-
-    <div class="timer-steps-row" id="timer-steps-row"></div>
-
-    <div id="clock-wrap">
-      <svg id="ring-svg" viewBox="0 0 300 300">
-        <circle id="ring-bg"   cx="150" cy="150" r="132"/>
-        <circle id="ring-fill" cx="150" cy="150" r="132"/>
-      </svg>
-      <!-- Logo reale sopra i numeri -->
-      <img src="assets/img/logo.webp" alt="" id="clock-gecko" class="clock-gecko-svg" aria-hidden="true"/>
-      <div id="clock-step-name"></div>
-      <div id="clock-time">00:00</div>
-      <div id="clock-min-label"></div>
-    </div>
-
-    <!-- Unica riga: Reset · Avvia/Pausa · Reset -->
-    <div class="timer-btns timer-btns-row">
-      <button class="btn-timer" id="btn-reset">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
-        Reset
-      </button>
-      <button class="btn-timer primary btn-avvia-wide" id="btn-start">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-        Avvia
-      </button>
-      <button class="btn-timer" id="btn-home-timer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
-        MEDITAZIONE
-      </button>
-    </div>
-
-    <div class="nature-section">
-      <div class="nature-label">suono di sottofondo</div>
-
-      <div class="nature-cat-label">silenzio</div>
-      <div class="nature-btns">
-        <button class="btn-nature active" data-sound="silence">🤫 Silenzio</button>
+      <div class="zen-section">
+        <div class="block-title"><div class="zen-eyebrow">Template</div></div>
+        <div class="tpl-row" id="tpl-row"></div>
       </div>
 
-      <div class="nature-cat-label">musica meditazione</div>
-      <div class="nature-btns">
-        <button class="btn-nature" data-sound="tibetan">🎵 Campana tibetana</button>
-        <button class="btn-nature" data-sound="om">🕉 Om drone</button>
-        <button class="btn-nature" data-sound="binaural">🎶 Binaural 432Hz</button>
+      <div class="zen-section">
+        <div class="block-title"><div class="zen-eyebrow">Durata</div></div>
+        <div class="panel">
+          <div class="stepper">
+            <button class="round-btn" type="button" id="min-dec" aria-label="Meno un minuto">
+              <svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg>
+            </button>
+            <div class="stepper-val"><span id="min-val">20</span><small>min</small></div>
+            <button class="round-btn" type="button" id="min-inc" aria-label="Più un minuto">
+              <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+            </button>
+          </div>
+          <input type="range" id="min-range" min="1" max="90" step="1" aria-label="Minuti"/>
+          <div class="chips-wrap" id="quick-mins"></div>
+          <div>
+            <div class="field-lbl">Tipo</div>
+            <div class="chips-wrap" id="kind-chips"></div>
+          </div>
+          <button class="btn block" type="button" id="btn-add-step">Aggiungi alla sequenza</button>
+          <p class="note">Una sola durata? Non serve aggiungere nulla: premi play in basso. Per unire più momenti (seduta, camminata, mantra) componi una sequenza.</p>
+        </div>
       </div>
 
-      <div class="nature-cat-label">elementi naturali</div>
-      <div class="nature-btns">
-        <button class="btn-nature" data-sound="rain">🌧 Pioggia</button>
-        <button class="btn-nature" data-sound="sea">🌊 Mare</button>
-        <button class="btn-nature" data-sound="wind">🍃 Vento</button>
-        <button class="btn-nature" data-sound="stream">💧 Ruscello</button>
-        <button class="btn-nature" data-sound="fire">🔥 Camino</button>
+      <div class="zen-section" id="seq-section" hidden>
+        <div class="block-title">
+          <div class="zen-eyebrow">La tua sequenza</div>
+          <button class="text-btn danger" type="button" id="btn-clear">Svuota</button>
+        </div>
+        <div class="panel" style="gap:var(--space-3)">
+          <div id="seq-list"></div>
+          <div class="seq-actions">
+            <button class="text-btn" type="button" id="btn-save-tpl">Salva come template</button>
+          </div>
+        </div>
       </div>
 
-      <div class="nature-cat-label">animali</div>
-      <div class="nature-btns">
-        <button class="btn-nature" data-sound="birds">🐦 Uccelli</button>
-        <button class="btn-nature" data-sound="crickets">🦗 Grilli</button>
+      <div class="zen-section">
+        <div class="block-title"><div class="zen-eyebrow">Suono</div></div>
+        <div class="panel">
+          <div id="sound-groups" style="display:flex;flex-direction:column;gap:var(--space-4)"></div>
+          <div>
+            <div class="field-lbl">Volume del sottofondo</div>
+            <div class="vol"><input type="range" id="vol-range" min="0" max="100" step="1" aria-label="Volume del sottofondo"/><span id="vol-val"></span></div>
+          </div>
+          <div>
+            <div class="field-lbl">Campana</div>
+            <div class="chips-wrap" id="bell-chips"></div>
+          </div>
+          <p class="note">Tocca un suono per ascoltarne l'anteprima. Le onde theta funzionano con le cuffie. La campana suona all'inizio, tra gli intervalli e tre volte alla fine.</p>
+        </div>
       </div>
+    </section>
+
+    <!-- ═══ Calendario ═══ -->
+    <section class="view" id="view-cal" hidden>
+      <div class="stats" id="stats"></div>
+
+      <div class="panel" style="gap:var(--space-4)">
+        <div class="cal-head">
+          <button class="icon-btn cal-nav" type="button" id="cal-prev" aria-label="Mese precedente"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
+          <div class="cal-title" id="cal-title"></div>
+          <button class="icon-btn cal-nav next" type="button" id="cal-next" aria-label="Mese successivo"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+
+      <div class="zen-section">
+        <div class="block-title">
+          <div class="zen-eyebrow" id="day-title">Sessioni</div>
+          <button class="text-btn" type="button" id="btn-manual">Segna una sessione</button>
+        </div>
+        <div class="list" id="day-list"></div>
+      </div>
+
+      <div style="text-align:center"><button class="text-btn" type="button" id="btn-csv">Esporta CSV</button></div>
+    </section>
+  </main>
+
+  <!-- ═══ Pratica ═══ -->
+  <div class="practice" id="practice" role="dialog" aria-modal="true" aria-label="Pratica in corso">
+    <div class="p-top">
+      <div class="p-top-row">
+        <div class="p-eyebrow" id="p-eyebrow"></div>
+        <button class="p-end" type="button" id="p-end">Termina</button>
+      </div>
+      <div class="p-segs" id="p-segs"></div>
     </div>
 
-    <!-- Footer timer: logo geco + link sito -->
-    <div class="timer-footer">
-      <a href="https://www.ilgecozen.it" target="_blank" rel="noopener" class="timer-footer-logo-link" aria-label="Visita il sito Il Geco Zen">
-        <img src="assets/img/logo.webp" alt="Il Geco Zen" class="timer-footer-gecko"/>
-        <span class="timer-footer-text">Visita il sito</span>
-      </a>
-    </div>
-
-  </div>
-
-  <!-- SCHERMATA CRONOLOGIA -->
-  <div class="screen" id="screen-history">
-    <div class="history-calendar" id="history-calendar"></div>
-    <div class="history-month-label" id="history-month-label"></div>
-    <div class="history-list" id="history-list"></div>
-    <button class="btn-export-csv" id="btn-export-csv" style="display:none"></button>
-  </div>
-
-  <!-- TAB BAR: Home | Avvia(centro) | Calendario -->
-  <nav class="tab-bar" id="tab-bar">
-    <button class="tab-btn tab-active" id="tab-home" aria-label="Home">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-        <polyline points="9,21 9,13 15,13 15,21"/>
-      </svg>
-      <span class="tab-label">meditazione</span>
-    </button>
-
-    <!-- pulsante centrale: usa un <a> per il link al sito quando attivo -->
-    <button class="tab-btn tab-center" id="tab-avvia" aria-label="Avvia pratica">
-      <div class="tab-center-circle" id="tab-center-circle">
-        <!-- Stato idle: triangolo play -->
-        <svg class="tab-center-icon" id="tab-center-icon" viewBox="0 0 24 24" fill="white">
-          <polygon points="6,3 20,12 6,21"/>
+    <div class="p-stage p-stage-live">
+      <div class="enso">
+        <div class="enso-glow"></div>
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <circle class="track" cx="150" cy="150" r="124" transform="rotate(-75 150 150)" id="enso-track"/>
+          <circle class="prog" cx="150" cy="150" r="124" transform="rotate(-75 150 150)" id="enso-prog"/>
+          <g id="enso-tip"><circle class="dot" cx="274" cy="150" r="5"/></g>
         </svg>
-        <!-- Stato attivo: logo geco (link al sito) — nascosto di default -->
-        <a href="https://www.ilgecozen.it" target="_blank" rel="noopener"
-           id="tab-center-gecko-link" style="display:none; line-height:0;"
-           onclick="event.stopPropagation()">
-          <img src="assets/img/logo.webp" alt="Il Geco Zen" class="tab-center-gecko" id="tab-center-gecko"/>
-        </a>
+        <div class="p-center">
+          <div class="p-time" id="p-time">00:00</div>
+          <div class="p-step" id="p-step"></div>
+          <div class="p-sub" id="p-sub"></div>
+        </div>
       </div>
-      <span class="tab-label" id="tab-avvia-label">avvia pratica</span>
-    </button>
+    </div>
 
-    <button class="tab-btn" id="tab-history" aria-label="Cronologia">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-        <circle cx="8" cy="15" r=".8" fill="currentColor"/>
-        <circle cx="12" cy="15" r=".8" fill="currentColor"/>
-        <circle cx="16" cy="15" r=".8" fill="currentColor"/>
-      </svg>
-      <span class="tab-label">cronologia</span>
-    </button>
-  </nav>
+    <div class="p-bottom">
+      <button class="p-pause" type="button" id="p-pause"></button>
+    </div>
 
-    <script type="module" src="js/meditazione/app.js"></script>
+    <div class="p-done" id="p-done">
+      <div class="p-kanji">禅</div>
+      <h2>Sessione completata</h2>
+      <p id="p-done-text"></p>
+      <p>Vuoi approfondire la mindfulness e la meditazione?<br><a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a></p>
+      <button class="btn" type="button" id="p-close">Chiudi</button>
+    </div>
+  </div>
+
+  <!-- ═══ Foglio generico (modifiche, conferme) ═══ -->
+  <div class="zen-sheet-overlay" id="app-sheet">
+    <div class="zen-sheet" role="dialog" aria-modal="true" aria-labelledby="app-sheet-title">
+      <div class="zen-sheet-handle"></div>
+      <div class="zen-sheet-title" id="app-sheet-title"></div>
+      <div class="sheet-body" id="app-sheet-body"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/meditazione/app.js"></script>
 </body>
 </html>
