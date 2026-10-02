@@ -71,6 +71,13 @@ body.zen {
   display: flex; align-items: center; justify-content: center; gap: var(--space-2);
 }
 .zen-header-title img { height: 26px; width: auto; }
+.zen-header-title:has(.zen-header-sub) { flex-wrap: wrap; row-gap: 0; line-height: 1.2; }
+.zen-header-sub {
+  flex-basis: 100%; text-align: center; font-family: var(--font-serif); font-style: italic;
+  font-size: 12.5px; font-weight: 400; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+body.zen[data-subtitle] .zen-header { grid-template-columns: 48px 1fr 48px; }
+body.zen[data-subtitle] { --header-h: 64px; }
 
 /* 4. Barra in basso stile Instagram ─────────────────────────────────────── */
 .zen-tabbar {

@@ -18,7 +18,6 @@
     /* Stili specifici della Home */
     .greeting { padding-top: var(--space-2); }
     .greeting .zen-h1 { margin-top: var(--space-1); }
-    .greeting .motto { margin-top: var(--space-2); color: var(--muted); font-size: var(--fs-sm); }
 
     .weather { display: flex; align-items: center; gap: var(--space-4); }
     .weather .dot-icon { width: 52px; height: 52px; border-radius: 16px; }
@@ -48,12 +47,35 @@
     .bday-when { font-size: var(--fs-sm); color: var(--muted); white-space: nowrap; }
     .bday-when.today { color: var(--danger); font-weight: 600; }
 
+    /* Sezioni a mosaico: due colonne sfalsate, rettangoli compatti */
+    .mosaic { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 8px; gap: 0 var(--space-3); grid-auto-flow: dense; }
+    .mosaic a {
+      grid-row: span var(--h, 8); margin-bottom: var(--space-3);
+      display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4);
+      border-radius: var(--radius-md); background: var(--tint); color: var(--text); text-decoration: none;
+      transition: transform .15s var(--ease), filter .2s;
+    }
+    .mosaic a:active { transform: scale(.97); filter: brightness(.97); }
+    .mosaic a.wide { grid-column: 1 / -1; }
+    .mosaic .ic {
+      width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: color-mix(in srgb, var(--card) 75%, transparent); color: var(--ink);
+    }
+    .mosaic .ic .icon { width: 21px; height: 21px; }
+    .mosaic .t { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; line-height: 1.25; }
+    .mosaic .s { font-size: var(--fs-xs); color: var(--muted); line-height: 1.3; margin-top: 2px; }
+    .mosaic .sky    { --tint: var(--geco-mist); --ink: var(--geco-blue); }
+    .mosaic .sakura { --tint: var(--sakura-soft); --ink: color-mix(in srgb, var(--sakura) 60%, var(--bark)); }
+    .mosaic .leaf   { --tint: color-mix(in srgb, var(--success) 13%, var(--bg)); --ink: var(--success); }
+    .mosaic .sand   { --tint: color-mix(in srgb, var(--warning) 15%, var(--bg)); --ink: color-mix(in srgb, var(--warning) 75%, var(--bark)); }
+
     .closing { text-align: center; color: var(--muted); padding: var(--space-4) var(--space-2) 0; }
     .closing .zen-quote { font-size: var(--fs-md); }
     .closing .site { margin-top: var(--space-5); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; }
   </style>
 </head>
-<body class="zen zen-native" data-title="Il Geco Zen" data-tab="home" style="visibility:hidden">
+<body class="zen zen-native" data-title="Il Geco Zen" data-subtitle="La via di mezzo per la prosperità" data-tab="home" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
@@ -62,7 +84,6 @@
     <section class="greeting">
       <div class="zen-eyebrow" id="today"></div>
       <h2 class="zen-h1" id="hello">Ciao</h2>
-      <p class="motto">La via di mezzo per la prosperità</p>
     </section>
 
     <!-- Meteo -->
@@ -99,7 +120,7 @@
     <!-- Sezioni -->
     <section class="zen-section" aria-label="Sezioni">
       <div class="zen-eyebrow">Il tuo spazio</div>
-      <div class="tile-grid" id="home-tiles"></div>
+      <nav class="mosaic" id="home-tiles" aria-label="Sezioni"></nav>
     </section>
 
     <footer class="closing">
@@ -127,22 +148,22 @@
     /* ── Pensiero del giorno ── */
     document.getElementById('daily-quote-text').textContent = getDailyQuote();
 
-    /* ── Sezioni della Home (stesso ordine e stesse larghezze di prima) ── */
+    /* ── Sezioni della Home: mosaico a due colonne sfalsate ──
+       h = altezza in righe da 8px (8 = basso, 11 = alto); wide = tutta la larghezza */
     const HOME = [
-      ['bucket-list.html'], ['direzione.html'],
-      ['alimentazione.html'], ['allenamento.html'],
-      ['meditazione.html', 'wide'],
-      ['passioni.html'], ['armonia-sociale.html'],
-      ['salute-mentale.html', 'wide'],
-      ['contributo-al-mondo.html', 'wide'],
+      ['bucket-list.html', 11], ['direzione.html', 8],
+      ['alimentazione.html', 8], ['allenamento.html', 11],
+      ['meditazione.html', 11], ['passioni.html', 8],
+      ['armonia-sociale.html', 8], ['salute-mentale.html', 11],
+      ['contributo-al-mondo.html', 8, 'wide'],
     ];
     const byHref = Object.fromEntries(SECTION_GROUPS.flatMap(g => g.items).map(s => [s.href, s]));
-    document.getElementById('home-tiles').innerHTML = HOME.map(([href, wide]) => {
+    document.getElementById('home-tiles').innerHTML = HOME.map(([href, h, wide], i) => {
       const s = byHref[href];
-      return `<a class="tile${wide ? ' wide' : ''}" href="${s.href}">
-        <span class="dot-icon ${s.tone}">${icon(s.icon)}</span>
-        <span><span class="tile-title">${escapeHtml(s.title)}</span>
-        ${s.sub ? `<span class="tile-sub" style="display:block">${escapeHtml(s.sub)}</span>` : ''}</span>
+      return `<a class="${s.tone}${wide ? ' wide' : ''}" href="${s.href}" style="--h:${h}${wide ? '' : `;grid-column:${i % 2 + 1}`}">
+        <span class="ic">${icon(s.icon)}</span>
+        <span><span class="t" style="display:block">${escapeHtml(s.title)}</span>
+        ${s.sub && h > 8 ? `<span class="s" style="display:block">${escapeHtml(s.sub)}</span>` : ''}</span>
       </a>`;
     }).join('');
 
