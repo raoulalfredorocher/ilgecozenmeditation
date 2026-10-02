@@ -896,7 +896,8 @@ export async function deleteContactDoc(docId) {
 /**
  * Contatti con il compleanno entro i prossimi `days` giorni (oggi incluso),
  * ordinati dal più vicino. Ogni contatto riceve `_daysUntilBirthday`.
- * Il campo `compleanno` è nel formato YYYY-MM-DD (input type="date").
+ * Il compleanno è nel formato YYYY-MM-DD (input type="date"): nel campo
+ * `compleanno` per i contatti recenti, in `birthday` per quelli più vecchi.
  */
 export async function getBirthdayContacts(days = 7) {
   const col = userCol('crm_contacts');
@@ -907,7 +908,8 @@ export async function getBirthdayContacts(days = 7) {
 
   return snap.docs
     .map(d => ({ _docId: d.id, ...d.data() }))
-    .filter(c => /^\d{4}-\d{2}-\d{2}$/.test(c.compleanno || ''))
+    .map(c => ({ ...c, compleanno: c.compleanno || c.birthday || '' }))
+    .filter(c => /^\d{4}-\d{2}-\d{2}$/.test(c.compleanno))
     .map(c => {
       const [, mm, dd] = c.compleanno.split('-').map(Number);
       let next = new Date(today.getFullYear(), mm - 1, dd);

@@ -15,7 +15,7 @@
  *   data-back    pagina a cui torna la freccia (default index.html; "none" = nessuna)
  *   data-add     selettore del pulsante "aggiungi" della pagina: il + della
  *                barra in basso lo preme. Senza, il + non compare.
- *   data-tab     scheda attiva: home | meditazione (default dal nome file)
+ *   data-tab     scheda attiva: home | assistente (default dal nome file)
  */
 import { injectIcons, icon } from './icons.js';
 import { SECTION_GROUPS } from './sections.js';
@@ -76,7 +76,7 @@ function buildHeader() {
 
 // ─── Barra in basso ─────────────────────────────────────────────────────
 function buildTabbar() {
-  const tab = body.dataset.tab || (isHome ? 'home' : page === 'meditazione.html' ? 'meditazione' : '');
+  const tab = body.dataset.tab || (isHome ? 'home' : page === 'assistente.html' ? 'assistente' : '');
   const addSel = body.dataset.add;
   const current = name => (tab === name ? ' aria-current="page"' : '');
   const nav = document.createElement('nav');
@@ -86,7 +86,7 @@ function buildTabbar() {
     <a class="zen-tab" href="index.html" aria-label="Home"${current('home')}>${icon('home')}</a>
     <button class="zen-tab" type="button" data-open-sheet="zen-sections" aria-label="Sezioni">${icon('grid')}</button>
     ${addSel ? `<button class="zen-tab add" type="button" aria-label="Aggiungi">${icon('plus')}</button>` : ''}
-    <a class="zen-tab" href="meditazione.html" aria-label="Meditazione"${current('meditazione')}>${icon('flower')}</a>
+    <a class="zen-tab" href="assistente.html" aria-label="Assistente"${current('assistente')}>${icon('chat')}</a>
     <button class="zen-tab" type="button" data-open-sheet="zen-profile" aria-label="Profilo" id="zen-tab-profile">${icon('user')}</button>`;
   body.append(nav);
 

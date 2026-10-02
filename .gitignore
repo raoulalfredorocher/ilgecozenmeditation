@@ -20,3 +20,4 @@ __pycache__/
 
 # Configurazione locale Claude Code
 .claude/
+functions/node_modules/
