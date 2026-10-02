@@ -4,248 +4,50 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Contributo al mondo"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Contributo al mondo</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html[data-theme="light"] {
-      --bg: #f7f4f9;
-      --surface: #ede8f4;
-      --card: #ffffff;
-      --border: #d4cee0;
-      --text: #1e2a38;
-      --muted: #876a6a;
-      --primary: #25739E;
-      --accent: #74C7E1;
-      --accent2: #F5A9BC;
-    }
-    html[data-theme="dark"] {
-      --bg: #111820;
-      --surface: #1a2230;
-      --card: #1e2a38;
-      --border: #2e3f52;
-      --text: #e8eef4;
-      --muted: #a89090;
-      --primary: #74C7E1;
-      --accent: #25739E;
-      --accent2: #F5A9BC;
-    }
-
-    html { overscroll-behavior: none; }
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 90px) 20px calc(72px + env(safe-area-inset-bottom, 0px));
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 20;
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .btn-back {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-family: inherit;
-      font-size: .58rem;
-      letter-spacing: .1em;
-      padding: 5px 8px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      width: 52px;
-    }
-    .header-center { flex: 1; text-align: center; }
-    .app-title { font-size: .95rem; letter-spacing: .16em; color: var(--primary); font-weight: 700; }
-    .app-sub { font-size: .48rem; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
-    .theme-toggle {
-      background: none;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      cursor: pointer;
-      width: 52px; height: 28px;
-      position: relative;
-    }
-    .theme-toggle .knob {
-      position: absolute;
-      top: 3px; left: 3px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      transition: transform .3s;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .7rem;
-    }
-    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
-
-    /* ── Tab bar ── */
-    .tab-bar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: calc(58px + env(safe-area-inset-bottom, 0px));
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      background: var(--card);
-      border-top: 1px solid var(--border);
-      border-radius: 22px 22px 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      z-index: 200;
-      overflow: visible;
-    }
-    .tab-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      color: var(--muted);
-      transition: color .2s;
-      padding: 8px 4px;
-      height: 100%;
-      font-family: inherit;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .tab-btn.active { color: var(--primary); }
-    .tab-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
-    .tab-label { font-size: .44rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1; }
-    .tab-center {
-      flex: 1.1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 8px;
-      gap: 4px;
-      overflow: visible;
-      position: relative;
-    }
-    .tab-center-circle {
-      width: 58px; height: 58px;
-      border-radius: 50%;
-      background: var(--accent2);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transform: translateY(-24px);
-      box-shadow: 0 -2px 0 var(--card), 0 4px 18px rgba(245,169,188,.6);
-      transition: background .2s, transform .12s;
-    }
-    .tab-center:active .tab-center-circle { transform: translateY(-24px) scale(.91); }
-    .tab-center-gecko { width: 38px; height: 38px; object-fit: contain; }
-    .tab-center .tab-label { margin-top: -20px; }
-
-    /* ── Screens ── */
-    .screen { display: none; width: 100%; }
-    .screen.active { display: block; }
-  </style>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body class="zen" data-title="Contributo al mondo" data-back="index.html" style="visibility:hidden">
+<body class="zen zen-native" data-title="Contributo al mondo" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
-
-  <header>
-    <a class="btn-back" href="index.html" aria-label="Torna al TAO">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>TAO</span>
-    </a>
-    <div class="header-center">
-      <div class="app-title">Contributo al mondo</div>
-      <div class="app-sub">il geco zen</div>
-    </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
-  </header>
-
-  <!-- Screen IT & AI -->
-  <section class="screen active" id="screen-itai"></section>
-
-  <!-- Screen Il Geco Zen -->
-  <section class="screen" id="screen-geco"></section>
-
-  <!-- Screen Volontariato -->
-  <section class="screen" id="screen-volontariato"></section>
-
-  <!-- Tab bar -->
-  <nav class="tab-bar" role="tablist">
-    <button type="button" class="tab-btn active" id="tab-itai" role="tab" aria-selected="true" aria-controls="screen-itai">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      <span class="tab-label">IT &amp; AI</span>
-    </button>
-
-    <button type="button" class="tab-btn tab-center" id="tab-geco" role="tab" aria-selected="false" aria-controls="screen-geco">
-      <div class="tab-center-circle">
-        <img src="assets/img/logo.webp" alt="Il Geco Zen" class="tab-center-gecko"/>
+  <main class="zen-main">
+    <div class="page-tabs">
+      <div class="segmented" role="group" aria-label="Ambito">
+        <button type="button" data-area="itai" aria-pressed="true">IT e AI</button>
+        <button type="button" data-area="geco">Il Geco Zen</button>
+        <button type="button" data-area="volontariato">Volontariato</button>
       </div>
-      <span class="tab-label">Geco Zen</span>
-    </button>
-
-    <button type="button" class="tab-btn" id="tab-volontariato" role="tab" aria-selected="false" aria-controls="screen-volontariato">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span class="tab-label">Volontariato</span>
-    </button>
-  </nav>
-
-  <script>
-    const htmlEl = document.documentElement;
-    const themeBtn = document.getElementById('theme-toggle');
-    const knob = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
-    function applyTheme() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
+    </div>
+    <section class="coming" id="area">
+      <span class="dot-icon leaf"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></span>
+      <h2 class="zen-h2" id="area-title"></h2>
+      <p id="area-text"></p>
+    </section>
+  </main>
+  <script type="module">
+    const AREAS = {
+      itai: ['IT e AI', 'Progetti, idee e impatto nel lavoro con la tecnologia e l\'intelligenza artificiale. In costruzione.'],
+      geco: ['Il Geco Zen', 'Il percorso del Geco Zen: contenuti, persone raggiunte, obiettivi. In costruzione.'],
+      volontariato: ['Volontariato', 'Le attività di volontariato e il tempo donato agli altri. In costruzione.'],
+    };
+    function show(key) {
+      document.querySelectorAll('[data-area]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.area === key)));
+      document.getElementById('area-title').textContent = AREAS[key][0];
+      document.getElementById('area-text').textContent = AREAS[key][1];
     }
-    applyTheme();
-    themeBtn.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
-
-    const tabs = [
-      { btn: document.getElementById('tab-itai'),         screen: document.getElementById('screen-itai') },
-      { btn: document.getElementById('tab-geco'),         screen: document.getElementById('screen-geco') },
-      { btn: document.getElementById('tab-volontariato'), screen: document.getElementById('screen-volontariato') },
-    ];
-    tabs.forEach((t, i) => {
-      t.btn.addEventListener('click', () => {
-        tabs.forEach(x => { x.btn.classList.remove('active'); x.btn.setAttribute('aria-selected','false'); x.screen.classList.remove('active'); });
-        t.btn.classList.add('active');
-        t.btn.setAttribute('aria-selected','true');
-        t.screen.classList.add('active');
-      });
+    document.querySelector('.segmented').addEventListener('click', e => {
+      const b = e.target.closest('[data-area]');
+      if (b) show(b.dataset.area);
     });
+    show('itai');
   </script>
 </body>
 </html>

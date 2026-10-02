@@ -47,30 +47,6 @@
     .bday-when { font-size: var(--fs-sm); color: var(--muted); white-space: nowrap; }
     .bday-when.today { color: var(--danger); font-weight: 600; }
 
-    /* Sezioni a mosaico: due colonne sfalsate, rettangoli compatti */
-    .mosaic { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-auto-rows: 8px; gap: 0 var(--space-3); grid-auto-flow: dense; }
-    .mosaic a {
-      grid-row: span var(--h, 8); margin-bottom: var(--space-3);
-      display: flex; align-items: center; gap: 9px; padding: 0 12px;
-      border-radius: var(--radius-md); background: var(--tint); color: var(--text); text-decoration: none;
-      transition: transform .15s var(--ease), filter .2s;
-    }
-    .mosaic a:active { transform: scale(.97); filter: brightness(.97); }
-    .mosaic a.wide { grid-column: 1 / -1; }
-    .mosaic .ic {
-      width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
-      display: inline-flex; align-items: center; justify-content: center;
-      background: color-mix(in srgb, var(--card) 75%, transparent); color: var(--ink);
-    }
-    .mosaic .ic .icon { width: 19px; height: 19px; }
-    .mosaic a > span:last-child { min-width: 0; }
-    .mosaic .t { font-size: 14.5px; font-weight: 600; letter-spacing: -.015em; line-height: 1.25; }
-    .mosaic .s { font-size: var(--fs-xs); color: var(--muted); line-height: 1.3; margin-top: 2px; }
-    .mosaic .sky    { --tint: var(--geco-mist); --ink: var(--geco-blue); }
-    .mosaic .sakura { --tint: var(--sakura-soft); --ink: color-mix(in srgb, var(--sakura) 60%, var(--bark)); }
-    .mosaic .leaf   { --tint: color-mix(in srgb, var(--success) 13%, var(--bg)); --ink: var(--success); }
-    .mosaic .sand   { --tint: color-mix(in srgb, var(--warning) 15%, var(--bg)); --ink: color-mix(in srgb, var(--warning) 75%, var(--bark)); }
-
     /* Auguri */
     .wish-btn { white-space: nowrap; flex-shrink: 0; }
     .wish-btn.sent { color: var(--success); border-color: transparent; background: transparent; }
@@ -155,6 +131,7 @@
   <script type="module">
     import { icon } from './js/ui/icons.js';
     import { SECTION_GROUPS } from './js/ui/sections.js';
+    import { renderMosaic } from './js/ui/mosaic.js';
     import { getDailyQuote } from './js/data/quotes.js';
     import { getBirthdayContacts } from './js/core/db.js';
     import { waitForUser } from './js/core/auth-guard.js';
@@ -181,14 +158,7 @@
       ['contributo-al-mondo.html', 8, 'wide'],
     ];
     const byHref = Object.fromEntries(SECTION_GROUPS.flatMap(g => g.items).map(s => [s.href, s]));
-    document.getElementById('home-tiles').innerHTML = HOME.map(([href, h, wide], i) => {
-      const s = byHref[href];
-      return `<a class="${s.tone}${wide ? ' wide' : ''}" href="${s.href}" style="--h:${h}${wide ? '' : `;grid-column:${i % 2 + 1}`}">
-        <span class="ic">${icon(s.icon)}</span>
-        <span><span class="t" style="display:block">${escapeHtml(s.title)}</span>
-        ${s.sub && h > 8 ? `<span class="s" style="display:block">${escapeHtml(s.sub)}</span>` : ''}</span>
-      </a>`;
-    }).join('');
+    renderMosaic(document.getElementById('home-tiles'), HOME.map(([href, h, wide]) => ({ ...byHref[href], h, wide })));
 
     /* ── Meteo (Open-Meteo, nessuna chiave richiesta) ── */
     const CITIES = {

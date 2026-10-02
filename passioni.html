@@ -4,155 +4,41 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Passioni"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Passioni</title>
-  <link rel="stylesheet" href="styles/theme.css?v=8"/>
-  <link rel="stylesheet" href="styles/layout.css?v=8"/>
-  <style>
-    .hub-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-    .hub-card-wide { grid-column: 1 / -1; }
-    .hub-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 28px 18px 22px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 10px; min-height: 138px;
-      cursor: pointer; text-decoration: none; color: inherit;
-      transition: border-color .2s, background .2s, transform .12s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none; text-align: center;
-    }
-    .hub-card:active { background: var(--surface); border-color: var(--gold); transform: scale(.97); }
-    .hub-card-icon { font-size: 2.2rem; line-height: 1; }
-    .hub-card-title { font-size: .84rem; font-weight: 600; letter-spacing: .1em; color: var(--text); text-align: center; }
-    .hub-card-sub { font-size: .52rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; text-align: center; line-height: 1.5; }
-
-    .hub-card.brand   { border-color: #c8a0f055; }
-    .hub-card.books   { border-color: #f0b36f66; }
-    .hub-card.films   { border-color: #9ec5ff66; }
-    .hub-card.music   { border-color: #6cbf8a55; }
-    .hub-card.photo   { border-color: #f5a9bc66; }
-    .hub-card.finance { border-color: #74C7E155; }
-    .hub-card.games   { border-color: #cbb7f855; }
-    .hub-card.tech    { border-color: #6cbf8a55; }
-    .hub-card.home    { border-color: #e8a87c55; }
-
-    .app-sub-passioni {
-      font-size: .48rem; letter-spacing: .22em;
-      color: var(--muted); text-transform: uppercase; margin-top: 2px;
-    }
-  </style>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body class="zen" data-title="Passioni" data-back="index.html" style="visibility:hidden">
+<body class="zen zen-native" data-title="Passioni" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
-  <header id="main-header">
-    <a class="btn-header-csv" href="index.html" aria-label="Torna al Qui e Ora" style="text-decoration:none;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>TAO</span>
-    </a>
-    <div class="header-center">
-      <a href="index.html" aria-label="Torna al Qui e Ora"
-         style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;">
-        <img src="assets/img/logo.webp" alt="Il Geco Zen" class="header-logo"/>
-        <div class="app-title">Il Geco Zen</div>
-        <div class="app-sub">passioni</div>
-      </a>
-    </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
-  </header>
-
-  <!-- Riga 0 — Personal Brand (rettangolone pieno) -->
-  <div class="hub-grid">
-    <a class="hub-card brand hub-card-wide" href="personal-brand.html">
-      <span class="hub-card-icon">🌟</span>
-      <div class="hub-card-title">Personal Brand</div>
-      <div class="hub-card-sub">identità · presenza · narrazione</div>
-    </a>
-  </div>
-
-  <!-- Riga 1 -->
-  <div class="hub-grid">
-    <a class="hub-card books" href="libri-manga.html">
-      <span class="hub-card-icon">📚</span>
-      <div class="hub-card-title">Libri e Manga</div>
-    </a>
-    <a class="hub-card films" href="film-anime.html">
-      <span class="hub-card-icon">🎬</span>
-      <div class="hub-card-title">Film, Anime e Serie TV</div>
-    </a>
-  </div>
-
-  <!-- Riga 2 -->
-  <div class="hub-grid">
-    <a class="hub-card music" href="musica.html">
-      <span class="hub-card-icon">🎵</span>
-      <div class="hub-card-title">Musica, Video e Podcast</div>
-    </a>
-    <a class="hub-card photo" href="fotografia-viaggi.html">
-      <span class="hub-card-icon">📸</span>
-      <div class="hub-card-title">Fotografia e Viaggi</div>
-    </a>
-  </div>
-
-  <!-- Riga 3 -->
-  <div class="hub-grid">
-    <a class="hub-card finance" href="finanza.html">
-      <span class="hub-card-icon">💰</span>
-      <div class="hub-card-title">Finanza</div>
-    </a>
-    <a class="hub-card games" href="giochi.html">
-      <span class="hub-card-icon">🎮</span>
-      <div class="hub-card-title">Giochi</div>
-    </a>
-  </div>
-
-  <!-- Riga 4 -->
-  <div class="hub-grid">
-    <a class="hub-card tech" href="#">
-      <span class="hub-card-icon">💻</span>
-      <div class="hub-card-title">Tecnologia</div>
-    </a>
-    <a class="hub-card home" href="#">
-      <span class="hub-card-icon">🏡</span>
-      <div class="hub-card-title">Home</div>
-    </a>
-  </div>
+  <main class="zen-main">
+    <p class="zen-muted small" style="text-align:center">Quello che ti accende, tutto in un posto.</p>
+    <nav class="mosaic" id="passions" aria-label="Passioni"></nav>
+  </main>
 
   <script type="module">
-    import { waitForAuth } from './js/core/db.js';
-    const htmlEl   = document.documentElement;
-    const btnTheme = document.getElementById('theme-toggle');
-    const knob     = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
-    function applyTheme() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-    }
-    applyTheme();
-    btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
-    waitForAuth().then(() => { document.body.style.visibility = ''; });
+    import { SECTION_GROUPS } from './js/ui/sections.js';
+    import { renderMosaic } from './js/ui/mosaic.js';
+
+    const byHref = Object.fromEntries(SECTION_GROUPS.flatMap(g => g.items).map(s => [s.href, s]));
+    const pick = (href, h, extra = {}) => ({ ...byHref[href], h, ...extra });
+    renderMosaic(document.getElementById('passions'), [
+      pick('personal-brand.html', 8, { wide: true }),
+      pick('libri-manga.html', 11), pick('film-anime.html', 8),
+      pick('musica.html', 8), pick('fotografia-viaggi.html', 11),
+      pick('finanza.html', 11), pick('giochi.html', 8),
+      // Sezioni previste ma non ancora realizzate (erano già nella versione precedente)
+      { title: 'Tecnologia', icon: 'grid', tone: 'sky', h: 8, soon: true },
+      { title: 'Casa', icon: 'home', tone: 'sand', h: 8, soon: true },
+    ]);
   </script>
 </body>
 </html>
