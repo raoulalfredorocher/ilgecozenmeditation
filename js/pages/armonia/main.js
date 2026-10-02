@@ -46,7 +46,7 @@ function view(c) {
   };
 }
 const initials = v => ((v.nome[0] || '') + (v.cognome[0] || '')).toUpperCase() || '?';
-const sortKey = v => (v.cognome ? `${v.cognome} ${v.nome}` : v.nome).trim().toLowerCase();
+const sortKey = v => `${v.nome} ${v.cognome}`.trim().toLowerCase();   // ordine per nome, poi cognome
 const avatar = (v, size = 40) => v.photo
   ? `<img class="avatar" src="${esc(v.photo)}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px" loading="lazy" referrerpolicy="no-referrer"/>`
   : `<span class="initials" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .36)}px">${esc(initials(v))}</span>`;
