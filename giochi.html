@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Giochi"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Giochi</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <link rel="stylesheet" href="styles/layout.css?v=8"/>
@@ -118,19 +118,9 @@
     .vfb-note{font-size:.72rem;color:var(--text);line-height:1.6;font-style:italic;}
     .bvc{width:100%;background:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--muted);cursor:pointer;letter-spacing:.1em;flex-shrink:0;}
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
   <header id="main-header">
     <div style="display:flex;flex-direction:row;gap:6px;align-items:center;">
       <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">
@@ -290,7 +280,7 @@
       <span class="tab-label">Da Giocare</span>
     </button>
     <button class="tab-btn tab-center" id="tab-center-btn">
-      <div class="tab-center-circle"><img src="Logo%20Trasparente.png" alt="" class="tab-center-gecko"/></div>
+      <div class="tab-center-circle"><img src="assets/img/logo.webp" alt="" class="tab-center-gecko"/></div>
       <span class="tab-label">RPG & Tavolo</span>
     </button>
     <button class="tab-btn" id="tab-giocati">
@@ -303,7 +293,7 @@
     import { subscribeGiochi, addGiocoDoc, updateGiocoDoc, deleteGiocoDoc,
              subscribeGiochiTavolo, addGiocoTavoloDoc, updateGiocoTavoloDoc, deleteGiocoTavoloDoc,
              addPartitaDoc, subscribePartite, deletePartitaDoc,
-             waitForAuth } from './js/firebase-config.js';
+             waitForAuth } from './js/core/db.js';
 
     /* ── Tema ── */
     const htmlEl=document.documentElement,btnTheme=document.getElementById('theme-toggle'),knob=document.getElementById('theme-knob');

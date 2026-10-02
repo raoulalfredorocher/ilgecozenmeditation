@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Allenamento"/>
   <meta name="theme-color" content="#f3f8f3"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Allenamento</title>
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <style>
@@ -362,16 +362,6 @@
   </style>
 </head>
 <body style="visibility:hidden">
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
   <div id="landscape-warning">
     <div style="font-size:3rem">📱</div>
     <div>Ruota il dispositivo in verticale</div>
@@ -394,7 +384,7 @@
     window.addEventListener('resize', checkOrientation);
     window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
   </script>
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
 
   <header>
@@ -551,7 +541,7 @@
             <circle id="ring-bg"   cx="130" cy="130" r="114"/>
             <circle id="ring-fill" cx="130" cy="130" r="114"/>
           </svg>
-          <img src="Logo%20Trasparente.png" alt="" id="clock-gecko" aria-hidden="true"/>
+          <img src="assets/img/logo.webp" alt="" id="clock-gecko" aria-hidden="true"/>
           <div id="clock-phase"></div>
           <div id="clock-time">00:00</div>
         </div>
@@ -846,12 +836,13 @@
   </div>
 
     <script type="module">
+    import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
     import {
       subscribeAllenamenti, addAllenamentoDoc, updateAllenamentoDoc, deleteAllenamentoDoc,
       subscribeRegistro, addRegistroDocSafe, updateRegistroDoc, deleteRegistroDoc,
       loadRegistroDettagli,
       waitForAuth,
-    } from './js/firebase-config.js';
+    } from './js/core/db.js';
 
     // ── Theme ──
     const htmlEl = document.documentElement;
@@ -1018,7 +1009,7 @@
         div.innerHTML = `
           <div class="item-row-icon">${ico}</div>
           <div class="item-row-info" style="cursor:pointer">
-            <div class="item-row-name">${all.nome}</div>
+            <div class="item-row-name">${esc(all.nome)}</div>
             <div class="item-row-meta">${all.obiettivo||'—'} · ${schedeCount} schede · ${all.settimane||'?'} sett.</div>
           </div>
           <div class="item-row-actions">
@@ -1103,7 +1094,7 @@
           <div class="drag-handle" title="Trascina">${SVG_DRAG}</div>
           <div class="item-row-icon" style="cursor:pointer">📋</div>
           <div class="item-row-info" style="cursor:pointer">
-            <div class="item-row-name">${sch.nome}</div>
+            <div class="item-row-name">${esc(sch.nome)}</div>
             <div class="item-row-meta">${exCount} esercizi</div>
           </div>
           <div class="item-row-actions">
@@ -1196,8 +1187,8 @@
         div.innerHTML = `
           <div class="drag-handle" title="Trascina">${SVG_DRAG}</div>
           <div class="esercizio-card-body">
-            <div class="esercizio-card-title">${ex.gruppo} — ${ex.nome}</div>
-            <div class="esercizio-card-meta">${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+(ex.gruppo==='Cardio' ? Math.round(ex.tempo/60)+' min' : ex.tempo+'s') : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}${ex.desc ? '<br>'+ex.desc : ''}</div>
+            <div class="esercizio-card-title">${esc(ex.gruppo)} — ${esc(ex.nome)}</div>
+            <div class="esercizio-card-meta">${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo > 0 ? ' · '+(ex.gruppo==='Cardio' ? Math.round(ex.tempo/60)+' min' : ex.tempo+'s') : ''}${ex.recupero ? ' · Rec. '+ex.recupero+'s' : ''}${ex.desc ? '<br>'+esc(ex.desc) : ''}</div>
           </div>
           <div class="esercizio-card-actions">
             <button class="icon-btn edit" title="Modifica">${SVG_EDIT}</button>
@@ -1465,7 +1456,7 @@
         } else if (currentPhase === 'esercizio' && _phaseStartEpoch) {
           const ex = sessExercises[sessIdx];
           if (!ex) { _clearTimerState(); return false; }
-          const exMeta = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo ? ' · '+ex.tempo+'s' : ''}`;
+          const exMeta = `${esc(ex.gruppo)} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${ex.tempo ? ' · '+ex.tempo+'s' : ''}`;
           const serieLabel = `Serie ${sessSerie + 1} / ${ex.serie}`;
           if (_phaseTotalSeconds > 0) {
             const elapsed = _phaseBaseSeconds + Math.round((now - _phaseStartEpoch) / 1000);
@@ -2031,7 +2022,7 @@
       document.getElementById('rec-box').style.display = 'none';
       setRingProgress(0);
       const hasTempo = ex.tempo && ex.tempo > 0;
-      const exMeta  = `${ex.gruppo} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${hasTempo ? ' · '+ex.tempo+'s' : ''}`;
+      const exMeta  = `${esc(ex.gruppo)} · ${ex.serie}×${ex.rep}${ex.kg ? ' · '+ex.kg+' kg' : ''}${hasTempo ? ' · '+ex.tempo+'s' : ''}`;
       const serieLabel = `Serie ${sessSerie + 1} / ${ex.serie}`;
       document.getElementById('timer-ex-label').textContent = '';
       document.getElementById('timer-ex-meta').textContent = exMeta;
@@ -2361,8 +2352,8 @@
         card.innerHTML = `
           <div class="registro-detail-header">
             <div>
-              <div class="registro-detail-name">${r.allenamentoNome}</div>
-              <div class="registro-detail-meta">${r.schedaNome} · ${r.durata||'?'} min</div>
+              <div class="registro-detail-name">${esc(r.allenamentoNome)}</div>
+              <div class="registro-detail-meta">${esc(r.schedaNome)} · ${r.durata||'?'} min</div>
             </div>
             <div style="display:flex;gap:6px;align-items:center">
               ${hasDetailData ? `<button class="icon-btn reg-detail-btn" title="Dettagli">${SVG_SEARCH}</button>` : ''}
@@ -2371,7 +2362,7 @@
             </div>
           </div>
           ${hasFb
-            ? `<div class="registro-fb-saved">${fbPos?'😊':fbNeu?'😐':'😞'} <span>${r.note||''}</span></div>`
+            ? `<div class="registro-fb-saved">${fbPos?'😊':fbNeu?'😐':'😞'} <span>${esc(r.note||'')}</span></div>`
             : `<div class="feedback-section">
                 <div class="feedback-row">
                   <button class="feedback-btn ${r._fbSel==='pos'?'active':''}" data-fb="pos">😊</button>
@@ -2379,7 +2370,7 @@
                   <button class="feedback-btn ${r._fbSel==='neg'?'active':''}" data-fb="neg">😞</button>
                 </div>
                 <div class="form-group" style="margin-bottom:0;margin-top:8px">
-                  <textarea id="nota-${r._docId}" placeholder="Note...">${r.note||''}</textarea>
+                  <textarea id="nota-${r._docId}" placeholder="Note...">${esc(r.note||'')}</textarea>
                 </div>
                 <button class="btn-primary" style="width:100%;margin-top:10px" data-send-fb="${r._docId}">Invia feedback</button>
               </div>`
@@ -2498,7 +2489,7 @@
           div.innerHTML = `
             <div style="font-size:.58rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px">${d.tipo === 'warmup' ? '🔥 Riscaldamento' : '🧘 Stretching'}</div>
             <div class="form-row" style="margin-bottom:0">
-              <div class="form-group" style="margin-bottom:0"><label>Nome</label><input class="mse-ex-nome" value="${d.nome||''}"/></div>
+              <div class="form-group" style="margin-bottom:0"><label>Nome</label><input class="mse-ex-nome" value="${esc(d.nome||'')}"/></div>
               <div class="form-group" style="margin-bottom:0"><label>Durata (s)</label><input class="mse-ex-esec" type="number" value="${d.durata||0}"/></div>
             </div>`;
           list.appendChild(div);
@@ -2512,7 +2503,7 @@
           div.innerHTML = `
             <div style="font-size:.58rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px">💪 Serie ${d.serie}${skipLabel}</div>
             <div class="form-row" style="margin-bottom:6px">
-              <div class="form-group" style="margin-bottom:0"><label>Esercizio</label><input class="mse-ex-nome" value="${d.nome||''}"/></div>
+              <div class="form-group" style="margin-bottom:0"><label>Esercizio</label><input class="mse-ex-nome" value="${esc(d.nome||'')}"/></div>
               <div class="form-group" style="margin-bottom:0"><label>Serie #</label><input class="mse-ex-serie" type="number" value="${d.serie||1}"/></div>
             </div>
             <div class="form-row" style="margin-bottom:0">
@@ -2556,7 +2547,7 @@
         let h = `<div class="modal-subtitle" style="margin-bottom:6px">${titolo}</div>`;
         rows.forEach(d => {
           h += `<div class="session-phase-row">
-            <span class="session-phase-label">${d.nome}</span>
+            <span class="session-phase-label">${esc(d.nome)}</span>
             <span class="session-phase-val">${fmtDurata(d.durata)}</span>
           </div>`;
         });
@@ -2593,7 +2584,7 @@
         sectionWarmup('🔥 Riscaldamento', warmups) +
         sectionEsercizi('💪 Esercizi', esercizi) +
         sectionWarmup('🧘 Stretching', stretching) +
-        (fbEmoji ? `<div class="registro-fb-saved" style="margin-top:14px">${fbEmoji} <span>${r.note||''}</span></div>` : '');
+        (fbEmoji ? `<div class="registro-fb-saved" style="margin-top:14px">${fbEmoji} <span>${esc(r.note||'')}</span></div>` : '');
 
       openModal('modal-session-detail');
     }
@@ -2704,7 +2695,7 @@
       _photoRecord = r;
       _photoDataUrl = null;
       document.getElementById('photo-modal-allenamento-label').textContent =
-        `${r.allenamentoNome} · ${r.schedaNome} · ${r.data}`;
+        `${esc(r.allenamentoNome)} · ${esc(r.schedaNome)} · ${r.data}`;
       document.getElementById('photo-preview-img').style.display = 'none';
       document.getElementById('photo-placeholder').style.display = 'flex';
       _photoFileInp.value = '';
@@ -2720,8 +2711,8 @@
         const item = document.createElement('div');
         item.className = 'photo-saved-item';
         item.innerHTML = `
-          <img class="photo-saved-thumb" src="${p.url}" alt="Foto ${idx+1}"/>
-          <span class="photo-saved-meta">${p.label || ('Foto '+(idx+1))} — ${p.date || ''}</span>
+          <img class="photo-saved-thumb" src="${esc(safeUrl(p.url))}" alt="Foto ${idx+1}"/>
+          <span class="photo-saved-meta">${esc(p.label || ('Foto '+(idx+1)))} — ${p.date || ''}</span>
           <button class="photo-saved-del" title="Elimina">${SVG_TRASH}</button>`;
         // zoom thumbnail
         item.querySelector('.photo-saved-thumb').addEventListener('click', () => {

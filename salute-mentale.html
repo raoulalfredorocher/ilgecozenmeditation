@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Salute mentale"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Salute mentale</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -467,19 +467,9 @@
     .wheel-img-wrap { width: 100%; max-width: 340px; margin: 0 auto; }
     .wheel-img-wrap img { width: 100%; height: auto; display: block; }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
   <header id="main-header">
     <div class="header-left">
@@ -525,11 +515,11 @@
     <div class="wheel-placeholder">
       <div class="wheel-placeholder-title">Ruota delle emozioni — Robert Plutchik</div>
       <div class="wheel-img-wrap" id="wheel-img-wrap" style="cursor:pointer;" title="Clicca per ingrandire">
-        <img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" id="wheel-img"/>
+        <img src="assets/img/ruota-emozioni.webp" alt="Ruota delle emozioni" id="wheel-img"/>
       </div>
       <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
         <button id="btn-wheel-zoom" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;">🔍 Visualizza</button>
-        <a href="Ruotadelleemozioni.webp" download="ruota-emozioni.webp" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;text-decoration:none;display:inline-flex;align-items:center;">⬇ Scarica</a>
+        <a href="assets/img/ruota-emozioni.webp" download="ruota-emozioni.webp" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 16px;font-family:inherit;font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;text-decoration:none;display:inline-flex;align-items:center;">⬇ Scarica</a>
       </div>
     </div>
 
@@ -570,7 +560,7 @@
     </button>
     <button class="tab-btn tab-center" id="tab-diario" role="tab" aria-selected="false" aria-controls="screen-diario">
       <div class="tab-center-circle">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="tab-center-gecko"/>
+        <img src="assets/img/logo.webp" alt="Il Geco Zen" class="tab-center-gecko"/>
       </div>
       <span class="tab-label">diario</span>
     </button>
@@ -664,17 +654,12 @@
 
 
   <script type="module">
-    import { waitForAuth } from './js/firebase-config.js';
-    import { getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+    import { waitForAuth } from './js/core/db.js';
     import {
-      getFirestore, doc, getDoc, setDoc,
+      doc, getDoc, setDoc,
       collection, addDoc, onSnapshot, query, orderBy, deleteDoc, updateDoc,
     } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
-    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-
-    const _app  = getApps()[0];
-    const _db   = _app ? getFirestore(_app) : null;
-    const _auth = _app ? getAuth(_app) : null;
+    import { db as _db, auth as _auth } from './js/core/firebase.js';
 
     function _uid() { return _auth?.currentUser?.uid || null; }
     function _storiaDoc() {
@@ -1389,7 +1374,7 @@
     const wheelLb = document.getElementById('plutchik-lightbox');
     const wheelLbContent = document.getElementById('plutchik-lb-content');
     function openWheelLb() {
-      wheelLbContent.innerHTML = '<img src="Ruotadelleemozioni.webp" alt="Ruota delle emozioni" style="width:100%;height:auto;border-radius:12px;"/>';
+      wheelLbContent.innerHTML = '<img src="assets/img/ruota-emozioni.webp" alt="Ruota delle emozioni" style="width:100%;height:auto;border-radius:12px;"/>';
       wheelLb.classList.add('open');
     }
     document.getElementById('btn-wheel-zoom').addEventListener('click', openWheelLb);

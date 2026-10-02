@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Alimentazione"/>
   <meta name="theme-color" content="#faf8f2"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Alimentazione</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -602,19 +602,9 @@
     .dot-sab { background: #ec4899; }
     .dot-dom { background: #ef4444; }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
 
   <header>
@@ -880,7 +870,7 @@
     </button>
     <button class="tab-btn tab-center tab-active" id="tab-ricette" aria-label="Ricettario">
       <div class="tab-center-circle">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;"/>
+        <img src="assets/img/logo.webp" alt="Il Geco Zen" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;"/>
       </div>
       <span class="tab-label">ricette</span>
     </button>
@@ -1173,6 +1163,7 @@
   </div>
 
     <script type="module">
+    import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
   import {
     subscribeRecipes, addRecipeDoc, updateRecipeDoc, deleteRecipeDoc,
     subscribeDiary,   saveDiaryDay,
@@ -1180,7 +1171,7 @@
     subscribeSavedDiets, addSavedDietDoc, deleteSavedDietDoc,
     subscribeMacrosProfiles, saveMacrosProfiles,
     waitForAuth,
-  } from './js/firebase-config.js';
+  } from './js/core/db.js';
 
   /* ════════════ TEMA ════════════ */
   const htmlEl  = document.documentElement;
@@ -1300,7 +1291,7 @@
       btn.innerHTML = `
         <span class="day-pill-dot" style="background:${dot}"></span>
         <span class="day-pill-name">${DAY_SHORT[i]}</span>
-        <span class="day-pill-type">${day.type}</span>`;
+        <span class="day-pill-type">${esc(day.type)}</span>`;
       btn.addEventListener('click', () => {
         dietAnalyticsOpen = false;
         selectedDayIdx = i;
@@ -1515,7 +1506,7 @@
       const tdeeStr = p.tdee && p.tdee.peso ? ` · TDEE ~${calcTdeeFrom(p.tdee)} kcal` : '';
       return `<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
         <div style="flex:1;">
-          <div style="font-size:.76rem;font-weight:600;color:var(--text);">${p.name}</div>
+          <div style="font-size:.76rem;font-weight:600;color:var(--text);">${esc(p.name)}</div>
           <div style="font-size:.50rem;color:var(--muted);margin-top:2px;">${p.kcal||0} kcal · P ${p.prot||0}g · C ${p.carb||0}g · F ${p.fat||0}g${tdeeStr}</div>
         </div>
         <button style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.68rem;padding:3px 7px;cursor:pointer;" onclick="editMacroProfile(${i})">✏️</button>
@@ -1635,10 +1626,10 @@
     const total = computeTotals(day.meals);
     const slotsHtml = MEAL_SLOTS.map(s => {
       const m = day.meals.find(x => x.slot === s.key);
-      if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-header"><div class="meal-slot-label">${s.label}</div></div><div class="meal-slot-desc">—</div></div></div>`;
+      if (!m) return `<div class="meal-slot empty"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content"><div class="meal-slot-header"><div class="meal-slot-label">${esc(s.label)}</div></div><div class="meal-slot-desc">—</div></div></div>`;
       return `<div class="meal-slot"><div class="meal-slot-icon">${s.icon}</div><div class="meal-slot-content">
         <div class="meal-slot-header">
-          <div class="meal-slot-label">${s.label}</div>
+          <div class="meal-slot-label">${esc(s.label)}</div>
           <div class="meal-slot-header-macros">
             <span class="macro-pill kcal">${m.kcal||0} kcal</span>
             <span class="macro-pill">P ${m.prot||0}g</span>
@@ -1646,7 +1637,7 @@
             <span class="macro-pill">F ${m.fat||0}g</span>
           </div>
         </div>
-        <div class="meal-slot-desc">${m.desc}</div>
+        <div class="meal-slot-desc">${esc(m.desc)}</div>
         ${m.supp ? `<div class="meal-slot-desc" style="color:var(--muted);font-size:.60rem;">💊 ${m.supp}</div>` : ''}
         </div></div>`;
     }).join('');
@@ -1686,7 +1677,7 @@
       <div class="day-card-header">
         <div class="day-card-left">
           <div class="day-dot" style="background:${dot}"></div>
-          <div><div class="day-name">${day.name}</div><div class="day-type">${day.type}</div></div>
+          <div><div class="day-name">${esc(day.name)}</div><div class="day-type">${esc(day.type)}</div></div>
         </div>
         <div class="day-card-right">
           <button class="day-edit-btn" onclick="openDayModal('${day.id}')">✏️</button>
@@ -1796,14 +1787,14 @@
     const el = document.createElement('div');
     el.className = 'dm-meal-block';
     el.style = 'background:var(--surface);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;';
-    const opts = MEAL_SLOTS.map(s => `<option value="${s.key}" ${prefill && prefill.slot===s.key?'selected':''}>${s.icon} ${s.label}</option>`).join('');
+    const opts = MEAL_SLOTS.map(s => `<option value="${s.key}" ${prefill && prefill.slot===s.key?'selected':''}>${s.icon} ${esc(s.label)}</option>`).join('');
     el.innerHTML = `
       <div style="display:flex;gap:6px;align-items:center;">
         <span class="dm-drag-handle" title="Sposta su">☰</span>
         <select class="form-select" style="flex:1;" data-role="slot">${opts}</select>
         <button type="button" class="item-del-btn" onclick="this.closest('.dm-meal-block').remove()">✕</button>
       </div>
-      <input class="form-input" type="text" placeholder="Descrizione pasto" data-role="desc" value="${prefill?prefill.desc:''}"/>
+      <input class="form-input" type="text" placeholder="Descrizione pasto" data-role="desc" value="${esc(prefill?prefill.desc:'')}"/>
       <input class="form-input" type="text" placeholder="💊 Integratori (es. Creatina 5g, Vit D)" data-role="supp" value="${prefill?(prefill.supp||''):''}"/>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
         <input class="form-input" type="number" min="0" placeholder="kcal" data-role="kcal" value="${prefill?(prefill.kcal||''):''}"/>
@@ -1856,9 +1847,9 @@
       document.getElementById('list-'+cat).innerHTML = items.map(r => `
         <div class="recipe-card">
           <div class="recipe-card-inner" onclick="showRecipePopup('${r.id}')">
-            ${r.photo ? `<img class="recipe-thumb" src="${r.photo}" alt="${r.name}"/>` : `<span class="recipe-flag">${getFlag(r.nat)}</span>`}
+            ${r.photo ? `<img class="recipe-thumb" src="${esc(safeUrl(r.photo))}" alt="${esc(r.name)}"/>` : `<span class="recipe-flag">${getFlag(r.nat)}</span>`}
             <div class="recipe-info">
-              <div class="recipe-name">${r.name}</div>
+              <div class="recipe-name">${esc(r.name)}</div>
               <div class="recipe-macros-row">
                 <span class="macro-pill kcal">${r.kcal||0} kcal</span>
                 <span class="macro-pill">P ${r.prot||0}g</span>
@@ -1885,7 +1876,7 @@
     document.getElementById('recipe-popup-content').innerHTML = `
       <button class="recipe-popup-close" onclick="closeRecipePopup()">✕</button>
       <div class="recipe-popup-flag">${getFlag(r.nat)}</div>
-      <div class="recipe-popup-title">${r.name}</div>
+      <div class="recipe-popup-title">${esc(r.name)}</div>
       ${r.nat ? `<div class="recipe-popup-nat">${r.nat}</div>` : ''}
       <div class="recipe-popup-macros">
         <span class="macro-pill kcal">${r.kcal||0} kcal</span>
@@ -1893,8 +1884,8 @@
         <span class="macro-pill">C ${r.carb||0}g</span>
         <span class="macro-pill">F ${r.fat||0}g</span>
       </div>
-      ${r.photo ? `<img class="recipe-popup-photo" src="${r.photo}" alt="${r.name}"/>` : ''}
-      ${r.url ? `<div style="font-size:.60rem;"><a href="${r.url}" target="_blank" rel="noopener" style="color:var(--primary);">🔗 ${r.url}</a></div>` : ''}
+      ${r.photo ? `<img class="recipe-popup-photo" src="${esc(safeUrl(r.photo))}" alt="${esc(r.name)}"/>` : ''}
+      ${r.url ? `<div style="font-size:.60rem;"><a href="${esc(safeUrl(r.url))}" target="_blank" rel="noopener" style="color:var(--primary);">🔗 ${esc(r.url)}</a></div>` : ''}
       <div><div class="recipe-popup-section">Ingredienti</div><div class="recipe-popup-ingredients">${ingHtml}</div></div>
       ${stepsHtml ? `<div><div class="recipe-popup-section">Procedimento</div><div class="recipe-popup-steps">${stepsHtml}</div></div>` : ''}
     `;
@@ -2071,7 +2062,7 @@
       <div class="export-check-row">
         <input type="checkbox" id="ec_${r.id}" value="${r.id}" checked/>
         <label for="ec_${r.id}">
-          <div class="export-check-label">${getFlag(r.nat)} ${r.name}</div>
+          <div class="export-check-label">${getFlag(r.nat)} ${esc(r.name)}</div>
           <div class="export-check-cat">${r.cat}</div>
         </label>
       </div>`).join('') : '<div style="font-size:.68rem;color:var(--muted);padding:6px 0;">Nessuna ricetta salvata.</div>';
@@ -2156,7 +2147,7 @@
       const ps=parts(m); const icon=ps[0]; const nm=ps.slice(1).join(' ');
       return `<div class="diary-meal-card">
         <div class="diary-meal-icon">${icon}</div>
-        <div class="diary-meal-info"><div class="diary-meal-name">${nm}</div><div class="diary-meal-desc">${m.desc||''}</div></div>
+        <div class="diary-meal-info"><div class="diary-meal-name">${nm}</div><div class="diary-meal-desc">${esc(m.desc||'')}</div></div>
         <div class="diary-meal-kcal">${m.kcal||0} <span>kcal</span></div>
         <div style="display:flex;align-items:center;gap:4px;">
           <button class="diary-meal-edit" onclick="openEditDiaryMealModal(${i})">✏️</button>
@@ -2224,7 +2215,7 @@
       return `<button style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:.80rem;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;transition:border-color .2s;-webkit-tap-highlight-color:transparent;" onclick="applyDietDayToDiary(${i})">
         <span style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;display:inline-block;"></span>
         <span style="font-weight:700;">${name}</span>
-        <span style="font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;">${diet[i].type}</span>
+        <span style="font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;">${esc(diet[i].type)}</span>
         <span style="margin-left:auto;font-size:.60rem;color:var(--primary);">${diet[i].meals.length} pasti</span>
       </button>`;
     }).join('');
@@ -2451,7 +2442,7 @@
       const pct=Math.round(d.val/total*100);
       return `<div class="pie-legend-row">
         <div class="pie-legend-swatch" style="background:${d.color}"></div>
-        <span>${d.label}</span>
+        <span>${esc(d.label)}</span>
         <span class="pie-legend-val">${d.val}g · ${pct}%</span>
       </div>`;
     }).join('');
@@ -2532,7 +2523,7 @@
       wrap.innerHTML = savedDiets.map(sd => `
         <div class="saved-diet-card">
           <div class="saved-diet-info">
-            <div class="saved-diet-name">${sd.name}</div>
+            <div class="saved-diet-name">${esc(sd.name)}</div>
             <div class="saved-diet-meta">${sd.date || '—'}</div>
           </div>
           <span class="saved-diet-obj">${GOAL_ICON[sd.goal]||''} ${sd.goal}</span>
@@ -2976,11 +2967,12 @@
   </div>
 
   <script type="module">
+    import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
     import {
       subscribeShoppingStores, addShoppingStore, updateShoppingStore, deleteShoppingStore,
       subscribeShoppingItems, addShoppingItem, updateShoppingItem, deleteShoppingItem,
       waitForAuth,
-    } from './js/firebase-config.js';
+    } from './js/core/db.js';
 
     waitForAuth().then(user => { if (!user) return; initShoppingApp(); });
     function initShoppingApp() {
@@ -3158,9 +3150,9 @@
         card.className = 'store-card';
 
         const imgEl = s.img
-          ? `<img class="store-card-img" src="${s.img}" alt="${s.name}" loading="lazy"/>`
+          ? `<img class="store-card-img" src="${esc(safeUrl(s.img))}" alt="${esc(s.name)}" loading="lazy"/>`
           : `<div class="store-card-img-placeholder">🛒</div>`;
-        card.innerHTML = `${imgEl}<div class="store-card-name">${s.name}</div>
+        card.innerHTML = `${imgEl}<div class="store-card-name">${esc(s.name)}</div>
           <button class="store-card-del" title="Elimina negozio">✕</button>`;
 
         card.querySelector('.store-card-del').addEventListener('click', async e => {
@@ -3244,7 +3236,7 @@
     async function promptManageCategories() {
       if (!currentStoreObj) return;
       const cats = [...getStoreCategories(currentStoreObj)];
-      const action = prompt(`Gestione Sezioni per "${currentStoreObj.name}":\n1. Digita "aggiungi: NomeSezione" per aggiungere\n2. Digita "elimina: NomeSezione" per eliminare\n3. Digita "modifica: VecchioNome -> NuovoNome" per rinominare\n\nSezioni attuali:\n${cats.join(', ')}`);
+      const action = prompt(`Gestione Sezioni per "${esc(currentStoreObj.name)}":\n1. Digita "aggiungi: NomeSezione" per aggiungere\n2. Digita "elimina: NomeSezione" per eliminare\n3. Digita "modifica: VecchioNome -> NuovoNome" per rinominare\n\nSezioni attuali:\n${cats.join(', ')}`);
       if (!action) return;
       const trimmed = action.trim();
       
@@ -3388,8 +3380,8 @@
 
         const info = document.createElement('div');
         info.className = 'store-item-info';
-        const catBadge = item.category ? `<span class="store-item-cat-badge">${item.category}</span>` : '';
-        info.innerHTML = `<div class="store-item-name">${catBadge}${item.name}</div>${item.qty ? `<div class="store-item-qty">${item.qty}</div>` : ''}`;
+        const catBadge = item.category ? `<span class="store-item-cat-badge">${esc(item.category)}</span>` : '';
+        info.innerHTML = `<div class="store-item-name">${catBadge}${esc(item.name)}</div>${item.qty ? `<div class="store-item-qty">${item.qty}</div>` : ''}`;
 
         const actions = document.createElement('div');
         actions.className = 'store-item-actions';

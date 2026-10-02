@@ -1,1 +1,22 @@
-js/secrets.js
+# Sistema / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Strumenti AI locali (es. hook di auto-commit)
+.bob/
+
+# Firebase
+# Configurazione per lo sviluppo locale (online la fornisce Firebase Hosting)
+/__/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+*-service-account*.json
+
+# Varie
+node_modules/
+__pycache__/
+
+# Configurazione locale Claude Code
+.claude/

@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Direzione"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Direzione</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -383,19 +383,9 @@
     }
     .page-footer a { color: var(--gold); text-decoration: none; }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
 
   <header>
@@ -468,16 +458,11 @@
   </div>
 
   <script type="module">
-    import { waitForAuth } from './js/firebase-config.js';
-    import { getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+    import { waitForAuth } from './js/core/db.js';
     import {
-      getFirestore, doc, getDoc, setDoc,
+      doc, getDoc, setDoc,
     } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
-    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-
-    const _app  = getApps()[0];
-    const _db   = _app ? getFirestore(_app) : null;
-    const _auth = _app ? getAuth(_app) : null;
+    import { db as _db, auth as _auth } from './js/core/firebase.js';
 
     function _directionDoc() {
       const uid = _auth?.currentUser?.uid;

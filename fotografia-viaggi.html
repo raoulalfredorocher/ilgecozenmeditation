@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Fotografia e Viaggi</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -42,7 +42,7 @@
       overflow:hidden;
     }
     #leaflet-map{width:100%;height:100%;display:block}
-    .leaflet-control-attribution{display:none!important}
+    .leaflet-control-attribution{font-size:9px;background:rgba(255,255,255,.7)!important}
     .leaflet-container{background:#a8d4e6;margin:0!important;padding:0!important}
 
     /* Spazio riservato sotto la mappa fixed per il contenuto */
@@ -130,19 +130,9 @@
     #stats-bar{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.6rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
     .sv{color:var(--gold);font-weight:700;font-size:.72rem;margin-right:2px}
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__={
-      apiKey:['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain:'ilgecozen-b2df7.firebaseapp.com',
-      projectId:'ilgecozen-b2df7',
-      storageBucket:'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId:'956821191073',
-      appId:'1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
   <header id="map-header">
     <a class="header-btn" href="passioni.html" style="color:var(--muted);text-decoration:none;">
@@ -174,8 +164,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module">
-    import { waitForAuth } from './js/firebase-config.js';
-    import { subscribeAllCountries, subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/firebase-config.js';
+    import { waitForAuth } from './js/core/db.js';
+    import { subscribeAllCountries, subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
 
     // ── Tema ─────────────────────────────────────────────────────────────────
     const html = document.documentElement;
@@ -1775,8 +1765,8 @@
     const headerEl = document.getElementById('map-header');
     const headerH = headerEl.offsetHeight || 60;
 
-    const map = L.map('leaflet-map', {zoomControl:true, attributionControl:false});
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(map);
+    const map = L.map('leaflet-map', {zoomControl:true, attributionControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18, attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
     map.setView([30, 15], 2);
 
     // Mappa numeric ISO3166 → iso2
@@ -1845,7 +1835,7 @@
       window._geoLayer.setStyle(geoStyle);
     }
 
-    fetch('./countries-110m.json')
+    fetch('./assets/data/countries-110m.json')
       .then(r => r.json())
       .then(topo => {
         const s = document.createElement('script');
