@@ -252,6 +252,15 @@ function buildRotateHint() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator) || location.hostname === 'localhost') return;
   navigator.serviceWorker.register('/sw.js').catch(() => { /* facoltativo */ });
+  // Nuova versione pubblicata: ricarica una volta se la pagina è appena stata aperta
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data?.type !== 'zen-updated') return;
+    if (performance.now() < 6000 && !sessionStorage.getItem('zen_reloaded')) {
+      sessionStorage.setItem('zen_reloaded', '1');
+      location.reload();
+    }
+  });
+  addEventListener('pageshow', () => setTimeout(() => sessionStorage.removeItem('zen_reloaded'), 8000));
 }
 
 // ─── Avvio ──────────────────────────────────────────────────────────────
