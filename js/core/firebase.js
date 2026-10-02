@@ -11,6 +11,7 @@
  */
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js';
 import {
   initializeFirestore,
   getFirestore,
@@ -61,6 +62,20 @@ function loadConfig() {
 export const firebaseConfig = loadConfig();
 
 export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+/**
+ * App Check: dimostra a Firebase che le richieste arrivano da questa app.
+ * Obbligatorio per l'assistente (Firebase AI Logic). Usa reCAPTCHA Enterprise,
+ * invisibile all'utente. La chiave del sito è pubblica per natura.
+ * In sviluppo locale si usa un token di debug (va registrato nella console:
+ * App Check → app web → Gestisci token di debug).
+ */
+const APP_CHECK_SITE_KEY = '6Lc01dotAAAAAJXfGFULfD1MqBeIE1ROUXyHGRiB';
+if (location.hostname === 'localhost') self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+export const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY),
+  isTokenAutoRefreshEnabled: true,
+});
 
 export const auth = getAuth(app);
 
