@@ -155,6 +155,22 @@ function buildSectionsSheet() {
   sheet('zen-sections', 'Sezioni', groups);
 }
 
+/**
+ * Aggiorna l'app: spegne il service worker, cancella tutte le copie salvate
+ * (pagine, script, immagini, librerie) e ricarica. Dati e login non si toccano:
+ * vivono su Firestore e nello spazio locale, che qui non viene svuotato.
+ */
+async function refreshApp() {
+  const btn = document.getElementById('zen-refresh');
+  btn.disabled = true;
+  btn.textContent = 'Aggiorno…';
+  try {
+    if ('serviceWorker' in navigator) (await navigator.serviceWorker.getRegistrations()).forEach(r => r.unregister());
+    if ('caches' in window) await Promise.all((await caches.keys()).map(k => caches.delete(k)));
+  } catch { /* si ricarica comunque */ }
+  location.reload();
+}
+
 function buildProfileSheet() {
   sheet('zen-profile', 'Profilo', `
     <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);margin-bottom:var(--space-6)">
@@ -170,10 +186,16 @@ function buildProfileSheet() {
         <button type="button" data-theme-choice="auto">Automatico</button>
       </div>
     </div>
+    <div class="zen-section" style="margin-bottom:var(--space-6)">
+      <div class="zen-eyebrow">App</div>
+      <button type="button" class="btn block" id="zen-refresh">${icon('refresh', 'sm')} Aggiorna app</button>
+      <p class="zen-muted" style="font-size:var(--fs-xs);text-align:center;line-height:1.5">Svuota la memoria del sito e ricarica l’ultima versione. Non tocca i tuoi dati né l’accesso.</p>
+    </div>
     <button type="button" class="btn block danger" id="zen-logout">${icon('logout', 'sm')} Esci</button>`);
   document.querySelectorAll('[data-theme-choice]').forEach(b =>
     b.addEventListener('click', () => setTheme(b.dataset.themeChoice)));
   document.getElementById('zen-logout').addEventListener('click', confirmAndSignOut);
+  document.getElementById('zen-refresh').addEventListener('click', refreshApp);
 }
 
 function fillProfile(user) {
