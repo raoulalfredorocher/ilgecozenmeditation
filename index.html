@@ -4,787 +4,226 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Home</title>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Stili specifici della Home */
+    .greeting { padding-top: var(--space-2); }
+    .greeting .zen-h1 { margin-top: var(--space-1); }
+    .greeting .motto { margin-top: var(--space-2); color: var(--muted); font-size: var(--fs-sm); }
 
-    html[data-theme="light"] {
-      --bg:      #f7f4f9;
-      --surface: #ede8f4;
-      --card:    #ffffff;
-      --border:  #d4cee0;
-      --text:    #1e2a38;
-      --muted:   #876a6a;
-      --gold:    #25739E;
-      --accent:  #F5A9BC;
-      --accent2: #74C7E1;
+    .weather { display: flex; align-items: center; gap: var(--space-4); }
+    .weather .dot-icon { width: 52px; height: 52px; border-radius: 16px; }
+    .weather .dot-icon .icon { width: 28px; height: 28px; }
+    .weather-temp { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .weather-temp small { font-size: var(--fs-md); color: var(--muted); font-weight: 500; }
+    .weather-desc { font-size: var(--fs-sm); color: var(--muted); }
+    .weather-meta { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .weather-meta strong { color: var(--text); font-weight: 600; }
+    .uv-low { color: var(--success) !important; } .uv-medium { color: var(--warning) !important; } .uv-high { color: var(--danger) !important; }
+    .zen select.city {
+      appearance: none; -webkit-appearance: none; border: 0; background-color: transparent; padding: 0 16px 0 0; min-height: 0;
+      font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+      background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(-45deg, transparent 50%, currentColor 50%);
+      background-size: 4px 4px; background-position: right 5px center, right 1px center; background-repeat: no-repeat;
+      width: auto; cursor: pointer;
     }
-    html[data-theme="dark"] {
-      --bg:      #111820;
-      --surface: #1a2230;
-      --card:    #1e2a38;
-      --border:  #2e3f52;
-      --text:    #e8eef4;
-      --muted:   #a89090;
-      --gold:    #74C7E1;
-      --accent:  #F5A9BC;
-      --accent2: #9DDDE8;
-    }
+    .zen select.city:focus { background-color: transparent; border: 0; }
 
-    html { overscroll-behavior: none; }
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, "Hiragino Mincho ProN", Georgia, serif;
-      -webkit-font-smoothing: antialiased;
-      transition: background .3s, color .3s;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 112px) 24px 48px;
-      max-width: 420px;
-      margin: 0 auto;
-      min-height: 100dvh;
-    }
+    .quote-card { border-left: 2px solid var(--sakura); border-radius: 4px var(--radius-lg) var(--radius-lg) 4px; }
+    .quote-card .zen-quote { margin-top: var(--space-3); }
 
-    .theme-toggle {
-      background: none;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      cursor: pointer;
-      width: 48px; height: 26px;
-      position: relative;
-      flex-shrink: 0;
-      transition: border-color .3s;
+    .bday-initials {
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--sakura-soft); color: var(--bark); font-weight: 600; font-size: var(--fs-sm); flex-shrink: 0;
     }
-    .theme-toggle .knob {
-      position: absolute;
-      top: 2px; left: 2px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      transition: transform .3s;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .7rem;
-    }
-    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(22px); }
+    .bday-when { font-size: var(--fs-sm); color: var(--muted); white-space: nowrap; }
+    .bday-when.today { color: var(--danger); font-weight: 600; }
 
-    /* ── Header fisso ── */
-    .hub-header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(env(safe-area-inset-top, 0px) + 10px) 18px 10px;
-      gap: 8px;
-    }
-    .hub-header-left {
-      width: 48px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: flex-start;
-    }
-    .hub-header-center {
-      flex: 1;
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-    }
-    .hub-header-right {
-      width: 48px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: flex-end;
-    }
-    .hub-logo {
-      height: 38px;
-      width: auto;
-      object-fit: contain;
-    }
-    .hub-title {
-      font-size: .56rem;
-      letter-spacing: .20em;
-      color: var(--gold);
-      font-weight: 700;
-      text-align: center;
-      text-transform: uppercase;
-      line-height: 1.4;
-    }
-    /* account icon */
-    .btn-account {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; overflow: hidden; flex-shrink: 0;
-      transition: border-color .2s;
-    }
-    .btn-account img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-    .btn-account svg { color: var(--muted); }
-    .btn-account:active { border-color: var(--gold); }
-
-    .section-card {
-      width: 100%;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 20px 18px;
-    }
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .section-title {
-      font-size: .58rem;
-      letter-spacing: .24em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-    .life-progress {
-      font-size: .74rem;
-      color: var(--gold);
-      text-align: center;
-      margin-bottom: 8px;
-      letter-spacing: .08em;
-      font-weight: 700;
-    }
-    .life-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: .62rem;
-      color: var(--muted);
-      margin-top: 8px;
-      letter-spacing: .04em;
-    }
-    .life-bar {
-      width: 100%;
-      height: 14px;
-      background: var(--surface);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      margin-bottom: 12px;
-    }
-    .life-bar-fill {
-      height: 100%;
-      width: 37.84%;
-      background: linear-gradient(90deg, var(--accent), var(--gold));
-      border-radius: 999px;
-    }
-
-    .compass {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      max-width: 220px;
-      margin: 6px auto 0;
-      border: 1.5px solid var(--border);
-      border-radius: 50%;
-      background: var(--surface);
-    }
-    .compass-center-wrap {
-      position: absolute;
-      inset: 50% auto auto 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-    }
-    .compass::before,
-    .compass::after {
-      content: "";
-      position: absolute;
-      background: var(--border);
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .compass::before {
-      width: 1px;
-      height: 84%;
-    }
-    .compass::after {
-      width: 84%;
-      height: 1px;
-    }
-    .compass-center {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--gold);
-      border: 4px solid var(--card);
-      cursor: pointer;
-    }
-    .ikigai-popup {
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 14px);
-      transform: translateX(-50%);
-      width: 220px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 18px;
-      padding: 14px 14px 12px;
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s ease;
-    }
-    .ikigai-popup.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .ikigai-popup-title {
-      font-size: .56rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
-    .ikigai-popup-text {
-      font-size: .68rem;
-      color: var(--text);
-      line-height: 1.6;
-    }
-    .weather-widget {
-      width: 100%;
-      margin-bottom: 18px;
-      padding: 14px 16px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .weather-main {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .weather-icon {
-      font-size: 1.8rem;
-      line-height: 1;
-      width: 2.2rem;
-      text-align: center;
-    }
-    .weather-place {
-      font-size: .52rem;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .weather-temp {
-      font-size: .82rem;
-      color: var(--text);
-      font-weight: 600;
-      margin-top: 2px;
-    }
-    .weather-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-      font-size: .62rem;
-      color: var(--muted);
-    }
-    .weather-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .uv-value {
-      font-weight: 700;
-    }
-    .uv-low {
-      color: #2f9e44;
-    }
-    .uv-medium {
-      color: #e0a800;
-    }
-    .uv-high {
-      color: #d64545;
-    }
-    /* ── Birthday widget ── */
-    .birthday-widget {
-      width: 100%;
-      margin-bottom: 18px;
-      background: var(--card);
-      border: 1.5px solid #f0b36f55;
-      border-radius: 18px;
-      padding: 14px 16px;
-      display: none;
-    }
-    .birthday-widget-title {
-      font-size: .56rem;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      color: #f0b36f;
-      margin-bottom: 10px;
-      font-weight: 700;
-    }
-    .birthday-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .birthday-item:last-child { border-bottom: none; }
-    .birthday-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 2px solid #f0b36f44;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .9rem;
-      color: #f0b36f;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .birthday-info { flex: 1; }
-    .birthday-name {
-      font-size: .84rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .birthday-days {
-      font-size: .62rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .birthday-days.today { color: #f0b36f; font-weight: 700; }
-
-    /* ── Frase del giorno ── */
-    .daily-quote-block {
-      width: 100%;
-      margin-bottom: 18px;
-      padding: 14px 18px;
-      background: var(--card);
-      border: 1.5px solid var(--accent);
-      border-radius: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .daily-quote-label {
-      font-size: .50rem;
-      letter-spacing: .20em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 700;
-    }
-    .daily-quote-text {
-      font-size: .86rem;
-      line-height: 1.65;
-      color: var(--text);
-      font-style: italic;
-    }
-
-    .footer-quote {
-      width: 100%;
-      margin-top: 22px;
-      padding: 20px 18px 0;
-      border-top: 1px solid var(--border);
-      color: var(--accent2);
-      font-size: .86rem;
-      line-height: 1.9;
-      text-align: center;
-      font-style: italic;
-    }
-    .page-footer {
-      margin-top: 16px; width: 100%;
-      border-top: 1px solid var(--border); padding-top: 12px;
-      text-align: center; font-size: .52rem;
-      letter-spacing: .14em; color: var(--muted);
-    }
-    .page-footer a { color: var(--gold); text-decoration: none; }
-    .compass-point {
-      position: absolute;
-      font-size: .58rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--text);
-      text-align: center;
-      line-height: 1.4;
-      width: 110px;
-    }
-    .compass-point strong {
-      display: block;
-      color: var(--gold);
-      font-size: .52rem;
-      letter-spacing: .2em;
-      margin-bottom: 2px;
-    }
-    .compass-point.north { top: 14px; left: 50%; transform: translateX(-50%); }
-    .compass-point.east { top: 50%; right: -18px; transform: translateY(-50%); }
-    .compass-point.south { bottom: 14px; left: 50%; transform: translateX(-50%); }
-    .compass-point.west { top: 50%; left: -18px; transform: translateY(-50%); }
-
-    .hub-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .hub-card-wide {
-      grid-column: 1 / -1;
-    }
-    .hub-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 28px 18px 22px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      min-height: 138px;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      transition: border-color .2s, background .2s, transform .12s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      text-align: center;
-    }
-    .hub-card:active {
-      background: var(--surface);
-      border-color: var(--accent);
-      transform: scale(.97);
-    }
-    .hub-card-icon {
-      font-size: 2.2rem;
-      line-height: 1;
-    }
-    .hub-card-title {
-      font-size: .84rem;
-      font-weight: 600;
-      letter-spacing: .1em;
-      color: var(--text);
-      text-align: center;
-    }
-    .hub-card-sub {
-      font-size: .52rem;
-      letter-spacing: .14em;
-      color: var(--muted);
-      text-transform: uppercase;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .hub-card.food   { border-color: #e8a87c55; }
-    .hub-card.gym    { border-color: #6cbf8a55; }
-    .hub-card.zen    { border-color: var(--accent); }
-    .hub-card.bucket { border-color: #cbb7f8; }
-    .hub-card.dir    { border-color: #74C7E155; }
-    .hub-card.journal{ border-color: #f0b36f66; }
-    .hub-card.mind   { border-color: #9ec5ff66; }
-    .hub-card.social { border-color: #f5a9bc66; }
-    .hub-card.world  { border-color: #25739E55; }
-
-    .hub-card-icon.food-icon { filter: drop-shadow(0 2px 6px rgba(232,168,124,.35)); }
-    .hub-card-icon.gym-icon  { filter: drop-shadow(0 2px 6px rgba(108,191,138,.35)); }
-    .hub-card-icon.zen-icon  { filter: drop-shadow(0 2px 6px rgba(245,169,188,.35)); }
-
-    @media (max-width: 360px) {
-      .compass-point.east { right: -28px; }
-      .compass-point.west { left: -28px; }
-      .compass-point { width: 100px; font-size: .54rem; }
-    }
+    .closing { text-align: center; color: var(--muted); padding: var(--space-4) var(--space-2) 0; }
+    .closing .zen-quote { font-size: var(--fs-md); }
+    .closing .site { margin-top: var(--space-5); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; }
   </style>
 </head>
-<body style="visibility:hidden">
+<body class="zen zen-native" data-title="Il Geco Zen" data-tab="home" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
 
-  <header class="hub-header">
-    <div class="hub-header-left">
-      <button class="btn-account" id="btn-account" aria-label="Account" title="Account">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      </button>
-    </div>
-    <div class="hub-header-center">
-      <img src="assets/img/logo.webp" alt="Il Geco Zen" class="hub-logo"/>
-      <div class="hub-title">LA VIA DI MEZZO PER LA PROSPERITÀ</div>
-    </div>
-    <div class="hub-header-right">
-      <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-        <div class="knob" id="theme-knob">☀️</div>
-      </button>
-    </div>
-  </header>
+  <main class="zen-main">
+    <!-- Saluto -->
+    <section class="greeting">
+      <div class="zen-eyebrow" id="today"></div>
+      <h2 class="zen-h1" id="hello">Ciao</h2>
+      <p class="motto">La via di mezzo per la prosperità</p>
+    </section>
 
-  <section class="weather-widget" aria-label="Meteo" id="weather-section">
-    <div class="weather-main">
-      <div class="weather-icon" id="weather-icon">☁️</div>
+    <!-- Meteo -->
+    <section class="card weather" aria-label="Meteo">
+      <span class="dot-icon" id="weather-icon" role="img" aria-label="Meteo"></span>
       <div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div class="weather-place" id="weather-place-name">Pandino</div>
-          <select id="city-select" style="background:none;border:none;font-size:.50rem;letter-spacing:.10em;color:var(--muted);cursor:pointer;font-family:inherit;padding:0;outline:none;" onchange="changeCity(this.value)">
-            <option value="pandino">Pandino</option>
-            <option value="milano">Milano</option>
-            <option value="lodi">Lodi</option>
-            <option value="zelo">Zelo Buon Persico</option>
-          </select>
-        </div>
-        <div class="weather-temp"><span id="weather-max">--</span>° / <span id="weather-min">--</span>°</div>
-        <div id="weather-desc" style="font-size:.58rem;color:var(--muted);margin-top:2px;letter-spacing:.04em;"></div>
+        <select class="city" id="city-select" aria-label="Città">
+          <option value="pandino">Pandino</option>
+          <option value="milano">Milano</option>
+          <option value="lodi">Lodi</option>
+          <option value="zelo">Zelo Buon Persico</option>
+        </select>
+        <div class="weather-temp"><span id="weather-max">--</span>° <small>/ <span id="weather-min">--</span>°</small></div>
+        <div class="weather-desc" id="weather-desc"></div>
       </div>
-    </div>
-    <div class="weather-meta">
-      <div class="weather-meta-row">UV <strong class="uv-value" id="weather-uv">--</strong></div>
-      <div class="weather-meta-row">Umidità <strong id="weather-humidity">--</strong>%</div>
-    </div>
-  </section>
+      <div class="weather-meta">
+        <span>UV <strong id="weather-uv">--</strong></span>
+        <span>Umidità <strong id="weather-humidity">--</strong>%</span>
+      </div>
+    </section>
 
-  <!-- ── Birthday widget ── -->
-  <section class="birthday-widget" id="birthday-widget" aria-label="Compleanni in arrivo">
-    <div class="birthday-widget-title">🎂 Compleanni in arrivo</div>
-    <div id="birthday-list"></div>
-  </section>
+    <!-- Pensiero del giorno -->
+    <section class="card quote-card" aria-label="Pensiero del giorno">
+      <div class="zen-eyebrow">Pensiero del giorno</div>
+      <p class="zen-quote" id="daily-quote-text">…</p>
+    </section>
 
-  <!-- ── Frase del giorno ── -->
-  <div class="daily-quote-block" aria-label="Frase del giorno">
-    <div class="daily-quote-label">✦ Pensiero del giorno</div>
-    <div class="daily-quote-text" id="daily-quote-text">…</div>
-  </div>
+    <!-- Compleanni (visibile solo se ce ne sono nei prossimi 7 giorni) -->
+    <section class="zen-section" id="birthday-widget" hidden aria-label="Compleanni in arrivo">
+      <div class="zen-eyebrow">Compleanni in arrivo</div>
+      <div class="list" id="birthday-list"></div>
+    </section>
 
-  <div class="hub-grid" style="margin-bottom: 18px;">
-    <a class="hub-card bucket" href="bucket-list.html">
-      <span class="hub-card-icon">✨</span>
-      <div class="hub-card-title">Bucket List</div>
-    </a>
+    <!-- Sezioni -->
+    <section class="zen-section" aria-label="Sezioni">
+      <div class="zen-eyebrow">Il tuo spazio</div>
+      <div class="tile-grid" id="home-tiles"></div>
+    </section>
 
-    <a class="hub-card dir" href="direzione.html">
-      <span class="hub-card-icon">🧭</span>
-      <div class="hub-card-title">Direzione</div>
-    </a>
-  </div>
+    <footer class="closing">
+      <p class="zen-quote">"Alla fine sei un 1 o uno 0, vuoi agire o no? Si lo sai ci sono tanti grigi, ma tu quando arrivi al nocciolo sei un 1 oppure uno 0? fai qualcosa o non la fai? dici no o dici si? Questo è il tuo day one oppure questo è one day?<br><br>Io sono sia lo 0 che l'1, io sono l'universo"</p>
+      <div class="site"><a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> · Il Geco Zen</div>
+    </footer>
+  </main>
 
-  <div class="hub-grid">
-    <a class="hub-card food" href="alimentazione.html">
-      <span class="hub-card-icon food-icon">🥗</span>
-      <div class="hub-card-title">Alimentazione</div>
-      <div class="hub-card-sub">dieta · ricette · diario</div>
-    </a>
+  <script type="module">
+    import { icon } from './js/ui/icons.js';
+    import { SECTION_GROUPS } from './js/ui/sections.js';
+    import { getDailyQuote } from './js/data/quotes.js';
+    import { getBirthdayContacts } from './js/core/db.js';
+    import { waitForUser } from './js/core/auth-guard.js';
+    import { escapeHtml } from './js/core/dom.js';
 
-    <a class="hub-card gym" href="allenamento.html">
-      <span class="hub-card-icon gym-icon">🏋️</span>
-      <div class="hub-card-title">Allenamento</div>
-      <div class="hub-card-sub">schede · sessioni</div>
-    </a>
+    /* ── Saluto e data ── */
+    const now = new Date();
+    document.getElementById('today').textContent =
+      now.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+    const h = now.getHours();
+    const saluto = h < 5 ? 'Buonanotte' : h < 13 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera';
+    document.getElementById('hello').textContent = saluto;
 
-    <a class="hub-card zen hub-card-wide" href="meditazione.html">
-      <span class="hub-card-icon zen-icon">🧘</span>
-      <div class="hub-card-title">Spiritualità</div>
-      <div class="hub-card-sub">pratica · presenza · connessione</div>
-    </a>
+    /* ── Pensiero del giorno ── */
+    document.getElementById('daily-quote-text').textContent = getDailyQuote();
 
-    <a class="hub-card journal" href="passioni.html">
-      <span class="hub-card-icon">📷</span>
-      <div class="hub-card-title">Passioni</div>
-    </a>
+    /* ── Sezioni della Home (stesso ordine e stesse larghezze di prima) ── */
+    const HOME = [
+      ['bucket-list.html'], ['direzione.html'],
+      ['alimentazione.html'], ['allenamento.html'],
+      ['meditazione.html', 'wide'],
+      ['passioni.html'], ['armonia-sociale.html'],
+      ['salute-mentale.html', 'wide'],
+      ['contributo-al-mondo.html', 'wide'],
+    ];
+    const byHref = Object.fromEntries(SECTION_GROUPS.flatMap(g => g.items).map(s => [s.href, s]));
+    document.getElementById('home-tiles').innerHTML = HOME.map(([href, wide]) => {
+      const s = byHref[href];
+      return `<a class="tile${wide ? ' wide' : ''}" href="${s.href}">
+        <span class="dot-icon ${s.tone}">${icon(s.icon)}</span>
+        <span><span class="tile-title">${escapeHtml(s.title)}</span>
+        ${s.sub ? `<span class="tile-sub" style="display:block">${escapeHtml(s.sub)}</span>` : ''}</span>
+      </a>`;
+    }).join('');
 
-    <a class="hub-card social" href="armonia-sociale.html">
-      <span class="hub-card-icon">🤝</span>
-      <div class="hub-card-title">Armonia sociale</div>
-      <div class="hub-card-sub">relazioni, CRM</div>
-    </a>
-
-    <a class="hub-card mind hub-card-wide" href="salute-mentale.html">
-      <span class="hub-card-icon">🫶</span>
-      <div class="hub-card-title">Salute mentale</div>
-      <div class="hub-card-sub">ascolto, emozioni diario</div>
-    </a>
-
-    <a class="hub-card world hub-card-wide" href="contributo-al-mondo.html">
-      <span class="hub-card-icon">🌍</span>
-      <div class="hub-card-title">Contributo al mondo</div>
-      <div class="hub-card-sub">lavoro · impatto · significato</div>
-    </a>
-  </div>
-
-  <footer class="footer-quote">
-    "Alla fine sei un 1 o uno 0, vuoi agire o no? Si lo sai ci sono tanti grigi, ma tu quando arrivi al nocciolo sei un 1 oppure uno 0? fai qualcosa o non la fai? dici no o dici si? Questo è il tuo day one oppure questo è one day?<br><br>Io sono sia lo 0 che l'1, io sono l'universo"
-  </footer>
-
-  <div class="page-footer">
-    <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a>
-    &nbsp;·&nbsp; Il Geco Zen
-  </div>
-
-  <script>
-    const htmlEl = document.documentElement;
-    const btn  = document.getElementById('theme-toggle');
-    const knob = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
-
-    function apply() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-    }
-
-    /* ── Città meteo ── */
+    /* ── Meteo (Open-Meteo, nessuna chiave richiesta) ── */
     const CITIES = {
       pandino: { name: 'Pandino',           lat: 45.4072, lon: 9.5525 },
       milano:  { name: 'Milano',            lat: 45.4654, lon: 9.1859 },
       lodi:    { name: 'Lodi',              lat: 45.3139, lon: 9.5030 },
       zelo:    { name: 'Zelo Buon Persico', lat: 45.4042, lon: 9.4847 },
     };
-    const WEATHER_TYPES = {
-      0:  { icon: '☀️',  label: 'Sereno' },
-      1:  { icon: '🌤️', label: 'Prevalentemente sereno' },
-      2:  { icon: '⛅',  label: 'Parzialmente nuvoloso' },
-      3:  { icon: '☁️',  label: 'Nuvoloso' },
-      45: { icon: '🌫️', label: 'Nebbia' },
-      48: { icon: '🌫️', label: 'Nebbia con brina' },
-      51: { icon: '🌦️', label: 'Pioviggine leggera' },
-      53: { icon: '🌦️', label: 'Pioviggine' },
-      55: { icon: '🌧️', label: 'Pioviggine intensa' },
-      61: { icon: '🌧️', label: 'Pioggia leggera' },
-      63: { icon: '🌧️', label: 'Pioggia' },
-      65: { icon: '🌧️', label: 'Pioggia intensa' },
-      66: { icon: '🌨️', label: 'Pioggia gelata' },
-      67: { icon: '🌨️', label: 'Pioggia gelata intensa' },
-      71: { icon: '❄️',  label: 'Neve leggera' },
-      73: { icon: '❄️',  label: 'Neve' },
-      75: { icon: '❄️',  label: 'Neve intensa' },
-      77: { icon: '🌨️', label: 'Neve granulare' },
-      80: { icon: '🌦️', label: 'Rovesci leggeri' },
-      81: { icon: '🌧️', label: 'Rovesci' },
-      82: { icon: '⛈️',  label: 'Rovesci violenti' },
-      85: { icon: '❄️',  label: 'Rovesci di neve' },
-      86: { icon: '❄️',  label: 'Rovesci di neve intensi' },
-      95: { icon: '⛈️',  label: 'Temporale' },
-      96: { icon: '⛈️',  label: 'Temporale con grandine' },
-      99: { icon: '⛈️',  label: 'Temporale con grandine intensa' },
-    };
-
-    let _currentCity = localStorage.getItem('zen_weather_city') || 'pandino';
-
-    function changeCity(val) {
-      _currentCity = val;
-      localStorage.setItem('zen_weather_city', val);
-      const sel = document.getElementById('city-select');
-      if (sel) sel.value = val;
-      document.getElementById('weather-place-name').textContent = CITIES[val]?.name || val;
-      loadWeather();
+    /** Codice meteo WMO → [icona, descrizione] */
+    function weatherInfo(code) {
+      if (code === 0) return ['sun', 'Sereno'];
+      if (code === 1) return ['cloudSun', 'Prevalentemente sereno'];
+      if (code === 2) return ['cloudSun', 'Parzialmente nuvoloso'];
+      if (code === 3) return ['cloud', 'Nuvoloso'];
+      if (code === 45 || code === 48) return ['fog', 'Nebbia'];
+      if (code >= 51 && code <= 57) return ['rain', 'Pioviggine'];
+      if (code >= 61 && code <= 67) return ['rain', code >= 65 ? 'Pioggia intensa' : 'Pioggia'];
+      if (code >= 71 && code <= 77) return ['snow', 'Neve'];
+      if (code >= 80 && code <= 82) return ['rain', 'Rovesci'];
+      if (code === 85 || code === 86) return ['snow', 'Rovesci di neve'];
+      if (code >= 95) return ['storm', 'Temporale'];
+      return ['cloud', 'Nuvoloso'];
     }
 
+    const citySelect = document.getElementById('city-select');
+    let city = localStorage.getItem('zen_weather_city') || 'pandino';
+    citySelect.value = city;
+    citySelect.addEventListener('change', () => {
+      city = citySelect.value;
+      localStorage.setItem('zen_weather_city', city);
+      loadWeather();
+    });
+
     async function loadWeather() {
-      const city = CITIES[_currentCity] || CITIES.pandino;
+      const c = CITIES[city] || CITIES.pandino;
+      const iconEl = document.getElementById('weather-icon');
       try {
-        // hourly: previsioni ora per ora per umidità e weather_code corrente
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}` +
-          `&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max` +
-          `&hourly=weather_code,relative_humidity_2m,precipitation_probability` +
-          `&current=temperature_2m,weather_code,relative_humidity_2m` +
-          `&timezone=auto&forecast_days=1`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}` +
+          '&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max' +
+          '&current=temperature_2m,weather_code,relative_humidity_2m&timezone=auto&forecast_days=1';
         const data = await (await fetch(url)).json();
-
-        // usa il weather_code CORRENTE (non quello giornaliero generico)
-        const currentCode = data.current?.weather_code ?? data.daily.weather_code[0];
-        const wt = WEATHER_TYPES[currentCode] || { icon: '☁️', label: 'Nuvoloso' };
-
-        const uvValue  = Math.round(data.daily.uv_index_max[0]);
-        const humidity = data.current?.relative_humidity_2m ?? data.hourly.relative_humidity_2m[new Date().getHours()];
-
-        document.getElementById('weather-icon').textContent = wt.icon;
-        document.getElementById('weather-icon').setAttribute('aria-label', wt.label);
-        document.getElementById('weather-desc').textContent = wt.label;
-        document.getElementById('weather-max').textContent  = Math.round(data.daily.temperature_2m_max[0]);
-        document.getElementById('weather-min').textContent  = Math.round(data.daily.temperature_2m_min[0]);
-        document.getElementById('weather-humidity').textContent = Math.round(humidity);
-
+        const [ic, label] = weatherInfo(data.current?.weather_code ?? data.daily.weather_code[0]);
+        const uv = Math.round(data.daily.uv_index_max[0]);
+        iconEl.innerHTML = icon(ic);
+        iconEl.setAttribute('aria-label', label);
+        document.getElementById('weather-desc').textContent = label;
+        document.getElementById('weather-max').textContent = Math.round(data.daily.temperature_2m_max[0]);
+        document.getElementById('weather-min').textContent = Math.round(data.daily.temperature_2m_min[0]);
+        document.getElementById('weather-humidity').textContent = Math.round(data.current?.relative_humidity_2m ?? 0);
         const uvEl = document.getElementById('weather-uv');
-        uvEl.textContent = uvValue;
-        uvEl.className = 'uv-value';
-        uvEl.classList.add(uvValue <= 2 ? 'uv-low' : uvValue <= 5 ? 'uv-medium' : 'uv-high');
+        uvEl.textContent = uv;
+        uvEl.className = uv <= 2 ? 'uv-low' : uv <= 5 ? 'uv-medium' : 'uv-high';
       } catch {
-        document.getElementById('weather-icon').textContent = '☁️';
+        iconEl.innerHTML = icon('cloud');
         document.getElementById('weather-desc').textContent = 'Dati non disponibili';
       }
     }
+    loadWeather();
 
-    apply();
-    // ripristina città salvata
-    (function() {
-      const sel = document.getElementById('city-select');
-      if (sel) sel.value = _currentCity;
-      document.getElementById('weather-place-name').textContent = CITIES[_currentCity]?.name || _currentCity;
-      loadWeather();
-    })();
-    btn.addEventListener('click', () => { isDark = !isDark; apply(); });
-    window.changeCity = changeCity;
-  </script>
+    /* ── Utente: saluto con il nome e compleanni ── */
+    waitForUser().then(async user => {
+      const first = (user.displayName || '').split(' ')[0];
+      if (first) document.getElementById('hello').textContent = `${saluto}, ${first}`;
 
-  <script type="module">
-    import { getDailyQuote } from './js/data/quotes.js';
-    // Frase del giorno
-    document.getElementById('daily-quote-text').textContent = getDailyQuote();
-  </script>
-
-  <script type="module">
-    import { getBirthdayContacts } from './js/core/db.js';
-    import { waitForUser, renderAccountAvatar, confirmAndSignOut } from './js/core/auth-guard.js';
-    import { escapeHtml } from './js/core/dom.js';
-
-    /* ── Pulsante account: foto Google, tocco = logout ── */
-    waitForUser().then(user => {
-      const btn = document.getElementById('btn-account');
-      if (!btn) return;
-      renderAccountAvatar(btn, user);
-      btn.setAttribute('aria-label', 'Disconnetti');
-      btn.title = `Disconnetti ${user.displayName || user.email || ''}`.trim();
-      btn.addEventListener('click', confirmAndSignOut);
-      loadBirthdays();
-    });
-
-    /* ── Compleanni dei prossimi 7 giorni (contatti di Armonia sociale) ── */
-    async function loadBirthdays() {
       const contacts = await getBirthdayContacts(7);
       if (!contacts.length) return;
-
-      const widget = document.getElementById('birthday-widget');
-      const list = document.getElementById('birthday-list');
-      widget.style.display = 'block';
-      list.innerHTML = '';
-
-      contacts.forEach(c => {
+      document.getElementById('birthday-widget').hidden = false;
+      document.getElementById('birthday-list').innerHTML = contacts.map(c => {
         const initials = ((c.nome?.[0] || '') + (c.cognome?.[0] || '')).toUpperCase() || '?';
-        const isToday = c._daysUntilBirthday === 0;
         const [, mm, dd] = c.compleanno.split('-');
-        const daysLabel = isToday
-          ? '🎉 Oggi!'
-          : c._daysUntilBirthday === 1 ? 'Domani' : `Tra ${c._daysUntilBirthday} giorni`;
-
-        const item = document.createElement('div');
-        item.className = 'birthday-item';
-        item.innerHTML = `
-          <div class="birthday-avatar">${escapeHtml(initials)}</div>
-          <div class="birthday-info">
-            <div class="birthday-name">${escapeHtml(`${c.nome || ''} ${c.cognome || ''}`.trim())}</div>
-            <div class="birthday-days${isToday ? ' today' : ''}">${daysLabel} · ${dd}/${mm}</div>
-          </div>`;
-        list.appendChild(item);
-      });
-    }
+        const d = c._daysUntilBirthday;
+        const when = d === 0 ? 'Oggi' : d === 1 ? 'Domani' : `Tra ${d} giorni`;
+        return `<a class="list-row" href="armonia-sociale.html">
+          <span class="bday-initials">${escapeHtml(initials)}</span>
+          <span class="grow">${escapeHtml(`${c.nome || ''} ${c.cognome || ''}`.trim())}</span>
+          <span class="bday-when${d === 0 ? ' today' : ''}">${when} · ${dd}/${mm}</span>
+        </a>`;
+      }).join('');
+    });
   </script>
 </body>
 </html>

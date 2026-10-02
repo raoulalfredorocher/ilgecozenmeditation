@@ -103,9 +103,13 @@
     .bvc{width:100%;background:none;border:1px solid var(--border);border-radius:14px;padding:10px;font-size:.76rem;font-family:inherit;color:var(--muted);cursor:pointer;letter-spacing:.1em;margin-top:4px;flex-shrink:0;}
     .tab-bar{position:fixed;bottom:0;left:0;right:0;height:calc(58px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--card);border-top:1px solid var(--border);border-radius:22px 22px 0 0;display:flex;align-items:center;justify-content:space-around;z-index:200;overflow:visible;}
   </style>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body style="visibility:hidden">
+<body class="zen" data-title="Libri e manga" data-back="passioni.html" data-add="#fab-add" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
   <header id="main-header">
     <div style="display:flex;flex-direction:row;gap:6px;align-items:center;">
       <a class="btn-header-csv" href="passioni.html" style="text-decoration:none;">

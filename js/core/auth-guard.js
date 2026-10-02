@@ -12,6 +12,8 @@
  */
 import { onAuthChange, signOutUser } from './auth.js';
 import { safeUrl } from './dom.js';
+// Pannelli che si chiudono trascinandoli verso il basso, in tutte le pagine
+import '../ui/sheet.js';
 
 document.body.style.visibility = 'hidden';
 

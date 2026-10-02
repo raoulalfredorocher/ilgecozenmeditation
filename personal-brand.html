@@ -227,9 +227,13 @@
     .insp-view-notes { display:none; margin-top:14px; padding:12px; border-radius:12px;
       background:var(--surface); color:var(--text); font-size:.78rem; line-height:1.6; white-space:pre-wrap; }
   </style>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body style="visibility:hidden">
+<body class="zen" data-title="Personal brand" data-back="passioni.html" data-add="#fab-capo" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
 
   <!-- HEADER -->
   <header>
@@ -581,7 +585,8 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('tab-active', b === btn));
         TABS.forEach(t => document.getElementById('screen-' + t).classList.toggle('active', t === id));
         // CSV button visibility
-        document.body.className = 'tab-' + id;
+        document.body.classList.remove(...[...document.body.classList].filter(c => c.startsWith('tab-')));
+        document.body.classList.add('tab-' + id);
         if (id === 'guardaroba') document.getElementById('fab-capo').style.display = '';
         else document.getElementById('fab-capo').style.display = 'none';
       });
@@ -1194,7 +1199,7 @@
     /* ══ INIT ══ */
     waitForAuth().then(() => {
       document.body.style.visibility = '';
-      document.body.className = 'tab-guardaroba';
+      document.body.classList.add('tab-guardaroba');
 
       subscribeGuardaroba(list => { capi = list; renderCapi(); });
       subscribeIgieneActions(list => {

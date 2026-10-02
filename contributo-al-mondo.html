@@ -168,9 +168,13 @@
     .screen { display: none; width: 100%; }
     .screen.active { display: block; }
   </style>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body style="visibility:hidden">
+<body class="zen" data-title="Contributo al mondo" data-back="index.html" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
 
   <header>
     <a class="btn-back" href="index.html" aria-label="Torna al TAO">
