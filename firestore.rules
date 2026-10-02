@@ -1,10 +1,54 @@
 rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regole di sicurezza Firestore — Il Geco Zen
+//
+// Principio: ogni utente vede e modifica SOLO i propri dati, che vivono
+// sotto users/{uid}/... . Tutto ciò che non è esplicitamente permesso
+// qui sotto è negato.
+//
+// In più si accettano solo le collezioni che l'app usa davvero: un utente
+// autenticato non può creare collezioni arbitrarie nel proprio spazio.
+// Quando aggiungi una nuova sezione all'app, aggiungi qui il nome della
+// sua collezione (vedi docs/SICUREZZA.md).
+//
+// Deploy: firebase deploy --only firestore:rules
+// ─────────────────────────────────────────────────────────────────────────────
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Ogni utente può leggere e scrivere solo i propri dati
-    // Struttura: users/{uid}/{collection}/{document}
-    match /users/{uid}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Collezioni di primo livello sotto users/{uid}/
+    function isKnownCollection(col) {
+      return col in [
+        // Meditazione
+        'meditation_sessions',
+        // Alimentazione
+        'recipes', 'food_diary', 'diet', 'saved_diets', 'macros', 'shopping_stores',
+        // Allenamento
+        'allenamenti_piani', 'allenamenti_registro',
+        // Bucket list, direzione, salute mentale
+        'bucket_list', 'direction', 'salute_mentale', 'mental_diary',
+        'emozioni_log', 'emozioni_entries',
+        // Passioni
+        'libri', 'film', 'giochi', 'giochi_tavolo', 'musica_accordi', 'musica_media',
+        'countries',
+        // Armonia sociale, finanza, personal brand
+        'crm_contacts',
+        'finanza_accounts', 'finanza_categories', 'finanza_expenses',
+        'guardaroba', 'igiene_actions', 'ispirazione'
+      ];
+    }
+
+    // Ogni documento delle collezioni note (comprese le sotto-collezioni
+    // come trips, partite, items, log, dettagli_chunks) è accessibile solo
+    // al proprietario.
+    match /users/{uid}/{col}/{rest=**} {
+      allow read, write: if isOwner(uid) && isKnownCollection(col);
     }
   }
 }

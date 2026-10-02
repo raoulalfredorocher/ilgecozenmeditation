@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Finanza"/>
   <meta name="theme-color" content="#f0f7fb"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Finanza</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -272,19 +272,9 @@
     .pat-exp-amount.pos { color:#22a85e; }
     .pat-exp-amount.neg { color:var(--red); }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
   <!-- HEADER -->
   <header>
@@ -492,12 +482,13 @@
   </script>
 
   <script type="module">
-    import { waitForAuth } from './js/firebase-config.js';
+    import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
+    import { waitForAuth } from './js/core/db.js';
     import {
       subscribeFinanzaAccounts, addFinanzaAccount, updateFinanzaAccount, deleteFinanzaAccount,
       subscribeFinanzaCategories, addFinanzaCategory, updateFinanzaCategory, deleteFinanzaCategory,
       subscribeFinanzaExpenses, addFinanzaExpense, updateFinanzaExpense, deleteFinanzaExpense,
-    } from './js/firebase-config.js';
+    } from './js/core/db.js';
 
     /* ══ THEME ══ */
     const htmlEl = document.documentElement;
@@ -647,8 +638,8 @@
           card.innerHTML = `
             <div class="asset-header">
               <div>
-                <span class="asset-name loading-pulse">${asset.name}</span>
-                <span class="asset-type-badge">${asset.type === 'etf' ? 'ETF' : 'Stock'}</span>
+                <span class="asset-name loading-pulse">${esc(asset.name)}</span>
+                <span class="asset-type-badge">${esc(asset.type === 'etf' ? 'ETF' : 'Stock')}</span>
                 <div class="asset-ticker">${asset.ticker}</div>
               </div>
               <div class="asset-right">
@@ -662,8 +653,8 @@
           card.innerHTML = `
             <div class="asset-header">
               <div>
-                <span class="asset-name">${asset.name}</span>
-                <span class="asset-type-badge">${asset.type === 'etf' ? 'ETF' : 'Stock'}</span>
+                <span class="asset-name">${esc(asset.name)}</span>
+                <span class="asset-type-badge">${esc(asset.type === 'etf' ? 'ETF' : 'Stock')}</span>
                 <div class="asset-ticker">${asset.ticker}${d.demo ? ' <span style="color:var(--muted);font-size:.46rem;">(demo)</span>' : ''}</div>
               </div>
               <div class="asset-right">
@@ -756,7 +747,7 @@
           const isEnt = exp.tipo === 'entrata';
           const m = monthly(exp);
           return `<div class="account-exp-item">
-            <span class="account-exp-title">${exp.title}</span>
+            <span class="account-exp-title">${esc(exp.title)}</span>
             <span class="account-exp-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
             <span class="account-exp-amount ${isEnt ? 'pos' : 'neg'}">${isEnt ? '+' : '-'}${fmtEur(m)}</span>
           </div>`;
@@ -768,7 +759,7 @@
             <div class="account-card-header" onclick="toggleAccDetail('${docId}')">
               <div class="account-icon">🏦</div>
               <div class="account-info">
-                <div class="account-name">${a.name}</div>
+                <div class="account-name">${esc(a.name)}</div>
                 <div class="account-meta">${a.holder || ''}${a.iban ? ' · ' + a.iban : ''}</div>
               </div>
               <div class="account-balance">
@@ -841,7 +832,7 @@
             <div class="expense-row">
               <div class="expense-info">
                 <div class="expense-title-text">
-                  ${exp.title}
+                  ${esc(exp.title)}
                   <span class="tipo-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
                 </div>
                 <div class="expense-meta">${accName ? accName + ' · ' : ''}${exp.year || ''}${exp.freq === 'annual' ? ' · annuale' : ''}</div>
@@ -864,7 +855,7 @@
         html += `
           <div class="cat-block">
             <div class="cat-block-header">
-              <div class="cat-block-name">📁 ${cat.name}</div>
+              <div class="cat-block-name">📁 ${esc(cat.name)}</div>
               <div class="cat-block-actions">
                 <button class="icon-btn" title="Aggiungi voce" onclick="openNewExp('${cat._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -879,7 +870,7 @@
             </div>
             ${expsHtml}
             <div class="cat-totals">
-              <span class="cat-total-label">Netto ${cat.name}</span>
+              <span class="cat-total-label">Netto ${esc(cat.name)}</span>
               <div style="text-align:right;">
                 <div class="cat-total-value" style="color:${catCls};">${catNetM >= 0 ? '+' : ''}${fmtEur(catNetM)}<span style="font-size:.58rem;font-weight:400;color:var(--muted)">/mese</span></div>
                 <div style="font-size:.6rem;color:var(--muted);">${catNetA >= 0 ? '+' : ''}${fmtEur(catNetA)}/anno</div>
@@ -910,9 +901,9 @@
       const catSel    = document.getElementById('exp-category');
       const accSel    = document.getElementById('exp-account');
       const toAccSel  = document.getElementById('exp-to-account');
-      const accOpts   = accounts.map(a => `<option value="${a._docId}">${a.name}</option>`).join('');
+      const accOpts   = accounts.map(a => `<option value="${a._docId}">${esc(a.name)}</option>`).join('');
       catSel.innerHTML = '<option value="">-- seleziona --</option>' +
-        categories.map(c => `<option value="${c._docId}">${c.name}</option>`).join('');
+        categories.map(c => `<option value="${c._docId}">${esc(c.name)}</option>`).join('');
       accSel.innerHTML  = '<option value="">-- nessuno --</option>' + accOpts;
       toAccSel.innerHTML = '<option value="">-- seleziona --</option>' + accOpts;
       if (catId) catSel.value = catId;
@@ -1248,7 +1239,7 @@
               prefix     = isEnt ? '+' : '-';
             }
             return `<div class="pat-exp-row">
-              <span class="pat-exp-label">${exp.title}</span>
+              <span class="pat-exp-label">${esc(exp.title)}</span>
               <span class="pat-exp-badge ${badgeClass}" style="${isGiro ? 'background:rgba(90,126,148,.15);color:var(--muted);' : ''}">${badgeLabel}</span>
               <span class="pat-exp-amount ${amountCls}">${prefix}${fmtEur(m)}</span>
             </div>`;

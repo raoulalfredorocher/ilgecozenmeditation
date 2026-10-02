@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Passioni"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Passioni</title>
   <link rel="stylesheet" href="styles/theme.css?v=8"/>
   <link rel="stylesheet" href="styles/layout.css?v=8"/>
@@ -55,19 +55,9 @@
       color: var(--muted); text-transform: uppercase; margin-top: 2px;
     }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
   <header id="main-header">
     <a class="btn-header-csv" href="index.html" aria-label="Torna al Qui e Ora" style="text-decoration:none;">
@@ -77,7 +67,7 @@
     <div class="header-center">
       <a href="index.html" aria-label="Torna al Qui e Ora"
          style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;">
-        <img src="Logo%20Trasparente.png" alt="Il Geco Zen" class="header-logo"/>
+        <img src="assets/img/logo.webp" alt="Il Geco Zen" class="header-logo"/>
         <div class="app-title">Il Geco Zen</div>
         <div class="app-sub">passioni</div>
       </a>
@@ -145,7 +135,7 @@
   </div>
 
   <script type="module">
-    import { waitForAuth } from './js/firebase-config.js';
+    import { waitForAuth } from './js/core/db.js';
     const htmlEl   = document.documentElement;
     const btnTheme = document.getElementById('theme-toggle');
     const knob     = document.getElementById('theme-knob');

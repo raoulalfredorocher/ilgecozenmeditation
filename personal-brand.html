@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Personal Brand"/>
   <meta name="theme-color" content="#f7f4f9"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
-  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Personal Brand</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -227,19 +227,9 @@
     .insp-view-notes { display:none; margin-top:14px; padding:12px; border-radius:12px;
       background:var(--surface); color:var(--text); font-size:.78rem; line-height:1.6; white-space:pre-wrap; }
   </style>
-  <script>
-    window.__FIREBASE_CONFIG__ = {
-      apiKey: ['AIzaSyD0CI9B1uN01ytY8','CALconh89uU9ZcO6SE'].join(''),
-      authDomain: 'ilgecozen-b2df7.firebaseapp.com',
-      projectId:  'ilgecozen-b2df7',
-      storageBucket: 'ilgecozen-b2df7.firebasestorage.app',
-      messagingSenderId: '956821191073',
-      appId: '1:956821191073:web:fd5abf9405e17a9abef3e0',
-    };
-  </script>
 </head>
 <body style="visibility:hidden">
-  <script type="module" src="js/auth-guard.js"></script>
+  <script type="module" src="js/core/auth-guard.js"></script>
 
   <!-- HEADER -->
   <header>
@@ -560,12 +550,13 @@
   </div>
 
   <script type="module">
-    import { waitForAuth } from './js/firebase-config.js';
+    import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
+    import { waitForAuth } from './js/core/db.js';
     import {
       subscribeGuardaroba, addGuardarobaItem, updateGuardarobaItem, deleteGuardarobaItem,
       subscribeIgieneActions, addIgieneAction, updateIgieneAction, deleteIgieneAction,
       subscribeIspirazione, addIspirazioneItem, updateIspirazioneItem, deleteIspirazioneItem,
-    } from './js/firebase-config.js';
+    } from './js/core/db.js';
 
     /* ══ THEME ══ */
     const htmlEl = document.documentElement;
@@ -671,14 +662,14 @@
       grid.innerHTML = list.map(c => {
         const emoji = CAT_EMOJI[c.categoria] || '👕';
         const photoHtml = c.foto
-          ? `<div class="capo-photo"><img src="${c.foto}" alt="${c.nome}" loading="lazy"/></div>`
+          ? `<div class="capo-photo"><img src="${esc(safeUrl(c.foto))}" alt="${esc(c.nome)}" loading="lazy"/></div>`
           : `<div class="capo-photo">${emoji}</div>`;
         return `
           <div class="capo-card" onclick="openCapoDetail('${c._docId}')">
             ${photoHtml}
             <div class="capo-info">
-              <div class="capo-name">${c.nome}</div>
-              <div class="capo-meta">${c.categoria || ''} ${c.colore ? '· ' + c.colore : ''}</div>
+              <div class="capo-name">${esc(c.nome)}</div>
+              <div class="capo-meta">${esc(c.categoria || '')} ${esc(c.colore ? '· ' + c.colore : '')}</div>
               <div class="stars-row">${starsHtml(c.stelle || 0)}</div>
             </div>
           </div>`;
@@ -736,7 +727,7 @@
       if (!c) return;
       const emoji = CAT_EMOJI[c.categoria] || '👕';
       const photoEl = document.getElementById('detail-photo');
-      photoEl.innerHTML = c.foto ? `<img src="${c.foto}" style="width:100%;height:100%;object-fit:cover;" alt="${c.nome}"/>` : emoji;
+      photoEl.innerHTML = c.foto ? `<img src="${esc(safeUrl(c.foto))}" style="width:100%;height:100%;object-fit:cover;" alt="${esc(c.nome)}"/>` : emoji;
       document.getElementById('detail-nome').textContent = c.nome;
       document.getElementById('detail-stars').innerHTML = starsHtml(c.stelle || 0);
       document.getElementById('detail-body').innerHTML = [
@@ -969,9 +960,9 @@
           <div class="action-row">
             <div class="action-icon">${emoji}</div>
             <div class="action-info">
-              <div class="action-title">${a.title}</div>
-              <div class="action-cat">${a.categoria || ''}</div>
-              ${a.desc ? `<div class="action-desc">${a.desc}</div>` : ''}
+              <div class="action-title">${esc(a.title)}</div>
+              <div class="action-cat">${esc(a.categoria || '')}</div>
+              ${a.desc ? `<div class="action-desc">${esc(a.desc)}</div>` : ''}
               ${time ? `<div class="action-time">${time}</div>` : ''}
             </div>
             <div class="action-btns">
@@ -1074,8 +1065,8 @@
         const items = ispItems.filter(i => i.section === sec);
         const imgsHtml = items.map(item => `
           <div class="insp-item" onclick="openViewInsp('${item._docId}')">
-            ${item.foto ? `<img src="${item.foto}" alt="${item.title||''}" loading="lazy"/>` : `<div style="font-size:2rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">🖼️</div>`}
-            ${item.title ? `<div class="insp-item-info">${item.title}</div>` : ''}
+            ${item.foto ? `<img src="${esc(safeUrl(item.foto))}" alt="${esc(item.title||'')}" loading="lazy"/>` : `<div style="font-size:2rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">🖼️</div>`}
+            ${item.title ? `<div class="insp-item-info">${esc(item.title)}</div>` : ''}
           </div>`).join('');
         return `
           <div class="insp-section">
