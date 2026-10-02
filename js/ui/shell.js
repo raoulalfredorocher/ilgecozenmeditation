@@ -237,8 +237,18 @@ function adoptLegacyPage() {
   if (fab && fab.matches('.fab-add, [class*="fab"]')) fab.classList.add('zen-legacy-hidden');
 }
 
+/** Invito a tenere il telefono in verticale (visibile solo da CSS in orizzontale). */
+function buildRotateHint() {
+  const el = document.createElement('div');
+  el.className = 'zen-rotate';
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = `<img src="assets/img/geco.webp" alt=""/><strong>Gira il telefono</strong><p>Il Geco Zen si usa in verticale</p>`;
+  body.append(el);
+}
+
 // ─── Avvio ──────────────────────────────────────────────────────────────
 injectIcons();
+buildRotateHint();
 buildHeader();
 if (!body.classList.contains('zen-native')) adoptLegacyPage();
 buildTabbar();

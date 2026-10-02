@@ -48,27 +48,50 @@
     .bday-when.today { color: var(--danger); font-weight: 600; }
 
     /* Sezioni a mosaico: due colonne sfalsate, rettangoli compatti */
-    .mosaic { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 8px; gap: 0 var(--space-3); grid-auto-flow: dense; }
+    .mosaic { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-auto-rows: 8px; gap: 0 var(--space-3); grid-auto-flow: dense; }
     .mosaic a {
       grid-row: span var(--h, 8); margin-bottom: var(--space-3);
-      display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4);
+      display: flex; align-items: center; gap: 9px; padding: 0 12px;
       border-radius: var(--radius-md); background: var(--tint); color: var(--text); text-decoration: none;
       transition: transform .15s var(--ease), filter .2s;
     }
     .mosaic a:active { transform: scale(.97); filter: brightness(.97); }
     .mosaic a.wide { grid-column: 1 / -1; }
     .mosaic .ic {
-      width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+      width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
       display: inline-flex; align-items: center; justify-content: center;
       background: color-mix(in srgb, var(--card) 75%, transparent); color: var(--ink);
     }
-    .mosaic .ic .icon { width: 21px; height: 21px; }
-    .mosaic .t { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; line-height: 1.25; }
+    .mosaic .ic .icon { width: 19px; height: 19px; }
+    .mosaic a > span:last-child { min-width: 0; }
+    .mosaic .t { font-size: 14.5px; font-weight: 600; letter-spacing: -.015em; line-height: 1.25; }
     .mosaic .s { font-size: var(--fs-xs); color: var(--muted); line-height: 1.3; margin-top: 2px; }
     .mosaic .sky    { --tint: var(--geco-mist); --ink: var(--geco-blue); }
     .mosaic .sakura { --tint: var(--sakura-soft); --ink: color-mix(in srgb, var(--sakura) 60%, var(--bark)); }
     .mosaic .leaf   { --tint: color-mix(in srgb, var(--success) 13%, var(--bg)); --ink: var(--success); }
     .mosaic .sand   { --tint: color-mix(in srgb, var(--warning) 15%, var(--bg)); --ink: color-mix(in srgb, var(--warning) 75%, var(--bark)); }
+
+    /* Auguri */
+    .wish-btn { white-space: nowrap; flex-shrink: 0; }
+    .wish-btn.sent { color: var(--success); border-color: transparent; background: transparent; }
+    .party {
+      position: fixed; inset: 0; z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: var(--space-3); background: color-mix(in srgb, var(--bg) 94%, transparent); text-align: center; padding: var(--space-6);
+      animation: party-in .35s var(--ease);
+    }
+    .party .cake { font-size: 84px; line-height: 1; animation: party-pop .9s var(--ease) both; }
+    .party h2 { font-size: var(--fs-2xl); font-weight: 700; margin: 0; }
+    .party p { color: var(--muted); margin: 0; }
+    .party .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .party .confetti i {
+      position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; opacity: .9;
+      animation: party-fall var(--d) linear var(--delay) forwards;
+    }
+    .party.out { animation: party-out .4s ease forwards; }
+    @keyframes party-in { from { opacity: 0; } }
+    @keyframes party-out { to { opacity: 0; } }
+    @keyframes party-pop { 0% { transform: scale(.2) rotate(-20deg); } 60% { transform: scale(1.15) rotate(6deg); } 100% { transform: scale(1); } }
+    @keyframes party-fall { to { transform: translate(var(--x), 105vh) rotate(var(--r)); } }
 
     .closing { text-align: center; color: var(--muted); padding: var(--space-4) var(--space-2) 0; }
     .closing .zen-quote { font-size: var(--fs-md); }
@@ -233,18 +256,69 @@
       const contacts = await getBirthdayContacts(7);
       if (!contacts.length) return;
       document.getElementById('birthday-widget').hidden = false;
-      document.getElementById('birthday-list').innerHTML = contacts.map(c => {
+      const list = document.getElementById('birthday-list');
+      list.innerHTML = contacts.map((c, i) => {
         const initials = ((c.nome?.[0] || '') + (c.cognome?.[0] || '')).toUpperCase() || '?';
         const [, mm, dd] = c.compleanno.split('-');
         const d = c._daysUntilBirthday;
         const when = d === 0 ? 'Oggi' : d === 1 ? 'Domani' : `Tra ${d} giorni`;
-        return `<a class="list-row" href="armonia-sociale.html">
+        const sent = wishSent(c);
+        return `<div class="list-row">
           <span class="bday-initials">${escapeHtml(initials)}</span>
-          <span class="grow">${escapeHtml(`${c.nome || ''} ${c.cognome || ''}`.trim())}</span>
-          <span class="bday-when${d === 0 ? ' today' : ''}">${when} · ${dd}/${mm}</span>
-        </a>`;
+          <a class="grow" href="armonia-sociale.html" style="color:inherit">
+            <span style="display:block">${escapeHtml(`${c.nome || ''} ${c.cognome || ''}`.trim())}</span>
+            <span class="bday-when${d === 0 ? ' today' : ''}">${when} · ${dd}/${mm}</span>
+          </a>
+          <button type="button" class="btn sm wish-btn${sent ? ' sent' : ''}" data-wish="${i}">${sent ? 'Auguri inviati ✓' : 'Manda auguri'}</button>
+        </div>`;
       }).join('');
+      list.addEventListener('click', e => {
+        const b = e.target.closest('[data-wish]');
+        if (b) sendWishes(contacts[Number(b.dataset.wish)], b);
+      });
     });
+
+    /* ── Auguri: messaggio su WhatsApp + festa a tutto schermo ── */
+    const wishKey = c => `zen_auguri_${c._docId}_${new Date().getFullYear()}`;
+    function wishSent(c) { try { return !!localStorage.getItem(wishKey(c)); } catch { return false; } }
+
+    /** Numero in formato internazionale per wa.me (senza +); i numeri italiani senza prefisso ricevono il 39. */
+    function waNumber(phone) {
+      let n = String(phone || '').replace(/[^\d+]/g, '');
+      if (!n) return '';
+      if (n.startsWith('+')) return n.slice(1);
+      if (n.startsWith('00')) return n.slice(2);
+      return n.length <= 10 ? '39' + n : n;
+    }
+
+    function sendWishes(c, button) {
+      const nome = (c.nome || '').trim();
+      const text = `Tantissimi auguri di buon compleanno${nome ? ' ' + nome : ''}!!!! 🎉🎂🥳🎈❤️`;
+      const num = waNumber(c.telefono);
+      // Apre subito WhatsApp (dentro il tocco, così il telefono non lo blocca)
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+      try { localStorage.setItem(wishKey(c), '1'); } catch { /* ignora */ }
+      button.classList.add('sent');
+      button.textContent = 'Auguri inviati ✓';
+      party(nome);
+    }
+
+    function party(nome) {
+      const el = document.createElement('div');
+      el.className = 'party';
+      el.setAttribute('role', 'status');
+      const colors = ['var(--sakura)', 'var(--geco-sky)', 'var(--warning)', 'var(--success)', 'var(--primary)'];
+      const pieces = Array.from({ length: 70 }, (_, i) => `<i style="left:${Math.random() * 100}%;background:${colors[i % colors.length]};
+        --x:${(Math.random() * 120 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;
+        --d:${(2.2 + Math.random() * 1.8).toFixed(2)}s;--delay:${(Math.random() * .6).toFixed(2)}s"></i>`).join('');
+      el.innerHTML = `<div class="confetti">${pieces}</div><div class="cake">🎂</div>
+        <h2>Auguri mandati!</h2><p>${nome ? `Che bel pensiero per ${escapeHtml(nome)}` : 'Che bel pensiero'} 🎉</p>`;
+      document.body.append(el);
+      if (navigator.vibrate) navigator.vibrate([30, 60, 30]);
+      const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 400); };
+      el.addEventListener('click', close);
+      setTimeout(close, 3600);
+    }
   </script>
 </body>
 </html>
