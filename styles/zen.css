@@ -84,6 +84,7 @@ body.zen[data-subtitle] { --header-h: 64px; }
 /* 4. Barra in basso stile Instagram ─────────────────────────────────────── */
 .zen-tabbar {
   position: fixed; inset: auto 0 0 0; z-index: 200;
+  bottom: calc(-1 * var(--deficit, 0px));          /* footer-guard.js: scende fino al fondo vero se la finestra è più bassa dello schermo */
   height: calc(56px + var(--safe-bottom));
   padding: 0 var(--space-2) var(--safe-bottom);
   display: flex; align-items: center; justify-content: space-around;
@@ -209,6 +210,7 @@ body.zen[data-subtitle] { --header-h: 64px; }
 /* 10. Pannelli (sheet) — si chiudono anche trascinando in basso (sheet.js) */
 .zen-sheet-overlay {
   position: fixed; inset: 0; z-index: 400; background: var(--scrim);
+  bottom: calc(-1 * var(--deficit, 0px));
   display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity .25s var(--ease);
 }
@@ -599,3 +601,12 @@ body.zen:not(.zen-native) :is(.filter-btn, .chip-btn, .pill, .cat-chip, .tog-btn
 /* Pagine protette nascoste solo finché non si sa se l'utente è collegato
    (prima apertura sul dispositivo); vedi theme-boot.js e auth-guard.js. */
 html.zen-guest body.zen { visibility: hidden; }
+
+/* ─── Finestra più bassa dello schermo (iPhone, all'avvio) ──────────────────
+   footer-guard.js misura il difetto e lo scrive in --deficit (px): i livelli
+   ancorati al fondo si estendono fino al fondo vero dello schermo. */
+body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overlay, .loyalty-overlay,
+  .new-store-overlay, .pat-modal-overlay, .spesa-overlay, .recipe-popup-overlay) {
+  bottom: calc(-1 * var(--deficit, 0px));
+}
+.zen-toast { margin-bottom: calc(-1 * var(--deficit, 0px)); }

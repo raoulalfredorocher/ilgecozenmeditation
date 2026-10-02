@@ -1,29 +1,67 @@
 /**
- * footer-guard.js — tiene la barra in basso attaccata al fondo dello schermo.
+ * footer-guard.js — tiene la barra in basso (e i fogli) attaccati al fondo vero dello schermo.
  *
- * Il problema (iPhone, app aperta dalla Home): all'avvio la finestra della
- * pagina può risultare più bassa dello schermo di qualche decina di punti. La
- * barra, ancorata al fondo di quella finestra, sembra "alzata" e sotto resta
- * una fascia vuota; appena si scorre l'iPhone ricalcola tutto e la barra scende.
+ * Il difetto (iPhone, app aperta dalla Home): su alcune pagine, all'avvio, la
+ * finestra della pagina risulta più bassa dello schermo esattamente della
+ * fascia della barra di stato (es. schermo 844, finestra 797, margine in alto
+ * 47). Tutto ciò che è ancorato al fondo sta così 47 punti più in alto, con una
+ * fascia vuota sotto, finché un primo scorrimento non fa ricalcolare l'iPhone.
  *
- * Qui facciamo due cose:
- *  1. "Scossa" alla finestra: si modifica un attimo il meta viewport (e si
- *     fa un micro-scorrimento), che costringe iOS a ricalcolare la finestra
- *     come farebbe il primo scorrimento. Si ripete nei momenti critici
- *     (avvio, ritorno nell'app, rotazione).
- *  2. Rete di sicurezza: si misura dove sta la barra rispetto al fondo
- *     visibile e, se è sollevata, la si abbassa della differenza.
+ * Qui lo si riconosce dalla sua firma (differenza = margine in alto) e lo si
+ * compensa: la differenza va in --deficit (px) e zen.css estende barra, fogli
+ * e schermate a pieno schermo fino al fondo vero. Se la finestra torna giusta
+ * (per esempio dopo uno scorrimento) --deficit torna a 0.
+ *
+ * In più, all'avvio si dà una "scossa" al viewport per far ricalcolare iOS
+ * da solo, quando funziona.
  */
-const bar = () => document.querySelector('.zen-tabbar');
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
+/** Misura un valore CSS in px (env(...), 100lvh…) tramite un elemento di prova. */
+function cssPx(prop, value) {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;left:0;top:0;width:1px;visibility:hidden;pointer-events:none;${prop}:${value}`;
+  document.body.append(el);
+  const px = prop === 'height' ? el.offsetHeight : Math.round(parseFloat(getComputedStyle(el)[prop]) || 0);
+  el.remove();
+  return px;
+}
+
+let topInset;   // il margine in alto non cambia: si misura una volta
+
+/** Punto di prova per i collaudi: window.__zenGeometry() può sostituire le misure reali. */
+function geometry() {
+  const fake = window.__zenGeometry?.();
+  if (fake) return fake;
+  return { standalone, longEdge: Math.max(screen.width, screen.height), top: (topInset ??= cssPx('height', 'env(safe-area-inset-top)')) };
+}
+
+/** Di quanto la finestra è più bassa dello schermo, se è il difetto noto; altrimenti 0. */
+export function currentDeficit() {
+  const g = geometry();
+  if (!g.standalone || innerHeight <= innerWidth) return 0;          // solo app installata, in verticale
+  const vv = window.visualViewport;
+  const viewH = Math.max(innerHeight, vv ? vv.height + vv.offsetTop : 0);
+  const deficit = Math.round(g.longEdge - viewH);
+  // firma del difetto: la differenza coincide con il margine in alto (barra di stato)
+  return g.top > 0 && deficit >= 10 && deficit <= 100 && Math.abs(deficit - g.top) <= 6 ? deficit : 0;
+}
+
+let last = -1;
+export function settle() {
+  const d = currentDeficit();
+  if (d === last) return;
+  last = d;
+  document.documentElement.style.setProperty('--deficit', `${d}px`);
+  document.documentElement.dataset.deficit = String(d);
+}
+
+// ─── "Scossa" al viewport (quando funziona, risolve alla radice) ────────────
 let kicking = false;
-// il contenuto originale si memorizza una volta sola, ripulito da eventuali residui di una "scossa" interrotta
 const vpMeta = () => document.querySelector('meta[name="viewport"]');
 const clean = c => String(c || '').replace(/,\s*maximum-scale=1/g, '');
 const originalViewport = clean(vpMeta()?.getAttribute('content'));
 
-/** Costringe il browser a ricalcolare la finestra (come il primo scorrimento). */
 function kick() {
   const meta = vpMeta();
   if (!meta || kicking) return;
@@ -32,7 +70,6 @@ function kick() {
   // timer e non requestAnimationFrame: il ripristino deve avvenire anche se la pagina non è in primo piano
   setTimeout(() => {
     meta.setAttribute('content', originalViewport);
-    // micro-scorrimento: non cambia nulla di visibile, ma sveglia il calcolo del layout
     const y = scrollY;
     scrollTo(scrollX, y + 1);
     scrollTo(scrollX, y);
@@ -41,57 +78,36 @@ function kick() {
   }, 80);
 }
 
-/** Se la barra è sollevata rispetto al fondo visibile, la abbassa della differenza. */
-export function settle() {
-  const b = bar();
-  if (!b) return;
-  b.style.transform = '';
-  const r = b.getBoundingClientRect();
-  const vv = window.visualViewport;
-  const visibleBottom = vv ? vv.offsetTop + vv.height : innerHeight;
-  const gap = Math.round(visibleBottom - r.bottom);
-  // solo scostamenti plausibili: oltre è la tastiera o uno zoom, non un'errata ancoraggio
-  if (gap > 1 && gap < 120) b.style.transform = `translateY(${gap}px)`;
-}
-
-/** Misure leggibili, per capire cosa succede quando la barra è sollevata. */
+/** Misure leggibili (pressione lunga su "Sezioni"): servono se il difetto si ripresenta. */
 export function report() {
-  const b = bar();
-  const r = b?.getBoundingClientRect();
+  const bar = document.querySelector('.zen-tabbar');
+  const r = bar?.getBoundingClientRect();
   const vv = window.visualViewport;
-  const probe = document.createElement('div');
-  probe.style.cssText = 'position:fixed;bottom:0;height:env(safe-area-inset-bottom);width:1px;visibility:hidden';
-  document.body.append(probe);
-  const safe = probe.offsetHeight;
-  probe.remove();
+  const g = geometry();
   return [
     `schermo: ${screen.width}×${screen.height}`,
     `finestra (innerHeight): ${innerHeight}`,
     `finestra visibile: ${vv ? `${Math.round(vv.height)} (offset ${Math.round(vv.offsetTop)}, zoom ${vv.scale.toFixed(2)})` : 'n/d'}`,
-    `clientHeight: ${document.documentElement.clientHeight}`,
-    `margine in basso: ${safe}`,
-    `barra: ${r ? `alto ${Math.round(r.top)}, fondo ${Math.round(r.bottom)}, altezza ${Math.round(r.height)}` : 'assente'}`,
-    `correzione applicata: ${b?.style.transform || 'nessuna'}`,
-    `installata: ${standalone ? 'sì' : 'no'}`,
+    `100vh / 100lvh / 100dvh: ${cssPx('height', '100vh')} / ${cssPx('height', '100lvh')} / ${cssPx('height', '100dvh')}`,
+    `margine in alto: ${g.top} · in basso: ${cssPx('height', 'env(safe-area-inset-bottom)')}`,
+    `barra: alto ${r ? Math.round(r.top) : '-'}, fondo ${r ? Math.round(r.bottom) : '-'}, altezza ${r ? Math.round(r.height) : '-'}`,
+    `differenza riconosciuta: ${currentDeficit()} (applicata: ${document.documentElement.dataset.deficit || 0})`,
+    `installata: ${g.standalone ? 'sì' : 'no'}`,
   ].join('\n');
 }
 
-const later = (ms, fn) => setTimeout(fn, ms);
-
 function start() {
+  settle();
   kick();
-  later(250, kick);
-  later(900, () => { kick(); settle(); });
-  later(2000, settle);
-  addEventListener('pageshow', () => { kick(); later(400, settle); });
-  addEventListener('orientationchange', () => later(300, () => { kick(); settle(); }));
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { kick(); later(400, settle); } });
-  addEventListener('resize', settle);
-  addEventListener('touchstart', () => later(450, settle), { passive: true });
+  setTimeout(kick, 250);
+  setTimeout(() => { kick(); settle(); }, 900);
+  // la finestra può correggersi (o sbagliare) in qualsiasi momento: si ricontrolla spesso, costa quasi nulla
+  setInterval(settle, 600);
+  for (const ev of ['resize', 'scroll', 'orientationchange', 'pageshow', 'touchend']) addEventListener(ev, () => { settle(); setTimeout(settle, 450); }, { passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { kick(); setTimeout(settle, 400); } });
   visualViewport?.addEventListener('resize', settle);
   visualViewport?.addEventListener('scroll', settle);
 }
 
-// la barra viene creata da shell.js: si parte quando c'è
 if (document.readyState === 'complete') start();
 else addEventListener('load', start, { once: true });

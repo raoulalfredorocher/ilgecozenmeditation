@@ -64,7 +64,7 @@
     .j-empty .zen-quote { color: var(--text); font-size: var(--fs-xl); margin-bottom: var(--space-3); }
 
     /* Editor a tutto schermo */
-    .editor { position: fixed; top: 0; left: 0; right: 0; bottom: 0; height: 100vh; height: 100dvh; z-index: 300; background: var(--bg); display: none; flex-direction: column; }
+    .editor { position: fixed; top: 0; left: 0; right: 0; bottom: 0; height: 100vh; height: calc(100dvh + var(--deficit, 0px)); z-index: 300; background: var(--bg); display: none; flex-direction: column; }
     .editor.on { display: flex; }
     .ed-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2); padding: calc(var(--safe-top) + var(--space-2)) var(--space-5) var(--space-2); }
     .ed-bar .l { justify-self: start; } .ed-bar .r { justify-self: end; }
