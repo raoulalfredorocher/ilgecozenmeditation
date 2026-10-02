@@ -1,0 +1,317 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   zen.css — base e componenti condivisi da tutte le pagine.
+   Richiede tokens.css (caricato prima). Stile: minimale, giapponese,
+   molto spazio, linee sottili, superfici calme, un solo colore d'accento.
+
+   Indice
+     1. Base           5. Pulsanti          9. Liste
+     2. Cornice        6. Campi             10. Pannelli (sheet)
+     3. Barra in alto  7. Card e tile       11. Varie
+     4. Barra in basso 8. Segmenti e chip
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* 1. Base ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body.zen {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 var(--fs-md)/1.55 var(--font);
+  letter-spacing: -.005em;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  padding:
+    calc(var(--safe-top) + var(--header-h) + var(--space-4))
+    var(--space-5)
+    calc(var(--safe-bottom) + 64px + var(--space-6));
+  transition: background-color .3s var(--ease), color .3s var(--ease);
+}
+.zen :where(button, input, select, textarea) { font: inherit; color: inherit; }
+.zen :where(a) { color: var(--primary); text-decoration: none; }
+.zen :where(h1, h2, h3, p) { margin: 0; }
+.zen [hidden] { display: none !important; }
+.zen :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 8px; }
+.zen .icon { width: 22px; height: 22px; flex-shrink: 0; display: block; }
+.zen .icon.sm { width: 18px; height: 18px; }
+.zen .icon.lg { width: 26px; height: 26px; }
+.zen-main { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* 2. Titoli di sezione ──────────────────────────────────────────────────── */
+.zen-eyebrow {
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
+}
+.zen-h1 { font-size: var(--fs-2xl); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.zen-h2 { font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; }
+.zen-muted { color: var(--muted); }
+.zen-section { display: flex; flex-direction: column; gap: var(--space-3); }
+.zen-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+
+/* 3. Barra in alto: titolo sempre al centro ─────────────────────────────── */
+.zen-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 200;
+  height: calc(var(--safe-top) + var(--header-h));
+  padding: var(--safe-top) var(--space-2) 0;
+  display: grid; grid-template-columns: 88px 1fr 88px; align-items: center;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  border-bottom: .5px solid transparent;
+  transition: border-color .2s;
+}
+.zen-header.scrolled { border-bottom-color: var(--border); }
+.zen-header-side { display: flex; align-items: center; gap: 2px; }
+.zen-header-side.end { justify-content: flex-end; }
+.zen-header-title {
+  text-align: center; font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+}
+.zen-header-title img { height: 26px; width: auto; }
+
+/* 4. Barra in basso stile Instagram ─────────────────────────────────────── */
+.zen-tabbar {
+  position: fixed; inset: auto 0 0 0; z-index: 200;
+  height: calc(56px + var(--safe-bottom));
+  padding: 0 var(--space-2) var(--safe-bottom);
+  display: flex; align-items: center; justify-content: space-around;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  border-top: .5px solid var(--border);
+}
+.zen-tab {
+  flex: 1; height: 48px; max-width: 72px;
+  display: flex; align-items: center; justify-content: center; position: relative;
+  color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer;
+  transition: color .2s, transform .15s var(--ease);
+}
+.zen-tab .icon { width: 25px; height: 25px; stroke-width: 1.6; }
+.zen-tab[aria-current="page"] { color: var(--text); }
+.zen-tab[aria-current="page"] .icon { stroke-width: 2.2; }
+.zen-tab:active { transform: scale(.9); }
+.zen-tab img.avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.zen-tab[aria-current="page"] img.avatar { outline: 1.5px solid var(--text); outline-offset: 2px; }
+.zen-tab.add .icon {
+  width: 30px; height: 30px; padding: 4px; border-radius: 9px;
+  border: 1.6px solid currentColor; stroke-width: 2;
+}
+.zen-tab.add { color: var(--text); }
+
+/* 5. Pulsanti ───────────────────────────────────────────────────────────── */
+.btn {
+  min-height: var(--tap); padding: 0 var(--space-5);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  border-radius: 999px; border: 1px solid var(--border); background: var(--card);
+  font-size: var(--fs-md); font-weight: 500; color: var(--text); cursor: pointer;
+  transition: background-color .2s, border-color .2s, transform .12s var(--ease), opacity .2s;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .45; pointer-events: none; }
+.btn.primary { background: var(--text); border-color: var(--text); color: var(--bg); }
+.btn.accent { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.danger { color: var(--danger); }
+.btn.block { width: 100%; }
+.btn.sm { min-height: 34px; padding: 0 var(--space-4); font-size: var(--fs-sm); }
+.icon-btn {
+  width: var(--tap); height: var(--tap); border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 0; color: var(--text); cursor: pointer; padding: 0;
+  transition: background-color .2s, transform .12s var(--ease);
+}
+.icon-btn:active { background: var(--surface); transform: scale(.92); }
+
+/* 6. Campi ──────────────────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label { font-size: var(--fs-sm); color: var(--muted); }
+.input, .zen select, .zen textarea {
+  width: 100%; min-height: var(--tap); padding: 10px 14px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  font-size: 16px; /* evita lo zoom automatico su iPhone */
+  transition: border-color .2s, background-color .2s;
+}
+.input:focus, .zen select:focus, .zen textarea:focus { outline: none; border-color: var(--primary); background: var(--card); }
+.zen textarea { min-height: 96px; resize: vertical; line-height: 1.5; }
+
+/* 7. Card e tile ────────────────────────────────────────────────────────── */
+.card {
+  background: var(--card); border-radius: var(--radius-lg);
+  border: .5px solid var(--border); padding: var(--space-5);
+}
+.card.flat { background: var(--surface); border-color: transparent; }
+.tile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.tile {
+  display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-4);
+  min-height: 112px; padding: var(--space-4);
+  background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md);
+  color: var(--text); text-decoration: none;
+  transition: transform .15s var(--ease), background-color .2s;
+}
+.tile:active { transform: scale(.97); background: var(--surface); }
+.tile-title { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; }
+.tile-sub { font-size: var(--fs-xs); color: var(--muted); margin-top: 2px; }
+.tile.wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; justify-content: flex-start; }
+
+/* Bollino colorato per le icone di sezione */
+.dot-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--geco-mist); color: var(--geco-blue);
+}
+.dot-icon.sakura { background: var(--sakura-soft); color: color-mix(in srgb, var(--sakura) 70%, var(--bark)); }
+.dot-icon.leaf { background: color-mix(in srgb, var(--success) 12%, transparent); color: var(--success); }
+.dot-icon.sand { background: color-mix(in srgb, var(--warning) 14%, transparent); color: color-mix(in srgb, var(--warning) 80%, var(--bark)); }
+.dot-icon .icon { width: 21px; height: 21px; }
+
+/* 8. Segmenti e chip ────────────────────────────────────────────────────── */
+.segmented {
+  display: flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--surface);
+}
+.segmented > button {
+  flex: 1; min-height: 34px; border: 0; border-radius: 999px; background: none;
+  font-size: var(--fs-sm); font-weight: 500; color: var(--muted); cursor: pointer;
+  transition: background-color .2s, color .2s;
+}
+.segmented > button[aria-pressed="true"], .segmented > button.active {
+  background: var(--card); color: var(--text); box-shadow: var(--shadow-sm);
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px;
+  border-radius: 999px; background: var(--surface); font-size: var(--fs-sm); color: var(--text);
+}
+
+/* 9. Liste ──────────────────────────────────────────────────────────────── */
+.list { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.list-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  min-height: 56px; padding: var(--space-3) var(--space-4);
+  color: var(--text); text-decoration: none; background: none; border: 0; width: 100%; text-align: left;
+}
+.list-row + .list-row { border-top: .5px solid var(--border); }
+.list-row:active { background: var(--surface); }
+.list-row .grow { flex: 1; min-width: 0; }
+.list-row .chev { color: var(--muted); transform: rotate(180deg); }
+
+/* 10. Pannelli (sheet) — si chiudono anche trascinando in basso (sheet.js) */
+.zen-sheet-overlay {
+  position: fixed; inset: 0; z-index: 400; background: var(--scrim);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s var(--ease);
+}
+.zen-sheet-overlay.open { opacity: 1; pointer-events: auto; }
+.zen-sheet {
+  width: 100%; max-width: 560px; max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--bg); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-3) var(--space-5) calc(var(--safe-bottom) + var(--space-6));
+  transform: translateY(100%); transition: transform .32s var(--ease);
+}
+.zen-sheet-overlay.open .zen-sheet { transform: none; }
+.zen-sheet-handle { width: 36px; height: 5px; border-radius: 3px; background: var(--border); margin: 0 auto var(--space-4); }
+.zen-sheet-title { text-align: center; font-size: var(--fs-lg); font-weight: 600; margin-bottom: var(--space-5); }
+
+/* 11. Varie ─────────────────────────────────────────────────────────────── */
+.zen-quote { font-family: var(--font-serif); font-size: var(--fs-lg); line-height: 1.6; font-style: italic; }
+.zen-divider { height: .5px; background: var(--border); border: 0; margin: 0; }
+.empty { text-align: center; color: var(--muted); padding: var(--space-8) var(--space-4); font-size: var(--fs-sm); }
+.avatar { border-radius: 50%; object-fit: cover; }
+@media (prefers-reduced-motion: reduce) {
+  .zen *, .zen *::before, .zen *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
+
+/* ─── Pagine non ancora ridisegnate ──────────────────────────────────────
+   Le pagine con la vecchia grafica usano <body> senza classe "zen" e il
+   loro header #main-header. Qui solo armonizzazione: font e palette. */
+body:not(.zen) { font-family: var(--font) !important; }
+body:not(.zen) :where(button, input, select, textarea) { font-family: inherit; }
+
+/* ─── Compatibilità: pagine con la vecchia grafica ──────────────────────
+   Stile nuovo per i componenti ricorrenti delle pagine non ancora
+   ridisegnate. Cambia solo l'aspetto: apertura/chiusura e logica restano
+   quelle della pagina. Selettori "body.zen …" per prevalere sugli stili
+   interni delle pagine. Da eliminare man mano che le pagine vengono rifatte. */
+
+body.zen .zen-legacy-hidden { display: none !important; }
+body.zen:not(.zen-native) {
+  display: block; max-width: none;
+  padding-top: calc(var(--safe-top) + var(--header-h) + 52px);
+}
+body.zen:not(.zen-native) > :not(.zen-header):not(.zen-tabbar):not(.zen-sheet-overlay):not(script):not(svg) {
+  max-width: 560px; margin-left: auto; margin-right: auto;
+}
+
+/* Schede della pagina → selettore in alto, sotto il titolo */
+body.zen .tab-bar.zen-page-tabs {
+  position: fixed; top: calc(var(--safe-top) + var(--header-h)); bottom: auto; left: 50%; right: auto;
+  transform: translateX(-50%); width: calc(100% - 2 * var(--space-5)); max-width: 520px; height: auto;
+  z-index: 190; display: flex; gap: 2px; padding: 3px; margin: 6px 0 0;
+  background: var(--surface); border: 0; border-radius: 999px; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+body.zen .zen-page-tabs .tab-btn {
+  flex: 1; min-height: 34px; height: auto; padding: 0 8px; margin: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 0; border-radius: 999px; color: var(--muted); box-shadow: none; transform: none;
+}
+body.zen .zen-page-tabs .tab-btn :is(svg, img, .tab-icon) { display: none !important; }
+body.zen .zen-page-tabs .tab-center-circle { display: contents; }
+body.zen .zen-page-tabs .tab-label {
+  display: block; font-size: var(--fs-sm); font-weight: 500; letter-spacing: 0; text-transform: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; color: inherit; opacity: 1;
+}
+body.zen .zen-page-tabs .tab-label::first-letter { text-transform: uppercase; }
+body.zen .zen-page-tabs .tab-btn:is(.tab-active, .active, [aria-selected="true"]) {
+  background: var(--card); color: var(--text); box-shadow: var(--shadow-sm);
+}
+
+/* Pannelli a foglio */
+body.zen :is(.modal-overlay, .mo, .vo, .edit-overlay, .edit-item-overlay, .loyalty-overlay,
+  .new-store-overlay, .pat-modal-overlay, .spesa-overlay, .recipe-popup-overlay) {
+  background: var(--scrim) !important;
+}
+body.zen :is(.modal-sheet, .ms, .vo-sheet, .edit-sheet, .edit-item-sheet, .loyalty-sheet,
+  .new-store-sheet, .pat-modal-sheet, .spesa-sheet) {
+  max-width: 560px; background: var(--bg);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-3) var(--space-5) calc(var(--safe-bottom) + var(--space-6));
+  box-shadow: var(--shadow-lg);
+}
+body.zen :is(.modal-handle, .mh) { width: 36px; height: 5px; border-radius: 3px; background: var(--border); margin: 0 auto var(--space-4); }
+body.zen :is(.modal-title, .mt) {
+  font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; text-transform: none; color: var(--text); text-align: center;
+}
+
+/* Etichette e campi */
+body.zen :is(.form-label, .fl, .form-group > label) {
+  font-size: var(--fs-sm); font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--muted);
+}
+body.zen :is(.form-input, .fi, .form-group input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+  .form-group select, .form-group textarea) {
+  background: var(--surface); color: var(--text); border: 1px solid transparent; border-radius: var(--radius-sm);
+  min-height: var(--tap); padding: 10px 14px; font-size: 16px; letter-spacing: 0;
+}
+body.zen :is(.form-input, .fi, .form-group input, .form-group select, .form-group textarea):focus {
+  outline: none; border-color: var(--primary); background: var(--card);
+}
+
+/* Pulsanti ricorrenti */
+body.zen :is(.btn-primary, .bs) {
+  min-height: var(--tap); border-radius: 999px; border: 0;
+  background: var(--text); color: var(--bg); font-size: var(--fs-md); font-weight: 500; letter-spacing: 0; text-transform: none;
+}
+body.zen .bc {
+  min-height: var(--tap); border-radius: 999px; border: 1px solid var(--border); background: transparent;
+  color: var(--text); font-size: var(--fs-md); letter-spacing: 0; text-transform: none;
+}
+body.zen .bd {
+  min-height: var(--tap); border-radius: 999px; border: 1px solid transparent; background: transparent;
+  color: var(--danger); font-size: var(--fs-md); letter-spacing: 0; text-transform: none;
+}
+
+/* Titoli di sezione e stati vuoti */
+body.zen .section-title { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+body.zen .section-divider { border: 0; height: .5px; background: var(--border); }
+body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }

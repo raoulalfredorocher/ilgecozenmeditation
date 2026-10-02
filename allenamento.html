@@ -360,8 +360,11 @@
       font-family:inherit; font-size:.84rem; letter-spacing:.12em; font-weight:600;
       padding:12px 32px; cursor:pointer; }
   </style>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body style="visibility:hidden">
+<body class="zen" data-title="Allenamento" data-back="index.html" style="visibility:hidden">
   <div id="landscape-warning">
     <div style="font-size:3rem">📱</div>
     <div>Ruota il dispositivo in verticale</div>
@@ -385,6 +388,7 @@
     window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
   </script>
   <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
 
 
   <header>

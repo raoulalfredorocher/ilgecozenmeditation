@@ -1,0 +1,110 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   tokens.css — design system "Il Geco Zen"
+
+   Colori presi dal logo: blu del contorno, azzurro del geco, rosa dei fiori
+   di ciliegio, marrone del ramo, carta calda dello sfondo.
+
+   I selettori usano :root[data-theme] (specificità più alta di
+   html[data-theme]) così questi valori prevalgono anche sulle variabili
+   ridefinite dentro le singole pagine: tutte le pagine prendono la stessa
+   palette senza doverle modificare una per una.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Tipografia: SF Pro su iPhone/Mac, font di sistema moderno altrove.
+     Il serif "New York" è riservato agli accenti (citazioni). */
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-serif: "New York", ui-serif, "Iowan Old Style", Georgia, serif;
+
+  --fs-xs: .75rem;    /* 12px — minimo leggibile */
+  --fs-sm: .8125rem;  /* 13px */
+  --fs-md: .9375rem;  /* 15px */
+  --fs-lg: 1.0625rem; /* 17px */
+  --fs-xl: 1.25rem;   /* 20px */
+  --fs-2xl: 1.625rem; /* 26px */
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  --radius-sm: 12px; --radius-md: 18px; --radius-lg: 24px; --radius-xl: 32px;
+
+  --tap: 44px;                 /* area minima di tocco */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --header-h: 56px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  /* Palette brand */
+  --geco-blue:   #25739E;
+  --geco-sky:    #6EC6E0;
+  --geco-mist:   #E3F3F9;
+  --sakura:      #EE9BB0;
+  --sakura-soft: #FCE8EE;
+  --bark:        #8B5A6B;
+
+  /* Superfici e testo */
+  --bg:       #FAF7F2;
+  --surface:  #F2EEE7;
+  --card:     #FFFFFF;
+  --border:   #E7E0D5;
+  --text:     #1C3444;
+  --muted:    #6B7C88;
+  --primary:  #25739E;
+  --on-primary: #FFFFFF;
+  --danger:   #C2475F;
+  --success:  #2F8A5B;
+  --warning:  #C98A1C;
+  --shadow-sm: 0 1px 2px rgba(28, 52, 68, .06), 0 1px 1px rgba(28, 52, 68, .04);
+  --shadow-md: 0 6px 20px rgba(28, 52, 68, .08), 0 2px 6px rgba(28, 52, 68, .05);
+  --shadow-lg: 0 16px 40px rgba(28, 52, 68, .14);
+  --scrim: rgba(18, 32, 42, .42);
+
+  /* Nomi usati dalle pagine esistenti (compatibilità) */
+  --gold:     var(--primary);
+  --accent:   var(--sakura);
+  --accent2:  var(--geco-sky);
+  --red:      var(--danger);
+  --ring-bg:  var(--geco-mist);
+  --input-bg: var(--card);
+  --overlay:  var(--bg);
+  --cat-label: #5E86A0;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --geco-blue:   #7FCDE6;
+  --geco-sky:    #8FD6EA;
+  --geco-mist:   #17323F;
+  --sakura:      #F2A9BC;
+  --sakura-soft: #3A2530;
+  --bark:        #C99AAA;
+
+  --bg:       #0E1A22;
+  --surface:  #14242E;
+  --card:     #182B37;
+  --border:   #24394A;
+  --text:     #E6EFF3;
+  --muted:    #93A7B4;
+  --primary:  #7FCDE6;
+  --on-primary: #0E1A22;
+  --danger:   #F07890;
+  --success:  #6CCB98;
+  --warning:  #E8B65A;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, .35);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, .5);
+  --scrim: rgba(0, 0, 0, .55);
+
+  --gold:     var(--primary);
+  --accent:   var(--sakura);
+  --accent2:  var(--geco-sky);
+  --red:      var(--danger);
+  --ring-bg:  var(--geco-mist);
+  --input-bg: var(--surface);
+  --overlay:  var(--bg);
+  --cat-label: #8AB4C8;
+}

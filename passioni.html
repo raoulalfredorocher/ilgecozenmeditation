@@ -55,9 +55,13 @@
       color: var(--muted); text-transform: uppercase; margin-top: 2px;
     }
   </style>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body style="visibility:hidden">
+<body class="zen" data-title="Passioni" data-back="index.html" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
 
   <header id="main-header">
     <a class="btn-header-csv" href="index.html" aria-label="Torna al Qui e Ora" style="text-decoration:none;">
