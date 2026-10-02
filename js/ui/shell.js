@@ -11,6 +11,7 @@
  *
  * Attributi del <body>:
  *   data-title   titolo al centro (sulla Home viene mostrato il logo)
+ *   data-subtitle riga piccola sotto il titolo (facoltativa)
  *   data-back    pagina a cui torna la freccia (default index.html; "none" = nessuna)
  *   data-add     selettore del pulsante "aggiungi" della pagina: il + della
  *                barra in basso lo preme. Senza, il + non compare.
@@ -61,6 +62,7 @@ function buildHeader() {
     </div>
     <h1 class="zen-header-title">
       ${isHome ? '<img src="assets/img/geco.webp" alt="" width="34" height="24"/><span>Il Geco Zen</span>' : `<span>${title}</span>`}
+      ${body.dataset.subtitle ? `<small class="zen-header-sub">${escapeHtml(body.dataset.subtitle)}</small>` : ''}
     </h1>
     <div class="zen-header-side end"></div>`;
   const actions = document.getElementById('zen-header-actions');
