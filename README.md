@@ -29,9 +29,21 @@ solo i propri dati.
 │   │   ├── auth-guard.js   Protegge le pagine: senza login → login.html
 │   │   ├── db.js           Lettura/scrittura dei dati utente su Firestore
 │   │   └── dom.js          Utility DOM (escape HTML, URL sicuri)
+│   ├── ui/                 Interfaccia condivisa
+│   │   ├── shell.js        Cornice: titolo al centro, barra in basso, tema, Profilo, Sezioni
+│   │   ├── sheet.js        Chiusura dei pannelli trascinando verso il basso
+│   │   ├── dialog.js       Pannelli, notifiche, CSV, compressione immagini
+│   │   ├── icons.js        Icone a linea (Lucide, ISC)
+│   │   ├── sections.js     Elenco unico delle sezioni dell'app
+│   │   └── theme-boot.js   Tema applicato prima del disegno (niente lampo bianco)
+│   ├── pages/              Logica delle pagine ridisegnate (una cartella per pagina)
+│   │   └── alimentazione/  state, oggi, settimana, ricette, spesa, main
 │   ├── data/               Contenuti statici (citazioni del giorno)
 │   └── meditazione/        Timer di meditazione (moduli della pagina meditazione.html)
-├── styles/                 CSS condivisi (tema, layout, timer)
+├── styles/
+│   ├── tokens.css          Design system: colori, caratteri, spaziature, temi chiaro/scuro
+│   ├── zen.css             Componenti condivisi + compatibilità per le pagine non ancora rifatte
+│   └── theme/layout/timer  CSS delle pagine con la vecchia grafica
 ├── docs/                   Documentazione tecnica
 ├── firestore.rules         Regole di sicurezza del database
 ├── firebase.json           Configurazione Firebase Hosting e header di sicurezza
@@ -75,14 +87,23 @@ configurazione da solo.
 | [docs/SICUREZZA.md](docs/SICUREZZA.md) | Modello di sicurezza e checklist della console Firebase/Google Cloud |
 | [docs/DEPLOY.md](docs/DEPLOY.md) | Pubblicazione su Firebase Hosting e regole Firestore |
 
+## Grafica
+
+Tutte le pagine usano lo stesso design system (`styles/tokens.css` + `styles/zen.css`)
+e la stessa cornice (`js/ui/shell.js`). Le pagine ridisegnate hanno
+`<body class="zen zen-native">`; quelle con la vecchia struttura hanno solo
+`class="zen"` e vengono adattate automaticamente (barra in alto nascosta,
+azioni nel menu ⋯, schede in alto). Pagina di riferimento: `alimentazione.html`.
+
 ## Aggiungere una nuova sezione
 
-1. Crea `nuova-sezione.html` partendo da una pagina esistente e includi
-   `<script type="module" src="js/core/auth-guard.js"></script>` come primo script nel `<body>`.
-2. Aggiungi le funzioni di accesso ai dati in `js/core/db.js` usando
+1. Crea `nuova-sezione.html` partendo da `alimentazione.html` (head, `body.zen.zen-native`,
+   `data-title`, `data-add`) e la sua logica in `js/pages/nuova-sezione/`.
+   Includi `js/core/auth-guard.js` e `js/ui/shell.js` come primi script nel `<body>`.
+2. Aggiungi la sezione a `js/ui/sections.js` (compare nella Home e nel pannello Sezioni).
+3. Aggiungi le funzioni di accesso ai dati in `js/core/db.js` usando
    `userCol('nome_collezione')` / `userDoc('nome_collezione', id)`.
-3. **Aggiungi `nome_collezione` all'elenco in `firestore.rules`** e pubblica le regole,
+4. **Aggiungi `nome_collezione` all'elenco in `firestore.rules`** e pubblica le regole,
    altrimenti Firestore rifiuterà letture e scritture.
-4. Collega la pagina dalla Home (`index.html`).
 5. Per mostrare dati dell'utente in un template HTML usa sempre `escapeHtml()`
    da `js/core/dom.js`.

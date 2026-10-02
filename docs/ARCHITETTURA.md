@@ -28,6 +28,16 @@ Spotify Web API e Web Playback SDK (musica, allenamento), Yahoo Finance
 | `db.js` | Tutte le funzioni di accesso ai dati, raggruppate per sezione (`subscribeX`, `addX`, `updateX`, `deleteX`). Usa `userCol()`/`userDoc()` che costruiscono sempre percorsi sotto `users/{uid}`. |
 | `dom.js` | `escapeHtml()` per inserire testo nei template HTML e `safeUrl()` per gli attributi `src`/`href`. |
 
+## Interfaccia (`js/ui/`)
+
+| Modulo | Responsabilità |
+|---|---|
+| `shell.js` | Crea barra in alto (titolo al centro, indietro, azioni) e barra in basso (Home, Sezioni, +, Meditazione, Profilo). Gestisce il tema chiaro/scuro/automatico (`zen_theme`). Adatta le pagine con la vecchia grafica. Attributi del `<body>`: `data-title`, `data-back`, `data-add`, `data-tab`. |
+| `sheet.js` | Rende chiudibile trascinando verso il basso qualsiasi pannello "a foglio", riconosciuto dalla forma. Caricato da `auth-guard.js`. |
+| `dialog.js` | `createSheet()`, `toast()`, `options()`, `downloadCSV()`, `compressImage()`. |
+| `icons.js` | Sprite di icone SVG (`<svg class="icon"><use href="#i-nome"/></svg>` o `icon('nome')`). |
+| `sections.js` | Elenco delle sezioni usato da Home e pannello Sezioni. |
+
 ## Pagine
 
 | Pagina | Sezione | Collezioni Firestore |
@@ -35,7 +45,7 @@ Spotify Web API e Web Playback SDK (musica, allenamento), Yahoo Finance
 | `index.html` | Home: meteo, compleanni, pensiero del giorno, accesso alle sezioni | `crm_contacts` (lettura compleanni) |
 | `login.html` | Accesso con Google | — |
 | `meditazione.html` | Timer di meditazione con preset e cronologia (`js/meditazione/`) | `meditation_sessions` |
-| `alimentazione.html` | Dieta, ricette, diario, macro, lista della spesa | `recipes`, `food_diary`, `diet`, `saved_diets`, `macros`, `shopping_stores` (+ `items`) |
+| `alimentazione.html` | Oggi (diario + piano del giorno), Settimana (piano, obiettivi, TDEE, diete salvate), Ricette, Spesa. Logica in `js/pages/alimentazione/` | `recipes`, `food_diary`, `diet`, `saved_diets`, `macros`, `shopping_stores` (+ `items`) |
 | `allenamento.html` | Schede, sessioni guidate, registro | `allenamenti_piani`, `allenamenti_registro` (+ `dettagli_chunks`) |
 | `bucket-list.html` | Obiettivi di vita | `bucket_list` |
 | `direzione.html` | Direzione / valori | `direction` |
