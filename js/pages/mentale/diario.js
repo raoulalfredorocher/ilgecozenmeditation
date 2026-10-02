@@ -2,11 +2,12 @@
  * diario.js — scheda Diario: un journal pensato per scrivere.
  *
  * Elenco per mese, scrittura a tutto schermo (titolo, testo, come ti senti,
- * foto), bozza salvata da sola. Le voci restano nella stessa raccolta di
+ * foto, nota vocale), bozza salvata da sola. Le voci restano nella stessa raccolta di
  * prima (mental_diary); i campi nuovi (emozioni) sono facoltativi.
  */
 import { MOODS, labelOf } from './data.js';
 import * as store from './store.js';
+import * as audio from './audio.js';
 import { $, esc, armedButton, dayStr, timeStr, GIORNI_BREVI, mese } from './ui.js';
 
 const DRAFT_KEY = 'zen_diary_draft';
@@ -76,8 +77,11 @@ function rowHTML(e) {
   const d = parseDay(entryDay(e));
   const text = (e.testo || '').trim();
   let title = (e.titolo || '').trim(), prev = text;
-  if (!title) ({ title, rest: prev } = splitFirstSentence(text));
-  const moods = (e.emozioni || []).map(labelOf).join(' · ');
+  if (!title) {
+    if (!text && e.audio) title = 'Nota vocale';
+    else ({ title, rest: prev } = splitFirstSentence(text));
+  }
+  const moods = [e.audio && `Audio ${audio.fmtDur(e.audio.dur || 0)}`, ...(e.emozioni || []).map(labelOf)].filter(Boolean).join(' · ');
   return `<button type="button" class="j-row" data-id="${esc(e._docId)}">
       <span class="j-day"><b>${d.getDate()}</b><span>${GIORNI_BREVI[d.getDay()]}</span></span>
       <span class="j-main">
@@ -198,6 +202,8 @@ export function openEditor(entry = null, presetDay = null) {
     ora: entry?.ora || timeStr(now),
     emozioni: [...(entry ? entry.emozioni || [] : draft?.emozioni || [])],
     attach: entry?.attachData ? { name: entry.attachName || 'allegato', data: entry.attachData, keep: true } : null,
+    audio: entry?.audio ? { saved: true, meta: entry.audio, mime: entry.audio.mime, blob: null, url: null } : null,
+    rec: false, recCtl: null, audioError: '',
   };
   $('ed-title').value = st.titolo;
   $('ed-text').value = st.testo;
@@ -206,10 +212,12 @@ export function openEditor(entry = null, presetDay = null) {
   $('ed-del').hidden = !entry;
   $('ed-del').innerHTML = '';
   if (entry) $('ed-del').appendChild(armedButton('Elimina voce', async () => {
+    if (entry.audio) await deleteAudioChunks(entry._docId);
     await store.deleteDoc(store.diaryRef(entry._docId));
     closeEditor();
   }, 'text-btn danger'));
   syncMeta();
+  syncAudio();
   $('editor').classList.add('on');
   document.documentElement.style.overflow = 'hidden';
   requestAnimationFrame(() => {
@@ -220,6 +228,8 @@ export function openEditor(entry = null, presetDay = null) {
 }
 
 function closeEditor() {
+  if (st?.recCtl) st.recCtl.cancel();                       // registrazione ancora aperta: si chiude il microfono
+  if (st?.audio?.url) URL.revokeObjectURL(st.audio.url);
   $('editor').classList.remove('on');
   document.documentElement.style.overflow = '';
   document.activeElement?.blur?.();
@@ -252,8 +262,9 @@ function readPhoto(file) {
 }
 
 async function save() {
+  if (st.rec) await endRecord();                           // registrazione ancora in corso: prima si chiude
   const titolo = st.titolo.trim(), testo = st.testo.trim();
-  if (!titolo && !testo) { closeEditor(); return; }
+  if (!titolo && !testo && !st.audio) { closeEditor(); return; }
   const col = store.diaryCol();
   if (!col) { alert('Sessione non pronta. Riprova tra un istante.'); return; }
   const btn = $('ed-save');
@@ -261,22 +272,103 @@ async function save() {
   const payload = { titolo, testo, data: st.data, ora: st.ora, emozioni: st.emozioni };
   if (st.attach && !st.attach.keep) { payload.attachName = st.attach.name; payload.attachData = st.attach.data; }
   else if (!st.attach && editing?.attachData) { payload.attachName = ''; payload.attachData = ''; }
+  const newAudio = st.audio && !st.audio.saved ? st.audio : null;
+  if (!st.audio && editing?.audio) payload.audio = null;   // audio rimosso
   try {
-    if (editing) await store.updateDoc(store.diaryRef(editing._docId), payload);
-    else await store.addDoc(col, { ...payload, createdAt: Date.now() });
+    let id;
+    if (editing) { id = editing._docId; await store.updateDoc(store.diaryRef(id), payload); }
+    else { id = (await store.addDoc(col, { ...payload, createdAt: Date.now() })).id; }
+    if (editing?.audio && (newAudio || !st.audio)) await deleteAudioChunks(id);
+    if (newAudio) {
+      // la voce punta all'audio solo a scrittura finita: un salvataggio interrotto non lascia riferimenti rotti
+      btn.textContent = 'Salvo l’audio…';
+      const parts = audio.splitChunks(await audio.blobToBase64(newAudio.blob));
+      for (let i = 0; i < parts.length; i++) await store.setDoc(store.diaryAudioRef(id, i), { n: i, data: parts[i] });
+      await store.updateDoc(store.diaryRef(id), { audio: { mime: newAudio.mime, dur: Math.round(newAudio.dur), size: newAudio.blob.size, chunks: parts.length } });
+    }
     clearDraft();
     closeEditor();
   } catch (err) {
     console.error('salvataggio diario', err);
     alert('Non sono riuscito a salvare. Controlla la connessione: il testo è ancora qui.');
-  } finally { btn.disabled = false; }
+  } finally { btn.disabled = false; btn.textContent = 'Fatto'; }
+}
+
+// ─── Nota vocale ────────────────────────────────────────────────────────────
+async function deleteAudioChunks(id) {
+  const snap = await store.getDocs(store.diaryAudioCol(id));
+  await Promise.all(snap.docs.map(d => store.deleteDoc(store.diaryAudioRef(id, d.id))));
+}
+
+/** Scarica i pezzi dell'audio salvato e ne fa un file ascoltabile (solo quando serve). */
+async function loadSavedAudio() {
+  const a = st.audio;
+  if (a.blob) return;
+  const snap = await store.getDocs(store.query(store.diaryAudioCol(editing._docId), store.orderBy('n', 'asc')));
+  if (snap.empty) throw new Error('Audio non trovato');
+  a.blob = audio.chunksToBlob(snap.docs.map(d => d.data().data), a.meta.mime);
+  a.url = URL.createObjectURL(a.blob);
+}
+
+function syncAudio() {
+  const host = $('ed-audio');
+  if (!host) return;
+  const a = st.audio;
+  if (st.rec) {
+    host.innerHTML = `<div class="rec"><span class="rec-dot"></span><span class="rec-time" id="rec-time">0:00</span><span class="grow"></span>
+      <button type="button" class="btn sm accent" id="rec-stop">Ferma</button><button type="button" class="text-btn" id="rec-cancel">Annulla</button></div>`;
+    return;
+  }
+  if (!a) {
+    host.innerHTML = `<div class="aud-actions">
+      ${audio.recordingSupported() ? '<button type="button" class="text-btn" id="ed-rec">Registra un audio</button>' : ''}
+      <button type="button" class="text-btn" id="ed-audio-pick">Scegli un file audio</button></div>`;
+    return;
+  }
+  const dur = a.saved ? a.meta.dur : a.dur;
+  host.innerHTML = `<div class="aud">
+    ${a.url ? `<audio controls preload="metadata" src="${a.url}"></audio>` : `<button type="button" class="btn block" id="aud-load">Ascolta · ${audio.fmtDur(dur)}</button>`}
+    <div class="aud-row"><span></span><button type="button" class="text-btn danger" id="aud-del">Rimuovi audio</button></div>
+    ${st.audioError ? `<p class="aud-err">${esc(st.audioError)}</p>` : ''}</div>`;
+}
+
+function setAudio(next) {
+  if (st.audio?.url && !st.audio.saved) URL.revokeObjectURL(st.audio.url);
+  st.audio = next; st.audioError = '';
+  syncAudio();
+}
+
+async function beginRecord() {
+  try {
+    st.recCtl = await audio.startRecording(s => { const el = $('rec-time'); if (el) el.textContent = audio.fmtDur(s); });
+    st.rec = true; st.audioError = '';
+    syncAudio();
+  } catch (e) {
+    console.error('microfono', e);
+    alert('Non riesco ad usare il microfono. Controlla che il sito abbia il permesso di usarlo nelle impostazioni del telefono.');
+  }
+}
+
+async function endRecord() {
+  const ctl = st.recCtl;
+  if (!ctl) return;
+  const r = await ctl.stop();
+  st.rec = false; st.recCtl = null;
+  if (r && r.blob.size) setAudio({ blob: r.blob, mime: r.mime, dur: r.dur, url: URL.createObjectURL(r.blob) });
+  else syncAudio();
+}
+
+async function pickAudioFile(file) {
+  if (file.size > audio.MAX_FILE_BYTES) { alert('Il file è troppo grande (massimo 12 MB, circa 20 minuti di voce).'); return; }
+  const dur = await audio.fileDuration(file);
+  setAudio({ blob: file, mime: file.type || 'audio/mp4', dur, url: URL.createObjectURL(file) });
 }
 
 function exportCSV() {
   if (!entries.length) return;
-  const rows = [['Data', 'Ora', 'Titolo', 'Testo', 'Emozioni']];
+  const rows = [['Data', 'Ora', 'Titolo', 'Testo', 'Emozioni', 'Audio']];
   [...entries].sort((a, b) => (sortKey(a) < sortKey(b) ? -1 : 1)).forEach(e =>
-    rows.push([entryDay(e), e.ora || '', e.titolo || '', e.testo || '', (e.emozioni || []).map(labelOf).join(' | ')]));
+    rows.push([entryDay(e), e.ora || '', e.titolo || '', e.testo || '', (e.emozioni || []).map(labelOf).join(' | '), e.audio ? audio.fmtDur(e.audio.dur || 0) : '']));
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' }));
@@ -332,6 +424,24 @@ export function initDiario() {
     if (!f) return;
     try { st.attach = { name: f.name.replace(/\.[^.]+$/, '') + '.jpg', data: await readPhoto(f) }; syncMeta(); }
     catch { alert('Non riesco a leggere questa immagine.'); }
+  });
+  $('ed-audio').addEventListener('click', async e => {
+    const id = e.target.closest('button')?.id;
+    if (id === 'ed-rec') beginRecord();
+    else if (id === 'rec-stop') endRecord();
+    else if (id === 'rec-cancel') { st.recCtl?.cancel(); st.rec = false; st.recCtl = null; syncAudio(); }
+    else if (id === 'ed-audio-pick') $('ed-audio-file').click();
+    else if (id === 'aud-del') setAudio(null);
+    else if (id === 'aud-load') {
+      e.target.closest('button').textContent = 'Carico…';
+      try { await loadSavedAudio(); syncAudio(); $('ed-audio').querySelector('audio')?.play().catch(() => {}); }
+      catch { st.audioError = 'Non riesco a caricare questo audio.'; syncAudio(); }
+    }
+  });
+  $('ed-audio-file').addEventListener('change', e => {
+    const f = e.target.files[0];
+    e.target.value = '';
+    if (f) pickAudioFile(f);
   });
   $('ed-cancel').addEventListener('click', closeEditor);
   $('ed-save').addEventListener('click', save);

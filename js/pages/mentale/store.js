@@ -6,11 +6,11 @@
  *   users/{uid}/emozioni_entries/{emozione}/log  → appunti e volte in cui l'hai provata
  */
 import {
-  doc, getDoc, setDoc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, updateDoc,
+  doc, getDoc, setDoc, collection, addDoc, getDocs, onSnapshot, query, orderBy, deleteDoc, updateDoc,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { db, auth } from '../../core/firebase.js';
 
-export { getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy };
+export { getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy };
 
 const root = () => {
   const uid = auth?.currentUser?.uid;
@@ -22,5 +22,8 @@ export const ready = () => !!root();
 export const storiaRef = () => { const r = root(); return r && doc(db, ...r, 'salute_mentale', 'storia'); };
 export const diaryCol  = () => { const r = root(); return r && collection(db, ...r, 'mental_diary'); };
 export const diaryRef  = id => { const r = root(); return r && doc(db, ...r, 'mental_diary', id); };
+// note vocali: pezzi base64 in mental_diary/{voce}/audio/{0000, 0001, …}
+export const diaryAudioCol = id => { const r = root(); return r && collection(db, ...r, 'mental_diary', id, 'audio'); };
+export const diaryAudioRef = (id, n) => { const r = root(); return r && doc(db, ...r, 'mental_diary', id, 'audio', typeof n === 'number' ? String(n).padStart(4, '0') : n); };
 export const emoCol    = key => { const r = root(); return r && collection(db, ...r, 'emozioni_entries', emoSafe(key), 'log'); };
 export const emoRef    = (key, id) => { const r = root(); return r && doc(db, ...r, 'emozioni_entries', emoSafe(key), 'log', id); };

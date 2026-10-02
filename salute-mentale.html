@@ -136,6 +136,18 @@
     .jc-day.today { box-shadow: inset 0 0 0 1.5px var(--text); }
     .jc-day.sel { box-shadow: 0 0 0 2px var(--sakura); }
 
+    /* Nota vocale */
+    .aud-actions { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+    .rec { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); }
+    .rec-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--danger); animation: rec-pulse 1.2s ease-in-out infinite; }
+    @keyframes rec-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.8); } }
+    .rec-time { font-size: var(--fs-lg); font-variant-numeric: tabular-nums; font-weight: 500; }
+    .aud { display: flex; flex-direction: column; gap: var(--space-2); }
+    .aud audio { width: 100%; }
+    .aud-row { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+    .aud-err { font-size: var(--fs-sm); color: var(--danger); line-height: 1.5; }
+    @media (prefers-reduced-motion: reduce) { .rec-dot { animation: none; } }
+
     /* ── Ruote ── */
     .wheel-wrap { margin: 0 calc(-1 * var(--space-2)); }
     .wheel { display: block; width: 100%; height: auto; --s: 55%; --l1: 66%; --l2: 79%; --l3: 90%; }
@@ -188,6 +200,8 @@
       <textarea class="ed-text" id="ed-text" placeholder="Cosa ti passa per la testa?"></textarea>
       <div class="ed-meta">
         <div><div class="field-lbl">Come ti senti?</div><div class="chips-wrap" id="ed-moods"></div></div>
+        <div id="ed-audio"></div>
+        <input type="file" id="ed-audio-file" accept="audio/*" hidden/>
         <div id="ed-attach"></div>
         <input type="file" id="ed-file" accept="image/*" hidden/>
         <div id="ed-del" hidden></div>
