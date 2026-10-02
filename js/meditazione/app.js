@@ -522,6 +522,11 @@ async function persist(steps) {
   } catch (e) { console.error('salvataggio sessione', e); }
 }
 
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+const themeMetaOrig = themeMeta?.content;
+/** Colora la barra di stato del telefono come la pratica; null = ripristina. */
+function setThemeColor(c) { if (themeMeta) themeMeta.content = c || themeMetaOrig; }
+
 function startPractice() {
   if (session) return;
   current = plan().map(s => ({ ...s }));
@@ -533,6 +538,8 @@ function startPractice() {
   el.classList.remove('done', 'paused');
   el.classList.add('on');
   document.documentElement.style.overflow = 'hidden';
+  document.documentElement.classList.add('practice-open');
+  setThemeColor('#0C171E');
   requestAnimationFrame(() => el.classList.add('show'));
   setPauseButton(false);
   setEnso(0);
@@ -570,6 +577,8 @@ function closePractice() {
   el.classList.remove('show');
   setTimeout(() => { el.classList.remove('on', 'done', 'paused'); }, 600);
   document.documentElement.style.overflow = '';
+  document.documentElement.classList.remove('practice-open');
+  setThemeColor(null);
   releaseWakeLock();
   audio.stopAmbient(1);
   session = null;

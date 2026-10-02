@@ -146,12 +146,14 @@
     /* ── Schermata di pratica: inchiostro e silenzio ── */
     .practice {
       --ink: #0C171E; --paper: #E6EFF3; --faint: #8FA3AF; --glow: #8FD6EA; --blossom: #F2A9BC;
-      position: fixed; inset: 0; z-index: 300; color: var(--paper);
-      background: radial-gradient(120% 80% at 50% 38%, #12242E 0%, var(--ink) 70%);
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; height: 100vh; height: 100dvh;
+      z-index: 300; color: var(--paper); background-color: var(--ink);
+      background-image: radial-gradient(120% 80% at 50% 38%, #12242E 0%, var(--ink) 70%);
       display: none; flex-direction: column; align-items: center;
       padding: calc(var(--safe-top) + var(--space-5)) var(--space-6) calc(var(--safe-bottom) + var(--space-8));
       opacity: 0; transition: opacity .6s var(--ease);
     }
+    html.practice-open, html.practice-open body { background: #0C171E !important; }
     .practice.on { display: flex; }
     .practice.show { opacity: 1; }
     .p-top { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: var(--space-4); }
@@ -183,6 +185,8 @@
     .p-time { font-size: clamp(3.5rem, 18vw, 4.75rem); font-weight: 100; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
     .p-step { margin-top: var(--space-3); font-size: var(--fs-md); letter-spacing: .06em; color: var(--paper); }
     .p-sub { margin-top: 4px; font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-variant-numeric: tabular-nums; }
+    .p-gecko { width: 64px; height: auto; opacity: .92; }
+    .p-gecko-done { width: 150px; }
     .p-bottom { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
     .p-pause {
       min-width: 168px; height: 52px; border-radius: 999px; padding: 0 var(--space-6); cursor: pointer;
@@ -294,11 +298,12 @@
     </div>
 
     <div class="p-bottom">
+      <img class="p-gecko" src="assets/img/geco.webp" alt="Il Geco Zen" width="64" height="46"/>
       <button class="p-pause" type="button" id="p-pause"></button>
     </div>
 
     <div class="p-done" id="p-done">
-      <div class="p-kanji">禅</div>
+      <img class="p-gecko p-gecko-done" src="assets/img/geco.webp" alt="Il Geco Zen" width="150" height="107"/>
       <h2>Sessione completata</h2>
       <p id="p-done-text"></p>
       <p>Vuoi approfondire la mindfulness e la meditazione?<br><a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a></p>
