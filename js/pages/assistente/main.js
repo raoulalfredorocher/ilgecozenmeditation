@@ -1,19 +1,17 @@
 /**
  * main.js — Assistente: chat testuale e vocale.
  *
- *  - Le domande vanno alla Cloud Function "assistant" (functions/index.js),
- *    che usa Claude e legge solo i dati dell'utente.
+ *  - Le domande vanno a Gemini tramite Firebase AI Logic (brain.js), gratis
+ *    e senza server; gli strumenti leggono solo i dati dell'utente.
  *  - Voce in ingresso: riconoscimento vocale del browser (it-IT).
  *  - Voce in uscita: sintesi vocale del dispositivo, attivabile dall'icona
  *    altoparlante in alto (preferenza salvata in zen_assistant_voice).
  *  - La conversazione resta per la durata della sessione (sessionStorage).
  */
-import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js';
-import { app } from '../../core/firebase.js';
+import { askAssistant } from './brain.js';
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 
-const ask = httpsCallable(getFunctions(app, 'europe-west1'), 'assistant', { timeout: 120000 });
 const STORE_KEY = 'zen_assistant_chat';
 
 const $ = id => document.getElementById(id);
@@ -40,13 +38,14 @@ function render() {
 }
 const scrollDown = () => requestAnimationFrame(() => scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
 
-const ERRORS = {
-  'functions/not-found': 'L\'assistente non è ancora attivo: manca l\'ultimo passaggio di configurazione.',
-  'functions/permission-denied': 'L\'assistente non è attivo per questo account.',
-  'functions/resource-exhausted': null, // messaggio dal server
-  'functions/unauthenticated': 'Devi accedere di nuovo.',
-  'functions/deadline-exceeded': 'Ci sta mettendo troppo, riprova.',
-};
+/** Messaggio comprensibile per gli errori più comuni. */
+function errorMessage(err) {
+  const m = String(err?.message || err || '');
+  if (/api-not-enabled|firebasevertexai|AI Logic/i.test(m)) return 'L\'assistente non è ancora attivo: manca l\'attivazione di Firebase AI Logic nella console.';
+  if (/quota|429|exhausted|rate/i.test(m)) return 'Per oggi ho risposto a tante domande (limite gratuito). Riprova più tardi.';
+  if (/network|fetch|offline/i.test(m)) return 'Sembra che tu sia offline. Controlla la connessione e riprova.';
+  return 'Qualcosa è andato storto, riprova.';
+}
 
 async function send(text) {
   text = text.trim();
@@ -62,18 +61,15 @@ async function send(text) {
   typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
   scrollDown();
   try {
-    const res = await ask({ messages });
-    const reply = res.data?.reply || '';
+    const reply = (await askAssistant(messages)) || 'Non ho trovato una risposta, prova a chiedermelo in un altro modo.';
     messages.push({ role: 'assistant', text: reply });
     save();
     render();
     speak(reply);
   } catch (err) {
     typing.remove();
-    // "internal" senza dettagli = funzione non raggiungibile (non ancora pubblicata o rete assente)
-    const msg = err.code === 'functions/internal' && err.message === 'internal'
-      ? 'L\'assistente non è raggiungibile in questo momento. Se è appena stato configurato, riprova tra qualche minuto.'
-      : ERRORS[err.code] ?? err.message;
+    console.error('Assistente', err);
+    const msg = errorMessage(err);
     bubble('error', msg || 'Qualcosa è andato storto, riprova.');
     messages.pop(); // la domanda non risposta non resta nello storico
     save();

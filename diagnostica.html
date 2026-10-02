@@ -54,8 +54,8 @@
     } catch (e) { log('Firebase', e.message, false); }
 
     if (fb) {
-      authMod = await import('https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js');
-      fs = await import('https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js');
+      authMod = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js');
+      fs = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js');
 
       document.getElementById('login').onclick = async () => {
         const p = new authMod.GoogleAuthProvider();
