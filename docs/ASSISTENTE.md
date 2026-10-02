@@ -1,14 +1,15 @@
 # Assistente
 
-Chat testuale e vocale nella barra in basso (icona fumetto). Risponde a domande
+Pannello vocale che si apre sopra la pagina corrente toccando l'icona
+fumetto nella barra in basso: il microfono parte subito. Risponde a domande
 come "che tempo fa oggi a Pandino?" o "cosa mangio oggi a pranzo?" leggendo i
 dati reali dell'utente.
 
 ## Come funziona
 
 ```
-assistente.html → js/pages/assistente/main.js   (chat, microfono, lettura ad alta voce)
-                → js/pages/assistente/brain.js  (Gemini via Firebase AI Logic + strumenti)
+js/ui/assistant-sheet.js        (pannello, microfono, lettura ad alta voce)
+js/pages/assistente/brain.js    (Gemini via Firebase AI Logic + strumenti)
                      ├─► Gemini (gemini-flash-lite-latest per la velocità; ripieghi automatici)
                      └─► strumenti eseguiti nel browser: meteo (Open-Meteo), piano
                          alimentare, diario, compleanni, bucket list, ricette, spesa
