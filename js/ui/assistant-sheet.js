@@ -94,7 +94,10 @@ function close() {
   document.documentElement.style.overflow = '';
 }
 
-function listen() {
+const isOpen = () => el?.classList.contains('open');
+
+/** Avvia l'ascolto. auto = riacceso dopo una risposta (se non senti nulla, si ferma in silenzio). */
+function listen({ auto = false } = {}) {
   stopSpeaking();
   recognition = new Recognition();
   recognition.lang = 'it-IT';
@@ -107,7 +110,7 @@ function listen() {
   };
   recognition.onerror = e => {
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') setStatus('Consenti il microfono nelle impostazioni, oppure scrivi la domanda.');
-    else if (e.error === 'no-speech') setStatus('Non ho sentito nulla. Tocca il microfono e riprova.');
+    else if (e.error === 'no-speech') setStatus(auto ? 'Tocca il microfono quando vuoi chiedere altro.' : 'Non ho sentito nulla. Tocca il microfono e riprova.');
     else if (e.error !== 'aborted') setStatus('Non ho capito bene, riprova.');
   };
   recognition.onend = () => {
@@ -116,7 +119,7 @@ function listen() {
     mic.innerHTML = icon('mic');
     if (text.trim()) ask(text);
   };
-  try { recognition.start(); } catch { /* già attivo */ }
+  try { recognition.start(); } catch { if (auto) setStatus('Tocca il microfono quando vuoi chiedere altro.'); }
 }
 
 async function ask(text) {
@@ -136,7 +139,8 @@ async function ask(text) {
     save();
     render();
     setStatus('');
-    speak(reply);
+    // Conversazione continua: finita la risposta, il microfono si riaccende
+    speak(reply, () => { if (isOpen() && Recognition && !listening) listen({ auto: true }); });
   } catch (err) {
     track('assistant', err?.message || String(err));
     messages.pop();
@@ -171,10 +175,11 @@ function toggleVoice() {
   if (!voiceOn) stopSpeaking();
   updateVoiceBtn();
 }
-function speak(text) {
-  if (!canSpeak || !voiceOn || !text) return;
+function speak(text, onDone) {
+  if (!canSpeak || !voiceOn || !text) { onDone && setTimeout(onDone, 300); return; }
   stopSpeaking();
   const u = new SpeechSynthesisUtterance(text);
+  if (onDone) { u.onend = () => setTimeout(onDone, 250); u.onerror = () => {}; }
   u.lang = 'it-IT';
   const voices = speechSynthesis.getVoices().filter(v => v.lang?.toLowerCase().startsWith('it'));
   const v = voices.find(x => /premium|enhanced|migliorat/i.test(x.name)) || voices.find(x => x.localService) || voices[0];
