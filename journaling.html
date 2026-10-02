@@ -4,192 +4,26 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Il Geco Zen — Journaling"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Journaling</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html[data-theme="light"] {
-      --bg: #f7f4f9;
-      --surface: #ede8f4;
-      --card: #ffffff;
-      --border: #d4cee0;
-      --text: #1e2a38;
-      --muted: #876a6a;
-      --primary: #c68a3d;
-      --accent: #f0b36f;
-    }
-    html[data-theme="dark"] {
-      --bg: #111820;
-      --surface: #1a2230;
-      --card: #1e2a38;
-      --border: #2e3f52;
-      --text: #e8eef4;
-      --muted: #a89090;
-      --primary: #f0b36f;
-      --accent: #c68a3d;
-    }
-
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 120px) 20px 32px;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .btn-back {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-family: inherit;
-      font-size: .58rem;
-      letter-spacing: .1em;
-      padding: 5px 8px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      width: 52px;
-    }
-    .header-center {
-      flex: 1;
-      text-align: center;
-    }
-    .app-title {
-      font-size: .95rem;
-      letter-spacing: .16em;
-      color: var(--primary);
-      font-weight: 700;
-    }
-    .app-sub {
-      font-size: .48rem;
-      letter-spacing: .22em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    .theme-toggle {
-      background: none;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      cursor: pointer;
-      width: 52px;
-      height: 28px;
-      position: relative;
-    }
-    .theme-toggle .knob {
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      transition: transform .3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .7rem;
-    }
-    html[data-theme="dark"] .theme-toggle .knob { transform: translateX(24px); }
-
-    .placeholder-card {
-      width: 100%;
-      background: var(--card);
-      border: 1.5px dashed var(--border);
-      border-radius: 22px;
-      padding: 42px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      text-align: center;
-    }
-    .placeholder-icon { font-size: 3rem; }
-    .placeholder-title {
-      font-size: .94rem;
-      letter-spacing: .08em;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .placeholder-sub {
-      font-size: .68rem;
-      color: var(--muted);
-      line-height: 1.7;
-      letter-spacing: .04em;
-    }
-  </style>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
 </head>
-<body class="zen" data-title="Journaling" data-back="index.html" style="visibility:hidden">
+<body class="zen zen-native" data-title="Journaling" style="visibility:hidden">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
-  <header>
-    <a class="btn-back" href="index.html" aria-label="Torna al Qui e Ora">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>QUI E ORA</span>
-    </a>
-    <div class="header-center">
-      <div class="app-title">Journaling</div>
-      <div class="app-sub">pagina in costruzione</div>
-    </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
-  </header>
-
-  <section class="placeholder-card">
-    <div class="placeholder-icon">📓</div>
-    <div class="placeholder-title">Journaling</div>
-    <div class="placeholder-sub">Spazio pronto per raccogliere riflessioni, note e pensieri quotidiani.</div>
-  </section>
-
-  <script>
-    const htmlEl = document.documentElement;
-    const btn = document.getElementById('theme-toggle');
-    const knob = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
-
-    function apply() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-    }
-
-    apply();
-    btn.addEventListener('click', () => { isDark = !isDark; apply(); });
-  </script>
+  <main class="zen-main">
+    <section class="coming">
+      <span class="dot-icon sand"><svg class="icon" aria-hidden="true"><use href="#i-pen"/></svg></span>
+      <h2 class="zen-h2">Journaling</h2>
+      <p>Uno spazio per raccogliere riflessioni, note e pensieri quotidiani. In costruzione.</p>
+    </section>
+  </main>
 </body>
 </html>
