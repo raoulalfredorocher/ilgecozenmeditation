@@ -24,6 +24,8 @@ import { SECTION_GROUPS } from './sections.js';
 import { waitForUser, confirmAndSignOut } from '../core/auth-guard.js';
 import { escapeHtml, safeUrl } from '../core/dom.js';
 import { openAssistant } from './assistant-sheet.js';
+// Tiene la barra in basso attaccata al fondo dello schermo (vedi footer-guard.js)
+import { report as screenReport } from './footer-guard.js';
 
 const body = document.body;
 const page = location.pathname.split('/').pop() || 'index.html';
@@ -94,6 +96,17 @@ function buildTabbar() {
   body.append(nav);
 
   nav.querySelector('#zen-tab-assistant').addEventListener('click', openAssistant);
+
+  // Scorciatoia nascosta: tenendo premuto "Sezioni" per un secondo e mezzo compaiono le misure dello schermo
+  const gridBtn = nav.querySelector('[data-open-sheet="zen-sections"]');
+  let pressTimer;
+  gridBtn.addEventListener('touchstart', () => {
+    pressTimer = setTimeout(() => { gridBtn.dataset.long = '1'; openScreenReport(); }, 1500);
+  }, { passive: true });
+  ['touchend', 'touchcancel', 'touchmove'].forEach(ev => gridBtn.addEventListener(ev, () => clearTimeout(pressTimer), { passive: true }));
+  gridBtn.addEventListener('click', e => {           // la pressione lunga non deve aprire anche "Sezioni"
+    if (gridBtn.dataset.long) { e.stopPropagation(); e.preventDefault(); delete gridBtn.dataset.long; }
+  });
   nav.querySelector('.add')?.addEventListener('click', () => {
     const target = document.querySelector(addSel);
     // Se la pagina ha nascosto il suo "aggiungi" (es. scheda senza aggiunta), non fare nulla
@@ -138,6 +151,15 @@ document.addEventListener('click', e => {
   const opener = e.target.closest('[data-open-sheet]');
   if (opener) openSheet(opener.dataset.openSheet);
 });
+
+function openScreenReport() {
+  let el = document.getElementById('zen-diag');
+  if (!el) {
+    el = sheet('zen-diag', 'Misure dello schermo', '<pre id="zen-diag-text" style="white-space:pre-wrap;font:12px/1.6 ui-monospace,Menlo,monospace;margin:0 0 var(--space-4)"></pre><p class="zen-muted" style="font-size:var(--fs-xs);line-height:1.5">Se la barra in basso è sollevata, fai uno screenshot di questa schermata.</p>');
+  }
+  document.getElementById('zen-diag-text').textContent = screenReport();
+  openSheet('zen-diag');
+}
 
 function buildSectionsSheet() {
   const groups = SECTION_GROUPS.map(g => `
