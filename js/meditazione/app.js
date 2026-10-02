@@ -128,34 +128,54 @@ function renderTemplates() {
     });
     row.appendChild(b);
   });
-  const add = document.createElement('button');
-  add.type = 'button'; add.className = 'tpl tpl-new';
-  add.innerHTML = '<span>Nuovo</span>';
-  add.addEventListener('click', () => editTemplate(null));
-  row.appendChild(add);
+}
+
+// Righello orizzontale: si scorre, il numero sotto l'indicatore centrale è la durata.
+const TICK = 14, MAX_MINS = 90;
+let rulerReady = false, rulerQuiet = false;
+
+function buildRuler() {
+  const el = $('ruler');
+  el.style.setProperty('--tick', `${TICK}px`);
+  el.innerHTML = `<div class="ruler-track">${Array.from({ length: MAX_MINS }, (_, i) => {
+    const m = i + 1;
+    return `<i class="${m % 10 === 0 ? 'm10' : m % 5 === 0 ? 'm5' : ''}">${m % 10 === 0 ? `<b>${m}</b>` : ''}</i>`;
+  }).join('')}</div>`;
+  let raf = 0;
+  el.addEventListener('scroll', () => {
+    if (rulerQuiet) return;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const m = Math.min(MAX_MINS, Math.max(1, Math.round(el.scrollLeft / TICK) + 1));
+      if (m === S.mins && !S.tpl) return;
+      S.mins = m; S.tpl = null; saveSettings();
+      renderTemplates(); renderReadout();
+    });
+  }, { passive: true });
+}
+
+function renderReadout() {
+  const t = templates.find(x => x.name === S.tpl);
+  const total = t ? sumMins(t.steps) : S.mins;
+  $('readout').innerHTML = `<b>${total}</b><small>min</small>`;
+  $('readout-sub').textContent = t ? t.name : 'Durata libera';
+  $('ruler').classList.toggle('dim', !!t);
 }
 
 function renderMinutes() {
-  const grid = $('mins-grid');
-  grid.innerHTML = '';
-  [5, 10, 15, 20, 30, 45, 60].forEach(m => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'pill'; b.textContent = m;
-    b.setAttribute('aria-label', mins(m));
-    b.setAttribute('aria-pressed', String(!S.tpl && S.mins === m));
-    b.addEventListener('click', () => { S.tpl = null; S.mins = m; saveSettings(); renderSetup(); });
-    grid.appendChild(b);
-  });
+  if (!rulerReady) {
+    buildRuler(); rulerReady = true;
+    // posizione iniziale (senza far scattare l'evento di scorrimento)
+    rulerQuiet = true;
+    requestAnimationFrame(() => {
+      $('ruler').scrollLeft = (S.mins - 1) * TICK;
+      setTimeout(() => { rulerQuiet = false; }, 150);
+    });
+  }
+  renderReadout();
 }
 
-function renderRows() {
-  const sound = audio.SOUND_GROUPS.flatMap(g => g.items).find(i => i.id === S.sound);
-  const bell = audio.BELLS.find(b => b.id === S.bell);
-  $('row-sound').querySelector('.val').textContent = sound ? sound.label : 'Silenzio';
-  $('row-bell').querySelector('.val').textContent = bell ? bell.label : '';
-}
-
-function renderSetup() { renderTemplates(); renderMinutes(); renderRows(); }
+function renderSetup() { renderTemplates(); renderMinutes(); }
 
 function openTemplate(t) {
   showSheet(t.name, body => {
@@ -234,8 +254,11 @@ function editTemplate(t) {
   });
 }
 
+/** Suono, volume e campana. Durante la pratica il cambio è immediato. */
 function openSound() {
-  showSheet('Sottofondo', body => {
+  showSheet('Suono', body => {
+    const mark = (box, attr, val) => box.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset[attr] === val)));
+
     audio.SOUND_GROUPS.forEach(g => {
       const box = document.createElement('div');
       box.innerHTML = `<div class="field-lbl">${escapeHtml(g.title)}</div>`;
@@ -246,47 +269,47 @@ function openSound() {
         b.type = 'button'; b.className = 'pill'; b.textContent = it.label; b.dataset.sound = it.id;
         b.setAttribute('aria-pressed', String(S.sound === it.id));
         b.addEventListener('click', () => {
-          S.sound = it.id; saveSettings(); renderRows();
+          S.sound = it.id; saveSettings();
           audio.initAudio();
-          it.id === 'silence' ? audio.stopAmbient() : audio.preview(it.id);
-          body.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.sound === S.sound)));
+          if (session?.isRunning()) audio.startAmbient(S.sound);                 // in pratica: subito
+          else it.id === 'silence' ? audio.stopAmbient() : audio.preview(it.id); // fuori: anteprima
+          body.querySelectorAll('[data-sound]').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.sound === S.sound)));
         });
         chips.appendChild(b);
       });
       box.appendChild(chips);
       body.appendChild(box);
     });
+
     const vol = document.createElement('div');
     vol.innerHTML = `<div class="field-lbl">Volume</div><input type="range" min="0" max="100" step="1" aria-label="Volume del sottofondo" value="${Math.round(S.volume * 100)}"/>`;
     const range = vol.querySelector('input');
     range.addEventListener('input', () => { S.volume = range.value / 100; audio.setAmbientVolume(S.volume); });
     range.addEventListener('change', saveSettings);
     body.appendChild(vol);
-  });
-}
 
-function openBell() {
-  showSheet('Campana', body => {
-    const list = document.createElement('div');
-    list.className = 'list';
-    audio.BELLS.forEach(b => {
-      const row = document.createElement('button');
-      row.type = 'button'; row.className = 'list-row';
-      const draw = () => { row.innerHTML = `<span class="grow">${b.label}</span>${S.bell === b.id ? icon('check', 'sm') : ''}`; };
-      draw();
-      row.addEventListener('click', () => {
-        S.bell = b.id; saveSettings(); renderRows();
-        audio.initAudio(); audio.ring(b.id, 1);
-        list.querySelectorAll('.list-row').forEach((r, i) => { r.innerHTML = `<span class="grow">${audio.BELLS[i].label}</span>${S.bell === audio.BELLS[i].id ? icon('check', 'sm') : ''}`; });
+    const bells = document.createElement('div');
+    bells.innerHTML = '<div class="field-lbl">Campana</div>';
+    const bc = document.createElement('div');
+    bc.className = 'chips-wrap';
+    audio.BELLS.forEach(bl => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'pill'; b.textContent = bl.label; b.dataset.bell = bl.id;
+      b.setAttribute('aria-pressed', String(S.bell === bl.id));
+      b.addEventListener('click', () => {
+        S.bell = bl.id; saveSettings(); audio.initAudio(); audio.ring(bl.id, 1);
+        bc.querySelectorAll('[data-bell]').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.bell === S.bell)));
       });
-      list.appendChild(row);
+      bc.appendChild(b);
     });
-    body.appendChild(list);
+    bells.appendChild(bc);
+    body.appendChild(bells);
   });
 }
 
-$('row-sound').addEventListener('click', openSound);
-$('row-bell').addEventListener('click', openBell);
+$('btn-more').addEventListener('click', openSound);
+$('p-more').addEventListener('click', openSound);
+$('btn-new-tpl').addEventListener('click', () => editTemplate(null));
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CALENDARIO
@@ -436,6 +459,10 @@ function showView(name) {
   $('view-cal').hidden = name !== 'cal';
   if (name !== 'setup') audio.stopAmbient(0.8); // niente anteprime fuori dalle impostazioni
   if (name === 'cal') renderCalendar();
+  if (name === 'setup') { // l'elemento nascosto perde lo scorrimento: rimetti il righello sui minuti scelti
+    rulerQuiet = true;
+    requestAnimationFrame(() => { $('ruler').scrollLeft = (S.mins - 1) * TICK; setTimeout(() => { rulerQuiet = false; }, 150); });
+  }
   scrollTo({ top: 0 });
 }
 document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));

@@ -66,22 +66,39 @@
     .tpl-meta { font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
 
     /* ── Scelte ── */
-    .mins-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
     .pill {
-      height: 44px; padding: 0 var(--space-4); border-radius: 999px; cursor: pointer;
-      background: var(--surface); border: 0; color: var(--text); font-size: var(--fs-md);
-      font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; justify-content: center;
+      height: 38px; padding: 0 var(--space-4); border-radius: 999px; cursor: pointer;
+      background: var(--surface); border: 0; color: var(--text); font-size: var(--fs-sm);
+      display: inline-flex; align-items: center; justify-content: center;
       transition: background-color .2s, color .2s;
     }
-    .mins-grid .pill { padding: 0; }
     .pill:active { transform: scale(.96); }
     .pill[aria-pressed="true"] { background: var(--text); color: var(--bg); }
     .chips-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .chips-wrap .pill { height: 38px; font-size: var(--fs-sm); }
     .field-lbl { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin-bottom: var(--space-2); }
-    .list-row .val { color: var(--muted); font-size: var(--fs-sm); }
     .hint { text-align: center; font-size: var(--fs-xs); letter-spacing: .06em; color: var(--muted); }
-    .tpl-new { flex: 0 0 96px; justify-content: center; align-items: center; color: var(--muted); border-style: dashed; box-shadow: none; background: none; font-size: var(--fs-md); }
+    /* ── Righello dei minuti ── */
+    .readout { text-align: center; margin-bottom: var(--space-2); }
+    .readout-val b { font-size: 2.75rem; font-weight: 200; letter-spacing: -.04em; font-variant-numeric: tabular-nums; line-height: 1; }
+    .readout-val small { font-size: var(--fs-sm); color: var(--muted); margin-left: 6px; }
+    .readout-sub { font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+    .ruler-wrap { position: relative; margin: 0 calc(-1 * var(--space-5)); }
+    .ruler {
+      --tick: 14px; display: flex; overflow-x: auto; scrollbar-width: none; height: 64px;
+      scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+      transition: opacity .25s;
+    }
+    .ruler::-webkit-scrollbar { display: none; }
+    .ruler.dim { opacity: .4; }
+    .ruler-track { display: flex; padding: 0 calc(50% - var(--tick) / 2); }
+    .ruler-track i { position: relative; flex: 0 0 var(--tick); height: 100%; scroll-snap-align: center; }
+    .ruler-track i::before { content: ''; position: absolute; left: 50%; top: 10px; width: 1px; height: 12px; margin-left: -.5px; background: var(--border); }
+    .ruler-track i.m5::before { height: 20px; background: var(--muted); opacity: .6; }
+    .ruler-track i.m10::before { height: 28px; background: var(--muted); }
+    .ruler-track i b { position: absolute; left: 50%; bottom: 2px; transform: translateX(-50%); font-size: .6875rem; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .ruler-mark { position: absolute; left: 50%; top: 4px; width: 2px; height: 38px; margin-left: -1px; border-radius: 1px; background: var(--sakura); pointer-events: none; }
     .seq-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--k); flex-shrink: 0; }
     .seq-mins { color: var(--muted); font-variant-numeric: tabular-nums; }
     input[type="range"] { width: 100%; accent-color: var(--geco-blue); height: 28px; margin: 0; }
@@ -140,6 +157,10 @@
     .p-top { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: var(--space-4); }
     .p-top-row { display: flex; justify-content: space-between; align-items: center; min-height: 32px; }
     .p-eyebrow { font-size: .6875rem; letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
+    .p-actions { display: flex; align-items: center; gap: var(--space-2); }
+    .p-more { background: none; border: 0; color: var(--faint); width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer; border-radius: 50%; }
+    .p-more:active { color: var(--paper); background: rgba(230,239,243,.08); }
+    .p-more .icon { width: 22px; height: 22px; }
     .p-end { background: none; border: 0; color: var(--faint); font-size: var(--fs-sm); padding: var(--space-2) 0 var(--space-2) var(--space-4); cursor: pointer; }
     .p-end:active { color: var(--paper); }
     .p-segs { display: flex; gap: 4px; }
@@ -190,6 +211,10 @@
   <!-- Il + (play) della barra in basso preme questo pulsante: avvia la pratica -->
   <button id="btn-add" type="button" hidden aria-hidden="true" tabindex="-1"></button>
 
+  <template id="zen-header-actions">
+    <button class="icon-btn" type="button" id="btn-more" aria-label="Suono e volume"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button>
+  </template>
+
   <main class="zen-main med-main">
     <div class="seg-wrap">
       <div class="segmented" role="group" aria-label="Schermata">
@@ -201,18 +226,17 @@
     <!-- ═══ Imposta ═══ -->
     <section class="view" id="view-setup">
       <div class="zen-section">
-        <div class="zen-eyebrow">Template</div>
+        <div class="block-title">
+          <div class="zen-eyebrow">Template</div>
+          <button class="text-btn" type="button" id="btn-new-tpl">+ Nuovo</button>
+        </div>
         <div class="tpl-row" id="tpl-row"></div>
       </div>
 
       <div class="zen-section">
-        <div class="zen-eyebrow">Oppure scegli i minuti</div>
-        <div class="mins-grid" id="mins-grid"></div>
-      </div>
-
-      <div class="list">
-        <button class="list-row" type="button" id="row-sound"><span class="grow">Sottofondo</span><span class="val"></span><svg class="icon sm chev" aria-hidden="true"><use href="#i-back"/></svg></button>
-        <button class="list-row" type="button" id="row-bell"><span class="grow">Campana</span><span class="val"></span><svg class="icon sm chev" aria-hidden="true"><use href="#i-back"/></svg></button>
+        <div class="zen-eyebrow">Durata</div>
+        <div class="readout"><div class="readout-val" id="readout"></div><div class="readout-sub" id="readout-sub"></div></div>
+        <div class="ruler-wrap"><div class="ruler" id="ruler" aria-label="Scorri per scegliere i minuti"></div><span class="ruler-mark" aria-hidden="true"></span></div>
       </div>
 
       <p class="hint">Premi play in basso per iniziare</p>
@@ -248,7 +272,7 @@
     <div class="p-top">
       <div class="p-top-row">
         <div class="p-eyebrow" id="p-eyebrow"></div>
-        <button class="p-end" type="button" id="p-end">Termina</button>
+        <div class="p-actions"><button class="p-more" type="button" id="p-more" aria-label="Suono e volume"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button><button class="p-end" type="button" id="p-end">Termina</button></div>
       </div>
       <div class="p-segs" id="p-segs"></div>
     </div>
