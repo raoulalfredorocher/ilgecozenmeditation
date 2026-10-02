@@ -37,19 +37,28 @@ const APP_HOST = 'ilgecozen-b2df7.firebaseapp.com';
 
 if (location.hostname.endsWith('.web.app') && !location.hostname.includes('--')) {
   location.replace(`https://${APP_HOST}${location.pathname}${location.search}${location.hash}`);
-  await new Promise(() => {}); // ferma il caricamento finché il browser cambia pagina
+  throw new Error('Reindirizzamento a ' + APP_HOST); // interrompe il caricamento di questa pagina
 }
 
-async function loadConfig() {
-  const res = await fetch(CONFIG_URL);
-  if (!res.ok) {
+/**
+ * Legge la configurazione in modo SINCRONO. Non usare `await` a livello di
+ * modulo qui: su iOS (WebKit) un modulo con top-level await importato da più
+ * script della stessa pagina fa partire gli script della pagina prima che
+ * Firebase sia pronto, e le pagine restano vuote senza errori visibili.
+ * Il file è piccolo, dello stesso dominio e in cache: il costo è trascurabile.
+ */
+function loadConfig() {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', CONFIG_URL, false);
+  xhr.send();
+  if (xhr.status !== 200) {
     throw new Error(`Configurazione Firebase non trovata (${CONFIG_URL}). ` +
       'In locale crea __/firebase/init.json come descritto nel README.');
   }
-  return res.json();
+  return JSON.parse(xhr.responseText);
 }
 
-export const firebaseConfig = await loadConfig();
+export const firebaseConfig = loadConfig();
 
 export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 

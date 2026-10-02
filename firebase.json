@@ -28,11 +28,11 @@
         ]
       },
       {
-        "source": "**/*.@(js|css|webp|png|json)",
-        "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+        "source": "**/*.@(webp|png)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
       },
       {
-        "source": "**/*.html",
+        "source": "**/*.@(html|js|css|json)",
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       }
     ]

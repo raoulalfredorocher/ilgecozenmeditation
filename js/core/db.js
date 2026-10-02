@@ -69,7 +69,11 @@ export function waitForAuth() {
   return new Promise(resolve => {
     if (!auth) { resolve(null); return; }
     // onAuthStateChanged si risolve immediatamente se lo stato è già noto
-    const unsub = onAuthStateChanged(auth, user => { unsub(); resolve(user); });
+    const unsub = onAuthStateChanged(auth, user => {
+      unsub();
+      window.__debugLog?.(`waitForAuth: ${user ? 'utente pronto' : 'nessun utente'}`);
+      resolve(user);
+    });
   });
 }
 

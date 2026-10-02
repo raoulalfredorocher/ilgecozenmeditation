@@ -15,6 +15,32 @@ import { safeUrl } from './dom.js';
 
 document.body.style.visibility = 'hidden';
 
+/**
+ * Modalità debug: aggiungendo ?debug all'indirizzo (es. bucket-list.html?debug)
+ * gli errori JavaScript e gli avvisi compaiono in un riquadro sulla pagina.
+ * Serve per diagnosticare problemi sui telefoni, dove la console non è visibile.
+ */
+if (new URLSearchParams(location.search).has('debug')) {
+  const box = document.createElement('pre');
+  Object.assign(box.style, {
+    position: 'fixed', left: '8px', right: '8px', bottom: '8px', maxHeight: '45vh', overflow: 'auto',
+    zIndex: '99999', background: 'rgba(20,20,30,.92)', color: '#ffd7df', font: '11px/1.4 monospace',
+    padding: '8px', borderRadius: '8px', whiteSpace: 'pre-wrap', margin: '0',
+  });
+  const add = (kind, msg) => {
+    box.textContent += `[${kind}] ${msg}\n`;
+    if (!box.isConnected) document.documentElement.append(box);
+  };
+  add('info', `${navigator.userAgent.slice(0, 80)}…`);
+  addEventListener('error', e => add('errore', `${e.message} @ ${(e.filename || '').split('/').pop()}:${e.lineno}:${e.colno}`));
+  addEventListener('unhandledrejection', e => add('promise', `${e.reason?.code || ''} ${e.reason?.message || e.reason}\n${e.reason?.stack || ''}`));
+  for (const level of ['error', 'warn']) {
+    const orig = console[level].bind(console);
+    console[level] = (...args) => { add(level, args.map(a => a?.stack || a?.message || String(a)).join(' ')); orig(...args); };
+  }
+  window.__debugLog = msg => add('log', msg);
+}
+
 let _resolveUser;
 /** Promise risolta con l'utente autenticato. */
 export const userReady = new Promise(resolve => { _resolveUser = resolve; });
@@ -29,6 +55,7 @@ onAuthChange(user => {
     window.location.replace('login.html');
     return;
   }
+  window.__debugLog?.(`login ok: ${user.email}`);
   document.body.style.visibility = '';
   _resolveUser(user);
   injectAccountButton(user);
