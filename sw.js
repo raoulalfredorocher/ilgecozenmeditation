@@ -1,16 +1,15 @@
 /**
  * sw.js — service worker: apertura istantanea delle pagine.
  *
- * Strategia "stale-while-revalidate" per i file dell'app (HTML, JS, CSS,
- * immagini): la pagina si apre subito dalla copia sul telefono e intanto
- * controlla la versione online. Se è cambiata, avvisa la pagina che si
- * ricarica da sola (solo nei primi secondi, per non disturbare).
+ * File dell'app (HTML, JS, CSS, immagini): prima la rete, così le pagine sono
+ * sempre aggiornate e i moduli sono della stessa versione; se la rete manca o
+ * ci mette più di 2,5 secondi si usa la copia sul telefono.
  * Le librerie Firebase (URL con versione, mai modificate) restano in cache.
  * Le chiamate ai dati (Firestore, login, AI, meteo) passano sempre dalla rete.
  *
  * Cambiare VERSION svuota le copie vecchie.
  */
-const VERSION = 'geco-v7';
+const VERSION = 'geco-v8';
 const APP = `${VERSION}-app`;
 const LIBS = `${VERSION}-libs`;
 
@@ -35,20 +34,19 @@ self.addEventListener('fetch', e => {
   // Solo file dell'app sullo stesso dominio; esclusi gli indirizzi riservati di Firebase
   if (url.origin !== location.origin || url.pathname.startsWith('/__/')) return;
 
+  // Prima la rete (file sempre aggiornati e coerenti tra loro: niente mescolanze di versioni vecchie e nuove),
+  // la copia sul telefono solo se la rete manca o risponde in ritardo.
   e.respondWith((async () => {
     const cache = await caches.open(APP);
     const key = url.pathname === '/' ? '/index.html' : url.pathname; // ignora ?query e #hash
     const cached = await cache.match(key);
     const network = fetch(req).then(async res => {
-      if (res.ok && res.type === 'basic') {
-        // Se il file è cambiato rispetto alla copia, avvisa la pagina: si ricarica
-        if (cached && changed(cached, res)) notify(e.clientId || e.resultingClientId);
-        await cache.put(key, res.clone());
-      }
+      if (res.ok && res.type === 'basic') await cache.put(key, res.clone());
       return res;
-    }).catch(() => cached);
-    if (cached) { e.waitUntil(network); return cached; }
-    return network;
+    });
+    if (!cached) return network;
+    e.waitUntil(network.catch(() => {}));
+    return Promise.race([network, new Promise(resolve => setTimeout(() => resolve(cached), 2500))]).catch(() => cached);
   })());
 });
 
