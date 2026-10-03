@@ -36,7 +36,8 @@
     .cm-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
     .cm-sum { text-align: center; margin-top: var(--space-3); font-size: var(--fs-xs); color: var(--muted); line-height: 1.7; }
     .cm-dayname { font: 600 1.375rem/1.2 var(--font-serif); letter-spacing: -.015em; text-transform: capitalize; margin-bottom: var(--space-3); }
-    .cm-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-top: .5px solid var(--border); color: inherit; text-decoration: none; }
+    .cm-row { display: flex; align-items: center; gap: var(--space-3); width: 100%; text-align: left; background: none; border: 0; border-top: .5px solid var(--border); padding: var(--space-3) 0; color: inherit; cursor: pointer; font: inherit; }
+    .cm-row:active { opacity: .6; }
     .cm-row:first-of-type { border-top: 0; }
     .cm-row .dotc { width: 10px; height: 10px; }
     .cm-row .grow { flex: 1; min-width: 0; }
@@ -45,6 +46,22 @@
     .cm-row .chev { color: var(--muted); }
     .cm-row .chev .icon { width: 16px; height: 16px; transform: rotate(180deg); }
     .cm-empty { color: var(--muted); font-size: var(--fs-sm); font-style: italic; padding: var(--space-2) 0; }
+    .cm-when { font-size: var(--fs-sm); color: var(--muted); text-transform: capitalize; margin: -8px 0 var(--space-3); text-align: center; }
+    .cm-stats { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: var(--space-3) 0; }
+    .cm-stats > div { display: flex; flex-direction: column; }
+    .cm-stats b { font-weight: 300; font-size: 1.75rem; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .cm-ex { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin-top: var(--space-3); }
+    .cm-ex-h { display: flex; flex-direction: column; margin-bottom: var(--space-1); }
+    .cm-ex-h.cm-between { flex-direction: row; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+    .cm-ex .s, .cm-items { font-size: var(--fs-sm); color: var(--muted); }
+    .cm-items { margin: 2px 0 4px; line-height: 1.5; }
+    .cm-set { display: flex; align-items: center; gap: var(--space-3); padding: 7px 0; border-top: .5px solid var(--border); font-variant-numeric: tabular-nums; }
+    .cm-set .grow { flex: 1; min-width: 0; }
+    .cm-set-n { width: 22px; height: 22px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: .6875rem; color: var(--muted); flex-shrink: 0; }
+    .cm-note, .cm-text { white-space: pre-wrap; line-height: 1.6; margin-top: var(--space-3); }
+    .cm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-2); }
+    .cm-chip2 { background: var(--sakura-soft); color: var(--bark); border-radius: 999px; padding: 4px 12px; font-size: var(--fs-sm); }
+    .cm-open { display: block; text-align: center; margin-top: var(--space-5); font-size: var(--fs-sm); font-weight: 600; color: var(--geco-blue); text-decoration: none; }
   </style>
 </head>
 <body class="zen zen-native" data-title="Il mio mese">

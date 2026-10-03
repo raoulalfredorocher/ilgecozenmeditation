@@ -41,7 +41,10 @@ export async function loadRange(from, to) {
         const r = d.data();
         if (!r.data) return;
         const sets = (r.es || []).reduce((a, e) => a + (e.s || []).filter(s => !s.f).length, 0);
-        day(r.data).allenamento.push({ id: d.id, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets });
+        day(r.data).allenamento.push({
+          id: d.id, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets,
+          es: r.es || null, rw: num(r.rw), st: num(r.st), acqua: num(r.acqua), feedback: r.feedback || null, note: r.note || '',
+        });
       });
     })().catch(e => console.warn('calendario: allenamento', e)),
     // Diario alimentare (un documento per giorno)
@@ -52,7 +55,7 @@ export async function loadRange(from, to) {
         if (!meals.length) return;
         day(d.id).cibo = meals.reduce((a, m) => ({
           kcal: a.kcal + num(m.kcal), prot: a.prot + num(m.prot), carb: a.carb + num(m.carb), fat: a.fat + num(m.fat), pasti: a.pasti + 1,
-        }), { kcal: 0, prot: 0, carb: 0, fat: 0, pasti: 0 });
+        }), { kcal: 0, prot: 0, carb: 0, fat: 0, pasti: 0, meals });
       });
     })().catch(e => console.warn('calendario: diario alimentare', e)),
     // Meditazione
@@ -60,8 +63,9 @@ export async function loadRange(from, to) {
       const snap = await getDocs(query(col('meditation_sessions'), where('ts', '>=', t0), where('ts', '<', t1)));
       snap.forEach(d => {
         const r = d.data();
-        const m = day(dateKey(new Date(num(r.ts)))).meditazione ||= { mins: 0, n: 0 };
+        const m = day(dateKey(new Date(num(r.ts)))).meditazione ||= { mins: 0, n: 0, sessions: [] };
         m.mins += num(r.totalMins); m.n++;
+        m.sessions.push({ ts: num(r.ts), mins: num(r.totalMins), steps: (r.steps || []).map(x => ({ mins: num(x.mins), name: x.name || '' })) });
       });
     })().catch(e => console.warn('calendario: meditazione', e)),
     // Journaling (diario di Salute mentale)
@@ -70,7 +74,7 @@ export async function loadRange(from, to) {
       snap.forEach(d => {
         const r = d.data();
         if (!r.data) return;
-        day(r.data).journaling.push({ id: d.id, titolo: r.titolo || (r.testo || '').slice(0, 40) || 'Senza titolo', ora: r.ora || '' });
+        day(r.data).journaling.push({ id: d.id, titolo: r.titolo || (r.testo || '').slice(0, 40) || 'Senza titolo', ora: r.ora || '', testo: r.testo || '', emozioni: Array.isArray(r.emozioni) ? r.emozioni : [] });
       });
     })().catch(e => console.warn('calendario: journaling', e)),
   ]);
