@@ -610,3 +610,15 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
   bottom: calc(-1 * var(--deficit, 0px));
 }
 .zen-toast { margin-bottom: calc(-1 * var(--deficit, 0px)); }
+
+/* ─── Avviso offline ───────────────────────────────────────────────────── */
+.zen-offline {
+  position: fixed; left: 50%; top: calc(var(--safe-top) + var(--header-h) + 8px); transform: translateX(-50%);
+  z-index: 190; max-width: calc(100% - 2 * var(--space-4)); display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 600; white-space: nowrap;
+  background: color-mix(in srgb, var(--warning) 18%, var(--card)); color: color-mix(in srgb, var(--warning) 70%, var(--text));
+  border: .5px solid color-mix(in srgb, var(--warning) 40%, transparent); box-shadow: var(--shadow-md);
+}
+.zen-offline[hidden] { display: none; }
+.zen-offline.ok { background: color-mix(in srgb, var(--success) 16%, var(--card)); color: var(--success); border-color: color-mix(in srgb, var(--success) 40%, transparent); }
+.zen-offline .icon { width: 15px; height: 15px; }

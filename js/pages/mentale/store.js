@@ -7,7 +7,7 @@
  */
 import {
   doc, getDoc, setDoc, collection, addDoc, getDocs, onSnapshot, query, orderBy, deleteDoc, updateDoc,
-} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+} from '../../core/firestore.js';
 import { db, auth } from '../../core/firebase.js';
 
 export { getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy };

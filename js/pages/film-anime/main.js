@@ -16,7 +16,7 @@ import { subscribeFilm, addFilmDoc, updateFilmDoc, deleteFilmDoc, db, auth } fro
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
-import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { doc, getDoc, setDoc } from '../../core/firestore.js';
 import { searchOnline, detailsOnline, posterData, providersFor, hasTmdb, getKey, setKey, testKey } from './online.js';
 import { statsHtml, statsYears } from './stats.js';
 

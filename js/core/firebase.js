@@ -49,14 +49,23 @@ if (location.hostname.endsWith('.web.app') && !location.hostname.includes('--'))
  * Il file è piccolo, dello stesso dominio e in cache: il costo è trascurabile.
  */
 function loadConfig() {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', CONFIG_URL, false);
-  xhr.send();
-  if (xhr.status !== 200) {
-    throw new Error(`Configurazione Firebase non trovata (${CONFIG_URL}). ` +
-      'In locale crea __/firebase/init.json come descritto nel README.');
-  }
-  return JSON.parse(xhr.responseText);
+  const KEY = 'zen_fbconfig';
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', CONFIG_URL, false);
+    xhr.send();
+    if (xhr.status === 200) {
+      // Ricordata sul dispositivo: senza rete l'app si apre comunque
+      try { localStorage.setItem(KEY, xhr.responseText); } catch { /* ok */ }
+      return JSON.parse(xhr.responseText);
+    }
+  } catch { /* rete assente: si prova con la copia salvata */ }
+  try {
+    const saved = localStorage.getItem(KEY);
+    if (saved) return JSON.parse(saved);
+  } catch { /* ok */ }
+  throw new Error(`Configurazione Firebase non trovata (${CONFIG_URL}). ` +
+    'In locale crea __/firebase/init.json come descritto nel README.');
 }
 
 export const firebaseConfig = loadConfig();

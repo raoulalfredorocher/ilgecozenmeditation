@@ -24,6 +24,8 @@ import { SECTION_GROUPS } from './sections.js';
 import { waitForUser, confirmAndSignOut } from '../core/auth-guard.js';
 import { escapeHtml, safeUrl } from '../core/dom.js';
 import { openAssistant } from './assistant-sheet.js';
+import { waitForPendingWrites } from '../core/firestore.js';
+import { db } from '../core/firebase.js';
 // Tiene la barra in basso attaccata al fondo dello schermo (vedi footer-guard.js)
 import { report as screenReport } from './footer-guard.js';
 
@@ -189,6 +191,7 @@ async function refreshApp() {
   try {
     if ('serviceWorker' in navigator) (await navigator.serviceWorker.getRegistrations()).forEach(r => r.unregister());
     if ('caches' in window) await Promise.all((await caches.keys()).map(k => caches.delete(k)));
+    try { localStorage.removeItem('zen_warm'); } catch { /* ok */ }
   } catch { /* si ricarica comunque */ }
   location.reload();
 }
@@ -209,6 +212,13 @@ function buildProfileSheet() {
       </div>
     </div>
     <div class="zen-section" style="margin-bottom:var(--space-6)">
+      <div class="zen-eyebrow">Dati</div>
+      <div class="list"><button type="button" class="list-row" id="zen-backup-open">
+        <span class="dot-icon sky">${icon('download')}</span>
+        <span class="grow">Backup e dati<span class="zen-muted" id="zen-backup-sub" style="display:block;font-size:var(--fs-xs)"></span></span>
+        ${icon('back', 'sm chev')}</button></div>
+    </div>
+    <div class="zen-section" style="margin-bottom:var(--space-6)">
       <div class="zen-eyebrow">App</div>
       <button type="button" class="btn block" id="zen-refresh">${icon('refresh', 'sm')} Aggiorna app</button>
       <p class="zen-muted" style="font-size:var(--fs-xs);text-align:center;line-height:1.5">Svuota la memoria del sito e ricarica l’ultima versione. Non tocca i tuoi dati né l’accesso.</p>
@@ -218,6 +228,17 @@ function buildProfileSheet() {
     b.addEventListener('click', () => setTheme(b.dataset.themeChoice)));
   document.getElementById('zen-logout').addEventListener('click', confirmAndSignOut);
   document.getElementById('zen-refresh').addEventListener('click', refreshApp);
+  document.getElementById('zen-backup-open').addEventListener('click', async () => {
+    closeSheet('zen-profile');
+    (await import('./backup-sheet.js')).openBackupSheet();
+  });
+  // Quando fu l'ultimo backup (senza caricare il modulo del backup)
+  document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', () => {
+    let iso = null; try { iso = localStorage.getItem('zen_last_backup'); } catch { /* ok */ }
+    const days = iso ? Math.floor((Date.now() - new Date(iso).getTime()) / 864e5) : null;
+    document.getElementById('zen-backup-sub').textContent = days === null ? 'Non hai ancora fatto un backup'
+      : days <= 0 ? 'Ultimo backup: oggi' : days === 1 ? 'Ultimo backup: ieri' : `Ultimo backup: ${days} giorni fa`;
+  });
 }
 
 function fillProfile(user) {
@@ -294,12 +315,18 @@ function buildRotateHint() {
   body.append(el);
 }
 
-/** Service worker per l'apertura istantanea delle pagine (non in sviluppo locale). */
+/**
+ * Service worker per l'apertura istantanea e l'uso senza rete (non in sviluppo locale).
+ * Dopo il primo avvio chiede al service worker di scaricare in silenzio tutte le pagine e i file
+ * che usano ("warm"), una volta per versione.
+ */
+const WARM_VERSION = 'v9';
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator) || location.hostname === 'localhost') return;
   navigator.serviceWorker.register('/sw.js').catch(() => { /* facoltativo */ });
   // Nuova versione pubblicata: ricarica una volta se la pagina è appena stata aperta
   navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data?.type === 'zen-warm-done') { try { localStorage.setItem('zen_warm', WARM_VERSION); } catch { /* ok */ } return; }
     if (e.data?.type !== 'zen-updated') return;
     if (performance.now() < 6000 && !sessionStorage.getItem('zen_reloaded')) {
       sessionStorage.setItem('zen_reloaded', '1');
@@ -307,12 +334,43 @@ function registerServiceWorker() {
     }
   });
   addEventListener('pageshow', () => setTimeout(() => sessionStorage.removeItem('zen_reloaded'), 8000));
+
+  let warmed = null; try { warmed = localStorage.getItem('zen_warm'); } catch { /* ok */ }
+  if (warmed !== WARM_VERSION) {
+    navigator.serviceWorker.ready.then(reg => setTimeout(() => {
+      if (!navigator.onLine) return;
+      const pages = SECTION_GROUPS.flatMap(g => g.items.map(s => '/' + s.href));
+      reg.active?.postMessage({ type: 'warm', urls: ['/index.html', '/login.html', '/manifest.json', '/calendario.html', '/diagnostica.html',
+        '/assets/icons/icon-192.png', '/assets/icons/icon-512.png', '/assets/icons/icon-maskable-512.png', ...pages] });
+    }, 5000));
+  }
+}
+
+/** Avviso "sei offline": le modifiche restano sul telefono e partono da sole quando torna la rete. */
+function buildOfflineBanner() {
+  const el = document.createElement('div');
+  el.className = 'zen-offline';
+  el.setAttribute('role', 'status');
+  el.hidden = true;
+  body.append(el);
+  let timer;
+  const show = (text, ok = false) => { clearTimeout(timer); el.className = 'zen-offline' + (ok ? ' ok' : ''); el.innerHTML = `${icon(ok ? 'check' : 'cloud', 'sm')}<span>${text}</span>`; el.hidden = false; };
+  addEventListener('offline', () => show('Sei offline · le modifiche restano sul telefono'));
+  addEventListener('online', async () => {
+    if (el.hidden) return;
+    show('Di nuovo online · sincronizzo…');
+    try { await Promise.race([waitForPendingWrites(db), new Promise(r => setTimeout(r, 20000))]); } catch { /* ok */ }
+    show('Tutto sincronizzato', true);
+    timer = setTimeout(() => { el.hidden = true; }, 2200);
+  });
+  if (navigator.onLine === false) show('Sei offline · le modifiche restano sul telefono');
 }
 
 // ─── Avvio ──────────────────────────────────────────────────────────────
 injectIcons();
 registerServiceWorker();
 buildRotateHint();
+buildOfflineBanner();
 buildHeader();
 if (!body.classList.contains('zen-native')) adoptLegacyPage();
 buildTabbar();

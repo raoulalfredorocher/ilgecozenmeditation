@@ -77,3 +77,10 @@ Spotify Web API e Web Playback SDK (musica, allenamento), Yahoo Finance
 | `localStorage` `spotify_*` | Token Spotify | cancellati |
 | `localStorage` `zen_macros_*`, `zen_tdee_*`, `zen_timer`, `zen_weather_*` | Preferenze personali | cancellate |
 | `localStorage` `zen_theme` | Tema chiaro/scuro del dispositivo | mantenuto |
+
+## Uso senza rete e backup
+
+- **Scritture offline** — `js/core/firestore.js` ri-esporta l'SDK Firestore e sostituisce `setDoc`, `addDoc`, `updateDoc`, `deleteDoc`, `writeBatch`: offline (o con rete lenta oltre 6 s) la Promise si risolve subito e la scrittura resta in coda nella cache locale, poi parte da sola. Le pagine devono importare Firestore da qui, non dall'indirizzo gstatic.
+- **Service worker** (`sw.js`) — prima la rete, poi la copia locale. Tiene in cache anche le librerie con versione (Firebase, Leaflet, topojson) e la configurazione `/__/firebase/init.json` (copia anche in `localStorage`, vedi `firebase.js`). Dopo il primo avvio la pagina gli chiede di «scaldare» la cache (`warm`): scarica da solo tutte le pagine e i file collegati (segue `src`, `href`, `import` e i percorsi tra virgolette). Alzare `VERSION` in `sw.js` e `WARM_VERSION` in `shell.js` quando cambia la strategia.
+- **Avviso offline** — `shell.js` mostra «Sei offline» e, al ritorno della rete, «Tutto sincronizzato».
+- **Backup** — `js/core/backup.js` legge ogni raccolta di `SECTIONS` (+ sotto-raccolte note in `SUBS`) e produce un JSON; `restoreBackup` lo riscrive in modo cumulativo. UI: `js/ui/backup-sheet.js`, aperta dal Profilo. **Quando si aggiunge una raccolta Firestore, aggiungerla a `SECTIONS` (e a `SUBS` se ha sotto-raccolte)** oltre che a `firestore.rules`.
