@@ -80,7 +80,7 @@ root.addEventListener('click', e => {
   const d = e.target.closest('[data-date]');
   if (d) { selected = d.dataset.date; return render(); }
   const s = e.target.closest('[data-sess]');
-  if (s) openDetail(s.dataset.sess);
+  if (s) openDetail(s.dataset.sess).catch(err => { console.error('sessione', err); toast(`Non riesco ad aprirla: ${err.message}`); });
 });
 
 /** Dopo una sessione guidata: mostra il giorno appena registrato. */
@@ -131,7 +131,7 @@ function drawDetail() {
     <div class="chips-wrap">${FEEDBACK.map(([k, l]) => `<button type="button" class="pill" data-fb="${k}" aria-pressed="${r.feedback === k}">${l}</button>`).join('')}</div>
     <div class="note-box" style="margin-top:var(--space-3)"><textarea id="dt-note" rows="2" placeholder="Note (facoltative)">${esc(r.note || '')}</textarea></div>
     <div class="field-lbl" style="margin-top:var(--space-4)">Foto</div>
-    <div class="al-photos">${photos.map((p, i) => `<div class="al-photo"><img src="${esc(p.url)}" alt="Foto ${i + 1}" data-photo="${i}"/><button type="button" class="al-photo-x" data-photo-del="${i}" aria-label="Elimina foto">×</button></div>`).join('')}
+    <div class="al-photos">${photos.filter(p => p && p.url).map((p, i) => `<div class="al-photo"><img src="${esc(p.url)}" alt="Foto ${i + 1}" data-photo="${i}"/><button type="button" class="al-photo-x" data-photo-del="${i}" aria-label="Elimina foto">×</button></div>`).join('')}
       ${photos.length < 4 ? '<button type="button" class="al-photo-add" data-photo-add>＋ Foto</button>' : ''}</div>
     <input type="file" id="dt-file" accept="image/*" hidden/>
     <div class="grid-2" style="margin-top:var(--space-5)"><button type="button" class="btn block" data-edit>Modifica</button><button type="button" class="btn block text-danger" data-del>Elimina</button></div>`;

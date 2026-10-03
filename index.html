@@ -28,14 +28,14 @@
     .weather-meta { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
     .weather-meta strong { color: var(--text); font-weight: 600; }
     .uv-low { color: var(--success) !important; } .uv-medium { color: var(--warning) !important; } .uv-high { color: var(--danger) !important; }
-    .zen select.city {
-      appearance: none; -webkit-appearance: none; border: 0; background-color: transparent; padding: 0 16px 0 0; min-height: 0;
-      font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
-      background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(-45deg, transparent 50%, currentColor 50%);
-      background-size: 4px 4px; background-position: right 5px center, right 1px center; background-repeat: no-repeat;
-      width: auto; cursor: pointer;
-    }
-    .zen select.city:focus { background-color: transparent; border: 0; }
+    .weather-card { padding-bottom: var(--space-3); overflow: hidden; }
+    .wx-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+    .wx-track::-webkit-scrollbar { display: none; }
+    .wx-slide { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; min-width: 0; }
+    .wx-city { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .wx-dots { display: flex; justify-content: center; gap: 6px; margin-top: var(--space-3); }
+    .wx-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background-color .2s, transform .2s; }
+    .wx-dots i.on { background: var(--geco-blue); transform: scale(1.25); }
 
     .quote-card { border-left: 2px solid var(--sakura); border-radius: 4px var(--radius-lg) var(--radius-lg) 4px; }
     .quote-card .zen-quote { margin-top: var(--space-3); }
@@ -85,23 +85,10 @@
       <h2 class="zen-h1" id="hello">Ciao</h2>
     </section>
 
-    <!-- Meteo -->
-    <section class="card weather" aria-label="Meteo">
-      <span class="dot-icon" id="weather-icon" role="img" aria-label="Meteo"></span>
-      <div>
-        <select class="city" id="city-select" aria-label="Città">
-          <option value="pandino">Pandino</option>
-          <option value="milano">Milano</option>
-          <option value="lodi">Lodi</option>
-          <option value="zelo">Zelo Buon Persico</option>
-        </select>
-        <div class="weather-temp"><span id="weather-max">--</span>° <small>/ <span id="weather-min">--</span>°</small></div>
-        <div class="weather-desc" id="weather-desc"></div>
-      </div>
-      <div class="weather-meta">
-        <span>UV <strong id="weather-uv">--</strong></span>
-        <span>Umidità <strong id="weather-humidity">--</strong>%</span>
-      </div>
+    <!-- Meteo: si scorre di lato tra le città -->
+    <section class="card weather-card" aria-label="Meteo">
+      <div class="wx-track" id="wx-track"></div>
+      <div class="wx-dots" id="wx-dots" aria-hidden="true"></div>
     </section>
 
     <!-- Pensiero del giorno -->
@@ -183,18 +170,41 @@
       return ['cloud', 'Nuvoloso'];
     }
 
-    const citySelect = document.getElementById('city-select');
-    let city = localStorage.getItem('zen_weather_city') || 'pandino';
-    citySelect.value = city;
-    citySelect.addEventListener('change', () => {
-      city = citySelect.value;
-      localStorage.setItem('zen_weather_city', city);
-      loadWeather();
-    });
+    /* Una scheda per città, si scorre con un tocco di lato; l'ultima vista viene ricordata. */
+    const keys = Object.keys(CITIES);
+    const track = document.getElementById('wx-track'), dots = document.getElementById('wx-dots');
+    track.innerHTML = keys.map(k => `
+      <div class="wx-slide" data-city="${k}" role="group" aria-label="${CITIES[k].name}">
+        <div class="weather">
+          <span class="dot-icon" data-f="icon" role="img" aria-label="Meteo"></span>
+          <div>
+            <div class="wx-city">${CITIES[k].name}</div>
+            <div class="weather-temp"><span data-f="max">--</span>° <small>/ <span data-f="min">--</span>°</small></div>
+            <div class="weather-desc" data-f="desc"></div>
+          </div>
+          <div class="weather-meta">
+            <span>UV <strong data-f="uv">--</strong></span>
+            <span>Umidità <strong data-f="hum">--</strong>%</span>
+          </div>
+        </div>
+      </div>`).join('');
+    dots.innerHTML = keys.map(() => '<i></i>').join('');
+    const setDot = i => [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i));
 
-    async function loadWeather() {
-      const c = CITIES[city] || CITIES.pandino;
-      const iconEl = document.getElementById('weather-icon');
+    let city = localStorage.getItem('zen_weather_city');
+    let idx = Math.max(0, keys.indexOf(city));
+    track.scrollLeft = idx * track.clientWidth;
+    setDot(idx);
+    track.addEventListener('scroll', () => {
+      const i = Math.round(track.scrollLeft / (track.clientWidth || 1));
+      if (i === idx || i < 0 || i >= keys.length) return;
+      idx = i; setDot(i);
+      try { localStorage.setItem('zen_weather_city', keys[i]); } catch { /* ok */ }
+    }, { passive: true });
+
+    async function loadWeather(k) {
+      const c = CITIES[k], slide = track.querySelector(`[data-city="${k}"]`);
+      const f = n => slide.querySelector(`[data-f="${n}"]`);
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}` +
           '&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max' +
@@ -202,21 +212,20 @@
         const data = await (await fetch(url)).json();
         const [ic, label] = weatherInfo(data.current?.weather_code ?? data.daily.weather_code[0]);
         const uv = Math.round(data.daily.uv_index_max[0]);
-        iconEl.innerHTML = icon(ic);
-        iconEl.setAttribute('aria-label', label);
-        document.getElementById('weather-desc').textContent = label;
-        document.getElementById('weather-max').textContent = Math.round(data.daily.temperature_2m_max[0]);
-        document.getElementById('weather-min').textContent = Math.round(data.daily.temperature_2m_min[0]);
-        document.getElementById('weather-humidity').textContent = Math.round(data.current?.relative_humidity_2m ?? 0);
-        const uvEl = document.getElementById('weather-uv');
-        uvEl.textContent = uv;
-        uvEl.className = uv <= 2 ? 'uv-low' : uv <= 5 ? 'uv-medium' : 'uv-high';
+        f('icon').innerHTML = icon(ic);
+        f('icon').setAttribute('aria-label', label);
+        f('desc').textContent = label;
+        f('max').textContent = Math.round(data.daily.temperature_2m_max[0]);
+        f('min').textContent = Math.round(data.daily.temperature_2m_min[0]);
+        f('hum').textContent = Math.round(data.current?.relative_humidity_2m ?? 0);
+        f('uv').textContent = uv;
+        f('uv').className = uv <= 2 ? 'uv-low' : uv <= 5 ? 'uv-medium' : 'uv-high';
       } catch {
-        iconEl.innerHTML = icon('cloud');
-        document.getElementById('weather-desc').textContent = 'Dati non disponibili';
+        f('icon').innerHTML = icon('cloud');
+        f('desc').textContent = 'Dati non disponibili';
       }
     }
-    loadWeather();
+    keys.forEach(loadWeather);
 
     /* ── Utente: saluto con il nome e compleanni ── */
     waitForUser().then(async user => {
