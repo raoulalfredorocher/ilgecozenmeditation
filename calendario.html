@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
+  <title>Il Geco Zen — Il mio mese</title>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
+  <style>
+    .cm-card { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-4) var(--space-4); box-shadow: var(--shadow-sm); }
+    .cm-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+    .cm-head .icon-btn .icon { width: 20px; height: 20px; }
+    .cm-head .next .icon { transform: rotate(180deg); }
+    .cm-month { font: 600 1.25rem/1.2 var(--font-serif); letter-spacing: -.01em; text-transform: capitalize; }
+    .cm-today { background: none; border: 0; font-size: var(--fs-xs); font-weight: 600; color: var(--geco-blue); cursor: pointer; padding: 4px 2px; }
+    .cm-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--space-3); }
+    .cm-chip { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px; border: 0; background: var(--surface); color: var(--text); font-size: var(--fs-xs); font-weight: 500; cursor: pointer; transition: opacity .2s; }
+    .cm-chip[aria-pressed="false"] { opacity: .45; }
+    .dotc { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex-shrink: 0; display: inline-block; }
+    .cm-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 4px; text-align: center; }
+    .cm-dow { font-size: .625rem; letter-spacing: .1em; color: var(--muted); padding-bottom: 4px; }
+    .cm-day { position: relative; height: 50px; border: 0; background: none; border-radius: 14px; color: var(--text); font-size: var(--fs-md); font-variant-numeric: tabular-nums; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0; }
+    .cm-day:active { background: var(--surface); }
+    .cm-day.today { box-shadow: inset 0 0 0 1.5px var(--text); }
+    .cm-day.sel { background: var(--geco-mist); color: var(--geco-blue); font-weight: 600; }
+    .cm-day.out { visibility: hidden; }
+    .cm-dots { display: flex; gap: 3px; height: 6px; }
+    .cm-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+    .cm-sum { text-align: center; margin-top: var(--space-3); font-size: var(--fs-xs); color: var(--muted); line-height: 1.7; }
+    .cm-dayname { font: 600 1.375rem/1.2 var(--font-serif); letter-spacing: -.015em; text-transform: capitalize; margin-bottom: var(--space-3); }
+    .cm-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-top: .5px solid var(--border); color: inherit; text-decoration: none; }
+    .cm-row:first-of-type { border-top: 0; }
+    .cm-row .dotc { width: 10px; height: 10px; }
+    .cm-row .grow { flex: 1; min-width: 0; }
+    .cm-row b { font-weight: 600; display: block; }
+    .cm-row .s { font-size: var(--fs-sm); color: var(--muted); }
+    .cm-row .chev { color: var(--muted); }
+    .cm-row .chev .icon { width: 16px; height: 16px; transform: rotate(180deg); }
+    .cm-empty { color: var(--muted); font-size: var(--fs-sm); font-style: italic; padding: var(--space-2) 0; }
+  </style>
+</head>
+<body class="zen zen-native" data-title="Il mio mese">
+  <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
+
+  <main class="zen-main">
+    <section class="cm-card" aria-label="Calendario">
+      <div class="cm-head">
+        <button type="button" class="icon-btn" id="cm-prev" aria-label="Mese precedente"></button>
+        <div style="text-align:center"><div class="cm-month" id="cm-month"></div><button type="button" class="cm-today" id="cm-today">Oggi</button></div>
+        <button type="button" class="icon-btn next" id="cm-next" aria-label="Mese successivo"></button>
+      </div>
+      <div class="cm-filters" id="cm-filters" role="group" aria-label="Aree da mostrare"></div>
+      <div class="cm-grid" id="cm-grid"></div>
+      <div class="cm-sum" id="cm-sum"></div>
+    </section>
+
+    <section class="cm-card" id="cm-day" aria-live="polite"></section>
+  </main>
+
+  <script type="module" src="js/pages/calendario/main.js"></script>
+</body>
+</html>

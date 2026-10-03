@@ -7,6 +7,7 @@ export const SECTION_GROUPS = [
   { title: 'Obiettivi', items: [
     { href: 'bucket-list.html', title: 'Bucket List', sub: 'sogni da realizzare', icon: 'sparkles', tone: 'sakura' },
     { href: 'direzione.html', title: 'Direzione', sub: 'valori e rotta', icon: 'compass', tone: 'sky' },
+    { href: 'calendario.html', title: 'Il mio mese', sub: 'allenamento · cibo · mente', icon: 'calendar', tone: 'leaf' },
   ]},
   { title: 'Corpo', items: [
     { href: 'alimentazione.html', title: 'Alimentazione', sub: 'dieta · ricette · diario', icon: 'salad', tone: 'leaf' },

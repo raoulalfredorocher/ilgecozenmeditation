@@ -43,6 +43,16 @@
     .wx-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background-color .2s, transform .2s; }
     .wx-dots i.on { background: var(--geco-blue); transform: scale(1.25); }
 
+    .week-card { display: block; color: inherit; text-decoration: none; }
+    .week-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-3); }
+    .week-link { font-size: var(--fs-xs); font-weight: 600; color: var(--geco-blue); }
+    .week-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+    .week-d { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0 8px; border-radius: 14px; }
+    .week-d .l { font-size: .625rem; letter-spacing: .1em; color: var(--muted); }
+    .week-d .n { font-size: var(--fs-md); font-variant-numeric: tabular-nums; }
+    .week-d.today { background: var(--geco-mist); color: var(--geco-blue); font-weight: 600; }
+    .week-dots { display: flex; gap: 3px; height: 6px; }
+    .week-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
     .quote-card { border-left: 2px solid var(--sakura); border-radius: 4px var(--radius-lg) var(--radius-lg) 4px; }
     .quote-card .zen-quote { margin-top: var(--space-3); }
 
@@ -97,6 +107,12 @@
       <div class="wx-foot"><span></span><div class="wx-dots" id="wx-dots" aria-hidden="true"></div><button type="button" class="wx-edit" id="wx-edit">Città</button></div>
     </section>
 
+    <!-- La settimana: puntini per area, tocco = calendario del mese -->
+    <a class="card week-card" href="calendario.html" aria-label="La tua settimana, apri il calendario del mese">
+      <div class="week-top"><span class="zen-eyebrow">La tua settimana</span><span class="week-link">Apri il mese ›</span></div>
+      <div class="week-days" id="week-days"></div>
+    </a>
+
     <!-- Pensiero del giorno -->
     <section class="card quote-card" aria-label="Pensiero del giorno">
       <div class="zen-eyebrow">Pensiero del giorno</div>
@@ -129,6 +145,7 @@
     import { getBirthdayContacts, db, auth } from './js/core/db.js';
     import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
     import { createSheet } from './js/ui/dialog.js';
+    import { AREAS, loadRange, areasOf, dateKey } from './js/core/attivita.js';
     import { waitForUser } from './js/core/auth-guard.js';
     import { escapeHtml } from './js/core/dom.js';
 
@@ -307,6 +324,22 @@
         }
       } catch (e) { console.error('meteo', e); }
     });
+
+    /* ── La settimana: allenamento, alimentazione, meditazione e journaling a colpo d'occhio ── */
+    (function week() {
+      const t = new Date(), mon = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7));
+      const days = Array.from({ length: 7 }, (_, i) => new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i));
+      const box = document.getElementById('week-days');
+      const draw = data => {
+        box.innerHTML = days.map((d, i) => {
+          const k = dateKey(d), dots = areasOf(data?.[k]);
+          return `<div class="week-d${k === dateKey() ? ' today' : ''}"><span class="l">${'LMMGVSD'[i]}</span><span class="n">${d.getDate()}</span>
+            <span class="week-dots">${dots.map(a => `<i style="--c:${AREAS.find(x => x.id === a).color}"></i>`).join('')}</span></div>`;
+        }).join('');
+      };
+      draw(null);
+      waitForUser().then(() => loadRange(dateKey(days[0]), dateKey(days[6]))).then(draw).catch(e => console.warn('settimana', e));
+    })();
 
     /* ── Utente: saluto con il nome e compleanni ── */
     waitForUser().then(async user => {
