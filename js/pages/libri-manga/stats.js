@@ -17,7 +17,47 @@ function parseDate(text) {
 }
 
 export const readings = items => items.filter(i => i.done).map(i => ({ item: i, stars: i.stars || 0, ...parseDate(i.doneDate) })).filter(r => r.y);
-export const statsYears = items => [...new Set(readings(items).map(r => r.y))].sort((a, b) => b - a);
+const sessionsOf = items => items.flatMap(i => (i.sessions || []).filter(s => s.d).map(s => ({ ...s, y: +String(s.d).slice(0, 4) })));
+export const statsYears = items => [...new Set([...readings(items).map(r => r.y), ...sessionsOf(items).map(s => s.y)])].sort((a, b) => b - a);
+
+const pad2 = n => String(n).padStart(2, '0');
+const keyOf = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+/** Tempo di lettura: ore, serie di giorni consecutivi e gli ultimi 28 giorni. */
+function timeHtml(items, year) {
+  const all = sessionsOf(items);
+  const ss = all.filter(s => s.y === year);
+  if (!ss.length) return '';
+  const byDay = {};
+  all.forEach(s => { byDay[s.d] = (byDay[s.d] || 0) + (s.min || 0); });
+  // serie in corso: giorni consecutivi fino a oggi (o a ieri)
+  let streak = 0; const d = new Date();
+  if (!byDay[keyOf(d)]) d.setDate(d.getDate() - 1);
+  while (byDay[keyOf(d)]) { streak++; d.setDate(d.getDate() - 1); }
+  // migliore serie dell'anno
+  const days = Object.keys(byDay).filter(k => k.startsWith(String(year))).sort();
+  let best = 0, run = 0, prev = null;
+  days.forEach(k => { const t = Date.parse(k); run = prev !== null && Math.round((t - prev) / 864e5) === 1 ? run + 1 : 1; best = Math.max(best, run); prev = t; });
+  const min = ss.reduce((s, x) => s + (x.min || 0), 0);
+  const cells = [];
+  const max = Math.max(1, ...Array.from({ length: 28 }, (_, i) => { const x = new Date(); x.setDate(x.getDate() - (27 - i)); return byDay[keyOf(x)] || 0; }));
+  for (let i = 27; i >= 0; i--) {
+    const x = new Date(); x.setDate(x.getDate() - i);
+    const m = byDay[keyOf(x)] || 0;
+    cells.push(`<i class="hm" style="--a:${m ? (0.25 + 0.75 * m / max).toFixed(2) : 0}" title="${x.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}: ${m} min"></i>`);
+  }
+  return `
+    <div class="fa-stats">
+      <div class="fa-stat"><b>${min >= 60 ? (Math.round(min / 6) / 10).toLocaleString('it-IT') : min}</b><span>${min >= 60 ? 'ore di lettura' : 'minuti di lettura'}</span></div>
+      <div class="fa-stat"><b>${streak}</b><span>${streak === 1 ? 'giorno di fila' : 'giorni di fila'}</span></div>
+      <div class="fa-stat"><b>${best}</b><span>serie migliore</span></div>
+    </div>
+    <div class="card">
+      <div class="zen-eyebrow">Ultimi 28 giorni</div>
+      <div class="hm-grid" role="img" aria-label="Giorni in cui hai letto">${cells.join('')}</div>
+      <p class="fa-note">${ss.length} ${ss.length === 1 ? 'sessione' : 'sessioni'} nel ${year}</p>
+    </div>`;
+}
 
 const bar = (label, n, max) =>
   `<div class="meter"><div class="meter-head"><span>${esc(label)}</span><span class="zen-muted">${n}</span></div>
@@ -25,7 +65,8 @@ const bar = (label, n, max) =>
 
 export function statsHtml(items, year, goal) {
   const ev = readings(items).filter(r => r.y === year);
-  if (!ev.length) return `<div class="empty">Nessuna lettura datata nel ${year}.</div>`;
+  const time = timeHtml(items, year);
+  if (!ev.length) return time || `<div class="empty">Nessuna lettura datata nel ${year}.</div>`;
 
   const perMonth = Array.from({ length: 12 }, (_, m) => ev.filter(r => r.m === m).length);
   const maxM = Math.max(...perMonth);
@@ -54,6 +95,7 @@ export function statsHtml(items, year, goal) {
         : `<p class="small zen-muted">Quanti libri e manga vuoi leggere nel ${year}? Imposta un obiettivo e guarda la barra riempirsi.</p>`}
     </div>
 
+    ${time}
     <div class="fa-stats">
       <div class="fa-stat"><b>${ev.length}</b><span>${ev.length === 1 ? 'lettura' : 'letture'}</span></div>
       <div class="fa-stat"><b>${pages ? pages.toLocaleString('it-IT') : '—'}</b><span>pagine</span></div>

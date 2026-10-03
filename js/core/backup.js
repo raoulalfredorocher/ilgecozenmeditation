@@ -59,6 +59,7 @@ const SUBS = {
   allenamenti_registro: ['dettagli_chunks'],
   countries: ['trips'],
   emozioni_entries: ['log'],
+  libri: ['citazioni'],
 };
 const ISO = 'AD AE AF AG AL AM AO AR AT AU AZ BA BB BD BE BF BG BH BI BJ BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CK CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GE GH GM GN GQ GR GT GW GY HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KP KR KW KZ LA LB LI LK LR LS LT LU LV LY MA MC MD ME MG MH MK ML MM MN MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NR NZ OM PA PE PG PH PK PL PS PT PW PY QA RO RS RW SA SB SC SD SE SI SK SL SM SN SO SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VE VN VU WS YE ZA ZM ZW'.split(' ');
 const emoSafe = key => key.replace(/[^a-zA-Z0-9_À-ɏ]/g, '_');

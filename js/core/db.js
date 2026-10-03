@@ -466,6 +466,34 @@ export async function deleteLibroDoc(docId) {
   await deleteDoc(ref);
 }
 
+// Citazioni e appunti di un libro: users/{uid}/libri/{libro}/citazioni/{id}
+// (sotto-raccolta di "libri": non servono nuove regole di sicurezza)
+function quotesCol(bookDocId) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return null;
+  return collection(db, 'users', uid, 'libri', bookDocId, 'citazioni');
+}
+export async function listQuotes(bookDocId) {
+  const col = quotesCol(bookDocId);
+  if (!col) return [];
+  const snap = await getDocs(col);
+  return snap.docs.map(d => ({ _docId: d.id, _bookDocId: bookDocId, ...d.data() })).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+}
+export async function addQuoteDoc(bookDocId, data) {
+  const col = quotesCol(bookDocId);
+  if (!col) return null;
+  const ref = await addDoc(col, { ...data, createdAt: Date.now() });
+  return ref.id;
+}
+export async function updateQuoteDoc(bookDocId, quoteId, fields) {
+  const col = quotesCol(bookDocId);
+  if (col) await setDoc(doc(col, quoteId), fields, { merge: true });
+}
+export async function deleteQuoteDoc(bookDocId, quoteId) {
+  const col = quotesCol(bookDocId);
+  if (col) await deleteDoc(doc(col, quoteId));
+}
+
 // ─── Film, Anime e Serie TV ───────────────────────────────────────────────────
 
 export function subscribeFilm(callback) {

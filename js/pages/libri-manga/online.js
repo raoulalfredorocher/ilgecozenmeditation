@@ -164,3 +164,19 @@ export async function posterData(url) {
     return await compressImage(blob, 500, 0.75);
   } catch { return null; }
 }
+
+/** Stato aggiornato di più manga (volumi, capitoli, stato) in una sola richiesta. */
+export async function fetchMangaStatus(ids) {
+  const list = [...new Set(ids)].slice(0, 50);
+  if (!list.length) return {};
+  const r = await fetch('https://graphql.anilist.co', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ query: 'query($ids:[Int]){Page(perPage:50){media(id_in:$ids,type:MANGA){id volumes chapters status}}}', variables: { ids: list } }),
+  });
+  if (!r.ok) throw new Error('AniList non raggiungibile');
+  const out = {};
+  ((await r.json()).data?.Page?.media || []).forEach(m => {
+    out[m.id] = { volumes: m.volumes || 0, chapters: m.chapters || 0, status: ANI_STATUS[m.status] || '' };
+  });
+  return out;
+}

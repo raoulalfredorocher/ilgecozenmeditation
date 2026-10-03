@@ -177,6 +177,64 @@
     .fa-buy .btn { min-height: 34px; padding: 0 12px; font-size: var(--fs-sm); }
     .fa-buy-acts { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 
+
+    /* Tab a scorrimento */
+    .segmented.scroll { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .segmented.scroll::-webkit-scrollbar { display: none; }
+    .segmented.scroll > button { flex: 0 0 auto; padding: 0 16px; white-space: nowrap; }
+
+    /* Novità sui volumi */
+    .lb-news-card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-md); background: color-mix(in srgb, var(--sakura) 22%, var(--card)); border: .5px solid color-mix(in srgb, var(--sakura) 45%, transparent); }
+    .lb-news-card .t { font-weight: 600; letter-spacing: -.01em; }
+    .lb-news-card .m { font-size: var(--fs-sm); color: var(--muted); }
+    .lb-news-btns { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .fa-now-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .fa-now-btns .btn { padding: 0 12px; }
+    .fa-pace { font-size: var(--fs-xs); color: var(--muted); }
+
+    /* Serie: griglia dei volumi */
+    .sr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; }
+    .sr-vol { height: 40px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: var(--fs-sm); font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; }
+    .sr-vol.read { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+    .sr-vol.reading { background: color-mix(in srgb, var(--warning) 22%, var(--card)); border-color: var(--warning); }
+    .sr-vol.owned { background: var(--geco-mist); border-color: transparent; color: var(--geco-blue); }
+    .sr-vol.buy { border-style: dashed; border-color: var(--sakura); color: color-mix(in srgb, var(--sakura) 60%, var(--bark)); }
+    .sr-vol.missing { background: transparent; border-style: dotted; color: var(--muted); opacity: .6; }
+    .sr-legend { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sr-legend .sr-vol { height: 26px; font-size: 11px; font-weight: 500; cursor: default; }
+
+    /* Citazioni */
+    .qt { margin: 0; padding: var(--space-4); background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-3); }
+    .qt blockquote { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: var(--fs-lg); line-height: 1.55; white-space: pre-wrap; }
+    .qt blockquote:empty { display: none; }
+    .qt-photo { width: 100%; border-radius: var(--radius-sm); display: block; }
+    .qt figcaption { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+    .qt-acts { display: flex; gap: 4px; justify-content: flex-end; margin: 0 -6px -6px; }
+    .qt-acts button { width: 36px; height: 36px; border: 0; background: none; border-radius: 50%; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+    .qt-acts button:active { background: var(--surface); }
+    .qt-prev { display: flex; gap: var(--space-3); align-items: center; }
+    .qt-prev img { width: 84px; height: 112px; object-fit: cover; border-radius: var(--radius-sm); }
+    .qt-hero { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; background: linear-gradient(160deg, var(--geco-mist), var(--card)); }
+    .qt-hero blockquote { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: var(--fs-xl); line-height: 1.5; }
+    .qt-cap { font-size: var(--fs-sm); color: var(--muted); }
+
+    /* Ultimi 28 giorni */
+    .hm-grid { display: grid; grid-template-columns: repeat(14, 1fr); gap: 5px; margin: var(--space-4) 0 var(--space-2); }
+    .hm { aspect-ratio: 1; border-radius: 5px; background: color-mix(in srgb, var(--geco-blue) calc(var(--a) * 100%), var(--surface)); display: block; }
+
+    /* Scaffale */
+    .sh-wood { padding: var(--space-4) var(--space-3) var(--space-2); border-radius: var(--radius-lg); background: linear-gradient(180deg, color-mix(in srgb, #8F6B45 14%, var(--surface)), color-mix(in srgb, #8F6B45 6%, var(--surface))); box-shadow: inset 0 2px 10px rgba(60, 40, 20, .1); display: flex; flex-direction: column; gap: 0; }
+    .sh-row { display: flex; gap: 9px; align-items: flex-end; padding: 0 2px; min-height: 108px; }
+    .sh-board { height: 12px; margin: 0 -10px var(--space-4); border-radius: 4px; background: linear-gradient(#C29A6B, #8F6B45); box-shadow: 0 3px 5px rgba(60, 40, 20, .3); }
+    .sh-book { width: 66px; height: 99px; padding: 0; border: 0; background: none; border-radius: 4px; overflow: hidden; cursor: pointer; flex: 0 0 66px; box-shadow: 2px 3px 6px rgba(40, 25, 10, .35); transition: transform .15s var(--ease); }
+    .sh-book:active { transform: translateY(-4px); }
+    .sh-book.unread { opacity: .55; filter: saturate(.7); }
+    .sh-book img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .sh-spine { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%; padding: 8px 6px; color: #fff; text-align: left; box-sizing: border-box; }
+    .sh-spine span { font-size: 11px; font-weight: 700; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; }
+    .sh-spine small { font-size: 8.5px; opacity: .85; line-height: 1.2; overflow: hidden; }
+    #sh-share { margin-top: var(--space-4); }
+
     /* Scanner a schermo intero */
     .lb-scan { position: fixed; inset: 0; z-index: 9500; background: #000; color: #fff; display: flex; flex-direction: column; }
     .lb-scan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -205,10 +263,12 @@
 
   <main class="zen-main">
     <div class="page-tabs">
-      <div class="segmented" role="group" aria-label="Sezioni">
+      <div class="segmented scroll" role="group" aria-label="Sezioni">
         <button type="button" data-tab="todo" aria-pressed="true">Da leggere</button>
         <button type="button" data-tab="done" aria-pressed="false">Letti</button>
-        <button type="button" data-tab="buy" aria-pressed="false">Da comprare</button>
+        <button type="button" data-tab="shelf" aria-pressed="false">Scaffale</button>
+        <button type="button" data-tab="series" aria-pressed="false">Serie</button>
+        <button type="button" data-tab="buy" aria-pressed="false">Acquisti</button>
       </div>
     </div>
 
@@ -222,6 +282,7 @@
     </div>
 
     <section class="fa-panel" id="p-todo" aria-live="polite">
+      <div id="lb-news"></div>
       <div id="fa-now"></div>
       <div class="fa-head"><span class="zen-eyebrow" id="fa-todo-count"></span>
         <button type="button" class="btn sm" id="fa-tonight"><svg class="icon sm" aria-hidden="true"><use href="#i-sparkles"/></svg> Cosa leggo?</button></div>
@@ -232,15 +293,26 @@
       <div class="segmented" id="fa-doneview" role="group" aria-label="Vista">
         <button type="button" data-view="list" aria-pressed="true">Elenco</button>
         <button type="button" data-view="stats" aria-pressed="false">Il tuo anno</button>
+        <button type="button" data-view="quotes" aria-pressed="false">Citazioni</button>
       </div>
       <div class="fa-panel" id="fa-listview">
         <div class="fa-stats" id="fa-stats"></div>
         <div class="list" id="fa-done-list"></div>
       </div>
+      <div class="fa-panel" id="fa-quotesview" hidden></div>
       <div class="fa-panel" id="fa-statsview" hidden>
         <div class="chips" id="fa-years" role="group" aria-label="Anno"></div>
         <div class="fa-panel" id="fa-statsbody"></div>
       </div>
+    </section>
+
+    <section class="fa-panel" id="p-shelf" hidden aria-live="polite">
+      <div id="lb-shelf"></div>
+    </section>
+
+    <section class="fa-panel" id="p-series" hidden aria-live="polite">
+      <div class="fa-head"><span class="zen-eyebrow">Serie e saghe</span></div>
+      <div id="lb-series"></div>
     </section>
 
     <section class="fa-panel" id="p-buy" hidden aria-live="polite">
