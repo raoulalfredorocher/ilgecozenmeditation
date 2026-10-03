@@ -24,6 +24,9 @@ import { initTimer, paceText } from './timer.js';
 import { initSeries } from './series.js';
 import { initQuotes } from './quotes.js';
 import { renderShelf, shareShelf } from './shelf.js';
+import { initFlash } from './flash.js';
+import { initMaestri } from './maestri.js';
+import { exportBookMarkdown, exportAllMarkdown } from './export-md.js';
 
 const $ = id => document.getElementById(id);
 
@@ -45,7 +48,8 @@ let tagFilter = 'all';
 let search = '';
 let statsYear = null;
 let goals = {};              // { 2026: 24 }
-let timer, series, quotes;   // moduli collegati in fondo (initTimer, initSeries, initQuotes)
+let timer, series, quotes, flash, masters;
+let flashShown = false;   // moduli collegati in fondo (initTimer, initSeries, initQuotes)
 
 const byId = id => items.find(i => String(i.id) === String(id));
 const kindOf = i => i.kind || 'Libro';
@@ -112,11 +116,13 @@ function renderChips(base) {
 // ─── Render ──────────────────────────────────────────────────────────────
 function render() {
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
-  for (const k of ['todo', 'done', 'shelf', 'series', 'buy']) $('p-' + k).hidden = tab !== k;
+  for (const k of ['todo', 'done', 'shelf', 'series', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
   const listMode = tab === 'todo' || tab === 'shelf' || (tab === 'done' && doneView === 'list');
   $('fa-tools').hidden = !listMode;
   if (tab === 'buy') return renderBuy();
   if (tab === 'series') return series?.renderList($('lb-series'));
+  if (tab === 'masters') return masters?.renderList($('lb-masters'));
+  if (tab === 'flash') { if (!flashShown) { flashShown = true; flash?.render($('lb-flash')); } return; }
 
   if (tab === 'done') {
     document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === doneView)));
@@ -386,7 +392,7 @@ function fillDetail(item) {
              <button class="btn block" type="button" id="dd-seen">${icon('check', 'sm')} Segna come letto</button>`
           : `<button class="btn block" type="button" id="dd-rate">${icon('star', 'sm')} Modifica voto e nota</button>
              <button class="btn ghost block" type="button" id="dd-undo">Rimetti in “Da leggere”</button>`}
-      <button class="btn block" type="button" id="dd-quotes">${icon('pen', 'sm')} Citazioni e appunti${item.quotesCount ? ` (${item.quotesCount})` : ''}</button>
+      <button class="btn block" type="button" id="dd-quotes">${icon('pen', 'sm')} Appunti${item.quotesCount ? ` (${item.quotesCount})` : ''}</button>
       ${toBuy(item) ? `<button class="btn block" type="button" id="dd-bought">${icon('check', 'sm')} L’ho comprato</button>` : ''}
       ${!item.done ? `<button class="btn ghost block" type="button" id="dd-prio">${item.prio ? 'Togli la priorità' : 'Metti in priorità alta'}</button>` : ''}
       <a class="btn block" href="${esc(amazonUrl(item))}" target="_blank" rel="noopener">${icon('link', 'sm')} ${safeUrl(item.amazon) ? 'Apri su Amazon' : 'Cerca su Amazon'}</a>
@@ -734,7 +740,7 @@ function exportCsv() {
 // ─── Eventi ──────────────────────────────────────────────────────────────
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-tab]');
-  if (t) { tab = t.dataset.tab; kindFilter = 'all'; tagFilter = 'all'; render(); return; }
+  if (t) { tab = t.dataset.tab; kindFilter = 'all'; tagFilter = 'all'; flashShown = false; render(); t.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: 'smooth' }); return; }
   const v = e.target.closest('[data-view]');
   if (v) { doneView = v.dataset.view; render(); return; }
   const y = e.target.closest('[data-year]');
@@ -756,6 +762,8 @@ document.addEventListener('click', e => {
   if (nb) { const it = byId(nb.dataset.newsBuy); if (it) { series.addVolume(it, parseInt(it.newVol), 'Da Acquistare').then(() => updateLibroDoc(it._docId, { newVol: null })); toast('Aggiunto ai da comprare'); } return; }
   const no = e.target.closest('[data-news-ok]');
   if (no) { const it = byId(no.dataset.newsOk); if (it) updateLibroDoc(it._docId, { newVol: null }); return; }
+  const ms = e.target.closest('[data-master]');
+  if (ms) { masters.open(ms.dataset.master); return; }
   const sr = e.target.closest('[data-series]');
   if (sr) { series.open(sr.dataset.series); return; }
   if (e.target.closest('#sh-share')) {
@@ -802,12 +810,29 @@ async function checkNewVolumes() {
 
 // ─── Avvio ───────────────────────────────────────────────────────────────
 const ctx = {
-  items: () => items, byId, update: updateLibroDoc, add: addLibroDoc, askConfirm, isManga,
+  items: () => items, byId, update: updateLibroDoc, add: addLibroDoc, askConfirm, isManga, stars,
   setProgress, openDetail: id => openDetail(byId(id)),
+  quotes: null,
+  exportBook: async book => {
+    try {
+      const qs = await quotes.loadMany([book]);
+      const r = await exportBookMarkdown(book, qs, q => quotes.audioBlob(book._docId, q));
+      if (r !== 'cancelled') toast('File Markdown pronto ✓');
+    } catch (err) { toast('Esportazione non riuscita: ' + (err.message || err)); }
+  },
+  exportAll: async () => {
+    try {
+      toast('Preparo i file…');
+      const r = await exportAllMarkdown(items, b => quotes.loadMany([b]), (b, q) => quotes.audioBlob(b._docId, q));
+      if (r !== 'cancelled') toast('Appunti esportati ✓');
+    } catch (err) { toast('Esportazione non riuscita: ' + (err.message || err)); }
+  },
 };
 timer = initTimer(ctx);
 series = initSeries(ctx);
-quotes = initQuotes(ctx);
+quotes = ctx.quotes = initQuotes(ctx);
+flash = initFlash(ctx);
+masters = initMaestri(ctx);
 render();
 waitForUser().then(async () => {
   let first = true;
@@ -815,9 +840,11 @@ waitForUser().then(async () => {
     items = list;
     render();
     series.refresh();
+    if (tab === 'masters') masters.renderList($('lb-masters'));
     if (first && list.length) { first = false; checkNewVolumes(); }
     if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
   });
+  masters.load().then(ok => { if (ok && tab === 'masters') render(); });
   try {                                   // obiettivo di lettura: lo stesso su tutti i dispositivi
     const snap = await getDoc(goalRef());
     if (snap.exists() && snap.data().goals) { goals = snap.data().goals; localStorage.setItem('zen_book_goals', JSON.stringify(goals)); render(); }

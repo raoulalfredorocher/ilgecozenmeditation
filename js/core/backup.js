@@ -119,6 +119,14 @@ export async function collectAll(onProgress = () => {}) {
       const sub = {};
       for (const s of subs) {
         const rows = await readCol(collection(db, 'users', uid(), sec.id, d.id, s));
+        // audio degli appunti dei libri: una sotto-raccolta dentro la sotto-raccolta
+        if (sec.id === 'libri' && s === 'citazioni') {
+          for (const r of rows) {
+            if (!r.data?.audio) continue;
+            const a = await readCol(collection(db, 'users', uid(), 'libri', d.id, 'citazioni', r.id, 'audio'));
+            if (a.length) r.sub = { audio: a };
+          }
+        }
         if (rows.length) sub[s] = rows;
       }
       return { id: d.id, data: d.data, ...(Object.keys(sub).length ? { sub } : {}) };
@@ -173,7 +181,11 @@ export async function restoreBackup(obj, onProgress = () => {}) {
   for (const sec of SECTIONS) {
     for (const e of obj.data[sec.id] || []) {
       if (!e.phantom) writes.push([[...base, sec.id, e.id], e.data]);
-      for (const [s, rows] of Object.entries(e.sub || {})) rows.forEach(r => writes.push([[...base, sec.id, e.id, s, r.id], r.data]));
+      const walk = (path, subs) => Object.entries(subs || {}).forEach(([s, rows]) => rows.forEach(r => {
+        writes.push([[...path, s, r.id], r.data]);
+        walk([...path, s, r.id], r.sub);              // sotto-raccolte annidate (audio degli appunti)
+      }));
+      walk([...base, sec.id, e.id], e.sub);
     }
   }
   // A gruppi: massimo 300 scritture o circa 6 MB per volta

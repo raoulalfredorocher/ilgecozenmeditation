@@ -491,7 +491,33 @@ export async function updateQuoteDoc(bookDocId, quoteId, fields) {
 }
 export async function deleteQuoteDoc(bookDocId, quoteId) {
   const col = quotesCol(bookDocId);
-  if (col) await deleteDoc(doc(col, quoteId));
+  if (!col) return;
+  await deleteQuoteAudio(bookDocId, quoteId).catch(() => {});
+  await deleteDoc(doc(col, quoteId));
+}
+
+// Audio di un appunto: a pezzi base64 in .../citazioni/{id}/audio/{0000,0001…} (un documento non supera 1 MiB)
+function quoteAudioCol(bookDocId, quoteId) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  if (!db || !uid) return null;
+  return collection(db, 'users', uid, 'libri', bookDocId, 'citazioni', quoteId, 'audio');
+}
+export async function saveQuoteAudio(bookDocId, quoteId, parts) {
+  const col = quoteAudioCol(bookDocId, quoteId);
+  if (!col) return;
+  for (let i = 0; i < parts.length; i++) await setDoc(doc(col, String(i).padStart(4, '0')), { n: i, data: parts[i] });
+}
+export async function loadQuoteAudio(bookDocId, quoteId) {
+  const col = quoteAudioCol(bookDocId, quoteId);
+  if (!col) return [];
+  const snap = await getDocs(query(col, orderBy('n', 'asc')));
+  return snap.docs.map(d => d.data().data);
+}
+export async function deleteQuoteAudio(bookDocId, quoteId) {
+  const col = quoteAudioCol(bookDocId, quoteId);
+  if (!col) return;
+  const snap = await getDocs(col);
+  await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
 }
 
 // ─── Film, Anime e Serie TV ───────────────────────────────────────────────────

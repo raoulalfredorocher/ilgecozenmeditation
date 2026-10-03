@@ -235,6 +235,42 @@
     .sh-spine small { font-size: 8.5px; opacity: .85; line-height: 1.2; overflow: hidden; }
     #sh-share { margin-top: var(--space-4); }
 
+
+    /* Appunti: audio */
+    .qt-audio { display: flex; }
+    .qt-audio audio, #qe-audio audio { width: 100%; height: 40px; }
+    .qt-rec { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: color-mix(in srgb, var(--danger) 10%, var(--card)); }
+    .qt-rec b { flex: 1; font-size: var(--fs-lg); font-variant-numeric: tabular-nums; }
+    .qt-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); animation: qt-pulse 1.1s ease-in-out infinite; }
+    @keyframes qt-pulse { 50% { opacity: .25; transform: scale(.8); } }
+
+    /* Maestri */
+    .ms-avatar { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; background: var(--sakura-soft); color: color-mix(in srgb, var(--sakura) 60%, var(--bark)); font-weight: 600; letter-spacing: .02em; }
+    .ms-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ms-avatar.big { width: 72px; height: 72px; font-size: 1.4rem; }
+    .ms-head { display: flex; align-items: center; gap: var(--space-4); }
+    #ms-fav[aria-pressed="true"] { color: var(--warning); }
+    #ms-fav[aria-pressed="true"] .icon { fill: currentColor; }
+
+    /* Flashcard */
+    .fc-hero { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+    .fc-hero h3 { margin: 0; font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; }
+    .fc-hero p { color: var(--muted); line-height: 1.55; }
+    .fc { display: flex; flex-direction: column; gap: var(--space-4); }
+    .fc-top { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; color: var(--muted); }
+    .fc-top .meter-track { flex: 1; }
+    .fc-card { display: flex; flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+    .fc-q { font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; line-height: 1.4; }
+    .fc-quote { margin: 0; padding: var(--space-3) var(--space-4); border-left: 2px solid var(--sakura); border-radius: 4px var(--radius-sm) var(--radius-sm) 4px; background: var(--surface); font-family: var(--font-serif); font-style: italic; line-height: 1.6; white-space: pre-wrap; width: 100%; box-sizing: border-box; }
+    .fc-opts { display: flex; flex-direction: column; gap: var(--space-2); width: 100%; }
+    .fc-opt { min-height: 52px; padding: 10px 16px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: background-color .2s, border-color .2s, transform .12s var(--ease); }
+    .fc-opt:active:not(:disabled) { transform: scale(.98); }
+    .fc-opt.right { background: color-mix(in srgb, var(--success) 16%, var(--card)); border-color: var(--success); }
+    .fc-opt.wrong { background: color-mix(in srgb, var(--danger) 14%, var(--card)); border-color: var(--danger); }
+    #fc-fb, #fc-ans { width: 100%; display: flex; flex-direction: column; gap: var(--space-3); }
+    .fc-why { font-size: var(--fs-sm); line-height: 1.5; }
+    .fc-why.ok { color: var(--success); } .fc-why.ko { color: var(--danger); }
+
     /* Scanner a schermo intero */
     .lb-scan { position: fixed; inset: 0; z-index: 9500; background: #000; color: #fff; display: flex; flex-direction: column; }
     .lb-scan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -268,6 +304,8 @@
         <button type="button" data-tab="done" aria-pressed="false">Letti</button>
         <button type="button" data-tab="shelf" aria-pressed="false">Scaffale</button>
         <button type="button" data-tab="series" aria-pressed="false">Serie</button>
+        <button type="button" data-tab="masters" aria-pressed="false">Maestri</button>
+        <button type="button" data-tab="flash" aria-pressed="false">Flashcard</button>
         <button type="button" data-tab="buy" aria-pressed="false">Acquisti</button>
       </div>
     </div>
@@ -293,7 +331,7 @@
       <div class="segmented" id="fa-doneview" role="group" aria-label="Vista">
         <button type="button" data-view="list" aria-pressed="true">Elenco</button>
         <button type="button" data-view="stats" aria-pressed="false">Il tuo anno</button>
-        <button type="button" data-view="quotes" aria-pressed="false">Citazioni</button>
+        <button type="button" data-view="quotes" aria-pressed="false">Appunti</button>
       </div>
       <div class="fa-panel" id="fa-listview">
         <div class="fa-stats" id="fa-stats"></div>
@@ -313,6 +351,15 @@
     <section class="fa-panel" id="p-series" hidden aria-live="polite">
       <div class="fa-head"><span class="zen-eyebrow">Serie e saghe</span></div>
       <div id="lb-series"></div>
+    </section>
+
+    <section class="fa-panel" id="p-masters" hidden aria-live="polite">
+      <div class="fa-head"><span class="zen-eyebrow">I tuoi maestri</span></div>
+      <div id="lb-masters" class="fa-panel"></div>
+    </section>
+
+    <section class="fa-panel" id="p-flash" hidden>
+      <div id="lb-flash" class="fa-panel"></div>
     </section>
 
     <section class="fa-panel" id="p-buy" hidden aria-live="polite">
