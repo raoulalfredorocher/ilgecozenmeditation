@@ -20,7 +20,9 @@ import {
   subscribeRecipes, subscribeDiary, subscribeDietFull, subscribeSavedDiets, subscribeMacrosProfiles,
   subscribeCustomFoods, saveDietCurrent, saveDiaryDay, saveMacrosProfiles, saveCustomFoods,
   addSavedDietDoc, updateSavedDietDoc, deleteSavedDietDoc,
+  db, auth,
 } from '../../core/db.js';
+import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { ageFromBirth } from '../../core/vita.js';
 
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
@@ -108,14 +110,32 @@ export function profileAt(key) {
 /** kcal bruciate dai passi: ~0,0005 kcal per passo per kg di peso. */
 export const stepsKcal = (passi, peso) => Math.round((parseFloat(passi) || 0) * 0.0005 * (parseFloat(peso) || 0));
 /**
- * Fabbisogno di un giorno: metabolismo basale × attività quotidiana (con il peso e il grasso di quel giorno)
- * + passi + kcal dell'allenamento se il giorno è un giorno Workout.
+ * L'allenamento di un giorno, con la sua origine:
+ *   • giorni passati: conta solo ciò che hai fatto davvero (il registro di Allenamento); senza sessione è un giorno di riposo,
+ *     anche se il piano prevedeva Workout;
+ *   • oggi: se hai già una sessione conta quella, altrimenti vale il piano;
+ *   • giorni futuri: vale il piano (Workout / Riposo).
+ * kcal: quelle della sessione se sono registrate (in futuro dall'orologio), altrimenti il valore del profilo per ogni sessione.
  */
-export function tdeeFor(key = dateKey(), dayType = 'Riposo') {
+export function workoutOn(key, planType = 'Riposo') {
+  const perSession = parseFloat(profileAt(key).kcalWorkout) || 0;
+  const real = state.workouts[key], today = dateKey();
+  if (key < today || (key === today && real)) {
+    if (!real) return { kcal: 0, source: null, n: 0 };
+    return { kcal: real.kcal ?? real.n * perSession, source: 'registro', n: real.n };
+  }
+  return planType === 'Workout' ? { kcal: perSession, source: 'piano', n: 1 } : { kcal: 0, source: null, n: 0 };
+}
+
+/**
+ * Fabbisogno di un giorno: metabolismo basale × attività quotidiana (con il peso e il grasso di quel giorno)
+ * + passi + kcal dell'allenamento (vedi workoutOn).
+ */
+export function tdeeFor(key = dateKey(), planType = 'Riposo') {
   const f = profileAt(key);
   const base = calcTdee(f);
   if (!base) return 0;
-  return base + stepsKcal(f.passi, f.peso) + (dayType === 'Workout' ? (parseFloat(f.kcalWorkout) || 0) : 0);
+  return Math.round(base + stepsKcal(f.passi, f.peso) + workoutOn(key, planType).kcal);
 }
 
 /** Supplementi del giorno in qualsiasi formato storico → array di stringhe. */
@@ -173,6 +193,7 @@ export const state = {
   recipes: [],
   profile: {},          // profilo dell'utente (una volta sola)
   customFoods: [],
+  workouts: {},         // allenamenti fatti davvero (dal registro): { 'AAAA-MM-GG': { n, kcal|null } }
   ready: { diet: false, diary: false, recipes: false, diets: false },
 };
 
@@ -263,6 +284,8 @@ export async function addCustomFood(food) {
   emit('foods');
 }
 
+const onAuthReady = fn => (auth?.currentUser ? fn() : setTimeout(() => onAuthReady(fn), 250));
+
 // ─── Avvio sincronizzazione ──────────────────────────────────────────────
 export function startSync() {
   subscribeDietFull(data => {
@@ -279,6 +302,23 @@ export function startSync() {
     ensureLibrary().catch(e => console.error('diete', e));
   });
   subscribeDiary(obj => { state.diary = obj; state.ready.diary = true; emit('diary'); });
+  // allenamenti fatti davvero (ultimi 120 giorni): il TDEE di ogni giorno ne tiene conto
+  onAuthReady(() => {
+    const uid = auth.currentUser?.uid, from = dateKey(new Date(Date.now() - 120 * 86400000));
+    if (!db || !uid) return;
+    try { onSnapshot(query(collection(db, 'users', uid, 'allenamenti_registro'), where('data', '>=', from)), snap => {
+      const w = {};
+      snap.forEach(d => {
+        const r = d.data();
+        if (!r.data) return;
+        const o = w[r.data] ||= { n: 0, kcal: null };
+        o.n++;
+        if (Number.isFinite(+r.kcal) && r.kcal !== null && r.kcal !== '') o.kcal = (o.kcal || 0) + (+r.kcal);   // quando arriveranno dall'orologio
+      });
+      state.workouts = w;
+      emit('workouts');
+    }, err => console.warn('allenamenti', err)); } catch (e) { console.warn('allenamenti', e); }
+  });
   subscribeRecipes(list => { state.recipes = list; state.ready.recipes = true; emit('recipes'); });
   subscribeMacrosProfiles((profiles, activeIdx, tdeeForm) => {
     state.profile = tdeeForm?.peso ? tdeeForm : (profiles?.[activeIdx]?.tdee || {});

@@ -17,11 +17,11 @@ const sheet = createSheet({ title: 'Il mio profilo', body: `
       <div class="field"><label class="field-lbl" for="pf-bf">Grasso (%)</label><input class="input" id="pf-bf" type="number" inputmode="decimal" min="3" max="60" step="0.1" placeholder="facoltativo"/></div>
       <div class="field"><label class="field-lbl" for="pf-date">Data misura</label><input class="input" id="pf-date" type="date"/></div>
       <div class="field"><label class="field-lbl" for="pf-passi">Passi al giorno</label><input class="input" id="pf-passi" type="number" inputmode="numeric" min="0" step="500"/></div>
-      <div class="field"><label class="field-lbl" for="pf-kw">kcal allenamento</label><input class="input" id="pf-kw" type="number" inputmode="numeric" min="0" step="50"/></div>
+      <div class="field"><label class="field-lbl" for="pf-kw">kcal per allenamento</label><input class="input" id="pf-kw" type="number" inputmode="numeric" min="0" step="50"/></div>
     </div>
     <div class="field"><label class="field-lbl" for="pf-naz">Nazionalità</label><select id="pf-naz">${COUNTRIES.map(([c, n]) => `<option value="${c}">${n}</option>`).join('')}</select></div>
     <div class="field"><label class="field-lbl" for="pf-act">Vita quotidiana (senza passi e allenamento)</label><select id="pf-act">${ACTIVITY.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select></div>
-    <p class="note">Passi e allenamento si contano a parte: scegli qui l'attività del lavoro e della giornata, non dello sport. Le kcal dell'allenamento si sommano solo nei giorni Workout.</p>
+    <p class="note">Passi e allenamento si contano a parte: scegli qui l'attività del lavoro e della giornata, non dello sport. Le kcal dell'allenamento si sommano nei giorni in cui ti sei allenato davvero (le legge dal registro di Allenamento); per i giorni futuri vale il piano.</p>
     <div class="de-sum" id="pf-sum"></div>
     <div id="pf-hist"></div>
     <button type="button" class="btn accent block" id="pf-ok">Salva</button>
