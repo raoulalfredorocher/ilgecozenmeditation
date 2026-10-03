@@ -10,7 +10,7 @@
  *
  * Cambiare VERSION svuota le copie vecchie.
  */
-const VERSION = 'geco-v3';
+const VERSION = 'geco-v4';
 const APP = `${VERSION}-app`;
 const LIBS = `${VERSION}-libs`;
 
