@@ -104,16 +104,3 @@ export function adherenceDots(days) {
   }).join('');
   return svg(W, H, dots, 'Giorni in linea con la dieta');
 }
-
-// ─── 6. Proteine al kg (indicatore con fascia ideale) ────────────────────
-export function proteinGauge(gPerKg) {
-  const W = 320, H = 54, L = 4, R = 4, max = 3;
-  const x = v => L + (W - L - R) * Math.min(v, max) / max;
-  const lo = 1.6, hi = 2.2;
-  return svg(W, H, `
-    <rect x="${L}" y="18" width="${W - L - R}" height="10" rx="5" class="ch-track"/>
-    <rect x="${x(lo)}" y="18" width="${x(hi) - x(lo)}" height="10" rx="5" fill="${BLUE}" opacity=".35"/>
-    <circle cx="${x(gPerKg || 0)}" cy="23" r="9" fill="${BLUE}" stroke="var(--card)" stroke-width="3"/>
-    <text x="${x(lo)}" y="46" text-anchor="middle" class="ch-t">1,6</text><text x="${x(hi)}" y="46" text-anchor="middle" class="ch-t">2,2</text>
-    <text x="${L}" y="46" class="ch-t">0</text><text x="${W - R}" y="46" text-anchor="end" class="ch-t">3 g/kg</text>`, 'Proteine al chilo di peso corporeo');
-}

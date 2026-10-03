@@ -11,7 +11,7 @@ import { icon } from '../../ui/icons.js';
 import {
   state, onChange, MC, MONTHS, DAY_SHORT, totals, planFor, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdee,
 } from './state.js';
-import { rings, kcalBars, macroSplit, balanceBars, adherenceDots, proteinGauge } from './charts.js';
+import { rings, kcalBars, macroSplit, balanceBars, adherenceDots } from './charts.js';
 import { registerToday } from './dieta.js';
 import { openProfile } from './profile.js';
 
@@ -106,20 +106,12 @@ function render() {
     counted ? `${ok} giorni su ${counted} entro il 10% dal piano${streak > 1 ? ` · serie di ${streak}` : ''}` : 'Si calcola sui giorni registrati',
     adherenceDots(st.slice(-28)), legend([[MC.prot, 'In linea'], [MC.fat, 'Sopra'], [MC.carb, 'Sotto']]));
 
-  // 6. Proteine al kg
-  const peso = parseFloat(state.profile?.peso);
-  const gkg = logged.length && peso ? avg(logged.map(d => d.t), 'prot') / peso : 0;
-  const protCard = peso
-    ? card('Proteine al chilo', logged.length ? `${gkg.toLocaleString('it-IT', { maximumFractionDigits: 1 })} <span class="s">g/kg</span>` : '–',
-      logged.length ? (gkg >= 1.6 && gkg <= 2.2 ? 'nella fascia ideale per chi si allena' : gkg < 1.6 ? 'sotto la fascia ideale (1,6–2,2)' : 'sopra la fascia ideale (1,6–2,2)') : 'Registra qualche giorno', proteinGauge(gkg))
-    : '';
-
   root.innerHTML = `
     ${hasProfile() ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il bilancio.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
     <div class="segmented" role="group" aria-label="Periodo">
       ${[7, 30, 90].map(n => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${n} giorni</button>`).join('')}
     </div>
-    ${todayCard}${kcalCard}${macroCard}${balanceCard}${adhCard}${protCard}
+    ${todayCard}${kcalCard}${macroCard}${balanceCard}${adhCard}
     ${calendar()}`;
 }
 
