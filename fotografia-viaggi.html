@@ -4,186 +4,195 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="theme-color" content="#f7f4f9"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
   <title>Il Geco Zen — Fotografia e Viaggi</title>
-  <link rel="stylesheet" href="styles/theme.css?v=8"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
-
-    /* ── Header ── */
-    #map-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--border)}
-    .header-btn{background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:inherit;font-size:.58rem;letter-spacing:.1em;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;width:52px;text-decoration:none;-webkit-tap-highlight-color:transparent}
-    .header-center-travel{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
-    .map-title{font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:700}
-    .map-sub{font-size:.46rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
-    .theme-toggle{background:none;border:1.5px solid var(--border);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;-webkit-tap-highlight-color:transparent}
-
-    /* ── Page layout ── */
-    #page-body{display:flex;flex-direction:column;flex:1;width:100%}
-
-    /* ── Mappa full-width: posizione fixed sotto header, poi scrollabile ── */
-    #map-container{
-      position:fixed;
-      top:calc(env(safe-area-inset-top,0px) + 60px);
-      left:0;
-      right:0;
-      width:100%;
-      height:55vw;
-      min-height:260px;
-      max-height:60vh;
-      z-index:1;
-      overflow:hidden;
-    }
-    #leaflet-map{width:100%;height:100%;display:block}
-    .leaflet-control-attribution{font-size:9px;background:rgba(255,255,255,.7)!important}
-    .leaflet-container{background:#a8d4e6;margin:0!important;padding:0!important}
-
-    /* Spazio riservato sotto la mappa fixed per il contenuto */
-    #map-spacer{
-      width:100%;
-      height:calc(55vw + env(safe-area-inset-top,0px) + 60px);
-      min-height:calc(260px + env(safe-area-inset-top,0px) + 60px);
-      max-height:calc(60vh + env(safe-area-inset-top,0px) + 60px);
-      flex-shrink:0;
-    }
-
-    /* ── Sezione paesi ── */
-    #countries-section{padding:16px 16px calc(min(env(safe-area-inset-bottom, 0px), 34px) + 80px)}
-
-    /* ── Blocco continente con accordion ── */
-    .continent-block{margin-bottom:16px}
-    .continent-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 6px;border-bottom:2px solid var(--gold);margin-bottom:0;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
-    .continent-title-text{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:700}
-    .continent-chevron{font-size:.7rem;color:var(--gold);transition:transform .25s;flex-shrink:0}
-    .continent-block.open .continent-chevron{transform:rotate(180deg)}
-    .continent-body{display:none;padding-top:10px}
-    .continent-block.open .continent-body{display:block}
-
-    /* ── Card paese ── */
-    .country-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden}
-    .country-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
-    .country-flag{font-size:1.6rem;line-height:1;flex-shrink:0}
-    .country-name{font-size:.88rem;font-weight:700;color:var(--text);flex:1}
-    /* Flag "visitato" accanto al nome */
-    .country-visited-badge{font-size:.7rem;background:#22c55e;color:#fff;border-radius:8px;padding:1px 7px;margin-left:4px;letter-spacing:.05em;font-weight:600;display:none}
-    .country-card.visited .country-visited-badge{display:inline-block}
-    .country-card.visited .country-name{color:var(--gold)}
-    /* Toggle visitato */
-    .country-visit-toggle{font-size:1.1rem;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:2px 4px;border-radius:8px;transition:transform .15s}
-    .country-visit-toggle:active{transform:scale(.85)}
-    .country-chevron{font-size:.8rem;color:var(--muted);transition:transform .25s;flex-shrink:0}
-    .country-card.open .country-chevron{transform:rotate(180deg)}
-    .country-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
-    .country-card.open .country-body{display:block}
-
-    /* ── Section title ── */
-    .section-title{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
-    .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-    .section-badge{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1px 7px;font-size:.54rem;color:var(--muted);font-weight:500}
-
-    /* ── Link Foto Drive (campo fisso paese) ── */
-    .drive-section{margin-top:14px;margin-bottom:2px}
-    .drive-link-wrap{display:flex;align-items:center;gap:8px;margin-top:4px}
-    .drive-link-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:.72rem;color:var(--text);font-family:inherit}
-    .drive-link-input:focus{outline:none;border-color:var(--gold)}
-    .drive-link-save{background:var(--gold);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:.66rem;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
-    .drive-link-open{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:7px;padding:3px 9px;margin-top:5px}
-
-    /* ── UNESCO ── */
-    .unesco-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
-    .unesco-item:last-child{border-bottom:none}
-    .unesco-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;background:var(--card);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s;margin-top:1px}
-    .unesco-check.checked{background:var(--gold);border-color:var(--gold);color:#fff}
-    .unesco-name{font-size:.76rem;font-weight:600;color:var(--text);line-height:1.3}
-    .unesco-year{font-size:.56rem;color:var(--muted);margin-top:1px}
-
-    /* ── Viaggi ── */
-    .trip-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
-    .trip-title{font-size:.8rem;font-weight:700;color:var(--text)}
-    .trip-dates{font-size:.58rem;color:var(--muted);margin-top:2px}
-    .trip-notes{font-size:.72rem;color:var(--text);line-height:1.5;margin-top:5px;white-space:pre-wrap}
-    .trip-actions{display:flex;gap:6px;margin-top:7px}
-    .btn-sm{background:none;border:1px solid var(--border);border-radius:7px;padding:3px 9px;font-size:.58rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
-    .btn-sm.danger{color:var(--red);border-color:var(--red)}
-    .btn-sm.primary{color:var(--gold);border-color:var(--gold)}
-
-    .add-trip-btn{width:100%;background:none;border:1.5px dashed var(--border);border-radius:10px;padding:10px;font-size:.7rem;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;margin-top:4px}
-    .trip-form{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:6px;display:none}
-    .trip-form.open{display:block}
-    .form-row{margin-bottom:9px}
-    .form-label{display:block;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-    .form-input,.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 9px;font-size:.76rem;color:var(--text);font-family:inherit}
-    .form-textarea{resize:vertical;min-height:60px}
-    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-    .form-btns{display:flex;gap:7px;margin-top:9px}
-    .btn-save{flex:1;background:var(--gold);color:#fff;border:none;border-radius:9px;padding:8px;font-size:.72rem;font-family:inherit;font-weight:600;cursor:pointer}
-    .btn-cancel{background:none;border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-size:.72rem;font-family:inherit;color:var(--muted);cursor:pointer}
-
-    /* ── Stats bar ── */
-    #stats-bar{position:fixed;bottom:calc(min(env(safe-area-inset-bottom, 0px), 34px) + 68px);left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.6rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
-    .sv{color:var(--gold);font-weight:700;font-size:.72rem;margin-right:2px}
-  </style>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    /* ── Mappa: resta ferma sotto la barra mentre la lista scorre ── */
+    .vg-sticky {
+      position: sticky; top: calc(var(--safe-top) + var(--header-h)); z-index: 50;
+      margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-5)) 0;
+      padding: var(--space-2) var(--space-5) var(--space-3);
+      background: var(--bg);
+    }
+    .vg-sticky::after { /* sfumatura: la lista scorre "sotto" la mappa senza taglio netto */
+      content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 14px; pointer-events: none;
+      background: linear-gradient(var(--bg), transparent);
+    }
+    .vg-map-card {
+      position: relative; isolation: isolate; overflow: hidden;
+      border-radius: var(--radius-lg); border: .5px solid var(--border); box-shadow: var(--shadow-md);
+      height: clamp(240px, 58vw, 340px); background: var(--geco-mist);
+    }
+    #leaflet-map { width: 100%; height: 100%; background: var(--geco-mist); font-family: inherit; }
+    .vg-map-card .leaflet-container { font-family: inherit; }
+    .vg-map-card .leaflet-bar { border: 0; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-md); margin: 10px; }
+    .vg-map-card .leaflet-bar a {
+      width: 34px; height: 34px; line-height: 34px; font-size: 18px; border: 0;
+      background: color-mix(in srgb, var(--card) 88%, transparent); color: var(--text);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    }
+    .vg-map-card .leaflet-bar a + a { border-top: .5px solid var(--border); }
+    .vg-map-card .leaflet-bar a:hover { background: var(--card); }
+    .vg-map-card .leaflet-control-attribution {
+      font-size: 9px; padding: 1px 6px; color: var(--muted); border-radius: 8px 0 0 0;
+      background: color-mix(in srgb, var(--bg) 70%, transparent);
+    }
+    .vg-map-card .leaflet-control-attribution a { color: inherit; }
+    .vg-tip.leaflet-tooltip {
+      background: var(--card); color: var(--text); border: .5px solid var(--border);
+      border-radius: 10px; box-shadow: var(--shadow-md); font: 500 var(--fs-sm)/1.2 var(--font); padding: 5px 10px;
+    }
+    .vg-tip.leaflet-tooltip::before { display: none; }
+    .leaflet-interactive:focus { outline: none; }
+    .vg-tiles { filter: saturate(.5) contrast(.94) brightness(1.04); }
+    :root[data-theme="dark"] .vg-tiles { filter: invert(1) hue-rotate(195deg) saturate(.45) brightness(.82) contrast(.92); }
+
+    /* Contatori sopra la mappa */
+    .vg-stats {
+      position: absolute; top: 10px; left: 10px; z-index: 800; display: flex; align-items: stretch;
+      border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-md); border: .5px solid var(--border);
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    }
+    .vg-stat { padding: 6px 11px 5px; text-align: center; line-height: 1.15; }
+    .vg-stat + .vg-stat { border-left: .5px solid var(--border); }
+    .vg-stat b { display: block; font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--primary); }
+    .vg-stat span { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── Ricerca e filtro ── */
+    .vg-tools { display: flex; flex-direction: column; gap: var(--space-3); }
+    .vg-search { position: relative; }
+    .vg-search .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
+    .vg-search .input { padding-left: 42px; border-radius: 999px; }
+
+    /* ── Continenti ── */
+    .vg-list { display: flex; flex-direction: column; gap: var(--space-3); }
+    .vg-cont { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-lg); overflow: clip; }
+    .vg-cont-head {
+      width: 100%; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4);
+      min-height: 64px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--text);
+    }
+    .vg-cont-head:active { background: var(--surface); }
+    .vg-cont-head .dot-icon { width: 38px; height: 38px; border-radius: 12px; }
+    .vg-cont-title { font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; }
+    .vg-cont-count { font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 1px; }
+    .vg-chev { color: var(--muted); transition: transform .25s var(--ease); }
+    .vg-chev .icon { width: 20px; height: 20px; }
+    .vg-cont.open > .vg-cont-head .vg-chev, .vg-country.open > .vg-country-head .vg-chev { transform: rotate(180deg); }
+    .vg-cont-body { display: none; flex-direction: column; gap: var(--space-2); padding: 0 var(--space-3) var(--space-3); }
+    .vg-cont.open > .vg-cont-body, .vg-filtering .vg-cont-body { display: flex; }
+    .vg-cont[hidden] { display: none; }
+
+    /* ── Paese ── */
+    .vg-country {
+      background: var(--surface); border: 1px solid transparent; border-radius: var(--radius-md);
+      scroll-margin-top: calc(var(--safe-top) + var(--header-h) + var(--vg-sticky, 320px) + 16px);
+      transition: border-color .25s, background-color .25s;
+    }
+    .vg-country[hidden] { display: none; }
+    .vg-country.visited { background: color-mix(in srgb, var(--geco-blue) 9%, var(--card)); border-color: color-mix(in srgb, var(--geco-blue) 35%, transparent); }
+    .vg-country-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); min-height: 56px; cursor: pointer; user-select: none; }
+    .vg-flag { font-size: 1.7rem; line-height: 1; flex-shrink: 0; }
+    .vg-name { flex: 1; min-width: 0; font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .vg-visit {
+      flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border-radius: 999px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-xs); font-weight: 600;
+      border: 1px solid var(--border); background: var(--card); color: var(--muted);
+      transition: background-color .2s, color .2s, border-color .2s, transform .12s var(--ease);
+    }
+    .vg-visit .icon { width: 15px; height: 15px; }
+    .vg-visit:active { transform: scale(.94); }
+    .vg-visit[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+    .vg-country-body { display: none; padding: 0 var(--space-4) var(--space-4); flex-direction: column; gap: var(--space-5); }
+    .vg-country.open > .vg-country-body { display: flex; }
+
+    /* Blocchi dentro il paese */
+    .vg-block { display: flex; flex-direction: column; gap: var(--space-3); }
+    .vg-block-head { display: flex; align-items: center; gap: var(--space-2); }
+    .vg-block-head .zen-eyebrow { display: flex; align-items: center; gap: 6px; }
+    .vg-block-head .icon { width: 15px; height: 15px; }
+    .vg-badge { margin-left: auto; font-size: var(--fs-xs); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; background: var(--card); border-radius: 999px; padding: 2px 10px; }
+    .vg-drive { display: flex; gap: var(--space-2); }
+    .vg-drive .input { background: var(--card); }
+    .vg-drive-link:empty { display: none; }
+
+    /* UNESCO */
+    .vg-sites { background: var(--card); border-radius: var(--radius-sm); overflow: hidden; }
+    .vg-site { display: flex; align-items: center; gap: var(--space-3); padding: 10px var(--space-3); width: 100%; background: none; border: 0; text-align: left; cursor: pointer; color: inherit; min-height: 52px; }
+    .vg-site + .vg-site { border-top: .5px solid var(--border); }
+    .vg-site:active { background: var(--surface); }
+    .vg-site-name { font-size: var(--fs-sm); font-weight: 500; line-height: 1.35; }
+    .vg-site-year { font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+    .vg-site[aria-pressed="true"] .vg-site-name { color: var(--primary); }
+    .vg-site[aria-pressed="true"] .check { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+    .vg-none { font-size: var(--fs-sm); color: var(--muted); padding: var(--space-2) 2px; }
+
+    /* Viaggi */
+    .vg-trip { background: var(--card); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 2px; }
+    .vg-trip-top { display: flex; align-items: center; gap: var(--space-2); }
+    .vg-trip-title { flex: 1; min-width: 0; font-size: var(--fs-md); font-weight: 600; letter-spacing: -.01em; }
+    .vg-trip-dates { display: flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--muted); }
+    .vg-trip-dates .icon { width: 14px; height: 14px; }
+    .vg-trip-notes { font-size: var(--fs-sm); line-height: 1.5; margin-top: 6px; white-space: pre-wrap; color: var(--text); }
+    .vg-trip .icon-btn { width: 34px; height: 34px; color: var(--muted); }
+    .vg-trip .icon-btn .icon { width: 18px; height: 18px; }
+    .vg-trip .icon-btn.del { color: var(--danger); }
+    .vg-form { display: none; flex-direction: column; gap: var(--space-3); background: var(--card); border-radius: var(--radius-sm); padding: var(--space-4); }
+    .vg-form.open { display: flex; }
+    .vg-form .input, .vg-form textarea { background: var(--surface); }
+    .vg-form .grid-2 > * { min-width: 0; }
+    .vg-form input[type="date"] { min-width: 0; max-width: 100%; -webkit-appearance: none; appearance: none; }
+    .vg-form-btns { display: flex; gap: var(--space-2); }
+    .vg-form-btns .btn { flex: 1; }
+    .vg-add { width: 100%; border-style: dashed; background: transparent; color: var(--muted); }
+  </style>
 </head>
-<body class="zen" data-title="Fotografia e viaggi" data-back="passioni.html">
+<body class="zen zen-native" data-title="Fotografia e viaggi" data-back="passioni.html" data-tab="">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
-  <header id="map-header">
-    <a class="header-btn" href="passioni.html" style="color:var(--muted);text-decoration:none;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9Z"/><path d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 0 0-9a4.5 4.5 0 0 1 0-9Z"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-      <span>TAO</span>
-    </a>
-    <div class="header-center-travel">
-      <div style="font-size:1.4rem;line-height:1">🗺️</div>
-      <div class="map-title">VIAGGI</div>
-      <div class="map-sub">fotografia · esplorazione</div>
+  <main class="zen-main">
+    <!-- Mappa: tocca un paese per aprirlo; i paesi visitati si colorano di blu -->
+    <div class="vg-sticky" id="vg-sticky">
+      <div class="vg-map-card">
+        <div id="leaflet-map" aria-label="Mappa del mondo"></div>
+        <div class="vg-stats" aria-label="Riepilogo">
+          <div class="vg-stat"><b id="sv-countries">0</b><span>Paesi</span></div>
+          <div class="vg-stat"><b id="sv-unesco">0</b><span>UNESCO</span></div>
+          <div class="vg-stat"><b id="sv-trips">0</b><span>Viaggi</span></div>
+        </div>
+      </div>
     </div>
-    <button class="theme-toggle" id="theme-toggle"><div id="theme-knob">☀️</div></button>
-  </header>
 
-  <div id="map-container">
-    <div id="leaflet-map"></div>
-  </div>
+    <div class="vg-tools">
+      <div class="vg-search">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input class="input" id="vg-q" type="search" placeholder="Cerca un paese" autocomplete="off" aria-label="Cerca un paese"/>
+      </div>
+      <div class="segmented" id="vg-filter" role="group" aria-label="Filtro">
+        <button type="button" data-f="all" aria-pressed="true">Tutti</button>
+        <button type="button" data-f="visited" aria-pressed="false">Visitati</button>
+      </div>
+    </div>
 
-  <div id="page-body">
-    <div id="map-spacer"></div>
-    <div id="countries-section"></div>
-  </div>
-
-  <div id="stats-bar">
-    <div><span class="sv" id="sv-countries">0</span>paesi</div>
-    <div><span class="sv" id="sv-unesco">0</span>UNESCO</div>
-    <div><span class="sv" id="sv-trips">0</span>viaggi</div>
-  </div>
+    <div class="vg-list" id="countries-section"></div>
+  </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module">
     import { waitForAuth } from './js/core/db.js';
-    import { subscribeAllCountries, subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
-
-    // ── Tema ─────────────────────────────────────────────────────────────────
-    const html = document.documentElement;
-    const knob = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
-    function applyTheme() {
-      html.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#111820' : '#f7f4f9';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-      if (window._geoLayer) paintGeo();
-    }
-    applyTheme();
-    document.getElementById('theme-toggle').addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+    import { subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
+    import { icon } from './js/ui/icons.js';
+    import { safeUrl } from './js/core/dom.js';
 
     // ── Dati paesi ────────────────────────────────────────────────────────────
     const COUNTRIES = {
@@ -1760,18 +1769,37 @@
       TO:[-21.2,-175.2],TV:[-7.5,178.7],VU:[-15.4,166.9],
     };
 
-    // ── Mappa visitati (caricata da Firebase) ─────────────────────────────────
-    // iso2 → true/false
+    // ── Stato visitati (caricato da Firebase) ─────────────────────────────────
     const visitedCountries = new Set();
+    const NAMES = {};   // iso2 → nome paese (per i suggerimenti sulla mappa)
+    Object.values(COUNTRIES).forEach(cs => Object.entries(cs).forEach(([iso, c]) => { NAMES[iso] = c.name; }));
 
-    // ── Leaflet ───────────────────────────────────────────────────────────────
-    // Calcola altezza header per il padding-top della mappa
-    const headerEl = document.getElementById('map-header');
-    const headerH = headerEl.offsetHeight || 60;
+    const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
-    const map = L.map('leaflet-map', {zoomControl:true, attributionControl:true});
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18, attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
-    map.setView([30, 15], 2);
+    // ── Mappa ─────────────────────────────────────────────────────────────────
+    const map = L.map('leaflet-map', { zoomControl: false, attributionControl: true, worldCopyJump: true, minZoom: 1, zoomSnap: .5 });
+    map.attributionControl.setPrefix(false);
+    L.control.zoom({ position: 'topright' }).addTo(map);
+    map.setView([28, 12], 1.5);
+
+    // Tessere OpenStreetMap ammorbidite con un filtro colore (vedi .vg-tiles): chiare nel tema chiaro, scure nel tema scuro
+    const TILE_ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+    let tiles = null;
+    function setTiles() {
+      if (tiles) return;
+      tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: TILE_ATTR, className: 'vg-tiles' }).addTo(map);
+    }
+    setTiles();
+
+    // Il pannello fisso con la mappa occupa spazio: la lista deve sapere quanto, per non finirci sotto
+    const stickyEl = document.getElementById('vg-sticky');
+    const measureSticky = () => {
+      document.documentElement.style.setProperty('--vg-sticky', stickyEl.offsetHeight + 'px');
+      map.invalidateSize();
+    };
+    measureSticky();
+    addEventListener('resize', measureSticky);
 
     // Mappa numeric ISO3166 → iso2
     const NUM2ISO = {
@@ -1812,31 +1840,34 @@
     };
 
     window._geoLayer = null;
+    const isoOf = f => NUM2ISO[String(f.id).padStart(3, '0')] || NUM2ISO[f.id];
 
+    // Paese non visitato: quasi trasparente. Visitato: blu del geco, solo dentro i suoi confini.
     function geoStyle(f) {
-      const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
-      if (!iso2) return {fillOpacity: 0.04, weight: 0.5, color: '#b0bec8'};
-      // Paese non ancora visitato: tenue
-      if (!visitedCountries.has(iso2)) {
-        return {
-          color: '#b0bec8',
-          weight: 1,
-          fillColor: '#d8e8f0',
-          fillOpacity: 0.25,
-        };
+      const iso2 = isoOf(f);
+      if (iso2 && visitedCountries.has(iso2)) {
+        return { color: cssVar('--geco-blue'), weight: 1.6, opacity: 1, fillColor: cssVar('--geco-blue'), fillOpacity: .5 };
       }
-      // Paese visitato: blu fisso (stesso in light e dark)
-      return {
-        color: '#0d4f80',
-        weight: 3,
-        fillColor: '#25739E',
-        fillOpacity: 0.5,
-      };
+      return { color: cssVar('--muted'), weight: .5, opacity: .35, fillColor: cssVar('--geco-blue'), fillOpacity: .02 };
     }
 
     function paintGeo() {
-      if (!window._geoLayer) return;
-      window._geoLayer.setStyle(geoStyle);
+      if (window._geoLayer) window._geoLayer.setStyle(geoStyle);
+    }
+
+    // Tema chiaro/scuro cambiato dal Profilo: mappa e colori seguono
+    new MutationObserver(() => paintGeo())
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    function openCountry(iso2) {
+      const card = document.getElementById('card-' + iso2);
+      if (!card) return;
+      if (card.hidden) { resetFilters(); }
+      card.classList.add('open');
+      card.querySelector('.vg-country-head')?.setAttribute('aria-expanded', 'true');
+      const block = card.closest('.vg-cont');
+      if (block) { block.classList.add('open'); block.querySelector('.vg-cont-head')?.setAttribute('aria-expanded', 'true'); }
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
     }
 
     fetch('./assets/data/countries-110m.json')
@@ -1849,18 +1880,14 @@
           window._geoLayer = L.geoJSON(geojson, {
             style: geoStyle,
             onEachFeature(f, layer) {
-              const iso2 = NUM2ISO[String(f.id).padStart(3,'0')] || NUM2ISO[f.id];
+              const iso2 = isoOf(f);
               if (!iso2) return;
+              if (NAMES[iso2]) layer.bindTooltip(NAMES[iso2], { sticky: true, direction: 'top', className: 'vg-tip', opacity: 1 });
+              layer.on('mouseover', () => layer.setStyle({ fillOpacity: visitedCountries.has(iso2) ? .68 : .2 }));
+              layer.on('mouseout', () => window._geoLayer.resetStyle(layer));
               layer.on('click', () => {
-                map.flyTo(CENTERS[iso2] || layer.getBounds().getCenter(), 5, {duration:1});
-                const card = document.getElementById('card-'+iso2);
-                if (card) {
-                  card.classList.add('open');
-                  // Apri anche il blocco continente padre
-                  const block = card.closest('.continent-block');
-                  if (block) block.classList.add('open');
-                  setTimeout(() => card.scrollIntoView({behavior:'smooth',block:'start'}), 400);
-                }
+                map.flyTo(CENTERS[iso2] || layer.getBounds().getCenter(), 5, { duration: 1 });
+                openCountry(iso2);
               });
             }
           }).addTo(map);
@@ -1869,124 +1896,188 @@
       })
       .catch(() => {});
 
-    // ── Stato visitati ────────────────────────────────────────────────────────
-    function updateVisitedCount() {
-      document.getElementById('sv-countries').textContent = visitedCountries.size;
+    // ── Conteggi e filtri ─────────────────────────────────────────────────────
+    const section = document.getElementById('countries-section');
+    const qInput = document.getElementById('vg-q');
+    const filterBtns = [...document.querySelectorAll('#vg-filter button')];
+    let mode = 'all';
+    const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+    const emptyEl = document.createElement('div');
+    emptyEl.className = 'empty';
+    emptyEl.hidden = true;
+    emptyEl.textContent = 'Nessun paese trovato.';
+
+    function applyFilter() {
+      const q = norm(qInput.value.trim());
+      section.classList.toggle('vg-filtering', !!q || mode === 'visited');
+      let any = false;
+      section.querySelectorAll('.vg-cont').forEach(block => {
+        let n = 0;
+        block.querySelectorAll('.vg-country').forEach(c => {
+          const show = (!q || c.dataset.name.includes(q)) && (mode !== 'visited' || c.classList.contains('visited'));
+          c.hidden = !show;
+          if (show) n++;
+        });
+        block.hidden = n === 0;
+        if (n) any = true;
+      });
+      emptyEl.hidden = any;
+    }
+    function resetFilters() {
+      qInput.value = ''; mode = 'all';
+      filterBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === 'all')));
+      applyFilter();
+    }
+    qInput.addEventListener('input', applyFilter);
+    filterBtns.forEach(b => b.addEventListener('click', () => {
+      mode = b.dataset.f;
+      filterBtns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      applyFilter();
+    }));
+
+    // Aggiornamenti raggruppati: all'avvio arrivano ~200 risposte di Firebase insieme
+    let refreshQueued = false;
+    function scheduleRefresh() {
+      if (refreshQueued) return;
+      refreshQueued = true;
+      requestAnimationFrame(() => {
+        refreshQueued = false;
+        document.getElementById('sv-countries').textContent = visitedCountries.size;
+        section.querySelectorAll('.vg-cont').forEach(block => {
+          const all = block.querySelectorAll('.vg-country');
+          const v = block.querySelectorAll('.vg-country.visited').length;
+          block.querySelector('[data-cc]').textContent = v ? `${v} ${v === 1 ? 'visitato' : 'visitati'} su ${all.length}` : `${all.length} paesi`;
+        });
+        if (mode === 'visited') applyFilter();
+      });
     }
 
     function setCountryVisited(iso2, visited) {
       if (visited) visitedCountries.add(iso2);
       else visitedCountries.delete(iso2);
-      // Aggiorna card UI
-      const card = document.getElementById('card-'+iso2);
+      const card = document.getElementById('card-' + iso2);
       if (card) {
         card.classList.toggle('visited', visited);
-        const btn = card.querySelector('.country-visit-toggle');
-        if (btn) btn.textContent = visited ? '🏁' : '🏴';
+        const btn = card.querySelector('.vg-visit');
+        if (btn) {
+          btn.setAttribute('aria-pressed', String(visited));
+          btn.querySelector('span').textContent = visited ? 'Visitato' : 'Segna';
+        }
       }
-      // Aggiorna mappa
-      if (window._geoLayer) paintGeo();
-      updateVisitedCount();
+      paintGeo();
+      scheduleRefresh();
     }
 
-    // ── Render lista paesi ────────────────────────────────────────────────────
-    const section = document.getElementById('countries-section');
+    // ── Lista: continenti → paesi ─────────────────────────────────────────────
+    const TONE = { Europa: '', Asia: 'sakura', Americhe: 'leaf', Africa: 'sand', Oceania: '' };
     const globalUnsubs = {};
 
     function buildCountriesList() {
       section.innerHTML = '';
       Object.entries(COUNTRIES).forEach(([continent, countries]) => {
         const block = document.createElement('div');
-        block.className = 'continent-block'; // chiuso di default
-
-        // Ordina i paesi alfabeticamente per nome
-        const sortedEntries = Object.entries(countries).sort(([,a],[,b]) => a.name.localeCompare(b.name, 'it'));
+        block.className = 'vg-cont'; // chiuso di default
+        const sortedEntries = Object.entries(countries).sort(([, a], [, b]) => a.name.localeCompare(b.name, 'it'));
 
         block.innerHTML = `
-          <div class="continent-header">
-            <div class="continent-title-text">🌍 ${continent}</div>
-            <div class="continent-chevron">▾</div>
-          </div>
-          <div class="continent-body"></div>`;
+          <button type="button" class="vg-cont-head" aria-expanded="false">
+            <span class="dot-icon ${TONE[continent] || ''}">${icon('globe')}</span>
+            <span class="grow"><span class="vg-cont-title" style="display:block">${continent}</span><span class="vg-cont-count" data-cc style="display:block">${sortedEntries.length} paesi</span></span>
+            <span class="vg-chev">${icon('down')}</span>
+          </button>
+          <div class="vg-cont-body"></div>`;
 
-        // Toggle accordion continente
-        block.querySelector('.continent-header').addEventListener('click', () => {
-          block.classList.toggle('open');
+        const head = block.querySelector('.vg-cont-head');
+        head.addEventListener('click', () => {
+          head.setAttribute('aria-expanded', String(block.classList.toggle('open')));
         });
 
-        const bodyEl = block.querySelector('.continent-body');
+        const bodyEl = block.querySelector('.vg-cont-body');
 
         sortedEntries.forEach(([iso2, info]) => {
           const card = document.createElement('div');
-          card.className = 'country-card';
+          card.className = 'vg-country';
           card.id = 'card-' + iso2;
+          card.dataset.name = norm(info.name);
 
           card.innerHTML = `
-            <div class="country-header">
-              <div class="country-flag">${info.flag}</div>
-              <div class="country-name">${info.name}<span class="country-visited-badge">✓ visitato</span></div>
-              <div class="country-visit-toggle" title="Segna come visitato">🏴</div>
-              <div class="country-chevron">▾</div>
+            <div class="vg-country-head" role="button" tabindex="0" aria-expanded="false">
+              <span class="vg-flag">${info.flag}</span>
+              <span class="vg-name">${esc(info.name)}</span>
+              <button type="button" class="vg-visit" aria-pressed="false" aria-label="Segna ${esc(info.name)} come visitato">${icon('check')}<span>Segna</span></button>
+              <span class="vg-chev">${icon('down')}</span>
             </div>
-            <div class="country-body">
-              <div class="drive-section">
-                <div class="section-title">📁 Foto Drive</div>
-                <div class="drive-link-wrap">
-                  <input class="drive-link-input" id="di-${iso2}" type="url" placeholder="https://drive.google.com/…"/>
-                  <button class="drive-link-save" id="ds-${iso2}">Salva</button>
+            <div class="vg-country-body">
+              <div class="vg-block">
+                <div class="vg-block-head"><span class="zen-eyebrow">${icon('image')} Foto su Drive</span></div>
+                <div class="vg-drive">
+                  <input class="input" id="di-${iso2}" type="url" inputmode="url" placeholder="Incolla il link della cartella" aria-label="Link alla cartella foto"/>
+                  <button type="button" class="btn sm accent" id="ds-${iso2}">Salva</button>
                 </div>
-                <div id="dl-${iso2}"></div>
+                <div class="vg-drive-link" id="dl-${iso2}"></div>
               </div>
-              <div class="section-title">🏛️ Patrimoni UNESCO <span class="section-badge" id="ub-${iso2}">0/${info.sites.length}</span></div>
-              <div id="ul-${iso2}"></div>
-              <div class="section-title">✈️ I Miei Viaggi <span class="section-badge" id="tb-${iso2}">0</span></div>
-              <div id="tl-${iso2}"></div>
-              <button class="add-trip-btn" id="atb-${iso2}">＋ Aggiungi viaggio</button>
-              <div class="trip-form" id="tf-${iso2}">
-                <div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="tf-title-${iso2}" type="text" placeholder="es. Giappone Aprile 2019"/></div>
-                <div class="form-row form-row-2">
-                  <div><label class="form-label">Inizio</label><input class="form-input" id="tf-s-${iso2}" type="date"/></div>
-                  <div><label class="form-label">Fine</label><input class="form-input" id="tf-e-${iso2}" type="date"/></div>
-                </div>
-                <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="tf-n-${iso2}" placeholder="Appunti di viaggio…"></textarea></div>
-                <div class="form-btns">
-                  <button class="btn-cancel" id="tf-cancel-${iso2}">Annulla</button>
-                  <button class="btn-save" id="tf-save-${iso2}">Salva</button>
+              <div class="vg-block">
+                <div class="vg-block-head"><span class="zen-eyebrow">${icon('star')} Patrimoni UNESCO</span><span class="vg-badge" id="ub-${iso2}">0/${info.sites.length}</span></div>
+                ${info.sites.length ? `<div class="meter-track"><div class="meter-fill" id="um-${iso2}" style="width:0"></div></div>` : ''}
+                <div id="ul-${iso2}"></div>
+              </div>
+              <div class="vg-block">
+                <div class="vg-block-head"><span class="zen-eyebrow">${icon('mapPin')} I miei viaggi</span><span class="vg-badge" id="tb-${iso2}">0</span></div>
+                <div class="stack" id="tl-${iso2}"></div>
+                <button type="button" class="btn vg-add" id="atb-${iso2}">${icon('plus', 'sm')} Aggiungi viaggio</button>
+                <div class="vg-form" id="tf-${iso2}">
+                  <div class="field"><label for="tf-title-${iso2}">Titolo</label><input class="input" id="tf-title-${iso2}" type="text" placeholder="es. ${esc(info.name)} aprile 2019"/></div>
+                  <div class="grid-2">
+                    <div class="field"><label for="tf-s-${iso2}">Inizio</label><input class="input" id="tf-s-${iso2}" type="date"/></div>
+                    <div class="field"><label for="tf-e-${iso2}">Fine</label><input class="input" id="tf-e-${iso2}" type="date"/></div>
+                  </div>
+                  <div class="field"><label for="tf-n-${iso2}">Note</label><textarea id="tf-n-${iso2}" placeholder="Appunti di viaggio…"></textarea></div>
+                  <div class="vg-form-btns">
+                    <button type="button" class="btn" id="tf-cancel-${iso2}">Annulla</button>
+                    <button type="button" class="btn accent" id="tf-save-${iso2}">Salva</button>
+                  </div>
                 </div>
               </div>
             </div>`;
 
           let editingId = null;
+          const cardHead = card.querySelector('.vg-country-head');
 
-          // Toggle apertura card paese
-          card.querySelector('.country-header').addEventListener('click', e => {
-            // Non propagare se si clicca sul toggle visitato
-            if (e.target.closest('.country-visit-toggle')) return;
+          // Apri / chiudi il paese (e porta la mappa lì)
+          const toggleCard = () => {
             const wasOpen = card.classList.contains('open');
             card.classList.toggle('open');
+            cardHead.setAttribute('aria-expanded', String(!wasOpen));
             if (!wasOpen) {
               startSubs(iso2, info);
-              if (CENTERS[iso2]) map.flyTo(CENTERS[iso2], 5, {duration:1});
+              if (CENTERS[iso2]) map.flyTo(CENTERS[iso2], 5, { duration: 1 });
             }
+          };
+          cardHead.addEventListener('click', e => {
+            if (e.target.closest('.vg-visit')) return;
+            toggleCard();
+          });
+          cardHead.addEventListener('keydown', e => {
+            if (e.target === cardHead && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleCard(); }
           });
 
-          // Toggle "visitato"
-          card.querySelector('.country-visit-toggle').addEventListener('click', async e => {
+          // "Visitato" sì/no
+          card.querySelector('.vg-visit').addEventListener('click', async e => {
             e.stopPropagation();
             const nowVisited = !visitedCountries.has(iso2);
             setCountryVisited(iso2, nowVisited);
-            // Salva su Firebase come parte dei dati paese
-            await saveCountryData(iso2, {visited: nowVisited});
+            await saveCountryData(iso2, { visited: nowVisited });
           });
 
-          // Drive link
+          // Link alla cartella foto
           card.querySelector(`#ds-${iso2}`).addEventListener('click', async () => {
             const url = document.getElementById(`di-${iso2}`).value.trim();
-            await saveCountryData(iso2, {driveUrl: url});
+            await saveCountryData(iso2, { driveUrl: url });
             renderDriveLink(iso2, url);
           });
 
-          // Add trip
+          // Nuovo viaggio
           card.querySelector(`#atb-${iso2}`).addEventListener('click', () => {
             editingId = null;
             clearForm(iso2);
@@ -1998,10 +2089,10 @@
             const saveBtn = card.querySelector(`#tf-save-${iso2}`);
             const resolvedId = editingId || saveBtn.dataset.editId || null;
             const data = {
-              title:    document.getElementById(`tf-title-${iso2}`).value.trim() || 'Viaggio',
-              dateStart:document.getElementById(`tf-s-${iso2}`).value,
-              dateEnd:  document.getElementById(`tf-e-${iso2}`).value,
-              notes:    document.getElementById(`tf-n-${iso2}`).value.trim(),
+              title:     document.getElementById(`tf-title-${iso2}`).value.trim() || 'Viaggio',
+              dateStart: document.getElementById(`tf-s-${iso2}`).value,
+              dateEnd:   document.getElementById(`tf-e-${iso2}`).value,
+              notes:     document.getElementById(`tf-n-${iso2}`).value.trim(),
             };
             if (resolvedId) await updateTripDoc(iso2, resolvedId, data);
             else            await addTripDoc(iso2, data);
@@ -2009,7 +2100,7 @@
           });
 
           function clearForm(c) {
-            ['title','s','e','n'].forEach(k => {
+            ['title', 's', 'e', 'n'].forEach(k => {
               const el = document.getElementById(`tf-${k}-${c}`);
               if (el) el.value = '';
             });
@@ -2027,124 +2118,133 @@
 
         section.appendChild(block);
       });
+      section.appendChild(emptyEl);
+      applyFilter();
+      scheduleRefresh();
     }
 
     function renderDriveLink(iso2, url) {
       const el = document.getElementById(`dl-${iso2}`);
       if (!el) return;
-      if (url) {
-        el.innerHTML = `<a class="drive-link-open" href="${esc(url)}" target="_blank" rel="noopener">📂 Apri cartella foto</a>`;
-      } else {
-        el.innerHTML = '';
-      }
+      const safe = safeUrl(url);
+      el.innerHTML = safe
+        ? `<a class="btn sm block" href="${esc(safe)}" target="_blank" rel="noopener">${icon('folder', 'sm')} Apri cartella foto</a>`
+        : '';
     }
 
-    // ── Subscriptions Firebase ────────────────────────────────────────────────
+    // ── Sottoscrizioni Firebase ───────────────────────────────────────────────
     function startSubs(iso2, info) {
-      if (globalUnsubs[iso2]) return;
+      if (globalUnsubs[iso2 + '_c']) return;
 
-      globalUnsubs[iso2+'_c'] = subscribeCountry(iso2, data => {
+      globalUnsubs[iso2 + '_c'] = subscribeCountry(iso2, data => {
         const visited = data?.visitedUnescoIds || [];
         const isVisited = data?.visited || false;
         const driveUrl = data?.driveUrl || '';
 
-        // Stato visitato paese
         setCountryVisited(iso2, isVisited);
 
-        // Link Drive
         const inputEl = document.getElementById(`di-${iso2}`);
-        if (inputEl && driveUrl) inputEl.value = driveUrl;
+        if (inputEl && document.activeElement !== inputEl) inputEl.value = driveUrl;
         renderDriveLink(iso2, driveUrl);
 
         renderUnesco(iso2, info.sites, visited);
-        document.getElementById(`ub-${iso2}`).textContent = `${visited.length}/${info.sites.length}`;
+        setUnescoProgress(iso2, visited.length, info.sites.length);
         updateUnescoStats();
       });
 
-      globalUnsubs[iso2+'_t'] = subscribeTrips(iso2, trips => {
+      globalUnsubs[iso2 + '_t'] = subscribeTrips(iso2, trips => {
         renderTrips(iso2, trips);
         document.getElementById(`tb-${iso2}`).textContent = trips.length;
         updateTripStats();
       });
     }
 
+    function setUnescoProgress(iso2, done, total) {
+      document.getElementById(`ub-${iso2}`).textContent = `${done}/${total}`;
+      const bar = document.getElementById(`um-${iso2}`);
+      if (bar) bar.style.width = total ? `${Math.round(done / total * 100)}%` : '0';
+    }
+
     function updateUnescoStats() {
-      let tot = 0;
-      document.querySelectorAll('.unesco-check.checked').forEach(() => tot++);
-      document.getElementById('sv-unesco').textContent = tot;
+      document.getElementById('sv-unesco').textContent = document.querySelectorAll('.vg-site[aria-pressed="true"]').length;
     }
     function updateTripStats() {
       let tot = 0;
-      document.querySelectorAll('.section-badge[id^="tb-"]').forEach(el => { tot += parseInt(el.textContent)||0; });
+      document.querySelectorAll('.vg-badge[id^="tb-"]').forEach(el => { tot += parseInt(el.textContent) || 0; });
       document.getElementById('sv-trips').textContent = tot;
     }
 
     function renderUnesco(iso2, sites, visited) {
       const el = document.getElementById(`ul-${iso2}`);
       if (!el) return;
-      if (!sites.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--muted);padding:6px 0">Nessun sito UNESCO registrato.</div>'; return; }
-      // Ordina per anno poi per nome
-      const sorted = [...sites].sort((a,b) => a.year - b.year || a.name.localeCompare(b.name,'it'));
-      el.innerHTML = sorted.map(s => `
-        <div class="unesco-item">
-          <div class="unesco-check ${visited.includes(s.id)?'checked':''}" data-id="${s.id}" data-iso="${iso2}">${visited.includes(s.id)?'✓':''}</div>
-          <div><div class="unesco-name">${s.name}</div><div class="unesco-year">📅 ${s.year}</div></div>
-        </div>`).join('');
-      el.querySelectorAll('.unesco-check').forEach(cb => {
-        cb.addEventListener('click', async () => {
-          cb.classList.toggle('checked');
-          cb.textContent = cb.classList.contains('checked') ? '✓' : '';
-          const newV = [...el.querySelectorAll('.unesco-check.checked')].map(e => e.dataset.id);
-          await saveCountryData(iso2, {visitedUnescoIds: newV});
+      if (!sites.length) { el.innerHTML = '<div class="vg-none">Nessun sito UNESCO registrato.</div>'; return; }
+      const sorted = [...sites].sort((a, b) => a.year - b.year || a.name.localeCompare(b.name, 'it'));
+      el.innerHTML = `<div class="vg-sites">${sorted.map(s => {
+        const on = visited.includes(s.id);
+        return `<button type="button" class="vg-site" aria-pressed="${on}" data-id="${esc(s.id)}">
+          <span class="check">${icon('check')}</span>
+          <span class="grow"><span class="vg-site-name" style="display:block">${esc(s.name)}</span><span class="vg-site-year">${s.year}</span></span>
+        </button>`;
+      }).join('')}</div>`;
+      el.querySelectorAll('.vg-site').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.setAttribute('aria-pressed', String(btn.getAttribute('aria-pressed') !== 'true'));
+          const newV = [...el.querySelectorAll('.vg-site[aria-pressed="true"]')].map(e => e.dataset.id);
+          setUnescoProgress(iso2, newV.length, sites.length);
           updateUnescoStats();
+          await saveCountryData(iso2, { visitedUnescoIds: newV });
         });
       });
     }
 
+    const fmtDate = d => {
+      const dt = new Date(d + 'T00:00:00');
+      return isNaN(dt) ? d : dt.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+
     function renderTrips(iso2, trips) {
       const el = document.getElementById(`tl-${iso2}`);
       if (!el) return;
-      if (!trips.length) { el.innerHTML = '<div style="font-size:.7rem;color:var(--muted);padding:4px 0 8px">Nessun viaggio registrato.</div>'; return; }
+      if (!trips.length) { el.innerHTML = '<div class="vg-none">Nessun viaggio registrato.</div>'; return; }
       el.innerHTML = trips.map(t => `
-        <div class="trip-card">
-          <div class="trip-title">✈️ ${esc(t.title||'Viaggio')}</div>
-          ${t.dateStart?`<div class="trip-dates">📅 ${t.dateStart}${t.dateEnd?' → '+t.dateEnd:''}</div>`:''}
-          ${t.notes?`<div class="trip-notes">${esc(t.notes)}</div>`:''}
-          <div class="trip-actions">
-            <button class="btn-sm primary" data-edit="${t._docId}" data-iso="${iso2}">✏️</button>
-            <button class="btn-sm danger" data-del="${t._docId}" data-iso="${iso2}">🗑</button>
+        <div class="vg-trip">
+          <div class="vg-trip-top">
+            <div class="vg-trip-title">${esc(t.title || 'Viaggio')}</div>
+            <button type="button" class="icon-btn" data-edit="${esc(t._docId)}" aria-label="Modifica">${icon('edit')}</button>
+            <button type="button" class="icon-btn del" data-del="${esc(t._docId)}" aria-label="Elimina">${icon('trash')}</button>
           </div>
+          ${t.dateStart ? `<div class="vg-trip-dates">${icon('calendar')} ${fmtDate(t.dateStart)}${t.dateEnd ? ' → ' + fmtDate(t.dateEnd) : ''}</div>` : ''}
+          ${t.notes ? `<div class="vg-trip-notes">${esc(t.notes)}</div>` : ''}
         </div>`).join('');
       el.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
-        if (confirm('Eliminare?')) await deleteTripDoc(iso2, b.dataset.del);
+        if (confirm('Eliminare questo viaggio?')) await deleteTripDoc(iso2, b.dataset.del);
       }));
       el.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
         const trip = trips.find(t => t._docId === b.dataset.edit);
         if (!trip) return;
-        const card = document.getElementById('card-'+iso2);
-        document.getElementById(`tf-title-${iso2}`).value = trip.title||'';
-        document.getElementById(`tf-s-${iso2}`).value = trip.dateStart||'';
-        document.getElementById(`tf-e-${iso2}`).value = trip.dateEnd||'';
-        document.getElementById(`tf-n-${iso2}`).value = trip.notes||'';
+        const card = document.getElementById('card-' + iso2);
+        document.getElementById(`tf-title-${iso2}`).value = trip.title || '';
+        document.getElementById(`tf-s-${iso2}`).value = trip.dateStart || '';
+        document.getElementById(`tf-e-${iso2}`).value = trip.dateEnd || '';
+        document.getElementById(`tf-n-${iso2}`).value = trip.notes || '';
         const saveBtn = card.querySelector(`#tf-save-${iso2}`);
         saveBtn.textContent = 'Aggiorna';
         saveBtn.dataset.editId = trip._docId;
         card.querySelector(`#tf-${iso2}`).classList.add('open');
         card.querySelector(`#atb-${iso2}`).style.display = 'none';
+        card.querySelector(`#tf-${iso2}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
       }));
     }
 
-    function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-    // ── Init ──────────────────────────────────────────────────────────────────
+    // ── Avvio ─────────────────────────────────────────────────────────────────
     waitForAuth().then(() => {
       document.body.style.visibility = '';
       buildCountriesList();
-      // Pre-carica subscriptions per tutti i paesi (per stats globali e visitati)
-      Object.entries(COUNTRIES).forEach(([, countries]) => {
-        Object.entries(countries).forEach(([iso2, info]) => {
-          startSubs(iso2, info);
-        });
+      // Sottoscrive tutti i paesi subito: servono per mappa colorata e contatori globali
+      Object.values(COUNTRIES).forEach(countries => {
+        Object.entries(countries).forEach(([iso2, info]) => startSubs(iso2, info));
       });
     });
   </script>
