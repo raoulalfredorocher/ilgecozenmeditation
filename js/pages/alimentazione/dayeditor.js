@@ -117,7 +117,7 @@ function render() {
       ${m.items.map((it, j) => `<button type="button" class="de-item" data-item="${j}">
         <span class="de-name">${esc(it.name)}</span><span class="s">${it.g ? it.g + ' g' : ''}</span><span class="de-ikc">${kc(it.kcal)}</span></button>`).join('')}
       ${m.items.length ? macroDots(t) : ''}
-      <button type="button" class="text-btn" data-add-item>+ Alimento</button>
+      <button type="button" class="de-addfood" data-add-item><span aria-hidden="true">＋</span> Aggiungi alimento</button>
     </section>`;
   }).join('') || '<p class="empty-line">Nessun pasto. Aggiungine uno.</p>';
   el.querySelector('#de-supp').innerHTML = ed.supp === null ? '' : `
@@ -151,17 +151,21 @@ let pk = null;   // { meal, tab, q, food?, grams, manual? }
 
 function pickFood(meal) {
   pk = { meal, tab: 'foods', q: '', food: null, recipe: null, manual: false };
+  picker.setTitle(`${slotLabel(ed.meals[meal].slot)} · aggiungi alimenti`);
   loadFoods().then(() => { if (pk) drawPicker(); });
   drawPicker();
   picker.open();
   setTimeout(() => picker.$('#pk-q')?.focus(), 300);
 }
 
+/** Aggiunge l'alimento al pasto e riapre la ricerca: un pasto si compone con più alimenti di fila ("Fatto" chiude). */
 function addItem(item) {
   ed.meals[pk.meal].items.push(item);
-  picker.close();
-  pk = null;
+  pk.food = pk.recipe = null; pk.manual = false; pk.q = '';
   render();
+  drawPicker();
+  picker.$('#pk-list')?.scrollTo?.(0, 0);
+  toast(`Aggiunto: ${item.name}`);
 }
 
 function drawPicker() {
@@ -173,8 +177,14 @@ function drawPicker() {
   const recs = pk.tab === 'recipes'
     ? state.recipes.filter(r => !pk.q || r.name?.toLowerCase().includes(pk.q.toLowerCase())).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'it'))
     : [];
+  const inMeal = ed.meals[pk.meal].items;
+  const mt = itemsTotals(inMeal);
   host.innerHTML = `
-    <div class="segmented" role="group"><button type="button" data-tab="foods" aria-pressed="${pk.tab === 'foods'}">Alimenti</button><button type="button" data-tab="recipes" aria-pressed="${pk.tab === 'recipes'}">Ricette</button></div>
+    <div class="pk-head">
+      <div class="grow">${inMeal.length ? `<div class="s"><b>${inMeal.length}</b> ${inMeal.length === 1 ? 'alimento' : 'alimenti'} nel pasto · ${kc(mt.kcal)} kcal</div><div class="pk-in">${esc(inMeal.map(i => (i.g ? `${i.name} ${i.g} g` : i.name)).join(' · '))}</div>` : '<div class="s">Aggiungi quanti alimenti vuoi: la ricerca resta aperta.</div>'}</div>
+      <button type="button" class="text-btn" data-done style="font-weight:600">Fatto</button>
+    </div>
+    <div class="segmented" role="group" style="margin-top:var(--space-3)"><button type="button" data-tab="foods" aria-pressed="${pk.tab === 'foods'}">Alimenti</button><button type="button" data-tab="recipes" aria-pressed="${pk.tab === 'recipes'}">Ricette</button></div>
     <input class="input" id="pk-q" type="search" placeholder="Cerca" autocomplete="off" value="${esc(pk.q)}" style="margin-top:var(--space-3)"/>
     <div class="list" id="pk-list" style="margin-top:var(--space-3);max-height:46dvh;overflow-y:auto">
       ${foods.map((f, i) => `<button type="button" class="list-row" data-food="${i}"><span class="grow">${esc(f.n)}</span><span class="s">${f.k} kcal</span></button>`).join('')}
@@ -192,6 +202,7 @@ picker.el.addEventListener('click', e => {
   if (!pk) return;
   const tab = e.target.closest('[data-tab]');
   if (tab) { pk.tab = tab.dataset.tab; pk.q = ''; return drawPicker(); }
+  if (e.target.closest('[data-done]')) { picker.close(); pk = null; return; }
   const f = e.target.closest('[data-food]');
   if (f) { pk.food = pk._foods[+f.dataset.food]; pk.grams = pk.food.u ? Object.values(pk.food.u)[0] : 100; return drawPicker(); }
   const r = e.target.closest('[data-recipe]');

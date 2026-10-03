@@ -3,8 +3,10 @@
  *
  * Il + in basso aggiunge: un negozio (nell'elenco dei negozi) oppure un
  * prodotto (dentro un negozio), in un foglio con nome, quantità e categoria.
- * Le categorie sono fisse. I prodotti si segnano per scegliere cosa comprare
- * e inviare su WhatsApp; la carta fedeltà del negozio è a portata di tocco.
+ * La lista è unica: la categoria è un'etichetta di ogni prodotto e serve a
+ * filtrare (chip in alto). Due viste: "Lista completa" e "Carrello" (i prodotti
+ * segnati). I prodotti si spostano su e giù trascinando la maniglia. L'invio su
+ * WhatsApp sta solo nel menu ⋯ del negozio.
  *
  * Nota sul dato `bought`: nelle versioni precedenti indicava i prodotti
  * "selezionati". Il nome è rimasto per compatibilità con i dati esistenti.
@@ -29,6 +31,9 @@ let store = null;          // negozio aperto
 let items = [];
 let unsubItems = null;
 let lastCat = 'Altro';
+let view = 'all';          // 'all' = lista completa, 'cart' = prodotti segnati
+let catFilter = null;      // categoria scelta nei chip, oppure null = tutte
+let drag = null;
 
 // ─── Vista negozi / vista lista ──────────────────────────────────────────
 function render() {
@@ -42,27 +47,40 @@ function render() {
       : '<div class="empty">Nessun negozio. Tocca + per aggiungerne uno.</div>';
     return;
   }
-  const sel = items.filter(i => i.bought);
-  const groups = CATEGORIES.map(c => [c, items.filter(i => catOf(i) === c)]).filter(([, l]) => l.length);
+  if (drag) return;                                  // niente ridisegno mentre si trascina
+  const cart = items.filter(i => i.bought);
+  const inView = view === 'cart' ? cart : items;
+  const cats = CATEGORIES.filter(c => inView.some(i => catOf(i) === c));
+  if (catFilter && !cats.includes(catFilter)) catFilter = null;
+  const shown = inView.filter(i => !catFilter || catOf(i) === catFilter);
+  const chipsScroll = root.querySelector('.sp-cats')?.scrollLeft || 0;
   root.innerHTML = `
     <div class="sp-top">
       <button class="icon-btn" type="button" data-back aria-label="Tutti i negozi"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
       <div class="sp-title">${esc(store.name)}</div>
       <button class="icon-btn" type="button" data-store-menu aria-label="Opzioni del negozio"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button>
     </div>
-    ${sel.length ? `<button type="button" class="sp-send" data-whatsapp>Invia ${sel.length} ${sel.length === 1 ? 'prodotto' : 'prodotti'} su WhatsApp</button>` : ''}
-    ${groups.length ? groups.map(([c, list]) => `
-      <div class="cap">${esc(c)}</div>
-      <div class="list">${list.map(it => `
-        <div class="list-row sp-row" data-item="${esc(it._docId)}">
-          <button type="button" class="sp-check" data-toggle aria-pressed="${!!it.bought}" aria-label="${it.bought ? 'Togli dalla selezione' : 'Seleziona'}"></button>
-          <button type="button" class="sp-name grow" data-edit><span>${esc(it.name)}</span>${it.qty ? `<span class="s">${esc(it.qty)}</span>` : ''}</button>
-        </div>`).join('')}</div>`).join('')
-      : '<div class="empty">La lista è vuota. Tocca + per aggiungere un prodotto.</div>'}`;
+    <div class="segmented" role="group" aria-label="Vista">
+      <button type="button" data-view="all" aria-pressed="${view === 'all'}">Lista completa</button>
+      <button type="button" data-view="cart" aria-pressed="${view === 'cart'}">Carrello${cart.length ? ` (${cart.length})` : ''}</button>
+    </div>
+    ${cats.length > 1 || catFilter ? `<div class="chips-wrap sp-cats" role="group" aria-label="Filtra per categoria">
+      <button type="button" class="pill" data-cat="" aria-pressed="${!catFilter}">Tutte</button>
+      ${cats.map(c => `<button type="button" class="pill" data-cat="${esc(c)}" aria-pressed="${catFilter === c}">${esc(c)} <span class="sp-n">${inView.filter(i => catOf(i) === c).length}</span></button>`).join('')}
+    </div>` : ''}
+    ${shown.length ? `<div class="list" id="sp-list">${shown.map(it => `
+      <div class="list-row sp-row" data-item="${esc(it._docId)}">
+        <span class="drag-handle" data-drag role="button" aria-label="Trascina per spostare"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g></svg></span>
+        <button type="button" class="sp-check" data-toggle aria-pressed="${!!it.bought}" aria-label="${it.bought ? 'Togli dal carrello' : 'Metti nel carrello'}"></button>
+        <button type="button" class="sp-name grow" data-edit><span>${esc(it.name)}</span><span class="s">${it.qty ? `${esc(it.qty)} · ` : ''}${esc(catOf(it))}</span></button>
+      </div>`).join('')}</div>`
+      : `<div class="empty">${view === 'cart' ? 'Il carrello è vuoto. Spunta i prodotti nella lista completa.' : items.length ? 'Nessun prodotto in questa categoria.' : 'La lista è vuota. Tocca + per aggiungere un prodotto.'}</div>`}`;
+  const chips = root.querySelector('.sp-cats');
+  if (chips) chips.scrollLeft = chipsScroll;
 }
 
 function openStore(s) {
-  store = s; items = [];
+  store = s; items = []; view = 'all'; catFilter = null;
   unsubItems?.();
   unsubItems = subscribeShoppingItems(s._docId, list => { items = list; if (store) render(); });
   render(); scrollTo({ top: 0 });
@@ -78,21 +96,79 @@ root.addEventListener('click', async e => {
   if (st) return openStore(stores.find(s => s._docId === st.dataset.store));
   if (t.closest('[data-back]')) return closeStore();
   if (t.closest('[data-store-menu]')) return storeMenu.open();
-  if (t.closest('[data-whatsapp]')) return sendWhatsapp();
+  const v = t.closest('[data-view]');
+  if (v) { view = v.dataset.view; return render(); }
+  const c = t.closest('[data-cat]');
+  if (c) { catFilter = c.dataset.cat || null; return render(); }
   const row = t.closest('[data-item]');
   if (!row) return;
   const it = items.find(i => i._docId === row.dataset.item);
+  if (t.closest('[data-drag]')) return;
   if (t.closest('[data-toggle]')) return updateShoppingItem(store._docId, it._docId, { bought: !it.bought });
   if (t.closest('[data-edit]')) openProduct(it);
 });
 
 function sendWhatsapp() {
-  const sel = items.filter(i => i.bought);
-  if (!sel.length) return toast('Seleziona prima i prodotti da inviare');
+  const sel = items.some(i => i.bought) ? items.filter(i => i.bought) : items;   // il carrello se c'è, altrimenti tutta la lista
+  if (!sel.length) return toast('La lista è vuota');
   let text = `Lista della spesa · ${store.name}\n\n`;
   sel.forEach((it, i) => { text += `${i + 1}. ${it.name}${it.qty ? ` (${it.qty})` : ''}\n`; });
   window.open(`https://wa.me/?text=${encodeURIComponent(text.trim())}`, '_blank');
 }
+
+// ─── Spostare i prodotti su e giù trascinando la maniglia ────────────────
+const clearDrop = () => root.querySelectorAll('.drop-before, .drop-after').forEach(r => r.classList.remove('drop-before', 'drop-after'));
+function updateDrop() {
+  if (!drag) return;
+  const el = document.elementFromPoint(window.innerWidth / 2, drag.y)?.closest('#sp-list [data-item]');
+  clearDrop();
+  if (!el || el === drag.row) { drag.target = null; return; }
+  const r = el.getBoundingClientRect();
+  drag.target = el.dataset.item;
+  drag.after = drag.y > r.top + r.height / 2;
+  el.classList.add(drag.after ? 'drop-after' : 'drop-before');
+}
+function dragTick() {
+  if (!drag) return;
+  if (drag.y < 120) scrollBy(0, -10); else if (drag.y > window.innerHeight - 140) scrollBy(0, 10);
+  updateDrop();
+  drag.raf = requestAnimationFrame(dragTick);
+}
+root.addEventListener('pointerdown', e => {
+  const h = e.target.closest('[data-drag]');
+  if (!h || drag) return;
+  e.preventDefault();
+  const row = h.closest('[data-item]');
+  try { h.setPointerCapture(e.pointerId); } catch { /* ok */ }
+  drag = { id: row.dataset.item, row, pid: e.pointerId, y: e.clientY, target: null, after: false, raf: 0 };
+  row.classList.add('dragging');
+  drag.raf = requestAnimationFrame(dragTick);
+});
+root.addEventListener('pointermove', e => { if (drag && e.pointerId === drag.pid) { e.preventDefault(); drag.y = e.clientY; } });
+async function endDrag(commit) {
+  if (!drag) return;
+  const d = drag; drag = null;
+  cancelAnimationFrame(d.raf);
+  d.row.classList.remove('dragging');
+  clearDrop();
+  if (!commit || !d.target) return render();
+  // l'ordine dei soli prodotti visibili cambia; le loro "posizioni" restano quelle di prima, solo riassegnate
+  const val = it => it.order ?? it.createdAt ?? 0;
+  const byId = Object.fromEntries(items.map(i => [i._docId, i]));
+  const before = [...root.querySelectorAll('#sp-list [data-item]')].map(r => r.dataset.item);
+  const ids = before.filter(id => id !== d.id);
+  ids.splice(ids.indexOf(d.target) + (d.after ? 1 : 0), 0, d.id);
+  const slots = before.map(id => val(byId[id])).sort((a, b) => a - b);
+  for (let i = 1; i < slots.length; i++) if (slots[i] <= slots[i - 1]) slots[i] = slots[i - 1] + 1;
+  const changed = [];
+  ids.forEach((id, i) => { if (val(byId[id]) !== slots[i]) { byId[id].order = slots[i]; changed.push(id); } });
+  items.sort((a, b) => val(a) - val(b));
+  render();
+  try { await Promise.all(changed.map(id => updateShoppingItem(store._docId, id, { order: byId[id].order }))); }
+  catch (err) { console.error('ordine spesa', err); toast('Non sono riuscito a salvare l\'ordine'); }
+}
+root.addEventListener('pointerup', e => { if (drag && e.pointerId === drag.pid) endDrag(true); });
+root.addEventListener('pointercancel', e => { if (drag && e.pointerId === drag.pid) endDrag(false); });
 
 // ─── Prodotto: aggiunta (+) e modifica nello stesso foglio ───────────────
 const product = createSheet({ title: 'Aggiungi prodotto', body: `
@@ -109,7 +185,7 @@ const drawCats = () => { product.$('#pr-cats').innerHTML = CATEGORIES.map(c => `
 
 function openProduct(it = null) {
   editing = it; delArmed = false;
-  prCat = it ? catOf(it) : lastCat;
+  prCat = it ? catOf(it) : (catFilter || lastCat);
   product.setTitle(it ? 'Modifica prodotto' : 'Aggiungi prodotto');
   product.$('#pr-name').value = it?.name || '';
   product.$('#pr-qty').value = it?.qty || '';
@@ -182,9 +258,9 @@ newStore.$('#ns-ok').addEventListener('click', async () => {
 const storeMenu = createSheet({ title: 'Negozio', body: `
   <div class="list">
     <button type="button" class="list-row" id="sm-card"><span class="grow">Carta fedeltà</span></button>
-    <button type="button" class="list-row" id="sm-send"><span class="grow">Invia la lista su WhatsApp</span></button>
+    <button type="button" class="list-row" id="sm-send"><span class="grow">Invia su WhatsApp (carrello, o tutta la lista)</span></button>
     <button type="button" class="list-row" id="sm-csv"><span class="grow">Scarica la lista (CSV)</span></button>
-    <button type="button" class="list-row" id="sm-clear"><span class="grow">Deseleziona tutto</span></button>
+    <button type="button" class="list-row" id="sm-clear"><span class="grow">Svuota il carrello</span></button>
     <button type="button" class="list-row text-danger" id="sm-del"><span class="grow">Elimina negozio</span></button>
   </div>` });
 let storeDelArmed = false;
@@ -193,7 +269,7 @@ storeMenu.$('#sm-send').addEventListener('click', () => { storeMenu.close(); sen
 storeMenu.$('#sm-csv').addEventListener('click', async () => {
   if (!items.length) return toast('La lista è vuota');
   storeMenu.close();
-  const rows = [['Prodotto', 'Quantità', 'Categoria', 'Selezionato'], ...items.map(it => [it.name || '', it.qty || '', catOf(it), it.bought ? 'Sì' : 'No'])];
+  const rows = [['Prodotto', 'Quantità', 'Categoria', 'Nel carrello'], ...items.map(it => [it.name || '', it.qty || '', catOf(it), it.bought ? 'Sì' : 'No'])];
   await deliver(csvFile(rows, `spesa-${(store.name || 'negozio').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.csv`));
 });
 storeMenu.$('#sm-clear').addEventListener('click', async () => {

@@ -8,7 +8,7 @@ import { createSheet, toast } from '../../ui/dialog.js';
 import {
   state, onChange, DAY_NAMES, DAY_SHORT, MC, slotLabel, slotOrder, totals, itemsTotals, daySupplements,
   fromDietMeal, toDietMeal, fromDiaryMeal, toDiaryMeal, planFor, weekdayIdx, dateKey, parseKey,
-  saveDietDays, saveDiary, activateDiet, createDiet, renameDiet, deleteDiet,
+  saveDietDays, saveDiary, activateDiet, createDiet, renameDiet, deleteDiet, hasProfile, tdee, addDays,
 } from './state.js';
 import { openDayEditor } from './dayeditor.js';
 import { deliver, csvFile } from './files.js';
@@ -18,8 +18,59 @@ const root = document.getElementById('tab-dieta');
 let selected = weekdayIdx(new Date());
 
 const kc = n => Math.round(n).toLocaleString('it-IT');
+const sgn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.round(Math.abs(n)).toLocaleString('it-IT');
 const g1 = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
 const dots = t => `<span class="mc"><span style="--c:${MC.prot}">P ${g1(t.prot)}</span><span style="--c:${MC.carb}">C ${g1(t.carb)}</span><span style="--c:${MC.fat}">G ${g1(t.fat)}</span></span>`;
+
+/** Data (AAAA-MM-GG) del giorno `i` della settimana in corso (0 = lunedì). */
+const weekDate = i => addDays(dateKey(), i - weekdayIdx(new Date()));
+
+/** Numeri della settimana: kcal e macro per giorno, totali, delta sul TDEE e aderenza al piano. */
+function weekNumbers(days, dayTotals) {
+  const T = hasProfile() ? tdee() : 0;
+  const withMeals = dayTotals.filter(t => t.kcal);
+  const sum = withMeals.reduce((a, t) => ({ kcal: a.kcal + t.kcal, prot: a.prot + t.prot, carb: a.carb + t.carb, fat: a.fat + t.fat }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
+  const n = withMeals.length;
+  const delta = t => (t.kcal && T ? t.kcal - T : null);
+  const dcell = v => (v == null ? '<span class="s">–</span>' : `<span class="dl ${v > 0 ? 'up' : 'dn'}">${sgn(v)}</span>`);
+  const rows = days.map((d, i) => {
+    const t = dayTotals[i];
+    return `<button type="button" class="wn-row${i === selected ? ' sel' : ''}" data-day="${i}">
+      <span class="wn-d">${esc(DAY_NAMES[i].slice(0, 3))}</span>
+      <span class="wn-n">${t.kcal ? kc(t.kcal) : '–'}</span>
+      <span class="wn-n">${t.kcal ? g1(t.prot) : '–'}</span><span class="wn-n">${t.kcal ? g1(t.carb) : '–'}</span><span class="wn-n">${t.kcal ? g1(t.fat) : '–'}</span>
+      <span class="wn-n">${dcell(delta(t))}</span></button>`;
+  }).join('');
+  const wkDelta = T && n ? sum.kcal - T * n : null;     // delta sui soli giorni con pasti (somma della colonna Δ)
+  const foot = n ? `
+    <div class="wn-row tot"><span class="wn-d">Totale</span><span class="wn-n">${kc(sum.kcal)}</span><span class="wn-n">${g1(sum.prot)}</span><span class="wn-n">${g1(sum.carb)}</span><span class="wn-n">${g1(sum.fat)}</span><span class="wn-n">${dcell(wkDelta)}</span></div>
+    <div class="wn-row avg"><span class="wn-d">Media</span><span class="wn-n">${kc(sum.kcal / n)}</span><span class="wn-n">${g1(sum.prot / n)}</span><span class="wn-n">${g1(sum.carb / n)}</span><span class="wn-n">${g1(sum.fat / n)}</span><span class="wn-n">${dcell(T ? sum.kcal / n - T : null)}</span></div>` : '';
+
+  // Aderenza: diario della settimana in corso contro il piano
+  const todayK = dateKey();
+  let ok = 0, counted = 0, diaryK = 0, planK = 0;
+  days.forEach((d, i) => {
+    const key = weekDate(i), meals = state.diary[key];
+    if (key > todayK || !meals?.length || !dayTotals[i].kcal) return;
+    const dk = totals(meals).kcal;
+    counted++; diaryK += dk; planK += dayTotals[i].kcal;
+    if (Math.abs(dk / dayTotals[i].kcal - 1) <= 0.1) ok++;
+  });
+  const adh = counted ? `
+    <div class="wn-adh"><div class="cap" style="margin:0 0 var(--space-2)">Aderenza · settimana in corso</div>
+      <div class="rs-head">${Math.round((ok / counted) * 100)}<span class="s">%</span></div>
+      <div class="s">${ok} giorni su ${counted} registrati entro il 10% dal piano · diario ${kc(diaryK)} kcal contro piano ${kc(planK)} (${sgn(diaryK - planK)})${T ? ` · rispetto al TDEE ${sgn(diaryK - T * counted)}` : ''}</div></div>`
+    : '<p class="note" style="margin-top:var(--space-3)">L\'aderenza compare appena registri nel diario qualche giorno di questa settimana (pulsante Registra sul giorno).</p>';
+
+  return `<section class="dt-day wn">
+    <div class="cap" style="margin:0 0 var(--space-2)">Numeri della settimana</div>
+    <div class="wn-row head"><span class="wn-d"></span><span class="wn-n">kcal</span><span class="wn-n" style="color:${MC.prot}">P</span><span class="wn-n" style="color:${MC.carb}">C</span><span class="wn-n" style="color:${MC.fat}">G</span><span class="wn-n">Δ TDEE</span></div>
+    ${rows}${foot}
+    ${T ? `<p class="note" style="margin-top:var(--space-2)">TDEE ${kc(T)} kcal. Δ = dieta meno fabbisogno: − deficit, + surplus.${n < 7 ? ` Totale e media sui ${n} giorni compilati.` : ''}</p>`
+      : '<p class="note" style="margin-top:var(--space-2)">Compila il profilo (menu ⋯ → Il mio profilo) per vedere il Δ rispetto al TDEE.</p>'}
+    ${adh}
+  </section>`;
+}
 
 // ─── Disegno ─────────────────────────────────────────────────────────────
 function render() {
@@ -35,7 +86,7 @@ function render() {
     return `<button type="button" class="wk-col${i === selected ? ' sel' : ''}" data-day="${i}" aria-label="${esc(d.name)}, ${kc(t.kcal)} kcal" aria-pressed="${i === selected}">
       <span class="wk-bar" style="height:${h}px">${t.kcal ? seg.map(([k, v]) => `<i style="flex:${Math.max(v, 1)};background:${MC[k]}"></i>`).join('') : '<i class="empty"></i>'}</span>
       <span class="wk-d${i === today ? ' today' : ''}">${DAY_SHORT[i]}</span>
-      <span class="wk-k">${t.kcal ? (t.kcal / 1000).toLocaleString('it-IT', { maximumFractionDigits: 1 }) + 'k' : '–'}</span>
+      <span class="wk-k">${t.kcal ? kc(t.kcal) : '–'}</span>
     </button>`;
   }).join('');
 
@@ -52,7 +103,8 @@ function render() {
         <div><div class="dt-dayname">${esc(day.name || DAY_NAMES[selected])}</div>
           <div class="s">${esc(day.type || '')}${meals.length ? ` · ${kc(dt.kcal)} kcal` : ''}</div>
           ${meals.length ? dots(dt) : ''}</div>
-        <button type="button" class="text-btn" id="dt-edit">Modifica</button>
+        <div class="dt-acts"><button type="button" class="text-btn" id="dt-edit">Modifica</button>
+          <button type="button" class="text-btn" id="dt-reg">${state.diary[weekDate(selected)]?.length ? 'Nel diario ✓' : 'Registra'}</button></div>
       </div>
       ${meals.length ? meals.map(m => `<div class="dt-meal">
           <div class="row"><span class="dt-slot">${esc(slotLabel(m.slot))}</span><span class="s">${kc(m.t.kcal)} kcal</span></div>
@@ -61,13 +113,15 @@ function render() {
         </div>`).join('')
       : '<p class="empty-line">Nessun pasto per questo giorno. Tocca Modifica per comporlo.</p>'}
       ${supp.length ? `<p class="dt-supp">Integratori: ${esc(supp.join(', '))}</p>` : ''}
-    </section>`;
+    </section>
+    ${weekNumbers(days, dayTotals)}`;
 }
 
 root.addEventListener('click', e => {
   const d = e.target.closest('[data-day]');
   if (d) { selected = +d.dataset.day; return render(); }
   if (e.target.closest('#dt-edit')) return editDay(selected);
+  if (e.target.closest('#dt-reg')) return registerToday(weekDate(selected));
   if (e.target.closest('#dt-diet')) return openDiets();
 });
 
@@ -196,5 +250,5 @@ export async function downloadCSV() {
 export const addAction = () => registerToday();
 export const newDietAction = newDiet;
 
-onChange(what => { if (what === 'diet' || what === 'diets') render(); });
+onChange(what => { if (['diet', 'diets', 'diary', 'profile'].includes(what)) render(); });
 render();
