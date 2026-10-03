@@ -22,7 +22,9 @@
     .fa-search { position: relative; }
     .fa-search .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
     .fa-search .input { padding-left: 42px; border-radius: 999px; }
-    .fa-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+    .fa-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .fa-head .btn { white-space: nowrap; flex-shrink: 0; }
+    .fa-head .zen-eyebrow { white-space: nowrap; }
 
     /* Locandine */
     .fa-card { position: relative; }
@@ -91,6 +93,71 @@
     .fa-poster-pick { display: flex; gap: var(--space-4); align-items: center; cursor: pointer; }
     .fa-poster-pick .fa-thumb { width: 72px; height: 108px; border-radius: var(--radius-sm); border: 1px dashed var(--border); background: var(--surface); color: var(--muted); }
     .fa-poster-pick small { color: var(--muted); font-size: var(--fs-sm); }
+
+    /* Continua a guardare */
+    .fa-strip { display: flex; gap: var(--space-3); overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--space-5)); padding: 2px var(--space-5); scroll-snap-type: x proximity; }
+    .fa-strip::-webkit-scrollbar { display: none; }
+    .fa-now { flex: 0 0 min(300px, 84%); scroll-snap-align: start; display: flex; gap: var(--space-3); padding: var(--space-3); background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); cursor: pointer; }
+    .fa-now .fa-thumb { width: 58px; height: 87px; }
+    .fa-now .t { font-weight: 600; letter-spacing: -.01em; display: block; line-height: 1.3; }
+    .fa-now .m { font-size: var(--fs-xs); color: var(--muted); display: block; margin: 2px 0 8px; }
+    .fa-now .meter-track { height: 5px; margin-bottom: 8px; }
+    .fa-now .btn { min-height: 32px; padding: 0 14px; font-size: var(--fs-sm); }
+    .fa-now-wrap { display: flex; flex-direction: column; gap: var(--space-3); }
+
+    /* Avanzamento serie */
+    .fa-prog { background: var(--surface); border-radius: var(--radius-md); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+    .fa-prog-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .fa-step { display: inline-flex; align-items: center; gap: var(--space-2); }
+    .fa-step button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; color: var(--text); }
+    .fa-step button:active { transform: scale(.9); }
+    .fa-step output { min-width: 28px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; font-size: var(--fs-lg); }
+    .fa-prog small { color: var(--muted); font-size: var(--fs-xs); }
+
+    /* Etichette, priorità, trama */
+    .fa-prio { display: inline-flex; color: var(--warning); vertical-align: -2px; margin-right: 4px; }
+    .fa-prio svg { width: 13px; height: 13px; fill: currentColor; stroke: currentColor; }
+    .fa-plot { line-height: 1.6; color: var(--text); font-size: var(--fs-sm); }
+    .fa-where { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .fa-where button { height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: var(--fs-sm); cursor: pointer; }
+    .fa-where button.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
+    /* Ricerca online nel modulo */
+    .fa-find { display: flex; flex-direction: column; gap: var(--space-2); }
+    .fa-hits { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+    .fa-hits[hidden] { display: none; }
+    .fa-hit { display: flex; align-items: center; gap: var(--space-3); width: 100%; padding: var(--space-2) var(--space-3); background: none; border: 0; text-align: left; cursor: pointer; color: inherit; min-height: 64px; }
+    .fa-hit + .fa-hit { border-top: .5px solid var(--border); }
+    .fa-hit:active { background: var(--surface); }
+    .fa-hit .fa-thumb { width: 36px; height: 54px; border-radius: 8px; }
+    .fa-hit .t { font-weight: 600; font-size: var(--fs-sm); display: block; }
+    .fa-hit .m { font-size: var(--fs-xs); color: var(--muted); display: block; }
+    .fa-hint { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+    .fa-hint button { background: none; border: 0; padding: 0; color: var(--primary); font: inherit; font-weight: 600; cursor: pointer; }
+    .fa-ok { color: var(--success); font-size: var(--fs-sm); display: flex; align-items: center; gap: 6px; }
+    .fa-ok .icon { width: 16px; height: 16px; }
+    .fa-chips-sel button { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Statistiche */
+    .fa-chart { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; align-items: end; height: 130px; margin: var(--space-4) 0 var(--space-3); }
+    .fa-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+    .fa-col i { display: block; width: 100%; max-width: 20px; border-radius: 6px 6px 3px 3px; background: var(--geco-mist); min-height: 3px; }
+    .fa-col.top i { background: linear-gradient(var(--geco-sky), var(--geco-blue)); }
+    .fa-col .n { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 12px; }
+    .fa-col .l { font-size: 10px; color: var(--muted); letter-spacing: .04em; }
+    .fa-note { font-size: var(--fs-sm); color: var(--muted); }
+    .fa-fav { display: flex; gap: var(--space-4); align-items: center; }
+    .fa-fav .fa-thumb { width: 62px; height: 93px; }
+    .fa-fav .t { font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; margin: 2px 0 6px; }
+
+    /* Stasera */
+    .fa-pick { display: flex; gap: var(--space-4); }
+    .fa-pick .fa-thumb { width: 104px; height: 156px; border-radius: var(--radius-sm); }
+    .fa-pick h3 { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; line-height: 1.25; margin: 0; }
+    .fa-pick p { font-size: var(--fs-sm); color: var(--muted); margin-top: var(--space-2); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
+    .fa-key { display: flex; flex-direction: column; gap: var(--space-3); }
+    .fa-key ol { margin: 0; padding-left: 1.2em; color: var(--muted); font-size: var(--fs-sm); line-height: 1.65; }
+    .fa-key a { color: var(--primary); }
     .fa-confirm-text { color: var(--muted); line-height: 1.55; text-align: center; margin-top: calc(-1 * var(--space-2)); }
   </style>
 </head>
@@ -98,6 +165,9 @@
 <body class="zen zen-native" data-title="Film e serie" data-back="passioni.html" data-add="#fa-add">
   <script type="module" src="js/core/auth-guard.js"></script>
   <template id="zen-header-actions">
+    <button class="icon-btn" type="button" id="fa-set" aria-label="Impostazioni ricerca online">
+      <svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>
+    </button>
     <button class="icon-btn" type="button" id="fa-csv" aria-label="Esporta in CSV">
       <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>
     </button>
@@ -119,16 +189,29 @@
         <input class="input" type="search" id="fa-q" placeholder="Cerca un titolo" autocomplete="off" aria-label="Cerca un titolo"/>
       </div>
       <div class="chips" id="fa-types" role="group" aria-label="Tipologia"></div>
+      <div class="chips" id="fa-tags" role="group" aria-label="Etichette" hidden></div>
     </div>
 
     <section class="fa-panel" id="p-todo" aria-live="polite">
-      <div class="fa-head"><span class="zen-eyebrow" id="fa-todo-count"></span></div>
+      <div id="fa-now"></div>
+      <div class="fa-head"><span class="zen-eyebrow" id="fa-todo-count"></span>
+        <button type="button" class="btn sm" id="fa-tonight"><svg class="icon sm" aria-hidden="true"><use href="#i-sparkles"/></svg> Cosa guardo?</button></div>
       <div class="photo-grid" id="fa-grid"></div>
     </section>
 
     <section class="fa-panel" id="p-done" hidden aria-live="polite">
-      <div class="fa-stats" id="fa-stats"></div>
-      <div class="list" id="fa-done-list"></div>
+      <div class="segmented" id="fa-doneview" role="group" aria-label="Vista">
+        <button type="button" data-view="list" aria-pressed="true">Elenco</button>
+        <button type="button" data-view="stats" aria-pressed="false">Il tuo anno</button>
+      </div>
+      <div class="fa-panel" id="fa-listview">
+        <div class="fa-stats" id="fa-stats"></div>
+        <div class="list" id="fa-done-list"></div>
+      </div>
+      <div class="fa-panel" id="fa-statsview" hidden>
+        <div class="chips" id="fa-years" role="group" aria-label="Anno"></div>
+        <div class="fa-panel" id="fa-statsbody"></div>
+      </div>
     </section>
 
     <section class="fa-panel" id="p-apps" hidden>
