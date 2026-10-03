@@ -33,7 +33,13 @@
     .wx-track::-webkit-scrollbar { display: none; }
     .wx-slide { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; min-width: 0; }
     .wx-city { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-    .wx-dots { display: flex; justify-content: center; gap: 6px; margin-top: var(--space-3); }
+    .wx-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: var(--space-3); }
+    .wx-dots { display: flex; justify-content: center; gap: 6px; }
+    .wx-edit { justify-self: end; background: none; border: 0; padding: 4px 2px; font-size: var(--fs-xs); font-weight: 600; color: var(--geco-blue); cursor: pointer; }
+    .wx-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; padding: var(--space-3) 0; color: var(--muted); font-size: var(--fs-sm); }
+    .wc-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); }
+    .wc-row + .wc-row { border-top: .5px solid var(--border); }
+    .wc-row .grow { flex: 1; min-width: 0; text-align: left; background: none; border: 0; color: inherit; font: inherit; padding: 0; }
     .wx-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background-color .2s, transform .2s; }
     .wx-dots i.on { background: var(--geco-blue); transform: scale(1.25); }
 
@@ -88,7 +94,7 @@
     <!-- Meteo: si scorre di lato tra le città -->
     <section class="card weather-card" aria-label="Meteo">
       <div class="wx-track" id="wx-track"></div>
-      <div class="wx-dots" id="wx-dots" aria-hidden="true"></div>
+      <div class="wx-foot"><span></span><div class="wx-dots" id="wx-dots" aria-hidden="true"></div><button type="button" class="wx-edit" id="wx-edit">Città</button></div>
     </section>
 
     <!-- Pensiero del giorno -->
@@ -120,7 +126,9 @@
     import { SECTION_GROUPS } from './js/ui/sections.js';
     import { renderMosaic } from './js/ui/mosaic.js';
     import { getDailyQuote } from './js/data/quotes.js';
-    import { getBirthdayContacts } from './js/core/db.js';
+    import { getBirthdayContacts, db, auth } from './js/core/db.js';
+    import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+    import { createSheet } from './js/ui/dialog.js';
     import { waitForUser } from './js/core/auth-guard.js';
     import { escapeHtml } from './js/core/dom.js';
 
@@ -148,12 +156,6 @@
     renderMosaic(document.getElementById('home-tiles'), HOME.map(([href, h, wide]) => ({ ...byHref[href], h, wide })));
 
     /* ── Meteo (Open-Meteo, nessuna chiave richiesta) ── */
-    const CITIES = {
-      pandino: { name: 'Pandino',           lat: 45.4072, lon: 9.5525 },
-      milano:  { name: 'Milano',            lat: 45.4654, lon: 9.1859 },
-      lodi:    { name: 'Lodi',              lat: 45.3139, lon: 9.5030 },
-      zelo:    { name: 'Zelo Buon Persico', lat: 45.4042, lon: 9.4847 },
-    };
     /** Codice meteo WMO → [icona, descrizione] */
     function weatherInfo(code) {
       if (code === 0) return ['sun', 'Sereno'];
@@ -170,62 +172,141 @@
       return ['cloud', 'Nuvoloso'];
     }
 
-    /* Una scheda per città, si scorre con un tocco di lato; l'ultima vista viene ricordata. */
-    const keys = Object.keys(CITIES);
+    /* Meteo personale: ognuno sceglie le sue città (salvate nell'account), si scorre di lato tra una e l'altra. */
     const track = document.getElementById('wx-track'), dots = document.getElementById('wx-dots');
-    track.innerHTML = keys.map(k => `
-      <div class="wx-slide" data-city="${k}" role="group" aria-label="${CITIES[k].name}">
-        <div class="weather">
-          <span class="dot-icon" data-f="icon" role="img" aria-label="Meteo"></span>
-          <div>
-            <div class="wx-city">${CITIES[k].name}</div>
-            <div class="weather-temp"><span data-f="max">--</span>° <small>/ <span data-f="min">--</span>°</small></div>
-            <div class="weather-desc" data-f="desc"></div>
-          </div>
-          <div class="weather-meta">
-            <span>UV <strong data-f="uv">--</strong></span>
-            <span>Umidità <strong data-f="hum">--</strong>%</span>
-          </div>
-        </div>
-      </div>`).join('');
-    dots.innerHTML = keys.map(() => '<i></i>').join('');
-    const setDot = i => [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i));
+    let cities = [];                 // [{ name, lat, lon }]
+    let idx = 0;
+    const cache = {};                // meteo già scaricato, per non rifarlo a ogni ridisegno
+    const cityKey = c => `${c.lat.toFixed(2)},${c.lon.toFixed(2)}`;
+    const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* ok */ } } };
+    const meteoDoc = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'meteo');
 
-    let city = localStorage.getItem('zen_weather_city');
-    let idx = Math.max(0, keys.indexOf(city));
-    track.scrollLeft = idx * track.clientWidth;
-    setDot(idx);
+    function drawWeather() {
+      if (!cities.length) {
+        track.innerHTML = `<div class="wx-slide"><div class="wx-empty"><span>Scegli le città di cui vuoi il meteo.</span><button type="button" class="btn sm accent" data-wx-add>Aggiungi una città</button></div></div>`;
+        dots.innerHTML = '';
+        return;
+      }
+      track.innerHTML = cities.map((c, i) => `
+        <div class="wx-slide" data-i="${i}" role="group" aria-label="${escapeHtml(c.name)}">
+          <div class="weather">
+            <span class="dot-icon" data-f="icon" role="img" aria-label="Meteo"></span>
+            <div>
+              <div class="wx-city">${escapeHtml(c.name)}</div>
+              <div class="weather-temp"><span data-f="max">--</span>° <small>/ <span data-f="min">--</span>°</small></div>
+              <div class="weather-desc" data-f="desc"></div>
+            </div>
+            <div class="weather-meta">
+              <span>UV <strong data-f="uv">--</strong></span>
+              <span>Umidità <strong data-f="hum">--</strong>%</span>
+            </div>
+          </div>
+        </div>`).join('');
+      dots.innerHTML = cities.length > 1 ? cities.map(() => '<i></i>').join('') : '';
+      idx = Math.min(idx, cities.length - 1);
+      setDot(idx);
+      track.scrollLeft = idx * track.clientWidth;
+      cities.forEach((c, i) => loadWeather(c, i));
+    }
+    const setDot = i => [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i));
     track.addEventListener('scroll', () => {
       const i = Math.round(track.scrollLeft / (track.clientWidth || 1));
-      if (i === idx || i < 0 || i >= keys.length) return;
+      if (i === idx || i < 0 || i >= cities.length) return;
       idx = i; setDot(i);
-      try { localStorage.setItem('zen_weather_city', keys[i]); } catch { /* ok */ }
+      ls.set('zen_weather_city', cities[i].name);
     }, { passive: true });
 
-    async function loadWeather(k) {
-      const c = CITIES[k], slide = track.querySelector(`[data-city="${k}"]`);
+    function fillWeather(slide, d) {
       const f = n => slide.querySelector(`[data-f="${n}"]`);
+      if (!d) { f('icon').innerHTML = icon('cloud'); f('desc').textContent = 'Dati non disponibili'; return; }
+      const [ic, label] = weatherInfo(d.current?.weather_code ?? d.daily.weather_code[0]);
+      const uv = Math.round(d.daily.uv_index_max[0]);
+      f('icon').innerHTML = icon(ic);
+      f('icon').setAttribute('aria-label', label);
+      f('desc').textContent = label;
+      f('max').textContent = Math.round(d.daily.temperature_2m_max[0]);
+      f('min').textContent = Math.round(d.daily.temperature_2m_min[0]);
+      f('hum').textContent = Math.round(d.current?.relative_humidity_2m ?? 0);
+      f('uv').textContent = uv;
+      f('uv').className = uv <= 2 ? 'uv-low' : uv <= 5 ? 'uv-medium' : 'uv-high';
+    }
+    async function loadWeather(c, i) {
+      const slide = track.querySelector(`[data-i="${i}"]`), k = cityKey(c);
+      if (!slide) return;
+      if (cache[k]) return fillWeather(slide, cache[k]);
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}` +
           '&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max' +
           '&current=temperature_2m,weather_code,relative_humidity_2m&timezone=auto&forecast_days=1';
-        const data = await (await fetch(url)).json();
-        const [ic, label] = weatherInfo(data.current?.weather_code ?? data.daily.weather_code[0]);
-        const uv = Math.round(data.daily.uv_index_max[0]);
-        f('icon').innerHTML = icon(ic);
-        f('icon').setAttribute('aria-label', label);
-        f('desc').textContent = label;
-        f('max').textContent = Math.round(data.daily.temperature_2m_max[0]);
-        f('min').textContent = Math.round(data.daily.temperature_2m_min[0]);
-        f('hum').textContent = Math.round(data.current?.relative_humidity_2m ?? 0);
-        f('uv').textContent = uv;
-        f('uv').className = uv <= 2 ? 'uv-low' : uv <= 5 ? 'uv-medium' : 'uv-high';
-      } catch {
-        f('icon').innerHTML = icon('cloud');
-        f('desc').textContent = 'Dati non disponibili';
-      }
+        cache[k] = await (await fetch(url)).json();
+        fillWeather(track.querySelector(`[data-i="${i}"]`) || slide, cache[k]);
+      } catch { fillWeather(slide, null); }
     }
-    keys.forEach(loadWeather);
+
+    async function saveCities() {
+      ls.set('zen_weather_cities', JSON.stringify(cities));
+      try { await setDoc(meteoDoc(), { cities }); } catch (e) { console.error('meteo', e); }
+    }
+
+    /* ── Scelta delle città ── */
+    const wcSheet = createSheet({ title: 'Le tue città', body: `
+      <div class="stack">
+        <div class="list" id="wc-list"></div>
+        <input class="input" id="wc-q" type="search" placeholder="Cerca una città" autocomplete="off" aria-label="Cerca una città"/>
+        <div class="list" id="wc-res" hidden></div>
+        <p class="s" id="wc-msg"></p>
+      </div>` });
+    function drawCityList() {
+      wcSheet.$('#wc-list').hidden = !cities.length;
+      wcSheet.$('#wc-list').innerHTML = cities.map((c, i) => `<div class="wc-row"><span class="grow">${escapeHtml(c.name)}</span><button type="button" class="btn sm" data-rm="${i}">Togli</button></div>`).join('');
+    }
+    let found = [], searchT = 0;
+    wcSheet.$('#wc-q').addEventListener('input', e => {
+      clearTimeout(searchT);
+      const q = e.target.value.trim();
+      const res = wcSheet.$('#wc-res'), msg = wcSheet.$('#wc-msg');
+      if (q.length < 2) { res.hidden = true; msg.textContent = ''; return; }
+      searchT = setTimeout(async () => {
+        try {
+          const r = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=it&format=json`)).json();
+          found = (r.results || []).map(x => ({ name: [x.name, x.admin1 && x.admin1 !== x.name ? x.admin1 : '', x.country_code || ''].filter(Boolean).join(', '), lat: x.latitude, lon: x.longitude }));
+          res.hidden = !found.length;
+          res.innerHTML = found.map((c, i) => `<button type="button" class="list-row" data-add="${i}"><span class="grow">${escapeHtml(c.name)}</span></button>`).join('');
+          msg.textContent = found.length ? '' : 'Nessuna città trovata.';
+        } catch { msg.textContent = 'Ricerca non disponibile ora.'; }
+      }, 350);
+    });
+    wcSheet.el.addEventListener('click', async e => {
+      const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]');
+      if (add) {
+        const c = found[+add.dataset.add];
+        if (!cities.some(x => cityKey(x) === cityKey(c))) cities.push({ name: c.name.split(',')[0], lat: c.lat, lon: c.lon });
+        if (cities.length > 8) cities.length = 8;
+        wcSheet.$('#wc-q').value = ''; wcSheet.$('#wc-res').hidden = true;
+        idx = cities.length - 1; drawCityList(); drawWeather(); await saveCities();
+      } else if (rm) {
+        cities.splice(+rm.dataset.rm, 1);
+        idx = 0; drawCityList(); drawWeather(); await saveCities();
+      }
+    });
+    const openCities = () => { drawCityList(); wcSheet.open(); };
+    document.getElementById('wx-edit').addEventListener('click', openCities);
+    track.addEventListener('click', e => { if (e.target.closest('[data-wx-add]')) openCities(); });
+
+    /* Le città si leggono solo dopo il login: sono dell'account, non del dispositivo. */
+    waitForUser().then(async () => {
+      try { cities = JSON.parse(ls.get('zen_weather_cities') || '[]'); } catch { cities = []; }
+      const last = ls.get('zen_weather_city');
+      idx = Math.max(0, cities.findIndex(c => c.name === last));
+      drawWeather();
+      try {
+        const snap = await getDoc(meteoDoc());
+        if (snap.exists() && Array.isArray(snap.data().cities)) {
+          const remote = snap.data().cities.filter(c => c && c.name && isFinite(c.lat) && isFinite(c.lon));
+          if (JSON.stringify(remote) !== JSON.stringify(cities)) { cities = remote; ls.set('zen_weather_cities', JSON.stringify(cities)); drawWeather(); }
+        }
+      } catch (e) { console.error('meteo', e); }
+    });
 
     /* ── Utente: saluto con il nome e compleanni ── */
     waitForUser().then(async user => {
