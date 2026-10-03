@@ -1842,20 +1842,54 @@
     window._geoLayer = null;
     const isoOf = f => NUM2ISO[String(f.id).padStart(3, '0')] || NUM2ISO[f.id];
 
-    // Paese non visitato: quasi trasparente. Visitato: blu del geco, solo dentro i suoi confini.
-    function geoStyle(f) {
-      const iso2 = isoOf(f);
-      if (iso2 && visitedCountries.has(iso2)) {
-        return { color: cssVar('--geco-blue'), weight: 1.6, opacity: 1, fillColor: cssVar('--geco-blue'), fillOpacity: .5 };
+    // Ogni paese può avere più livelli (il poligono e, per i paesi minuscoli, un cerchio cliccabile)
+    const isoLayers = {};
+    let selectedIso = null;
+
+    // Visitato: blu del geco dentro i suoi confini. Selezionato: contorno rosa. Gli altri: quasi trasparenti.
+    function styleFor(iso2, isMarker) {
+      const visited = visitedCountries.has(iso2), sel = iso2 === selectedIso;
+      const s = {
+        color: visited ? cssVar('--geco-blue') : cssVar('--muted'),
+        weight: visited ? 1.4 : .5, opacity: visited ? 1 : .35,
+        fillColor: cssVar('--geco-blue'), fillOpacity: visited ? .5 : .02,
+      };
+      if (sel) { s.color = cssVar('--sakura'); s.weight = 2.6; s.opacity = 1; s.fillOpacity = visited ? .55 : .3; s.fillColor = visited ? cssVar('--geco-blue') : cssVar('--sakura'); }
+      if (isMarker) {   // cerchio dei paesi minuscoli: visibile solo se visitato o selezionato
+        if (!visited && !sel) { s.opacity = .45; s.weight = 1; s.fillOpacity = .06; }
+        else { s.fillOpacity = Math.max(s.fillOpacity, .55); }
       }
-      return { color: cssVar('--muted'), weight: .5, opacity: .35, fillColor: cssVar('--geco-blue'), fillOpacity: .02 };
+      return s;
     }
+    const geoStyle = f => styleFor(isoOf(f), false);
 
+    // Raggruppato: all'avvio arrivano ~200 aggiornamenti di Firebase quasi insieme
+    let paintQueued = false;
     function paintGeo() {
-      if (window._geoLayer) window._geoLayer.setStyle(geoStyle);
+      if (paintQueued) return;
+      paintQueued = true;
+      requestAnimationFrame(() => {
+        paintQueued = false;
+        Object.entries(isoLayers).forEach(([iso2, ls]) => ls.forEach(l => l.setStyle(styleFor(iso2, l instanceof L.CircleMarker))));
+      });
     }
 
-    // Tema chiaro/scuro cambiato dal Profilo: mappa e colori seguono
+    function selectCountry(iso2) {
+      selectedIso = iso2;
+      paintGeo();
+      (isoLayers[iso2] || []).forEach(l => l.bringToFront?.());
+    }
+
+    // Zoom adatto alla grandezza del paese: Malta o Monaco molto vicino, l'Italia a misura intera
+    function focusCountry(iso2) {
+      const poly = (isoLayers[iso2] || [])[0];
+      const span = poly ? Math.max(...(([a, b]) => [b.lat - a.lat, b.lng - a.lng])([poly.getBounds().getSouthWest(), poly.getBounds().getNorthEast()])) : 99;
+      const zoom = span < 1 ? 9 : span < 3 ? 7 : span < 8 ? 6 : 5;
+      const center = (span < 8 && poly) ? poly.getBounds().getCenter() : (CENTERS[iso2] || (poly && poly.getBounds().getCenter()));
+      if (center) map.flyTo(center, zoom, { duration: 1 });
+    }
+
+    // Tema chiaro/scuro cambiato dal Profilo: i colori della mappa seguono
     new MutationObserver(() => paintGeo())
       .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -1863,6 +1897,7 @@
       const card = document.getElementById('card-' + iso2);
       if (!card) return;
       if (card.hidden) { resetFilters(); }
+      selectCountry(iso2);
       card.classList.add('open');
       card.querySelector('.vg-country-head')?.setAttribute('aria-expanded', 'true');
       const block = card.closest('.vg-cont');
@@ -1870,27 +1905,51 @@
       setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
     }
 
-    fetch('./assets/data/countries-110m.json')
+    fetch('./assets/data/countries-10m-lite.json')
       .then(r => r.json())
       .then(topo => {
         const s = document.createElement('script');
         s.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
         s.onload = () => {
           const geojson = topojson.feature(topo, topo.objects.countries);
+          const markers = [];
+          const onPick = iso2 => {
+            focusCountry(iso2);
+            openCountry(iso2);
+          };
+          const hover = (iso2, on) => (isoLayers[iso2] || []).forEach(l => {
+            if (on) l.setStyle({ fillOpacity: visitedCountries.has(iso2) ? .68 : .25 });
+            else l.setStyle(styleFor(iso2, l instanceof L.CircleMarker));
+          });
+          const tip = (layer, iso2) => NAMES[iso2] && layer.bindTooltip(NAMES[iso2], { sticky: true, direction: 'top', className: 'vg-tip', opacity: 1 });
+          const wire = (layer, iso2) => {
+            tip(layer, iso2);
+            layer.on('mouseover', () => hover(iso2, true));
+            layer.on('mouseout', () => hover(iso2, false));
+            layer.on('click', e => { L.DomEvent.stopPropagation(e); onPick(iso2); });
+          };
+
           window._geoLayer = L.geoJSON(geojson, {
             style: geoStyle,
+            smoothFactor: .3,           // confini fedeli, senza semplificazione a schermo
             onEachFeature(f, layer) {
               const iso2 = isoOf(f);
               if (!iso2) return;
-              if (NAMES[iso2]) layer.bindTooltip(NAMES[iso2], { sticky: true, direction: 'top', className: 'vg-tip', opacity: 1 });
-              layer.on('mouseover', () => layer.setStyle({ fillOpacity: visitedCountries.has(iso2) ? .68 : .2 }));
-              layer.on('mouseout', () => window._geoLayer.resetStyle(layer));
-              layer.on('click', () => {
-                map.flyTo(CENTERS[iso2] || layer.getBounds().getCenter(), 5, { duration: 1 });
-                openCountry(iso2);
-              });
+              (isoLayers[iso2] ||= []).push(layer);
+              wire(layer, iso2);
+              // Paesi minuscoli (Malta, Monaco, Liechtenstein…): a schermo il poligono è un puntino,
+              // quindi si aggiunge un cerchio cliccabile al centro
+              const b = layer.getBounds();
+              if (Math.max(b.getNorth() - b.getSouth(), b.getEast() - b.getWest()) < 2.2) markers.push([iso2, b.getCenter()]);
             }
           }).addTo(map);
+
+          markers.forEach(([iso2, c]) => {
+            const m = L.circleMarker(c, { radius: 8, ...styleFor(iso2, true) }).addTo(map);
+            isoLayers[iso2].push(m);
+            wire(m, iso2);
+          });
+          paintGeo();
         };
         document.head.appendChild(s);
       })
@@ -2051,7 +2110,8 @@
             cardHead.setAttribute('aria-expanded', String(!wasOpen));
             if (!wasOpen) {
               startSubs(iso2, info);
-              if (CENTERS[iso2]) map.flyTo(CENTERS[iso2], 5, { duration: 1 });
+              selectCountry(iso2);
+              focusCountry(iso2);
             }
           };
           cardHead.addEventListener('click', e => {
