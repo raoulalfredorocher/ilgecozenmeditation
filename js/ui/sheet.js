@@ -127,11 +127,17 @@ function releaseScroll() {
 
 /** Chiude usando la logica della pagina (tocco sull'overlay), altrimenti le classi. */
 function closeOverlay(overlay) {
+  const hadClass = OPEN_CLASSES.find(c => overlay.classList.contains(c));
   overlay.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+  if (hadClass) {
+    // Se la pagina ha già tolto la classe il foglio è chiuso: non va nascosto con display:none,
+    // altrimenti alla riapertura resterebbe invisibile per sempre.
+    if (overlay.classList.contains(hadClass)) overlay.classList.remove(hadClass);
+    releaseScroll();
+    return;
+  }
   if (!isVisible(overlay)) return;
-  const cls = OPEN_CLASSES.find(c => overlay.classList.contains(c));
-  if (cls) overlay.classList.remove(cls);
-  else overlay.style.display = 'none';
+  overlay.style.display = 'none';
   releaseScroll();
 }
 

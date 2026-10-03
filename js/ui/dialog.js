@@ -36,6 +36,7 @@ export function createSheet({ title = '', body = '', className = '', onClose } =
     isOpen: () => overlay.classList.contains('open'),
     open() {
       if (api.isOpen()) return api;
+      overlay.style.removeProperty('display');
       overlay.classList.add('open');
       openCount++;
       document.documentElement.style.overflow = 'hidden';
