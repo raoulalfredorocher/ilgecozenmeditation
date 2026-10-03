@@ -128,11 +128,6 @@ const progress = () => {
   const total = S.exs.reduce((a, e) => a + e.p[0], 0), done = S.exs.reduce((a, e) => a + e.s.length, 0);
   return { total, done };
 };
-const stepper = (id, label, value, step, unit = '') => `
-  <div class="wk-step"><div class="field-lbl">${label}</div>
-    <div class="wk-step-row"><button type="button" class="wk-pm" data-step="${id}" data-d="${-step}" aria-label="Meno">−</button>
-      <div class="wk-val"><span id="v-${id}">${fmtKg(value)}</span>${unit ? `<span class="s"> ${unit}</span>` : ''}</div>
-      <button type="button" class="wk-pm" data-step="${id}" data-d="${step}" aria-label="Più">+</button></div></div>`;
 const ringHtml = (sub = '') => `<div class="wk-ring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="88" class="rg-bg"/><circle cx="100" cy="100" r="88" class="rg-fg" id="rg" stroke-dasharray="${RING.toFixed(1)}" stroke-dashoffset="0" transform="rotate(-90 100 100)"/></svg>
   <div class="wk-clock" id="clk">0:00</div><div class="wk-sub" id="clk-sub">${sub}</div></div>`;
 
@@ -169,17 +164,11 @@ function render() {
       <button type="button" class="text-btn" data-act="skip-ex">Salta esercizio</button>
       ${(e.s.length || S.ei > 0) ? '<button type="button" class="text-btn" data-act="undo">Annulla ultima</button>' : ''}</div>`;
     const foot = `${next ? `<div class="wk-next">Poi: ${esc(next.n)}</div>` : ''}`;
-    if (e.t === 't') {
-      body.innerHTML = `<div class="wk-center">${head}${ringHtml(S.running ? '' : 'durata della serie')}${e.d ? `<p class="note">${esc(e.d)}</p>` : ''}
-        ${S.running ? '<button type="button" class="btn accent block wk-cta" data-act="timed-end">Fine serie</button>' : '<button type="button" class="btn accent block wk-cta" data-act="timed-go">Via</button>'}${links}${foot}</div>`;
-    } else {
-      body.innerHTML = `<div class="wk-center">${head}
-        <div class="wk-target">Programma: ${e.p[1]} ripetizioni${e.p[2] ? ` · ${fmtKg(e.p[2])} kg` : ''}</div>
-        <div class="wk-steps">${stepper('reps', 'Ripetizioni', S.reps, 1)}${stepper('kg', 'Carico (kg)', S.kg, 2.5)}</div>
-        ${last ? `<div class="s wk-last">Ultima volta (${new Date(last.data + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}): ${last.sets.map(s => `${s[0]}×${fmtKg(num(s[1]))}`).join(' · ')}</div>` : ''}
-        ${e.d ? `<p class="note">${esc(e.d)}</p>` : ''}
-        <button type="button" class="btn accent block wk-cta" data-act="set-done">Serie fatta</button>${links}${foot}</div>`;
-    }
+    const target = e.t === 't' ? fmtClock(e.p[3]) : `${e.p[1]} ripetizioni${e.p[2] ? ` · ${fmtKg(e.p[2])} kg` : ''}`;
+    body.innerHTML = `<div class="wk-center">${head}<div class="wk-target">${target}</div>${ringHtml(S.running ? '' : 'pronto')}
+      ${last && e.t !== 't' ? `<div class="s wk-last">Ultima volta (${new Date(last.data + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}): ${last.sets.map(x => `${x[0]}×${fmtKg(num(x[1]))}`).join(' · ')}</div>` : ''}
+      ${e.d ? `<p class="note">${esc(e.d)}</p>` : ''}
+      <button type="button" class="btn accent block wk-cta" data-act="${S.running ? 'set-stop' : 'set-start'}">${S.running ? 'Stop' : 'Avvia'}</button>${links}${foot}</div>`;
   } else if (S.stage === 'rest') {
     const ne = S.exs[S.ei], newEx = S.restNewEx;
     body.innerHTML = `<div class="wk-center"><div class="wk-eyebrow">Recupero</div>${ringHtml('secondi')}
@@ -222,7 +211,11 @@ function tick() {
       el.querySelector('#rg').style.strokeDashoffset = String(RING * (1 - (total ? Math.min(1, rem / total) : 0)));
       if (S.stage === 'rest' && rem > 0 && rem <= 3 && rem !== lastBeepSec) { lastBeepSec = rem; beep(1); }
       if (rem === 0) onTimeUp();
-    } else if (S.stage === 'ex') { clk.textContent = fmtClock(cur().p[3]); el.querySelector('#rg').style.strokeDashoffset = '0'; }
+    } else if (S.stage === 'ex') {
+      const t = cur().t === 't', sec = S.running ? Math.floor((now - S.shownAt) / 1000) : 0;
+      clk.textContent = fmtClock(t && !S.running ? cur().p[3] : sec);          // serie a ripetizioni: conta in avanti
+      el.querySelector('#rg').style.strokeDashoffset = String(t ? 0 : RING * (1 - (S.running ? (sec % 60) / 60 : 0)));
+    }
   }
   // promemoria acqua
   if (S.startedAt && ['warmup', 'ex', 'rest', 'stretch'].includes(S.stage) && now - S.lastWater >= WATER_EVERY) {
@@ -269,7 +262,7 @@ function endRest() {
   prepSet(); go('ex');
 }
 function recordSet(flag) {
-  const e = cur(), exec = Math.round((Date.now() - S.shownAt) / 1000);
+  const e = cur(), exec = S.running ? Math.round((Date.now() - S.shownAt) / 1000) : 0;
   e.s.push(flag ? [0, 0, exec, 0, flag] : [S.reps, S.kg, exec, 0, 0]);
   S.lastRef = [S.ei, e.s.length - 1];
   afterSet(!flag);
@@ -289,13 +282,6 @@ function undo() {
 
 async function onClick(ev) {
   const t = ev.target;
-  const step = t.closest('[data-step]');
-  if (step) {
-    const id = step.dataset.step, d = +step.dataset.d;
-    S[id] = Math.max(0, Math.round((S[id] + d) * 10) / 10);
-    el.querySelector('#v-' + id).textContent = fmtKg(S[id]);
-    return save();
-  }
   const fb = t.closest('[data-fb]');
   if (fb) { S.feedback = S.feedback === fb.dataset.fb ? null : fb.dataset.fb; el.querySelectorAll('[data-fb]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.fb === S.feedback))); return; }
   const a = t.closest('[data-act]')?.dataset.act;
@@ -308,12 +294,11 @@ async function onClick(ev) {
     if (S.stage === 'warmup') { S.rw = secs; return toFirstExercise(); }
     S.st = secs; return go('watch-stop');
   }
-  if (a === 'set-done') return recordSet(0);
+  if (a === 'set-start') { const now = Date.now(); beep(1); return go('ex', { running: true, shownAt: now, runEnd: cur().t === 't' ? now + cur().p[3] * 1000 : 0 }); }
+  if (a === 'set-stop') return cur().t === 't' ? recordTimed() : recordSet(0);
   if (a === 'skip-set') return recordSet(1);
   if (a === 'skip-ex') { const e = cur(); while (e.s.length < e.p[0]) e.s.push([0, 0, 0, 0, 2]); S.lastRef = null; return afterSet(false); }
   if (a === 'undo') return undo();
-  if (a === 'timed-go') { const e = cur(); const now = Date.now(); beep(1); return go('ex', { running: true, shownAt: now, runEnd: now + e.p[3] * 1000 }); }
-  if (a === 'timed-end') return recordTimed();
   if (a === 'rest-plus') { S.phaseEnd += 15000; S.total += 15; save(); return tick(); }
   if (a === 'rest-minus') { S.phaseEnd = Math.max(Date.now() + 1000, S.phaseEnd - 15000); S.total = Math.max(1, S.total - 15); save(); return tick(); }
   if (a === 'rest-skip') return endRest();
