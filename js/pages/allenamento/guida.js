@@ -13,8 +13,7 @@
  */
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
-import { addRegistroDoc, updateRegistroDoc } from '../../core/db.js';
-import { state, planById, num, exType, fmtClock, fmtKg, lastTimeFor, dateKey, DEFAULT_WARMUP, DEFAULT_STRETCH, FEEDBACK } from './state.js';
+import { state, planById, addSession, updateSession, num, exType, fmtClock, fmtKg, lastTimeFor, dateKey, DEFAULT_WARMUP, DEFAULT_STRETCH, FEEDBACK } from './state.js';
 
 const KEY = 'geco_wk', PENDING = 'geco_wk_pending', MAX_AGE = 8 * 3600e3, WATER_EVERY = 15 * 60e3;
 const RING = 2 * Math.PI * 88;
@@ -342,7 +341,7 @@ async function finish() {
   S.durata = doc.durata; S.feedback = null; S.note = ''; S.saveDoc = doc;
   const pend = store.get(PENDING) || [];
   pend.push(doc); store.set(PENDING, pend);                         // finché non è confermato, resta qui
-  savePromise = addRegistroDoc(doc).then(id => {
+  savePromise = addSession(doc).then(id => {
     if (!id) throw new Error('nessun id');
     S && (S.docId = id);
     store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine));
@@ -365,7 +364,7 @@ async function closeDone() {
   window.dispatchEvent(new CustomEvent('al:saved', { detail: { data } }));
   try {
     const id = await Promise.race([savePromise, new Promise((_, rej) => setTimeout(() => rej(new Error('slow')), 4000))]);
-    if (fb || note) await updateRegistroDoc(id, { feedback: fb, note });
+    if (fb || note) await updateSession(id, { feedback: fb, note });
   } catch { /* se il salvataggio è ancora in corso, feedback e note si possono aggiungere dal registro */ }
 }
 
@@ -374,6 +373,6 @@ export async function flushPending() {
   const pend = store.get(PENDING) || [];
   for (const doc of pend) {
     if (state.log.some(r => r.fine === doc.fine)) { store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); continue; }   // era già arrivato
-    try { if (await addRegistroDoc(doc)) store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); } catch { /* riprova la prossima volta */ }
+    try { if (await addSession(doc)) store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); } catch { /* riprova la prossima volta */ }
   }
 }

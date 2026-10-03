@@ -8,9 +8,9 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
-import { updateRegistroDoc, deleteRegistroDoc, addRegistroDoc, loadRegistroDettagli } from '../../core/db.js';
+import { deleteRegistroDoc, loadRegistroDettagli } from '../../core/db.js';
 import {
-  state, onChange, planById, MONTHS, DAY_SHORT, FEEDBACK, dateKey, parseKey, num, fmtKg, fmtClock, fmtDur, exType,
+  addSession, updateSession as updateRegistroDoc, state, onChange, planById, MONTHS, DAY_SHORT, FEEDBACK, dateKey, parseKey, num, fmtKg, fmtClock, fmtDur, exType,
   sessionVolume, sessionSets,
 } from './state.js';
 import { deliver, csvFile } from './files.js';
@@ -241,7 +241,7 @@ manual.$('#mn-ok').addEventListener('click', async () => {
     s: Array.from({ length: num(x.serie) || 1 }, () => [exType(x) === 't' ? 0 : num(x.rep), exType(x) === 't' ? 0 : num(x.kg), exType(x) === 't' ? num(x.tempo) : 0, num(x.recupero), 0]) }));
   const now = Date.now();
   manual.close();
-  const id = await addRegistroDoc({ v: 2, data, allenamentoId: p._docId, allenamentoNome: p.nome, schedaNome: sc.nome, durata: num(manual.$('#mn-dur').value) || 60, ini: now, fine: now, rw: 0, st: 0, acqua: 0, es, feedback: null, note: '' });
+  const id = await addSession({ v: 2, data, allenamentoId: p._docId, allenamentoNome: p.nome, schedaNome: sc.nome, durata: num(manual.$('#mn-dur').value) || 60, ini: now, fine: now, rw: 0, st: 0, acqua: 0, es, feedback: null, note: '' });
   selected = data; month = parseKey(data); render();
   if (id) setTimeout(() => openEdit(id), 400);
 });

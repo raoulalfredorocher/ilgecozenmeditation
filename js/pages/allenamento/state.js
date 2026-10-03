@@ -11,10 +11,12 @@
  *     Sessioni nuove (v: 2): un solo documento, compatto, senza sotto-collezioni:
  *       ini, fine (ms), rw / st (secondi di riscaldamento / stretching), acqua (quante volte hai bevuto),
  *       es: [{ n: nome, g: gruppo, t: 'r'|'t', p: [serie, rep, kg, tempo, recupero] (il programma),
- *              s: [[rep, kg, secondiEsecuzione, secondiRecupero, saltata 0|1|2], ...] (ciò che hai fatto) }]
+ *              s: [{ r: rep, k: kg, e: secondiEsecuzione, c: secondiRecupero, f: saltata 0|1|2 }, ...] (ciò che hai fatto) }]
+ *       Firestore non accetta liste dentro liste: nel documento le serie sono oggetti; nell'app sono liste
+ *       [rep, kg, esecuzione, recupero, saltata] (si convertono con packEs / unpackEs qui sotto).
  *     Sessioni vecchie: `dettagli` nella sotto-collezione dettagli_chunks (si leggono ancora).
  */
-import { subscribeAllenamenti, subscribeRegistro, updateAllenamentoDoc, addAllenamentoDoc, deleteAllenamentoDoc } from '../../core/db.js';
+import { subscribeAllenamenti, subscribeRegistro, updateAllenamentoDoc, addAllenamentoDoc, deleteAllenamentoDoc, addRegistroDoc, updateRegistroDoc } from '../../core/db.js';
 
 export const GROUPS = ['Petto', 'Schiena', 'Spalle', 'Bicipiti', 'Tricipiti', 'Gambe', 'Glutei', 'Addome', 'Cardio', 'Altro'];
 export const FEEDBACK = [['pos', 'Bene'], ['neu', 'Così così'], ['neg', 'Male']];
@@ -72,6 +74,13 @@ export async function reorderPlans(ids) {
 }
 
 // ─── Registro ────────────────────────────────────────────────────────────
+/** Serie come liste [rep, kg, esecuzione, recupero, saltata] → oggetti, per Firestore. */
+export const packEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x => (Array.isArray(x) ? { r: x[0], k: x[1], e: x[2], c: x[3], f: x[4] } : x)) }));
+/** Il contrario: dal documento alle liste usate dall'app. */
+export const unpackEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x => (Array.isArray(x) ? x : [x.r || 0, x.k || 0, x.e || 0, x.c || 0, x.f || 0])) }));
+export const addSession = doc => addRegistroDoc(doc.es ? { ...doc, es: packEs(doc.es) } : doc);
+export const updateSession = (id, fields) => updateRegistroDoc(id, fields.es ? { ...fields, es: packEs(fields.es) } : fields);
+
 /** Ultima volta che hai fatto un esercizio: le sue serie, per avere il carico di riferimento. */
 export function lastTimeFor(name) {
   const key = String(name).trim().toLowerCase();
@@ -92,5 +101,5 @@ export function startSync() {
     state.ready.plans = true;
     emit('plans');
   });
-  subscribeRegistro(list => { state.log = list; state.ready.log = true; emit('log'); });
+  subscribeRegistro(list => { state.log = list.map(r => (r.es ? { ...r, es: unpackEs(r.es) } : r)); state.ready.log = true; emit('log'); });
 }
