@@ -174,7 +174,10 @@
     .pk-in { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; margin-top: 2px; }
 
     /* Dieta: azioni del giorno e numeri della settimana */
-    .dt-acts { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .dt-reg { background: var(--geco-blue); color: #fff; border: 0; border-radius: 999px; padding: 10px 16px; font-size: var(--fs-md); font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: var(--shadow-sm); }
+    .dt-reg:active { transform: scale(.96); }
+    .dt-reg.done { background: var(--geco-mist); color: var(--geco-blue); box-shadow: none; }
+    .dt-acts { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); }
     .wn-row { display: grid; grid-template-columns: 3.2rem repeat(4, minmax(0, 1fr)) 4.4rem; gap: 4px; align-items: baseline; width: 100%; background: none; border: 0; border-top: .5px solid var(--border); padding: var(--space-2) var(--space-1); color: inherit; font: inherit; text-align: left; cursor: pointer; }
     .wn-row.head { border-top: 0; cursor: default; font-size: .6875rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; padding-top: 0; }
     .wn-row.tot, .wn-row.avg { cursor: default; font-weight: 600; }

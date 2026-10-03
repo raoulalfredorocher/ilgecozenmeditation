@@ -91,7 +91,7 @@ function render() {
           ${meals.length ? dots(dt) : ''}
           ${meals.length && hasProfile() ? (() => { const T = tdeeFor(weekDate(selected), day.type); return `<div class="s wn">TDEE ${kc(T)} kcal · dieta <span class="dl ${dt.kcal > T ? 'up' : 'dn'}">${sgn(dt.kcal - T)} kcal</span></div>`; })() : ''}</div>
         <div class="dt-acts"><button type="button" class="text-btn" id="dt-edit">Modifica</button>
-          <button type="button" class="text-btn" id="dt-reg">${state.diary[weekDate(selected)]?.length ? 'Nel diario ✓' : 'Registra'}</button></div>
+          <button type="button" class="dt-reg${state.diary[weekDate(selected)]?.length ? ' done' : ''}" id="dt-reg">${state.diary[weekDate(selected)]?.length ? 'Nel diario ✓' : 'Registra nel diario'}</button></div>
       </div>
       ${meals.length ? meals.map(m => `<div class="dt-meal">
           <div class="row"><span class="dt-slot">${esc(slotLabel(m.slot))}</span><span class="s">${kc(m.t.kcal)} kcal</span></div>
