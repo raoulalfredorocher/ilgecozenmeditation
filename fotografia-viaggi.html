@@ -30,9 +30,13 @@
     .vg-map-card {
       position: relative; isolation: isolate; overflow: hidden;
       border-radius: var(--radius-lg); border: .5px solid var(--border); box-shadow: var(--shadow-md);
-      height: clamp(240px, 58vw, 340px); background: var(--geco-mist);
+      height: clamp(240px, 58vw, 340px); background: var(--sea);
+      /* Colori della mappa: mare, terra, confini, passaggio del mouse */
+      --sea: #D6EAF2; --land: #F7F2E8; --line: #CDC3B1; --hov: #DCEBF3;
     }
-    #leaflet-map { width: 100%; height: 100%; background: var(--geco-mist); font-family: inherit; }
+    :root[data-theme="dark"] .vg-map-card { --sea: #0A151C; --land: #17313E; --line: #2A4A5C; --hov: #23485B; }
+    #leaflet-map { width: 100%; height: 100%; background: var(--sea); font-family: inherit; }
+    .leaflet-overlay-pane path { transition: fill-opacity .35s, fill .35s, stroke .3s; }
     .vg-map-card .leaflet-container { font-family: inherit; }
     .vg-map-card .leaflet-bar { border: 0; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-md); margin: 10px; }
     .vg-map-card .leaflet-bar a {
@@ -154,6 +158,92 @@
     .vg-form-btns { display: flex; gap: var(--space-2); }
     .vg-form-btns .btn { flex: 1; }
     .vg-add { width: 100%; border-style: dashed; background: transparent; color: var(--muted); }
+
+    /* ── Schermo intero ── */
+    .vg-fs-btn { display: flex !important; align-items: center; justify-content: center; }
+    .vg-fs-btn svg { width: 17px; height: 17px; }
+    html:has(body.vg-fs) { overflow: hidden; }
+    body.vg-fs .vg-sticky {
+      position: fixed; z-index: 150; margin: 0;
+      top: calc(var(--safe-top) + var(--header-h)); bottom: calc(var(--safe-bottom) + 56px);
+      left: 0; right: 0; padding: var(--space-2) var(--space-4);
+    }
+    body.vg-fs .vg-sticky::after { display: none; }
+    body.vg-fs .vg-map-card { height: 100%; }
+
+    /* ── Segnaposto sulla mappa ── */
+    .vg-pin-wrap, .vg-gecko-wrap, .vg-ripple-wrap { background: none; border: 0; }
+    .vg-pin {
+      width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--card); color: var(--geco-blue); border: 1.5px solid var(--geco-blue); box-shadow: var(--shadow-md);
+      transition: transform .15s var(--ease);
+    }
+    .vg-pin .icon { width: 14px; height: 14px; }
+    .vg-pin-wrap:hover .vg-pin { transform: scale(1.15); }
+    .vg-map-card.vg-far .vg-pin-wrap { display: none; }
+    .leaflet-container .leaflet-marker-pane img.vg-gecko { width: 34px !important; height: auto !important; max-width: none; display: block; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); animation: vg-bob 2.4s ease-in-out infinite; }
+    @keyframes vg-bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-4px) rotate(3deg); } }
+    .vg-ripple { position: absolute; left: -45px; top: -45px; width: 90px; height: 90px; border-radius: 50%; border: 2.5px solid var(--geco-blue); opacity: 0; animation: vg-ripple 1.3s ease-out forwards; }
+    .vg-ripple.r2 { animation-delay: .25s; }
+    @keyframes vg-ripple { 0% { transform: scale(.1); opacity: .9; } 100% { transform: scale(1.3); opacity: 0; } }
+
+    /* ── Schede Paesi / Panoramica / Cronologia ── */
+    .vg-panel { display: flex; flex-direction: column; gap: var(--space-4); }
+    .vg-panel[hidden] { display: none; }
+    .vg-hero { display: flex; flex-direction: column; gap: var(--space-3); }
+    .vg-hero-top { display: flex; align-items: baseline; justify-content: space-between; }
+    .vg-big { font-size: 2.6rem; font-weight: 600; letter-spacing: -.03em; line-height: 1; color: var(--primary); font-variant-numeric: tabular-nums; }
+    .vg-of { font-size: var(--fs-md); color: var(--muted); margin-left: 4px; }
+    .vg-pct { font-size: var(--fs-lg); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .vg-hero .meter-track { height: 10px; border-radius: 5px; }
+    .vg-hero .meter-fill { border-radius: 5px; background: linear-gradient(90deg, var(--geco-sky), var(--geco-blue)); }
+    .vg-next { font-size: var(--fs-sm); color: var(--muted); }
+    .vg-miles { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .vg-mile { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border-radius: 999px; background: var(--surface); color: var(--muted); font-size: var(--fs-sm); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .vg-mile .icon { width: 14px; height: 14px; }
+    .vg-mile.on { background: var(--sakura-soft); color: color-mix(in srgb, var(--sakura) 55%, var(--bark)); }
+    .vg-conts { display: flex; flex-direction: column; gap: var(--space-4); }
+    .vg-tiles2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-3); }
+    .vg-tile2 { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 2px; }
+    .vg-tile2 b { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .vg-tile2 span { font-size: var(--fs-xs); color: var(--muted); }
+    .vg-tl-year { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .14em; color: var(--muted); margin: var(--space-2) 2px -4px; }
+    .vg-tl-flag { font-size: 1.6rem; line-height: 1; }
+    .vg-tl-sub { font-size: var(--fs-xs); color: var(--muted); }
+    .vg-note { font-size: var(--fs-sm); color: var(--muted); padding: 0 2px; }
+
+    /* ── Voglio andarci ── */
+    .vg-wishrow { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+    .vg-wishrow[hidden] { display: none; }
+    .vg-wish {
+      display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: var(--fs-sm); font-weight: 600;
+      transition: background-color .2s, color .2s, border-color .2s;
+    }
+    .vg-wish .icon { width: 16px; height: 16px; }
+    .vg-wish[aria-pressed="true"] { background: color-mix(in srgb, var(--warning) 16%, var(--card)); border-color: var(--warning); color: color-mix(in srgb, var(--warning) 80%, var(--text)); }
+    .vg-wish-note { font-size: var(--fs-xs); color: var(--muted); }
+    .vg-country.wish:not(.visited) { border-color: color-mix(in srgb, var(--warning) 45%, transparent); }
+
+    /* ── Scheda paese dalla mappa (si apre dal basso, la mappa resta visibile) ── */
+    .zen-sheet-overlay.vg-ov, .zen-sheet-overlay.vg-ov.open { background: transparent; pointer-events: none; }
+    .vg-ov .zen-sheet { pointer-events: auto; max-height: 54dvh; box-shadow: var(--shadow-lg); border-top: .5px solid var(--border); }
+    .vg-sheet-head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .vg-sheet-head .vg-name { font-size: var(--fs-lg); }
+    .vg-country-body.in-sheet { display: flex !important; padding: 0 0 var(--space-4); }
+
+    /* ── Festa al traguardo ── */
+    .vg-party { position: fixed; inset: 0; z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); background: color-mix(in srgb, var(--bg) 92%, transparent); text-align: center; padding: var(--space-6); animation: vg-in .35s var(--ease); }
+    .vg-party .big { font-size: 84px; line-height: 1; animation: vg-pop .9s var(--ease) both; }
+    .vg-party h2 { font-size: var(--fs-2xl); font-weight: 700; }
+    .vg-party p { color: var(--muted); }
+    .vg-party .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .vg-party .confetti i { position: absolute; top: -12px; width: 8px; height: 14px; border-radius: 2px; opacity: .9; animation: vg-fall var(--d) linear var(--delay) forwards; }
+    .vg-party.out { animation: vg-out .4s ease forwards; }
+    @keyframes vg-in { from { opacity: 0; } }
+    @keyframes vg-out { to { opacity: 0; } }
+    @keyframes vg-pop { 0% { transform: scale(.2) rotate(-20deg); } 60% { transform: scale(1.15) rotate(6deg); } 100% { transform: scale(1); } }
+    @keyframes vg-fall { to { transform: translate(var(--x), 105vh) rotate(var(--r)); } }
   </style>
 </head>
 <body class="zen zen-native" data-title="Fotografia e viaggi" data-back="passioni.html" data-tab="">
@@ -173,23 +263,34 @@
       </div>
     </div>
 
-    <div class="vg-tools">
-      <div class="vg-search">
-        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-        <input class="input" id="vg-q" type="search" placeholder="Cerca un paese" autocomplete="off" aria-label="Cerca un paese"/>
-      </div>
-      <div class="segmented" id="vg-filter" role="group" aria-label="Filtro">
-        <button type="button" data-f="all" aria-pressed="true">Tutti</button>
-        <button type="button" data-f="visited" aria-pressed="false">Visitati</button>
-      </div>
+    <div class="segmented" id="vg-tabs" role="tablist" aria-label="Sezioni">
+      <button type="button" data-t="paesi" aria-pressed="true">Paesi</button>
+      <button type="button" data-t="over" aria-pressed="false">Panoramica</button>
+      <button type="button" data-t="time" aria-pressed="false">Cronologia</button>
     </div>
 
-    <div class="vg-list" id="countries-section"></div>
+    <section class="vg-panel" id="panel-paesi">
+      <div class="vg-tools">
+        <div class="vg-search">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input class="input" id="vg-q" type="search" placeholder="Cerca un paese" autocomplete="off" aria-label="Cerca un paese"/>
+        </div>
+        <div class="segmented" id="vg-filter" role="group" aria-label="Filtro">
+          <button type="button" data-f="all" aria-pressed="true">Tutti</button>
+          <button type="button" data-f="visited" aria-pressed="false">Visitati</button>
+          <button type="button" data-f="wish" aria-pressed="false">Da visitare</button>
+        </div>
+      </div>
+      <div class="vg-list" id="countries-section"></div>
+    </section>
+    <section class="vg-panel" id="panel-over" hidden></section>
+    <section class="vg-panel" id="panel-time" hidden></section>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module">
-    import { waitForAuth } from './js/core/db.js';
+    import { waitForAuth, addBucketItem, updateBucketItem, deleteBucketItem } from './js/core/db.js';
+    import { createSheet } from './js/ui/dialog.js';
     import { subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
     import { icon } from './js/ui/icons.js';
     import { safeUrl } from './js/core/dom.js';
@@ -1769,28 +1870,37 @@
       TO:[-21.2,-175.2],TV:[-7.5,178.7],VU:[-15.4,166.9],
     };
 
-    // ── Stato visitati (caricato da Firebase) ─────────────────────────────────
+    // ── Stato dei paesi (caricato da Firebase) ────────────────────────────────
     const visitedCountries = new Set();
-    const NAMES = {};   // iso2 → nome paese (per i suggerimenti sulla mappa)
-    Object.values(COUNTRIES).forEach(cs => Object.entries(cs).forEach(([iso, c]) => { NAMES[iso] = c.name; }));
+    const S = {};                       // iso2 → { wish, bucketId, drive, unescoDone, unescoTot, trips[], visitedAt }
+    const NAMES = {}, FLAGS = {}, CONT_OF = {};
+    const st = iso2 => (S[iso2] ||= { trips: [], unescoDone: 0, unescoTot: 0 });
+    Object.entries(COUNTRIES).forEach(([cont, cs]) => Object.entries(cs).forEach(([iso, c]) => {
+      NAMES[iso] = c.name; FLAGS[iso] = c.flag; CONT_OF[iso] = cont; st(iso).unescoTot = c.sites.length;
+    }));
+    const TOTAL = Object.keys(NAMES).length;
+    const MILESTONES = [10, 25, 50, 75, 100, 150];
 
-    const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+    const rootVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const mapCardEl = document.querySelector('.vg-map-card');
+    const mapVar = n => getComputedStyle(mapCardEl).getPropertyValue(n).trim();
+    const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
     // ── Mappa ─────────────────────────────────────────────────────────────────
+    // Da lontano: mare e terra con i soli confini (pulita, colori del Geco Zen).
+    // Da vicino (zoom 6+): compaiono strade e città di OpenStreetMap sotto i paesi.
+    const DETAIL_Z = 6;
+    let detail = false, rings = false;   // rings: i cerchi dei paesi minuscoli si vedono solo da vicino
     const map = L.map('leaflet-map', { zoomControl: false, attributionControl: true, worldCopyJump: true, minZoom: 1, zoomSnap: .5 });
     map.attributionControl.setPrefix(false);
+    map.attributionControl.addAttribution('Confini © Natural Earth');
     L.control.zoom({ position: 'topright' }).addTo(map);
     map.setView([28, 12], 1.5);
 
-    // Tessere OpenStreetMap ammorbidite con un filtro colore (vedi .vg-tiles): chiare nel tema chiaro, scure nel tema scuro
-    const TILE_ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
-    let tiles = null;
-    function setTiles() {
-      if (tiles) return;
-      tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: TILE_ATTR, className: 'vg-tiles' }).addTo(map);
-    }
-    setTiles();
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18, className: 'vg-tiles',
+      attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+    });
 
     // Il pannello fisso con la mappa occupa spazio: la lista deve sapere quanto, per non finirci sotto
     const stickyEl = document.getElementById('vg-sticky');
@@ -1800,6 +1910,43 @@
     };
     measureSticky();
     addEventListener('resize', measureSticky);
+
+    // Schermo intero: la mappa occupa tutto lo spazio tra la barra in alto e quella in basso
+    const FS_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+    const FS_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
+    let fsBtn;
+    function setFullscreen(on) {
+      document.body.classList.toggle('vg-fs', on);
+      if (fsBtn) { fsBtn.innerHTML = on ? FS_OFF : FS_ON; fsBtn.title = on ? 'Esci dallo schermo intero' : 'Schermo intero'; }
+      setTimeout(() => { measureSticky(); }, 60);
+    }
+    const FsControl = L.Control.extend({
+      options: { position: 'topright' },
+      onAdd() {
+        const bar = L.DomUtil.create('div', 'leaflet-bar');
+        fsBtn = L.DomUtil.create('a', 'vg-fs-btn', bar);
+        fsBtn.href = '#'; fsBtn.setAttribute('role', 'button'); fsBtn.setAttribute('aria-label', 'Schermo intero');
+        fsBtn.innerHTML = FS_ON; fsBtn.title = 'Schermo intero';
+        L.DomEvent.disableClickPropagation(bar);
+        L.DomEvent.on(fsBtn, 'click', e => { L.DomEvent.preventDefault(e); setFullscreen(!document.body.classList.contains('vg-fs')); });
+        return bar;
+      },
+    });
+    new FsControl().addTo(map);
+    addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('vg-fs') && !cSheet.isOpen()) setFullscreen(false); });
+
+    // Tasti pin e dettaglio dipendono dallo zoom
+    function syncZoom() {
+      const z = map.getZoom();
+      mapCardEl.classList.toggle('vg-far', z < 3);
+      const d = z >= DETAIL_Z, r = z >= 4;
+      if (r !== rings) { rings = r; paintGeo(); }
+      if (d === detail) return;
+      detail = d;
+      if (d) tiles.addTo(map); else map.removeLayer(tiles);
+      paintGeo();
+    }
+    map.on('zoomend', syncZoom);
 
     // Mappa numeric ISO3166 → iso2
     const NUM2ISO = {
@@ -1846,20 +1993,31 @@
     const isoLayers = {};
     let selectedIso = null;
 
-    // Visitato: blu del geco dentro i suoi confini. Selezionato: contorno rosa. Gli altri: quasi trasparenti.
+    /* Colori:
+       - non visitato: terra neutra (trasparente quando si vede la mappa di dettaglio)
+       - visitato: blu del geco, più intenso con viaggi registrati e siti UNESCO fatti
+       - tutti i siti UNESCO del paese fatti: rosa sakura
+       - da visitare: ambra tratteggiato
+       - selezionato: contorno rosa */
     function styleFor(iso2, isMarker) {
-      const visited = visitedCountries.has(iso2), sel = iso2 === selectedIso;
-      const s = {
-        color: visited ? cssVar('--geco-blue') : cssVar('--muted'),
-        weight: visited ? 1.4 : .5, opacity: visited ? 1 : .35,
-        fillColor: cssVar('--geco-blue'), fillOpacity: visited ? .5 : .02,
-      };
-      if (sel) { s.color = cssVar('--sakura'); s.weight = 2.6; s.opacity = 1; s.fillOpacity = visited ? .55 : .3; s.fillColor = visited ? cssVar('--geco-blue') : cssVar('--sakura'); }
-      if (isMarker) {   // cerchio dei paesi minuscoli: visibile solo se visitato o selezionato
-        if (!visited && !sel) { s.opacity = .45; s.weight = 1; s.fillOpacity = .06; }
-        else { s.fillOpacity = Math.max(s.fillOpacity, .55); }
+      const s = S[iso2] || { trips: [], unescoDone: 0, unescoTot: 0 };
+      const visited = visitedCountries.has(iso2), wish = !!s.wish && !visited, sel = iso2 === selectedIso;
+      const blue = rootVar('--geco-blue'), pink = rootVar('--sakura'), amber = rootVar('--warning');
+      const complete = visited && s.unescoTot > 0 && s.unescoDone === s.unescoTot;
+      let o = { color: mapVar('--line'), weight: .6, opacity: 1, fillColor: mapVar('--land'), fillOpacity: detail ? 0 : 1, dashArray: null };
+      if (visited) {
+        const depth = Math.min(1, (s.trips.length ? .4 : 0) + (s.unescoTot ? .6 * s.unescoDone / s.unescoTot : 0));
+        const c = complete ? pink : blue;
+        o = { color: c, weight: 1.3, opacity: 1, fillColor: c, fillOpacity: (detail ? .3 : .5) + .4 * depth, dashArray: null };
+      } else if (wish) {
+        o = { color: amber, weight: 1.4, opacity: 1, fillColor: amber, fillOpacity: detail ? .22 : .4, dashArray: '4 3' };
       }
-      return s;
+      if (sel) { o.color = complete ? rootVar('--text') : pink; o.weight = 2.6; o.dashArray = null; if (!visited && !wish) { o.fillColor = pink; o.fillOpacity = detail ? .3 : .55; } }
+      if (isMarker) {   // cerchio dei paesi minuscoli: appena visibile finché il paese non è visitato o selezionato
+        if (!visited && !wish && !sel) { o.fillColor = mapVar('--line'); o.fillOpacity = rings ? .22 : 0; o.opacity = rings ? 1 : 0; o.weight = 1; }
+        else o.fillOpacity = Math.max(o.fillOpacity, .7);
+      }
+      return o;
     }
     const geoStyle = f => styleFor(isoOf(f), false);
 
@@ -1874,37 +2032,80 @@
       });
     }
 
-    function selectCountry(iso2) {
-      selectedIso = iso2;
-      paintGeo();
-      (isoLayers[iso2] || []).forEach(l => l.bringToFront?.());
-    }
-
-    // Zoom adatto alla grandezza del paese: Malta o Monaco molto vicino, l'Italia a misura intera
-    function focusCountry(iso2) {
-      const poly = (isoLayers[iso2] || [])[0];
-      const span = poly ? Math.max(...(([a, b]) => [b.lat - a.lat, b.lng - a.lng])([poly.getBounds().getSouthWest(), poly.getBounds().getNorthEast()])) : 99;
-      const zoom = span < 1 ? 9 : span < 3 ? 7 : span < 8 ? 6 : 5;
-      const center = (span < 8 && poly) ? poly.getBounds().getCenter() : (CENTERS[iso2] || (poly && poly.getBounds().getCenter()));
-      if (center) map.flyTo(center, zoom, { duration: 1 });
-    }
-
     // Tema chiaro/scuro cambiato dal Profilo: i colori della mappa seguono
     new MutationObserver(() => paintGeo())
       .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-    function openCountry(iso2) {
-      const card = document.getElementById('card-' + iso2);
-      if (!card) return;
-      if (card.hidden) { resetFilters(); }
-      selectCountry(iso2);
-      card.classList.add('open');
-      card.querySelector('.vg-country-head')?.setAttribute('aria-expanded', 'true');
-      const block = card.closest('.vg-cont');
-      if (block) { block.classList.add('open'); block.querySelector('.vg-cont-head')?.setAttribute('aria-expanded', 'true'); }
-      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
+    function selectCountry(iso2) {
+      selectedIso = iso2;
+      paintGeo();
+      requestAnimationFrame(() => (isoLayers[iso2] || []).forEach(l => l.bringToFront?.()));
     }
 
+    const pointOf = iso2 => CENTERS[iso2] || (isoLayers[iso2]?.[0]?.getBounds().getCenter());
+
+    // Zoom adatto alla grandezza del paese: Malta o Monaco molto vicino, l'Italia a misura intera
+    function focusCountry(iso2) {
+      const poly = (isoLayers[iso2] || [])[0];
+      const b = poly?.getBounds();
+      const span = b ? Math.max(b.getNorth() - b.getSouth(), b.getEast() - b.getWest()) : 99;
+      const zoom = span < 1 ? 9 : span < 3 ? 7 : span < 8 ? 6 : 5;
+      const center = (span < 8 && b) ? b.getCenter() : pointOf(iso2);
+      if (!center) return;
+      map.flyTo(center, zoom, { duration: 1 });
+      // A schermo intero la scheda copre la metà bassa: il paese va sollevato
+      if (document.body.classList.contains('vg-fs')) map.once('moveend', () => { if (cSheet.isOpen()) map.panBy([0, Math.round(innerHeight * .18)]); });
+    }
+
+    // ── Segnaposto: foto, geco sull'ultimo viaggio, onda quando segni un paese ─
+    const pins = {};
+    function syncPin(iso2) {
+      const url = safeUrl(S[iso2]?.drive);
+      if (!url) { if (pins[iso2]) { map.removeLayer(pins[iso2]); delete pins[iso2]; } return; }
+      if (pins[iso2]) { pins[iso2]._url = url; return; }
+      const pt = pointOf(iso2);
+      if (!pt) return;   // i confini non sono ancora arrivati: si riprova dopo
+      const m = L.marker(pt, { icon: L.divIcon({ className: 'vg-pin-wrap', html: `<span class="vg-pin">${icon('image')}</span>`, iconSize: [26, 26], iconAnchor: [13, 13] }), keyboard: false });
+      m._url = url;
+      m.bindTooltip(`Foto · ${NAMES[iso2]}`, { direction: 'top', offset: [0, -10], className: 'vg-tip', opacity: 1 });
+      m.on('click', e => { L.DomEvent.stopPropagation(e); window.open(m._url, '_blank', 'noopener'); });
+      m.addTo(map);
+      pins[iso2] = m;
+    }
+    const syncAllPins = () => Object.keys(S).forEach(syncPin);
+
+    let gecko = null;
+    function lastTrip() {
+      let best = null;
+      const limit = Date.now() + 864e5;
+      visitedCountries.forEach(iso => {
+        const s = S[iso];
+        let t = s?.visitedAt || 0;
+        (s?.trips || []).forEach(tr => { const d = Date.parse(tr.dateEnd || tr.dateStart || ''); if (d && d <= limit && d > t) t = d; });
+        if (t && (!best || t > best.t)) best = { iso, t };
+      });
+      return best;
+    }
+    function syncGecko() {
+      const last = lastTrip(), pt = last && pointOf(last.iso);
+      if (!pt) { if (gecko) { map.removeLayer(gecko); gecko = null; } return; }
+      if (gecko && gecko._iso === last.iso) return;
+      if (gecko) map.removeLayer(gecko);
+      gecko = L.marker(pt, { icon: L.divIcon({ className: 'vg-gecko-wrap', html: '<img class="vg-gecko" src="assets/img/geco.webp" alt="">', iconSize: [34, 24], iconAnchor: [17, 26] }), zIndexOffset: 900, keyboard: false });
+      gecko._iso = last.iso;
+      gecko.bindTooltip(`Ultimo viaggio · ${NAMES[last.iso]}`, { direction: 'top', offset: [0, -24], className: 'vg-tip', opacity: 1 });
+      gecko.on('click', e => { L.DomEvent.stopPropagation(e); showCountry(last.iso); });
+      gecko.addTo(map);
+    }
+
+    function ripple(iso2) {
+      const pt = pointOf(iso2);
+      if (!pt) return;
+      const m = L.marker(pt, { icon: L.divIcon({ className: 'vg-ripple-wrap', html: '<span class="vg-ripple"></span><span class="vg-ripple r2"></span>', iconSize: [0, 0] }), interactive: false, keyboard: false }).addTo(map);
+      setTimeout(() => map.removeLayer(m), 1700);
+    }
+
+    // ── Caricamento dei confini ───────────────────────────────────────────────
     fetch('./assets/data/countries-10m-lite.json')
       .then(r => r.json())
       .then(topo => {
@@ -1912,21 +2113,27 @@
         s.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
         s.onload = () => {
           const geojson = topojson.feature(topo, topo.objects.countries);
-          const markers = [];
-          const onPick = iso2 => {
-            focusCountry(iso2);
-            openCountry(iso2);
-          };
-          const hover = (iso2, on) => (isoLayers[iso2] || []).forEach(l => {
-            if (on) l.setStyle({ fillOpacity: visitedCountries.has(iso2) ? .68 : .25 });
-            else l.setStyle(styleFor(iso2, l instanceof L.CircleMarker));
+          // Paesi a cavallo dell'antimeridiano (Russia, Fiji, USA…): senza questa correzione
+          // il contorno taglia tutta la mappa con una riga orizzontale
+          geojson.features.forEach(f => {
+            if (!f.geometry || f.id === '010') return;
+            const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+            polys.forEach(poly => poly.forEach(ring => {
+              if (ring.some((pt, i) => i && Math.abs(pt[0] - ring[i - 1][0]) > 180)) ring.forEach(pt => { if (pt[0] < 0) pt[0] += 360; });
+            }));
           });
-          const tip = (layer, iso2) => NAMES[iso2] && layer.bindTooltip(NAMES[iso2], { sticky: true, direction: 'top', className: 'vg-tip', opacity: 1 });
+          const markers = [];
+          const hover = (iso2, on) => (isoLayers[iso2] || []).forEach(l => {
+            const base = styleFor(iso2, l instanceof L.CircleMarker);
+            if (!on) return l.setStyle(base);
+            const plain = !visitedCountries.has(iso2) && !S[iso2]?.wish;
+            l.setStyle({ fillOpacity: Math.min(1, base.fillOpacity + .15), fillColor: plain ? mapVar('--hov') : base.fillColor });
+          });
           const wire = (layer, iso2) => {
-            tip(layer, iso2);
+            if (NAMES[iso2]) layer.bindTooltip(NAMES[iso2], { sticky: true, direction: 'top', className: 'vg-tip', opacity: 1 });
             layer.on('mouseover', () => hover(iso2, true));
             layer.on('mouseout', () => hover(iso2, false));
-            layer.on('click', e => { L.DomEvent.stopPropagation(e); onPick(iso2); });
+            layer.on('click', e => { L.DomEvent.stopPropagation(e); showCountry(iso2); });
           };
 
           window._geoLayer = L.geoJSON(geojson, {
@@ -1950,12 +2157,22 @@
             wire(m, iso2);
           });
           paintGeo();
+          syncAllPins();
+          syncGecko();
         };
         document.head.appendChild(s);
       })
       .catch(() => {});
 
-    // ── Conteggi e filtri ─────────────────────────────────────────────────────
+    // ── Schede della pagina: Paesi · Panoramica · Cronologia ──────────────────
+    const tabBtns = [...document.querySelectorAll('#vg-tabs button')];
+    const PANELS = { paesi: 'panel-paesi', over: 'panel-over', time: 'panel-time' };
+    tabBtns.forEach(b => b.addEventListener('click', () => {
+      tabBtns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      Object.entries(PANELS).forEach(([k, id]) => { document.getElementById(id).hidden = k !== b.dataset.t; });
+    }));
+
+    // ── Conteggi, ricerca e filtri ────────────────────────────────────────────
     const section = document.getElementById('countries-section');
     const qInput = document.getElementById('vg-q');
     const filterBtns = [...document.querySelectorAll('#vg-filter button')];
@@ -1969,12 +2186,13 @@
 
     function applyFilter() {
       const q = norm(qInput.value.trim());
-      section.classList.toggle('vg-filtering', !!q || mode === 'visited');
+      section.classList.toggle('vg-filtering', !!q || mode !== 'all');
       let any = false;
       section.querySelectorAll('.vg-cont').forEach(block => {
         let n = 0;
         block.querySelectorAll('.vg-country').forEach(c => {
-          const show = (!q || c.dataset.name.includes(q)) && (mode !== 'visited' || c.classList.contains('visited'));
+          const ok = mode === 'all' || (mode === 'visited' ? c.classList.contains('visited') : c.classList.contains('wish') && !c.classList.contains('visited'));
+          const show = (!q || c.dataset.name.includes(q)) && ok;
           c.hidden = !show;
           if (show) n++;
         });
@@ -1982,6 +2200,7 @@
         if (n) any = true;
       });
       emptyEl.hidden = any;
+      emptyEl.textContent = mode === 'wish' && !qInput.value ? 'Nessun paese in lista. Apri un paese e tocca “Voglio andarci”.' : 'Nessun paese trovato.';
     }
     function resetFilters() {
       qInput.value = ''; mode = 'all';
@@ -2008,24 +2227,193 @@
           const v = block.querySelectorAll('.vg-country.visited').length;
           block.querySelector('[data-cc]').textContent = v ? `${v} ${v === 1 ? 'visitato' : 'visitati'} su ${all.length}` : `${all.length} paesi`;
         });
-        if (mode === 'visited') applyFilter();
+        if (mode !== 'all') applyFilter();
+        renderOverview();
+        renderTimeline();
+        syncGecko();
+      });
+    }
+
+    // ── Panoramica ────────────────────────────────────────────────────────────
+    const pct = n => (Math.round(n * 10) / 10).toLocaleString('it-IT', { maximumFractionDigits: 1 });
+    function renderOverview() {
+      const n = visitedCountries.size, p = TOTAL ? n / TOTAL * 100 : 0;
+      const next = MILESTONES.find(m => m > n);
+      let unDone = 0, unTot = 0, trips = 0, wish = 0;
+      Object.entries(S).forEach(([iso, s]) => { unDone += s.unescoDone; unTot += s.unescoTot; trips += s.trips.length; if (s.wish && !visitedCountries.has(iso)) wish++; });
+      const conts = Object.keys(COUNTRIES).map(c => {
+        const keys = Object.keys(COUNTRIES[c]), v = keys.filter(k => visitedCountries.has(k)).length;
+        return `<div class="meter"><div class="meter-head"><span>${c}</span><span class="zen-muted">${v}/${keys.length}</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:${keys.length ? v / keys.length * 100 : 0}%"></div></div></div>`;
+      }).join('');
+      document.getElementById('panel-over').innerHTML = `
+        <div class="card vg-hero">
+          <div class="vg-hero-top"><div><span class="vg-big">${n}</span><span class="vg-of">su ${TOTAL} paesi</span></div><span class="vg-pct">${pct(p)}%</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:${p}%"></div></div>
+          <p class="vg-next">${next ? `Ancora ${next - n} ${next - n === 1 ? 'paese' : 'paesi'} al traguardo dei ${next}.` : 'Hai superato tutti i traguardi. Complimenti, viaggiatore!'}</p>
+          <div class="vg-miles">${MILESTONES.map(m => `<span class="vg-mile${n >= m ? ' on' : ''}">${n >= m ? icon('check') : ''}${m}</span>`).join('')}</div>
+        </div>
+        <div class="vg-tiles2">
+          <div class="vg-tile2"><b>${unDone}</b><span>UNESCO</span></div>
+          <div class="vg-tile2"><b>${trips}</b><span>${trips === 1 ? 'viaggio' : 'viaggi'}</span></div>
+          <div class="vg-tile2"><b>${wish}</b><span>da visitare</span></div>
+        </div>
+        <div class="card"><div class="zen-eyebrow" style="margin-bottom:var(--space-4)">Per continente</div><div class="vg-conts">${conts}</div></div>`;
+    }
+
+    // ── Cronologia: tutti i viaggi in ordine di data + paesi da visitare ──────
+    const fmtDate = d => {
+      const dt = new Date(d + 'T00:00:00');
+      return isNaN(dt) ? d : dt.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+    function renderTimeline() {
+      const rows = [];
+      Object.entries(S).forEach(([iso, s]) => s.trips.forEach(t => rows.push({ iso, t })));
+      rows.sort((a, b) => (b.t.dateStart || '').localeCompare(a.t.dateStart || ''));
+      const byYear = {};
+      rows.forEach(r => { (byYear[r.t.dateStart ? r.t.dateStart.slice(0, 4) : 'Senza data'] ||= []).push(r); });
+      const years = Object.keys(byYear).sort((a, b) => (a === 'Senza data') - (b === 'Senza data') || b.localeCompare(a));
+      const row = (iso, title, sub) => `<button type="button" class="list-row" data-show="${iso}">
+        <span class="vg-tl-flag">${FLAGS[iso]}</span>
+        <span class="grow"><span style="display:block;font-weight:600">${esc(title)}</span><span class="vg-tl-sub">${sub}</span></span>
+        <span class="chev">${icon('back', 'sm')}</span></button>`;
+      let html = '';
+      if (!rows.length) html += '<div class="empty">Qui comparirà la linea del tempo dei tuoi viaggi.<br>Aggiungine uno da un paese.</div>';
+      years.forEach(y => {
+        html += `<div class="vg-tl-year">${y}</div><div class="list">${byYear[y].map(({ iso, t }) =>
+          row(iso, t.title || 'Viaggio', `${esc(NAMES[iso])}${t.dateStart ? ' · ' + fmtDate(t.dateStart) + (t.dateEnd ? ' → ' + fmtDate(t.dateEnd) : '') : ''}`)).join('')}</div>`;
+      });
+      const wish = Object.keys(S).filter(iso => S[iso].wish && !visitedCountries.has(iso)).sort((a, b) => NAMES[a].localeCompare(NAMES[b], 'it'));
+      if (wish.length) {
+        html += `<div class="vg-tl-year">DA VISITARE</div><div class="list">${wish.map(iso =>
+          row(iso, NAMES[iso], S[iso].bucketId ? 'Anche nella tua Bucket List' : 'Nella tua lista')).join('')}</div>`;
+      }
+      document.getElementById('panel-time').innerHTML = html;
+    }
+    document.getElementById('panel-time').addEventListener('click', e => {
+      const b = e.target.closest('[data-show]');
+      if (b) showCountry(b.dataset.show);
+    });
+
+    // ── Festa al traguardo ────────────────────────────────────────────────────
+    function party(n) {
+      const el = document.createElement('div');
+      el.className = 'vg-party';
+      el.setAttribute('role', 'status');
+      const colors = ['var(--sakura)', 'var(--geco-sky)', 'var(--warning)', 'var(--success)', 'var(--primary)'];
+      const pieces = Array.from({ length: 70 }, (_, i) => `<i style="left:${Math.random() * 100}%;background:${colors[i % colors.length]};
+        --x:${(Math.random() * 120 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;
+        --d:${(2.2 + Math.random() * 1.8).toFixed(2)}s;--delay:${(Math.random() * .6).toFixed(2)}s"></i>`).join('');
+      el.innerHTML = `<div class="confetti">${pieces}</div><div class="big">🌍</div><h2>${n} paesi!</h2><p>Un nuovo traguardo del tuo giro del mondo</p>`;
+      document.body.append(el);
+      if (navigator.vibrate) navigator.vibrate([30, 60, 30]);
+      const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 400); };
+      el.addEventListener('click', close);
+      setTimeout(close, 3800);
+    }
+
+    // ── Visitato / Voglio andarci ─────────────────────────────────────────────
+    function paintCountryUI(iso2) {
+      const visited = visitedCountries.has(iso2), s = st(iso2);
+      const card = document.getElementById('card-' + iso2);
+      if (card) { card.classList.toggle('visited', visited); card.classList.toggle('wish', !!s.wish); }
+      document.querySelectorAll(`.vg-visit[data-iso="${iso2}"]`).forEach(btn => {
+        btn.setAttribute('aria-pressed', String(visited));
+        btn.querySelector('span').textContent = visited ? 'Visitato' : 'Segna';
+      });
+      document.querySelectorAll(`.vg-wishrow[data-iso="${iso2}"]`).forEach(row => {
+        row.hidden = visited;
+        row.querySelector('.vg-wish').setAttribute('aria-pressed', String(!!s.wish));
+        row.querySelector('.vg-wish-note').textContent = s.wish && s.bucketId ? 'Aggiunto alla Bucket List' : '';
       });
     }
 
     function setCountryVisited(iso2, visited) {
       if (visited) visitedCountries.add(iso2);
       else visitedCountries.delete(iso2);
-      const card = document.getElementById('card-' + iso2);
-      if (card) {
-        card.classList.toggle('visited', visited);
-        const btn = card.querySelector('.vg-visit');
-        if (btn) {
-          btn.setAttribute('aria-pressed', String(visited));
-          btn.querySelector('span').textContent = visited ? 'Visitato' : 'Segna';
-        }
-      }
+      paintCountryUI(iso2);
       paintGeo();
       scheduleRefresh();
+    }
+
+    async function toggleVisited(iso2) {
+      const now = !visitedCountries.has(iso2), s = st(iso2);
+      setCountryVisited(iso2, now);
+      if (now) {
+        s.visitedAt = Date.now();
+        ripple(iso2);
+        if (MILESTONES.includes(visitedCountries.size)) setTimeout(() => party(visitedCountries.size), 600);
+      }
+      await saveCountryData(iso2, now ? { visited: true, visitedAt: s.visitedAt } : { visited: false });
+      // Se era nella Bucket List, il sogno si realizza (o torna da realizzare)
+      if (s.bucketId) {
+        try { await updateBucketItem(s.bucketId, now ? { done: true, doneDate: new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }) } : { done: false, doneDate: null }); }
+        catch (e) { console.warn('bucket list', e); }
+      }
+    }
+
+    async function toggleWish(iso2) {
+      const s = st(iso2), now = !s.wish;
+      s.wish = now;
+      paintCountryUI(iso2); paintGeo(); scheduleRefresh();
+      try {
+        if (now) {
+          if (!s.bucketId) {
+            s.bucketId = await addBucketItem({ id: Date.now(), title: `Viaggio in ${NAMES[iso2]}`, desc: '', img: null, done: false, doneDate: null });
+          }
+          await saveCountryData(iso2, { wish: true, wishBucketId: s.bucketId || null });
+        } else {
+          if (s.bucketId) { await deleteBucketItem(s.bucketId); s.bucketId = null; }
+          await saveCountryData(iso2, { wish: false, wishBucketId: null });
+        }
+      } catch (e) { console.warn('voglio andarci', e); }
+      paintCountryUI(iso2); scheduleRefresh();
+    }
+
+    document.addEventListener('click', e => {
+      const v = e.target.closest('.vg-visit');
+      if (v) { e.stopPropagation(); toggleVisited(v.dataset.iso); return; }
+      const w = e.target.closest('.vg-wish');
+      if (w) toggleWish(w.dataset.iso);
+      if (e.target.closest('[data-close-vgs]')) cSheet.close();
+    });
+
+    // ── Scheda del paese (dalla mappa, dalla cronologia, dal geco) ────────────
+    const cSheet = createSheet({
+      title: '', className: 'vg-sheet',
+      body: '<div class="vg-sheet-head" id="vgs-head"></div><div id="vgs-body"></div>',
+      onClose: () => restoreBody(),
+    });
+    cSheet.el.classList.add('vg-ov');
+    let sheetIso = null;
+
+    function restoreBody() {
+      if (!sheetIso) return;
+      const body = cSheet.$('#vgs-body').firstElementChild;
+      const card = document.getElementById('card-' + sheetIso);
+      if (body && card) { body.classList.remove('in-sheet'); card.appendChild(body); }
+      sheetIso = null;
+    }
+    function openCountrySheet(iso2) {
+      const card = document.getElementById('card-' + iso2);
+      const body = card?.querySelector('.vg-country-body');
+      if (!card || !body) return;
+      restoreBody();
+      sheetIso = iso2;
+      cSheet.$('#vgs-head').innerHTML = `<span class="vg-flag">${FLAGS[iso2]}</span><span class="vg-name">${esc(NAMES[iso2])}</span>
+        <button type="button" class="vg-visit" data-iso="${iso2}" aria-pressed="false">${icon('check')}<span>Segna</span></button>
+        <button type="button" class="icon-btn" data-close-vgs aria-label="Chiudi">${icon('close')}</button>`;
+      body.classList.add('in-sheet');
+      cSheet.$('#vgs-body').append(body);
+      paintCountryUI(iso2);
+      cSheet.open();
+    }
+
+    function showCountry(iso2) {
+      if (!document.getElementById('card-' + iso2)) return;
+      selectCountry(iso2);
+      focusCountry(iso2);
+      openCountrySheet(iso2);
     }
 
     // ── Lista: continenti → paesi ─────────────────────────────────────────────
@@ -2064,10 +2452,14 @@
             <div class="vg-country-head" role="button" tabindex="0" aria-expanded="false">
               <span class="vg-flag">${info.flag}</span>
               <span class="vg-name">${esc(info.name)}</span>
-              <button type="button" class="vg-visit" aria-pressed="false" aria-label="Segna ${esc(info.name)} come visitato">${icon('check')}<span>Segna</span></button>
+              <button type="button" class="vg-visit" data-iso="${iso2}" aria-pressed="false" aria-label="Segna ${esc(info.name)} come visitato">${icon('check')}<span>Segna</span></button>
               <span class="vg-chev">${icon('down')}</span>
             </div>
             <div class="vg-country-body">
+              <div class="vg-wishrow" data-iso="${iso2}">
+                <button type="button" class="vg-wish" data-iso="${iso2}" aria-pressed="false">${icon('heart')}<span>Voglio andarci</span></button>
+                <span class="vg-wish-note"></span>
+              </div>
               <div class="vg-block">
                 <div class="vg-block-head"><span class="zen-eyebrow">${icon('image')} Foto su Drive</span></div>
                 <div class="vg-drive">
@@ -2103,7 +2495,7 @@
           let editingId = null;
           const cardHead = card.querySelector('.vg-country-head');
 
-          // Apri / chiudi il paese (e porta la mappa lì)
+          // Apri / chiudi il paese nella lista (e porta la mappa lì)
           const toggleCard = () => {
             const wasOpen = card.classList.contains('open');
             card.classList.toggle('open');
@@ -2122,17 +2514,11 @@
             if (e.target === cardHead && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleCard(); }
           });
 
-          // "Visitato" sì/no
-          card.querySelector('.vg-visit').addEventListener('click', async e => {
-            e.stopPropagation();
-            const nowVisited = !visitedCountries.has(iso2);
-            setCountryVisited(iso2, nowVisited);
-            await saveCountryData(iso2, { visited: nowVisited });
-          });
-
           // Link alla cartella foto
           card.querySelector(`#ds-${iso2}`).addEventListener('click', async () => {
             const url = document.getElementById(`di-${iso2}`).value.trim();
+            st(iso2).drive = url;
+            syncPin(iso2);
             await saveCountryData(iso2, { driveUrl: url });
             renderDriveLink(iso2, url);
           });
@@ -2141,12 +2527,12 @@
           card.querySelector(`#atb-${iso2}`).addEventListener('click', () => {
             editingId = null;
             clearForm(iso2);
-            card.querySelector(`#tf-${iso2}`).classList.add('open');
-            card.querySelector(`#atb-${iso2}`).style.display = 'none';
+            document.getElementById(`tf-${iso2}`).classList.add('open');
+            document.getElementById(`atb-${iso2}`).style.display = 'none';
           });
-          card.querySelector(`#tf-cancel-${iso2}`).addEventListener('click', () => closeForm(iso2, card));
+          card.querySelector(`#tf-cancel-${iso2}`).addEventListener('click', () => closeForm(iso2));
           card.querySelector(`#tf-save-${iso2}`).addEventListener('click', async () => {
-            const saveBtn = card.querySelector(`#tf-save-${iso2}`);
+            const saveBtn = document.getElementById(`tf-save-${iso2}`);
             const resolvedId = editingId || saveBtn.dataset.editId || null;
             const data = {
               title:     document.getElementById(`tf-title-${iso2}`).value.trim() || 'Viaggio',
@@ -2156,7 +2542,7 @@
             };
             if (resolvedId) await updateTripDoc(iso2, resolvedId, data);
             else            await addTripDoc(iso2, data);
-            closeForm(iso2, card);
+            closeForm(iso2);
           });
 
           function clearForm(c) {
@@ -2164,12 +2550,12 @@
               const el = document.getElementById(`tf-${k}-${c}`);
               if (el) el.value = '';
             });
-            card.querySelector(`#tf-save-${iso2}`).textContent = 'Salva';
-            delete card.querySelector(`#tf-save-${iso2}`).dataset.editId;
+            document.getElementById(`tf-save-${c}`).textContent = 'Salva';
+            delete document.getElementById(`tf-save-${c}`).dataset.editId;
           }
-          function closeForm(c, cd) {
-            cd.querySelector(`#tf-${c}`).classList.remove('open');
-            cd.querySelector(`#atb-${c}`).style.display = '';
+          function closeForm(c) {
+            document.getElementById(`tf-${c}`).classList.remove('open');
+            document.getElementById(`atb-${c}`).style.display = '';
             editingId = null;
           }
 
@@ -2197,25 +2583,33 @@
       if (globalUnsubs[iso2 + '_c']) return;
 
       globalUnsubs[iso2 + '_c'] = subscribeCountry(iso2, data => {
-        const visited = data?.visitedUnescoIds || [];
-        const isVisited = data?.visited || false;
-        const driveUrl = data?.driveUrl || '';
+        const visitedIds = data?.visitedUnescoIds || [];
+        const s = st(iso2);
+        s.wish = !!data?.wish;
+        s.bucketId = data?.wishBucketId || null;
+        s.drive = data?.driveUrl || '';
+        s.visitedAt = data?.visitedAt || 0;
+        s.unescoDone = visitedIds.length;
 
-        setCountryVisited(iso2, isVisited);
+        setCountryVisited(iso2, data?.visited || false);
+        syncPin(iso2);
 
         const inputEl = document.getElementById(`di-${iso2}`);
-        if (inputEl && document.activeElement !== inputEl) inputEl.value = driveUrl;
-        renderDriveLink(iso2, driveUrl);
+        if (inputEl && document.activeElement !== inputEl) inputEl.value = s.drive;
+        renderDriveLink(iso2, s.drive);
 
-        renderUnesco(iso2, info.sites, visited);
-        setUnescoProgress(iso2, visited.length, info.sites.length);
+        renderUnesco(iso2, info.sites, visitedIds);
+        setUnescoProgress(iso2, visitedIds.length, info.sites.length);
         updateUnescoStats();
       });
 
       globalUnsubs[iso2 + '_t'] = subscribeTrips(iso2, trips => {
+        st(iso2).trips = trips;
         renderTrips(iso2, trips);
         document.getElementById(`tb-${iso2}`).textContent = trips.length;
         updateTripStats();
+        paintGeo();
+        scheduleRefresh();
       });
     }
 
@@ -2250,17 +2644,14 @@
         btn.addEventListener('click', async () => {
           btn.setAttribute('aria-pressed', String(btn.getAttribute('aria-pressed') !== 'true'));
           const newV = [...el.querySelectorAll('.vg-site[aria-pressed="true"]')].map(e => e.dataset.id);
+          st(iso2).unescoDone = newV.length;
           setUnescoProgress(iso2, newV.length, sites.length);
           updateUnescoStats();
+          paintGeo(); scheduleRefresh();
           await saveCountryData(iso2, { visitedUnescoIds: newV });
         });
       });
     }
-
-    const fmtDate = d => {
-      const dt = new Date(d + 'T00:00:00');
-      return isNaN(dt) ? d : dt.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
-    };
 
     function renderTrips(iso2, trips) {
       const el = document.getElementById(`tl-${iso2}`);
@@ -2282,26 +2673,25 @@
       el.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
         const trip = trips.find(t => t._docId === b.dataset.edit);
         if (!trip) return;
-        const card = document.getElementById('card-' + iso2);
         document.getElementById(`tf-title-${iso2}`).value = trip.title || '';
         document.getElementById(`tf-s-${iso2}`).value = trip.dateStart || '';
         document.getElementById(`tf-e-${iso2}`).value = trip.dateEnd || '';
         document.getElementById(`tf-n-${iso2}`).value = trip.notes || '';
-        const saveBtn = card.querySelector(`#tf-save-${iso2}`);
+        const saveBtn = document.getElementById(`tf-save-${iso2}`);
         saveBtn.textContent = 'Aggiorna';
         saveBtn.dataset.editId = trip._docId;
-        card.querySelector(`#tf-${iso2}`).classList.add('open');
-        card.querySelector(`#atb-${iso2}`).style.display = 'none';
-        card.querySelector(`#tf-${iso2}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById(`tf-${iso2}`).classList.add('open');
+        document.getElementById(`atb-${iso2}`).style.display = 'none';
+        document.getElementById(`tf-${iso2}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
       }));
     }
-
-    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
     // ── Avvio ─────────────────────────────────────────────────────────────────
     waitForAuth().then(() => {
       document.body.style.visibility = '';
       buildCountriesList();
+      renderOverview();
+      renderTimeline();
       // Sottoscrive tutti i paesi subito: servono per mappa colorata e contatori globali
       Object.values(COUNTRIES).forEach(countries => {
         Object.entries(countries).forEach(([iso2, info]) => startSubs(iso2, info));
