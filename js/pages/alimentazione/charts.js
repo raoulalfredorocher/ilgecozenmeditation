@@ -105,3 +105,24 @@ export function adherenceDots(days) {
   }).join('');
   return svg(W, H, dots, 'Giorni in linea con la dieta');
 }
+
+// ─── 6. Allenamento della settimana (kcal bruciate per giorno) ───────────
+/** data: [{ label, kcal, n, real }] — real = sessione fatta davvero, altrimenti prevista dal piano. */
+export function workoutBars(data) {
+  const W = 320, H = 118, L = 6, R = 6, T = 16, B = 22;
+  const n = data.length, bw = (W - L - R) / n, bar = Math.min(26, bw * 0.62);
+  const top = Math.max(400, ...data.map(d => d.kcal || 0)) * 1.1;
+  const y = v => T + (H - T - B) * (1 - v / top);
+  const cx = i => L + bw * i + bw / 2;
+  const base = `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" class="ch-axis"/>`;
+  const bars = data.map((d, i) => {
+    if (!d.n && !d.kcal) return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${(y(0) - 3).toFixed(1)}" width="${bar.toFixed(1)}" height="3" rx="1.5" class="ch-track"/>`;
+    const h = Math.max(6, y(0) - y(d.kcal || 0));
+    return d.real
+      ? `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${(y(0) - h).toFixed(1)}" width="${bar.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${BLUE}"/>`
+      : `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${(y(0) - h).toFixed(1)}" width="${bar.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${BLUE}" fill-opacity=".14" stroke="${BLUE}" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+  }).join('');
+  const vals = data.map((d, i) => (d.kcal ? `<text x="${cx(i).toFixed(1)}" y="${(y(d.kcal) - 5).toFixed(1)}" text-anchor="middle" class="ch-t">${kc(d.kcal)}</text>` : '')).join('');
+  const lbl = data.map((d, i) => `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>`).join('');
+  return svg(W, H, base + bars + vals + lbl, 'Kcal bruciate con l\'allenamento, giorno per giorno');
+}

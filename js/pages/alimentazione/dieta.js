@@ -11,6 +11,7 @@ import {
   saveDietDays, saveDiary, activateDiet, createDiet, renameDiet, deleteDiet, hasProfile, tdeeFor, workoutOn, addDays,
 } from './state.js';
 import { openDayEditor } from './dayeditor.js';
+import { workoutBars } from './charts.js';
 import { deliver, csvFile } from './files.js';
 import { buildDietPDF } from './pdf.js';
 
@@ -47,6 +48,14 @@ function weekNumbers(days, dayTotals) {
     if (Math.abs(dk / dayTotals[i].kcal - 1) <= 0.1) ok++;
   });
 
+  // Allenamento della settimana: fatto davvero (pieno) o previsto dal piano (tratteggiato)
+  const wk = days.map((d, i) => { const w = workoutOn(weekDate(i), d.type); return { label: DAY_SHORT[i], kcal: Math.round(w.kcal), n: w.n, real: w.source === 'registro', src: w.source }; });
+  const done = wk.filter(x => x.real), planned = wk.filter(x => x.src === 'piano');
+  const doneN = done.reduce((a, x) => a + x.n, 0), doneK = done.reduce((a, x) => a + x.kcal, 0);
+  const wkChart = `<div class="wn-adh" style="margin-top:var(--space-4)"><div class="cap" style="margin:0 0 var(--space-2)">Allenamento</div>
+    ${workoutBars(wk)}
+    <div class="s" style="margin-top:6px">${doneN ? `${doneN} ${doneN === 1 ? 'sessione fatta' : 'sessioni fatte'} · ${kc(doneK)} kcal bruciate` : 'Nessuna sessione fatta questa settimana'}${planned.length ? ` · ${planned.length} ${planned.length === 1 ? 'prevista' : 'previste'} (tratteggiate)` : ''}</div></div>`;
+
   return `<section class="dt-day wn">
     <div class="cap" style="margin:0 0 var(--space-2)">Settimana</div>
     ${n ? `<div class="de-sum"><div><span class="de-kcal">${kc(sum.kcal)}</span><span class="s"> kcal totali · media ${kc(sum.kcal / n)} al giorno</span></div>
@@ -54,6 +63,7 @@ function weekNumbers(days, dayTotals) {
       ${HP ? `<div class="s">Fabbisogno della settimana (TDEE) ${kc(tSum)} kcal · dieta ${dl(sum.kcal - tSum)}${n < 7 ? ` · ${n} giorni compilati` : ''}</div>`
         : '<p class="note">Compila il profilo (menu ⋯ → Il mio profilo) per vedere il delta rispetto al TDEE.</p>'}`
       : '<p class="empty-line">Nessun pasto in questa dieta.</p>'}
+    ${wkChart}
     ${counted ? `<div class="wn-adh"><div class="s">Aderenza: <b>${Math.round((ok / counted) * 100)}%</b> · ${ok} giorni su ${counted} registrati entro il 10% dal piano · diario ${kc(diaryK)} kcal contro piano ${kc(planK)} (${sgn(diaryK - planK)})</div></div>` : ''}
   </section>`;
 }
