@@ -92,6 +92,31 @@ export function calcTdee(f) {
   return Math.round(bmr * lavoro);
 }
 
+/**
+ * Peso e % di grasso valevoli in una data: l'ultima misura dello storico fino a quel giorno
+ * (la più vecchia se la data è precedente a tutte). Senza storico, i valori del profilo.
+ */
+export function profileAt(key) {
+  const p = state.profile || {};
+  const h = (p.history || []).filter(x => x.date && parseFloat(x.peso)).sort((a, b) => a.date.localeCompare(b.date));
+  if (!h.length) return p;
+  let m = h[0];
+  for (const x of h) if (x.date <= key) m = x;
+  return { ...p, peso: m.peso, bf: m.bf ?? '' };
+}
+/** kcal bruciate dai passi: ~0,0005 kcal per passo per kg di peso. */
+export const stepsKcal = (passi, peso) => Math.round((parseFloat(passi) || 0) * 0.0005 * (parseFloat(peso) || 0));
+/**
+ * Fabbisogno di un giorno: metabolismo basale × attività quotidiana (con il peso e il grasso di quel giorno)
+ * + passi + kcal dell'allenamento se il giorno è un giorno Workout.
+ */
+export function tdeeFor(key = dateKey(), dayType = 'Riposo') {
+  const f = profileAt(key);
+  const base = calcTdee(f);
+  if (!base) return 0;
+  return base + stepsKcal(f.passi, f.peso) + (dayType === 'Workout' ? (parseFloat(f.kcalWorkout) || 0) : 0);
+}
+
 /** Supplementi del giorno in qualsiasi formato storico → array di stringhe. */
 export function daySupplements(day) {
   const s = day?.supplements;
@@ -163,7 +188,7 @@ export function planFor(date) {
 
 // ─── Profilo ─────────────────────────────────────────────────────────────
 export const hasProfile = () => !!(state.profile?.peso && state.profile?.altezza && state.profile?.eta);
-export const tdee = () => calcTdee(state.profile);
+export const tdee = () => tdeeFor(dateKey(), planFor(new Date()).day.type);
 
 /** Media del piano (sui giorni con pasti): serve a tenere aggiornato il riepilogo che legge l'assistente. */
 function planAverage() {

@@ -3,7 +3,7 @@
  * % di grasso facoltativa, attività). Da qui si ricava il TDEE usato nei Risultati.
  */
 import { createSheet, toast } from '../../ui/dialog.js';
-import { state, ACTIVITY, calcTdee, saveProfile } from './state.js';
+import { state, ACTIVITY, calcTdee, stepsKcal, saveProfile, dateKey } from './state.js';
 
 const sheet = createSheet({ title: 'Il mio profilo', body: `
   <div class="stack">
@@ -14,18 +14,35 @@ const sheet = createSheet({ title: 'Il mio profilo', body: `
       <div class="field"><label class="field-lbl" for="pf-peso">Peso (kg)</label><input class="input" id="pf-peso" type="number" inputmode="decimal" min="30" max="250" step="0.1"/></div>
       <div class="field"><label class="field-lbl" for="pf-bf">Grasso (%) facoltativo</label><input class="input" id="pf-bf" type="number" inputmode="decimal" min="3" max="60" step="0.1"/></div>
     </div>
-    <div class="field"><label class="field-lbl" for="pf-act">Attività</label><select id="pf-act">${ACTIVITY.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select></div>
+    <div class="field"><label class="field-lbl" for="pf-date">Data di questa misura (peso e grasso)</label><input class="input" id="pf-date" type="date"/></div>
+    <div class="grid-2">
+      <div class="field"><label class="field-lbl" for="pf-passi">Passi medi al giorno</label><input class="input" id="pf-passi" type="number" inputmode="numeric" min="0" step="500"/></div>
+      <div class="field"><label class="field-lbl" for="pf-kw">kcal di un allenamento</label><input class="input" id="pf-kw" type="number" inputmode="numeric" min="0" step="50"/></div>
+    </div>
+    <div class="field"><label class="field-lbl" for="pf-act">Vita quotidiana (senza passi e allenamento)</label><select id="pf-act">${ACTIVITY.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select></div>
+    <p class="note">Passi e allenamento si contano a parte: scegli qui l'attività del lavoro e della giornata, non dello sport. Le kcal dell'allenamento si sommano solo nei giorni Workout.</p>
     <div class="de-sum" id="pf-sum"></div>
+    <div id="pf-hist"></div>
     <button type="button" class="btn accent block" id="pf-ok">Salva</button>
   </div>` });
 let sex = 'M';
 const form = () => ({
   sesso: sex, eta: sheet.$('#pf-eta').value, altezza: sheet.$('#pf-alt').value, peso: sheet.$('#pf-peso').value,
   bf: sheet.$('#pf-bf').value, lavoro: sheet.$('#pf-act').value,
+  passi: sheet.$('#pf-passi').value, kcalWorkout: sheet.$('#pf-kw').value,
 });
+let history = [];
+const fmtD = k => new Date(k + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
+function drawHistory() {
+  const h = [...history].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+  sheet.$('#pf-hist').innerHTML = h.length ? `<div class="field-lbl" style="margin-top:var(--space-3)">Storico delle misure</div>
+    <div class="list">${h.map(x => `<div class="list-row" style="min-height:44px"><span class="grow">${fmtD(x.date)}</span><span class="s">${x.peso} kg${x.bf ? ` · ${x.bf}% grasso` : ''}</span></div>`).join('')}</div>` : '';
+}
 function preview() {
-  const t = calcTdee(form());
-  sheet.$('#pf-sum').innerHTML = t ? `<span class="de-kcal">${t.toLocaleString('it-IT')}</span><span class="s"> kcal al giorno (TDEE)</span>` : '<span class="s">Compila età, altezza e peso per calcolare il fabbisogno.</span>';
+  const f = form();
+  const base = calcTdee(f) + stepsKcal(f.passi, f.peso), w = parseFloat(f.kcalWorkout) || 0;
+  const k = n => n.toLocaleString('it-IT');
+  sheet.$('#pf-sum').innerHTML = base ? `<span class="de-kcal">${k(base)}</span><span class="s"> kcal nei giorni di riposo (TDEE)</span><div class="s">${k(base + w)} kcal nei giorni Workout</div>` : '<span class="s">Compila età, altezza e peso per calcolare il fabbisogno.</span>';
 }
 sheet.el.addEventListener('input', preview);
 sheet.el.addEventListener('click', e => {
@@ -38,8 +55,11 @@ sheet.el.addEventListener('click', e => {
 sheet.$('#pf-ok').addEventListener('click', async () => {
   const f = form();
   if (!calcTdee(f)) return toast('Compila età, altezza e peso');
+  const date = sheet.$('#pf-date').value || dateKey();
+  const hist = history.filter(x => x.date !== date);
+  hist.push({ date, peso: f.peso, bf: f.bf });
   sheet.close();
-  await saveProfile(f);
+  await saveProfile({ ...f, history: hist });
   toast('Profilo salvato');
 });
 
@@ -52,6 +72,11 @@ export function openProfile() {
   sheet.$('#pf-peso').value = p.peso || '';
   sheet.$('#pf-bf').value = p.bf || '';
   sheet.$('#pf-act').value = p.lavoro || '1.375';
+  sheet.$('#pf-passi').value = p.passi || '';
+  sheet.$('#pf-kw').value = p.kcalWorkout || '';
+  sheet.$('#pf-date').value = dateKey();
+  history = (p.history || []).map(x => ({ ...x }));
+  drawHistory();
   preview();
   sheet.open();
 }

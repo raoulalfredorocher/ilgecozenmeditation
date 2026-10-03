@@ -8,7 +8,7 @@ import { createSheet, toast } from '../../ui/dialog.js';
 import {
   state, onChange, DAY_NAMES, DAY_SHORT, MC, slotLabel, slotOrder, totals, itemsTotals, daySupplements,
   fromDietMeal, toDietMeal, fromDiaryMeal, toDiaryMeal, planFor, weekdayIdx, dateKey, parseKey,
-  saveDietDays, saveDiary, activateDiet, createDiet, renameDiet, deleteDiet, hasProfile, tdee, addDays,
+  saveDietDays, saveDiary, activateDiet, createDiet, renameDiet, deleteDiet, hasProfile, tdeeFor, addDays,
 } from './state.js';
 import { openDayEditor } from './dayeditor.js';
 import { deliver, csvFile } from './files.js';
@@ -27,10 +27,13 @@ const weekDate = i => addDays(dateKey(), i - weekdayIdx(new Date()));
 
 /** Riepilogo settimanale (in fondo): totale kcal e macro, media, delta sul TDEE e aderenza al piano. */
 function weekNumbers(days, dayTotals) {
-  const T = hasProfile() ? tdee() : 0;
+  const HP = hasProfile();
   const withMeals = dayTotals.filter(t => t.kcal);
   const n = withMeals.length;
   const sum = withMeals.reduce((a, t) => ({ kcal: a.kcal + t.kcal, prot: a.prot + t.prot, carb: a.carb + t.carb, fat: a.fat + t.fat }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
+  // il fabbisogno cambia col giorno (Workout/Riposo) e con il peso di quel momento: si somma giorno per giorno
+  let tSum = 0;
+  days.forEach((d, i) => { if (dayTotals[i].kcal) tSum += tdeeFor(weekDate(i), d.type); });
   const dl = v => `<span class="dl ${v > 0 ? 'up' : 'dn'}">${sgn(v)} kcal</span>`;
 
   // Aderenza: diario della settimana in corso contro il piano
@@ -48,7 +51,7 @@ function weekNumbers(days, dayTotals) {
     <div class="cap" style="margin:0 0 var(--space-2)">Settimana</div>
     ${n ? `<div class="de-sum"><div><span class="de-kcal">${kc(sum.kcal)}</span><span class="s"> kcal totali · media ${kc(sum.kcal / n)} al giorno</span></div>
       <span class="mc"><span style="--c:${MC.prot}">P ${g1(sum.prot)}</span><span style="--c:${MC.carb}">C ${g1(sum.carb)}</span><span style="--c:${MC.fat}">G ${g1(sum.fat)}</span></span></div>
-      ${T ? `<div class="s">Rispetto al TDEE (${kc(T)} al giorno): ${dl(sum.kcal - T * n)} nella settimana${n < 7 ? ` · ${n} giorni compilati` : ''}</div>`
+      ${HP ? `<div class="s">Fabbisogno della settimana (TDEE) ${kc(tSum)} kcal · dieta ${dl(sum.kcal - tSum)}${n < 7 ? ` · ${n} giorni compilati` : ''}</div>`
         : '<p class="note">Compila il profilo (menu ⋯ → Il mio profilo) per vedere il delta rispetto al TDEE.</p>'}`
       : '<p class="empty-line">Nessun pasto in questa dieta.</p>'}
     ${counted ? `<div class="wn-adh"><div class="s">Aderenza: <b>${Math.round((ok / counted) * 100)}%</b> · ${ok} giorni su ${counted} registrati entro il 10% dal piano · diario ${kc(diaryK)} kcal contro piano ${kc(planK)} (${sgn(diaryK - planK)})</div></div>` : ''}
@@ -86,7 +89,7 @@ function render() {
         <div><div class="dt-dayname">${esc(day.name || DAY_NAMES[selected])}</div>
           <div class="s">${esc(day.type || '')}${meals.length ? ` · ${kc(dt.kcal)} kcal` : ''}</div>
           ${meals.length ? dots(dt) : ''}
-          ${meals.length && hasProfile() ? `<div class="s wn">Rispetto al TDEE: <span class="dl ${dt.kcal > tdee() ? 'up' : 'dn'}">${sgn(dt.kcal - tdee())} kcal</span></div>` : ''}</div>
+          ${meals.length && hasProfile() ? (() => { const T = tdeeFor(weekDate(selected), day.type); return `<div class="s wn">TDEE ${kc(T)} kcal · dieta <span class="dl ${dt.kcal > T ? 'up' : 'dn'}">${sgn(dt.kcal - T)} kcal</span></div>`; })() : ''}</div>
         <div class="dt-acts"><button type="button" class="text-btn" id="dt-edit">Modifica</button>
           <button type="button" class="text-btn" id="dt-reg">${state.diary[weekDate(selected)]?.length ? 'Nel diario ✓' : 'Registra'}</button></div>
       </div>

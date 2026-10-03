@@ -31,10 +31,10 @@ export function rings(list, centerTop, centerBottom) {
 
 // ─── 2. Calorie: diario, dieta, TDEE ─────────────────────────────────────
 /** data: [{ label, kcal|null, plan }] */
-export function kcalBars(data, tdee) {
+export function kcalBars(data) {
   const W = 320, H = 168, L = 34, R = 8, T = 10, B = 24;
   const n = data.length;
-  const top = Math.max(tdee || 0, ...data.map(d => Math.max(d.kcal || 0, d.plan || 0)), 800) * 1.1;
+  const top = Math.max(...data.map(d => d.tdee || 0), ...data.map(d => Math.max(d.kcal || 0, d.plan || 0)), 800) * 1.1;
   const step = top > 3200 ? 1000 : 500;
   const y = v => T + (H - T - B) * (1 - v / top);
   const bw = (W - L - R) / n, bar = Math.max(3, Math.min(20, bw * 0.62));
@@ -45,7 +45,8 @@ export function kcalBars(data, tdee) {
   const planPts = data.map((d, i) => (d.plan ? `${cx(i).toFixed(1)},${y(d.plan).toFixed(1)}` : null)).filter(Boolean);
   const plan = planPts.length > 1 ? `<polyline points="${planPts.join(' ')}" fill="none" stroke="${ROSE}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
   const dots = n <= 14 ? data.map((d, i) => (d.plan ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.plan).toFixed(1)}" r="2.6" fill="${ROSE}"/>` : '')).join('') : '';
-  const tl = tdee ? `<line x1="${L}" x2="${W - R}" y1="${y(tdee)}" y2="${y(tdee)}" stroke="${BARK}" stroke-width="1.5" stroke-dasharray="5 4"/>` : '';
+  const tp = data.map((d, i) => (d.tdee ? `${cx(i).toFixed(1)},${y(d.tdee).toFixed(1)}` : null)).filter(Boolean);
+  const tl = tp.length > 1 ? `<polyline points="${tp.join(' ')}" fill="none" stroke="${BARK}" stroke-width="1.5" stroke-dasharray="5 4" stroke-linejoin="round"/>` : '';
   const every = n <= 7 ? 1 : Math.ceil(n / 6);
   const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
   return svg(W, H, grid + tl + bars + plan + dots + xl, 'Calorie giornaliere: diario, dieta e fabbisogno');
@@ -70,10 +71,10 @@ export function macroSplit(plan, diary) {
 }
 
 // ─── 4. Bilancio calorico (diario meno TDEE) ─────────────────────────────
-export function balanceBars(data, tdee) {
+export function balanceBars(data) {
   const W = 320, H = 150, L = 34, R = 8, T = 12, B = 24;
   const n = data.length;
-  const diffs = data.map(d => (d.kcal ? d.kcal - tdee : null));
+  const diffs = data.map(d => (d.kcal && d.tdee ? d.kcal - d.tdee : null));
   const maxAbs = Math.max(400, ...diffs.filter(v => v != null).map(Math.abs)) * 1.15;
   const mid = T + (H - T - B) / 2;
   const half = (H - T - B) / 2;

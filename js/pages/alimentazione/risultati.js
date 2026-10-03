@@ -9,7 +9,7 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { icon } from '../../ui/icons.js';
 import {
-  state, onChange, MC, MONTHS, DAY_SHORT, totals, planFor, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdee,
+  state, onChange, MC, MONTHS, DAY_SHORT, totals, planFor, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdeeFor,
 } from './state.js';
 import { rings, kcalBars, macroSplit, balanceBars, adherenceDots } from './charts.js';
 import { registerToday } from './dieta.js';
@@ -32,7 +32,7 @@ function buildDays(n) {
     const meals = state.diary[key];
     const t = meals?.length ? totals(meals) : null;
     const plan = planFor(d);
-    return { key, label: n <= 7 ? DAY_SHORT[weekdayIdx(d)] : `${d.getDate()}/${d.getMonth() + 1}`, t, kcal: t?.kcal || null, plan: plan.kcal || 0, planT: plan };
+    return { key, label: n <= 7 ? DAY_SHORT[weekdayIdx(d)] : `${d.getDate()}/${d.getMonth() + 1}`, t, kcal: t?.kcal || null, plan: plan.kcal || 0, planT: plan, tdee: hasProfile() ? tdeeFor(key, plan.day.type) : 0 };
   });
 }
 const avg = (list, k) => (list.length ? list.reduce((a, x) => a + (x[k] || 0), 0) / list.length : 0);
@@ -47,10 +47,11 @@ const legend = items => `<div class="rs-legend">${items.map(([c, l, dash]) => `<
 function render() {
   const days = buildDays(period);
   const logged = days.filter(d => d.t);
-  const T = hasProfile() ? tdee() : 0;
   const todayKey = dateKey();
   const today = days.length ? buildDays(1)[0] : null;
   const plan = planFor(new Date());
+  const T = hasProfile() ? tdeeFor(todayKey, plan.day.type) : 0;
+  const anyT = days.some(d => d.tdee);
 
   // 1. Oggi
   const tt = today?.t;
@@ -63,7 +64,7 @@ function render() {
       <div class="rs-lines">
         ${[['kcal', 'Calorie', tt?.kcal || 0, plan.kcal, ''], ['prot', 'Proteine', tt?.prot || 0, plan.prot, ' g'], ['carb', 'Carboidrati', tt?.carb || 0, plan.carb, ' g'], ['fat', 'Grassi', tt?.fat || 0, plan.fat, ' g']]
           .map(([k, l, v, p, u]) => `<div class="rs-line"><span class="dot" style="--c:${MC[k]}"></span><span class="rl">${l}</span><span class="rv"><b>${k === 'kcal' ? kc(v) : g1(v)}</b><span class="s"> / ${k === 'kcal' ? kc(p) : g1(p)}${u}</span></span></div>`).join('')}
-        ${T ? `<div class="s" style="margin-top:6px">Fabbisogno (TDEE) ${kc(T)} kcal</div>` : ''}
+        ${T ? `<div class="s" style="margin-top:6px">Fabbisogno di oggi (TDEE) ${kc(T)} kcal</div>` : ''}
         ${tt ? '' : '<div class="s" style="margin-top:6px">Nessun diario per oggi.</div>'}
       </div>
     </div>`);
@@ -72,7 +73,7 @@ function render() {
   const avgK = avg(logged, 'kcal'), avgPlan = avg(logged, 'plan');
   const kcalCard = card('Calorie', logged.length ? `${kc(avgK)} <span class="s">kcal al giorno</span>` : '–',
     logged.length ? `media su ${logged.length} ${logged.length === 1 ? 'giorno registrato' : 'giorni registrati'}` : 'Registra qualche giorno per vedere il grafico',
-    kcalBars(days, T), legend([[MC.prot, 'Diario'], [MC.carb, 'Dieta'], ['#8B5A6B', 'TDEE', true]].filter(l => l[1] !== 'TDEE' || T)));
+    kcalBars(days), legend([[MC.prot, 'Diario'], [MC.carb, 'Dieta'], ['#8B5A6B', 'TDEE', true]].filter(l => l[1] !== 'TDEE' || anyT)));
 
   // 3. Ripartizione dei macro
   const planAvg = logged.length ? { prot: avg(logged.map(d => d.planT), 'prot'), carb: avg(logged.map(d => d.planT), 'carb'), fat: avg(logged.map(d => d.planT), 'fat') } : null;
@@ -86,11 +87,11 @@ function render() {
   if (!T) {
     balanceCard = card('Bilancio', '', '', '<p class="s">Compila il profilo per vedere quanto sei sopra o sotto il tuo fabbisogno.</p><button type="button" class="text-btn" data-profile>Compila il profilo</button>');
   } else {
-    const sum = logged.reduce((a, d) => a + (d.kcal - T), 0);
+    const sum = logged.reduce((a, d) => a + (d.kcal - d.tdee), 0);
     const kg = sum / 7700;
     balanceCard = card('Bilancio', logged.length ? `${sign(sum)} <span class="s">kcal nel periodo</span>` : '–',
       logged.length ? `${sum < 0 ? 'deficit' : 'surplus'} medio ${kc(Math.abs(sum / logged.length))} kcal al giorno · ≈ ${kg > 0 ? '+' : kg < 0 ? '−' : ''}${Math.abs(kg).toLocaleString('it-IT', { maximumFractionDigits: 1 })} kg` : 'Registra qualche giorno',
-      balanceBars(days, T), legend([[MC.kcal, 'Sotto il fabbisogno'], [MC.fat, 'Sopra']]));
+      balanceBars(days), legend([[MC.kcal, 'Sotto il fabbisogno'], [MC.fat, 'Sopra']]));
   }
 
   // 5. Aderenza
