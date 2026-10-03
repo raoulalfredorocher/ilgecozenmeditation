@@ -27,7 +27,14 @@ const isStandalone =
  * Chiavi localStorage che appartengono all'utente e vanno rimosse al logout.
  * Le preferenze del dispositivo (es. `zen_theme`) restano.
  */
-const USER_STORAGE_PREFIXES = ['spotify_', 'zen_macros_', 'zen_tdee_', 'zen_timer', 'zen_weather_'];
+const USER_STORAGE_PREFIXES = ['spotify_', 'zen_macros_', 'zen_tdee_', 'zen_timer', 'zen_weather_', 'geco_wk', 'zen_diary_', 'zen_mentale_', 'zen_auguri_'];
+
+/** Toglie dal dispositivo le chiavi personali (bozze, allenamento in corso, preferenze legate all'account). */
+export function clearUserStorage() {
+  Object.keys(localStorage)
+    .filter(key => USER_STORAGE_PREFIXES.some(prefix => key.startsWith(prefix)))
+    .forEach(key => localStorage.removeItem(key));
+}
 
 /**
  * Avvia il login Google.
@@ -79,9 +86,8 @@ export async function signOutUser() {
   } catch (err) {
     console.warn('Cache Firestore non cancellata', err);
   }
-  Object.keys(localStorage)
-    .filter(key => USER_STORAGE_PREFIXES.some(prefix => key.startsWith(prefix)))
-    .forEach(key => localStorage.removeItem(key));
+  clearUserStorage();
+  localStorage.removeItem('zen_last_uid');
   localStorage.removeItem('zen_session');
   // Conversazione con l'assistente (contiene dati personali)
   sessionStorage.removeItem('zen_assistant_chat');

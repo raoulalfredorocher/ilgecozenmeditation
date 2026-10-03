@@ -173,6 +173,22 @@
     .pk-head .grow { flex: 1; min-width: 0; }
     .pk-in { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; margin-top: 2px; }
 
+
+    /* Moduli (fogli): etichette sobrie, campi in coppia allineati */
+    [hidden] { display: none !important; }
+    .zen-sheet .field-lbl { font-size: var(--fs-sm); letter-spacing: 0; text-transform: none; color: var(--muted); font-weight: 500; margin: 0 0 6px; line-height: 1.2; }
+    .zen-sheet .field { gap: 0; min-width: 0; }
+    .zen-sheet .grid-2 { align-items: start; gap: var(--space-3); }
+    .zen-sheet .stack { gap: var(--space-4); }
+    .zen-sheet .input, .zen-sheet select, .zen-sheet textarea { width: 100%; min-height: 48px; box-sizing: border-box; }
+    .zen-sheet input[type="date"] { -webkit-appearance: none; appearance: none; height: 48px; padding-top: 0; padding-bottom: 0; display: block; }
+    .zen-sheet input[readonly] { color: var(--muted); }
+    .zen-sheet textarea { min-height: 76px; padding-top: 12px; }
+    .zen-sheet .chips-wrap { gap: 6px; }
+    .zen-sheet .pill { height: 34px; padding: 0 14px; font-size: var(--fs-sm); }
+    .zen-sheet .segmented > button { min-height: 38px; }
+    .zen-sheet .btn.block { min-height: 48px; }
+
     /* Dieta: azioni del giorno e numeri della settimana */
     .dt-reg { background: var(--geco-blue); color: #fff; border: 0; border-radius: 999px; padding: 10px 16px; font-size: var(--fs-md); font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: var(--shadow-sm); }
     .dt-reg:active { transform: scale(.96); }

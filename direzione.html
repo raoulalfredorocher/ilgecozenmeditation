@@ -40,6 +40,7 @@
       font-variant-numeric: tabular-nums; color: var(--text);
     }
     .life-value small { font-size: 1.25rem; font-weight: 300; color: var(--muted); margin-left: 2px; letter-spacing: 0; }
+    .life-note { font-size: var(--fs-xs); opacity: .8; }
     .life-sub { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; }
     .life-track {
       position: relative; height: 4px; border-radius: 2px;
@@ -158,11 +159,11 @@
       <div class="zen-eyebrow life-eyebrow">Barra della vita</div>
       <div class="life-value" id="life-value">0<small>%</small></div>
       <div class="life-sub" id="life-sub"></div>
-      <div class="life-track" role="img" aria-label="Avanzamento della vita su 90 anni">
+      <div class="life-track" role="img" aria-label="Avanzamento della vita">
         <div class="life-fill" id="life-fill"></div>
         <div class="life-dot" id="life-dot"></div>
       </div>
-      <div class="life-scale"><span>0</span><span>30</span><span>60</span><span>90 anni</span></div>
+      <div class="life-scale"><span>0</span><span></span><span></span><span></span></div>
     </section>
 
     <!-- ── Bussola dei valori ── -->
@@ -223,6 +224,7 @@
     import { db as _db, auth as _auth } from './js/core/firebase.js';
     import { icon } from './js/ui/icons.js';
     import { openSheet, closeSheet } from './js/ui/shell.js';
+    import { ageFromBirth, lifeExpectancy, countryName } from './js/core/vita.js';
 
     function _directionDoc() {
       const uid = _auth?.currentUser?.uid;
@@ -240,6 +242,16 @@
       return null;
     }
 
+    /** Profilo (Alimentazione): data di nascita, nazionalità e sesso per la barra della vita. */
+    async function loadProfile() {
+      const uid = _auth?.currentUser?.uid;
+      if (!_db || !uid) return;
+      try {
+        const snap = await getDoc(doc(_db, 'users', uid, 'macros', 'profiles'));
+        renderLife(snap.exists() ? snap.data().tdeeForm : null);
+      } catch (e) { console.error('profilo', e); }
+    }
+
     async function _saveRemote() {
       const ref = _directionDoc();
       if (!ref) return;
@@ -249,23 +261,35 @@
 
     /* ═══════════════════════════════════════════
        BARRA DELLA VITA
+       Età dalla data di nascita del profilo (Alimentazione → Il mio profilo);
+       lunghezza della barra = speranza di vita del Paese e del sesso scelti nel profilo.
     ═══════════════════════════════════════════ */
-    (function () {
-      const LIFE_YEARS = 90;
-      const birth = new Date(1992, 10, 23);
-      const now = new Date();
-      const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
-      const age = months / 12;
-      const pct = Math.min((age / LIFE_YEARS) * 100, 100);
-      const fmt = n => n.toFixed(1).replace('.', ',');
-      document.getElementById('life-value').innerHTML = `${fmt(pct)}<small>%</small>`;
-      document.getElementById('life-sub').textContent =
-        `${fmt(age)} anni vissuti · ${fmt(Math.max(LIFE_YEARS - age, 0))} davanti a te`;
+    const fmt = n => n.toFixed(1).replace('.', ',');
+    function renderLife(profile) {
+      const val = document.getElementById('life-value'), sub = document.getElementById('life-sub');
+      const track = document.querySelector('.life-track'), scale = document.querySelector('.life-scale');
+      const age = ageFromBirth(profile?.nascita);
+      if (!age) {
+        val.innerHTML = '–<small>%</small>';
+        sub.innerHTML = 'Aggiungi la tua data di nascita nel profilo per vedere la barra. <a href="alimentazione.html?profilo=1#risultati">Apri il profilo</a>';
+        document.getElementById('life-fill').style.width = '0%';
+        document.getElementById('life-dot').style.left = '0%';
+        scale.innerHTML = '<span>0</span><span></span><span></span><span></span>';
+        return;
+      }
+      const years = lifeExpectancy(profile.nazione, profile.sesso);
+      const pct = Math.min((age / years) * 100, 100);
+      val.innerHTML = `${fmt(pct)}<small>%</small>`;
+      sub.innerHTML = `${fmt(age)} anni vissuti · ${fmt(Math.max(years - age, 0))} davanti a te<br><span class="life-note">Speranza di vita ${fmt(years)} anni · ${countryName(profile.nazione)}${profile.sesso === 'M' ? ', uomini' : profile.sesso === 'F' ? ', donne' : ''}</span>`;
+      track.setAttribute('aria-label', `Avanzamento della vita su ${fmt(years)} anni`);
+      const r = Math.round(years);
+      scale.innerHTML = `<span>0</span><span>${Math.round(r / 3)}</span><span>${Math.round(r * 2 / 3)}</span><span>${r} anni</span>`;
       requestAnimationFrame(() => {
         document.getElementById('life-fill').style.width = `${pct}%`;
         document.getElementById('life-dot').style.left = `${pct}%`;
       });
-    })();
+    }
+    renderLife(null);
 
     /* ═══════════════════════════════════════════
        DATI DEFAULT
@@ -291,19 +315,18 @@
           { name: 'Gestione delle Emozioni', label: 'direction', text: '' },
           { name: 'Journaling',              label: 'direction', text: '' } ] },
       { id: 'sec-relazioni', icon: '❤️', title: 'Relazioni', goal: '', areas: [
-          { name: 'Raoul',           label: 'direction', text: '' },
-          { name: 'Michela',         label: 'direction', text: '' },
-          { name: 'Emma',            label: 'direction', text: '' },
-          { name: 'Animali',         label: 'direction', text: '' },
-          { name: 'Mamma e Papà',    label: 'direction', text: '' },
+          { name: 'Io',              label: 'direction', text: '' },
+          { name: 'Partner',         label: 'direction', text: '' },
+          { name: 'Figli',           label: 'direction', text: '' },
+          { name: 'Famiglia',        label: 'direction', text: '' },
           { name: 'Amici & Network', label: 'direction', text: '' } ] },
       { id: 'sec-contributo', icon: '🌍', title: 'Contributo al Mondo', goal: '', areas: [
-          { name: 'IBM',         label: 'direction', text: '' },
-          { name: 'Il Geco Zen', label: 'direction', text: '' },
+          { name: 'Lavoro',      label: 'direction', text: '' },
+          { name: 'Progetti',    label: 'direction', text: '' },
           { name: 'Finanza',     label: 'direction', text: '' },
           { name: 'Competenze',  label: 'direction', text: '' } ] },
       { id: 'sec-connessione', icon: '☯️', title: 'Connessione con il Tutto', goal: '', areas: [
-          { name: 'Buddismo',    label: 'direction', text: '' },
+          { name: 'Spiritualità', label: 'direction', text: '' },
           { name: 'Meditazione', label: 'direction', text: '' } ] },
       { id: 'sec-passioni', icon: '✨', title: 'Passioni & Anima', goal: '', areas: [
           { name: 'Nutrimento dell\'anima', label: 'direction', text: '' } ] },
@@ -313,8 +336,8 @@
           { name: 'Purezza dell\'Impatto',          label: 'memento', text: '' } ] },
     ];
 
-    const DEFAULT_COMPASS = { north: 'Gentilezza', east: 'Serenità', south: 'Salute', west: 'Prosperità' };
-    const DEFAULT_MISSION = 'Vivere una vita lunga, sana, umile e semplice, emozionandosi con i piccoli gesti e divulgando il tema del benessere e della prosperità in modo da lasciare il segno nel mondo per renderlo un posto migliore rispetto a quando sono nato.';
+    const DEFAULT_COMPASS = { north: '', east: '', south: '', west: '' };
+    const DEFAULT_MISSION = '';
 
     let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
     let COMPASS = { ...DEFAULT_COMPASS };
@@ -360,16 +383,20 @@
     function renderCompass() {
       Object.entries(COMPASS).forEach(([d, v]) => {
         const el = document.getElementById(`compass-${d}`);
-        if (el) el.textContent = v;
+        if (!el) return;
+        el.textContent = v || 'Aggiungi';
+        el.closest('button')?.classList.toggle('is-empty', !v);
       });
-      document.getElementById('mission-text').textContent = MISSION;
+      const m = document.getElementById('mission-text');
+      m.textContent = MISSION || 'Tocca per scrivere la tua missione';
+      m.classList.toggle('is-empty', !MISSION);
     }
 
     document.querySelectorAll('[data-compass]').forEach(btn => {
       btn.addEventListener('click', () => {
         const d = btn.dataset.compass;
         openEdit(`Valore · ${DIR_NAMES[d]}`, COMPASS[d], {
-          rows: 1,
+          rows: 1, allowEmpty: true,
           onSave: v => { COMPASS[d] = v; renderCompass(); saveData(); },
         });
       });
@@ -377,7 +404,7 @@
 
     document.getElementById('mission-text').addEventListener('click', () => {
       openEdit('La mia missione', MISSION, {
-        rows: 6,
+        rows: 6, allowEmpty: true,
         onSave: v => { MISSION = v; renderCompass(); saveData(); },
       });
     });
@@ -516,6 +543,7 @@
     // Attende auth, poi carica da Firestore (o usa i dati di default)
     (async () => {
       await waitForAuth();
+      loadProfile();
       const remote = await _loadRemote();
       if (remote) {
         COMPASS = { ...DEFAULT_COMPASS, ...remote.compass };

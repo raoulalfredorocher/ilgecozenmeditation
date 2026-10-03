@@ -21,6 +21,7 @@ import {
   subscribeCustomFoods, saveDietCurrent, saveDiaryDay, saveMacrosProfiles, saveCustomFoods,
   addSavedDietDoc, updateSavedDietDoc, deleteSavedDietDoc,
 } from '../../core/db.js';
+import { ageFromBirth } from '../../core/vita.js';
 
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
 export const DAY_SHORT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
@@ -83,7 +84,7 @@ export function totals(meals = []) {
 /** TDEE: Katch-McArdle se c'è la % di grasso, altrimenti Mifflin-St Jeor. */
 export function calcTdee(f) {
   if (!f) return 0;
-  const peso = parseFloat(f.peso), alt = parseFloat(f.altezza), eta = parseFloat(f.eta);
+  const peso = parseFloat(f.peso), alt = parseFloat(f.altezza), eta = f.nascita ? ageFromBirth(f.nascita) : parseFloat(f.eta);
   const bf = parseFloat(f.bf), lavoro = parseFloat(f.lavoro) || 1.2;
   if (!peso || !alt || !eta) return 0;
   const bmr = bf > 0
@@ -187,7 +188,7 @@ export function planFor(date) {
 }
 
 // ─── Profilo ─────────────────────────────────────────────────────────────
-export const hasProfile = () => !!(state.profile?.peso && state.profile?.altezza && state.profile?.eta);
+export const hasProfile = () => !!(state.profile?.peso && state.profile?.altezza && (state.profile?.eta || state.profile?.nascita));
 export const tdee = () => tdeeFor(dateKey(), planFor(new Date()).day.type);
 
 /** Media del piano (sui giorni con pasti): serve a tenere aggiornato il riepilogo che legge l'assistente. */

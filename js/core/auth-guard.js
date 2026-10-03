@@ -10,7 +10,7 @@
  * Nota: il guard evita solo di mostrare una pagina vuota. La vera protezione
  * dei dati sono le regole Firestore: senza login non si legge nulla.
  */
-import { onAuthChange, signOutUser } from './auth.js';
+import { onAuthChange, signOutUser, clearUserStorage } from './auth.js';
 import { track, layoutProbe } from './telemetry.js';
 import { safeUrl } from './dom.js';
 // Pannelli che si chiudono trascinandoli verso il basso, in tutte le pagine
@@ -59,7 +59,13 @@ onAuthChange(user => {
     window.location.replace('login.html');
     return;
   }
-  try { localStorage.setItem('zen_session', '1'); } catch { /* ignora */ }
+  try {
+    // Un altro account su questo dispositivo: via bozze, allenamento in corso e preferenze del precedente
+    const last = localStorage.getItem('zen_last_uid');
+    if (last && last !== user.uid) clearUserStorage();
+    localStorage.setItem('zen_last_uid', user.uid);
+    localStorage.setItem('zen_session', '1');
+  } catch { /* ignora */ }
   document.documentElement.classList.remove('zen-guest');
   window.__debugLog?.(`login ok: ${user.email}`);
   if (!_resolved) {

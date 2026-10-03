@@ -64,5 +64,6 @@ showTab(location.hash.slice(1) || 'dieta');
 loadFoods();
 waitForUser().then(() => {
   startSync();
+  if (new URLSearchParams(location.search).has('profilo')) setTimeout(openProfile, 600);   // arrivo da Direzione: serve la data di nascita
   spesa.startSpesa();
 });
