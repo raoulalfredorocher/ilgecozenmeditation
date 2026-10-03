@@ -25,26 +25,13 @@ const dots = t => `<span class="mc"><span style="--c:${MC.prot}">P ${g1(t.prot)}
 /** Data (AAAA-MM-GG) del giorno `i` della settimana in corso (0 = lunedì). */
 const weekDate = i => addDays(dateKey(), i - weekdayIdx(new Date()));
 
-/** Numeri della settimana: kcal e macro per giorno, totali, delta sul TDEE e aderenza al piano. */
+/** Riepilogo settimanale (in fondo): totale kcal e macro, media, delta sul TDEE e aderenza al piano. */
 function weekNumbers(days, dayTotals) {
   const T = hasProfile() ? tdee() : 0;
   const withMeals = dayTotals.filter(t => t.kcal);
-  const sum = withMeals.reduce((a, t) => ({ kcal: a.kcal + t.kcal, prot: a.prot + t.prot, carb: a.carb + t.carb, fat: a.fat + t.fat }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
   const n = withMeals.length;
-  const delta = t => (t.kcal && T ? t.kcal - T : null);
-  const dcell = v => (v == null ? '<span class="s">–</span>' : `<span class="dl ${v > 0 ? 'up' : 'dn'}">${sgn(v)}</span>`);
-  const rows = days.map((d, i) => {
-    const t = dayTotals[i];
-    return `<button type="button" class="wn-row${i === selected ? ' sel' : ''}" data-day="${i}">
-      <span class="wn-d">${esc(DAY_NAMES[i].slice(0, 3))}</span>
-      <span class="wn-n">${t.kcal ? kc(t.kcal) : '–'}</span>
-      <span class="wn-n">${t.kcal ? g1(t.prot) : '–'}</span><span class="wn-n">${t.kcal ? g1(t.carb) : '–'}</span><span class="wn-n">${t.kcal ? g1(t.fat) : '–'}</span>
-      <span class="wn-n">${dcell(delta(t))}</span></button>`;
-  }).join('');
-  const wkDelta = T && n ? sum.kcal - T * n : null;     // delta sui soli giorni con pasti (somma della colonna Δ)
-  const foot = n ? `
-    <div class="wn-row tot"><span class="wn-d">Totale</span><span class="wn-n">${kc(sum.kcal)}</span><span class="wn-n">${g1(sum.prot)}</span><span class="wn-n">${g1(sum.carb)}</span><span class="wn-n">${g1(sum.fat)}</span><span class="wn-n">${dcell(wkDelta)}</span></div>
-    <div class="wn-row avg"><span class="wn-d">Media</span><span class="wn-n">${kc(sum.kcal / n)}</span><span class="wn-n">${g1(sum.prot / n)}</span><span class="wn-n">${g1(sum.carb / n)}</span><span class="wn-n">${g1(sum.fat / n)}</span><span class="wn-n">${dcell(T ? sum.kcal / n - T : null)}</span></div>` : '';
+  const sum = withMeals.reduce((a, t) => ({ kcal: a.kcal + t.kcal, prot: a.prot + t.prot, carb: a.carb + t.carb, fat: a.fat + t.fat }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
+  const dl = v => `<span class="dl ${v > 0 ? 'up' : 'dn'}">${sgn(v)} kcal</span>`;
 
   // Aderenza: diario della settimana in corso contro il piano
   const todayK = dateKey();
@@ -56,19 +43,15 @@ function weekNumbers(days, dayTotals) {
     counted++; diaryK += dk; planK += dayTotals[i].kcal;
     if (Math.abs(dk / dayTotals[i].kcal - 1) <= 0.1) ok++;
   });
-  const adh = counted ? `
-    <div class="wn-adh"><div class="cap" style="margin:0 0 var(--space-2)">Aderenza · settimana in corso</div>
-      <div class="rs-head">${Math.round((ok / counted) * 100)}<span class="s">%</span></div>
-      <div class="s">${ok} giorni su ${counted} registrati entro il 10% dal piano · diario ${kc(diaryK)} kcal contro piano ${kc(planK)} (${sgn(diaryK - planK)})${T ? ` · rispetto al TDEE ${sgn(diaryK - T * counted)}` : ''}</div></div>`
-    : '<p class="note" style="margin-top:var(--space-3)">L\'aderenza compare appena registri nel diario qualche giorno di questa settimana (pulsante Registra sul giorno).</p>';
 
   return `<section class="dt-day wn">
-    <div class="cap" style="margin:0 0 var(--space-2)">Numeri della settimana</div>
-    <div class="wn-row head"><span class="wn-d"></span><span class="wn-n">kcal</span><span class="wn-n" style="color:${MC.prot}">P</span><span class="wn-n" style="color:${MC.carb}">C</span><span class="wn-n" style="color:${MC.fat}">G</span><span class="wn-n">Δ TDEE</span></div>
-    ${rows}${foot}
-    ${T ? `<p class="note" style="margin-top:var(--space-2)">TDEE ${kc(T)} kcal. Δ = dieta meno fabbisogno: − deficit, + surplus.${n < 7 ? ` Totale e media sui ${n} giorni compilati.` : ''}</p>`
-      : '<p class="note" style="margin-top:var(--space-2)">Compila il profilo (menu ⋯ → Il mio profilo) per vedere il Δ rispetto al TDEE.</p>'}
-    ${adh}
+    <div class="cap" style="margin:0 0 var(--space-2)">Settimana</div>
+    ${n ? `<div class="de-sum"><div><span class="de-kcal">${kc(sum.kcal)}</span><span class="s"> kcal totali · media ${kc(sum.kcal / n)} al giorno</span></div>
+      <span class="mc"><span style="--c:${MC.prot}">P ${g1(sum.prot)}</span><span style="--c:${MC.carb}">C ${g1(sum.carb)}</span><span style="--c:${MC.fat}">G ${g1(sum.fat)}</span></span></div>
+      ${T ? `<div class="s">Rispetto al TDEE (${kc(T)} al giorno): ${dl(sum.kcal - T * n)} nella settimana${n < 7 ? ` · ${n} giorni compilati` : ''}</div>`
+        : '<p class="note">Compila il profilo (menu ⋯ → Il mio profilo) per vedere il delta rispetto al TDEE.</p>'}`
+      : '<p class="empty-line">Nessun pasto in questa dieta.</p>'}
+    ${counted ? `<div class="wn-adh"><div class="s">Aderenza: <b>${Math.round((ok / counted) * 100)}%</b> · ${ok} giorni su ${counted} registrati entro il 10% dal piano · diario ${kc(diaryK)} kcal contro piano ${kc(planK)} (${sgn(diaryK - planK)})</div></div>` : ''}
   </section>`;
 }
 
@@ -102,7 +85,8 @@ function render() {
       <div class="dt-dayhead">
         <div><div class="dt-dayname">${esc(day.name || DAY_NAMES[selected])}</div>
           <div class="s">${esc(day.type || '')}${meals.length ? ` · ${kc(dt.kcal)} kcal` : ''}</div>
-          ${meals.length ? dots(dt) : ''}</div>
+          ${meals.length ? dots(dt) : ''}
+          ${meals.length && hasProfile() ? `<div class="s wn">Rispetto al TDEE: <span class="dl ${dt.kcal > tdee() ? 'up' : 'dn'}">${sgn(dt.kcal - tdee())} kcal</span></div>` : ''}</div>
         <div class="dt-acts"><button type="button" class="text-btn" id="dt-edit">Modifica</button>
           <button type="button" class="text-btn" id="dt-reg">${state.diary[weekDate(selected)]?.length ? 'Nel diario ✓' : 'Registra'}</button></div>
       </div>
