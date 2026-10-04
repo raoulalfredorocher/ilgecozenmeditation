@@ -205,6 +205,53 @@
     .p-done a { color: var(--glow); }
     .p-done .btn { margin-top: var(--space-4); min-width: 200px; background: transparent; color: var(--paper); border-color: rgba(230, 239, 243, .28); }
     @media (prefers-reduced-motion: reduce) { .enso-glow { animation: none; } }
+
+    /* ═══ Nuovo design Geco Zen: schede sfumate con barra colorata, numeri grandi, serif ═══ */
+    :root { --tn1:#25739E; --tn2:#E48AA3; --tn3:#7FAE82; --tn4:#D9A55B; }
+    html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6BC7C; }
+    .tpl-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; }
+    .tpl { --t: var(--tn1); position: relative; overflow: hidden; flex: none; min-height: 112px; border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border));
+      border-radius: var(--radius-lg); padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); gap: var(--space-2); justify-content: flex-end;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 20%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
+    .tpl::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .tpl::after { content: attr(data-n); position: absolute; top: 8px; right: var(--space-3); font-size: 2.75rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; color: color-mix(in srgb, var(--t) 55%, transparent); font-variant-numeric: tabular-nums; }
+    .tpl:nth-child(4n+2) { --t: var(--tn2); } .tpl:nth-child(4n+3) { --t: var(--tn3); } .tpl:nth-child(4n+4) { --t: var(--tn4); }
+    .tpl:first-child:nth-last-child(odd) { grid-column: 1 / -1; min-height: 124px; }
+    .tpl[aria-pressed="true"] { border-color: var(--t); box-shadow: 0 0 0 1.5px var(--t); }
+    .tpl-name { font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 500; min-height: 0; padding-right: 56px; }
+    .tpl .bar { display: none; }
+    .tpl-meta { font-family: var(--font-serif); font-style: italic; }
+    .dur-card { position: relative; overflow: hidden; border-radius: var(--radius-lg); padding: var(--space-5) var(--space-5) var(--space-4) calc(var(--space-5) + 4px);
+      border: .5px solid color-mix(in srgb, var(--tn1) 28%, var(--border)); box-shadow: var(--shadow-sm);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--tn1) 16%, var(--card)), color-mix(in srgb, var(--tn1) 3%, var(--card))); }
+    .dur-card::before { content: ''; position: absolute; left: 0; top: 18px; bottom: 18px; width: 4px; border-radius: 0 4px 4px 0; background: var(--tn1); }
+    .dur-card .ruler-wrap { margin: 0 calc(-1 * var(--space-5)); }
+    .readout-val b { font-size: 4rem; color: color-mix(in srgb, var(--tn1) 75%, var(--text)); }
+    .readout-sub { font-family: var(--font-serif); font-style: italic; text-transform: none; letter-spacing: .02em; font-size: var(--fs-sm); }
+    .hint { font-family: var(--font-serif); font-style: italic; }
+    .stats { gap: var(--space-3); }
+    .stat { --t: var(--tn1); position: relative; overflow: hidden; text-align: left; padding: var(--space-4) var(--space-3) var(--space-3) calc(var(--space-3) + 3px); min-height: 96px; display: flex; flex-direction: column; justify-content: flex-end;
+      border-radius: var(--radius-lg); border-color: color-mix(in srgb, var(--t) 28%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 20%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
+    .stat::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: var(--t); }
+    .stat:nth-child(2) { --t: var(--tn2); } .stat:nth-child(3) { --t: var(--tn3); }
+    .stat b { font-size: 2.5rem; font-weight: 200; color: color-mix(in srgb, var(--t) 70%, var(--text)); }
+    .stat span { font-family: var(--font-serif); font-style: italic; text-transform: none; letter-spacing: 0; font-size: var(--fs-xs); }
+    .cal-title { font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 500; }
+    .cal-day.has { background: color-mix(in srgb, var(--tn1) 18%, var(--card)); }
+    .cal-day.deep { background: var(--tn1); }
+    .cal-day.sel { box-shadow: 0 0 0 2px var(--tn2); }
+    #day-list { display: flex; flex-direction: column; gap: var(--space-3); }
+    #day-list .day-row { position: relative; overflow: hidden; border: .5px solid color-mix(in srgb, var(--tn1) 25%, var(--border)); border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--tn1) 14%, var(--card)), color-mix(in srgb, var(--tn1) 3%, var(--card))); }
+    #day-list .day-row + .day-row { border-top: .5px solid color-mix(in srgb, var(--tn1) 25%, var(--border)); }
+    #day-list .day-row::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: var(--tn1); }
+    #day-list .day-n b { font-size: 2.25rem; font-weight: 200; }
+    #day-list .day-info b { font-family: var(--font-serif); font-weight: 500; font-size: var(--fs-lg); }
+    .month-stamp { display: inline-block; margin: 0 auto; transform: rotate(-6deg); padding: 3px 10px; border: 1.5px solid #C2475F; border-radius: 5px; color: #C2475F; font: 700 .9rem/1 var(--font-serif); letter-spacing: .1em; }
+    .p-stamp { display: inline-block; transform: rotate(-6deg); padding: 4px 12px; border: 1.5px solid var(--blossom, #F07890); border-radius: 6px; color: var(--blossom, #F07890); font: 700 1.1rem/1 var(--font-serif); letter-spacing: .12em; }
+    .p-done h2 { font-family: var(--font-serif); font-weight: 500; }
   </style>
 </head>
 <body class="zen zen-native" data-title="Spiritualità" data-back="index.html"
@@ -237,7 +284,7 @@
         <div class="tpl-row" id="tpl-row"></div>
       </div>
 
-      <div class="zen-section">
+      <div class="zen-section dur-card">
         <div class="zen-eyebrow">Durata</div>
         <div class="readout"><div class="readout-val" id="readout"></div><div class="readout-sub" id="readout-sub"></div></div>
         <div class="ruler-wrap"><div class="ruler" id="ruler" aria-label="Scorri per scegliere i minuti"></div><span class="ruler-mark" aria-hidden="true"></span></div>
@@ -304,6 +351,7 @@
 
     <div class="p-done" id="p-done">
       <img class="p-gecko p-gecko-done" src="assets/img/geco.webp" alt="Il Geco Zen" width="150" height="107"/>
+      <span class="p-stamp" aria-hidden="true">整</span>
       <h2>Sessione completata</h2>
       <p id="p-done-text"></p>
       <p>Vuoi approfondire la mindfulness e la meditazione?<br><a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a></p>

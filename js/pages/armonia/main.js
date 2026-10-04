@@ -69,6 +69,7 @@ function render() {
     return;
   }
   let html = '', letter = '';
+  if (tab === 'all' && !q) html += topBlocks(all, besties);
   for (const v of list) {
     const l = (sortKey(v)[0] || '#').toUpperCase();
     if (l !== letter) {
@@ -76,14 +77,43 @@ function render() {
       letter = l;
       html += `<div class="letter">${esc(l)}</div><div class="list">`;
     }
-    const sub = [v.tags.slice(0, 2).join(' · '), v.place].filter(Boolean).join(' — ');
-    html += `<button type="button" class="list-row" data-id="${esc(v.id)}">
-      ${avatar(v)}
-      <span class="grow"><span style="display:block">${esc(v.full)}</span>${sub ? `<span class="xsmall zen-muted">${esc(sub)}</span>` : ''}</span>
+    const sub = v.place;
+    const pills = v.tags.slice(0, 3);
+    html += `<button type="button" class="ct c${(hash(v.id) % 4) + 1}${v.bestie ? ' bestie' : ''}" data-id="${esc(v.id)}">
+      ${avatar(v, 46)}
+      <span class="grow"><span class="ct-name">${esc(v.full)}</span>${sub ? `<span class="ct-sub">${esc(sub)}</span>` : ''}
+        ${pills.length ? `<span class="ct-pills">${pills.map(t => `<span class="ct-pill">${esc(t)}</span>`).join('')}</span>` : ''}</span>
       ${v.bestie ? `<span class="bestie-star">${icon('star', 'sm')}</span>` : ''}
     </button>`;
   }
   $('ar-list').innerHTML = html + '</div>';
+}
+
+const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+/** Prossimo compleanno + fila dei Besties, in cima all'elenco. */
+function topBlocks(all, besties) {
+  let out = '';
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let best = null;
+  for (const v of all) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v.birthday || '');
+    if (!m) continue;
+    let d = new Date(today.getFullYear(), +m[2] - 1, +m[3]);
+    if (d < today) d = new Date(today.getFullYear() + 1, +m[2] - 1, +m[3]);
+    const days = Math.round((d - today) / 864e5);
+    if (!best || days < best.days) best = { v, days, d };
+  }
+  if (best) {
+    const when = best.d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long' });
+    out += `<button type="button" class="nb" data-id="${esc(best.v.id)}"><span><span class="nb-eyebrow">Prossimo compleanno</span>
+      <span class="nb-name">${esc(best.v.full)}</span><span class="nb-when">${best.days === 0 ? 'oggi!' : when}</span></span>
+      <span class="nb-num">${best.days === 0 ? '🎂' : `${best.days}<small>${best.days === 1 ? 'giorno' : 'giorni'}</small>`}</span></button>`;
+  }
+  if (besties.length) {
+    out += `<div class="bf" aria-label="Besties">${besties.map(v => `<button type="button" data-id="${esc(v.id)}">${avatar(v, 56)}<span>${esc(v.nome || v.full)}</span></button>`).join('')}</div>`;
+  }
+  return out;
 }
 
 $('ar-list').addEventListener('click', e => {

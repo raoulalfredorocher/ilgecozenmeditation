@@ -115,7 +115,7 @@ function renderTemplates() {
   row.innerHTML = '';
   templates.forEach(t => {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'tpl';
+    b.type = 'button'; b.className = 'tpl'; b.dataset.n = String(sumMins(t.steps));
     b.setAttribute('aria-pressed', String(S.tpl === t.name));
     b.innerHTML = `
       <div class="tpl-name">${escapeHtml(t.name)}</div>
@@ -334,9 +334,9 @@ function streak() {
 function renderCalendar() {
   const monthSessions = sessions.filter(s => inMonth(s, calY, calM));
   $('stats').innerHTML = `
-    <div class="stat"><b>${monthSessions.length}</b><span>Sessioni</span></div>
-    <div class="stat"><b>${monthSessions.reduce((a, s) => a + (s.totalMins || 0), 0)}</b><span>Minuti</span></div>
-    <div class="stat"><b>${streak()}</b><span>Giorni di fila</span></div>`;
+    <div class="stat"><b>${monthSessions.length}</b><span>sessioni</span></div>
+    <div class="stat"><b>${monthSessions.reduce((a, s) => a + (s.totalMins || 0), 0)}</b><span>minuti</span></div>
+    <div class="stat"><b>${streak()}</b><span>giorni di fila</span></div>`;
 
   $('cal-title').textContent = `${MESI[calM]} ${calY}`;
   const minsByDay = {};

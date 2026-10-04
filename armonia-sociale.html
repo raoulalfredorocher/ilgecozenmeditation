@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
-  <title>Il Geco Zen — Armonia sociale</title>
+  <title>Il Geco Zen — Relazioni</title>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
@@ -26,10 +26,46 @@
     .contact-action { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text); text-decoration: none; min-width: 56px; }
     .contact-action .dot-icon { width: 48px; height: 48px; border-radius: 50%; }
     #cd-star.accent .icon { fill: currentColor; }
+
+    /* ═══ Nuovo design Geco Zen ═══ */
+    :root { --tn1:#25739E; --tn2:#E48AA3; --tn3:#7FAE82; --tn4:#D9A55B; }
+    html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6BC7C; }
+    .letter { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-xl); font-weight: 400; letter-spacing: 0; color: var(--muted); margin: var(--space-5) 0 var(--space-2) var(--space-2); }
+    .page-tabs .segmented button { font-family: var(--font-serif); }
+    #ar-list .list { display: flex; flex-direction: column; gap: var(--space-3); background: none; border: 0; box-shadow: none; padding: 0; }
+    .ct { --t: var(--tn1); position: relative; overflow: hidden; display: flex; align-items: center; gap: var(--space-3); width: 100%; text-align: left; cursor: pointer; min-height: 72px;
+      padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) + 4px); border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border)); border-radius: var(--radius-lg); color: var(--text);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); transition: transform .15s var(--ease); }
+    .ct:active { transform: scale(.98); }
+    .ct::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .ct.c2 { --t: var(--tn2); } .ct.c3 { --t: var(--tn3); } .ct.c4 { --t: var(--tn4); }
+    .ct.bestie { background: linear-gradient(135deg, color-mix(in srgb, var(--tn4) 28%, var(--card)), color-mix(in srgb, var(--tn4) 5%, var(--card))); }
+    .ct .initials { background: color-mix(in srgb, var(--t) 22%, var(--card)); color: color-mix(in srgb, var(--t) 75%, var(--text)); font-family: var(--font-serif); font-weight: 500; }
+    .ct-name { display: block; font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 500; letter-spacing: -.01em; }
+    .ct-sub { display: block; font-family: var(--font-serif); font-style: italic; font-size: var(--fs-sm); color: var(--muted); }
+    .ct-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .ct-pill { font-size: .6875rem; padding: 2px 9px; border-radius: 999px; background: color-mix(in srgb, var(--t) 16%, var(--card)); color: color-mix(in srgb, var(--t) 75%, var(--text)); }
+    .nb { --t: var(--tn2); position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); min-height: 120px; width: 100%; text-align: left; cursor: pointer;
+      padding: var(--space-4) var(--space-5) var(--space-4) calc(var(--space-5) + 4px); border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border)); color: var(--text);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 24%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
+    .nb::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .nb-eyebrow { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .nb-name { display: block; font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 500; margin-top: 2px; }
+    .nb-when { display: block; font-family: var(--font-serif); font-style: italic; color: var(--muted); font-size: var(--fs-sm); }
+    .nb-num { font-size: 3.5rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; color: color-mix(in srgb, var(--t) 65%, transparent); font-variant-numeric: tabular-nums; }
+    .nb-num small { font-size: var(--fs-sm); margin-left: 4px; }
+    .bf { display: flex; gap: var(--space-3); overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--space-5)); padding: 2px var(--space-5); }
+    .bf::-webkit-scrollbar { display: none; }
+    .bf button { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; cursor: pointer; color: var(--text); font-family: var(--font-serif); font-size: var(--fs-xs); max-width: 64px; }
+    .bf .initials, .bf .avatar { box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--tn4); }
+    .contact-action .dot-icon { background: color-mix(in srgb, var(--tn1) 16%, var(--card)); color: var(--tn1); }
+    .contact-action:nth-child(4n+2) .dot-icon { background: color-mix(in srgb, var(--tn2) 18%, var(--card)); color: var(--tn2); }
+    .contact-action:nth-child(4n+3) .dot-icon { background: color-mix(in srgb, var(--tn3) 18%, var(--card)); color: var(--tn3); }
+    .contact-action:nth-child(4n+4) .dot-icon { background: color-mix(in srgb, var(--tn4) 18%, var(--card)); color: var(--tn4); }
   </style>
 </head>
 <!-- Armonia sociale: logica in js/pages/armonia/main.js -->
-<body class="zen zen-native" data-title="Armonia sociale" data-add="#ar-add">
+<body class="zen zen-native" data-title="Relazioni" data-add="#ar-add">
   <script type="module" src="js/core/auth-guard.js"></script>
   <template id="zen-header-actions">
     <button class="icon-btn" type="button" id="ar-more" aria-label="Altre azioni">
