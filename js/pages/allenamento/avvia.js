@@ -40,6 +40,9 @@ function render() {
   if (sel.sc >= p.schede.length) sel.sc = 0;
   const sc = p.schede[sel.sc];
   root.innerHTML = `
+    <section class="gz al-hero"><span class="eb">${sg && sg.plan === p._docId && sg.sc === sel.sc ? 'Oggi tocca a' : 'Hai scelto'}</span>
+      <span class="nm">${esc(sc?.nome || p.nome)}</span><span class="sb">${esc(p.nome)}${sc ? ` · ${sc.esercizi.length} ${sc.esercizi.length === 1 ? 'esercizio' : 'esercizi'}` : ''}</span>
+      <span class="big" aria-hidden="true">${String((sel.sc || 0) + 1).padStart(2, '0')}</span></section>
     <div class="field-lbl">Allenamento</div>
     <div class="chips-wrap al-chips">${state.plans.map(x => `<button type="button" class="pill" data-plan="${esc(x._docId)}" aria-pressed="${x._docId === p._docId}">${esc(x.nome)}</button>`).join('')}</div>
     <div class="field-lbl" style="margin-top:var(--space-2)">Scheda</div>

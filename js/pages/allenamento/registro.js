@@ -56,7 +56,13 @@ function render() {
     cells += `<button type="button" class="cal-day${has ? ' has' : ''}${key === today ? ' today' : ''}${key === selected ? ' sel' : ''}" data-date="${key}" aria-label="${d} ${MONTHS[m]}${has ? `, ${has} allenamenti` : ''}">${d}</button>`;
   }
   const list = byDate[selected] || [];
+  const hm = monthMin >= 60 ? `${Math.floor(monthMin / 60)}<small style="font-size:1rem">h</small>${monthMin % 60}` : `${monthMin}`;
+  const full = monthSess >= 12;
   root.innerHTML = `
+    <div class="bento"><div class="bn"><b>${monthSess}</b><span>${monthSess === 1 ? 'allenamento' : 'allenamenti'}</span></div>
+      <div class="bn"><b>${hm}</b><span>${monthMin >= 60 ? 'ore e minuti' : 'minuti'}</span></div>
+      <div class="bn"><b>${monthKeys.length}</b><span>${monthKeys.length === 1 ? 'giorno attivo' : 'giorni attivi'}</span></div></div>
+    ${full ? '<div style="text-align:center"><span class="stamp" aria-hidden="true">鍛</span></div>' : ''}
     <section class="rs-card">
       <div class="rs-calhead">
         <button type="button" class="icon-btn" data-month="-1" aria-label="Mese precedente">${icon('back')}</button>

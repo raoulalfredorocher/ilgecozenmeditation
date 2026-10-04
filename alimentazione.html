@@ -217,6 +217,70 @@
     #rc-cats { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--space-5)); padding: 0 var(--space-5); }
     #rc-cats::-webkit-scrollbar { display: none; }
     #rc-cats .pill { flex-shrink: 0; }
+
+    /* ═══ Nuovo design Geco Zen: schede sfumate con barra colorata, numeri grandi, serif ═══ */
+    :root { --tn1:#25739E; --tn2:#E48AA3; --tn3:#7FAE82; --tn4:#D9A55B; }
+    html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6BC7C; }
+    .gz { --t: var(--tn1); position: relative; overflow: hidden; border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border)) !important; border-radius: var(--radius-lg) !important;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))) !important; box-shadow: var(--shadow-sm); }
+    .gz::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .gz.c2 { --t: var(--tn2); } .gz.c3 { --t: var(--tn3); } .gz.c4 { --t: var(--tn4); }
+    .cap { font-family: var(--font-serif); font-style: italic; text-transform: none; letter-spacing: 0; font-size: var(--fs-md); }
+    .cal-title-serif { font-family: var(--font-serif); }
+    .cal-day.has { background: color-mix(in srgb, var(--tn1) 18%, var(--card)); color: var(--text); }
+    .stamp { display: inline-block; transform: rotate(-6deg); padding: 3px 10px; border: 1.5px solid #C2475F; border-radius: 5px; color: #C2475F; font: 700 .95rem/1 var(--font-serif); letter-spacing: .1em; }
+    html[data-theme="dark"] .stamp { color: #F07890; border-color: #F07890; }
+    .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    .bento .bn { --t: var(--tn1); position: relative; overflow: hidden; min-height: 96px; padding: var(--space-4) var(--space-3) var(--space-3) calc(var(--space-3) + 3px); display: flex; flex-direction: column; justify-content: flex-end;
+      border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 20%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
+    .bento .bn::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: var(--t); }
+    .bento .bn:nth-child(2) { --t: var(--tn2); } .bento .bn:nth-child(3) { --t: var(--tn3); }
+    .bento .bn b { font-size: 2.5rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; color: color-mix(in srgb, var(--t) 70%, var(--text)); font-variant-numeric: tabular-nums; }
+    .bento .bn span { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-xs); color: var(--muted); }
+
+    .diet-pill { font-family: var(--font-serif); }
+    .wk { border-radius: var(--radius-lg); background: linear-gradient(135deg, color-mix(in srgb, var(--tn1) 10%, var(--card)), var(--card)); }
+    .dt-day { --t: var(--tn1); position: relative; overflow: hidden; border-color: color-mix(in srgb, var(--t) 28%, var(--border)); padding-left: calc(var(--space-5) + 4px);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 2%, var(--card))); }
+    .dt-day::before { content: ''; position: absolute; left: 0; top: 18px; bottom: 18px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .dt-dayname { font-weight: 500; font-size: 1.625rem; }
+    .dt-meal { --t: var(--tn2); position: relative; margin-top: var(--space-3); padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) + 3px); border: .5px solid color-mix(in srgb, var(--t) 26%, var(--border)); border-radius: var(--radius-md);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 16%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); overflow: hidden; }
+    .dt-meal::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--t); }
+    .dt-day .dt-meal:nth-of-type(4n+2) { --t: var(--tn3); } .dt-day .dt-meal:nth-of-type(4n+3) { --t: var(--tn4); } .dt-day .dt-meal:nth-of-type(4n+4) { --t: var(--tn1); }
+    .dt-slot { font: 500 var(--fs-lg) var(--font-serif); }
+    .dt-meal .row .s { font-size: 1.5rem; font-weight: 200; letter-spacing: -.03em; color: color-mix(in srgb, var(--t) 70%, var(--text)); }
+    .dt-desc { font-family: var(--font-serif); font-style: italic; }
+    .de-kcal { font-size: 3rem; }
+    .dt-reg { background: var(--tn1); }
+    .dt-reg.done { background: color-mix(in srgb, var(--tn3) 22%, var(--card)); color: color-mix(in srgb, var(--tn3) 70%, var(--text)); }
+    .rs-card { --t: var(--tn1); position: relative; overflow: hidden; padding-left: calc(var(--space-5) + 4px); border-color: color-mix(in srgb, var(--t) 28%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 2%, var(--card))); }
+    .rs-card::before { content: ''; position: absolute; left: 0; top: 18px; bottom: 18px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    #tab-risultati .rs-card:nth-of-type(4n+2) { --t: var(--tn2); } #tab-risultati .rs-card:nth-of-type(4n+3) { --t: var(--tn3); } #tab-risultati .rs-card:nth-of-type(4n+4) { --t: var(--tn4); }
+    .rs-banner { background: linear-gradient(135deg, color-mix(in srgb, var(--tn2) 18%, var(--card)), color-mix(in srgb, var(--tn2) 3%, var(--card))); border-color: color-mix(in srgb, var(--tn2) 28%, var(--border)); }
+    .rs-head { font-size: 3rem; }
+    .rs-calhead .cap { font: 500 var(--fs-xl) var(--font-serif); font-style: normal; text-transform: capitalize; }
+    .rc-grid { gap: var(--space-3); }
+    .rc-card { --t0: var(--tn1); position: relative; overflow: hidden; border-radius: var(--radius-lg); border: .5px solid var(--border); background: var(--card); box-shadow: var(--shadow-sm); padding-bottom: var(--space-3); }
+    .rc-card:nth-child(5n+1) { grid-column: 1 / -1; }
+    .rc-card:nth-child(5n+1) .rc-cover { aspect-ratio: 16 / 9; }
+    .rc-cover { border-radius: 0; }
+    .rc-tile { background: linear-gradient(135deg, color-mix(in srgb, var(--t) 85%, var(--card)), color-mix(in srgb, var(--t) 45%, var(--card))); position: relative; }
+    .rc-tile b { font-weight: 200; font-size: 4.5rem; opacity: .9; }
+    .rc-card .rc-name { padding: 0 var(--space-3); }
+    .rc-card > :not(.rc-cover):not(.rc-name) { padding: 0 var(--space-3); }
+    .sp-store { --t: var(--tn1); position: relative; overflow: hidden; border-color: color-mix(in srgb, var(--t) 28%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
+    .sp-store:nth-child(4n+2) { --t: var(--tn2); } .sp-store:nth-child(4n+3) { --t: var(--tn3); } .sp-store:nth-child(4n+4) { --t: var(--tn4); }
+    .sp-store::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .sp-logo { background: color-mix(in srgb, var(--t) 22%, var(--card)); color: color-mix(in srgb, var(--t) 75%, var(--text)); }
+    .sp-sname { font-weight: 500; font-size: var(--fs-xl); }
+    .sp-title { font-weight: 500; }
+    .sp-check { border-color: var(--tn1); }
+    .sp-check[aria-pressed="true"] { background: var(--tn3); border-color: var(--tn3); }
+    .sp-check[aria-pressed="true"] ~ * { opacity: .55; }
+    #tab-spesa .list { background: none; border: 0; box-shadow: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+    #tab-spesa .sp-row { border: .5px solid var(--border); border-radius: var(--radius-md); background: var(--card); border-top: .5px solid var(--border); }
   </style>
 </head>
 <!--
