@@ -26,6 +26,7 @@ import { initQuotes } from './quotes.js';
 import { renderShelf, shareShelf } from './shelf.js';
 import { initFlash } from './flash.js';
 import { initMaestri } from './maestri.js';
+import { initCovers } from './covers.js';
 import { exportBookMarkdown, exportAllMarkdown } from './export-md.js';
 
 const $ = id => document.getElementById(id);
@@ -48,7 +49,7 @@ let tagFilter = 'all';
 let search = '';
 let statsYear = null;
 let goals = {};              // { 2026: 24 }
-let timer, series, quotes, flash, masters;
+let timer, series, quotes, flash, masters, covers;
 let flashShown = false;   // moduli collegati in fondo (initTimer, initSeries, initQuotes)
 
 const byId = id => items.find(i => String(i.id) === String(id));
@@ -119,6 +120,7 @@ function render() {
   for (const k of ['todo', 'done', 'shelf', 'series', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
   const listMode = tab === 'todo' || tab === 'shelf' || (tab === 'done' && doneView === 'list');
   $('fa-tools').hidden = !listMode;
+  covers?.banner($('lb-covers')); $('lb-covers').hidden = !(tab === 'todo' || (tab === 'done' && doneView === 'list'));
   if (tab === 'buy') return renderBuy();
   if (tab === 'series') return series?.renderList($('lb-series'));
   if (tab === 'masters') return masters?.renderList($('lb-masters'));
@@ -179,7 +181,7 @@ function renderTodo(base, list) {
 
   const queue = list.filter(i => !i.reading);
   const all = base.filter(i => !i.reading).length;
-  $('fa-todo-count').textContent = all ? `${all} da leggere` : '';
+  $('fa-todo-count').innerHTML = all ? `<b class="fa-bign">${all}</b> da leggere` : '';
   $('fa-tonight').hidden = !all;
   const grid = $('fa-grid');
   if (!base.length) { grid.innerHTML = `<div class="empty" style="grid-column:1/-1">Nessun libro ancora.<br/>Tocca + per aggiungerne uno, o scansiona il codice a barre.</div>`; return; }
@@ -774,6 +776,7 @@ document.addEventListener('click', e => {
   const bt = e.target.closest('[data-bought]');
   if (bt) { const it = byId(bt.dataset.bought); if (it) { updateLibroDoc(it._docId, { purchase: OWNED }); toast('Spostato tra i tuoi libri'); } return; }
   if (e.target.closest('#fa-tonight')) { tnCurrent = null; drawTonight(true); tonight.open(); return; }
+  if (e.target.closest('[data-covers]')) return covers.open();
   if (e.target.closest('#lb-csv')) return exportCsv();
   const o = e.target.closest('[data-open]');
   if (o) openDetail(byId(o.dataset.open));
@@ -833,6 +836,7 @@ series = initSeries(ctx);
 quotes = ctx.quotes = initQuotes(ctx);
 flash = initFlash(ctx);
 masters = initMaestri(ctx);
+covers = initCovers(ctx);
 render();
 waitForUser().then(async () => {
   let first = true;

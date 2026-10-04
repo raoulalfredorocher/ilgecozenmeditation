@@ -285,6 +285,74 @@
     .lb-scan-bottom form { display: flex; gap: 8px; }
     .lb-scan-bottom input { flex: 1; min-height: 44px; border-radius: 999px; border: 0; padding: 0 16px; font-size: 16px; background: rgba(255,255,255,.92); color: #1C3444; }
     .lb-scan-bottom button { min-height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: var(--sakura); color: #3a1a24; font-weight: 600; font-size: var(--fs-md); cursor: pointer; }
+
+    /* ═══ Nuovo design Geco Zen: schede sfumate con barra colorata, numeri grandi, serif ═══ */
+    :root { --tn1:#25739E; --tn2:#E48AA3; --tn3:#7FAE82; --tn4:#D9A55B; }
+    html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6BC7C; }
+    .fa-head { --t: var(--tn1); position: relative; overflow: hidden; padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); min-height: 72px; }
+    .fa-head::before, .fa-now::before, .fa-stat::before, #fa-done-list .fa-row::before, .fa-buy::before, .cv-banner::before, .lb-news-card::before, .qt::before, .fa-prog::before, .fa-card::before {
+      content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); z-index: 2; pointer-events: none; }
+    .fa-head .zen-eyebrow { font: italic 400 var(--fs-md) var(--font-serif); letter-spacing: 0; text-transform: none; color: var(--muted); }
+    .fa-bign { font-size: 2.75rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; margin-right: 6px; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--t) 75%, var(--text)); font-style: normal; font-family: var(--font); }
+    /* copertine */
+    .fa-card { --t: var(--tn4); border-radius: var(--radius-lg); border-color: color-mix(in srgb, var(--t) 28%, var(--border)); overflow: hidden;
+      background: linear-gradient(160deg, color-mix(in srgb, var(--t) 14%, var(--card)), var(--card)); }
+    .fa-card:has(.tone-sakura) { --t: var(--tn2); } .fa-card:has(.tone-sky) { --t: var(--tn1); }
+    .fa-card::before { top: auto; bottom: 14px; height: 40px; }
+    .fa-card .info { padding-left: calc(12px + 4px); }
+    .fa-card .name { font: 500 var(--fs-md)/1.25 var(--font-serif); letter-spacing: -.01em; }
+    .fa-card .meta:first-of-type { font-family: var(--font-serif); font-style: italic; }
+    .fa-card .ph { border-radius: 0; }
+    /* in lettura */
+    .fa-now { --t: var(--tn3); position: relative; overflow: hidden; border-radius: var(--radius-lg); padding-left: calc(var(--space-3) + 4px); border-color: color-mix(in srgb, var(--t) 28%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
+    .fa-now .t, .fa-row .t, .fa-hit .t { font-family: var(--font-serif); font-weight: 500; font-size: var(--fs-lg); }
+    .fa-now .m, .fa-row .m { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-sm); }
+    .meter-fill { background: var(--tn3); }
+    /* letti */
+    .fa-stats { gap: var(--space-3); }
+    .fa-stat { --t: var(--tn1); position: relative; overflow: hidden; min-height: 92px; justify-content: flex-end; padding: var(--space-4) var(--space-3) var(--space-3) calc(var(--space-3) + 3px); border-radius: var(--radius-lg); border-color: color-mix(in srgb, var(--t) 28%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 20%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
+    .fa-stat::before { top: 12px; bottom: 12px; width: 3px; }
+    .fa-stat:nth-child(2) { --t: var(--tn2); } .fa-stat:nth-child(3) { --t: var(--tn3); }
+    .fa-stat b { font-size: 2.5rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; color: color-mix(in srgb, var(--t) 70%, var(--text)); }
+    .fa-stat span { font: italic 400 var(--fs-xs) var(--font-serif); }
+    #fa-done-list.list, #fa-buy-list.list { background: none; border: 0; box-shadow: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+    #fa-done-list .fa-row, #fa-buy-list .fa-row { --t: var(--tn4); position: relative; overflow: hidden; border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border)); border-top: .5px solid color-mix(in srgb, var(--t) 28%, var(--border)); border-radius: var(--radius-lg);
+      padding-left: calc(var(--space-4) + 4px); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 16%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
+    #fa-done-list .fa-row:has(.tone-sakura), #fa-buy-list .fa-row:has(.tone-sakura) { --t: var(--tn2); }
+    #fa-done-list .fa-row:has(.tone-sky), #fa-buy-list .fa-row:has(.tone-sky) { --t: var(--tn1); }
+    .fa-buy { position: relative; }
+    .fa-star.on { fill: var(--tn4); stroke: var(--tn4); }
+    .fa-row .q { font-family: var(--font-serif); }
+    /* avvisi */
+    .lb-news-card, .cv-banner { --t: var(--tn2); position: relative; overflow: hidden; padding-left: calc(var(--space-4) + 4px); border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 22%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
+    .cv-banner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); border-radius: var(--radius-lg); --t: var(--tn1); }
+    .cv-banner[hidden], #lb-covers[hidden] { display: none; }
+    .cv-banner .t { font: 500 var(--fs-lg) var(--font-serif); } .cv-banner .m { font: italic 400 var(--fs-sm) var(--font-serif); color: var(--muted); }
+    .cv-banner .btn { flex-shrink: 0; }
+    .cv-sum { font: italic 400 var(--fs-lg) var(--font-serif); } .cv-sum b { font: 200 2.25rem var(--font); margin-right: 4px; font-style: normal; }
+    .cv-rev { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) 0; border-top: .5px solid var(--border); }
+    .cv-rev .t { font: 500 var(--fs-md) var(--font-serif); display: flex; flex-direction: column; } .cv-rev .m { font: italic 400 var(--fs-xs) var(--font-serif); color: var(--muted); }
+    .cv-cands { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; }
+    .cv-cand { flex: 0 0 84px; display: flex; flex-direction: column; gap: 4px; border: 0; background: none; padding: 0; cursor: pointer; color: var(--text); font: inherit; text-align: left; }
+    .cv-cand img { width: 84px; height: 124px; object-fit: cover; border-radius: var(--radius-sm); background: var(--surface); }
+    .cv-cand span { font-size: .6875rem; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .cv-cand.skip { flex: 0 0 auto; align-self: center; padding: 0 var(--space-3); height: 36px; border-radius: 999px; background: var(--surface); }
+    /* dettagli */
+    .fa-hero h3, .fa-pick h3, .fc-hero h3 { font-family: var(--font-serif); font-weight: 500; }
+    .fa-view q, .qt blockquote { font-family: var(--font-serif); }
+    .qt { --t: var(--tn4); position: relative; overflow: hidden; padding-left: calc(var(--space-4) + 4px); border-radius: var(--radius-lg); border-color: color-mix(in srgb, var(--t) 28%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 2%, var(--card))); }
+    .fa-prog { --t: var(--tn3); position: relative; overflow: hidden; padding-left: calc(var(--space-4) + 4px); border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
+    .sr-vol.read { background: var(--tn1); border-color: var(--tn1); }
+    .fa-col i { background: color-mix(in srgb, var(--tn1) 22%, var(--card)); } .fa-col.top i { background: linear-gradient(var(--tn2), var(--tn1)); }
+    .ms-avatar { font-family: var(--font-serif); }
+    .fc-q { font-family: var(--font-serif); font-weight: 500; }
+    .fa-prio, .fa-bign { }
   </style>
 </head>
 <!-- Libri e manga: logica in js/pages/libri-manga/main.js -->
@@ -318,6 +386,8 @@
       <div class="chips" id="fa-types" role="group" aria-label="Tipo"></div>
       <div class="chips" id="fa-tags" role="group" aria-label="Etichette" hidden></div>
     </div>
+
+    <div id="lb-covers"></div>
 
     <section class="fa-panel" id="p-todo" aria-live="polite">
       <div id="lb-news"></div>
