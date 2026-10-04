@@ -132,11 +132,13 @@ menu.$('#mn-list').addEventListener('click', async e => {
   const b = e.target.closest('[data-i]');
   if (!b) return;
   const i = +b.dataset.i, [, fn, danger] = menuItems[i];
-  if (danger && armedIdx !== i) { armedIdx = i; return drawMenu(); }
+  if (danger && armedIdx !== i) { armedIdx = i; justArmed = true; return drawMenu(); }
   menu.close();
   await fn();
 });
-menu.el.addEventListener('click', () => { armedIdx = -1; });
+let justArmed = false;
+// un tocco altrove annulla la conferma (ma non quello che l'ha appena attivata)
+menu.el.addEventListener('click', () => { if (justArmed) justArmed = false; else armedIdx = -1; });
 
 function planMenu(id) {
   const p = planById(id);
