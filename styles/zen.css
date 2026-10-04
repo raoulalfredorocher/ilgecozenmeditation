@@ -477,7 +477,8 @@ body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }
 
 /* Numero: stessa grandezza e sempre dentro la scheda */
 .hc-num, .hc.w .hc-num, .hc.t .hc-num, .hc.h .hc-num { font-size: 2.75rem; }
-.hc.h .hc-num, 
+.hc.h .hc-num { top: 3px; right: var(--space-3); }
+.hc.t .hc-num { top: 10px; right: var(--space-4); }
 
 /* Rettangolo piccolo: il testo sta in basso, il numero in alto a destra */
 .hc.h { justify-content: flex-end; padding-top: var(--space-3); padding-bottom: 14px; }
