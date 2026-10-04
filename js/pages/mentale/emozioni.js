@@ -13,7 +13,7 @@
  * appunti con il tag di quella emozione.
  */
 import { EMOTIONS, familyOf, labelOf } from './data.js';
-import { primaryWheelSVG, familyWheelSVG } from './wheel.js';
+import { primaryWheelSVG, familyWheelSVG, setFamilyHub } from './wheel.js';
 import * as store from './store.js';
 import { $, esc, showSheet, hideSheet, armedButton, fmtDay, dayStr, withDay, noonOf } from './ui.js';
 
@@ -71,6 +71,7 @@ export function openEmotion(key) {
       w.className = 'family-wheel';
       w.id = 'family-wheel';
       w.innerHTML = familyWheelSVG(home);
+      w.style.setProperty('--fc', familyOf(home)?.color || 'var(--sakura)');
       w.addEventListener('click', ev => {
         const cell = ev.target.closest('.cell');
         if (cell) page.sel = page.sel === cell.dataset.key ? null : cell.dataset.key;
@@ -98,6 +99,8 @@ function fillNotes() {
   if (!host || !page) return;
   // evidenzia nella ruota l'emozione scelta
   $('family-wheel')?.querySelectorAll('.cell').forEach(c => c.classList.toggle('sel', c.dataset.key === page.sel));
+  const fw = $('family-wheel')?.querySelector('.wheel');
+  if (fw) { fw.classList.toggle('has-sel', !!page.sel); setFamilyHub(fw, labelOf(page.key), page.sel ? labelOf(page.sel) : ''); }
 
   const kept = host.querySelector('textarea')?.value || '';       // non perdere ciò che stai scrivendo
   const keptDay = host.querySelector('input[type=date]')?.value || dayStr(Date.now());
@@ -190,6 +193,7 @@ export function initEmozioni() {
   $('view-emozioni').addEventListener('click', e => {
     const cell = e.target.closest('.cell');
     if (cell) openEmotion(cell.dataset.key);
+    else if (e.target.closest('.hub-g')) openPicker();          // il centro: cerca un'emozione per nome
   });
 }
 
