@@ -78,7 +78,7 @@ function render() {
       html += `<div class="letter">${esc(l)}</div><div class="list">`;
     }
     const sub = v.place;
-    const pills = v.tags.slice(0, 3);
+    const pills = shownTags(v).slice(0, 3);
     html += `<button type="button" class="ct c${(hash(v.id) % 4) + 1}${v.bestie ? ' bestie' : ''}" data-id="${esc(v.id)}">
       ${avatar(v, 46)}
       <span class="grow"><span class="ct-name">${esc(v.full)}</span>${sub ? `<span class="ct-sub">${esc(sub)}</span>` : ''}
@@ -89,6 +89,8 @@ function render() {
   $('ar-list').innerHTML = html + '</div>';
 }
 
+// "My Contacts" ce l'hanno tutti (arriva dall'importazione): non dice nulla, non lo mostro
+const shownTags = v => v.tags.filter(t => !/^my contacts$/i.test(t.trim()));
 const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 
 /** Prossimo compleanno + fila dei Besties, in cima all'elenco. */
@@ -173,7 +175,7 @@ function openDetail(id) {
       `<a class="contact-action" href="${esc(safeUrl(href) || href)}" ${href.startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>
         <span class="dot-icon">${icon(ic)}</span><span class="xsmall">${label}</span></a>`).join('')}</div>` : ''}
     ${info.length ? `<div class="list">${info.map(([ic, t]) => `<div class="list-row small">${icon(ic, 'sm')}<span class="grow">${esc(t)}</span></div>`).join('')}</div>` : ''}
-    ${v.tags.length ? `<div class="row" style="flex-wrap:wrap;gap:6px">${v.tags.map(t => `<span class="chip">${icon('tag', 'sm')}${esc(t)}</span>`).join('')}</div>` : ''}
+    ${shownTags(v).length ? `<div class="row" style="flex-wrap:wrap;gap:6px">${shownTags(v).map(t => `<span class="chip">${icon('tag', 'sm')}${esc(t)}</span>`).join('')}</div>` : ''}
     <div class="zen-section">
       <div class="zen-section-head"><div class="zen-eyebrow">Memorie e scoperte</div>
         <button class="btn sm ghost" type="button" id="cd-mem-add">${icon('plus', 'sm')} Aggiungi</button></div>
