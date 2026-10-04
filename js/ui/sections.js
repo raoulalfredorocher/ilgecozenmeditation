@@ -10,7 +10,7 @@ export const SECTION_GROUPS = [
     { href: 'calendario.html', desc: 'Cosa hai fatto, giorno per giorno.', title: 'Il mio mese', sub: 'allenamento · cibo · mente', icon: 'calendar', tone: 'leaf' },
   ]},
   { title: 'Corpo', items: [
-    { href: 'alimentazione.html', desc: 'Dieta, ricette e diario.', title: 'Alimentazione', sub: 'dieta · ricette · diario', icon: 'salad', tone: 'leaf' },
+    { href: 'alimentazione.html', desc: 'Dieta, ricette e diario.', title: 'Alimentazione', sub: 'dieta · ricette', icon: 'salad', tone: 'leaf' },
     { href: 'allenamento.html', desc: 'Schede e sessioni di ogni giorno.', title: 'Allenamento', sub: 'schede · sessioni', icon: 'dumbbell', tone: 'sky' },
   ]},
   { title: 'Mente e spirito', items: [
@@ -19,7 +19,7 @@ export const SECTION_GROUPS = [
     { href: 'journaling.html', desc: 'Scrivere per capirsi.', title: 'Journaling', sub: 'scrittura', icon: 'pen', tone: 'sand' },
   ]},
   { title: 'Relazioni e mondo', items: [
-    { href: 'armonia-sociale.html', desc: 'Le persone a cui tieni.', title: 'Armonia sociale', sub: 'relazioni · contatti', icon: 'users', tone: 'sky' },
+    { href: 'armonia-sociale.html', desc: 'Le persone a cui tieni.', title: 'Relazioni', sub: 'contatti', icon: 'users', tone: 'sky' },
     { href: 'contributo-al-mondo.html', desc: 'Il tuo impatto sul mondo.', title: 'Contributo al mondo', sub: 'impatto · significato', icon: 'globe', tone: 'leaf' },
   ]},
   { title: 'Passioni', items: [
