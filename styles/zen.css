@@ -459,7 +459,7 @@ body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }
    Stile di "La mia storia" in composizione a blocchi: rettangoli a tutta larghezza,
    quadrati alti e rettangoli piccoli affiancati (vedi js/ui/cards.js). Ogni scheda ha
    sfumatura e barretta nel colore della sezione (--t), numero grande trasparente, titolo in serif. */
-.hc-grid { --row: 104px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: var(--row); gap: var(--space-3); }
+.hc-grid { --row: 100px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: var(--row); gap: var(--space-3); }
 .hc {
   position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-width: 0;
   color: var(--text); text-decoration: none; text-align: left;
@@ -475,11 +475,12 @@ body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }
 .hc-title { font: 600 1.0625rem/1.25 var(--font-serif); letter-spacing: -.015em; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hc-meta { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-/* Numero: stessa grandezza in tutte le schede */
-.hc-num, .hc.w .hc-num, .hc.t .hc-num { font-size: 3.25rem; }
+/* Numero: stessa grandezza e sempre dentro la scheda */
+.hc-num, .hc.w .hc-num, .hc.t .hc-num, .hc.h .hc-num { font-size: 2.75rem; }
+.hc.h .hc-num, 
 
-/* Rettangolo piccolo: il numero spunta dall'angolo, così non copre il titolo */
-.hc.h .hc-num { top: -8px; right: -2px; opacity: .17; }
+/* Rettangolo piccolo: il testo sta in basso, il numero in alto a destra */
+.hc.h { justify-content: flex-end; padding-top: var(--space-3); padding-bottom: 14px; }
 
 /* Rettangolo a tutta larghezza: numero al centro a destra */
 .hc.w { padding-left: calc(var(--space-5) + 4px); padding-right: var(--space-5); }
@@ -487,10 +488,10 @@ body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }
 .hc.w .hc-title { font-size: 1.375rem; padding-right: 60px; }
 .hc.w .hc-meta { font-size: var(--fs-xs); letter-spacing: .12em; padding-right: 60px; }
 
-/* Quadrato alto: icona e titolo in alto, il numero riempie l'angolo in basso */
-.hc.t { justify-content: flex-start; gap: 14px; padding-top: var(--space-4); padding-bottom: var(--space-4); }
-.hc.t .hc-num { top: auto; bottom: 6px; right: var(--space-4); }
-.hc.t .hc-title { font-size: 1.3125rem; }
+/* Quadrato alto: icona (e numero) in alto, poi titolo, riga piccola e frase in corsivo */
+.hc.t { justify-content: center; gap: 12px; padding-top: var(--space-4); padding-bottom: var(--space-4); }
+.hc.t .hc-title { font-size: 1.3125rem; padding-right: 0; }
+.hc-desc { margin-top: var(--space-2); font: italic 400 var(--fs-sm)/1.55 var(--font-serif); color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hc-ic { width: 44px; height: 44px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--t) 20%, var(--card)); color: var(--t); }
 .hc-ic .icon { width: 22px; height: 22px; }
 

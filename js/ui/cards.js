@@ -44,6 +44,6 @@ export function renderCards(el, entries) {
   el.innerHTML = place(entries).map(({ e, kind, css }) => `<a class="hc ${kind}${e.soon ? ' soon' : ''}" href="${e.soon ? '#' : escapeHtml(e.href)}" style="--t:${TINT[e.tone] || TINT.sky};${css}"${e.soon ? ' aria-disabled="true" tabindex="-1"' : ''}>
     <span class="hc-num" aria-hidden="true">${pad2(nums.get(e))}</span>
     ${kind === 't' && e.icon ? `<span class="hc-ic" aria-hidden="true">${icon(e.icon)}</span>` : ''}
-    <span class="hc-text"><span class="hc-title">${escapeHtml(e.title)}</span><span class="hc-meta">${escapeHtml(e.soon ? 'In arrivo' : e.sub || '')}</span></span>
+    <span class="hc-text"><span class="hc-title">${escapeHtml(e.title)}</span><span class="hc-meta">${escapeHtml(e.soon ? 'In arrivo' : e.sub || '')}</span>${kind === 't' && e.desc ? `<span class="hc-desc">${escapeHtml(e.desc)}</span>` : ''}</span>
   </a>`).join('');
 }
