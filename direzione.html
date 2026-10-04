@@ -146,9 +146,59 @@
 
     .dir-footer { text-align: center; font-size: var(--fs-xs); letter-spacing: .12em; color: var(--muted); }
     .dir-footer a { color: var(--geco-blue); }
+
+    /* ── Stile "La mia storia": schede con sfumatura, barretta colorata, serif e numeri grandi ── */
+    .life, .compass-card, .sec, .mission-card {
+      position: relative; overflow: hidden; border: .5px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+      background: linear-gradient(120deg, color-mix(in srgb, var(--t, var(--geco-blue)) 17%, var(--card)), var(--card) 74%);
+    }
+    .life::before, .compass-card::before, .sec::before, .mission-card::before {
+      content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t, var(--geco-blue)); z-index: 1;
+    }
+    .dir-main { gap: var(--space-4); }
+
+    /* Barra della vita */
+    .life { --t: var(--geco-blue); padding: var(--space-6) var(--space-5) var(--space-5) calc(var(--space-5) + 6px); text-align: left; }
+    .life-eyebrow { margin-bottom: var(--space-2); }
+    .life-value { font: 300 4.25rem/1 var(--font-serif); letter-spacing: -.05em; }
+    .life-value small { font: 300 1.5rem var(--font-serif); color: var(--geco-blue); }
+    .life-sub { font-family: var(--font-serif); font-style: italic; font-size: var(--fs-md); line-height: 1.5; }
+    .life-track { height: 5px; margin: var(--space-5) 0 var(--space-2); background: color-mix(in srgb, var(--geco-blue) 14%, var(--surface)); }
+
+    /* Bussola dei valori */
+    .compass-card { --t: var(--sakura); padding: var(--space-5) var(--space-4) var(--space-5) calc(var(--space-4) + 6px); }
+    .compass-card .zen-eyebrow { text-align: left; padding-left: var(--space-2); }
+    .compass-rings .ring-soft { fill: color-mix(in srgb, var(--sakura) 12%, var(--geco-mist)); opacity: .8; }
+    .compass-rings .ring-line, .compass-rings .cross { stroke: color-mix(in srgb, var(--sakura) 40%, var(--border)); }
+    .compass-pt .dir { font: 300 .8125rem var(--font-serif); letter-spacing: .3em; color: var(--sakura); }
+    .compass-pt .val { font: 600 var(--fs-lg)/1.25 var(--font-serif); letter-spacing: -.01em; }
+
+    /* Missione */
+    .mission { margin-top: var(--space-5); padding: var(--space-4) var(--space-4) 0; border-top: .5px solid var(--border); position: relative; }
+    .mission::before { content: '“'; position: absolute; left: var(--space-2); top: -6px; font: 200 4.5rem/1 var(--font-serif); color: var(--sakura); opacity: .5; pointer-events: none; }
+    .mission .zen-eyebrow { padding-left: var(--space-8); }
+    .mission-text { font-size: 1.1875rem; line-height: 1.6; border-left: 0; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-8); }
+
+    /* Aree di vita: schede numerate */
+    .sections { counter-reset: sec; }
+    .sec { --t: var(--sakura); counter-increment: sec; }
+    .sec:has(.sec-ico.blue) { --t: var(--geco-blue); }
+    .sec::after { content: counter(sec, decimal-leading-zero); position: absolute; right: var(--space-4); top: 4px; font: 200 2.75rem/1 var(--font-serif); letter-spacing: -.05em; color: var(--t); opacity: .22; pointer-events: none; }
+    .sec-head { padding-left: calc(var(--space-4) + 4px); padding-right: 64px; }
+    .sec-title { font: 600 1.25rem/1.25 var(--font-serif); letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sec-head { position: relative; padding-bottom: var(--space-5); }
+    .sec-count { position: absolute; left: calc(var(--space-4) + 4px + 40px + var(--space-3)); top: 50px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
+    .sec-count::after { content: ' aree'; }
+    .sec-chev { position: absolute; right: var(--space-4); top: 54px; }
+    .sec-ico { background: color-mix(in srgb, var(--t) 20%, var(--card)); color: var(--t); }
+    .sec-goal { padding-left: calc(var(--space-4) + 4px); }
+    .area { border-top: .5px solid color-mix(in srgb, var(--t) 22%, var(--border)); }
+    .area-name { font-family: var(--font-serif); font-size: var(--fs-lg); }
+    .area-lbl { color: var(--t); }
+    .sec-actions { background: color-mix(in srgb, var(--t) 7%, var(--surface)); }
   </style>
 </head>
-<body class="zen zen-native" data-title="Direction" data-back="index.html">
+<body class="zen zen-native" data-title="Direzione" data-back="index.html">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
