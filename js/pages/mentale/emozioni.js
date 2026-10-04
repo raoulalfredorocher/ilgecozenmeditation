@@ -12,7 +12,7 @@
  * precedenti dentro la raccolta di un'emozione figlia si leggono ancora, come
  * appunti con il tag di quella emozione.
  */
-import { EMOTIONS, familyOf, labelOf } from './data.js';
+import { EMOTIONS, FAMILIES, familyOf, labelOf } from './data.js';
 import { primaryWheelSVG, familyWheelSVG, setFamilyHub } from './wheel.js';
 import * as store from './store.js';
 import { $, esc, showSheet, hideSheet, armedButton, fmtDay, dayStr, withDay, noonOf } from './ui.js';
@@ -37,6 +37,7 @@ function subscribe(key) {
   unsubs[key] = store.onSnapshot(store.query(col, store.orderBy('ts', 'asc')), snap => {
     cache[key] = snap.docs.map(d => ({ id: d.id, src: key, ...d.data() }));
     if (page?.key === key && $('sheet-a').classList.contains('open')) fillNotes();
+    renderAll();
   }, err => console.warn('emozioni', err));
 }
 
@@ -53,6 +54,7 @@ async function loadLegacy(key) {
     } catch { return []; }
   }));
   legacy[key] = lists.flat();
+  renderAll();
   if (page?.key === key && legacy[key].length && $('sheet-a').classList.contains('open')) fillNotes();
 }
 
@@ -189,12 +191,55 @@ function editEntry(en) {
 
 // ─── Scheda Emozioni ────────────────────────────────────────────────────────
 export function initEmozioni() {
-  $('view-emozioni').innerHTML = `<div class="wheel-wrap" id="wheel-wrap">${primaryWheelSVG()}</div>`;
+  $('view-emozioni').innerHTML = `<div class="wheel-wrap" id="wheel-wrap">${primaryWheelSVG()}</div><div class="emo-all" id="emo-all"></div>`;
+  renderAll();
+  $('emo-all').addEventListener('click', e => {
+    const f = e.target.closest('[data-f]');
+    if (f) { allFilter = f.dataset.f || null; allLimit = 30; renderAll(); return; }
+    if (e.target.closest('#emo-more')) { allLimit += 30; renderAll(); return; }
+    const c = e.target.closest('[data-i]');
+    if (c && lastShown[Number(c.dataset.i)]) {
+      const { e: en, fam } = lastShown[Number(c.dataset.i)];
+      page = { key: fam.key, sel: null };               // serve a modificare/eliminare l'appunto
+      editEntry(en);
+    }
+  });
   $('view-emozioni').addEventListener('click', e => {
     const cell = e.target.closest('.cell');
     if (cell) openEmotion(cell.dataset.key);
     else if (e.target.closest('.hub-g')) openPicker();          // il centro: cerca un'emozione per nome
   });
+}
+
+// ─── Tutti gli appunti, in fondo alla scheda Emozioni ───────────────────────
+let allFilter = null;      // emozione di base scelta come filtro (o null = tutte)
+let allLimit = 30;
+let lastShown = [];
+
+/** Avvia l'ascolto di tutte le emozioni di base (serve il login): da chiamare quando l'utente è pronto. */
+export function startEmozioni() {
+  FAMILIES.forEach(f => { subscribe(f.key); loadLegacy(f.key); });
+  renderAll();
+}
+
+function renderAll() {
+  const host = $('emo-all');
+  if (!host) return;
+  const rows = FAMILIES.flatMap(fam => [...(cache[fam.key] || []), ...(legacy[fam.key] || [])].map(e => ({ e, fam })));
+  const count = k => rows.filter(r => r.fam.key === k).length;
+  const shown = rows.filter(r => !allFilter || r.fam.key === allFilter).sort((a, b) => (b.e.ts || 0) - (a.e.ts || 0));
+  lastShown = shown.slice(0, allLimit);
+  host.innerHTML = `
+    <div class="block-title"><span class="zen-eyebrow">I miei appunti${shown.length ? ` · ${shown.length}` : ''}</span></div>
+    <div class="chips-wrap">
+      <button type="button" class="pill" data-f="" aria-pressed="${!allFilter}">Tutte <span class="pill-n">${rows.length}</span></button>
+      ${FAMILIES.map(f => `<button type="button" class="pill" data-f="${f.key}" aria-pressed="${allFilter === f.key}"><span class="fam-dot" style="--c:${f.color}"></span>${esc(f.label)} <span class="pill-n">${count(f.key)}</span></button>`).join('')}
+    </div>
+    <div class="note-list">${lastShown.length ? lastShown.map(({ e, fam }, i) => `<button type="button" class="note-card" data-i="${i}">
+        <span class="nc-text">${esc(e.text || (e.kind === 'felt' ? 'L’ho provata' : ''))}</span>
+        <span class="nc-foot"><span class="nc-date">${fmtDay(e.ts)}</span>${tagHTML(e.tag || fam.key)}</span></button>`).join('')
+      : `<p class="empty-line">${allFilter ? 'Nessun appunto per questa emozione.' : 'Ancora nessun appunto. Tocca un’emozione sulla ruota per scrivere il primo.'}</p>`}</div>
+    ${shown.length > allLimit ? `<button type="button" class="btn block" id="emo-more">Mostra altri</button>` : ''}`;
 }
 
 /** Il + della barra in basso, sulla scheda Emozioni: cerca un'emozione tra tutte. */

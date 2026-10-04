@@ -181,6 +181,12 @@
     @keyframes breathe { 0%, 100% { transform: scale(1); opacity: .5; } 50% { transform: scale(1.12); opacity: .15; } }
     @media (prefers-reduced-motion: reduce) { .wheel .cell, .wheel .hub-halo { animation: none; } }
 
+
+    /* Tutti gli appunti sulle emozioni */
+    .emo-all { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-6); padding-top: var(--space-5); border-top: .5px solid var(--border); }
+    .pill-n { margin-left: 6px; font-size: var(--fs-xs); opacity: .6; font-variant-numeric: tabular-nums; }
+    .pill .fam-dot { margin-right: 7px; }
+
     /* ── Fogli ── */
     .sheet-body { display: flex; flex-direction: column; gap: var(--space-5); }
     #pick-list { max-height: 52dvh; overflow-y: auto; }

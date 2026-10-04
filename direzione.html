@@ -196,6 +196,27 @@
     .area-name { font-family: var(--font-serif); font-size: var(--fs-lg); }
     .area-lbl { color: var(--t); }
     .sec-actions { background: color-mix(in srgb, var(--t) 7%, var(--surface)); }
+
+    /* Bussola: i punti cardinali stanno fuori dal cerchio, i valori su pulsanti che coprono le linee */
+    .compass { max-width: 340px; }
+    .compass-rings { inset: 12%; width: 76%; height: 76%; }
+    .compass-pt { position: static; padding: 0; }
+    .compass-pt .dir { position: absolute; margin: 0; font: 300 .75rem var(--font-serif); letter-spacing: .28em; white-space: nowrap; }
+    .compass-pt.n .dir { top: 4px; left: 50%; transform: translateX(-50%); }
+    .compass-pt.s .dir { bottom: 4px; left: 50%; transform: translateX(-50%); }
+    .compass-pt.w .dir { left: 0; top: 50%; writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg); }
+    .compass-pt.e .dir { right: 0; top: 50%; writing-mode: vertical-rl; transform: translateY(-50%); }
+    .compass-pt .val {
+      position: relative; z-index: 2; max-width: 100%; text-align: center; font-size: var(--fs-md);
+      padding: 7px 14px; border-radius: 999px; background: var(--card);
+      border: .5px solid color-mix(in srgb, var(--sakura) 45%, var(--border)); box-shadow: var(--shadow-sm);
+    }
+    .compass-pt.w .val, .compass-pt.e .val { max-width: 74px; font-size: .78rem; padding: 6px 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .compass-pt.n .val, .compass-pt.s .val { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .compass-pt.w .val { margin-left: auto; } .compass-pt.e .val { margin-right: auto; }
+    .compass-pt.n .val, .compass-pt.s .val { margin: 0 auto; }
+    .compass-pt.n { align-self: end; } .compass-pt.s { align-self: start; }
+    .compass-pt.w { justify-self: end; } .compass-pt.e { justify-self: start; }
   </style>
 </head>
 <body class="zen zen-native" data-title="Direzione" data-back="index.html">

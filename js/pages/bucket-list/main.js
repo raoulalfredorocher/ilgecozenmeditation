@@ -10,6 +10,7 @@ import { subscribeBucketList, addBucketItem, updateBucketItem, deleteBucketItem 
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
+import { initRacconto } from './racconto.js';
 
 const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const $ = id => document.getElementById(id);
@@ -111,6 +112,24 @@ document.addEventListener('click', e => {
 });
 $('bl-search').addEventListener('input', e => { search = e.target.value; render(); });
 
+// Conferma a foglio (swipe per chiudere)
+let cfResolve = null, cfValue = false;
+const cfSheet = createSheet({
+  body: `<p style="text-align:center;color:var(--muted);line-height:1.55;margin:0" id="cf-text"></p>
+    <div class="zen-sheet-actions"><button type="button" class="btn primary block" id="cf-ok"></button><button type="button" class="btn ghost block" id="cf-no">Annulla</button></div>`,
+  onClose: () => { cfResolve?.(cfValue); cfResolve = null; },
+});
+cfSheet.el.style.zIndex = '430';
+cfSheet.$('#cf-ok').addEventListener('click', () => { cfValue = true; cfSheet.close(); });
+cfSheet.$('#cf-no').addEventListener('click', () => cfSheet.close());
+function askConfirm(title, text, label, danger = false) {
+  cfValue = false; cfSheet.setTitle(title); cfSheet.$('#cf-text').textContent = text;
+  const ok = cfSheet.$('#cf-ok'); ok.textContent = label; ok.classList.toggle('primary', !danger); ok.classList.toggle('danger', danger);
+  cfSheet.open();
+  return new Promise(res => { cfResolve = res; });
+}
+const racconto = initRacconto({ byId: id => items.find(i => String(i.id) === String(id)), askConfirm });
+
 // ─── Dettaglio ───────────────────────────────────────────────────────────
 const detail = createSheet({ body: '' });
 let detailItem = null;
@@ -123,6 +142,7 @@ function openDetail(item) {
     ${item.desc ? `<p style="line-height:1.6">${esc(item.desc)}</p>` : ''}
     ${item.done ? `<button type="button" class="list-row card flat" id="dd-date" style="border-radius:var(--radius-md)">
         ${icon('calendar', 'sm')}<span class="grow">Realizzato il ${esc(item.doneDate || '—')}</span><span class="xsmall zen-muted">modifica</span></button>` : ''}
+    <div id="dd-story"></div>
     <button class="btn ${item.done ? '' : 'accent'} block" type="button" id="dd-toggle">
       ${icon(item.done ? 'close' : 'check', 'sm')} ${item.done ? 'Segna come da realizzare' : 'Segna come realizzato'}</button>
     <div class="grid-2">
@@ -137,6 +157,7 @@ function openDetail(item) {
     await deleteBucketItem(detailItem._docId);
   });
   detail.$('#dd-date')?.addEventListener('click', () => openDateSheet(detailItem));
+  racconto.mount(detail.$('#dd-story'), item);
   detail.open();
 }
 

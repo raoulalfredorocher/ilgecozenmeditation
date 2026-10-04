@@ -105,6 +105,53 @@ export async function deleteSessionDoc(sessionId) {
   await deleteDoc(ref);
 }
 
+// ─── Racconto di un sogno (Bucket List) ─────────────────────────────────────
+// users/{uid}/bucket_list/{sogno}/diario/{id}  → { phase, text, audio:{…}, date, createdAt }
+// audio a pezzi base64 in …/diario/{id}/audio/{0000…} (stesso metodo del diario di Salute mentale)
+function dreamCol(dreamDocId) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  return db && uid ? collection(db, 'users', uid, 'bucket_list', dreamDocId, 'diario') : null;
+}
+function dreamAudioCol(dreamDocId, noteId) {
+  const uid = auth?.currentUser?.uid || _cachedUid;
+  return db && uid ? collection(db, 'users', uid, 'bucket_list', dreamDocId, 'diario', noteId, 'audio') : null;
+}
+export async function listDreamNotes(dreamDocId) {
+  const col = dreamCol(dreamDocId);
+  if (!col) return [];
+  return (await getDocs(col)).docs.map(d => ({ _docId: d.id, _dreamDocId: dreamDocId, ...d.data() })).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+}
+export async function addDreamNote(dreamDocId, data) {
+  const col = dreamCol(dreamDocId);
+  if (!col) return null;
+  return (await addDoc(col, { ...data, createdAt: Date.now() })).id;
+}
+export async function updateDreamNote(dreamDocId, noteId, fields) {
+  const col = dreamCol(dreamDocId);
+  if (col) await setDoc(doc(col, noteId), fields, { merge: true });
+}
+export async function saveDreamAudio(dreamDocId, noteId, parts) {
+  const col = dreamAudioCol(dreamDocId, noteId);
+  if (!col) return;
+  for (let i = 0; i < parts.length; i++) await setDoc(doc(col, String(i).padStart(4, '0')), { n: i, data: parts[i] });
+}
+export async function loadDreamAudio(dreamDocId, noteId) {
+  const col = dreamAudioCol(dreamDocId, noteId);
+  if (!col) return [];
+  return (await getDocs(query(col, orderBy('n', 'asc')))).docs.map(d => d.data().data);
+}
+export async function deleteDreamAudio(dreamDocId, noteId) {
+  const col = dreamAudioCol(dreamDocId, noteId);
+  if (!col) return;
+  await Promise.all((await getDocs(col)).docs.map(d => deleteDoc(d.ref)));
+}
+export async function deleteDreamNote(dreamDocId, noteId) {
+  const col = dreamCol(dreamDocId);
+  if (!col) return;
+  await deleteDreamAudio(dreamDocId, noteId).catch(() => {});
+  await deleteDoc(doc(col, noteId));
+}
+
 // ─── Bucket List ─────────────────────────────────────────────────────────────
 
 export function subscribeBucketList(callback) {

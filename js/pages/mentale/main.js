@@ -7,7 +7,7 @@ import { waitForAuth } from '../../core/db.js';
 import { $ } from './ui.js';
 import { initStoria, loadStoria, renderStoria, newSection } from './storia.js';
 import { initDiario, startDiary, openEditor, openDiaryMenu } from './diario.js';
-import { initEmozioni, openPicker } from './emozioni.js';
+import { initEmozioni, startEmozioni, openPicker } from './emozioni.js';
 
 const TAB_KEY = 'zen_mentale_tab';
 const TABS = ['storia', 'diario', 'emozioni'];
@@ -41,4 +41,5 @@ waitForAuth().then(async () => {
   await loadStoria();
   renderStoria();
   startDiary();
+  startEmozioni();
 });
