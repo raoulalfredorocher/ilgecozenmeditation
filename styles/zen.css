@@ -482,6 +482,7 @@ body.zen .empty-st { font-size: var(--fs-sm); letter-spacing: 0; }
 
 /* Rettangolo piccolo: il testo sta in basso, il numero in alto a destra */
 .hc.h { justify-content: flex-end; padding-top: var(--space-3); padding-bottom: 14px; }
+.hc.h .hc-meta { letter-spacing: .06em; }
 
 /* Rettangolo a tutta larghezza: numero al centro a destra */
 .hc.w { padding-left: calc(var(--space-5) + 4px); padding-right: var(--space-5); }

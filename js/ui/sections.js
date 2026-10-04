@@ -25,11 +25,11 @@ export const SECTION_GROUPS = [
   { title: 'Passioni', items: [
     { href: 'passioni.html', desc: 'Ciò che ti accende.', title: 'Passioni', sub: 'tutte le passioni', icon: 'camera', tone: 'sand' },
     { href: 'libri-manga.html', desc: 'Cosa leggi, cosa vorrai leggere.', title: 'Libri e manga', sub: 'da leggere · letti', icon: 'book', tone: 'sand' },
-    { href: 'film-anime.html', desc: 'Da vedere, visti, dove guardarli.', title: 'Film e serie', sub: 'film · anime · serie TV', icon: 'film', tone: 'sky' },
-    { href: 'musica.html', desc: 'Accordi, video e podcast.', title: 'Musica', sub: 'accordi · video · podcast', icon: 'music', tone: 'sakura' },
+    { href: 'film-anime.html', desc: 'Da vedere, visti, dove guardarli.', title: 'Film e serie', sub: 'anime', icon: 'film', tone: 'sky' },
+    { href: 'musica.html', desc: 'Accordi, video e podcast.', title: 'Musica', sub: 'accordi · podcast', icon: 'music', tone: 'sakura' },
     { href: 'fotografia-viaggi.html', desc: 'Paesi, viaggi e foto.', title: 'Fotografia e viaggi', sub: 'paesi · viaggi · foto', icon: 'map', tone: 'leaf' },
-    { href: 'giochi.html', desc: 'Videogiochi e da tavolo.', title: 'Giochi', sub: 'videogiochi · da tavolo', icon: 'gamepad', tone: 'sky' },
-    { href: 'finanza.html', desc: 'Conti e spese sotto controllo.', title: 'Finanza', sub: 'conti · spese · patrimonio', icon: 'wallet', tone: 'leaf' },
-    { href: 'personal-brand.html', desc: 'Identità e presenza.', title: 'Personal brand', sub: 'identità · presenza · narrazione', icon: 'shirt', tone: 'sand' },
+    { href: 'giochi.html', desc: 'Videogiochi e da tavolo.', title: 'Giochi', sub: 'game e GDR', icon: 'gamepad', tone: 'sky' },
+    { href: 'finanza.html', desc: 'Conti e spese sotto controllo.', title: 'Finanza', sub: 'patrimonio', icon: 'wallet', tone: 'leaf' },
+    { href: 'personal-brand.html', desc: 'Identità e presenza.', title: 'Personal brand', sub: 'identità · presenza', icon: 'shirt', tone: 'sand' },
   ]},
 ];
