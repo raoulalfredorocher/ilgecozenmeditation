@@ -128,7 +128,7 @@
     <!-- Sezioni -->
     <section class="zen-section" aria-label="Sezioni">
       <div class="zen-eyebrow">Il tuo spazio</div>
-      <nav class="mosaic" id="home-tiles" aria-label="Sezioni"></nav>
+      <nav id="home-tiles" aria-label="Sezioni"></nav>
     </section>
 
     <footer class="closing">
@@ -140,7 +140,7 @@
   <script type="module">
     import { icon } from './js/ui/icons.js';
     import { SECTION_GROUPS } from './js/ui/sections.js';
-    import { renderMosaic } from './js/ui/mosaic.js';
+    import { renderCards } from './js/ui/cards.js';
     import { getDailyQuote } from './js/data/quotes.js';
     import { getBirthdayContacts, db, auth } from './js/core/db.js';
     import { doc, getDoc, setDoc } from './js/core/firestore.js';
@@ -160,17 +160,11 @@
     /* ── Pensiero del giorno ── */
     document.getElementById('daily-quote-text').textContent = getDailyQuote();
 
-    /* ── Sezioni della Home: mosaico a due colonne sfalsate ──
-       h = altezza in righe da 8px (8 = basso, 11 = alto); wide = tutta la larghezza */
-    const HOME = [
-      ['bucket-list.html', 11], ['direzione.html', 8],
-      ['alimentazione.html', 8], ['allenamento.html', 11],
-      ['meditazione.html', 11], ['passioni.html', 8],
-      ['armonia-sociale.html', 8], ['salute-mentale.html', 11],
-      ['contributo-al-mondo.html', 8, 'wide'],
-    ];
+    /* ── Sezioni della Home: grandi schede numerate (stile "La mia storia") ── */
+    const HOME = ['bucket-list.html', 'direzione.html', 'alimentazione.html', 'allenamento.html', 'meditazione.html',
+      'passioni.html', 'armonia-sociale.html', 'salute-mentale.html', 'contributo-al-mondo.html'];
     const byHref = Object.fromEntries(SECTION_GROUPS.flatMap(g => g.items).map(s => [s.href, s]));
-    renderMosaic(document.getElementById('home-tiles'), HOME.map(([href, h, wide]) => ({ ...byHref[href], h, wide })));
+    renderCards(document.getElementById('home-tiles'), HOME.map(href => byHref[href]));
 
     /* ── Meteo (Open-Meteo, nessuna chiave richiesta) ── */
     /** Codice meteo WMO → [icona, descrizione] */
