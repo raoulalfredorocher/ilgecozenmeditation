@@ -51,18 +51,44 @@ function render() {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1">${filter === 'done' ? 'Nessun sogno realizzato qui.' : 'Nessun risultato.'}</div>`;
     return;
   }
-  grid.innerHTML = list.map(i => `
-    <article class="photo-card dream${i.done ? ' is-done' : ''}" data-id="${i.id}">
-      <button type="button" class="ph" data-open="${i.id}" aria-label="Apri ${esc(i.title)}">
-        ${i.img ? `<img src="${esc(safeUrl(i.img))}" alt="" loading="lazy"/>` : icon('sparkles', 'lg')}
-      </button>
-      <button type="button" class="check dream-check" data-toggle="${i.id}" aria-pressed="${!!i.done}"
+  grid.innerHTML = placeBento(list).map(({ i, kind, css, n }) => {
+    const safe = i.img ? safeUrl(i.img) : '';
+    const tone = TINTS[(n - 1) % TINTS.length];
+    return `<article class="bl-card ${kind}${safe ? ' has-img' : ''}${i.done ? ' is-done' : ''}" data-id="${i.id}" style="--t:${tone};${css}">
+      <button type="button" class="bl-open" data-open="${i.id}" aria-label="Apri ${esc(i.title)}"${safe ? ` style="background-image:url('${esc(safe)}')"` : ''}></button>
+      <span class="bl-num" aria-hidden="true">${String(n).padStart(2, '0')}</span>
+      ${!safe && kind === 't' ? `<span class="bl-ic" aria-hidden="true">${icon('sparkles')}</span>` : ''}
+      <button type="button" class="check bl-check" data-toggle="${i.id}" aria-pressed="${!!i.done}"
         aria-label="${i.done ? 'Segna come da realizzare' : 'Segna come realizzato'}">${icon('check')}</button>
-      <button type="button" class="info" data-open="${i.id}">
-        <span class="name">${esc(i.title)}</span>
-        <span class="meta">${i.done ? `Realizzato ${esc(i.doneDate || '')}` : esc(i.desc || '')}</span>
-      </button>
-    </article>`).join('');
+      <span class="bl-text"><span class="bl-title">${esc(i.title)}</span>
+        <span class="bl-meta">${i.done ? `Realizzato ${esc(i.doneDate || '')}` : esc(i.desc || '')}</span></span>
+      ${i.done ? '<span class="bl-stamp" aria-hidden="true">達成</span>' : ''}
+    </article>`;
+  }).join('');
+}
+
+/** Disposizione a blocchi: il primo sogno in grande, poi a cicli quadrato alto + due piccoli, largo, due piccoli + quadrato alto, largo. */
+const TINTS = ['var(--sakura)', 'var(--geco-blue)', 'var(--warning)', 'var(--success)', 'var(--bark)', 'var(--geco-sky)'];
+function placeBento(list) {
+  const out = [];
+  let row = 1, k = 0;
+  const num = () => ++k;
+  const wide = (i, span = 1, kind = 'w') => { out.push({ i, kind, css: `grid-column:1/-1;grid-row:${row}/span ${span}`, n: num() }); row += span; };
+  if (list.length) wide(list.shift(), 2, 'w hero');
+  const CYCLE = ['L', 'w', 'R', 'w'];
+  let c = 0;
+  while (list.length) {
+    const step = CYCLE[c++ % CYCLE.length];
+    if (step === 'w' || list.length < 3) { wide(list.shift()); continue; }
+    const [a, b, d] = [list.shift(), list.shift(), list.shift()];
+    if (step === 'L') {
+      out.push({ i: a, kind: 't', css: `grid-column:1;grid-row:${row}/span 2`, n: num() }, { i: b, kind: 'h', css: `grid-column:2;grid-row:${row}`, n: num() }, { i: d, kind: 'h', css: `grid-column:2;grid-row:${row + 1}`, n: num() });
+    } else {
+      out.push({ i: a, kind: 'h', css: `grid-column:1;grid-row:${row}`, n: num() }, { i: b, kind: 'h', css: `grid-column:1;grid-row:${row + 1}`, n: num() }, { i: d, kind: 't', css: `grid-column:2;grid-row:${row}/span 2`, n: num() });
+    }
+    row += 2;
+  }
+  return out;
 }
 
 // ─── Azioni ──────────────────────────────────────────────────────────────
