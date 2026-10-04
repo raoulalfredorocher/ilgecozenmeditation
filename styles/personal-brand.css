@@ -22,7 +22,7 @@ html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6
 .chip { flex: 0 0 auto; height: 36px; padding: 0 var(--space-4); border-radius: 999px; border: 0; cursor: pointer; background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-sm); display: inline-flex; align-items: center; gap: 6px; }
 .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); }
 .chip small { opacity: .6; font-size: .6875rem; }
-.sw { width: 30px; height: 30px; border-radius: 50%; border: 0; flex: 0 0 auto; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14); position: relative; }
+.sw { width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; padding: 0; aspect-ratio: 1 / 1; border-radius: 50%; border: 0; flex: 0 0 30px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14); position: relative; }
 .sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--text); }
 .sw.all { background: conic-gradient(#E4574E, #E8B94A, #6DB36F, #4A90C8, #A06CC4, #E4574E) !important; }
 
