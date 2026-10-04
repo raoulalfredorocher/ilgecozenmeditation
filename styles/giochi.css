@@ -116,3 +116,42 @@ html[data-theme="dark"] .plat.sw { color: #FF6C7B; } html[data-theme="dark"] .pl
 .stepper { display: flex; align-items: center; justify-content: center; gap: var(--space-4); }
 .stepper button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--surface); font-size: 1.4rem; cursor: pointer; color: var(--text); }
 .stepper b { font-size: 3rem; font-weight: 200; min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Il tuo anno */
+.gpills { display: flex; flex-wrap: wrap; gap: 6px; }
+.anno-hero { padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); }
+.anno-hero .eb { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.anno-row { display: flex; gap: var(--space-4); align-items: center; margin-top: var(--space-3); }
+.anno-row .cv { width: 84px; height: 112px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--t) 22%, var(--card)); }
+.anno-row .cv img { width: 100%; height: 100%; object-fit: cover; }
+.anno-row .nm { font: 500 1.5rem/1.2 var(--font-serif); display: block; letter-spacing: -.02em; }
+.anno-months { padding: var(--space-4) var(--space-4) var(--space-3) calc(var(--space-4) + 4px); }
+.mchart { display: grid; grid-template-columns: repeat(12, 1fr); gap: 5px; align-items: end; height: 124px; }
+.mcol { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; }
+.mcol i { display: block; width: 100%; max-width: 18px; border-radius: 6px 6px 3px 3px; background: linear-gradient(var(--tn2), var(--tn1)); opacity: .85; }
+.mcol .mn { font-size: .625rem; color: var(--muted); min-height: 12px; font-variant-numeric: tabular-nums; }
+.mcol .ml { font-size: .625rem; color: var(--muted); letter-spacing: .04em; }
+
+/* Collezione */
+.s2btns { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.s2btns .gchip { height: 32px; font-size: .75rem; }
+.tools-cta { --t: var(--tn4); display: flex; flex-direction: column; gap: 2px; width: 100%; padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); text-align: left; cursor: pointer; color: var(--text); font: inherit; }
+.tools-cta .nm { font: 500 var(--fs-xl) var(--font-serif); }
+.tools-cta .gmt { font: italic 400 var(--fs-sm) var(--font-serif); color: var(--muted); }
+
+/* Il tavolo da gioco */
+.dice { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 92px; align-items: center; margin: var(--space-3) 0; }
+.die { min-width: 72px; height: 72px; padding: 0 10px; display: grid; place-items: center; border-radius: 18px; font: 200 2.4rem var(--font); font-variant-numeric: tabular-nums;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tn1) 22%, var(--card)), color-mix(in srgb, var(--tn1) 6%, var(--card))); border: .5px solid color-mix(in srgb, var(--tn1) 30%, var(--border)); }
+.firstbox { min-height: 120px; display: grid; place-items: center; text-align: center; font: 500 2.2rem/1.2 var(--font-serif); padding: var(--space-4); border-radius: var(--radius-lg); background: linear-gradient(135deg, color-mix(in srgb, var(--tn2) 20%, var(--card)), color-mix(in srgb, var(--tn2) 4%, var(--card))); margin: var(--space-3) 0; }
+.clock { font: 200 5.5rem/1 var(--font); text-align: center; letter-spacing: -.04em; font-variant-numeric: tabular-nums; margin: var(--space-4) 0; color: color-mix(in srgb, var(--tn1) 70%, var(--text)); }
+.clock.end { color: var(--tn2); animation: gx-blink .7s ease-in-out infinite alternate; }
+@keyframes gx-blink { to { opacity: .35; } }
+.tbody { display: flex; flex-direction: column; gap: var(--space-3); }
+.pl-row { display: flex; align-items: center; gap: 6px; margin-bottom: var(--space-2); }
+.pl-row .pn { flex: 1; min-width: 0; }
+.pl-row b { min-width: 2.4ch; text-align: center; font: 200 2rem var(--font); font-variant-numeric: tabular-nums; }
+.pl-row button { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 1.2rem; cursor: pointer; flex-shrink: 0; }
+.pl-row .five { font-size: .8rem; background: color-mix(in srgb, var(--tn1) 14%, var(--card)); }
+.pl-row .rm { font-size: .8rem; background: none; color: var(--muted); width: 28px; }
+.anno-row .cv b { font: 200 3rem var(--font-serif); color: color-mix(in srgb, var(--t) 70%, var(--text)); }
