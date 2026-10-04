@@ -167,7 +167,9 @@ def main():
     days = {}
     out = api.band_data(zc, start, end)
     if out.status == "ok":
-        for row in (out.data.get("data") or []):
+        righe = out.data.get("data") or []
+        log(f"Righe giornaliere ricevute: {len(righe)}")
+        for row in righe:
             if not isinstance(row, dict):
                 continue
             s = decode.summarise_day(row)
@@ -217,7 +219,10 @@ def main():
     if out.status != "ok":
         log(f"Allenamenti: {out.status}")
         return 0
-    items = [workouts.normalise(r) for r in api.parse_rows(out.data)]
+    tutti = [workouts.normalise(r) for r in api.parse_rows(out.data)]
+    # Zepp può restituire anche allenamenti fuori dal periodo chiesto: si tengono solo quelli recenti
+    items = [w for w in tutti if str(w.get("start_local") or "")[:10] >= start]
+    log(f"Allenamenti restituiti da Zepp: {len(tutti)} (nel periodo: {len(items)})")
     q = {"structuredQuery": {"from": [{"collectionId": "allenamenti_registro"}], "where": {"fieldFilter": {
         "field": {"fieldPath": "data"}, "op": "GREATER_THAN_OR_EQUAL", "value": {"stringValue": start}}}}}
     existing = [{"id": r["document"]["name"].rsplit("/", 1)[1], **{k: dec(v) for k, v in r["document"].get("fields", {}).items()}}
