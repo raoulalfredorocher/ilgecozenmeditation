@@ -13,7 +13,7 @@ import { flushPending } from './guida.js';
 const TABS = { registro, schede, avvia };
 let current = 'avvia';
 
-const MENU = { registro: [['Importa da Apple Salute', registro.openImport], ['Esporta il registro (CSV)', registro.exportLog]], schede: [], avvia: [] };
+const MENU = { registro: [['Esporta il registro (CSV)', registro.exportLog]], schede: [], avvia: [] };
 
 function showTab(name) {
   if (!TABS[name]) name = 'avvia';

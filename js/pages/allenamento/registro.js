@@ -14,7 +14,7 @@ import {
   sessionVolume, sessionSets,
 } from './state.js';
 import { deliver, csvFile } from './files.js';
-import { importHealth, loadHealthDays, health, watchLine } from './salute.js';
+import { watchHealth, health, watchLine } from './salute.js';
 
 const root = document.getElementById('tab-registro');
 let month = new Date(), selected = dateKey();
@@ -41,9 +41,18 @@ function viewOf(r) {
 
 function dayHealth(key) {
   const d = health.days[key];
-  if (!d || !(d.passi || d.bpmRiposo || d.spo2 || d.respiro)) return '';
-  const cell = (v, l) => v ? `<div class="bn"><b>${v}</b><span>${l}</span></div>` : '';
-  return `<div class="bento al-day">${cell(d.passi ? d.passi.toLocaleString('it-IT') : '', 'passi')}${cell(d.bpmRiposo, 'bpm a riposo')}${cell(d.spo2 ? d.spo2 + '%' : '', 'ossigeno')}${cell(d.respiro, 'respiri/min')}</div>`;
+  if (!d) return '';
+  const cell = (v, l) => (v ? `<div class="bn"><b>${v}</b><span>${l}</span></div>` : '');
+  const sonno = d.sonnoMin ? `${Math.floor(d.sonnoMin / 60)}h${String(d.sonnoMin % 60).padStart(2, '0')}` : '';
+  const cells = [
+    cell(d.passi ? d.passi.toLocaleString('it-IT') : '', 'passi'),
+    cell(d.bpmRiposo, 'bpm a riposo'),
+    cell(d.bpmMedio ? `${d.bpmMedio}` : '', d.bpmMin && d.bpmMax ? `bpm medio · ${d.bpmMin}–${d.bpmMax}` : 'bpm medio'),
+    cell(d.spo2 ? d.spo2 + '%' : '', 'ossigeno'),
+    cell(d.respiro, 'respiri/min'),
+    cell(sonno, d.sonnoPunteggio ? `sonno · punteggio ${d.sonnoPunteggio}` : 'sonno'),
+  ].join('');
+  return cells ? `<div class="bento al-day">${cells}</div>` : '';
 }
 
 // ─── Disegno ─────────────────────────────────────────────────────────────
@@ -280,41 +289,5 @@ onChange(what => { if (what === 'log') render(); });
 render();
 
 
-// ─── Importa da Apple Salute ─────────────────────────────────────────────
-const imp = createSheet({ title: 'Importa da Apple Salute', body: `
-  <p class="s" style="line-height:1.55;margin:0 0 var(--space-3)">Lancia il Comando Rapido "Salute → Geco Zen" (copia i dati negli appunti), poi incolla qui.</p>
-  <div class="stack">
-    <button type="button" class="btn block" id="im-paste">Incolla dagli appunti</button>
-    <textarea id="im-text" rows="5" placeholder="A;Pesi;2026-10-04T18:30:00;62;340;112;148&#10;G;2026-10-04;8200;58;97;14,5" style="width:100%;font-size:16px"></textarea>
-    <button type="button" class="btn primary block" id="im-go">Importa</button>
-    <details class="im-help"><summary>Come si crea il Comando Rapido (una volta sola)</summary>
-      <ol>
-        <li>Nell'app Zepp: Profilo → Aggiungi account → Apple Salute, e consenti allenamenti, battito, passi, ossigeno e respirazione.</li>
-        <li>App <b>Comandi</b> → + → nuovo comando, chiamalo "Salute → Geco Zen".</li>
-        <li><b>Data corrente</b> → <b>Modifica data</b> (sottrai 7 giorni) → variabile "Da".</li>
-        <li><b>Trova campioni di Salute</b>: Tipo = Allenamenti, Data di inizio dopo "Da".</li>
-        <li><b>Ripeti con ciascun elemento</b>: dentro, <b>Trova campioni di Salute</b> Tipo = Frequenza cardiaca, con inizio e fine nell'intervallo dell'allenamento → <b>Calcola statistiche</b> (media) e un secondo per il massimo.</li>
-        <li>Sempre nel ciclo, un'azione <b>Testo</b>: <code>A;[Tipo];[Data inizio, formato ISO];[Durata in minuti];[Energia attiva];[media];[massimo]</code></li>
-        <li>Fuori dal ciclo: <b>Trova campioni</b> Passi (oggi) → Calcola statistiche (somma); Frequenza cardiaca a riposo, Saturazione dell'ossigeno e Frequenza respiratoria (media di oggi). Un <b>Testo</b>: <code>G;[oggi, AAAA-MM-GG];[passi];[a riposo];[ossigeno];[respiri]</code></li>
-        <li><b>Combina testo</b> (a capo) le righe A e G → <b>Copia negli appunti</b>.</li>
-      </ol>
-      <p class="s">Le calorie e i battiti si agganciano alla sessione che hai fatto nell'app alla stessa ora; tapis roulant e cyclette diventano sessioni nuove.</p>
-    </details>
-  </div>` });
-imp.$('#im-paste').addEventListener('click', async () => {
-  try { imp.$('#im-text').value = await navigator.clipboard.readText(); }
-  catch { toast('Tieni premuto nel riquadro e scegli Incolla'); imp.$('#im-text').focus(); }
-});
-imp.$('#im-go').addEventListener('click', async e => {
-  const btn = e.currentTarget, text = imp.$('#im-text').value;
-  btn.disabled = true; btn.textContent = 'Importo…';
-  try {
-    const r = await importHealth(text);
-    imp.close(); imp.$('#im-text').value = '';
-    toast(`Fatto: ${r.agganciati} agganciati, ${r.nuovi} nuovi${r.doppi ? `, ${r.doppi} già presenti` : ''}${r.giorni ? `, ${r.giorni} giorni` : ''}`);
-    render();
-  } catch (err) { toast(err.message || 'Importazione non riuscita'); }
-  btn.disabled = false; btn.textContent = 'Importa';
-});
-export function openImport() { imp.open(); }
-loadHealthDays().then(() => render()).catch(() => {});
+// dati dell'orologio, sincronizzati da soli ogni 6 ore
+watchHealth(() => render());

@@ -1,0 +1,41 @@
+# Sincronizza Zepp (Amazfit) → Il Geco Zen: allenamenti, battiti, passi, sonno. Ogni 6 ore, gratis.
+# Secret richiesti (Settings → Secrets → Actions): ZEPP_EMAIL, ZEPP_PASSWORD, ZEPP_SYNC_PASSWORD, FIREBASE_UID
+# Nessuna chiave di amministratore: l'accesso a Firebase è di un utente dedicato, limitato dalle regole di Firestore.
+# Il repository è pubblico: lo script stampa solo conteggi. Si può lanciare a mano da Actions → "Sincronizza Zepp" → Run workflow.
+name: Sincronizza Zepp
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sync-zepp
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # zepp-mcp bloccato su una versione precisa (commit): non cambia da solo
+      - run: pip install "git+https://github.com/DhavalBhimani44/zepp-mcp@9ba4f58ec19c300a74751386fc9a8d22aebbbfff"
+      # Il token di Zepp dura 30 giorni: lo si tiene tra un giro e l'altro, per non rifare il login (Zepp blocca dopo troppi tentativi)
+      - uses: actions/cache@v4
+        with:
+          path: ~/.zepp-mcp
+          key: zepp-token-${{ github.run_id }}
+          restore-keys: zepp-token-
+      - run: python scripts/sync_zepp.py
+        env:
+          ZEPP_EMAIL: ${{ secrets.ZEPP_EMAIL }}
+          ZEPP_PASSWORD: ${{ secrets.ZEPP_PASSWORD }}
+          ZEPP_SYNC_PASSWORD: ${{ secrets.ZEPP_SYNC_PASSWORD }}
+          FIREBASE_UID: ${{ secrets.FIREBASE_UID }}

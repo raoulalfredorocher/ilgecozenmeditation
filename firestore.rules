@@ -22,6 +22,31 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == uid;
     }
 
+
+    // ── Servizio di sincronizzazione dell'orologio (scripts/sync_zepp.py, GitHub Actions) ──
+    // Accede con un utente dedicato (zepp-sync@…), NON con una chiave di amministratore.
+    // Può soltanto: leggere il registro degli allenamenti, aggiungervi sessioni "Dall'orologio",
+    // aggiornarne i campi dell'orologio (kcal, battiti) e scrivere i dati del giorno. Non cancella
+    // niente e non vede nessun'altra parte dell'app, anche se le sue credenziali venissero rubate.
+    function isZeppSync() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'password'
+        && request.auth.token.email == 'zepp-sync@ilgecozen-b2df7.firebaseapp.com';
+    }
+
+    match /users/{uid}/direction/salute_giorni {
+      allow create, update: if isZeppSync();
+    }
+
+    match /users/{uid}/allenamenti_registro/{id} {
+      allow read: if isZeppSync();
+      allow create: if isZeppSync()
+        && request.resource.data.hk is string && request.resource.data.hk.matches('zepp:.*')
+        && request.resource.data.orologio is string;
+      allow update: if isZeppSync()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['kcal', 'bpmMedio', 'bpmMax', 'orologio', 'hk']);
+    }
+
     // Collezioni di primo livello sotto users/{uid}/
     function isKnownCollection(col) {
       return col in [
