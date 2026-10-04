@@ -148,7 +148,7 @@ root.addEventListener('click', e => {
 
 export const addAction = () => registerToday();
 
-onChange(what => { if (['diary', 'diet', 'profile', 'workouts'].includes(what)) render(); });
+onChange(what => { if (['diary', 'diet', 'profile', 'workouts', 'health'].includes(what)) render(); });
 render();
 
 // ─── Esportazione del diario ─────────────────────────────────────────────

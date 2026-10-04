@@ -22,7 +22,7 @@ import {
   addSavedDietDoc, updateSavedDietDoc, deleteSavedDietDoc,
   db, auth,
 } from '../../core/db.js';
-import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { collection, query, where, onSnapshot, doc as fsDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { ageFromBirth } from '../../core/vita.js';
 
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
@@ -135,7 +135,8 @@ export function tdeeFor(key = dateKey(), planType = 'Riposo') {
   const f = profileAt(key);
   const base = calcTdee(f);
   if (!base) return 0;
-  return Math.round(base + stepsKcal(f.passi, f.peso) + workoutOn(key, planType).kcal);
+  const passi = state.health?.[key]?.passi ?? f.passi;          // i passi veri dell'orologio, se ci sono
+  return Math.round(base + stepsKcal(passi, f.peso) + workoutOn(key, planType).kcal);
 }
 
 /** Supplementi del giorno in qualsiasi formato storico → array di stringhe. */
@@ -193,6 +194,7 @@ export const state = {
   recipes: [],
   profile: {},          // profilo dell'utente (una volta sola)
   customFoods: [],
+  health: {},           // dati dell'orologio per giorno (passi, battito a riposo…), da Apple Salute
   workouts: {},         // allenamenti fatti davvero (dal registro): { 'AAAA-MM-GG': { n, kcal|null } }
   ready: { diet: false, diary: false, recipes: false, diets: false },
 };
@@ -318,6 +320,12 @@ export function startSync() {
       state.workouts = w;
       emit('workouts');
     }, err => console.warn('allenamenti', err)); } catch (e) { console.warn('allenamenti', e); }
+  });
+  // passi veri dall'orologio (importati in Allenamento da Apple Salute)
+  onAuthReady(() => {
+    const uid = auth.currentUser?.uid;
+    if (!db || !uid) return;
+    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_giorni'), snap => { state.health = snap.exists() ? (snap.data().days || {}) : {}; emit('health'); }, err => console.warn('salute', err)); } catch (e) { console.warn('salute', e); }
   });
   subscribeRecipes(list => { state.recipes = list; state.ready.recipes = true; emit('recipes'); });
   subscribeMacrosProfiles((profiles, activeIdx, tdeeForm) => {

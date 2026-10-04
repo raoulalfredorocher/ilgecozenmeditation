@@ -248,5 +248,5 @@ export async function downloadCSV() {
 export const addAction = () => registerToday();
 export const newDietAction = newDiet;
 
-onChange(what => { if (['diet', 'diets', 'diary', 'profile', 'workouts'].includes(what)) render(); });
+onChange(what => { if (['diet', 'diets', 'diary', 'profile', 'workouts', 'health'].includes(what)) render(); });
 render();
