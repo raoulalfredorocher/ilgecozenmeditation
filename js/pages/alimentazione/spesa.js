@@ -258,12 +258,26 @@ newStore.$('#ns-ok').addEventListener('click', async () => {
 const storeMenu = createSheet({ title: 'Negozio', body: `
   <div class="list">
     <button type="button" class="list-row" id="sm-card"><span class="grow">Carta fedeltà</span></button>
+    <button type="button" class="list-row" id="sm-ticket"><span class="grow">Ticket (apre l'app Edenred)</span></button>
+    <button type="button" class="list-row" id="sm-satispay"><span class="grow">Satispay (apre l'app)</span></button>
+    <button type="button" class="list-row" id="sm-paypal"><span class="grow">PayPal (apre l'app)</span></button>
     <button type="button" class="list-row" id="sm-send"><span class="grow">Invia su WhatsApp (carrello, o tutta la lista)</span></button>
     <button type="button" class="list-row" id="sm-csv"><span class="grow">Scarica la lista (CSV)</span></button>
     <button type="button" class="list-row" id="sm-clear"><span class="grow">Svuota il carrello</span></button>
     <button type="button" class="list-row text-danger" id="sm-del"><span class="grow">Elimina negozio</span></button>
   </div>` });
 let storeDelArmed = false;
+
+/** Apre un'app di pagamento col suo indirizzo diretto; se l'app non c'è, apre il sito. */
+function openApp(scheme, fallback) {
+  storeMenu.close();
+  const t = setTimeout(() => { if (!document.hidden) window.open(fallback, '_blank'); }, 1500);
+  document.addEventListener('visibilitychange', () => clearTimeout(t), { once: true });
+  window.location.href = scheme;
+}
+storeMenu.$('#sm-ticket').addEventListener('click', () => openApp('edenred://', 'https://www.edenred.it/'));
+storeMenu.$('#sm-satispay').addEventListener('click', () => openApp('satispay://', 'https://www.satispay.com/it-it/'));
+storeMenu.$('#sm-paypal').addEventListener('click', () => openApp('paypal://', 'https://www.paypal.com/it/home'));
 storeMenu.$('#sm-card').addEventListener('click', () => { storeMenu.close(); openLoyalty(); });
 storeMenu.$('#sm-send').addEventListener('click', () => { storeMenu.close(); sendWhatsapp(); });
 storeMenu.$('#sm-csv').addEventListener('click', async () => {
