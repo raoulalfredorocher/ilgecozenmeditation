@@ -258,7 +258,7 @@ newStore.$('#ns-ok').addEventListener('click', async () => {
 const storeMenu = createSheet({ title: 'Negozio', body: `
   <div class="list">
     <button type="button" class="list-row" id="sm-card"><span class="grow">Carta fedeltà</span></button>
-    <button type="button" class="list-row" id="sm-ticket"><span class="grow">Ticket (apre l'app Edenred)</span></button>
+    <button type="button" class="list-row" id="sm-ticket"><span class="grow">Ticket (Edenred Italia)</span></button>
     <button type="button" class="list-row" id="sm-satispay"><span class="grow">Satispay (apre l'app)</span></button>
     <button type="button" class="list-row" id="sm-paypal"><span class="grow">PayPal (apre l'app)</span></button>
     <button type="button" class="list-row" id="sm-send"><span class="grow">Invia su WhatsApp (carrello, o tutta la lista)</span></button>
@@ -275,7 +275,8 @@ function openApp(scheme, fallback) {
   document.addEventListener('visibilitychange', () => clearTimeout(t), { once: true });
   window.location.href = scheme;
 }
-storeMenu.$('#sm-ticket').addEventListener('click', () => openApp('edenred://', 'https://www.edenred.it/'));
+// L'app Edenred Italia non ha un indirizzo diretto noto: si apre la sua scheda sull'App Store (tasto "Apri").
+storeMenu.$('#sm-ticket').addEventListener('click', () => { storeMenu.close(); window.location.href = 'https://apps.apple.com/it/app/edenred-italia/id1027782759'; });
 storeMenu.$('#sm-satispay').addEventListener('click', () => openApp('satispay://', 'https://www.satispay.com/it-it/'));
 storeMenu.$('#sm-paypal').addEventListener('click', () => openApp('paypal://', 'https://www.paypal.com/it/home'));
 storeMenu.$('#sm-card').addEventListener('click', () => { storeMenu.close(); openLoyalty(); });
