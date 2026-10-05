@@ -275,8 +275,7 @@ function openApp(scheme, fallback) {
   document.addEventListener('visibilitychange', () => clearTimeout(t), { once: true });
   window.location.href = scheme;
 }
-// L'app Edenred Italia non ha un indirizzo diretto noto: si apre la sua scheda sull'App Store (tasto "Apri").
-storeMenu.$('#sm-ticket').addEventListener('click', () => { storeMenu.close(); window.location.href = 'https://apps.apple.com/it/app/edenred-italia/id1027782759'; });
+storeMenu.$('#sm-ticket').addEventListener('click', () => openApp('edenreditalia://', 'https://apps.apple.com/it/app/edenred-italia/id1027782759'));
 storeMenu.$('#sm-satispay').addEventListener('click', () => openApp('satispay://', 'https://www.satispay.com/it-it/'));
 storeMenu.$('#sm-paypal').addEventListener('click', () => openApp('paypal://', 'https://www.paypal.com/it/home'));
 storeMenu.$('#sm-card').addEventListener('click', () => { storeMenu.close(); openLoyalty(); });
