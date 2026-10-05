@@ -271,11 +271,11 @@ let storeDelArmed = false;
 /** Apre un'app di pagamento col suo indirizzo diretto; se l'app non c'è, apre il sito. */
 function openApp(scheme, fallback) {
   storeMenu.close();
-  const t = setTimeout(() => { if (!document.hidden) window.open(fallback, '_blank'); }, 1500);
+  const t = setTimeout(() => { if (document.hidden) return; if (fallback) window.open(fallback, '_blank'); else toast('Non riesco ad aprire l\'app'); }, 1500);
   document.addEventListener('visibilitychange', () => clearTimeout(t), { once: true });
   window.location.href = scheme;
 }
-storeMenu.$('#sm-ticket').addEventListener('click', () => openApp('edenreditalia://', 'https://apps.apple.com/it/app/edenred-italia/id1027782759'));
+storeMenu.$('#sm-ticket').addEventListener('click', () => openApp('edenreditalia://', null));
 storeMenu.$('#sm-satispay').addEventListener('click', () => openApp('satispay://', 'https://www.satispay.com/it-it/'));
 storeMenu.$('#sm-paypal').addEventListener('click', () => openApp('paypal://', 'https://www.paypal.com/it/home'));
 storeMenu.$('#sm-card').addEventListener('click', () => { storeMenu.close(); openLoyalty(); });
