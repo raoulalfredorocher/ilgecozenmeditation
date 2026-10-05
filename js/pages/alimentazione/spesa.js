@@ -275,7 +275,21 @@ function openApp(scheme, fallback) {
   document.addEventListener('visibilitychange', () => clearTimeout(t), { once: true });
   window.location.href = scheme;
 }
-storeMenu.$('#sm-ticket').addEventListener('click', () => openApp('edenreditalia://', null));
+/** L'indirizzo dell'app Edenred Italia non è pubblicato: provo i più probabili, uno alla volta, in un riquadro nascosto (se non esiste, non succede nulla). */
+const TICKET_SCHEMES = ['com.edenred.italyTR://', 'edenreditalia://', 'edenred-italia://', 'edenred://', 'ticketrestaurant://', 'ticket-restaurant://'];
+storeMenu.$('#sm-ticket').addEventListener('click', async () => {
+  storeMenu.close();
+  for (const scheme of TICKET_SCHEMES) {
+    const f = document.createElement('iframe');
+    f.style.display = 'none';
+    f.src = scheme;
+    document.body.appendChild(f);
+    await new Promise(r => setTimeout(r, 600));
+    f.remove();
+    if (document.hidden) return;
+  }
+  toast('Non riesco ad aprire l\'app');
+});
 storeMenu.$('#sm-satispay').addEventListener('click', () => openApp('satispay://', 'https://www.satispay.com/it-it/'));
 storeMenu.$('#sm-paypal').addEventListener('click', () => openApp('paypal://', 'https://www.paypal.com/it/home'));
 storeMenu.$('#sm-card').addEventListener('click', () => { storeMenu.close(); openLoyalty(); });
