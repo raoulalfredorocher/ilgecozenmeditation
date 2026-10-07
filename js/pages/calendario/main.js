@@ -80,7 +80,7 @@ function renderDay() {
     const h = d.salute, sonno = h.sonnoMin ? `${Math.floor(h.sonnoMin / 60)}h${String(h.sonnoMin % 60).padStart(2, '0')}` : '';
     const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · riposo ${h.bpmRiposo}` : ''}` : '';
     const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
-    rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}${h.kcalGiorno ? `` : ''}</b><span class="s">${sub}</span></span></div>`);
+    rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}</b><span class="s">${sub}</span></span></div>`);
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
     ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}`;
