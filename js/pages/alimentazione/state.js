@@ -111,19 +111,17 @@ export function profileAt(key) {
 export const stepsKcal = (passi, peso) => Math.round((parseFloat(passi) || 0) * 0.0005 * (parseFloat(peso) || 0));
 /**
  * L'allenamento di un giorno, con la sua origine:
- *   • giorni passati: conta solo ciò che hai fatto davvero (il registro di Allenamento); senza sessione è un giorno di riposo,
- *     anche se il piano prevedeva Workout;
- *   • oggi: se hai già una sessione conta quella, altrimenti vale il piano;
- *   • giorni futuri: vale il piano (Workout / Riposo).
- * kcal: quelle della sessione se sono registrate (in futuro dall'orologio), altrimenti il valore del profilo per ogni sessione.
+ *   • oggi e giorni passati: contano solo le kcal misurate dall'orologio sugli allenamenti fatti davvero (mai stime);
+ *     senza allenamento, o senza kcal dall'orologio, sono 0;
+ *   • giorni futuri: vale il piano (Workout / Riposo) con le kcal del profilo, solo come previsione.
  */
 export function workoutOn(key, planType = 'Riposo') {
-  const perSession = parseFloat(profileAt(key).kcalWorkout) || 0;
   const real = state.workouts[key], today = dateKey();
-  if (key < today || (key === today && real)) {
+  if (key <= today) {
     if (!real) return { kcal: 0, source: null, n: 0 };
-    return { kcal: real.kcal ?? real.n * perSession, source: 'registro', n: real.n };
+    return { kcal: real.kcal || 0, source: 'registro', n: real.n };
   }
+  const perSession = parseFloat(profileAt(key).kcalWorkout) || 0;
   return planType === 'Workout' ? { kcal: perSession, source: 'piano', n: 1 } : { kcal: 0, source: null, n: 0 };
 }
 
