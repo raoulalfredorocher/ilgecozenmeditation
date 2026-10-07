@@ -24,7 +24,8 @@ let search = '';
 
 /** Vista normalizzata di un contatto, indipendente dal formato salvato. */
 function view(c) {
-  const tags = Array.isArray(c.interessi) ? c.interessi.filter(t => typeof t === 'string' && t.trim()) : [];
+  // "myContacts" / "My Contacts" arriva dall'importazione da Google e non dice nulla: non si tiene mai
+  const tags = Array.isArray(c.interessi) ? c.interessi.filter(t => typeof t === 'string' && t.trim() && !/^my\s*contacts$/i.test(t.trim())) : [];
   return {
     id: c._docId,
     nome: c.nome || '', cognome: c.cognome || '',
@@ -89,8 +90,7 @@ function render() {
   $('ar-list').innerHTML = html + '</div>';
 }
 
-// "My Contacts" ce l'hanno tutti (arriva dall'importazione): non dice nulla, non lo mostro
-const shownTags = v => v.tags.filter(t => !/^my contacts$/i.test(t.trim()));
+const shownTags = v => v.tags;
 const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 
 /** Prossimo compleanno + fila dei Besties, in cima all'elenco. */
