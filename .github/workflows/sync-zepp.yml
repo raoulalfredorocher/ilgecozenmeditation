@@ -8,6 +8,10 @@ on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+    inputs:
+      days_back:
+        description: 'Quanti giorni indietro leggere da Zepp (di solito 10; per recuperare lo storico, es. 280)'
+        default: '10'
 
 concurrency:
   group: sync-zepp
@@ -39,3 +43,4 @@ jobs:
           ZEPP_PASSWORD: ${{ secrets.ZEPP_PASSWORD }}
           ZEPP_SYNC_PASSWORD: ${{ secrets.ZEPP_SYNC_PASSWORD }}
           FIREBASE_UID: ${{ secrets.FIREBASE_UID }}
+          ZEPP_DAYS_BACK: ${{ github.event.inputs.days_back || '10' }}
