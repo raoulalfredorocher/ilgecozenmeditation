@@ -125,13 +125,12 @@ function renderStatusChips(base) {
 
 function render() {
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
-  for (const k of ['lib', 'year', 'notes', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
+  for (const k of ['lib', 'year', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
   $('fa-tools').hidden = tab !== 'lib';
   covers?.banner($('lb-covers')); $('lb-covers').hidden = tab !== 'lib';
   if (tab === 'buy') return renderBuy();
   if (tab === 'masters') return masters?.renderList($('lb-masters'));
   if (tab === 'flash') { if (!flashShown) { flashShown = true; flash?.render($('lb-flash')); } return; }
-  if (tab === 'notes') return quotes?.renderAll($('fa-quotesview'));
   if (tab === 'year') return renderStatsView();
 
   const base = libBase();
@@ -200,7 +199,7 @@ function renderLib(base, list) {
       <button type="button" class="info" data-open="${i.id}">
         <span class="name">${i.prio ? PRIO : ''}${esc(i.title)}</span>
         <span class="meta">${esc(i.author || '')}</span>
-        ${i.done && i.stars ? stars(i.stars) : `<span class="meta">${esc([kindOf(i), i.genre, sizeLabel(i)].filter(Boolean).join(' · '))}</span>`}
+        ${i.done && i.stars ? stars(i.stars) : `<span class="meta">${esc([kindOf(i), i.genre, sizeLabel(i), i.audible ? 'Audible' : ''].filter(Boolean).join(' · '))}</span>`}
       </button>
     </article>`).join('');
 }
@@ -224,7 +223,7 @@ function renderStatsView() {
   }
   if (!years.includes(statsYear)) statsYear = years[0];
   $('fa-years').innerHTML = years.map(y => `<button type="button" data-year="${y}" aria-pressed="${y === statsYear}">${y}</button>`).join('');
-  $('fa-statsbody').innerHTML = statsHtml(items, statsYear, goals[statsYear] || 0);
+  $('fa-statsbody').innerHTML = statsHtml(items, statsYear, 0);
 }
 
 function renderBuy() {
@@ -369,7 +368,7 @@ function fillDetail(item) {
         <h3>${item.prio ? PRIO : ''}${esc(item.title)}</h3>
         ${item.author ? `<div class="zen-muted" style="margin-top:2px">${esc(item.author)}</div>` : ''}
         <div class="fa-chips">
-          ${[kindOf(item), item.year, item.genre, sizeLabel(item), item.status, item.lang !== 'Italiano' ? item.lang : '', item.format !== 'Cartaceo' ? item.format : ''].filter(Boolean).map(v => `<span class="chip">${esc(v)}</span>`).join('')}
+          ${[kindOf(item), item.year, item.genre, sizeLabel(item), item.status, item.lang !== 'Italiano' ? item.lang : '', item.format !== 'Cartaceo' ? item.format : '', item.audible ? 'Audible' : ''].filter(Boolean).map(v => `<span class="chip">${esc(v)}</span>`).join('')}
           ${toBuy(item) ? `<span class="chip" style="background:color-mix(in srgb,var(--sakura) 30%,var(--card))">${icon('cart', 'sm')} Da comprare</span>` : ''}
           ${(item.tags || []).map(v => `<span class="chip">${esc(v)}</span>`).join('')}
         </div>
@@ -491,6 +490,7 @@ tonight.$('#tn-tags').addEventListener('click', e => { const b = e.target.closes
 
 // ─── Nuovo / modifica ────────────────────────────────────────────────────
 const ONLINE_KEYS = ['year', 'plot', 'isbn', 'olKey', 'anilistId', 'volumes', 'chapters', 'status'];
+let edAudible = false;
 let editing = null, img = null, meta = {}, edKind = 'Libro', edFormat = 'Cartaceo', edLang = 'Italiano', edBuy = OWNED, edTags = new Set(), edPrio = false;
 let hits = [], searchTimer = 0, searchSeq = 0;
 const chipRow = (id, list, cls = '') => `<div class="chips ${cls}" id="${id}">${list.map(v => `<button type="button" data-v="${esc(v)}" aria-pressed="false">${esc(v)}</button>`).join('')}</div>`;
@@ -526,7 +526,7 @@ const editor = createSheet({
     <div class="field"><label for="ed-amazon">Link Amazon (per “Leggi su Kindle” incolla quello dell’ebook)</label><input class="input" id="ed-amazon" type="url" inputmode="url" autocomplete="off" placeholder="https://www.amazon.it/…"/></div>
     <div class="field"><label>Etichette</label><div class="chips fa-chips-sel" id="ed-tags"></div>
       <div class="row"><input class="input grow" id="ed-newtag" maxlength="24" placeholder="Nuova etichetta"/><button type="button" class="btn" id="ed-addtag">Aggiungi</button></div></div>
-    <div class="chips"><button type="button" id="ed-prio" aria-pressed="false">★ Priorità alta</button></div>
+    <div class="chips"><button type="button" id="ed-audible" aria-pressed="false">Ascoltato su Audible</button><button type="button" id="ed-prio" aria-pressed="false">★ Priorità alta</button></div>
     <div class="zen-sheet-actions"><button class="btn primary block" type="submit" id="ed-save">Salva</button></div>
   </form>`,
 });
@@ -565,6 +565,7 @@ const addTag = () => {
 };
 editor.$('#ed-addtag').addEventListener('click', addTag);
 editor.$('#ed-newtag').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
+editor.$('#ed-audible').addEventListener('click', () => { edAudible = !edAudible; editor.$('#ed-audible').setAttribute('aria-pressed', String(edAudible)); });
 editor.$('#ed-prio').addEventListener('click', () => { edPrio = !edPrio; editor.$('#ed-prio').setAttribute('aria-pressed', String(edPrio)); });
 editor.$('#ed-file').addEventListener('change', async e => {
   const f = e.target.files[0];
@@ -658,6 +659,8 @@ function openEditor(item = null, asWish = false) {
   edBuy = item ? (String(item.purchase || '').toLowerCase() === BUY.toLowerCase() ? BUY : OWNED) : (asWish ? BUY : OWNED);
   edTags = new Set(item?.tags || []);
   edPrio = !!item?.prio;
+  edAudible = !!item?.audible;
+  editor.$('#ed-audible').setAttribute('aria-pressed', String(edAudible));
   editor.setTitle(item ? 'Modifica titolo' : asWish ? 'Nella wish list' : 'Nuovo titolo');
   editor.$('#ed-q').value = '';
   editor.$('#ed-hits').hidden = true;
@@ -685,7 +688,7 @@ editor.$('#ed-form').addEventListener('submit', async e => {
   const d = {
     title, author: editor.$('#ed-author').value.trim(), kind: edKind, lang: edLang, format: edFormat, purchase: edBuy,
     amazon: editor.$('#ed-amazon').value.trim() || null, genre: editor.$('#ed-genre').value, img: img || null,
-    tags: [...edTags], prio: edPrio, ...meta,
+    tags: [...edTags], prio: edPrio, audible: edAudible, ...meta,
     series: editor.$('#ed-series').value.trim() || null, seriesNo: parseInt(editor.$('#ed-sno').value) || null,
     pages: edKind === 'Manga' ? '' : editor.$('#ed-pages').value.trim(),
     volumes: edKind === 'Manga' ? editor.$('#ed-volumes').value.trim() : '',
@@ -759,7 +762,6 @@ document.addEventListener('click', e => {
   if (e.target.closest('#fa-amz-list')) { amzSheet.$('#am-url').value = amzUrl(); amzSheet.open(); return; }
   const y = e.target.closest('[data-year]');
   if (y) { statsYear = Number(y.dataset.year); render(); return; }
-  if (e.target.closest('[data-goal]')) return openGoal();
   const c = e.target.closest('[data-type]');
   if (c) { kindFilter = c.dataset.type; render(); return; }
   const g = e.target.closest('[data-tag]');

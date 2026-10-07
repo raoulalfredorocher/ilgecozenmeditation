@@ -87,14 +87,6 @@ export function statsHtml(items, year, goal) {
   const pct = goal ? Math.min(100, Math.round(ev.length / goal * 100)) : null;
 
   return `
-    <div class="card fa-goal">
-      <div class="row"><span class="zen-eyebrow">Obiettivo ${year}</span><button type="button" class="btn sm" data-goal>${goal ? 'Cambia' : 'Imposta'}</button></div>
-      ${goal
-        ? `<div class="row" style="align-items:baseline"><div><span class="vg-big" style="font-size:2.4rem;font-weight:600;letter-spacing:-.03em;color:var(--primary)">${ev.length}</span><span class="zen-muted"> su ${goal} letture</span></div><b>${pct}%</b></div>
-           <div class="meter-track" style="height:10px"><div class="meter-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--geco-sky),var(--geco-blue))"></div></div>`
-        : `<p class="small zen-muted">Quanti libri e manga vuoi leggere nel ${year}? Imposta un obiettivo e guarda la barra riempirsi.</p>`}
-    </div>
-
     ${time}
     <div class="fa-stats">
       <div class="fa-stat"><b>${ev.length}</b><span>${ev.length === 1 ? 'lettura' : 'letture'}</span></div>

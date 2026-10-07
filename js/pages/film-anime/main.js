@@ -30,19 +30,21 @@ const SUGGESTED_TAGS = ['Serata in coppia', 'Weekend', 'Con i bimbi', 'Da solo',
 
 /** App di streaming. `main`: sempre nella scheda Streaming; le altre solo se ci sono titoli. */
 const APPS = [
-  { name: 'Netflix',      mark: 'N',  tone: 'sakura', main: 1, ios: 'nflx://',       web: 'https://www.netflix.com' },
-  { name: 'Disney+',      mark: 'D+', tone: 'sky',    main: 1, ios: 'disneyplus://', web: 'https://www.disneyplus.com' },
-  { name: 'Amazon Prime', mark: 'P',  tone: 'sky',    main: 1, ios: 'aiv://',        web: 'https://www.primevideo.com' },
-  { name: 'DAZN',         mark: 'Dz', tone: 'sand',   main: 1, ios: 'dazn://',       web: 'https://www.dazn.com' },
-  { name: 'YouTube',      mark: '▶',  tone: 'sakura', main: 1, ios: 'youtube://',    web: 'https://www.youtube.com' },
-  { name: 'Apple TV+',    mark: 'tv', tone: 'sand',   ios: 'videos://',             web: 'https://tv.apple.com' },
-  { name: 'Paramount+',   mark: 'P+', tone: 'sky',    web: 'https://www.paramountplus.com' },
-  { name: 'NOW',          mark: 'N',  tone: 'leaf',   web: 'https://www.nowtv.it' },
-  { name: 'RaiPlay',      mark: 'R',  tone: 'sakura', web: 'https://www.raiplay.it' },
-  { name: 'Mediaset Infinity', mark: 'In', tone: 'leaf', web: 'https://mediasetinfinity.mediaset.it' },
-  { name: 'Crunchyroll',  mark: 'C',  tone: 'sand',   ios: 'crunchyroll://',        web: 'https://www.crunchyroll.com' },
-  { name: 'Sky Go',       mark: 'S',  tone: 'sky',    web: 'https://skygo.sky.it' },
+  { name: 'Netflix',      logo: 'netflix',       bg: '#E50914', main: 1, ios: 'nflx://',       web: 'https://www.netflix.com' },
+  { name: 'Disney+',      mark: 'Disney+',       bg: '#113CCF', main: 1, ios: 'disneyplus://', web: 'https://www.disneyplus.com' },
+  { name: 'Amazon Prime', logo: 'primevideo',    bg: '#00A8E1', main: 1, ios: 'aiv://',        web: 'https://www.primevideo.com' },
+  { name: 'DAZN',         logo: 'dazn',          bg: '#111111', main: 1, ios: 'dazn://',       web: 'https://www.dazn.com' },
+  { name: 'YouTube',      logo: 'youtube',       bg: '#FF0000', main: 1, ios: 'youtube://',    web: 'https://www.youtube.com' },
+  { name: 'Apple TV+',    logo: 'appletv',       bg: '#111111', ios: 'videos://',             web: 'https://tv.apple.com' },
+  { name: 'Paramount+',   logo: 'paramountplus', bg: '#0064FF', web: 'https://www.paramountplus.com' },
+  { name: 'NOW',          mark: 'NOW',           bg: '#14B8A6', web: 'https://www.nowtv.it' },
+  { name: 'RaiPlay',      mark: 'Rai',           bg: '#0A6CF0', web: 'https://www.raiplay.it' },
+  { name: 'Mediaset Infinity', mark: '∞',        bg: '#1F1F1F', web: 'https://mediasetinfinity.mediaset.it' },
+  { name: 'Crunchyroll',  logo: 'crunchyroll',   bg: '#F47521', ios: 'crunchyroll://',        web: 'https://www.crunchyroll.com' },
+  { name: 'Sky Go',       logo: 'sky',           bg: '#0072C9', web: 'https://skygo.sky.it' },
 ];
+/** Icona dell'app: il suo logo bianco su fondo del colore del marchio (o la sigla se manca il logo). */
+const appLogo = (a, size = 44) => `<span class="app-logo" style="--bg:${a.bg};width:${size}px;height:${size}px;border-radius:${Math.round(size * .3)}px" aria-hidden="true">${a.logo ? `<i style="-webkit-mask-image:url(assets/streaming/${a.logo}.svg);mask-image:url(assets/streaming/${a.logo}.svg)"></i>` : `<b style="font-size:${a.mark.length > 2 ? size * .26 : size * .42}px">${esc(a.mark)}</b>`}</span>`;
 const PLATFORMS = [...APPS.map(a => a.name), 'Altro'];
 const appOf = name => APPS.find(a => a.name === name);
 
@@ -50,6 +52,7 @@ let items = [];
 let tab = 'todo';            // todo | done | apps
 let doneView = 'list';       // list | stats
 let typeFilter = 'all';
+let statusFilter = 'all';    // all | new | watching (solo in Da vedere)
 let tagFilter = 'all';
 let search = '';
 let statsYear = null;
@@ -75,9 +78,17 @@ function poster(i, cls = '') {
 }
 const toneOf = i => `tone-${TYPE_TONE[i.type] || 'sky'}`;
 
-// ─── Avanzamento delle serie ─────────────────────────────────────────────
+// ─── Avanzamento delle serie (sempre dentro ai limiti reali della serie) ──
+const maxSeasons = i => (i.seasonEps || []).length || parseInt(i.seasons) || 0;           // 0 = sconosciuto
+const maxEps = (i, s) => (i.seasonEps || [])[s - 1] || 0;                                   // 0 = sconosciuto
+const clampProg = (i, p) => {
+  const S = maxSeasons(i) || 40;
+  const s = Math.min(S, Math.max(1, parseInt(p?.s) || 1));
+  const E = maxEps(i, s) || 400;
+  return { s, e: Math.min(E, Math.max(0, parseInt(p?.e) || 0)) };
+};
 function progressOf(i) {
-  const p = i.prog || { s: 1, e: 0 }, eps = i.seasonEps || [];
+  const p = clampProg(i, i.prog), eps = i.seasonEps || [];
   let pct = null;
   if (eps.length) {
     const total = eps.reduce((a, b) => a + b, 0);
@@ -89,22 +100,25 @@ function progressOf(i) {
 const isLastEpisode = (i, p) => { const eps = i.seasonEps || []; return eps.length && p.s >= eps.length && p.e >= eps[eps.length - 1]; };
 
 async function setProgress(i, p) {
+  p = clampProg(i, p);
   await updateFilmDoc(i._docId, { prog: p });
   if (isLastEpisode(i, p) && await askConfirm('Hai finito?', `Hai visto l’ultimo episodio di “${i.title}”. Vuoi segnarla come vista?`, 'Sì, finita')) {
     openFeedback({ ...i, prog: p });
   }
 }
 function nextEpisode(i) {
-  const p = { ...(i.prog || { s: 1, e: 0 }) }, eps = i.seasonEps || [];
-  p.e++;
-  if (eps[p.s - 1] && p.e > eps[p.s - 1] && p.s < eps.length) { p.s++; p.e = 1; }
+  const p = clampProg(i, i.prog), eps = i.seasonEps || [];
+  const E = maxEps(i, p.s);
+  if (E && p.e >= E) { if (p.s < eps.length) { p.s++; p.e = 1; } }      // fine stagione: passa alla successiva
+  else p.e++;
   return setProgress(i, p);
 }
 
 // ─── Elenchi filtrati ────────────────────────────────────────────────────
 function matches(i) {
   const q = search.trim().toLowerCase();
-  return (typeFilter === 'all' || i.type === typeFilter) &&
+  return (tab !== 'todo' || statusFilter === 'all' || (statusFilter === 'watching' ? isWatching(i) : !isWatching(i))) &&
+    (typeFilter === 'all' || i.type === typeFilter) &&
     (tagFilter === 'all' || (i.tags || []).includes(tagFilter)) &&
     (!q || [i.title, i.genre, i.platform].some(v => String(v || '').toLowerCase().includes(q)));
 }
@@ -134,6 +148,7 @@ function render() {
   $('p-apps').hidden = tab !== 'apps';
   const listMode = tab === 'todo' || (tab === 'done' && doneView === 'list');
   $('fa-tools').hidden = !listMode;
+  $('fa-status').hidden = tab !== 'todo';
   $('fa-add').style.display = tab === 'apps' ? 'none' : '';
   if (tab === 'apps') return renderApps();
 
@@ -150,8 +165,10 @@ function render() {
 }
 
 function renderTodo(base, list) {
+  $('fa-status').innerHTML = [['all', 'Tutti', base.length], ['new', 'Da iniziare', base.filter(i => !isWatching(i)).length], ['watching', 'In corso', base.filter(isWatching).length]]
+    .map(([v, l, n]) => `<button type="button" data-status="${v}" aria-pressed="${v === statusFilter}">${l} <span class="count">${n}</span></button>`).join('');
   // In corso (sempre in cima)
-  const now = list.filter(isWatching);
+  const now = statusFilter === 'new' ? [] : list.filter(isWatching);
   $('fa-now').innerHTML = now.length ? `<div class="fa-now-wrap"><span class="zen-eyebrow">Continua a guardare</span>
     <div class="fa-strip">${now.map(i => {
       const ser = isSeries(i), pr = ser ? progressOf(i) : null;
@@ -166,7 +183,7 @@ function renderTodo(base, list) {
         </div></div>`;
     }).join('')}</div></div>` : '';
 
-  const queue = list.filter(i => !i.watching);
+  const queue = statusFilter === 'watching' ? [] : list.filter(i => !i.watching);
   const all = base.filter(i => !i.watching).length, rw = base.filter(i => i.rewatch && !i.watching).length;
   $('fa-todo-count').textContent = all ? `${all} da vedere${rw ? ` · ${rw} rewatch` : ''}` : '';
   $('fa-tonight').hidden = !all;
@@ -239,7 +256,7 @@ function renderApps() {
   $('fa-apps').innerHTML = APPS.filter(a => a.main || count(a)).map(a => {
     const n = count(a);
     return `<a class="fa-app" href="${a.web}" target="_blank" rel="noopener" data-app="${esc(a.name)}">
-      <span class="dot-icon tone-${a.tone}" style="width:44px;height:44px;border-radius:14px">${esc(a.mark)}</span>
+      ${appLogo(a, 48)}
       <span><span class="n">${esc(a.name)}</span><span class="s">${n ? `${n} da vedere` : 'nessun titolo'}</span></span>
     </a>`;
   }).join('');
@@ -346,20 +363,19 @@ function fillDetail(item) {
     </div>
     ${item.plot ? `<p class="fa-plot">${esc(item.plot)}</p>` : ''}
     ${where.length ? `<div class="stack"><div class="zen-eyebrow">Dove lo guardi</div><div class="fa-where">
-      ${where.map(w => appOf(w) ? `<button type="button" data-prov="${esc(w)}" class="${w === item.platform ? 'on' : ''}">${esc(w)}</button>` : `<span class="chip">${esc(w)}</span>`).join('')}</div></div>` : ''}
+      ${where.map(w => appOf(w) ? `<button type="button" data-prov="${esc(w)}" class="${w === item.platform ? 'on' : ''}" style="display:inline-flex;align-items:center;gap:8px">${appLogo(appOf(w), 22)}${esc(w)}</button>` : `<span class="chip">${esc(w)}</span>`).join('')}</div></div>` : ''}
     ${watching && ser ? `<div class="fa-prog">
       <div class="fa-prog-row"><b>${esc(pr.text)}</b>${pr.pct !== null ? `<small>${pr.pct}%</small>` : ''}</div>
       ${pr.pct !== null ? `<div class="meter-track"><div class="meter-fill" style="width:${pr.pct}%"></div></div>` : ''}
-      <div class="fa-prog-row"><span>Stagione</span><span class="fa-step"><button type="button" data-s="-1" aria-label="Stagione precedente">${icon('minus', 'sm')}</button><output>${pr.s}</output><button type="button" data-s="1" aria-label="Stagione successiva">${icon('plus', 'sm')}</button></span></div>
-      <div class="fa-prog-row"><span>Episodio</span><span class="fa-step"><button type="button" data-e="-1" aria-label="Episodio precedente">${icon('minus', 'sm')}</button><output>${pr.e}</output><button type="button" data-e="1" aria-label="Episodio successivo">${icon('plus', 'sm')}</button></span></div>
+      <div class="fa-prog-row"><span>Stagione</span><select class="fa-sel" id="pg-s" aria-label="Stagione">${Array.from({ length: maxSeasons(item) || 40 }, (_, k) => `<option value="${k + 1}"${k + 1 === pr.s ? ' selected' : ''}>${k + 1}${maxSeasons(item) ? ` di ${maxSeasons(item)}` : ''}</option>`).join('')}</select></div>
+      <div class="fa-prog-row"><span>Episodio</span><select class="fa-sel" id="pg-e" aria-label="Episodio">${Array.from({ length: (maxEps(item, pr.s) || 400) + 1 }, (_, k) => `<option value="${k}"${k === pr.e ? ' selected' : ''}>${k === 0 ? 'Da iniziare' : `${k}${maxEps(item, pr.s) ? ` di ${maxEps(item, pr.s)}` : ''}`}</option>`).join('')}</select></div>
     </div>` : ''}
     ${fbs.length ? `<div class="stack"><div class="zen-eyebrow">Le tue visioni</div>${fbs.map((f, n) => `
       <div class="fa-view"><div class="e"><span>Visione ${n + 1}${f.date ? ' · ' + esc(f.date) : ''}</span>${stars(f.stars)}</div>
       ${f.note ? `<q>${esc(f.note)}</q>` : ''}</div>`).join('')}</div>` : ''}
     <div class="zen-sheet-actions">
       ${watching
-        ? `${ser ? `<button class="btn accent block" type="button" id="dd-next">${icon('plus', 'sm')} +1 episodio</button>` : ''}
-           <button class="btn ${ser ? '' : 'accent'} block" type="button" id="dd-seen">${icon('check', 'sm')} Ho finito</button>
+        ? `<button class="btn accent block" type="button" id="dd-seen">${icon('check', 'sm')} Ho finito</button>
            <button class="btn ghost block" type="button" id="dd-pause">Metti in pausa</button>`
         : pending
           ? `<button class="btn accent block" type="button" id="dd-start">${icon('play', 'sm')} Inizia a guardare</button>
@@ -376,7 +392,6 @@ function fillDetail(item) {
   const $d = s => detail.$(s);
   $d('#dd-start')?.addEventListener('click', () => updateFilmDoc(item._docId, { watching: true, prog: isSeries(item) ? (item.prog || { s: 1, e: 0 }) : null }));
   $d('#dd-pause')?.addEventListener('click', () => updateFilmDoc(item._docId, { watching: false }));
-  $d('#dd-next')?.addEventListener('click', () => nextEpisode(item));
   $d('#dd-prio')?.addEventListener('click', () => updateFilmDoc(item._docId, { prio: !item.prio }));
   $d('#dd-seen')?.addEventListener('click', () => { detail.close(); openFeedback(item); });
   $d('#dd-rewatch')?.addEventListener('click', async () => {
@@ -393,14 +408,8 @@ function fillDetail(item) {
     if (await askConfirm('Eliminare?', `“${item.title}” verrà tolto dall’elenco.`, 'Elimina', true)) await deleteFilmDoc(item._docId);
   });
   detail.$$('[data-prov]').forEach(b => b.addEventListener('click', () => launchApp(appOf(b.dataset.prov))));
-  const step = (key, d) => {
-    const p = { ...(item.prog || { s: 1, e: 0 }) };
-    p[key] = Math.max(key === 's' ? 1 : 0, p[key] + d);
-    if (key === 's') p.e = 0;
-    updateFilmDoc(item._docId, { prog: p });
-  };
-  detail.$$('[data-s]').forEach(b => b.addEventListener('click', () => step('s', Number(b.dataset.s))));
-  detail.$$('[data-e]').forEach(b => b.addEventListener('click', () => step('e', Number(b.dataset.e))));
+  $d('#pg-s')?.addEventListener('change', e => setProgress(item, { s: Number(e.target.value), e: 0 }));
+  $d('#pg-e')?.addEventListener('change', e => setProgress(item, { s: progressOf(item).s, e: Number(e.target.value) }));
 }
 
 function openDetail(item) {
@@ -467,6 +476,7 @@ tonight.$('#tn-tags').addEventListener('click', e => { const b = e.target.closes
 
 // ─── Nuovo / modifica ────────────────────────────────────────────────────
 const ONLINE_KEYS = ['year', 'plot', 'providers', 'providersAt', 'tmdbId', 'tmdbKind', 'seasonEps'];
+let edWatching = false;
 let editing = null, img = null, meta = {}, edType = 'Film', edPlatform = 'Netflix', edDur = 'min', edTags = new Set(), edPrio = false;
 let hits = [], searchTimer = 0, searchSeq = 0;
 const chipRow = (id, list, cls = '') => `<div class="chips ${cls}" id="${id}">${list.map(v => `<button type="button" data-v="${esc(v)}" aria-pressed="false">${esc(v)}</button>`).join('')}</div>`;
@@ -497,7 +507,7 @@ const editor = createSheet({
       </div></div>
     <div class="field"><label>Etichette</label><div class="chips fa-chips-sel" id="ed-tags"></div>
       <div class="row"><input class="input grow" id="ed-newtag" maxlength="24" placeholder="Nuova etichetta"/><button type="button" class="btn" id="ed-addtag">Aggiungi</button></div></div>
-    <div class="chips"><button type="button" id="ed-prio" aria-pressed="false">★ Priorità alta</button></div>
+    <div class="chips"><button type="button" id="ed-watching" aria-pressed="false">In corso (lo sto guardando)</button><button type="button" id="ed-prio" aria-pressed="false">★ Priorità alta</button></div>
     <div class="zen-sheet-actions"><button class="btn primary block" type="submit" id="ed-save">Salva</button></div>
   </form>`,
 });
@@ -542,6 +552,7 @@ const addTag = () => {
 };
 editor.$('#ed-addtag').addEventListener('click', addTag);
 editor.$('#ed-newtag').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
+editor.$('#ed-watching').addEventListener('click', () => { edWatching = !edWatching; editor.$('#ed-watching').setAttribute('aria-pressed', String(edWatching)); });
 editor.$('#ed-prio').addEventListener('click', () => { edPrio = !edPrio; editor.$('#ed-prio').setAttribute('aria-pressed', String(edPrio)); });
 editor.$('#ed-file').addEventListener('change', async e => {
   const f = e.target.files[0];
@@ -609,6 +620,8 @@ function openEditor(item = null) {
   edPlatform = item?.platform || 'Netflix';
   edTags = new Set(item?.tags || []);
   edPrio = !!item?.prio;
+  edWatching = !!item && isWatching(item);
+  editor.$('#ed-watching').setAttribute('aria-pressed', String(edWatching));
   editor.setTitle(item ? 'Modifica titolo' : 'Nuovo titolo');
   editor.$('#ed-q').value = '';
   editor.$('#ed-hits').hidden = true;
@@ -632,7 +645,7 @@ editor.$('#ed-form').addEventListener('submit', async e => {
   if (!title) { editor.$('#ed-title').focus(); return toast('Scrivi il titolo'); }
   const d = {
     title, type: edType, platform: edPlatform, genre: editor.$('#ed-genre').value, img: img || null,
-    tags: [...edTags], prio: edPrio, ...meta,
+    tags: [...edTags], prio: edPrio, watching: edWatching, ...meta,
   };
   if (edDur === 'min') { d.duration = editor.$('#ed-minutes').value.trim(); d.seasons = null; d.episodes = null; }
   else { d.seasons = editor.$('#ed-seasons').value.trim(); d.episodes = editor.$('#ed-episodes').value.trim(); d.duration = null; }
@@ -722,6 +735,8 @@ function exportCsv() {
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-tab]');
   if (t) { tab = t.dataset.tab; typeFilter = 'all'; tagFilter = 'all'; render(); return; }
+  const stt = e.target.closest('[data-status]');
+  if (stt) { statusFilter = stt.dataset.status; render(); return; }
   const v = e.target.closest('[data-view]');
   if (v) { doneView = v.dataset.view; render(); return; }
   const y = e.target.closest('[data-year]');

@@ -150,6 +150,12 @@
     .fa-fav .fa-thumb { width: 62px; height: 93px; }
     .fa-fav .t { font-size: var(--fs-lg); font-weight: 600; letter-spacing: -.01em; margin: 2px 0 6px; }
 
+    .app-logo { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; background: var(--bg); color: #fff; overflow: hidden; }
+    .app-logo i { width: 58%; height: 58%; background: #fff; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain; }
+    .app-logo b { font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+
+    .fa-sel { min-width: 150px; min-height: 40px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; padding: 0 12px; }
+
     /* Stasera */
     .fa-pick { display: flex; gap: var(--space-4); }
     .fa-pick .fa-thumb { width: 104px; height: 156px; border-radius: var(--radius-sm); }
@@ -188,6 +194,7 @@
         <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
         <input class="input" type="search" id="fa-q" placeholder="Cerca un titolo" autocomplete="off" aria-label="Cerca un titolo"/>
       </div>
+      <div class="chips" id="fa-status" role="group" aria-label="Stato" hidden></div>
       <div class="chips" id="fa-types" role="group" aria-label="Tipologia"></div>
       <div class="chips" id="fa-tags" role="group" aria-label="Etichette" hidden></div>
     </div>

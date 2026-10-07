@@ -4,7 +4,6 @@
  * Le domande stanno in users/{uid}/direction/libri_flash_deck:
  *   cards: [{ bt: titolo, q, a: risposta giusta, o: [3 risposte sbagliate], w: spiegazione }]   (preparate per i tuoi libri)
  *   mine:  [{ bt, q, r }]                                                                      (le tue domande: domanda + risposta)
- * In più: «cosa ti ha lasciato?» (dalla tua nota) e frasi dei tuoi appunti con una parola mancante.
  * Niente domande su autore, anno o genere. Le domande che sbagli ritornano più spesso.
  * Risultati: localStorage + users/{uid}/direction/libri_flash.
  */
@@ -59,32 +58,12 @@ export function initFlash(ctx) {
   async function buildCards() {
     await loadDeck();
     const all = ctx.items();
-    const subjects = all.filter(b => b.done);
-    const learnt = all.filter(b => b.done || b.reading);
-    const cards = [];
+        const cards = [];
     const add = c => c && cards.push(c);
 
     deck.cards.forEach((c, n) => { const b = readBook(c.bt); if (b && c.o?.length >= 3) add({ key: `d:${norm(c.bt)}:${n}:${c.q.slice(0, 20)}`, type: 'content', book: b, q: c.q, options: shuffle([c.a, ...c.o.slice(0, 3)]), answer: c.a, why: c.w || '' }); });
     deck.mine.forEach((c, n) => { const b = readBook(c.bt); if (b) add({ key: `m:${norm(c.bt)}:${n}:${c.q.slice(0, 20)}`, type: 'mine', book: b, q: c.q, reveal: c.r, why: '' }); });
-    for (const b of subjects) if (b.note && b.note.length > 6) add({ key: `n:${b.id}`, type: 'recall', book: b, q: `Cosa ti ha lasciato «${b.title}»?`, reveal: b.note, why: '' });
 
-    // Frasi dai tuoi appunti, con una parola mancante
-    const qs = (await ctx.quotes.loadMany(sample(learnt.filter(b => (b.quotesCount || 0) > 0), 10))).filter(q => q.text && q.text.length > 20 && q.text.length < 320);
-    const words = qs.flatMap(q => q.text.split(/\s+/).map(w => w.replace(/[^\p{L}]/gu, '')).filter(w => w.length >= 5));
-    for (const q of qs) {
-      const b = all.find(x => x._docId === q._bookDocId);
-      if (!b) continue;
-      const toks = q.text.split(/(\s+)/);
-      const idxs = toks.map((t, i) => [t.replace(/[^\p{L}]/gu, ''), i]).filter(([w, i]) => w.length >= 5 && i > 0 && i < toks.length - 2);
-      if (idxs.length) {
-        const [w, i] = idxs[rnd(idxs.length)];
-        const wrong = sample(words.filter(x => x.toLowerCase() !== w.toLowerCase() && Math.abs(x.length - w.length) <= 3), 3);
-        if (wrong.length === 3) {
-          const shown = toks.map((t, k) => (k === i ? t.replace(w, '_____') : t)).join('');
-          add({ key: `c:${q._docId}:${i}`, type: 'cloze', book: b, q: 'Completa la frase', quote: shown, options: shuffle([w, ...wrong]), answer: w, why: `La parola era «${w}» (${b.title}).` });
-        }
-      }
-    }
     return cards;
   }
 
@@ -121,7 +100,7 @@ export function initFlash(ctx) {
       <div class="card fc-hero">
         <span class="dot-icon sakura" style="width:48px;height:48px">${icon('sparkles')}</span>
         <h3>Flashcard</h3>
-        <p>${N} domande sul contenuto dei libri che hai letto: trama, personaggi, idee. Solo libri segnati come letti.</p>
+        <p>${N} domande sul contenuto dei libri che hai letto: trama, personaggi, fatti. Solo libri segnati come letti.</p>
         ${read.length ? `<button type="button" class="btn accent block" id="fc-start">${icon('play', 'sm')} Inizia le ${N} domande</button>`
                       : `<p class="fa-hint">Segna qualche libro come letto e potrai metterti alla prova.</p>`}
         ${read.length ? `<button type="button" class="btn block" id="fc-add">${icon('plus', 'sm')} Aggiungi una tua domanda</button>` : ''}
@@ -161,7 +140,7 @@ export function initFlash(ctx) {
     let deck;
     try { deck = pickDeck(await buildCards()); } catch (e) { console.warn(e); deck = []; }
     if (deck.length < 3) {
-      el.innerHTML = `<div class="empty">Per ora non riesco a fare abbastanza domande.<br/>Scrivi una nota ai libri letti, aggiungi qualche tua domanda o salva degli appunti.</div><button type="button" class="btn block" id="fc-back">Indietro</button>`;
+      el.innerHTML = `<div class="empty">Per ora non riesco a fare abbastanza domande.<br/>Aggiungi qualche tua domanda sui libri letti.</div><button type="button" class="btn block" id="fc-back">Indietro</button>`;
       el.querySelector('#fc-back').addEventListener('click', () => landing(el));
       return;
     }
