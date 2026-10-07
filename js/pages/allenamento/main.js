@@ -1,5 +1,5 @@
 /**
- * main.js — pagina Allenamento: tre schede (Registro, Schede, Avvia).
+ * main.js — pagina Allenamento: quattro schede (Registro, Schede, Avvia, Salute).
  * Il + della barra in basso esegue l'azione della scheda aperta.
  */
 import { waitForUser } from '../../core/auth-guard.js';
@@ -8,12 +8,13 @@ import { startSync, state, onChange } from './state.js';
 import * as registro from './registro.js';
 import * as schede from './schede.js';
 import * as avvia from './avvia.js';
+import * as salute from './grafici.js';
 import { flushPending } from './guida.js';
 
-const TABS = { registro, schede, avvia };
+const TABS = { registro, schede, avvia, salute };
 let current = 'avvia';
 
-const MENU = { registro: [['Esporta il registro (CSV)', registro.exportLog]], schede: [], avvia: [] };
+const MENU = { registro: [['Esporta il registro (CSV)', registro.exportLog]], schede: [], avvia: [], salute: [] };
 
 function showTab(name) {
   if (!TABS[name]) name = 'avvia';

@@ -639,3 +639,14 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .zen-offline[hidden] { display: none; }
 .zen-offline.ok { background: color-mix(in srgb, var(--success) 16%, var(--card)); color: var(--success); border-color: color-mix(in srgb, var(--success) 40%, transparent); }
 .zen-offline .icon { width: 15px; height: 15px; }
+
+/* Allenamento → Salute (grafici dell'orologio) ───────────────────────────── */
+#tab-salute { display: grid; gap: var(--space-3); }
+.gz-card { padding: var(--space-4); }
+.gz-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-2); }
+.gz-big { font-size: 1.7rem; font-weight: 600; line-height: 1.15; }
+.gz-big small { font-size: var(--fs-sm); font-weight: 400; color: var(--muted); }
+.gz-avg { font-size: var(--fs-sm); color: var(--muted); text-align: right; }
+.gz-avg span { font-size: .72rem; }
+.gz-svg { width: 100%; height: auto; display: block; }
+.gz-empty { color: var(--muted); text-align: center; }
