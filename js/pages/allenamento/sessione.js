@@ -1,24 +1,22 @@
 /**
- * registro.js — scheda "Registro": calendario degli allenamenti fatti.
- *
- * Si tocca un giorno per vedere le sessioni; ogni sessione mostra esercizi, serie, ripetizioni, carichi,
- * tempi e recuperi reali. Si può correggere, aggiungere un feedback, note e foto, eliminare ed esportare in CSV.
- * Il + della barra in basso registra a mano un allenamento (parte dai valori della scheda).
+ * sessione.js — una sessione di allenamento: dettaglio, modifica, foto, note, eliminazione, registrazione a mano ed export.
+ * Si usa dal calendario centrale (calendario.html): tocchi un allenamento e da qui lo gestisci.
+ * Servono i dati di allenamento/state.js (startSync() li carica).
  */
 import { escapeHtml as esc } from '../../core/dom.js';
-import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
 import { deleteRegistroDoc, loadRegistroDettagli } from '../../core/db.js';
 import {
-  addSession, updateSession as updateRegistroDoc, state, onChange, planById, MONTHS, DAY_SHORT, FEEDBACK, dateKey, parseKey, num, fmtKg, fmtClock, fmtDur, exType,
+  addSession, updateSession as updateRegistroDoc, state, planById, FEEDBACK, dateKey, parseKey, num, fmtKg, fmtClock, fmtDur, exType,
   sessionVolume, sessionSets,
 } from './state.js';
 import { deliver, csvFile } from './files.js';
-import { watchHealth, health, watchLine } from './salute.js';
 
-const root = document.getElementById('tab-registro');
-let month = new Date(), selected = dateKey();
 const legacy = {};     // dettagli delle sessioni vecchie, caricati al bisogno
+let selected = dateKey();
+let afterChange = () => {};
+/** Funzione da chiamare dopo ogni modifica (il calendario ricarica il mese). */
+export const onSessionChange = fn => { afterChange = fn; };
 
 const fbLabel = v => FEEDBACK.find(f => f[0] === v)?.[1] || '';
 const niceDate = k => parseKey(k).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -39,83 +37,13 @@ function viewOf(r) {
   return { es: [...map.values()], rw, st, acqua: 0, vecchia: true };
 }
 
-function dayHealth(key) {
-  const d = health.days[key];
-  if (!d) return '';
-  const cell = (v, l) => (v ? `<div class="bn"><b>${v}</b><span>${l}</span></div>` : '');
-  const sonno = d.sonnoMin ? `${Math.floor(d.sonnoMin / 60)}h${String(d.sonnoMin % 60).padStart(2, '0')}` : '';
-  const cells = [
-    cell(d.passi ? d.passi.toLocaleString('it-IT') : '', 'passi'),
-    cell(d.bpmRiposo, 'bpm a riposo'),
-    cell(d.bpmMedio ? `${d.bpmMedio}` : '', d.bpmMin && d.bpmMax ? `bpm medio · ${d.bpmMin}–${d.bpmMax}` : 'bpm medio'),
-    cell(d.spo2 ? d.spo2 + '%' : '', 'ossigeno'),
-    cell(d.respiro, 'respiri/min'),
-    cell(sonno, d.sonnoPunteggio ? `sonno · punteggio ${d.sonnoPunteggio}` : 'sonno'),
-  ].join('');
-  return cells ? `<div class="bento al-day">${cells}</div>` : '';
-}
-
-// ─── Disegno ─────────────────────────────────────────────────────────────
-function render() {
-  const y = month.getFullYear(), m = month.getMonth();
-  const offset = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate();
-  const today = dateKey();
-  const byDate = {};
-  state.log.forEach(r => { (byDate[r.data] ||= []).push(r); });
-  const monthKeys = Object.keys(byDate).filter(k => k.startsWith(`${y}-${String(m + 1).padStart(2, '0')}`));
-  const monthSess = monthKeys.reduce((a, k) => a + byDate[k].length, 0);
-  const monthMin = monthKeys.reduce((a, k) => a + byDate[k].reduce((b, r) => b + num(r.durata), 0), 0);
-
-  let cells = DAY_SHORT.map(d => `<div class="cal-dow">${d}</div>`).join('') + '<div></div>'.repeat(offset);
-  for (let d = 1; d <= n; d++) {
-    const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    const has = byDate[key]?.length;
-    cells += `<button type="button" class="cal-day${has ? ' has' : ''}${key === today ? ' today' : ''}${key === selected ? ' sel' : ''}" data-date="${key}" aria-label="${d} ${MONTHS[m]}${has ? `, ${has} allenamenti` : ''}">${d}</button>`;
-  }
-  const list = byDate[selected] || [];
-  const hm = monthMin >= 60 ? `${Math.floor(monthMin / 60)}<small style="font-size:1rem">h</small>${monthMin % 60}` : `${monthMin}`;
-  const full = monthSess >= 12;
-  root.innerHTML = `
-    <div class="bento"><div class="bn"><b>${monthSess}</b><span>${monthSess === 1 ? 'allenamento' : 'allenamenti'}</span></div>
-      <div class="bn"><b>${hm}</b><span>${monthMin >= 60 ? 'ore e minuti' : 'minuti'}</span></div>
-      <div class="bn"><b>${monthKeys.length}</b><span>${monthKeys.length === 1 ? 'giorno attivo' : 'giorni attivi'}</span></div></div>
-    ${full ? '<div style="text-align:center"><span class="stamp" aria-hidden="true">鍛</span></div>' : ''}
-    <section class="rs-card">
-      <div class="rs-calhead">
-        <button type="button" class="icon-btn" data-month="-1" aria-label="Mese precedente">${icon('back')}</button>
-        <div class="cap" style="margin:0;text-transform:capitalize">${MONTHS[m]} ${y}</div>
-        <button type="button" class="icon-btn next" data-month="1" aria-label="Mese successivo">${icon('back')}</button></div>
-      <div class="cal-grid">${cells}</div>
-      <p class="s" style="text-align:center;margin-top:8px">${monthSess ? `${monthSess} ${monthSess === 1 ? 'allenamento' : 'allenamenti'} · ${monthMin >= 60 ? `${Math.floor(monthMin / 60)} h ${monthMin % 60} min` : `${monthMin} min`}` : 'Nessun allenamento questo mese'}</p>
-    </section>
-    <div class="cap" style="text-transform:capitalize;margin-bottom:0">${niceDate(selected)}</div>
-    ${dayHealth(selected)}
-    ${list.length ? list.map(r => {
-      const sets = sessionSets(r), vol = sessionVolume(r);
-      return `<button type="button" class="al-sess" data-sess="${esc(r._docId)}">
-        <div class="al-sess-h"><b>${esc(r.schedaNome || '—')}</b><span class="s">${num(r.durata) ? `${r.durata} min` : ''}</span></div>
-        <div class="s">${esc(r.allenamentoNome || '')}${r.es ? ` · ${r.es.length} esercizi · ${sets} serie${vol ? ` · ${kg0(vol)} kg` : ''}` : ''}${r.feedback ? ` · ${fbLabel(r.feedback)}` : ''}</div>${watchLine(r) ? `<div class="s al-watch">${watchLine(r)}</div>` : ''}</button>`;
-    }).join('') : '<p class="empty-line">Nessun allenamento in questo giorno. Tocca + per registrarne uno a mano.</p>'}`;
-}
-
-root.addEventListener('click', e => {
-  const mo = e.target.closest('[data-month]');
-  if (mo) { month = new Date(month.getFullYear(), month.getMonth() + +mo.dataset.month, 1); return render(); }
-  const d = e.target.closest('[data-date]');
-  if (d) { selected = d.dataset.date; return render(); }
-  const s = e.target.closest('[data-sess]');
-  if (s) openDetail(s.dataset.sess).catch(err => { console.error('sessione', err); toast(`Non riesco ad aprirla: ${err.message}`); });
-});
-
-/** Dopo una sessione guidata: mostra il giorno appena registrato. */
-export function showDate(key) { selected = key; month = parseKey(key); render(); }
 
 // ─── Dettaglio di una sessione ───────────────────────────────────────────
 const detail = createSheet({ title: 'Sessione', className: 'al-detail', body: '<div id="dt-body"></div>' });
 let curId = null, delArmed = false;
 const recordOf = id => state.log.find(r => r._docId === id);
 
-async function openDetail(id) {
+export async function openDetail(id) {
   curId = id; delArmed = false;
   const r = recordOf(id);
   if (!r) return;
@@ -166,7 +94,7 @@ detail.el.addEventListener('click', async e => {
   const t = e.target, r = recordOf(curId);
   if (!r) return;
   const fb = t.closest('[data-fb]');
-  if (fb) { const val = r.feedback === fb.dataset.fb ? null : fb.dataset.fb; r.feedback = val; drawDetail(); render(); return updateRegistroDoc(curId, { feedback: val }); }
+  if (fb) { const val = r.feedback === fb.dataset.fb ? null : fb.dataset.fb; r.feedback = val; drawDetail(); afterChange(); return updateRegistroDoc(curId, { feedback: val }); }
   if (t.closest('[data-photo-add]')) return detail.$('#dt-file').click();
   const pd = t.closest('[data-photo-del]');
   if (pd) { const ph = (r.photos || []).filter((_, i) => i !== +pd.dataset.photoDel); r.photos = ph; drawDetail(); return updateRegistroDoc(curId, { photos: ph }); }
@@ -179,6 +107,7 @@ detail.el.addEventListener('click', async e => {
     detail.close();
     await deleteRegistroDoc(curId);
     toast('Allenamento eliminato');
+    afterChange();
   }
 });
 detail.el.addEventListener('focusout', e => {
@@ -232,9 +161,9 @@ edit.el.addEventListener('click', async e => {
   edit.close();
   Object.assign(r, fields);
   selected = fields.data;
-  render();
   await updateRegistroDoc(edDoc.id, fields);
   toast('Salvato');
+  afterChange(fields.data);
 });
 
 // ─── Registra a mano (+) ─────────────────────────────────────────────────
@@ -252,7 +181,8 @@ const fillSchede = () => {
   manual.$('#mn-sc').innerHTML = (p?.schede || []).map((s, i) => `<option value="${i}">${esc(s.nome)}</option>`).join('');
 };
 manual.$('#mn-pl').addEventListener('change', fillSchede);
-export function addAction() {
+export function addAction(date) {
+  if (date) selected = date;
   if (!state.plans.length) return toast('Crea prima un allenamento nella scheda Schede');
   manual.$('#mn-data').value = selected;
   manual.$('#mn-pl').innerHTML = state.plans.map(p => `<option value="${esc(p._docId)}">${esc(p.nome)}</option>`).join('');
@@ -268,7 +198,8 @@ manual.$('#mn-ok').addEventListener('click', async () => {
   const now = Date.now();
   manual.close();
   const id = await addSession({ v: 2, data, allenamentoId: p._docId, allenamentoNome: p.nome, schedaNome: sc.nome, durata: num(manual.$('#mn-dur').value) || 60, ini: now, fine: now, rw: 0, st: 0, acqua: 0, es, feedback: null, note: '' });
-  selected = data; month = parseKey(data); render();
+  selected = data;
+  afterChange(data);
   if (id) setTimeout(() => openEdit(id), 400);
 });
 
@@ -285,9 +216,3 @@ export async function exportLog() {
   await deliver(csvFile(rows, 'allenamenti.csv'));
 }
 
-onChange(what => { if (what === 'log') render(); });
-render();
-
-
-// dati dell'orologio, sincronizzati da soli ogni 6 ore
-watchHealth(() => render());

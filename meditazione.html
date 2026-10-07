@@ -267,13 +267,6 @@
   </template>
 
   <main class="zen-main med-main">
-    <div class="seg-wrap">
-      <div class="segmented" role="group" aria-label="Schermata">
-        <button type="button" data-view="setup" aria-pressed="true">Imposta</button>
-        <button type="button" data-view="cal" aria-pressed="false">Calendario</button>
-      </div>
-    </div>
-
     <!-- ═══ Imposta ═══ -->
     <section class="view" id="view-setup">
       <div class="zen-section">
@@ -293,29 +286,6 @@
       <p class="hint">Premi play in basso per iniziare</p>
     </section>
 
-    <!-- ═══ Calendario ═══ -->
-    <section class="view" id="view-cal" hidden>
-      <div class="stats" id="stats"></div>
-
-      <div class="panel" style="gap:var(--space-4)">
-        <div class="cal-head">
-          <button class="icon-btn cal-nav" type="button" id="cal-prev" aria-label="Mese precedente"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
-          <div class="cal-title" id="cal-title"></div>
-          <button class="icon-btn cal-nav next" type="button" id="cal-next" aria-label="Mese successivo"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></button>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </div>
-
-      <div class="zen-section">
-        <div class="block-title">
-          <div class="zen-eyebrow" id="day-title">Sessioni</div>
-          <button class="text-btn" type="button" id="btn-manual">Segna una sessione</button>
-        </div>
-        <div class="list" id="day-list"></div>
-      </div>
-
-      <div style="text-align:center"><button class="text-btn" type="button" id="btn-csv">Esporta CSV</button></div>
-    </section>
   </main>
 
   <!-- ═══ Pratica ═══ -->

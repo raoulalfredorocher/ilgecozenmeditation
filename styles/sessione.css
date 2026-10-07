@@ -1,0 +1,35 @@
+/* Dettaglio e modifica di una sessione di allenamento (usato dal calendario centrale). Stesse regole di allenamento.html. */
+.s { font-size: var(--fs-xs); color: var(--muted); }
+.field-lbl { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin-bottom: var(--space-2); }
+.empty-line { font-size: var(--fs-sm); color: var(--muted); font-style: italic; padding: var(--space-2) 0; line-height: 1.6; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pill { height: 36px; padding: 0 var(--space-4); border-radius: 999px; cursor: pointer; background: var(--surface); border: 0; color: var(--text); font-size: var(--fs-sm); display: inline-flex; align-items: center; transition: background-color .2s, color .2s; }
+.pill:active { transform: scale(.96); }
+.pill[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+.note-box { border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+.zen .note-box textarea { width: 100%; border: 0 !important; background: none !important; outline: none; resize: none; min-height: 0; padding: 0; border-radius: 0; font: 400 var(--fs-md)/1.6 var(--font); color: var(--text); display: block; }
+.zen-sheet .field-lbl, .wk .field-lbl { font-size: var(--fs-sm); letter-spacing: 0; text-transform: none; color: var(--muted); font-weight: 500; margin: 0 0 6px; line-height: 1.2; }
+.zen-sheet .field { gap: 0; }
+.zen-sheet .grid-2 { align-items: start; gap: var(--space-3); }
+.zen-sheet .stack { gap: var(--space-4); }
+.zen-sheet .input, .zen-sheet select, .zen-sheet textarea { width: 100%; min-height: 48px; box-sizing: border-box; }
+.zen-sheet textarea { min-height: 76px; padding-top: 12px; }
+.zen-sheet .chips-wrap { gap: 6px; }
+.zen-sheet .pill { height: 34px; padding: 0 14px; font-size: var(--fs-sm); }
+.al-pl { font: 600 1.375rem/1.2 var(--font-serif); letter-spacing: -.015em; }
+.al-stats { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: var(--space-3) 0; }
+.al-stats > div { display: flex; flex-direction: column; }
+.al-stats b { font-weight: 300; font-size: 1.75rem; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.al-ex { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin-top: var(--space-3); }
+.al-ex-h { display: flex; flex-direction: column; margin-bottom: var(--space-1); }
+.al-set { display: flex; align-items: center; gap: var(--space-3); padding: 7px 0; border-top: .5px solid var(--border); font-size: var(--fs-md); font-variant-numeric: tabular-nums; }
+.al-set .grow { flex: 1; min-width: 0; }
+.al-set-n { width: 22px; height: 22px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: .6875rem; color: var(--muted); flex-shrink: 0; }
+.al-in { width: 64px; min-height: 36px; padding: 0 8px; text-align: center; }
+.al-photos { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.al-photo { position: relative; width: 76px; height: 76px; }
+.al-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; }
+.al-photo-x { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: var(--text); color: var(--bg); font-size: 14px; line-height: 1; cursor: pointer; }
+.al-photo-add { width: 76px; height: 76px; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); background: none; color: var(--muted); font-size: var(--fs-sm); cursor: pointer; }
+.al-stats b { font-weight: 200; font-size: 2.25rem; }
+.al-pl { font-weight: 500; }

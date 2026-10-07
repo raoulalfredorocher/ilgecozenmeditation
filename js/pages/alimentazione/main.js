@@ -20,7 +20,7 @@ let current = 'dieta';
 /** Voci del menu dei tre puntini, per scheda. */
 const MENU = {
   dieta: [['Scarica la dieta (PDF)', dieta.downloadPDF], ['Scarica la dieta (CSV)', dieta.downloadCSV], ['Nuova dieta', dieta.newDietAction], ['Il mio profilo', openProfile]],
-  risultati: [['Il mio profilo', openProfile], ['Esporta il diario (CSV)', risultati.exportDiary]],
+  risultati: [['Il mio profilo', openProfile]],
   ricette: [['Esporta le ricette (CSV)', ricette.exportRecipes]],
   spesa: [],
 };

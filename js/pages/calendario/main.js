@@ -9,6 +9,13 @@ import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey } from '../../core/attivita.js';
 import { dayBalance } from '../../core/bilancio.js';
+import { toast } from '../../ui/dialog.js';
+import { saveSessionDoc, deleteSessionDoc, loadSessions } from '../../core/db.js';
+import { startSync as startWorkouts } from '../allenamento/state.js';
+import * as sessione from '../allenamento/sessione.js';
+import { csvFile, deliver } from '../alimentazione/files.js';
+import { startSync as startFood } from '../alimentazione/state.js';
+import { registerDay, exportDiary } from '../alimentazione/diario.js';
 
 const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
@@ -17,7 +24,9 @@ const kc = n => Math.round(n).toLocaleString('it-IT');
 const g1 = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
 
 let month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-let selected = dateKey();
+const startParam = new URLSearchParams(location.search).get('d');
+let selected = /^\d{4}-\d{2}-\d{2}$/.test(startParam || '') ? startParam : dateKey();
+{ const [y, m] = selected.split('-').map(Number); month = new Date(y, m - 1, 1); }
 let profile = null;                              // per il bilancio calorico
 let data = {};                                   // giorni del mese mostrato
 let on = new Set(AREAS.map(a => a.id));          // aree visibili
@@ -105,38 +114,29 @@ function renderDay() {
     rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}</b><span class="s">${sub}</span></span></div>`);
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-    ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}`;
+    ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}
+    <div class="cm-add" role="group" aria-label="Aggiungi a questo giorno"><button type="button" data-add="allenamento">＋ Allenamento</button><button type="button" data-add="cibo">＋ ${d?.cibo ? 'Modifica diario' : 'Diario'}</button><button type="button" data-add="meditazione">＋ Meditazione</button></div>`;
 }
 
 // ─── Dettaglio di ciò che hai fatto (foglio, senza lasciare il calendario) ───
 const sheet = createSheet({ title: '', body: '<div id="cm-detail"></div>' });
-const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
-const FB = { pos: 'Bene', neu: 'Così così', neg: 'Male' };
 const foot = (a, label) => `<a class="cm-open" href="${a.href}">${label} ›</a>`;
+const actBtn = (act, label, cls = '') => `<button type="button" class="btn block ${cls}" data-act="${act}" style="margin-top:var(--space-4)">${label}</button>`;
 const stat = (b, l) => `<div><b>${b}</b><span class="s">${l}</span></div>`;
 
-function detailWorkout(t) {
-  const sets = (t.es || []).reduce((a, e) => a + (e.s || []).filter(x => !x.f).length, 0);
-  const vol = (t.es || []).reduce((a, e) => a + (e.s || []).reduce((b, x) => b + (x.f ? 0 : (+x.r || 0) * (+x.k || 0)), 0), 0);
-  const ex = (t.es || []).map(e => `<section class="cm-ex"><div class="cm-ex-h"><b>${esc(e.n)}</b><span class="s">${esc(e.g || '')}${e.p ? ` · programma ${e.p[0]} × ${e.t === 't' ? mmss(e.p[3]) : `${e.p[1]}${e.p[2] ? ` · ${g1(e.p[2])} kg` : ''}`}` : ''}</span></div>
-    ${(e.s || []).map((x, i) => `<div class="cm-set"><span class="cm-set-n">${i + 1}</span><span class="grow">${x.f ? `<span class="s">${x.f === 2 ? 'esercizio saltato' : 'saltata'}</span>` : e.t === 't' ? `<b>${mmss(x.e)}</b>` : `<b>${x.r} × ${g1(+x.k || 0)} kg</b>`}</span><span class="s">${!x.f && e.t !== 't' && x.e ? mmss(x.e) : ''}${+x.c ? ` · rec. ${Math.round(x.c)} s` : ''}</span></div>`).join('')}</section>`).join('');
-  return `<div class="cm-stats">${t.durata ? stat(t.durata, 'min') : ''}${t.es ? stat(sets, 'serie') + stat(kc(vol), 'kg totali') : ''}${t.rw || t.st ? stat(Math.round((t.rw + t.st) / 60), 'min riscald. + stretching') : ''}${t.acqua ? stat(t.acqua, 'volte acqua') : ''}</div>
-    ${t.es ? ex : '<p class="cm-empty">I dettagli di questa sessione sono nella sezione Allenamento.</p>'}
-    ${t.feedback ? `<p class="s">Com'è andata: <b>${FB[t.feedback] || ''}</b></p>` : ''}${t.note ? `<p class="cm-note">${esc(t.note)}</p>` : ''}
-    ${foot(AREAS[0], 'Apri nel registro per modificare')}`;
-}
 function detailFood(c) {
   const meals = (c.meals || []).map(m => {
     const items = Array.isArray(m.items) && m.items.length ? m.items.map(i => `${esc(i.name)}${i.g ? ` ${i.g} g` : ''}`).join(' · ') : esc(m.desc || '');
     return `<section class="cm-ex"><div class="cm-ex-h cm-between"><b>${esc((m.type || 'Pasto').replace(/^[^\p{L}\p{N}]+/u, '').trim())}</b><span class="s">${kc(+m.kcal || 0)} kcal</span></div>
       <p class="cm-items">${items}</p><span class="s">P ${g1(+m.prot || 0)} · C ${g1(+m.carb || 0)} · G ${g1(+m.fat || 0)}</span></section>`;
   }).join('');
-  return `<div class="cm-stats">${stat(kc(c.kcal), 'kcal')}${stat(g1(c.prot), 'proteine')}${stat(g1(c.carb), 'carbo')}${stat(g1(c.fat), 'grassi')}</div>${meals}${foot(AREAS[1], 'Apri il diario per modificare')}`;
+  return `<div class="cm-stats">${stat(kc(c.kcal), 'kcal')}${stat(g1(c.prot), 'proteine')}${stat(g1(c.carb), 'carbo')}${stat(g1(c.fat), 'grassi')}</div>${meals}${actBtn('diary', 'Modifica il diario')}`;
 }
 function detailMed(m) {
   const list = [...m.sessions].sort((a, b) => a.ts - b.ts).map(x => `<section class="cm-ex"><div class="cm-ex-h cm-between"><b>${new Date(x.ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</b><span class="s">${Math.round(x.mins)} min</span></div>
-    ${x.steps.length ? `<p class="cm-items">${x.steps.map(s => `${esc(s.name || 'Meditazione')} ${Math.round(s.mins)} min`).join(' · ')}</p>` : ''}</section>`).join('');
-  return `<div class="cm-stats">${stat(Math.round(m.mins), 'minuti')}${stat(m.n, m.n === 1 ? 'sessione' : 'sessioni')}</div>${list}${foot(AREAS[2], 'Apri la meditazione')}`;
+    ${x.steps.length ? `<p class="cm-items">${x.steps.map(s => `${esc(s.name || 'Meditazione')} ${Math.round(s.mins)} min`).join(' · ')}</p>` : ''}
+    <button type="button" class="btn block text-danger" data-med-del="${esc(x.id)}" style="margin-top:var(--space-2)">Elimina sessione</button></section>`).join('');
+  return `<div class="cm-stats">${stat(Math.round(m.mins), 'minuti')}${stat(m.n, m.n === 1 ? 'sessione' : 'sessioni')}</div>${list}`;
 }
 function detailJournal(j) {
   return `<div class="s">${j.ora ? esc(j.ora) : ''}</div>
@@ -147,7 +147,7 @@ function openDetail(kind, i) {
   const d = data[selected];
   if (!d) return;
   let body = '', title = '';
-  if (kind === 'allenamento') { const t = d.allenamento[i]; title = t.scheda || 'Allenamento'; body = `<div class="s">${esc(t.piano)}</div>` + detailWorkout(t); }
+  if (kind === 'allenamento') return sessione.openDetail(d.allenamento[i].id).catch(err => toast(`Non riesco ad aprirla: ${err.message}`));
   else if (kind === 'cibo') { title = 'Diario alimentare'; body = detailFood(d.cibo); }
   else if (kind === 'meditazione') { title = 'Meditazione'; body = detailMed(d.meditazione); }
   else { const j = d.journaling[i]; title = j.titolo; body = detailJournal(j); }
@@ -156,7 +156,58 @@ function openDetail(kind, i) {
   sheet.open();
 }
 
-document.addEventListener('click', e => {
+// ─── Aggiungere, modificare, eliminare, esportare ───────────────────────────
+const refresh = day => {
+  if (day) { selected = day; const [y, m] = day.split('-').map(Number); month = new Date(y, m - 1, 1); }
+  return load();
+};
+sessione.onSessionChange(refresh);
+
+const medSheet = createSheet({ title: 'Segna una meditazione', body: `<div class="stack">
+  <div class="field"><label class="field-lbl" for="md-date">Giorno</label><input class="input" type="date" id="md-date"/></div>
+  <div class="field"><label class="field-lbl" for="md-mins">Minuti</label><input class="input" type="number" id="md-mins" inputmode="numeric" min="1" max="600" value="20"/></div>
+  <button type="button" class="btn accent block" id="md-ok">Salva</button></div>` });
+medSheet.$('#md-ok').addEventListener('click', async () => {
+  const [y, m, d] = medSheet.$('#md-date').value.split('-').map(Number), mins = Math.round(+medSheet.$('#md-mins').value);
+  if (!y || !(mins >= 1)) return toast('Scegli giorno e minuti');
+  medSheet.close();
+  await saveSessionDoc({ totalMins: mins, steps: [{ mins, name: 'Meditazione' }], ts: new Date(y, m - 1, d, 12).getTime() });
+  toast('Meditazione salvata');
+  refresh(dateKey(new Date(y, m - 1, d)));
+});
+
+async function exportMeditation() {
+  const list = await loadSessions();
+  if (!list.length) return toast('Nessuna meditazione registrata');
+  const rows = [['Data', 'Ora', 'Minuti totali', 'Intervalli']];
+  [...list].sort((a, b) => a.ts - b.ts).forEach(s => {
+    const t = new Date(s.ts);
+    rows.push([t.toLocaleDateString('it-IT'), t.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }), s.totalMins, (s.steps || []).map(st => `${st.mins} min ${st.name || ''}`).join(' | ')]);
+  });
+  await deliver(csvFile(rows, 'meditazioni.csv'));
+}
+
+let delArmed = null;
+document.addEventListener('click', async e => {
+  const add = e.target.closest('[data-add]');
+  if (add) {
+    if (add.dataset.add === 'allenamento') return sessione.addAction(selected);
+    if (add.dataset.add === 'cibo') return registerDay(selected, refresh);
+    medSheet.$('#md-date').value = selected; medSheet.$('#md-date').max = dateKey();
+    return medSheet.open();
+  }
+  const act = e.target.closest('[data-act]');
+  if (act?.dataset.act === 'diary') { sheet.close(); return setTimeout(() => registerDay(selected, refresh), 220); }
+  const md = e.target.closest('[data-med-del]');
+  if (md) {
+    if (delArmed !== md) { delArmed = md; md.textContent = 'Tocca ancora per eliminare'; return; }
+    sheet.close(); delArmed = null;
+    await deleteSessionDoc(md.dataset.medDel);
+    toast('Meditazione eliminata');
+    return refresh();
+  }
+  const ex = e.target.closest('[data-exp]');
+  if (ex) return ({ allenamenti: sessione.exportLog, diario: exportDiary, meditazione: exportMeditation })[ex.dataset.exp]();
   const op = e.target.closest('[data-open]');
   if (op) { const [k, i] = op.dataset.open.split(':'); return openDetail(k, +i); }
   const d = e.target.closest('[data-date]');
@@ -174,4 +225,4 @@ document.addEventListener('click', e => {
 });
 
 render();
-waitForUser().then(load);
+waitForUser().then(() => { startWorkouts(); startFood(); load(); });

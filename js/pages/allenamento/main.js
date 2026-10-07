@@ -1,20 +1,19 @@
 /**
- * main.js — pagina Allenamento: quattro schede (Registro, Schede, Avvia, Salute).
+ * main.js — pagina Allenamento: tre schede (Schede, Avvia, Salute). Gli allenamenti fatti si vedono e si modificano nel calendario centrale..
  * Il + della barra in basso esegue l'azione della scheda aperta.
  */
 import { waitForUser } from '../../core/auth-guard.js';
 import { createSheet } from '../../ui/dialog.js';
 import { startSync, state, onChange } from './state.js';
-import * as registro from './registro.js';
 import * as schede from './schede.js';
 import * as avvia from './avvia.js';
 import * as salute from './grafici.js';
 import { flushPending } from './guida.js';
 
-const TABS = { registro, schede, avvia, salute };
+const TABS = { schede, avvia, salute };
 let current = 'avvia';
 
-const MENU = { registro: [['Esporta il registro (CSV)', registro.exportLog]], schede: [], avvia: [], salute: [] };
+const MENU = { schede: [], avvia: [], salute: [] };
 
 function showTab(name) {
   if (!TABS[name]) name = 'avvia';
@@ -48,7 +47,7 @@ document.getElementById('al-more')?.addEventListener('click', () => {
 });
 
 // Dopo una sessione guidata: si va al registro, sul giorno appena salvato
-window.addEventListener('al:saved', e => { showTab('registro'); registro.showDate(e.detail.data); });
+window.addEventListener('al:saved', e => { location.href = `calendario.html?d=${e.detail.data}`; });
 
 showTab(location.hash.slice(1) || 'avvia');
 waitForUser().then(() => {

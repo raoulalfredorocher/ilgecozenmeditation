@@ -1,6 +1,6 @@
 /**
  * risultati.js — scheda "Risultati": come stai andando rispetto alla dieta e
- * al tuo fabbisogno (TDEE). Sei grafici più il calendario del diario.
+ * al tuo fabbisogno (TDEE). Grafici; il calendario del diario è nel calendario centrale (calendario.html).
  *
  *   dieta    = il piano del giorno (dalla dieta attiva)
  *   diario   = ciò che hai registrato davvero
@@ -18,7 +18,6 @@ import { openProfile } from './profile.js';
 
 const root = document.getElementById('tab-risultati');
 let period = 7;
-let calMonth = new Date();
 
 const kc = n => Math.round(n).toLocaleString('it-IT');
 const g1 = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
@@ -124,56 +123,16 @@ function render() {
       ${[7, 30, 90].map(n => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${n} giorni</button>`).join('')}
     </div>
     ${todayCard}${kcalCard}${macroCard}${balanceCard}${stackCard}${watchCards ? `<div class="cap" style="margin:var(--space-3) 0 0">Dall'orologio</div>${watchCards}` : ''}${adhCard}
-    ${calendar()}`;
-}
-
-// ─── Calendario del diario ───────────────────────────────────────────────
-function calendar() {
-  const y = calMonth.getFullYear(), m = calMonth.getMonth();
-  const offset = (new Date(y, m, 1).getDay() + 6) % 7;
-  const n = new Date(y, m + 1, 0).getDate();
-  const today = dateKey();
-  let cells = DAY_SHORT.map(d => `<div class="cal-dow">${d}</div>`).join('') + '<div></div>'.repeat(offset);
-  for (let d = 1; d <= n; d++) {
-    const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    const has = state.diary[key]?.length;
-    cells += `<button type="button" class="cal-day${has ? ' has' : ''}${key === today ? ' today' : ''}" data-date="${key}" aria-label="${d} ${MONTHS[m]}${has ? ', diario presente' : ''}">${d}</button>`;
-  }
-  return `<section class="rs-card"><div class="rs-calhead">
-      <button type="button" class="icon-btn" data-month="-1" aria-label="Mese precedente">${icon('back')}</button>
-      <div class="cap" style="margin:0;text-transform:capitalize">Diario · ${MONTHS[m]} ${y}</div>
-      <button type="button" class="icon-btn next" data-month="1" aria-label="Mese successivo">${icon('back')}</button></div>
-    <div class="cal-grid">${cells}</div>
-    <p class="s" style="text-align:center;margin-top:8px">Tocca un giorno per aprirlo e modificarlo.</p></section>`;
+`;
 }
 
 root.addEventListener('click', e => {
   const p = e.target.closest('[data-period]');
   if (p) { period = +p.dataset.period; return render(); }
   if (e.target.closest('[data-profile]')) return openProfile();
-  const mo = e.target.closest('[data-month]');
-  if (mo) { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + +mo.dataset.month, 1); return render(); }
-  const d = e.target.closest('[data-date]');
-  if (d) registerToday(d.dataset.date);
 });
 
 export const addAction = () => registerToday();
 
 onChange(what => { if (['diary', 'diet', 'profile', 'workouts', 'health'].includes(what)) render(); });
 render();
-
-// ─── Esportazione del diario ─────────────────────────────────────────────
-import { deliver, csvFile } from './files.js';
-import { slotOrder as _so, diaryTypeLabel, fromDiaryMeal, slotLabel } from './state.js';
-import { toast } from '../../ui/dialog.js';
-
-export async function exportDiary() {
-  const keys = Object.keys(state.diary).filter(k => state.diary[k]?.length).sort();
-  if (!keys.length) return toast('Il diario è ancora vuoto');
-  const rows = [['Data', 'Pasto', 'Alimenti', 'kcal', 'Proteine (g)', 'Carboidrati (g)', 'Grassi (g)']];
-  keys.forEach(k => state.diary[k].map(fromDiaryMeal).sort((a, b) => _so(a.slot) - _so(b.slot)).forEach(m => {
-    const t = m.items.reduce((a, i) => ({ kcal: a.kcal + (+i.kcal || 0), prot: a.prot + (+i.prot || 0), carb: a.carb + (+i.carb || 0), fat: a.fat + (+i.fat || 0) }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
-    rows.push([k, slotLabel(m.slot), m.items.map(i => (i.g ? `${i.name} ${i.g} g` : i.name)).join(' · '), Math.round(t.kcal), Math.round(t.prot * 10) / 10, Math.round(t.carb * 10) / 10, Math.round(t.fat * 10) / 10]);
-  }));
-  await deliver(csvFile(rows, 'diario-alimentare.csv'));
-}

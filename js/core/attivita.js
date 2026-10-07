@@ -10,9 +10,9 @@ import {
 
 /** Le quattro aree, con il colore dei puntini e la pagina di dettaglio. */
 export const AREAS = [
-  { id: 'allenamento', label: 'Allenamento', color: 'var(--geco-blue)', href: 'allenamento.html#registro' },
-  { id: 'cibo', label: 'Alimentazione', color: 'var(--success)', href: 'alimentazione.html#risultati' },
-  { id: 'meditazione', label: 'Meditazione', color: 'var(--sakura)', href: 'meditazione.html' },
+  { id: 'allenamento', label: 'Allenamento', color: 'var(--geco-blue)', href: 'calendario.html' },
+  { id: 'cibo', label: 'Alimentazione', color: 'var(--success)', href: 'calendario.html' },
+  { id: 'meditazione', label: 'Meditazione', color: 'var(--sakura)', href: 'calendario.html' },
   { id: 'journaling', label: 'Journaling', color: 'var(--warning)', href: 'salute-mentale.html' },
 ];
 
@@ -65,7 +65,7 @@ export async function loadRange(from, to) {
         const r = d.data();
         const m = day(dateKey(new Date(num(r.ts)))).meditazione ||= { mins: 0, n: 0, sessions: [] };
         m.mins += num(r.totalMins); m.n++;
-        m.sessions.push({ ts: num(r.ts), mins: num(r.totalMins), steps: (r.steps || []).map(x => ({ mins: num(x.mins), name: x.name || '' })) });
+        m.sessions.push({ id: d.id, ts: num(r.ts), mins: num(r.totalMins), steps: (r.steps || []).map(x => ({ mins: num(x.mins), name: x.name || '' })) });
       });
     })().catch(e => console.warn('calendario: meditazione', e)),
     // Dati dell'orologio (Zepp): un solo documento con tutti i giorni

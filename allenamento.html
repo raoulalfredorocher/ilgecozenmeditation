@@ -225,7 +225,7 @@
 </head>
 <!--
   Allenamento: tre schede.
-    Registro → js/pages/allenamento/registro.js   calendario delle sessioni fatte, con tutti i dati
+    (il registro delle sessioni fatte è nel calendario centrale: js/pages/allenamento/sessione.js)
     Schede   → js/pages/allenamento/schede.js     allenamenti → schede → esercizi (si riordinano trascinando)
     Avvia    → js/pages/allenamento/avvia.js + guida.js   la guida a tutto schermo durante l'allenamento
   Il + della barra in basso preme #al-add, che esegue l'azione della scheda attiva.
@@ -244,14 +244,12 @@
       <div class="segmented" role="group" aria-label="Sezioni di Allenamento">
         <button type="button" data-tab-btn="schede" aria-pressed="false">Schede</button>
         <button type="button" data-tab-btn="avvia" aria-pressed="true">Avvia</button>
-        <button type="button" data-tab-btn="registro" aria-pressed="false">Registro</button>
         <button type="button" data-tab-btn="salute" aria-pressed="false">Salute</button>
       </div>
     </div>
 
     <section class="tab-panel" id="tab-schede" aria-label="Schede" hidden></section>
     <section class="tab-panel" id="tab-avvia" aria-label="Avvia"></section>
-    <section class="tab-panel" id="tab-registro" aria-label="Registro" hidden></section>
     <section class="tab-panel" id="tab-salute" aria-label="Salute" hidden></section>
 
     <button type="button" id="al-add" hidden aria-hidden="true" tabindex="-1"></button>

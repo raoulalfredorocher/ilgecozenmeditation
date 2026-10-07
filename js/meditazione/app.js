@@ -5,7 +5,7 @@
  * Dati: impostazioni e template in localStorage, sessioni su Firestore
  * (collezione meditation_sessions, tramite js/core/db.js).
  */
-import { waitForAuth, loadSessions, saveSessionDoc, deleteSessionDoc } from '../core/db.js';
+import { saveSessionDoc } from '../core/db.js';
 import { escapeHtml } from '../core/dom.js';
 import { openSheet, closeSheet } from '../ui/shell.js';
 import { icon } from '../ui/icons.js';
@@ -77,7 +77,6 @@ const SET_KEY = 'zen_med_settings';
 const S = { mins: 20, tpl: null, sound: 'silence', bell: 'bowl', volume: 0.7, ...read(SET_KEY, {}) };
 const saveSettings = () => write(SET_KEY, S);
 let templates = loadTemplates();
-let sessions = [];
 
 /** Cosa parte quando premi play: il template scelto, oppure i minuti scelti. */
 const plan = () => templates.find(t => t.name === S.tpl)?.steps || [{ mins: S.mins, name: 'Meditazione' }];
@@ -312,160 +311,10 @@ $('p-more').addEventListener('click', openSound);
 $('btn-new-tpl').addEventListener('click', () => editTemplate(null));
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CALENDARIO
-// ═══════════════════════════════════════════════════════════════════════════
-const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
-const DOW = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
-const now0 = new Date();
-let calY = now0.getFullYear(), calM = now0.getMonth(), selDay = null;
-
-const dayKey = d => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-const inMonth = (s, y, m) => { const d = new Date(s.ts); return d.getFullYear() === y && d.getMonth() === m; };
-
-function streak() {
-  const days = new Set(sessions.map(s => dayKey(new Date(s.ts))));
-  const d = new Date();
-  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1); // oggi può ancora arrivare
-  let n = 0;
-  while (days.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
-  return n;
-}
-
-function renderCalendar() {
-  const monthSessions = sessions.filter(s => inMonth(s, calY, calM));
-  $('stats').innerHTML = `
-    <div class="stat"><b>${monthSessions.length}</b><span>sessioni</span></div>
-    <div class="stat"><b>${monthSessions.reduce((a, s) => a + (s.totalMins || 0), 0)}</b><span>minuti</span></div>
-    <div class="stat"><b>${streak()}</b><span>giorni di fila</span></div>`;
-
-  $('cal-title').textContent = `${MESI[calM]} ${calY}`;
-  const minsByDay = {};
-  monthSessions.forEach(s => { const d = new Date(s.ts).getDate(); minsByDay[d] = (minsByDay[d] || 0) + (s.totalMins || 0); });
-  const offset = (new Date(calY, calM, 1).getDay() + 6) % 7;
-  const days = new Date(calY, calM + 1, 0).getDate();
-  const t = new Date();
-  let html = DOW.map(d => `<div class="cal-dow">${d}</div>`).join('') + '<div></div>'.repeat(offset);
-  for (let d = 1; d <= days; d++) {
-    const mins = minsByDay[d] || 0;
-    const cls = ['cal-day'];
-    if (mins) cls.push('has'); if (mins >= 30) cls.push('deep');
-    if (t.getFullYear() === calY && t.getMonth() === calM && t.getDate() === d) cls.push('today');
-    if (selDay === d) cls.push('sel');
-    html += `<button type="button" class="${cls.join(' ')}" data-day="${d}" aria-label="${d} ${MESI[calM]}${mins ? `, ${mins} minuti` : ''}">${d}</button>`;
-  }
-  $('cal-grid').innerHTML = html;
-  renderDayList();
-}
-
-function renderDayList() {
-  const list = $('day-list');
-  let items;
-  if (selDay !== null) {
-    items = sessions.filter(s => inMonth(s, calY, calM) && new Date(s.ts).getDate() === selDay);
-    $('day-title').textContent = new Date(calY, calM, selDay).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
-  } else {
-    items = sessions.filter(s => inMonth(s, calY, calM));
-    $('day-title').textContent = `Sessioni di ${MESI[calM]}`;
-  }
-  items = [...items].sort((a, b) => b.ts - a.ts);
-  if (!items.length) { list.innerHTML = '<div class="empty">Nessuna sessione. Premi play in basso per iniziare, oppure segnala una sessione già fatta.</div>'; return; }
-  list.innerHTML = '';
-  items.forEach(s => {
-    const d = new Date(s.ts);
-    const desc = (s.steps || []).map(st => `${kindOf(st.name).label} ${st.mins}′`).join(' · ');
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'day-row';
-    b.innerHTML = `
-      <div class="day-n"><b>${d.getDate()}</b><span>${DOW[(d.getDay() + 6) % 7]}</span></div>
-      <div class="day-info"><b>${s.totalMins} min</b> <small style="display:inline;margin-left:6px">${d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</small>
-        ${desc ? `<small>${escapeHtml(desc)}</small>` : ''}</div>`;
-    b.addEventListener('click', () => openSession(s));
-    list.appendChild(b);
-  });
-}
-
-function openSession(s) {
-  const d = new Date(s.ts);
-  showSheet(d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }), body => {
-    const steps = s.steps || [];
-    body.insertAdjacentHTML('beforeend', `
-      <div style="text-align:center"><div class="hero-total">${s.totalMins}<small>min</small></div></div>
-      ${steps.length ? bar(steps) : ''}
-      ${steps.length ? `<div class="list">${steps.map(st => `<div class="list-row"><span class="seq-dot ${kindOf(st.name).cls}"></span><span class="grow">${escapeHtml(kindOf(st.name).label)}</span><span class="seq-mins">${st.mins} min</span></div>`).join('')}</div>` : ''}`);
-    body.appendChild(armedButton('Elimina sessione', async () => {
-      await deleteSessionDoc(s.id);
-      sessions = sessions.filter(x => x.id !== s.id);
-      closeAppSheet(); renderCalendar();
-    }));
-  });
-}
-
-function manualSession() {
-  showSheet('Segna una sessione', body => {
-    const base = selDay !== null ? new Date(calY, calM, selDay) : new Date();
-    const iso = `${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, '0')}-${String(base.getDate()).padStart(2, '0')}`;
-    body.innerHTML = `
-      <div class="field"><label for="ms-date">Giorno</label><input class="input" type="date" id="ms-date" value="${iso}" max="${new Date().toISOString().slice(0, 10)}"/></div>
-      <div class="field"><label for="ms-mins">Minuti</label><input class="input" type="number" id="ms-mins" inputmode="numeric" min="1" max="600" value="20"/></div>`;
-    const ok = document.createElement('button');
-    ok.type = 'button'; ok.className = 'btn accent block'; ok.textContent = 'Salva';
-    ok.addEventListener('click', async () => {
-      const [y, m, d] = $('ms-date').value.split('-').map(Number);
-      const mins = Math.round(+$('ms-mins').value);
-      if (!y || !(mins >= 1)) return;
-      ok.disabled = true;
-      await saveSessionDoc({ totalMins: mins, steps: [{ mins, name: 'Meditazione' }], ts: new Date(y, m - 1, d, 12).getTime() });
-      sessions = await loadSessions();
-      calY = y; calM = m - 1; selDay = d;
-      closeAppSheet(); renderCalendar();
-    });
-    body.appendChild(ok);
-  });
-}
-
-function exportCSV() {
-  if (!sessions.length) return;
-  const rows = [['Data', 'Ora', 'Minuti totali', 'Intervalli']];
-  [...sessions].sort((a, b) => a.ts - b.ts).forEach(s => {
-    const d = new Date(s.ts);
-    rows.push([d.toLocaleDateString('it-IT'), d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
-      s.totalMins, (s.steps || []).map(st => `${st.mins}min ${kindOf(st.name).label}`).join(' | ')]);
-  });
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' }));
-  a.download = 'meditazioni.csv'; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-
-const shiftMonth = d => { calM += d; if (calM < 0) { calM = 11; calY--; } if (calM > 11) { calM = 0; calY++; } selDay = null; renderCalendar(); };
-$('cal-prev').addEventListener('click', () => shiftMonth(-1));
-$('cal-next').addEventListener('click', () => shiftMonth(1));
-$('cal-grid').addEventListener('click', e => {
-  const d = e.target.closest('[data-day]')?.dataset.day;
-  if (!d) return;
-  selDay = selDay === +d ? null : +d;
-  renderCalendar();
-});
-$('btn-manual').addEventListener('click', manualSession);
-$('btn-csv').addEventListener('click', exportCSV);
-
-// ═══════════════════════════════════════════════════════════════════════════
 // SCHERMATE
 // ═══════════════════════════════════════════════════════════════════════════
-function showView(name) {
-  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === name)));
-  $('view-setup').hidden = name !== 'setup';
-  $('view-cal').hidden = name !== 'cal';
-  if (name !== 'setup') audio.stopAmbient(0.8); // niente anteprime fuori dalle impostazioni
-  if (name === 'cal') renderCalendar();
-  if (name === 'setup') { // l'elemento nascosto perde lo scorrimento: rimetti il righello sui minuti scelti
-    rulerQuiet = true;
-    requestAnimationFrame(() => { $('ruler').scrollLeft = (S.mins - 1) * TICK; setTimeout(() => { rulerQuiet = false; }, 150); });
-  }
-  scrollTo({ top: 0 });
-}
-document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+/** Le sessioni fatte si vedono e si gestiscono nel calendario centrale. */
+const openCalendar = (d = new Date()) => { location.href = `calendario.html?d=${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PRATICA
@@ -513,13 +362,12 @@ function doneSteps(sec) {
   return out;
 }
 
-async function persist(steps) {
+let saving = Promise.resolve();      // il salvataggio in corso: si aspetta prima di aprire il calendario
+function persist(steps) {
   const totalMins = sumMins(steps);
-  if (!totalMins) return;
-  try {
-    await saveSessionDoc({ totalMins, steps });
-    sessions = await loadSessions();
-  } catch (e) { console.error('salvataggio sessione', e); }
+  if (!totalMins) return saving;
+  saving = saveSessionDoc({ totalMins, steps }).catch(e => { console.error('salvataggio sessione', e); });
+  return saving;
 }
 
 const themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -568,7 +416,7 @@ function startPractice() {
 
 function showDone() {
   const total = sumMins(current);
-  $('p-done-text').textContent = `${fmtTotal(total)} di pratica. Una sessione in più nel tuo calendario.`;
+  $('p-done-text').textContent = `${fmtTotal(total)} di pratica. Una sessione in più nel calendario.`;
   $('practice').classList.add('done');
 }
 
@@ -610,7 +458,7 @@ $('p-end').addEventListener('click', () => {
     if (steps.length) {
       const save = document.createElement('button');
       save.type = 'button'; save.className = 'btn block'; save.textContent = `Termina e salva ${fmtTotal(sumMins(steps))}`;
-      save.addEventListener('click', async () => { session.stop(); closeAppSheet(); closePractice(); await persist(steps); renderCalendar(); });
+      save.addEventListener('click', async () => { session.stop(); closeAppSheet(); closePractice(); await persist(steps); openCalendar(); });
       body.appendChild(save);
     }
     const quit = document.createElement('button');
@@ -622,8 +470,7 @@ $('p-end').addEventListener('click', () => {
 
 $('p-close').addEventListener('click', () => {
   closePractice();
-  selDay = new Date().getDate(); calY = new Date().getFullYear(); calM = new Date().getMonth();
-  showView('cal');
+  saving.then(() => openCalendar());
 });
 
 // Schermo spento / app in background: al ritorno il timer si riallinea da solo
@@ -639,7 +486,4 @@ document.addEventListener('visibilitychange', () => {
 audio.setAmbientVolume(S.volume);
 renderSetup();
 
-waitForAuth().then(async () => {
-  try { sessions = await loadSessions(); } catch (e) { console.error('caricamento sessioni', e); }
-  if (!$('view-cal').hidden) renderCalendar();
-});
+

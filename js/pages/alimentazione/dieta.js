@@ -11,6 +11,7 @@ import {
   saveDietDays, saveDiary, activateDiet, createDiet, renameDiet, deleteDiet, hasProfile, tdeeFor, workoutOn, addDays,
 } from './state.js';
 import { openDayEditor } from './dayeditor.js';
+import { registerDay } from './diario.js';
 import { workoutBars } from './charts.js';
 import { deliver, csvFile } from './files.js';
 import { buildDietPDF } from './pdf.js';
@@ -139,19 +140,7 @@ function editDay(i) {
 }
 
 // ─── Registra oggi: parte dal piano, si modifica, poi si invia al diario ──
-export function registerToday(date = dateKey()) {
-  const existing = state.diary[date];
-  const plan = planFor(parseKey(date));
-  openDayEditor({
-    title: 'Registra', saveLabel: 'Invia al diario', date,
-    meals: existing?.length ? existing.map(fromDiaryMeal) : (plan.day.meals || []).map(fromDietMeal),
-    supplements: null, compareTo: plan.kcal, warnOverwrite: !existing?.length,
-    onSave: async ({ meals, date: d }) => {
-      await saveDiary(d, meals.map(toDiaryMeal));
-      toast('Inviato al diario');
-    },
-  });
-}
+export const registerToday = (date = dateKey()) => registerDay(date, d => { location.href = `calendario.html?d=${d}`; });
 
 // ─── Scelta della dieta ──────────────────────────────────────────────────
 const dietsSheet = createSheet({ title: 'Le tue diete', body: `
