@@ -61,7 +61,8 @@
     :root[data-theme="dark"] .vg-tiles { filter: invert(1) hue-rotate(195deg) saturate(.45) brightness(.82) contrast(.92); }
 
     /* Contatori sopra la mappa */
-    .vg-stats {
+    .vg-stats { display: none !important; }
+    .vg-stats-old {
       position: absolute; top: 10px; left: 10px; z-index: 800; display: flex; align-items: stretch;
       border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-md); border: .5px solid var(--border);
       background: color-mix(in srgb, var(--card) 88%, transparent);
@@ -203,7 +204,7 @@
     .vg-mile .icon { width: 14px; height: 14px; }
     .vg-mile.on { background: var(--sakura-soft); color: color-mix(in srgb, var(--sakura) 55%, var(--bark)); }
     .vg-conts { display: flex; flex-direction: column; gap: var(--space-4); }
-    .vg-tiles2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-3); }
+    .vg-tiles2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
     .vg-tile2 { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 2px; }
     .vg-tile2 b { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
     .vg-tile2 span { font-size: var(--fs-xs); color: var(--muted); }
@@ -2241,6 +2242,11 @@
       const next = MILESTONES.find(m => m > n);
       let unDone = 0, unTot = 0, trips = 0, wish = 0;
       Object.entries(S).forEach(([iso, s]) => { unDone += s.unescoDone; unTot += s.unescoTot; trips += s.trips.length; if (s.wish && !visitedCountries.has(iso)) wish++; });
+      // Continenti visitati su 6 (senza Antartide): le Americhe si dividono in Nord e Sud
+      const SOUTH_AM = new Set(['AR', 'BO', 'BR', 'CL', 'CO', 'EC', 'GY', 'PY', 'PE', 'SR', 'UY', 'VE']);
+      const seen = new Set();
+      for (const [c, list] of Object.entries(COUNTRIES)) for (const k of Object.keys(list)) if (visitedCountries.has(k)) seen.add(c === 'Americhe' ? (SOUTH_AM.has(k) ? 'Sud America' : 'Nord America') : c);
+      const contN = seen.size;
       const conts = Object.keys(COUNTRIES).map(c => {
         const keys = Object.keys(COUNTRIES[c]), v = keys.filter(k => visitedCountries.has(k)).length;
         return `<div class="meter"><div class="meter-head"><span>${c}</span><span class="zen-muted">${v}/${keys.length}</span></div>
@@ -2254,6 +2260,7 @@
           <div class="vg-miles">${MILESTONES.map(m => `<span class="vg-mile${n >= m ? ' on' : ''}">${n >= m ? icon('check') : ''}${m}</span>`).join('')}</div>
         </div>
         <div class="vg-tiles2">
+          <div class="vg-tile2"><b>${contN}<small style="font-size:.5em;font-weight:400;opacity:.6"> / 6</small></b><span>continenti</span></div>
           <div class="vg-tile2"><b>${unDone}</b><span>UNESCO</span></div>
           <div class="vg-tile2"><b>${trips}</b><span>${trips === 1 ? 'viaggio' : 'viaggi'}</span></div>
           <div class="vg-tile2"><b>${wish}</b><span>da visitare</span></div>
