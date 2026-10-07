@@ -9,9 +9,10 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { icon } from '../../ui/icons.js';
 import {
-  state, onChange, MC, MONTHS, DAY_SHORT, totals, planFor, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdeeFor,
+  state, onChange, MC, MONTHS, DAY_SHORT, totals, planFor, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdeeFor, tdeeParts,
 } from './state.js';
-import { rings, kcalBars, macroSplit, balanceBars, adherenceDots } from './charts.js';
+import { rings, kcalBars, macroSplit, balanceBars, adherenceDots, tdeeStack } from './charts.js';
+import { METRICS, lastDays, metricCard } from '../../core/salute-charts.js';
 import { registerToday } from './dieta.js';
 import { openProfile } from './profile.js';
 
@@ -32,7 +33,7 @@ function buildDays(n) {
     const meals = state.diary[key];
     const t = meals?.length ? totals(meals) : null;
     const plan = planFor(d);
-    return { key, label: n <= 7 ? DAY_SHORT[weekdayIdx(d)] : `${d.getDate()}/${d.getMonth() + 1}`, t, kcal: t?.kcal || null, plan: plan.kcal || 0, planT: plan, tdee: hasProfile() ? tdeeFor(key, plan.day.type) : 0 };
+    return { key, label: n <= 7 ? DAY_SHORT[weekdayIdx(d)] : `${d.getDate()}/${d.getMonth() + 1}`, t, kcal: t?.kcal || null, plan: plan.kcal || 0, planT: plan, tdee: hasProfile() ? tdeeFor(key, plan.day.type) : 0, parts: hasProfile() ? tdeeParts(key, plan.day.type) : null };
   });
 }
 const avg = (list, k) => (list.length ? list.reduce((a, x) => a + (x[k] || 0), 0) / list.length : 0);
@@ -107,12 +108,22 @@ function render() {
     counted ? `${ok} giorni su ${counted} entro il 10% dal piano${streak > 1 ? ` · serie di ${streak}` : ''}` : 'Si calcola sui giorni registrati',
     adherenceDots(st.slice(-28)), legend([[MC.prot, 'In linea'], [MC.fat, 'Sopra'], [MC.carb, 'Sotto']]));
 
+  // 6. Da cosa è fatto il fabbisogno, con i dati veri dell'orologio
+  const withParts = days.filter(d => d.parts);
+  const A = k => (withParts.length ? withParts.reduce((a, d) => a + d.parts[k], 0) / withParts.length : 0);
+  const realSteps = withParts.filter(d => d.parts.realSteps).length;
+  const stackCard = withParts.length ? card('Fabbisogno e attività', `${kc(A('base') + A('passi') + A('workout'))} <span class="s">kcal al giorno (TDEE medio)</span>`,
+    `metabolismo e vita quotidiana ${kc(A('base'))} + passi ${kc(A('passi'))} + allenamento ${kc(A('workout'))}${realSteps ? ` · passi dell'orologio in ${realSteps} giorni su ${withParts.length}` : ' · passi del profilo (l\'orologio non ha ancora mandato dati)'}`,
+    tdeeStack(days), legend([['#8B5A6B', 'Metabolismo e vita quotidiana'], [MC.kcal, 'Passi'], [MC.prot, 'Allenamento'], [MC.fat, 'Calorie mangiate']])) : '';
+  const hd = state.health || {}, hdays = lastDays(period);
+  const watchCards = ['passi', 'bpm', 'spo2'].map(k => metricCard(METRICS[k], hdays, hd)).join('');
+
   root.innerHTML = `
     ${hasProfile() ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il bilancio.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
     <div class="segmented" role="group" aria-label="Periodo">
       ${[7, 30, 90].map(n => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${n} giorni</button>`).join('')}
     </div>
-    ${todayCard}${kcalCard}${macroCard}${balanceCard}${adhCard}
+    ${todayCard}${kcalCard}${macroCard}${balanceCard}${stackCard}${watchCards ? `<div class="cap" style="margin:var(--space-3) 0 0">Dall'orologio</div>${watchCards}` : ''}${adhCard}
     ${calendar()}`;
 }
 

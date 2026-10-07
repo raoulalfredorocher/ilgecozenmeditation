@@ -58,6 +58,8 @@ function render() {
   if (on.has('cibo')) parts.push(`${all.filter(d => d.cibo).length} giorni di diario`);
   if (on.has('meditazione')) parts.push(`${all.filter(d => d.meditazione).length} giorni di meditazione`);
   if (on.has('journaling')) parts.push(`${all.reduce((a, d) => a + d.journaling.length, 0)} voci di journaling`);
+  const hs = all.map(d => d.salute).filter(h => h?.passi);
+  if (hs.length) parts.push(`${kc(hs.reduce((a, h) => a + h.passi, 0) / hs.length)} passi al giorno in media`);
   $('cm-sum').textContent = parts.join(' · ');
 
   renderDay();
@@ -74,6 +76,12 @@ function renderDay() {
   if (d?.cibo && on.has('cibo')) rows.push(row(A('cibo'), 'cibo', 0, `${kc(d.cibo.kcal)} kcal`, `P ${g1(d.cibo.prot)} · C ${g1(d.cibo.carb)} · G ${g1(d.cibo.fat)} · ${d.cibo.pasti} ${d.cibo.pasti === 1 ? 'pasto' : 'pasti'}`));
   if (d?.meditazione && on.has('meditazione')) rows.push(row(A('meditazione'), 'meditazione', 0, `${Math.round(d.meditazione.mins)} min di meditazione`, d.meditazione.n > 1 ? `${d.meditazione.n} sessioni` : '1 sessione'));
   if (d && on.has('journaling')) d.journaling.forEach((j, i) => rows.push(row(A('journaling'), 'journaling', i, esc(j.titolo), j.ora ? esc(j.ora) : 'Journaling')));
+  if (d?.salute) {
+    const h = d.salute, sonno = h.sonnoMin ? `${Math.floor(h.sonnoMin / 60)}h${String(h.sonnoMin % 60).padStart(2, '0')}` : '';
+    const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · riposo ${h.bpmRiposo}` : ''}` : '';
+    const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
+    rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}${h.kcalGiorno ? ` · ${kc(h.kcalGiorno)} kcal` : ''}</b><span class="s">${sub}</span></span></div>`);
+  }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
     ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}`;
 }

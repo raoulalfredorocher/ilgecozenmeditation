@@ -126,3 +126,32 @@ export function workoutBars(data) {
   const lbl = data.map((d, i) => `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>`).join('');
   return svg(W, H, base + bars + vals + lbl, 'Kcal bruciate con l\'allenamento, giorno per giorno');
 }
+
+// ─── 7. Da cosa è fatto il fabbisogno (TDEE): metabolismo + passi + allenamento, con il diario sopra ───
+/** data: [{ label, parts: { base, passi, workout }|null, kcal|null }] */
+export function tdeeStack(data) {
+  const W = 320, H = 168, L = 34, R = 8, T = 10, B = 24;
+  const n = data.length;
+  const tot = d => (d.parts ? d.parts.base + d.parts.passi + d.parts.workout : 0);
+  const top = Math.max(...data.map(tot), ...data.map(d => d.kcal || 0), 1000) * 1.1;
+  const y = v => T + (H - T - B) * (1 - v / top);
+  const bw = (W - L - R) / n, bar = Math.max(3, Math.min(22, bw * 0.62));
+  const cx = i => L + bw * i + bw / 2;
+  let grid = '';
+  for (let v = 0; v <= top; v += top > 3200 ? 1000 : 500) grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="ch-grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ch-t">${v >= 1000 ? (v / 1000).toLocaleString('it-IT') + 'k' : v}</text>`;
+  const bars = data.map((d, i) => {
+    if (!d.parts) return '';
+    let acc = 0;
+    return [['base', BARK, 1], ['passi', SKY, 1], ['workout', BLUE, 1]].map(([k, col]) => {
+      const v = d.parts[k]; if (!v) return '';
+      const y0 = y(acc + v), h = y(acc) - y0; acc += v;
+      return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y0.toFixed(1)}" width="${bar.toFixed(1)}" height="${Math.max(h, 0.5).toFixed(1)}" fill="${col}"/>`;
+    }).join('');
+  }).join('');
+  const pts = data.map((d, i) => (d.kcal ? `${cx(i).toFixed(1)},${y(d.kcal).toFixed(1)}` : null)).filter(Boolean);
+  const line = pts.length > 1 ? `<polyline points="${pts.join(' ')}" fill="none" stroke="${GOLD}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
+  const dots = data.map((d, i) => (d.kcal ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.kcal).toFixed(1)}" r="${n > 14 ? 2 : 3}" fill="${GOLD}" stroke="var(--card)" stroke-width="1"/>` : '')).join('');
+  const every = n <= 7 ? 1 : Math.ceil(n / 6);
+  const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
+  return svg(W, H, grid + bars + line + dots + xl, 'Fabbisogno giornaliero: metabolismo, passi e allenamento, con le calorie mangiate');
+}

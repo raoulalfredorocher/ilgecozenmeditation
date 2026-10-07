@@ -5,7 +5,7 @@
  */
 import { db, auth } from './db.js';
 import {
-  collection, query, where, getDocs, documentId,
+  collection, query, where, getDocs, getDoc, doc, documentId,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 /** Le quattro aree, con il colore dei puntini e la pagina di dettaglio. */
@@ -22,14 +22,14 @@ const num = v => +v || 0;
 
 /**
  * Attività dal giorno `from` al giorno `to` (compresi, 'AAAA-MM-GG').
- * Restituisce { 'AAAA-MM-GG': { allenamento: [...], cibo: {...}|null, meditazione: {...}|null, journaling: [...] } }
+ * Restituisce { 'AAAA-MM-GG': { allenamento: [...], cibo: {...}|null, meditazione: {...}|null, journaling: [...], salute: {...}|null (dati dell'orologio) } }
  * solo per i giorni in cui c'è qualcosa. Un'area che non si riesce a leggere viene saltata.
  */
 export async function loadRange(from, to) {
   const uid = auth?.currentUser?.uid;
   const days = {};
   if (!db || !uid) return days;
-  const day = k => (days[k] ||= { allenamento: [], cibo: null, meditazione: null, journaling: [] });
+  const day = k => (days[k] ||= { allenamento: [], cibo: null, meditazione: null, journaling: [], salute: null });
   const col = name => collection(db, 'users', uid, name);
   const t0 = parseKey(from).getTime(), t1 = parseKey(to).getTime() + 86400000;
 
@@ -68,6 +68,12 @@ export async function loadRange(from, to) {
         m.sessions.push({ ts: num(r.ts), mins: num(r.totalMins), steps: (r.steps || []).map(x => ({ mins: num(x.mins), name: x.name || '' })) });
       });
     })().catch(e => console.warn('calendario: meditazione', e)),
+    // Dati dell'orologio (Zepp): un solo documento con tutti i giorni
+    (async () => {
+      const snap = await getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni'));
+      const all = snap.exists() ? (snap.data().days || {}) : {};
+      Object.keys(all).filter(k => k >= from && k <= to).forEach(k => { day(k).salute = all[k]; });
+    })().catch(e => console.warn('calendario: salute', e)),
     // Journaling (diario di Salute mentale)
     (async () => {
       const snap = await getDocs(query(col('mental_diary'), where('data', '>=', from), where('data', '<=', to)));

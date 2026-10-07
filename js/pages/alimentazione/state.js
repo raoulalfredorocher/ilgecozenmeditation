@@ -131,12 +131,17 @@ export function workoutOn(key, planType = 'Riposo') {
  * Fabbisogno di un giorno: metabolismo basale × attività quotidiana (con il peso e il grasso di quel giorno)
  * + passi + kcal dell'allenamento (vedi workoutOn).
  */
-export function tdeeFor(key = dateKey(), planType = 'Riposo') {
+export function tdeeParts(key = dateKey(), planType = 'Riposo') {
   const f = profileAt(key);
   const base = calcTdee(f);
-  if (!base) return 0;
+  if (!base) return null;
   const passi = state.health?.[key]?.passi ?? f.passi;          // i passi veri dell'orologio, se ci sono
-  return Math.round(base + stepsKcal(passi, f.peso) + workoutOn(key, planType).kcal);
+  const w = workoutOn(key, planType);
+  return { base, passi: stepsKcal(passi, f.peso), workout: Math.round(w.kcal), realSteps: state.health?.[key]?.passi != null, source: w.source };
+}
+export function tdeeFor(key = dateKey(), planType = 'Riposo') {
+  const p = tdeeParts(key, planType);
+  return p ? Math.round(p.base + p.passi + p.workout) : 0;
 }
 
 /** Supplementi del giorno in qualsiasi formato storico → array di stringhe. */
