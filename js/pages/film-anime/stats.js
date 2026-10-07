@@ -43,8 +43,9 @@ export function totalMins(items) {
     const views = i.done ? Math.max(1, fb) : i.rewatch ? fb : 0;
     t += views * viewMins(i);
     if (i.watching && !i.done && isSer(i) && i.prog) {
-      const eps = i.seasonEps || [];
-      t += (eps.slice(0, Math.max(0, i.prog.s - 1)).reduce((a, b) => a + b, 0) + (i.prog.e || 0)) * epMin(i);
+      const eps = i.seasonEps || [], { s: ps, e: pe } = i.prog;
+      if (eps.length && ps >= 1 && ps <= eps.length && pe >= 0 && pe <= eps[ps - 1])      // un valore salvato impossibile non conta
+        t += (eps.slice(0, ps - 1).reduce((a, b) => a + b, 0) + pe) * epMin(i);
     }
   }
   return t;
