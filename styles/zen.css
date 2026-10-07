@@ -738,3 +738,18 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .lv-zen .lv-row { border-top: .5px solid color-mix(in srgb, var(--sakura) 25%, var(--border)); }
 .lv-zen .lv-bar { height: 3px; background: color-mix(in srgb, var(--sakura) 16%, var(--surface)); }
 .lv-zen .lv-bar i { background: var(--sakura); }
+/* testi dei grafici sempre leggibili, anche sopra barre e linee */
+.gz-svg text { paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
+.gz-pt { transition: transform .12s; transform-box: fill-box; transform-origin: center; }
+.gz-pt.gz-sel { transform: scale(1.7); stroke: var(--text); }
+/* semaforo degli esami */
+.gz-luce { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; flex-shrink: 0; }
+.gz-luce.l-verde { background: var(--success); } .gz-luce.l-giallo { background: var(--warning); }
+.gz-luce.l-rosso { background: var(--danger); } .gz-luce.l-grigio { background: transparent; border: 1.5px solid var(--muted); }
+.gz-semline { display: flex; align-items: center; font-size: var(--fs-sm); line-height: 1.5; margin: 2px 0 var(--space-2); }
+.gz-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.gz-luci { flex: 1 1 260px; }
+.gz-luci > button { display: inline-flex; align-items: center; justify-content: center; gap: 2px; padding: 0 8px; }
+.gz-luci .gz-luce { margin-right: 5px; width: 9px; height: 9px; }
+.gz-luci small { color: var(--muted); font-size: .7rem; margin-left: 3px; }
+#sl-anno { flex: 0 0 auto; width: auto; min-height: 36px; }

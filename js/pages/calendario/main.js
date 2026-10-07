@@ -18,6 +18,7 @@ import * as sessione from '../allenamento/sessione.js';
 import { csvFile, deliver } from '../alimentazione/files.js';
 import { startSync as startFood } from '../alimentazione/state.js';
 import { registerDay, exportDiary } from '../alimentazione/diario.js';
+import { buildDiaryPDF } from '../alimentazione/diario-pdf.js';
 
 const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
@@ -236,12 +237,36 @@ manSheet.$('#mh-del').addEventListener('click', async () => {
 // Menu ⋯: esportazioni
 const moreSheet = createSheet({ title: 'Calendario', body: `<div class="list">
   <button type="button" class="list-row" data-exp="allenamenti"><span class="grow">Esporta gli allenamenti (CSV)</span></button>
+  <button type="button" class="list-row" data-pdf><span class="grow">Diario alimentare in PDF…</span></button>
   <button type="button" class="list-row" data-exp="diario"><span class="grow">Esporta il diario alimentare (CSV)</span></button>
   <button type="button" class="list-row" data-exp="meditazione"><span class="grow">Esporta le meditazioni (CSV)</span></button></div>` });
 document.getElementById('cm-more')?.addEventListener('click', () => moreSheet.open());
 
+// Diario alimentare in PDF (impaginazione da studio di nutrizione)
+const pdfSheet = createSheet({ title: 'Diario alimentare in PDF', body: `<div class="stack">
+  <p class="note" style="margin:0">Un PDF curato con copertina, riepilogo (medie, ripartizione dei macro, calorie giorno per giorno) e un blocco per ogni giorno con pasti e alimenti.</p>
+  <div class="grid-2"><div class="field"><label class="field-lbl" for="pd-da">Dal</label><input class="input" id="pd-da" type="date"/></div>
+  <div class="field"><label class="field-lbl" for="pd-a">Al</label><input class="input" id="pd-a" type="date"/></div></div>
+  <button type="button" class="btn accent block" id="pd-ok">Scarica il PDF</button></div>` });
+function openPdf() {
+  const y = month.getFullYear(), m = month.getMonth();
+  pdfSheet.$('#pd-da').value = dateKey(new Date(y, m, 1)); pdfSheet.$('#pd-a').value = dateKey(new Date(y, m + 1, 0) > new Date() ? new Date() : new Date(y, m + 1, 0));
+  pdfSheet.open();
+}
+pdfSheet.$('#pd-ok').addEventListener('click', async () => {
+  const da = pdfSheet.$('#pd-da').value, a = pdfSheet.$('#pd-a').value;
+  if (!da || !a || da > a) return toast('Controlla le date');
+  try {
+    toast('Preparo il PDF…');
+    const file = await buildDiaryPDF(da, a, auth.currentUser?.displayName || '');
+    if (!file) return toast('Nessun giorno di diario in questo periodo');
+    await deliver(file); pdfSheet.close();
+  } catch (e) { console.error(e); toast(e.message || 'Non sono riuscito a creare il PDF'); }
+});
+
 let delArmed = null;
 document.addEventListener('click', async e => {
+  if (e.target.closest('[data-pdf]')) { moreSheet.close(); return setTimeout(openPdf, 220); }
   if (e.target.closest('[data-manual]')) return openManual();
   const mood = e.target.closest('[data-mood]');
   if (mood) {

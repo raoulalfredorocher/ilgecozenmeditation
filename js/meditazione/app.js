@@ -329,7 +329,12 @@ function downloadTemplates() {
 }
 
 $('btn-sound').addEventListener('click', openSound);
-$('btn-dl-tpl').addEventListener('click', downloadTemplates);
+$('btn-more')?.addEventListener('click', () => showSheet('Spiritualità', body => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'list-row'; b.innerHTML = '<span class="grow">Scarica i template</span>';
+  b.addEventListener('click', () => { closeAppSheet(); setTimeout(downloadTemplates, 220); });
+  const list = document.createElement('div'); list.className = 'list'; list.appendChild(b); body.appendChild(list);
+}));
 $('p-more').addEventListener('click', openSound);
 $('btn-new-tpl').addEventListener('click', () => editTemplate(null));
 

@@ -183,7 +183,7 @@
     .sections { counter-reset: sec; }
     .sec { --t: var(--sakura); counter-increment: sec; }
     .sec:has(.sec-ico.blue) { --t: var(--geco-blue); }
-    .sec::after { content: counter(sec, decimal-leading-zero); position: absolute; right: var(--space-4); top: 4px; font: 200 2.75rem/1 var(--font-serif); letter-spacing: -.05em; color: var(--t); opacity: .22; pointer-events: none; }
+    .sec::after { display: none !important; content: counter(sec, decimal-leading-zero); position: absolute; right: var(--space-4); top: 4px; font: 200 2.75rem/1 var(--font-serif); letter-spacing: -.05em; color: var(--t); opacity: .22; pointer-events: none; }
     .sec-head { padding-left: calc(var(--space-4) + 4px); padding-right: 64px; }
     .sec-title { font: 600 1.25rem/1.25 var(--font-serif); letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sec-head { position: relative; padding-bottom: var(--space-5); }

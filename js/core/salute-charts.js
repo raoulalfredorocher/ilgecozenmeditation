@@ -133,7 +133,8 @@ export function metricCard(m, days, hd, extra = '') {
 
 /** Collega i grafici: toccando (o passando sopra) un giorno, la riga sotto mostra il valore esatto. */
 export function bindChartReadouts(root) {
-  const show = e => { const r = e.target.closest?.('.gz-hit'); if (!r) return; const card = r.closest('.gz-card'); const out = card?.querySelector('.gz-readout'); if (out) out.textContent = r.dataset.t; };
+  const show = e => { const r = e.target.closest?.('.gz-hit'); if (!r) return; const card = r.closest('.gz-card'); const out = card?.querySelector('.gz-readout'); if (out) out.textContent = r.dataset.t;
+    const svg = r.closest('svg'); if (r.dataset.k != null && svg) { svg.querySelectorAll('.gz-pt.gz-sel').forEach(c => c.classList.remove('gz-sel')); svg.querySelector(`.gz-pt[data-k="${r.dataset.k}"]`)?.classList.add('gz-sel'); } };
   root.addEventListener('pointermove', show); root.addEventListener('click', show);
 }
 
@@ -167,20 +168,19 @@ export function seriesChart(series, { band, label = '', fmt = it } = {}) {
     if (bh > bl) g += `<rect x="${P.l}" y="${y(bh).toFixed(1)}" width="${iw}" height="${Math.max(1, y(bl) - y(bh)).toFixed(1)}" fill="var(--success)" opacity=".11"/>`;
   }
   g += sc.ticks.map(v => `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="var(--border)" stroke-width=".7"/><text x="${P.l - 7}" y="${(y(v) + 3.5).toFixed(1)}" font-size="10" fill="var(--muted)" text-anchor="end">${fmt(v)}</text>`).join('');
-  const few = pts.length <= 9, yMax = Math.max(...pts.map(p => p.y)), yMin = Math.min(...pts.map(p => p.y));
+  let k = 0;
   series.forEach(s => {
     const pp = [...s.points].sort((a, b) => a.d.localeCompare(b.d));
-    if (pp.length > 1) g += `<path d="${pp.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(p.y).toFixed(1)}`).join('')}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (pp.length > 1) g += `<path d="${pp.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(p.y).toFixed(1)}`).join('')}" fill="none" stroke="${s.color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" opacity=".85"/>`;
+    pp.forEach(p => { p._k = k++; });
     g += pp.map(p => s.hollow
-      ? `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="4.5" fill="var(--card)" stroke="${s.color}" stroke-width="2"/>`
-      : `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="4" fill="${s.color}" stroke="var(--card)" stroke-width="2"/>`).join('');
-    const last = pp[pp.length - 1];
-    g += pp.map(p => (few || p === last || p.y === yMax || p.y === yMin) ? `<text x="${Math.min(Math.max(x(p.d), P.l + 8), W - P.r - 8).toFixed(1)}" y="${(y(p.y) - 9).toFixed(1)}" font-size="10" font-weight="600" fill="var(--text)" text-anchor="middle">${fmt(p.y)}</text>` : '').join('');
+      ? `<circle class="gz-pt" data-k="${p._k}" cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3.4" fill="var(--card)" stroke="${s.color}" stroke-width="1.8"/>`
+      : `<circle class="gz-pt" data-k="${p._k}" cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3.2" fill="${s.color}" stroke="var(--card)" stroke-width="1.5"/>`).join('');
   });
   const ds = [...new Set(pts.map(p => p.d))].sort(), lab = ds.length > 1 ? [ds[0], ds[ds.length - 1]] : [ds[0]];
   g += lab.map((d, i) => `<text x="${x(d).toFixed(1)}" y="${H - 7}" font-size="10" fill="var(--muted)" text-anchor="${ds.length === 1 ? 'middle' : i ? 'end' : 'start'}">${short(d)}/${d.slice(2, 4)}</text>`).join('');
   // zone di tocco: una per punto, con il testo da mostrare sotto il grafico
-  g += series.flatMap(s => s.points.map(p => `<rect class="gz-hit" x="${(x(p.d) - 16).toFixed(1)}" y="${P.t}" width="32" height="${ih}" fill="transparent" data-t="${(p.t || `${short(p.d)}/${p.d.slice(2, 4)} · ${fmt(p.y)}`).replace(/"/g, '&quot;')}"/>`)).join('');
+  g += series.flatMap(s => s.points.map(p => `<rect class="gz-hit" data-k="${p._k}" x="${(x(p.d) - 14).toFixed(1)}" y="${P.t}" width="28" height="${ih}" fill="transparent" data-t="${(p.t || `${short(p.d)}/${p.d.slice(2, 4)} · ${fmt(p.y)}`).replace(/"/g, '&quot;')}"/>`)).join('');
   return `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${label}">${g}</svg><div class="gz-readout">Tocca un punto per leggere il valore.</div>`;
 }
 

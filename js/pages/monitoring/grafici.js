@@ -8,7 +8,6 @@ import { watchHealth, health } from '../allenamento/salute.js';
 import { METRICS, lastDays, metricCard, baselineLine, bindChartReadouts, fmtAvg, it } from '../../core/salute-charts.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { loadAll, pk } from './dati.js';
-import { statoHtml } from './stato.js';
 
 const root = document.getElementById('gz-root');
 let range = 14;
@@ -66,7 +65,7 @@ function salute(days) {
 function render() {
   const days = lastDays(range);
   const head = `<div class="segmented gz-range" role="group" aria-label="Periodo">${[7, 14, 30, 90].map(n => `<button type="button" data-r="${n}" aria-pressed="${n === range}">${n} giorni</button>`).join('')}</div>`;
-  root.innerHTML = statoHtml(ctx?.daysWatch || health.watch, ctx?.sync) + head + (ctx ? quadro('med', 'Meditazione', meditazione(days)) + quadro('wk', 'Allenamenti e passi', allenamenti(days)) + quadro('cibo', 'Alimentazione', alimentazione(days)) + quadro('sal', 'Salute', salute(days)) : '<div class="card flat gz-empty">Carico i tuoi dati…</div>');
+  root.innerHTML = head + (ctx ? quadro('med', 'Meditazione', meditazione(days)) + quadro('wk', 'Allenamenti e passi', allenamenti(days)) + quadro('cibo', 'Alimentazione', alimentazione(days)) + quadro('sal', 'Salute', salute(days)) : '<div class="card flat gz-empty">Carico i tuoi dati…</div>');
 }
 
 root.addEventListener('click', e => {

@@ -12,7 +12,6 @@ import { sessionVolume } from '../allenamento/state.js';
 import { loadAll, pk } from './dati.js';
 import { carica, cambia, innaffia } from './sfide.js';
 import { alberoSVG } from './albero.js';
-import { statoHtml } from './stato.js';
 
 const root = document.getElementById('rc-root');
 let D = null, L = null;      // dati completi · livello e sfide
@@ -97,8 +96,7 @@ sheet.$('#rs-ok').addEventListener('click', async () => {
 
 function render() {
   if (!D) { root.innerHTML = '<div class="card flat gz-empty">Carico i tuoi dati…</div>'; return; }
-  root.innerHTML = `${statoHtml(D.days, D.sync)}
-    <div class="gz-sec"><div class="cap">Livello e sfide</div>${livello()}</div>
+  root.innerHTML = `<div class="gz-sec"><div class="cap">Livello e sfide</div>${livello()}</div>
     <div class="gz-sec"><div class="cap">I tuoi record</div>${records()}</div>
     <div class="gz-sec"><div class="cap">Record storici</div>${storiciCard()}</div>`;
 }

@@ -113,7 +113,33 @@ const ALIAS = { 'Glicemia': 'glucosio zucchero', 'Proteina C reattiva': 'pcr crp
   'Piastrine': 'plt', 'Creatinina': 'reni rene', 'eGFR': 'reni filtrato glomerulare', 'Acido urico': 'uricemia', 'Ferro': 'sideremia', 'TSH': 'tiroide', 'FT3': 'tiroide', 'FT4': 'tiroide',
   'Vitamina D': '25 oh', 'Vitamina B12': 'cobalamina', 'HbA1c': 'emoglobina glicata', 'HOMA': 'insulino resistenza', 'Insulina': 'insulino resistenza', 'Omocisteina': '', 'Cortisolo': 'stress surrene' };
 const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-let q = '';
+let q = '', luceF = 'tutti', annoF = '';
+
+// ─── Semaforo ───────────────────────────────────────────────────────────
+// Per ogni misura: dentro il riferimento del laboratorio (ok), appena fuori entro il 10% (near) o fuori di oltre il 10% (far).
+// Verde: dentro il riferimento in almeno 2 esami consecutivi. Giallo: appena fuori, oppure rientrato dopo un valore fuori o appena fuori (da monitorare).
+// Rosso: fuori di oltre il 10%. Grigio: un solo esame, nel riferimento (serve il secondo per il verde).
+const scostamento = x => {
+  if (x.min == null && x.max == null) return null;
+  if (x.lt) return x.max != null && x.v <= x.max ? 0 : null;
+  if (x.min != null && x.v < x.min) return (x.min - x.v) / (Math.abs(x.min) || 1) * 100;
+  if (x.max != null && x.v > x.max) return (x.v - x.max) / (Math.abs(x.max) || 1) * 100;
+  return 0;
+};
+const classe = x => { const d = scostamento(x); return d == null ? null : d === 0 ? 'ok' : d < 10 ? 'near' : 'far'; };
+/** `asc` = le misure di un esame dalla più vecchia. */
+function semaforo(asc) {
+  const cs = asc.map(classe).filter(Boolean);
+  if (!cs.length) return null;
+  const c = cs[cs.length - 1], p = cs[cs.length - 2];
+  if (c === 'far') return { luce: 'rosso', why: 'Fuori dal riferimento di oltre il 10%.' };
+  if (c === 'near') return { luce: 'giallo', why: 'Appena fuori dal riferimento (entro il 10%): da monitorare.' };
+  if (cs.length === 1) return { luce: 'grigio', why: 'Nel riferimento. Serve un secondo esame per il verde.' };
+  if (p === 'ok') return { luce: 'verde', why: 'Nel riferimento in almeno 2 esami consecutivi.' };
+  return { luce: 'giallo', why: p === 'far' ? 'Rientrato dopo un valore fuori: da monitorare.' : 'Rientrato dopo un valore appena fuori: da monitorare.' };
+}
+const LUCI = { tutti: 'Tutti', verde: 'Verdi', giallo: 'Gialli', rosso: 'Rossi' };
+const dot = luce => `<span class="gz-luce l-${luce}" aria-hidden="true"></span>`;
 
 /** Il riferimento del laboratorio, a parole. */
 const refText = x => (x.min != null && x.max != null ? `${dec(x.min)} – ${dec(x.max)}` : x.max != null ? `fino a ${dec(x.max)}` : x.min != null ? `oltre ${dec(x.min)}` : '');
@@ -126,21 +152,33 @@ function labStatus(x) {
   return ['Nel riferimento', 'in'];
 }
 
-function labsList() {
+/** Gli esami con le loro misure (dalla più recente) e il semaforo, tenendo conto del filtro per anno. */
+function labsData() {
   const by = {};
   list('esami').forEach(x => { (by[x.nome] ||= []).push(x); });
+  return Object.entries(by).map(([n, desc]) => {
+    const asc = [...desc].reverse();
+    const L = annoF ? desc.filter(x => x.d.startsWith(annoF)) : desc;
+    if (!L.length) return null;
+    return { n, L, sem: semaforo(annoF ? asc.filter(x => x.d <= `${annoF}-12-31`) : asc) };
+  }).filter(Boolean);
+}
+
+function labsList() {
+  const all = labsData();
   const f = norm(q).trim();
-  const names = Object.keys(by).filter(n => !f || norm(n + ' ' + (ALIAS[n] || '')).includes(f)).sort((a, b) => a.localeCompare(b, 'it'));
-  if (!names.length) return `<div class="card flat gz-empty">${f ? `Nessun esame trovato per "${esc(q)}".` : 'Nessun esame ancora. Mandami il PDF del referto in chat e inserisco io i valori, oppure aggiungili a mano.'}</div>`;
-  return names.map(n => {
-    const L = by[n], last = L[0], prev = L[1];
+  const items = all.filter(e => (!f || norm(e.n + ' ' + (ALIAS[e.n] || '')).includes(f)) && (luceF === 'tutti' || e.sem?.luce === luceF)).sort((a, b) => a.n.localeCompare(b.n, 'it'));
+  if (!items.length) return `<div class="card flat gz-empty">${f ? `Nessun esame trovato per "${esc(q)}".` : (luceF !== 'tutti' || annoF) ? 'Nessun esame con questi filtri.' : 'Nessun esame ancora. Mandami il PDF del referto in chat e inserisco io i valori, oppure aggiungili a mano.'}</div>`;
+  return items.map(({ n, L, sem }) => {
+    const last = L[0], prev = L[1];
     const out = (last.min != null && last.v < last.min) || (last.max != null && last.v > last.max);
     const band = last.min != null && last.max != null ? { min: last.min, max: last.max } : null;
     const delta = prev ? last.v - prev.v : null;
     const info = INFO[n], st = labStatus(last);
-    return `<div class="card gz-card" id="ex-${esc(n)}"><div class="gz-top"><div><div class="section-title" style="margin:0">${esc(n)}</div>
+    return `<div class="card gz-card" id="ex-${esc(n)}"><div class="gz-top"><div><div class="section-title" style="margin:0">${sem ? dot(sem.luce) : ''}${esc(n)}</div>
       <div class="gz-big ${out ? 'gz-out' : ''}">${val(last)} <small>${esc(last.u || '')}</small></div></div>
       <div class="gz-avg">${fdate(last.d)}${last.lab ? `<br><span>${esc(last.lab)}</span>` : ''}</div></div>
+      ${sem ? `<div class="gz-semline">${dot(sem.luce)}<span>${esc(sem.why)}</span></div>` : ''}
       <div class="gz-refline"><b>Riferimento del laboratorio:</b> ${refText(last) ? `${refText(last)} ${esc(last.u || '')}` : 'non indicato nel referto'}${st ? ` · ${tag(...st)}` : ''}${delta != null ? `<br><span class="s">${delta > 0 ? '+' : delta < 0 ? '−' : ''}${dec(Math.abs(delta))} rispetto al precedente (${fdate(prev.d)})</span>` : ''}</div>
       ${info ? `<details class="gz-info"><summary>Cos'è e valori ottimali</summary><p>${esc(info.cos)}</p><p><b>Valori:</b> ${esc(info.ott)}</p>${info.nota ? `<p class="s">${esc(info.nota)}</p>` : ''}<p class="s">Indicazioni generali, non una diagnosi: conta il riferimento del tuo laboratorio e il parere del medico.</p></details>` : ''}
       ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v, t: `${fdate(x.d)} · ${val(x)} ${x.u || ''}${x.lab ? ' · ' + x.lab : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}` })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
@@ -180,8 +218,18 @@ function checksCard() {
 }
 
 function labsCard() {
+  const all = labsData(), cnt = l => all.filter(e => e.sem?.luce === l).length;
+  const anni = [...new Set(list('esami').map(x => x.d.slice(0, 4)))].sort().reverse();
   return `<div class="gz-sec"><div class="cap">Esami del sangue</div>
     <input class="input" id="sl-q" type="search" placeholder="Cerca un esame (es. glicemia, colesterolo, tiroide)" value="${esc(q)}" autocomplete="off" aria-label="Cerca un esame"/>
+    <div class="gz-filters"><div class="segmented gz-luci" role="group" aria-label="Semaforo">${Object.entries(LUCI).map(([k, l]) => `<button type="button" data-luce="${k}" aria-pressed="${luceF === k}">${k === 'tutti' ? l : `${dot(k)}${l} <small>${cnt(k)}</small>`}</button>`).join('')}</div>
+      <select class="input" id="sl-anno" aria-label="Anno"><option value="">Tutti gli anni</option>${anni.map(y => `<option value="${y}"${annoF === y ? ' selected' : ''}>${y}</option>`).join('')}</select></div>
+    <details class="gz-info" style="margin:0"><summary>Come funziona il semaforo</summary>
+      <p><span class="gz-luce l-verde"></span>Verde: nel riferimento in almeno 2 esami consecutivi.</p>
+      <p><span class="gz-luce l-giallo"></span>Giallo: appena fuori dal riferimento (entro il 10%), oppure rientrato dopo un valore fuori: da monitorare. Dopo un giallo, anche un valore corretto resta giallo; torna verde alla misura giusta successiva.</p>
+      <p><span class="gz-luce l-rosso"></span>Rosso: fuori dal riferimento di oltre il 10%.</p>
+      <p><span class="gz-luce l-grigio"></span>Grigio: un solo esame nel riferimento: serve il secondo.</p>
+      <p class="s">Il riferimento è quello scritto sul referto del laboratorio. Indicazioni generali, non una diagnosi.</p></details>
     <div class="gz-sec" id="sl-labs">${labsList()}</div>
     <div class="gz-add"><button type="button" class="pri" data-add="esami">＋ Valore a mano</button></div>
     <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
@@ -237,6 +285,7 @@ sheet.$('#sl-form').addEventListener('click', async e => {
 });
 
 root.addEventListener('keydown', e => { const gt = e.target.closest?.('[data-gotab]'); if (gt && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); gt.click(); } });
+root.addEventListener('change', e => { if (e.target.id === 'sl-anno') { annoF = e.target.value; render(); } });
 root.addEventListener('input', e => {
   if (e.target.id !== 'sl-q') return;
   q = e.target.value;
@@ -263,6 +312,8 @@ moreSheet.el.addEventListener('click', e => { const b = e.target.closest('[data-
 
 let armed = null;
 root.addEventListener('click', async e => {
+  const lc = e.target.closest('[data-luce]');
+  if (lc) { luceF = lc.dataset.luce; return render(); }
   const gt = e.target.closest('[data-gotab]');
   if (gt) { tab = gt.dataset.gotab; q = gt.dataset.go || ''; history.replaceState(null, '', '#' + tab); render(); return scrollTo({ top: 0 }); }
   const tb = e.target.closest('[data-tab]');

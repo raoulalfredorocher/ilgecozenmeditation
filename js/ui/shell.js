@@ -198,6 +198,7 @@ async function refreshApp() {
 
 function buildProfileSheet() {
   sheet('zen-profile', 'Profilo', `
+    <div style="text-align:right;min-height:1.2em;margin:calc(var(--space-2) * -1) 0 var(--space-2)"><span id="zen-watch-note" class="zen-muted" style="font-size:var(--fs-xs)"></span></div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);margin-bottom:var(--space-6)">
       <div id="zen-profile-avatar"></div>
       <div id="zen-profile-name" class="zen-h2"></div>
@@ -231,6 +232,20 @@ function buildProfileSheet() {
   document.getElementById('zen-backup-open').addEventListener('click', async () => {
     closeSheet('zen-profile');
     (await import('./backup-sheet.js')).openBackupSheet();
+  });
+  // Quando ha sincronizzato l'orologio l'ultima volta (e se è fermo da troppo)
+  document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', async () => {
+    const el = document.getElementById('zen-watch-note');
+    try {
+      const { doc, getDoc } = await import('../core/firestore.js'), { auth } = await import('../core/firebase.js');
+      const snap = await getDoc(doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_giorni'));
+      const ts = snap.exists() ? snap.data().sync?.ts : null;
+      if (!ts) { el.textContent = 'Orologio: nessuna sincronizzazione'; return; }
+      const m = Math.round((Date.now() - ts) / 60000), h = Math.round(m / 60), d = Math.round(h / 24);
+      const ago = m < 2 ? 'adesso' : m < 60 ? `${m} minuti fa` : h < 24 ? `${h} ${h === 1 ? 'ora' : 'ore'} fa` : `${d} ${d === 1 ? 'giorno' : 'giorni'} fa`;
+      el.textContent = `Orologio sincronizzato ${ago}`;
+      el.style.color = Date.now() - ts > 13 * 3600e3 ? 'var(--warning)' : '';
+    } catch { el.textContent = ''; }
   });
   // Quando fu l'ultimo backup (senza caricare il modulo del backup)
   document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', () => {
