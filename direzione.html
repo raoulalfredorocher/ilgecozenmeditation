@@ -198,7 +198,7 @@
     .sec-actions { background: color-mix(in srgb, var(--t) 7%, var(--surface)); }
 
     /* Bussola: i punti cardinali stanno fuori dal cerchio, i valori su pulsanti che coprono le linee */
-    .compass { max-width: 360px; }
+    .compass { max-width: 360px; box-sizing: border-box; padding-inline: 24px; }
     .compass-rings { inset: 12%; width: 76%; height: 76%; }
     .compass-pt { position: static; padding: 0; }
     .compass-pt .dir { position: absolute; margin: 0; font: 300 .75rem var(--font-serif); letter-spacing: .28em; white-space: nowrap; }
@@ -213,7 +213,7 @@
     }
     /* I valori si leggono per intero: niente puntini di sospensione, se serve vanno a capo */
     .compass-pt .val { white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
-    .compass-pt.w .val, .compass-pt.e .val { max-width: 104px; font-size: .8rem; padding: 7px 10px; }
+    .compass-pt.w .val, .compass-pt.e .val { max-width: 100%; font-size: .76rem; padding: 7px 9px; }
     .compass-pt.n .val, .compass-pt.s .val { max-width: 170px; }
     .compass-rings .tick { stroke: color-mix(in srgb, var(--sakura) 55%, var(--border)); stroke-width: .35; }
     .compass-rings .tick.major { stroke-width: .7; stroke: var(--sakura); }
