@@ -123,4 +123,4 @@ root.addEventListener('click', async e => {
 });
 
 render();
-waitForUser().then(async () => { D = await loadAll(); render(); L = await carica(D); render(); });
+waitForUser().then(async () => { D = await loadAll(); render(); L = await carica(D); try { localStorage.setItem('zen_sfide_prog', JSON.stringify({ level: L.level, done: L.ch.filter(c => c.done).length })); } catch { /* ok */ } render(); });

@@ -204,6 +204,10 @@ function buildProfileSheet() {
       <div id="zen-profile-name" class="zen-h2"></div>
       <div id="zen-profile-email" class="zen-muted" style="font-size:var(--fs-sm)"></div>
     </div>
+    <div class="zen-section" id="zen-notif-sec" style="margin-bottom:var(--space-6)">
+      <div class="zen-eyebrow">Notifiche</div>
+      <div class="list" id="zen-notif-list"></div>
+    </div>
     <div class="zen-section" style="margin-bottom:var(--space-6)">
       <div class="zen-eyebrow">Aspetto</div>
       <div class="segmented" role="group" aria-label="Tema">
@@ -393,3 +397,21 @@ buildSectionsSheet();
 buildProfileSheet();
 applyTheme();
 waitForUser().then(fillProfile);
+waitForUser().then(() => setTimeout(refreshNotifiche, 1500));
+
+// ─── Notifiche nel profilo ───────────────────────────────────────────────
+async function refreshNotifiche(force = false) {
+  const tab = document.getElementById('zen-tab-profile'), list = document.getElementById('zen-notif-list');
+  if (!tab || !list) return;
+  try {
+    const { caricaNotifiche, chiudi } = await import('./notifiche.js');
+    const items = await caricaNotifiche(force);
+    tab.classList.toggle('has-notif', items.length > 0);
+    list.innerHTML = items.length ? items.map(n => `<div class="list-row notif-row">
+        <a class="grow" href="${escapeHtml(n.href)}" style="color:inherit"><span style="display:block">${escapeHtml(n.testo)}</span><span class="zen-muted" style="display:block;font-size:var(--fs-xs)">${escapeHtml(n.sub)}</span></a>
+        <button type="button" class="notif-x" data-nx="${escapeHtml(n.id)}" aria-label="Nascondi">×</button></div>`).join('')
+      : '<div class="zen-muted" style="font-size:var(--fs-sm);padding:var(--space-2) 0">Nessuna notifica. Tutto in ordine.</div>';
+    list.querySelectorAll('[data-nx]').forEach(b => b.addEventListener('click', () => { chiudi(b.dataset.nx); refreshNotifiche(); }));
+  } catch (e) { console.warn('notifiche', e); }
+}
+document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', () => refreshNotifiche());

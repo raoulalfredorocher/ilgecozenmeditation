@@ -320,6 +320,16 @@ function editItem(i, j) {
         <div class="field"><label class="field-lbl" for="ei-f">Grassi</label><input class="input" id="ei-f" type="number" inputmode="decimal" value="${item.fat}"/></div>
       </div>
       <button type="button" class="btn accent block" id="ei-ok" style="margin-top:var(--space-4)">Salva</button><div id="ei-rm" style="margin-top:var(--space-3)"></div>`;
+    // i grammi guidano kcal e macro: si riscalano in proporzione ai valori di partenza
+    const base = item.g > 0 ? { g: item.g, k: item.kcal, p: item.prot, c: item.carb, f: item.fat } : null;
+    const r1 = x => Math.round(x * 10) / 10;
+    if (base) host.querySelector('#ei-gm').addEventListener('input', () => {
+      const g = parseFloat(host.querySelector('#ei-gm').value) || 0, k = g / base.g;
+      host.querySelector('#ei-k').value = Math.round(base.k * k);
+      host.querySelector('#ei-p').value = r1(base.p * k);
+      host.querySelector('#ei-c').value = r1(base.c * k);
+      host.querySelector('#ei-f').value = r1(base.f * k);
+    });
     host.querySelector('#ei-ok').addEventListener('click', () => {
       const v = id => parseFloat(host.querySelector('#' + id).value) || 0;
       const name = host.querySelector('#ei-name').value.trim() || item.name;

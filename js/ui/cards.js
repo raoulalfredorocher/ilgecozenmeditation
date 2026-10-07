@@ -15,7 +15,6 @@
 import { escapeHtml } from '../core/dom.js';
 import { icon } from './icons.js';
 
-const TINT = { sky: 'var(--geco-blue)', sakura: 'var(--sakura)', leaf: 'var(--success)', sand: 'var(--warning)' };
 const pad2 = n => String(n).padStart(2, '0');
 
 /** Sequenza dei blocchi: w = tutta larghezza, L = alto a sinistra, R = alto a destra. */
@@ -41,7 +40,7 @@ function place(entries) {
 export function renderCards(el, entries) {
   el.classList.add('hc-grid');
   const nums = new Map(entries.map((e, n) => [e, n + 1]));        // il numero segue l'ordine dell'elenco, non la posizione
-  el.innerHTML = place(entries).map(({ e, kind, css }) => `<a class="hc ${kind}${e.soon ? ' soon' : ''}" href="${e.soon ? '#' : escapeHtml(e.href)}" style="--t:${TINT[e.tone] || TINT.sky};${css}"${e.soon ? ' aria-disabled="true" tabindex="-1"' : ''}>
+  el.innerHTML = place(entries).map(({ e, kind, css }) => `<a class="hc ${kind}${e.soon ? ' soon' : ''}" href="${e.soon ? '#' : escapeHtml(e.href)}" style="${css}"${e.soon ? ' aria-disabled="true" tabindex="-1"' : ''}>
     <span class="hc-num" aria-hidden="true">${pad2(nums.get(e))}</span>
     ${kind === 't' && e.icon ? `<span class="hc-ic" aria-hidden="true">${icon(e.icon)}</span>` : ''}
     <span class="hc-text"><span class="hc-title">${escapeHtml(e.title)}</span><span class="hc-meta">${escapeHtml(e.soon ? 'In arrivo' : e.sub || '')}</span>${kind === 't' && e.desc ? `<span class="hc-desc">${escapeHtml(e.desc)}</span>` : ''}</span>

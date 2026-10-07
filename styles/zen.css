@@ -753,3 +753,16 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-luci .gz-luce { margin-right: 5px; width: 9px; height: 9px; }
 .gz-luci small { color: var(--muted); font-size: .7rem; margin-left: 3px; }
 #sl-anno { flex: 0 0 auto; width: auto; min-height: 36px; }
+
+/* Home e sezioni: un colore diverso per ogni tessera, dall'alto in basso (tinte tradizionali giapponesi, smorzate) */
+.hc-grid { --hc1:#D98BA0; --hc2:#7FA582; --hc3:#5F7FA8; --hc4:#C9A15A; --hc5:#D0705A; --hc6:#5FA3A0; --hc7:#9885BE; --hc8:#A98B6C; --hc9:#8FA050; --hc10:#7A8794; }
+:root[data-theme="dark"] .hc-grid { --hc1:#EAA5B7; --hc2:#9CC29F; --hc3:#86A3C9; --hc4:#E0BC7C; --hc5:#E48F7A; --hc6:#80C0BD; --hc7:#B5A4D8; --hc8:#C6A98B; --hc9:#AFBF70; --hc10:#9AA6B2; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-grid { --hc1:#EAA5B7; --hc2:#9CC29F; --hc3:#86A3C9; --hc4:#E0BC7C; --hc5:#E48F7A; --hc6:#80C0BD; --hc7:#B5A4D8; --hc8:#C6A98B; --hc9:#AFBF70; --hc10:#9AA6B2; } }
+.hc { --t: var(--hc1); }
+.hc:nth-child(10n+2) { --t: var(--hc2); } .hc:nth-child(10n+3) { --t: var(--hc3); } .hc:nth-child(10n+4) { --t: var(--hc4); } .hc:nth-child(10n+5) { --t: var(--hc5); }
+.hc:nth-child(10n+6) { --t: var(--hc6); } .hc:nth-child(10n+7) { --t: var(--hc7); } .hc:nth-child(10n+8) { --t: var(--hc8); } .hc:nth-child(10n+9) { --t: var(--hc9); } .hc:nth-child(10n) { --t: var(--hc10); }
+
+/* Notifiche: pallino rosso sul profilo e righe nel foglio */
+.zen-tab.has-notif { position: relative; }
+.zen-tab.has-notif::after { content: ''; position: absolute; top: 8px; right: calc(50% - 20px); width: 10px; height: 10px; border-radius: 50%; background: #D9453B; box-shadow: 0 0 0 2px var(--bg, #fff); }
+.notif-x { flex: none; width: 32px; height: 32px; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; }
