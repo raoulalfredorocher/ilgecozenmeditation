@@ -18,7 +18,8 @@ const root = document.getElementById('sl-root');
 let data = { pressione: {}, glicemia: {}, esami: {} };
 let ref = null;
 
-const dec = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
+const dec = n => (Math.round(n * 100) / 100).toLocaleString('it-IT');
+const val = x => `${x.lt ? '<' : ''}${dec(x.v)}`;
 const fdate = d => { const [y, m, dd] = d.split('-'); return `${+dd}/${+m}/${y.slice(2)}`; };
 const list = k => Object.entries(data[k] || {}).map(([id, v]) => ({ id, ...v })).sort((a, b) => (b.d + (b.ora || '')).localeCompare(a.d + (a.ora || '')));
 const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -70,6 +71,31 @@ function glucoseCard() {
     <div class="gz-add" style="margin-top:var(--space-3)"><button type="button" class="pri" data-add="glicemia">＋ Glicemia</button></div></div></div>`;
 }
 
+/** I quattro valori chiave per cuore e metabolismo: HDL, glicemia, proteina C reattiva, lipoproteina(a). */
+function heartCard() {
+  const E = list('esami');
+  const lastOf = names => E.find(x => names.includes(x.nome));
+  const hdl = lastOf(['Colesterolo HDL']), glu = lastOf(['Glicemia']);
+  const crpHs = lastOf(['Proteina C reattiva ad alta sensibilità', 'PCR ad alta sensibilità']), crp = crpHs || lastOf(['Proteina C reattiva']);
+  const lpa = lastOf(['Lipoproteina (a)']);
+  const tile = (title, x, status, why) => `<div class="card gz-card gz-heart"><div class="section-title" style="margin:0">${title}</div>
+    <div class="gz-big ${status && status[1] === 'out' ? 'gz-out' : ''}">${x ? `${val(x)} <small>${esc(x.u || '')}</small>` : '—'}</div>
+    <div class="s">${x ? fdate(x.d) : 'mai misurata'}${status ? ` · ${tag(...status)}` : ''}</div><p class="gz-rif">${why}</p></div>`;
+  const hdlSt = hdl && (hdl.v < 40 ? ['Basso', 'out'] : hdl.v < 60 ? ['Accettabile', 'in'] : ['Ottimo', 'in']);
+  const gluSt = glu && (glu.v < 70 ? ['Bassa', 'out'] : glu.v < 100 ? ['Nella norma', 'in'] : ['Alterata', 'out']);
+  let crpSt = null;
+  if (crp) crpSt = crpHs ? (crp.v < 1 ? ['Rischio basso', 'in'] : crp.v <= 3 ? ['Rischio medio', 'out'] : ['Rischio alto', 'out']) : ['Non valutabile: non è ad alta sensibilità', 'out'];
+  let lpaSt = null;
+  if (lpa) { const hi = /nmol/i.test(lpa.u || '') ? 125 : 50; lpaSt = lpa.v > hi ? ['Alta', 'out'] : ['Nella norma', 'in']; }
+  return `<div class="gz-sec"><div class="cap">Cuore e metabolismo: i 4 valori chiave</div>
+    <div class="gz-heart-grid">
+    ${tile('Colesterolo HDL', hdl, hdlSt, 'È il colesterolo "buono". Per un uomo conta stare sopra 40 mg/dL; più alto è meglio e oltre 60 è protettivo. Si alza con attività aerobica, calo del grasso addominale e meno zuccheri raffinati.')}
+    ${tile('Glicemia a digiuno', glu, gluSt, 'Normale tra 70 e 99 mg/dL; da 100 a 125 è alterata. Per il quadro metabolico completo servono anche emoglobina glicata (HbA1c) e insulina.')}
+    ${tile('Proteina C reattiva', crp, crpSt, 'Per il cuore serve quella ad alta sensibilità (hs-CRP): sotto 1 mg/L rischio basso, 1–3 medio, sopra 3 alto. Se il referto dice solo "&lt;4" non permette di distinguere. Va misurata a distanza da infezioni o infiammazioni.')}
+    ${tile('Lipoproteina(a)', lpa, lpaSt, 'Dipende dai geni e non cambia con dieta e sport. Basta misurarla una volta nella vita (lo raccomandano le linee guida europee). Sopra 50 mg/dL (circa 125 nmol/L) il rischio cardiovascolare è più alto.')}
+    </div></div>`;
+}
+
 function labsCard() {
   const by = {};
   list('esami').forEach(x => { (by[x.nome] ||= []).push(x); });
@@ -80,10 +106,10 @@ function labsCard() {
     const band = last.min != null && last.max != null ? { min: last.min, max: last.max } : null;
     const delta = prev ? last.v - prev.v : null;
     return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${esc(n)}</div>
-      <div class="gz-big ${out ? 'gz-out' : ''}">${dec(last.v)} <small>${esc(last.u || '')}</small></div></div>
+      <div class="gz-big ${out ? 'gz-out' : ''}">${val(last)} <small>${esc(last.u || '')}</small></div></div>
       <div class="gz-avg">${last.min != null || last.max != null ? `rif. ${last.min ?? '…'}–${last.max ?? '…'}` : ''}<br><span>${fdate(last.d)}${delta != null ? ` · ${delta > 0 ? '+' : delta < 0 ? '−' : ''}${dec(Math.abs(delta))} dal precedente` : ''}</span></div></div>
       ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
-      ${L.slice(0, 3).map(x => row('esami', x.id, `${dec(x.v)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}`)).join('')}</div>`;
+      ${L.slice(0, 3).map(x => row('esami', x.id, `${val(x)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}`)).join('')}</div>`;
   }).join('');
   return `<div class="gz-sec"><div class="cap">Esami del sangue</div>
     ${cards || '<div class="card flat gz-empty">Nessun esame ancora. Mandami il PDF del referto in chat e inserisco io i valori, oppure aggiungili a mano.</div>'}
@@ -91,7 +117,7 @@ function labsCard() {
     <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
 }
 
-function render() { root.innerHTML = pressureCard() + glucoseCard() + labsCard(); }
+function render() { root.innerHTML = pressureCard() + glucoseCard() + heartCard() + labsCard(); }
 
 // ─── Inserimento ────────────────────────────────────────────────────────
 const nowTime = () => new Date().toTimeString().slice(0, 5);

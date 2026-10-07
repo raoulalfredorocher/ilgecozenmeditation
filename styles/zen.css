@@ -662,3 +662,6 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-legend { display: flex; gap: var(--space-4); font-size: var(--fs-xs); color: var(--muted); margin-top: 4px; }
 .gz-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
 .gz-in { color: var(--success); } .gz-out { color: var(--danger); }
+.gz-heart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.gz-heart .gz-big { font-size: 1.5rem; }
+@media (max-width: 420px) { .gz-heart-grid { grid-template-columns: 1fr; } }
