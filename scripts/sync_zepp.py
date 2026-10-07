@@ -151,6 +151,24 @@ def parse_spo2(items):
     return {d: round(sum(v) / len(v), 1) for d, v in acc.items()}
 
 
+def parse_stress(items):
+    """all_day_stress: un elemento per giorno con stress medio/min/max (0-100); il giorno si ricava dall'orario dei campioni."""
+    out = {}
+    for it in items:
+        try:
+            pts = json.loads(it.get("data") or "[]")
+            t = pts[0]["time"] if pts else 0
+            if not t or t < 1e11:
+                t = it["timestamp"]
+            d = datetime.fromtimestamp(t / 1000, TZ).date().isoformat()
+            avg, mx = int(num(it.get("avgStress"))), int(num(it.get("maxStress")))
+            if avg > 0:
+                out[d] = {"stressMedio": avg, "stressMax": mx}
+        except Exception:  # noqa: BLE001
+            continue
+    return out
+
+
 def main():
     for k in ("ZEPP_EMAIL", "ZEPP_PASSWORD", "ZEPP_SYNC_PASSWORD", "FIREBASE_UID"):
         if not os.environ.get(k):
@@ -207,6 +225,11 @@ def main():
         for d, v in spo2.items():
             days.setdefault(d, {})["spo2"] = v
         log(f"Respirazione: {len(resp)} giorni · ossigeno: {len(spo2)} giorni")
+        r = zc.get(f"/users/{zc.credential().user_id}/events", {"from": t0, "to": t1, "eventType": "all_day_stress", "limit": 50})
+        stress = parse_stress((r.data or {}).get("items") or []) if r.status == "ok" else {}
+        for d, o in stress.items():
+            days.setdefault(d, {}).update(o)
+        log(f"Stress: {len(stress)} giorni")
     except Exception as e:  # noqa: BLE001 - dati extra: non devono fermare il resto
         log(f"ossigeno/respirazione non disponibili ({type(e).__name__})")
 
@@ -269,6 +292,16 @@ def main():
             r = http("POST", f"{DOCS}/users/{uid}/allenamenti_registro", {"fields": {k: enc(v) for k, v in doc.items()}}, token)
             existing.append({"id": r["name"].rsplit("/", 1)[1], **doc})
             nuovi += 1
+    # VO2 max: stima dell'orologio, presente nel riepilogo degli allenamenti che la misurano (-1 = non misurata)
+    vo2 = {}
+    for w in sorted(items, key=lambda x: str(x.get("start_local"))):
+        v = num((w.get("summary") or {}).get("VO2_max"))
+        a = to_dt(w.get("start_local"))
+        if a and v > 0:
+            vo2[a.astimezone(TZ).date().isoformat()] = int(round(v))
+    for d, v in vo2.items():
+        patch(token, f"users/{uid}/direction/salute_giorni", {"days": {d: {"vo2max": v}}}, [f"days.`{d}`.vo2max"])
+    log(f"VO2 max: {len(vo2)} giorni")
     log(f"Allenamenti: {len(items)} letti, {agganciati} agganciati, {nuovi} nuovi, {doppi} già presenti")
     return 0
 

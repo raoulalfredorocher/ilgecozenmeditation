@@ -82,7 +82,7 @@ function renderDay() {
   const bil = (() => {
     if (!profile || !d) return null;
     const kw = d.allenamento.reduce((a, t) => a + (+t.kcal || 0), 0);
-    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, ingerite: d.cibo?.kcal });
+    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: d.allenamento.reduce((a, t) => a + (+t.durata || 0), 0), ingerite: d.cibo?.kcal });
   })();
   if (bil && d.cibo) {
     const r = (l, v, strong) => `<div class="cm-bil${strong ? ' strong' : ''}"><span>${l}</span><b>${v}</b></div>`;
@@ -101,7 +101,7 @@ function renderDay() {
   if (d?.salute) {
     const h = d.salute, sonno = h.sonnoMin ? `${Math.floor(h.sonnoMin / 60)}h${String(h.sonnoMin % 60).padStart(2, '0')}` : '';
     const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · a riposo ${h.bpmRiposo} bpm` : ''}` : '';
-    const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
+    const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min` : '', h.stressMedio ? `stress ${h.stressMedio}/100 (max ${h.stressMax})` : '', h.vo2max ? `VO₂ max ${h.vo2max}` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
     rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}</b><span class="s">${sub}</span></span></div>`);
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>

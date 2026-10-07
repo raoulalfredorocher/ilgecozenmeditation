@@ -15,6 +15,8 @@ export const METRICS = {
   bpm: { title: 'Frequenza cardiaca', unit: 'bpm', color: 'var(--danger)', type: 'band', get: d => d.bpmRiposo || d.bpmMedio, lo: d => d.bpmMin, hi: d => d.bpmMax, fmt: it, sub: 'a riposo · fascia min–max' },
   spo2: { title: 'Ossigenazione', unit: '%', color: 'var(--success)', type: 'line', get: d => d.spo2, fmt: n => n.toFixed(0), min: 90, max: 100 },
   respiro: { title: 'Respirazione', unit: 'resp/min', color: 'var(--geco-blue, var(--primary))', type: 'line', get: d => d.respiro, fmt: n => n.toFixed(1) },
+  stress: { title: 'Stress', unit: '/100', color: 'var(--warning)', type: 'line', get: d => d.stressMedio, fmt: it, min: 0, max: 100 },
+  vo2max: { title: 'VO₂ max', unit: 'ml/kg/min', color: 'var(--success)', type: 'line', get: d => d.vo2max, fmt: it },
   sonno: { title: 'Sonno', unit: '', color: 'var(--bark, var(--primary))', type: 'bar', get: d => d.sonnoMin, fmt: hm },
 };
 

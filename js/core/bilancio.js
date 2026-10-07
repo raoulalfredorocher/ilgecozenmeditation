@@ -31,10 +31,13 @@ export function profileOn(profile, key) {
 export const stepsKcal = (passi, peso) => Math.round((parseFloat(passi) || 0) * 0.0005 * (parseFloat(peso) || 0));
 
 /** Bilancio di un giorno. Senza profilo completo restituisce null. */
-export function dayBalance(profile, key, { passi, kcalAllenamento, ingerite }) {
+/** kcal dell'allenamento al netto del metabolismo di base di quei minuti (già contato nel fabbisogno di base). */
+export const netWorkoutKcal = (kcal, minuti, base) => Math.max(0, Math.round((kcal || 0) - ((base || 0) / 1440) * (minuti || 0)));
+
+export function dayBalance(profile, key, { passi, kcalAllenamento, minutiAllenamento, ingerite }) {
   const f = profileOn(profile, key), base = calcTdee(f);
   if (!base) return null;
-  const kp = stepsKcal(passi ?? f.passi, f.peso), kw = Math.round(kcalAllenamento || 0);
+  const kp = stepsKcal(passi ?? f.passi, f.peso), kw = netWorkoutKcal(kcalAllenamento, minutiAllenamento, base);
   const tdee = base + kp + kw;
   return { peso: parseFloat(f.peso) || 0, base, passi: kp, allenamento: kw, tdee, ingerite: Math.round(ingerite || 0), delta: Math.round((ingerite || 0) - tdee), passiDaOrologio: passi != null };
 }
