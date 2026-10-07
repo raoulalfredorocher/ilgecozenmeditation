@@ -189,25 +189,25 @@ const MAN_LABEL = { sonnoMin: 'sonno', passi: 'passi', bpmRiposo: 'battiti a rip
 const manSheet = createSheet({ title: 'Dati inseriti a mano', body: `<div class="stack">
   <p class="note" style="margin:0">Se l'orologio era scarico o non l'hai indossato puoi inserire tu i valori. Se poi arrivano i dati dell'orologio, li sostituiscono. Nei grafici i valori a mano sono tratteggiati.</p>
   <div class="grid-2">
-    <div class="field"><label class="field-lbl" for="mn-sonno">Sonno (ore)</label><input class="input" id="mn-sonno" type="number" inputmode="decimal" step="0.25" min="0" max="16" placeholder="es. 7,5"/></div>
-    <div class="field"><label class="field-lbl" for="mn-passi">Passi</label><input class="input" id="mn-passi" type="number" inputmode="numeric" min="0" max="80000"/></div>
-    <div class="field"><label class="field-lbl" for="mn-bpm">Battiti a riposo</label><input class="input" id="mn-bpm" type="number" inputmode="numeric" min="30" max="130"/></div>
-    <div class="field"><label class="field-lbl" for="mn-resp">Respiri al minuto</label><input class="input" id="mn-resp" type="number" inputmode="decimal" step="0.1" min="6" max="40"/></div>
-    <div class="field"><label class="field-lbl" for="mn-stress">Stress (0–100)</label><input class="input" id="mn-stress" type="number" inputmode="numeric" min="0" max="100"/></div>
+    <div class="field"><label class="field-lbl" for="mh-sonno">Sonno (ore)</label><input class="input" id="mh-sonno" type="number" inputmode="decimal" step="0.25" min="0" max="16" placeholder="es. 7,5"/></div>
+    <div class="field"><label class="field-lbl" for="mh-passi">Passi</label><input class="input" id="mh-passi" type="number" inputmode="numeric" min="0" max="80000"/></div>
+    <div class="field"><label class="field-lbl" for="mh-bpm">Battiti a riposo</label><input class="input" id="mh-bpm" type="number" inputmode="numeric" min="30" max="130"/></div>
+    <div class="field"><label class="field-lbl" for="mh-resp">Respiri al minuto</label><input class="input" id="mh-resp" type="number" inputmode="decimal" step="0.1" min="6" max="40"/></div>
+    <div class="field"><label class="field-lbl" for="mh-stress">Stress (0–100)</label><input class="input" id="mh-stress" type="number" inputmode="numeric" min="0" max="100"/></div>
   </div>
-  <button type="button" class="btn block" id="mn-avg">Compila i vuoti con la mia media</button>
-  <button type="button" class="btn accent block" id="mn-ok">Salva</button>
-  <button type="button" class="btn block text-danger" id="mn-del">Togli i valori inseriti a mano</button></div>` });
+  <button type="button" class="btn block" id="mh-avg">Compila i vuoti con la mia media</button>
+  <button type="button" class="btn accent block" id="mh-ok">Salva</button>
+  <button type="button" class="btn block text-danger" id="mh-del">Togli i valori inseriti a mano</button></div>` });
 const manRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_manuale');
-const MAN_IDS = { sonnoMin: 'mn-sonno', passi: 'mn-passi', bpmRiposo: 'mn-bpm', respiro: 'mn-resp', stressMedio: 'mn-stress' };
+const MAN_IDS = { sonnoMin: 'mh-sonno', passi: 'mh-passi', bpmRiposo: 'mh-bpm', respiro: 'mh-resp', stressMedio: 'mh-stress' };
 const manVal = f => { const v = parseFloat(manSheet.$('#' + MAN_IDS[f]).value.replace(',', '.')); return Number.isFinite(v) && v >= 0 ? (f === 'sonnoMin' ? Math.round(v * 60) : v) : null; };
 function openManual() {
   const h = data[selected]?.salute?._man ? data[selected].salute : {}, man = h._man || {};
   Object.entries(MAN_IDS).forEach(([f, id]) => { const v = man[f] ? h[f] : ''; manSheet.$('#' + id).value = v === '' ? '' : (f === 'sonnoMin' ? +(v / 60).toFixed(2) : v); });
-  manSheet.$('#mn-del').hidden = !Object.keys(man).length;
+  manSheet.$('#mh-del').hidden = !Object.keys(man).length;
   manSheet.open();
 }
-manSheet.$('#mn-avg').addEventListener('click', async () => {
+manSheet.$('#mh-avg').addEventListener('click', async () => {
   try {
     const snap = await getDoc(doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_giorni'));
     const days = Object.entries(snap.data()?.days || {}).filter(([k]) => k < selected).sort().slice(-30).map(([, v]) => v);
@@ -220,14 +220,14 @@ manSheet.$('#mn-avg').addEventListener('click', async () => {
     toast(days.length ? `Medie degli ultimi ${days.length} giorni con dati` : 'Non ci sono ancora dati dell\'orologio per calcolare una media');
   } catch (e) { console.error(e); toast('Non riesco a calcolare la media'); }
 });
-manSheet.$('#mn-ok').addEventListener('click', async () => {
+manSheet.$('#mh-ok').addEventListener('click', async () => {
   const entry = {}; Object.keys(MAN_IDS).forEach(f => { const v = manVal(f); if (v != null) entry[f] = v; });
   if (!Object.keys(entry).length) return toast('Scrivi almeno un valore');
   manSheet.close();
   try { await setDoc(manRef(), { days: { [selected]: entry } }, { merge: true }); toast('Salvato'); } catch (e) { console.error(e); toast('Non sono riuscito a salvare'); }
   refresh();
 });
-manSheet.$('#mn-del').addEventListener('click', async () => {
+manSheet.$('#mh-del').addEventListener('click', async () => {
   manSheet.close();
   try { await updateDoc(manRef(), { [`days.${selected}`]: deleteField() }); toast('Tolti'); } catch (e) { console.error(e); }
   refresh();
