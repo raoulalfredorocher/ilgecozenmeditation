@@ -74,7 +74,7 @@ export function workoutKcalCard(days, byDay) {
 
 /**
  * Grafico nel tempo di misure irregolari (glicemia, pressione, esami).
- * series: [{ name, color, points: [{ d: 'AAAA-MM-GG', y }] }]; band: { min, max } fascia di riferimento (facoltativa).
+ * series: [{ name, color, hollow?, points: [{ d: 'AAAA-MM-GG', y }] }]; band: { min, max } fascia di riferimento (facoltativa).
  */
 export function seriesChart(series, { band, label = '', fmt = it } = {}) {
   const pts = series.flatMap(s => s.points);
@@ -92,7 +92,9 @@ export function seriesChart(series, { band, label = '', fmt = it } = {}) {
   series.forEach(s => {
     const pp = [...s.points].sort((a, b) => a.d.localeCompare(b.d));
     if (pp.length > 1) g += `<path d="${pp.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(p.y).toFixed(1)}`).join('')}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
-    g += pp.map(p => `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3" fill="${s.color}"/>`).join('');
+    g += pp.map(p => s.hollow
+      ? `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3.6" fill="var(--card)" stroke="${s.color}" stroke-width="2"/>`
+      : `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3" fill="${s.color}"/>`).join('');
   });
   const ds = [...new Set(pts.map(p => p.d))].sort();
   const lab = ds.length > 1 ? [ds[0], ds[ds.length - 1]] : [ds[0]];

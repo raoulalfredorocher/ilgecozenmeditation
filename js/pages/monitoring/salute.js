@@ -61,14 +61,23 @@ function pressureCard() {
     <div class="gz-add" style="margin-top:var(--space-3)"><button type="button" class="pri" data-add="pressione">＋ Pressione</button></div></div></div>`;
 }
 
+/** Glicemia: un'unica curva con le misure col dito e quella a digiuno degli esami del sangue, distinguibili dal simbolo. */
 function glucoseCard() {
-  const L = list('glicemia'), last = L[0];
-  const chart = seriesChart([{ name: 'Glicemia', color: 'var(--warning)', points: L.map(x => ({ d: x.d, y: x.v })) }], { band: { min: 70, max: 99 }, label: 'Glicemia nel tempo', fmt: it });
+  const fingers = list('glicemia');
+  const labs = list('esami').filter(x => x.nome === 'Glicemia');
+  const all = [...fingers.map(x => ({ ...x, src: 'dito' })), ...labs.map(x => ({ d: x.d, ora: '', v: x.v, ctx: 'digiuno', src: 'esame', lab: x.lab }))]
+    .sort((a, b) => (b.d + (b.ora || '')).localeCompare(a.d + (a.ora || '')));
+  const last = all[0];
+  const chart = seriesChart([
+    { name: 'Esami del sangue', color: 'var(--primary)', hollow: true, points: labs.map(x => ({ d: x.d, y: x.v })) },
+    { name: 'Misure col dito', color: 'var(--warning)', points: fingers.map(x => ({ d: x.d, y: x.v })) },
+  ].filter(s => s.points.length), { band: { min: 70, max: 99 }, label: 'Glicemia nel tempo', fmt: it });
   return `<div class="gz-sec"><div class="cap">Glicemia</div><div class="card gz-card">
-    ${last ? `<div class="gz-big">${it(last.v)} <small>mg/dL</small></div><div class="s">${fdate(last.d)} · ${CTX[last.ctx] || ''} · ${tag(...glCategory(last.v, last.ctx))}</div>${chart}
+    ${last ? `<div class="gz-big">${it(last.v)} <small>mg/dL</small></div><div class="s">${fdate(last.d)} · ${last.src === 'esame' ? 'esame del sangue' : 'misura col dito'} · ${CTX[last.ctx] || ''} · ${tag(...glCategory(last.v, last.ctx))}</div>${chart}
+      <div class="gz-legend"><span><i style="background:var(--card);border:2px solid var(--primary)"></i>esami del sangue</span><span><i style="background:var(--warning)"></i>misure col dito</span></div>
       <p class="gz-rif">La fascia verde è 70–99 mg/dL, valida per la misura a digiuno.</p>` : '<p class="s">Nessuna misura ancora.</p>'}
-    <p class="gz-rif">Riferimento: a digiuno 70–99 mg/dL è normale, 100–125 è alterata, da 126 in su va confermata col medico. Due ore dopo il pasto è normale sotto 140. Indicare sempre quando hai misurato.</p>
-    ${L.slice(0, 5).map(x => row('glicemia', x.id, `${it(x.v)} mg/dL`, `${fdate(x.d)}${x.ora ? ' ' + esc(x.ora) : ''} · ${CTX[x.ctx] || ''}`)).join('')}
+    <p class="gz-rif">Riferimento: a digiuno 70–99 mg/dL è normale, 100–125 è alterata, da 126 in su va confermata col medico. Due ore dopo il pasto è normale sotto 140. Il glucometro dal dito può differire di circa il 10–15% dall'esame in laboratorio: confronta tra loro misure fatte nelle stesse condizioni (meglio sempre a digiuno).</p>
+    ${fingers.slice(0, 5).map(x => row('glicemia', x.id, `${it(x.v)} mg/dL`, `${fdate(x.d)}${x.ora ? ' ' + esc(x.ora) : ''} · ${CTX[x.ctx] || ''}`)).join('')}
     <div class="gz-add" style="margin-top:var(--space-3)"><button type="button" class="pri" data-add="glicemia">＋ Glicemia</button></div></div></div>`;
 }
 
