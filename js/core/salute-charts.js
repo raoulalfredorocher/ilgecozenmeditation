@@ -145,32 +145,43 @@ export function workoutKcalCard(days, byDay) {
 
 /**
  * Grafico nel tempo di misure irregolari (glicemia, pressione, esami).
- * series: [{ name, color, hollow?, points: [{ d: 'AAAA-MM-GG', y }] }]; band: { min, max } fascia di riferimento (facoltativa).
+ * series: [{ name, color, hollow?, points: [{ d: 'AAAA-MM-GG', y, t? }] }]; `t` è il testo che compare toccando il punto.
+ * La scala verticale segue i tuoi valori (non il riferimento), con numeri tondi, così anche piccole differenze si leggono.
+ * band: { min, max } fascia di riferimento (facoltativa): si disegna solo la parte dentro la scala.
  */
 export function seriesChart(series, { band, label = '', fmt = it } = {}) {
   const pts = series.flatMap(s => s.points);
   if (!pts.length) return '';
-  const W = 320, H = 150, P = { l: 30, r: 8, t: 10, b: 20 };
+  const W = 340, H = 172, P = { l: 46, r: 18, t: 18, b: 26 }, iw = W - P.l - P.r, ih = H - P.t - P.b;
   const tm = d => { const [y, m, dd] = d.split('-').map(Number); return new Date(y, m - 1, dd).getTime(); };
   let t0 = Math.min(...pts.map(p => tm(p.d))), t1 = Math.max(...pts.map(p => tm(p.d)));
   if (t1 === t0) { t0 -= 86400000 * 3; t1 += 86400000 * 3; }
-  let lo = Math.min(...pts.map(p => p.y), band?.min ?? Infinity), hi = Math.max(...pts.map(p => p.y), band?.max ?? -Infinity);
-  const pad = (hi - lo || 1) * .12; lo -= pad; hi += pad;
-  const x = d => P.l + ((tm(d) - t0) / (t1 - t0)) * (W - P.l - P.r);
-  const y = v => P.t + (H - P.t - P.b) * (1 - (v - lo) / (hi - lo));
-  let g = [0, .5, 1].map(f => { const v = hi - (hi - lo) * f; return `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--border)" stroke-width=".6"/><text x="${P.l - 4}" y="${y(v) + 3}" font-size="9" fill="var(--muted)" text-anchor="end">${fmt(v)}</text>`; }).join('');
-  if (band) g += `<rect x="${P.l}" y="${y(band.max)}" width="${W - P.l - P.r}" height="${Math.max(1, y(band.min) - y(band.max))}" fill="var(--success)" opacity=".13"/>`;
+  let lo = Math.min(...pts.map(p => p.y)), hi = Math.max(...pts.map(p => p.y));
+  const span = hi - lo, pad = span ? span * 0.2 : Math.max(1, Math.abs(hi) * 0.06);
+  const sc = niceScale(lo - pad, hi + pad, 4);
+  const y = v => P.t + ih * (1 - (v - sc.min) / (sc.max - sc.min));
+  const x = d => P.l + ((tm(d) - t0) / (t1 - t0)) * iw;
+  let g = '';
+  if (band) {
+    const bl = Math.max(band.min ?? sc.min, sc.min), bh = Math.min(band.max ?? sc.max, sc.max);
+    if (bh > bl) g += `<rect x="${P.l}" y="${y(bh).toFixed(1)}" width="${iw}" height="${Math.max(1, y(bl) - y(bh)).toFixed(1)}" fill="var(--success)" opacity=".11"/>`;
+  }
+  g += sc.ticks.map(v => `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="var(--border)" stroke-width=".7"/><text x="${P.l - 7}" y="${(y(v) + 3.5).toFixed(1)}" font-size="10" fill="var(--muted)" text-anchor="end">${fmt(v)}</text>`).join('');
+  const few = pts.length <= 9, yMax = Math.max(...pts.map(p => p.y)), yMin = Math.min(...pts.map(p => p.y));
   series.forEach(s => {
     const pp = [...s.points].sort((a, b) => a.d.localeCompare(b.d));
     if (pp.length > 1) g += `<path d="${pp.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(p.y).toFixed(1)}`).join('')}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
     g += pp.map(p => s.hollow
-      ? `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3.6" fill="var(--card)" stroke="${s.color}" stroke-width="2"/>`
-      : `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3" fill="${s.color}"/>`).join('');
+      ? `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="4.5" fill="var(--card)" stroke="${s.color}" stroke-width="2"/>`
+      : `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="4" fill="${s.color}" stroke="var(--card)" stroke-width="2"/>`).join('');
+    const last = pp[pp.length - 1];
+    g += pp.map(p => (few || p === last || p.y === yMax || p.y === yMin) ? `<text x="${Math.min(Math.max(x(p.d), P.l + 8), W - P.r - 8).toFixed(1)}" y="${(y(p.y) - 9).toFixed(1)}" font-size="10" font-weight="600" fill="var(--text)" text-anchor="middle">${fmt(p.y)}</text>` : '').join('');
   });
-  const ds = [...new Set(pts.map(p => p.d))].sort();
-  const lab = ds.length > 1 ? [ds[0], ds[ds.length - 1]] : [ds[0]];
-  g += lab.map((d, i) => `<text x="${x(d).toFixed(1)}" y="${H - 4}" font-size="9" fill="var(--muted)" text-anchor="${i ? 'end' : 'start'}">${short(d)}/${d.slice(2, 4)}</text>`).join('');
-  return `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${label}">${g}</svg>`;
+  const ds = [...new Set(pts.map(p => p.d))].sort(), lab = ds.length > 1 ? [ds[0], ds[ds.length - 1]] : [ds[0]];
+  g += lab.map((d, i) => `<text x="${x(d).toFixed(1)}" y="${H - 7}" font-size="10" fill="var(--muted)" text-anchor="${ds.length === 1 ? 'middle' : i ? 'end' : 'start'}">${short(d)}/${d.slice(2, 4)}</text>`).join('');
+  // zone di tocco: una per punto, con il testo da mostrare sotto il grafico
+  g += series.flatMap(s => s.points.map(p => `<rect class="gz-hit" x="${(x(p.d) - 16).toFixed(1)}" y="${P.t}" width="32" height="${ih}" fill="transparent" data-t="${(p.t || `${short(p.d)}/${p.d.slice(2, 4)} · ${fmt(p.y)}`).replace(/"/g, '&quot;')}"/>`)).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${label}">${g}</svg><div class="gz-readout">Tocca un punto per leggere il valore.</div>`;
 }
 
 /** Confronto con la tua media personale: l'ultimo valore contro gli ultimi 30 giorni precedenti. */

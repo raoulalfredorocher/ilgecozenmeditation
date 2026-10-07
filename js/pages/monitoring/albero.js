@@ -1,44 +1,70 @@
 /**
- * albero.js — il ciliegio che cresce con il livello: da un seme a un albero secolare in fiore.
- * Più sali, più è alto, con più rami e più fiori. I tre boccioli a terra sono le sfide del livello: sbocciano quando le completi.
+ * albero.js — il ciliegio (sakura) che cresce con il livello, in stile inchiostro giapponese:
+ * rami sottili color sumi, fiori pallidi, molto spazio bianco e un grande cerchio morbido dietro, come il sole di un rotolo dipinto.
+ *
+ *   livello 1  un seme nella terra
+ *   livello 2  un germoglio con due foglie
+ *   da 3       un fusto che si alza, si ramifica a ogni livello e si riempie di fiori
+ *   da 25      una chioma ampia, petali che cadono e un tappeto di petali a terra
+ *   da 40      il grande ciliegio secolare, come quelli dei parchi del Giappone
+ *
+ * Il disegno è deterministico: lo stesso livello dà sempre lo stesso albero, e ogni livello aggiunge qualche ramo e qualche fiore.
  */
 function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const f1 = n => n.toFixed(1);
+const X0 = 160, G = 232;                 // base del tronco
 
-// [lato, altezza sul tronco (0-1), lunghezza, livello da cui compare]
-const RAMI = [[-1, .46, 34, 3], [1, .56, 38, 6], [-1, .68, 30, 10], [1, .75, 32, 15], [-1, .83, 26, 22], [1, .89, 28, 30], [-1, .94, 22, 36], [1, .97, 20, 40]];
-
-export function alberoSVG(level, fatte = 0) {
-  const lv = Math.min(level, 40), X = 120, G = 205, r = rng(11);
-  let g = `<ellipse cx="${X}" cy="${G + 2}" rx="96" ry="9" fill="var(--surface)"/>`, vtop = 150;
-  if (level < 3) {
-    // seme e primi germogli
-    g += `<ellipse cx="${X}" cy="${G - 3}" rx="7" ry="4.5" fill="var(--bark)"/>`;
-    if (level >= 2) g += `<path d="M${X} ${G - 6}Q${X} ${G - 24} ${X + 2} ${G - 34}" stroke="var(--success)" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="${X - 7}" cy="${G - 30}" rx="7" ry="3.4" transform="rotate(-25 ${X - 7} ${G - 30})" fill="var(--success)" opacity=".85"/><ellipse cx="${X + 9}" cy="${G - 36}" rx="7" ry="3.4" transform="rotate(20 ${X + 9} ${G - 36})" fill="var(--success)" opacity=".85"/>`;
-  } else {
-    const H = 30 + lv * 2.6, bw = 6 + lv * 0.34, tw = 2.4 + lv * 0.1, top = G - H;
-    vtop = Math.max(0, Math.min(150, Math.round(top - (13 + lv * 0.9) - 22)));
-    g += `<path d="M${X - bw / 2} ${G}Q${X - bw / 2 - 2} ${G - H / 2} ${X - tw / 2} ${top}L${X + tw / 2} ${top}Q${X + bw / 2 + 2} ${G - H / 2} ${X + bw / 2} ${G}Z" fill="var(--bark)"/>`;
-    const tips = [[X, top]];
-    RAMI.filter(b => level >= b[3]).forEach(([d, f, len]) => {
-      const y0 = G - H * f, k = 0.5 + lv / 80, x1 = X + d * len * k, y1 = y0 - len * 0.5 * k;
-      g += `<path d="M${X} ${y0.toFixed(1)}Q${(X + d * len * 0.4 * k).toFixed(1)} ${(y0 - 4).toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="var(--bark)" stroke-width="${(1.2 + lv * 0.03).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-      tips.push([x1, y1]);
-    });
-    // fiori attorno ai rami e alla chioma
-    const n = Math.min(140, 2 + level * 3), cx = X, cy = top - 6, rx = 20 + lv * 1.5, ry = 13 + lv * 0.9;
-    for (let i = 0; i < n; i++) {
-      const t = tips[i % tips.length], a = r() * Math.PI * 2, d = Math.sqrt(r());
-      const x = i % 3 === 0 ? t[0] + (r() - .5) * 26 : cx + Math.cos(a) * rx * d, y = i % 3 === 0 ? t[1] + (r() - .5) * 20 : cy + Math.sin(a) * ry * d;
-      g += `<circle class="tr-b" style="animation-delay:${Math.min(i * 12, 1000)}ms" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2 + r() * 2.2).toFixed(1)}" fill="${r() > .3 ? 'var(--sakura)' : 'var(--sakura-soft)'}" opacity="${(.55 + r() * .4).toFixed(2)}"/>`;
+function costruisci(level) {
+  const r = rng(2024), lv = Math.min(level, 40);
+  const fiori = [], rami = [], petali = [];
+  let minX = X0, maxX = X0, minY = G;
+  const trunkLen = 30 + lv * 2.3, depth = Math.max(1, Math.min(6, 1 + Math.floor(level / 6))), w0 = 2.4 + lv * 0.27;
+  const dens = level < 6 ? 1 : Math.min(5, 1 + Math.floor(level / 10));        // fiori per punta
+  const reach = 9 + lv * 0.28;                                    // quanto si allarga un grappolo
+  const ramo = (x, y, a, len, d, w) => {
+    const bend = (r() - .5) * 0.5, x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len;
+    const cx = (x + x2) / 2 + Math.cos(a + Math.PI / 2) * len * bend, cy = (y + y2) / 2 + Math.sin(a + Math.PI / 2) * len * bend;
+    rami.push(`<path d="M${f1(x)} ${f1(y)}Q${f1(cx)} ${f1(cy)} ${f1(x2)} ${f1(y2)}" stroke-width="${f1(Math.max(w, .7))}"/>`);
+    minX = Math.min(minX, x2); maxX = Math.max(maxX, x2); minY = Math.min(minY, y2);
+    if (d > 0) {
+      const n = d >= 3 && r() > .8 ? 3 : 2;
+      for (let i = 0; i < n; i++) {
+        const side = n === 2 ? (i === 0 ? -1 : 1) : i - 1, da = side * (0.32 + r() * 0.42) + (r() - .5) * 0.18;
+        ramo(x2, y2, a + da, len * (0.68 + r() * 0.14), d - 1, w * 0.66);
+      }
+      if (d <= 2 && level >= 6) for (let k = 0; k < dens; k++) fiori.push([x2 + (r() - .5) * reach * 1.2, y2 + (r() - .5) * reach, 1.6 + r() * 2.2]);   // fiori lungo i rami
+    } else {
+      for (let k = 0; k < dens + 1; k++) fiori.push([x2 + (r() - .5) * reach * 1.5, y2 + (r() - .5) * reach * 1.2, 1.8 + r() * 2.6]);
     }
-    for (let i = 0; i < 3; i++) g += `<ellipse class="tr-petal" style="animation-delay:${i * 2.3}s" cx="${(cx - 14 + i * 14 + r() * 8).toFixed(1)}" cy="${(cy + ry * .6).toFixed(1)}" rx="2.6" ry="1.6" fill="var(--sakura)"/>`;
+  };
+  ramo(X0, G, -Math.PI / 2 + (r() - .5) * 0.08, trunkLen, depth, w0);
+  for (let i = 0; i < Math.min(14, Math.floor(level / 3)); i++) petali.push([X0 + (r() - .5) * (60 + lv * 3), G - 40 - r() * (lv * 3 + 40), r() * 5]);
+  return { fiori, rami, petali, minX, maxX, minY };
+}
+
+/** `pioggia` = mostra l'annaffiatura. */
+export function alberoSVG(level, { pioggia = false } = {}) {
+  let body = '', vy = 120, sun = '';
+  if (level < 3) {
+    body += `<ellipse cx="${X0}" cy="${G + 3}" rx="${level === 1 ? 46 : 54}" ry="5" fill="var(--text)" opacity=".06"/>`;
+    if (level === 1) body += `<g class="tr-seed"><ellipse cx="${X0}" cy="${G - 4}" rx="7.5" ry="4.8" transform="rotate(-18 ${X0} ${G - 4})" fill="var(--bark)"/><path d="M${X0 - 3} ${G - 7}q3 -3 6 -2" stroke="var(--card)" stroke-width="1" fill="none" opacity=".7" stroke-linecap="round"/></g>`;
+    else body += `<g class="tr-b"><path d="M${X0} ${G - 2}Q${X0 + 2} ${G - 22} ${X0 + 1} ${G - 36}" stroke="var(--success)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M${X0 + 1} ${G - 34}q-15 -2 -17 -14q12 0 17 14z" fill="var(--success)" opacity=".8"/><path d="M${X0 + 1} ${G - 30}q14 -3 17 -15q-13 2 -17 15z" fill="var(--success)" opacity=".62"/></g>`;
+    vy = 150;
+    sun = `<circle cx="${X0}" cy="${G - 20}" r="${Math.min(62, G - 20 - vy - 2)}" fill="var(--sakura)" opacity=".09"/>`;
+  } else {
+    const t = costruisci(level), w = t.maxX - t.minX, h = G - t.minY;
+    const s = Math.min(1, 292 / (w + 30), 214 / (h + 20));
+    const cxm = (t.minX + t.maxX) / 2, cy = G - h * 0.62;
+    vy = Math.max(0, Math.round(G - (h + 26) * s - 10));
+    sun = `<circle cx="${f1(X0 + (cxm - X0) * s)}" cy="${f1(G - (G - cy) * s)}" r="${f1(Math.max(40, Math.min(150, (h * s) * 0.6 + 20, (G - (G - cy) * s) - vy - 2)))}" fill="var(--sakura)" opacity=".10"/>`;
+    const nuvola = level >= 12 ? `<g opacity=".13" fill="var(--sakura)">${Array.from({ length: Math.min(7, 2 + Math.floor(level / 7)) }, (_, i) => { const rr = rng(7 + i); return `<circle cx="${f1(cxm + (rr() - .5) * w * .8)}" cy="${f1(t.minY + (rr() - .1) * h * .45)}" r="${f1(14 + rr() * (10 + level * .5))}"/>`; }).join('')}</g>` : '';
+    const fl = t.fiori.map(([x, y, rad], i) => `<circle class="tr-b" style="animation-delay:${Math.min(i * 6, 1100)}ms" cx="${f1(x)}" cy="${f1(y)}" r="${f1(rad)}" fill="var(--sakura)" opacity="${(0.5 + ((i * 37) % 45) / 100).toFixed(2)}"/>`).join('');
+    const pe = t.petali.map(([x, y, d], i) => `<ellipse class="tr-petal" style="animation-delay:${d.toFixed(1)}s" cx="${f1(x)}" cy="${f1(y)}" rx="2.6" ry="1.5" fill="var(--sakura)"/>`).join('');
+    const terra = level >= 25 ? `<g fill="var(--sakura)" opacity=".5">${Array.from({ length: 16 }, (_, i) => { const rr = rng(99 + i); return `<ellipse cx="${f1(X0 + (rr() - .5) * 170)}" cy="${f1(G + 1 + rr() * 4)}" rx="${f1(2 + rr() * 1.6)}" ry="1.2"/>`; }).join('')}</g>` : '';
+    body += `<ellipse cx="${X0}" cy="${G + 3}" rx="${f1(40 + Math.min(level, 40) * 2)}" ry="5" fill="var(--text)" opacity=".06"/>${terra}
+      <g transform="translate(${X0} ${G}) scale(${f1(s)}) translate(${-X0} ${-G})">${nuvola}<g stroke="var(--text)" fill="none" stroke-linecap="round" opacity=".84">${t.rami.join('')}</g>${fl}${pe}</g>`;
   }
-  // i tre boccioli delle sfide
-  for (let i = 0; i < 3; i++) {
-    const x = 156 + i * 20, done = i < fatte;
-    g += done
-      ? `<g class="tr-b"><circle cx="${x}" cy="${G - 4}" r="6.5" fill="var(--sakura)"/><circle cx="${x}" cy="${G - 4}" r="2.4" fill="var(--sakura-soft)"/></g>`
-      : `<circle cx="${x}" cy="${G - 4}" r="5" fill="none" stroke="var(--muted)" stroke-width="1.2" opacity=".6"/>`;
-  }
-  return `<svg class="tree" viewBox="0 ${vtop} 240 ${220 - vtop}" role="img" aria-label="Il tuo ciliegio al livello ${level}">${g}</svg>`;
+  const H = 244 - vy;
+  const acqua = pioggia ? `<g class="tr-water">${[0, 1, 2, 3, 4, 5, 6].map(i => `<path class="tr-drop" style="animation-delay:${i * 0.18}s" d="M${X0 - 40 + i * 13} ${vy + 10}q-2.4 3.6 -2.4 5.6a2.4 2.4 0 0 0 4.8 0q0 -2 -2.4 -5.6z" fill="var(--primary)" opacity=".75"/>`).join('')}</g>` : '';
+  return `<svg class="tree${pioggia ? ' watering' : ''}" viewBox="0 ${vy} 320 ${H}" role="img" aria-label="Il tuo ciliegio al livello ${level}">${sun}${body}${acqua}</svg>`;
 }

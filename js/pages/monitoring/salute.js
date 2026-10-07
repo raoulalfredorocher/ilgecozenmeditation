@@ -12,7 +12,7 @@ import { db, auth } from '../../core/db.js';
 import { doc, onSnapshot, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
-import { seriesChart, dkey, it } from '../../core/salute-charts.js';
+import { seriesChart, bindChartReadouts, dkey, it } from '../../core/salute-charts.js';
 import { csvFile, deliver } from '../alimentazione/files.js';
 import { INFO } from './esami-info.js';
 
@@ -50,8 +50,8 @@ function pressureCard() {
   const L = list('pressione');
   const last = L[0];
   const chart = seriesChart([
-    { name: 'Massima', color: 'var(--danger)', points: L.map(x => ({ d: x.d, y: x.sys })) },
-    { name: 'Minima', color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.dia })) },
+    { name: 'Massima', color: 'var(--danger)', points: L.map(x => ({ d: x.d, y: x.sys, t: `${fdate(x.d)}${x.ora ? ' ' + x.ora : ''} · massima ${x.sys} mmHg (minima ${x.dia})` })) },
+    { name: 'Minima', color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.dia, t: `${fdate(x.d)}${x.ora ? ' ' + x.ora : ''} · minima ${x.dia} mmHg (massima ${x.sys})` })) },
   ], { band: null, label: 'Pressione arteriosa nel tempo', fmt: it });
   return `<div class="gz-sec"><div class="cap">Pressione arteriosa</div><div class="card gz-card">
     ${last ? `<div class="gz-big">${last.sys}/${last.dia} <small>mmHg</small>${last.fc ? ` <small>· ${last.fc} bpm</small>` : ''}</div>
@@ -70,8 +70,8 @@ function glucoseCard() {
     .sort((a, b) => (b.d + (b.ora || '')).localeCompare(a.d + (a.ora || '')));
   const last = all[0];
   const chart = seriesChart([
-    { name: 'Esami del sangue', color: 'var(--primary)', hollow: true, points: labs.map(x => ({ d: x.d, y: x.v })) },
-    { name: 'Misure col dito', color: 'var(--warning)', points: fingers.map(x => ({ d: x.d, y: x.v })) },
+    { name: 'Esami del sangue', color: 'var(--primary)', hollow: true, points: labs.map(x => ({ d: x.d, y: x.v, t: `${fdate(x.d)} · ${it(x.v)} mg/dL · esame del sangue${x.lab ? ' · ' + x.lab : ''}${x.min != null || x.max != null ? ` · rif. ${refText(x)}` : ''}` })) },
+    { name: 'Misure col dito', color: 'var(--warning)', points: fingers.map(x => ({ d: x.d, y: x.v, t: `${fdate(x.d)}${x.ora ? ' ' + x.ora : ''} · ${it(x.v)} mg/dL · col dito · ${CTX[x.ctx] || ''}` })) },
   ].filter(s => s.points.length), { band: { min: 70, max: 99 }, label: 'Glicemia nel tempo', fmt: it });
   return `<div class="gz-sec"><div class="cap">Glicemia</div><div class="card gz-card">
     ${last ? `<div class="gz-big">${it(last.v)} <small>mg/dL</small></div><div class="s">${fdate(last.d)} · ${last.src === 'esame' ? 'esame del sangue' : 'misura col dito'} · ${CTX[last.ctx] || ''} · ${tag(...glCategory(last.v, last.ctx))}</div>${chart}
@@ -143,7 +143,7 @@ function labsList() {
       <div class="gz-avg">${fdate(last.d)}${last.lab ? `<br><span>${esc(last.lab)}</span>` : ''}</div></div>
       <div class="gz-refline"><b>Riferimento del laboratorio:</b> ${refText(last) ? `${refText(last)} ${esc(last.u || '')}` : 'non indicato nel referto'}${st ? ` · ${tag(...st)}` : ''}${delta != null ? `<br><span class="s">${delta > 0 ? '+' : delta < 0 ? '−' : ''}${dec(Math.abs(delta))} rispetto al precedente (${fdate(prev.d)})</span>` : ''}</div>
       ${info ? `<details class="gz-info"><summary>Cos'è e valori ottimali</summary><p>${esc(info.cos)}</p><p><b>Valori:</b> ${esc(info.ott)}</p>${info.nota ? `<p class="s">${esc(info.nota)}</p>` : ''}<p class="s">Indicazioni generali, non una diagnosi: conta il riferimento del tuo laboratorio e il parere del medico.</p></details>` : ''}
-      ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
+      ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v, t: `${fdate(x.d)} · ${val(x)} ${x.u || ''}${x.lab ? ' · ' + x.lab : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}` })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
       ${L.slice(0, 4).map(x => row('esami', x.id, `${val(x)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}`)).join('')}</div>`;
   }).join('');
 }
@@ -278,6 +278,7 @@ root.addEventListener('click', async e => {
   }
 });
 
+bindChartReadouts(root);
 render();
 waitForUser().then(() => {
   ref = doc(db, 'users', auth.currentUser.uid, 'direction', 'misure_salute');

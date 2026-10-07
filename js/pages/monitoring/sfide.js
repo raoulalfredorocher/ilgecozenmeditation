@@ -85,9 +85,10 @@ export async function carica(D) {
   const ref = userDoc('direction', 'sfide');
   let s = (await getDoc(ref)).data();
   let nuovoLivello = false;
+  if (s && s.grown == null) { s.grown = s.level; await setDoc(ref, { ...s }); }
   if (!s?.level) {
     const ch = await stato(genera(1, D), D);
-    s = { level: 1, start: Date.now(), ch, skips: 0, tot: 0, hist: [] };
+    s = { level: 1, start: Date.now(), ch, skips: 0, tot: 0, hist: [], grown: 1 };
     await setDoc(ref, s);
   }
   let prog = await misura(s.ch, D, s.start);
@@ -101,7 +102,7 @@ export async function carica(D) {
   return modello(s, prog, nuovoLivello);
 }
 const modello = (s, prog, nuovoLivello) => ({
-  level: s.level, nome: nomeLivello(s.level), tot: s.tot || 0, skips: s.skips || 0, nuovoLivello,
+  level: s.level, grown: s.grown ?? s.level, nome: nomeLivello(s.level), tot: s.tot || 0, skips: s.skips || 0, nuovoLivello,
   next: [...NOMI].find(([from]) => from > s.level) || null,
   ch: s.ch.map((c, i) => ({ ...c, text: CATALOGO[c.id].text(c.n), cat: CATALOGO[c.id].cat, value: Math.min(prog[i], c.n), done: prog[i] >= c.n })),
 });
@@ -117,4 +118,12 @@ export async function cambia(D, index) {
   s.ch[index] = (await stato([{ ...nuova }], D))[0]; s.skips = (s.skips || 0) + 1;
   await setDoc(ref, s);
   return carica(D);
+}
+
+/** Annaffia il ciliegio: dopo un livello nuovo, l'albero cresce fino al livello raggiunto. */
+export async function innaffia() {
+  const ref = userDoc('direction', 'sfide'), s = (await getDoc(ref)).data();
+  if (!s) return null;
+  await setDoc(ref, { ...s, grown: s.level });
+  return s.level;
 }

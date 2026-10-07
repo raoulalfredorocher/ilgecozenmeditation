@@ -10,7 +10,7 @@ import { escapeHtml as esc } from '../../core/dom.js';
 import { seriesChart, hm, it } from '../../core/salute-charts.js';
 import { sessionVolume } from '../allenamento/state.js';
 import { loadAll, pk } from './dati.js';
-import { carica, cambia } from './sfide.js';
+import { carica, cambia, innaffia } from './sfide.js';
 import { alberoSVG } from './albero.js';
 import { statoHtml } from './stato.js';
 
@@ -50,21 +50,25 @@ function records() {
 }
 
 // ─── Livello e sfide ────────────────────────────────────────────────────
+let acqua = false, cresciuto = false;        // annaffiatura in corso · appena cresciuto
 function livello() {
   if (!L) return '<div class="card flat gz-empty">Preparo le tue sfide…</div>';
-  const fatte = L.ch.filter(c => c.done).length;
-  const ring = (() => { const R = 22, C = 2 * Math.PI * R; return `<svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="${R}" fill="none" stroke="var(--surface)" stroke-width="6"/>${fatte ? `<circle cx="28" cy="28" r="${R}" fill="none" stroke="var(--sakura)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * fatte / 3).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 28 28)"/>` : ''}<text x="28" y="33" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text)">${fatte}/3</text></svg>`; })();
+  const fatte = L.ch.filter(c => c.done).length, vis = L.grown, daInnaffiare = L.level > vis;
   const cat = { mente: 'mente', corpo: 'corpo', cibo: 'alimentazione' };
-  const fmtV = c => (c.id === 'passi' ? `${it(c.value)} / ${it(c.n)}` : c.id === 'meditazMin' ? `${it(c.value)} / ${it(c.n)} min` : `${it(c.value)} / ${it(c.n)}`);
-  return `<div class="card gz-card">
-    ${L.nuovoLivello ? `<div class="lv-up">Complimenti! Sei salito al <b>livello ${L.level}</b>: ${esc(L.nome)}.</div>` : ''}
-    <div class="lv-head"><div><div class="section-title" style="margin:0">Livello</div><div class="gz-big">${L.level} <small>${esc(L.nome)}</small></div></div>${ring}</div>
-    ${alberoSVG(L.level, fatte)}
-    <p class="gz-rif" style="margin:0 0 var(--space-2);text-align:center">Completa 3 sfide per passare al livello ${L.level + 1}${L.next ? ` · dal livello ${L.next[0]} sarai un ${esc(L.next[1]).toLowerCase()}` : ''}.</p>
+  const fmtV = c => (c.id === 'meditazMin' ? `${it(c.value)} / ${it(c.n)} min` : `${it(c.value)} / ${it(c.n)}`);
+  const gocce = `<div class="lv-drops" aria-label="${fatte} sfide su 3">${[0, 1, 2].map(i => `<svg viewBox="0 0 12 16" width="14" height="19"><path d="M6 1q-5 6.5 -5 9.5a5 5 0 0 0 10 0q0 -3 -5 -9.5z" fill="${i < fatte ? 'var(--sakura)' : 'none'}" stroke="var(--sakura)" stroke-width="1.1" opacity="${i < fatte ? 1 : .5}"/></svg>`).join('')}</div>`;
+  return `<div class="lv-zen">
+    ${L.nuovoLivello ? `<div class="lv-up">Sei salito al livello ${L.level}.</div>` : ''}
+    <div class="lv-top"><div><div class="lv-eyebrow">桜 · il tuo ciliegio</div><div class="lv-num">${vis}</div><div class="lv-name">${esc(L.nome)}</div></div>${gocce}</div>
+    <div class="lv-tree${cresciuto ? ' grow' : ''}">${alberoSVG(vis, { pioggia: acqua })}</div>
+    ${daInnaffiare
+      ? `<button type="button" class="lv-water" data-innaffia${acqua ? ' disabled' : ''}><svg viewBox="0 0 12 16" width="13" height="17" aria-hidden="true"><path d="M6 1q-5 6.5 -5 9.5a5 5 0 0 0 10 0q0 -3 -5 -9.5z" fill="currentColor"/></svg>${acqua ? 'Sto innaffiando…' : `Innaffia il ciliegio · livello ${L.level}`}</button>
+         <p class="lv-hint">Hai completato le tre sfide: innaffia la pianta e vedrai crescere il ciliegio.</p>`
+      : `<p class="lv-hint">Completa 3 sfide per salire al livello ${L.level + 1}${L.next ? ` · dal livello ${L.next[0]} sarai un ${esc(L.next[1]).toLowerCase()}` : ''}.</p>`}
     <div class="lv-ch">${L.ch.map((c, i) => `<div class="lv-row${c.done ? ' done' : ''}"><div class="lv-row-h"><span><span class="lv-cat">${cat[c.cat]}</span><br>${c.done ? '✓ ' : ''}<b>${esc(c.text)}</b></span>
         ${!c.done && L.skips < 1 ? `<button type="button" class="text-btn" data-cambia="${i}" style="color:var(--muted);font-weight:400;flex-shrink:0">Cambia</button>` : ''}</div>
         <div class="lv-bar"><i style="width:${Math.round(c.value / c.n * 100)}%"></i></div><div class="s">${c.done ? 'Fatta' : fmtV(c)}</div></div>`).join('')}</div>
-    <p class="gz-rif">Sfide completate in tutto: ${L.tot}. Il progresso si calcola dai dati veri dell'app, da quando è iniziato il livello. "Cambia" sostituisce una sfida (una volta per livello).</p></div>`;
+    <p class="lv-foot">Sfide completate in tutto: ${L.tot}. Il progresso si calcola dai dati veri dell'app, da quando è iniziato il livello. "Cambia" sostituisce una sfida (una volta per livello).</p></div>`;
 }
 
 // ─── Record storici ─────────────────────────────────────────────────────
@@ -101,6 +105,13 @@ function render() {
 
 let armed = null;
 root.addEventListener('click', async e => {
+  if (e.target.closest('[data-innaffia]') && !acqua) {
+    acqua = true; render();
+    await new Promise(r => setTimeout(r, 1900));
+    await innaffia(); L.grown = L.level; acqua = false; cresciuto = true; render();
+    setTimeout(() => { cresciuto = false; }, 2500);
+    return;
+  }
   const cb = e.target.closest('[data-cambia]');
   if (cb) { cb.disabled = true; L = (await cambia(D, +cb.dataset.cambia)) || L; return render(); }
   if (e.target.closest('[data-sadd]')) { sheet.$('#rs-v').value = ''; sheet.$('#rs-nota').value = ''; sheet.$('#rs-d').value = ''; return sheet.open(); }

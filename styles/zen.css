@@ -715,3 +715,26 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-qb[hidden] { display: none; }
 .gz-tiles > div { min-width: 0; }
 .cm-manual { align-items: center; }
+
+/* Livello: il ciliegio, in stile inchiostro giapponese */
+.lv-zen { position: relative; border-radius: var(--radius-lg); padding: var(--space-6) var(--space-5) var(--space-5);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--sakura) 9%, var(--card)), var(--card) 70%); border: .5px solid color-mix(in srgb, var(--sakura) 22%, var(--border)); box-shadow: var(--shadow-sm); }
+.lv-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.lv-eyebrow { font: 300 .6875rem var(--font-serif); letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+.lv-num { font: 200 4.25rem/1 var(--font-serif); letter-spacing: -.03em; margin-top: 8px; color: var(--text); }
+.lv-name { font: italic 1rem var(--font-serif); color: var(--muted); margin-top: 2px; }
+.lv-drops { display: flex; gap: 7px; padding-top: 4px; }
+.lv-tree { margin: var(--space-2) 0 var(--space-3); }
+.lv-tree.grow .tree { animation: tr-grow 1.7s cubic-bezier(.2, .8, .2, 1) both; transform-origin: 50% 100%; }
+@keyframes tr-grow { from { transform: scale(.84); opacity: .55; } to { transform: scale(1); opacity: 1; } }
+.lv-water { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 48px; border: 0; border-radius: 999px; cursor: pointer;
+  background: color-mix(in srgb, var(--primary) 14%, var(--card)); color: var(--primary); font: 600 var(--fs-md) var(--font); }
+.lv-water:disabled { opacity: .7; }
+.lv-hint { text-align: center; font: italic var(--fs-sm) var(--font-serif); color: var(--muted); margin: var(--space-3) 0; line-height: 1.5; }
+.lv-foot { font-size: var(--fs-xs); color: var(--muted); line-height: 1.55; margin-top: var(--space-3); }
+.tr-drop { animation: tr-drip 1.15s ease-in infinite; }
+@keyframes tr-drip { 0% { transform: translateY(0); opacity: 0; } 18% { opacity: .9; } 100% { transform: translateY(150px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tr-drop { animation: none; } .lv-tree.grow .tree { animation: none; } }
+.lv-zen .lv-row { border-top: .5px solid color-mix(in srgb, var(--sakura) 25%, var(--border)); }
+.lv-zen .lv-bar { height: 3px; background: color-mix(in srgb, var(--sakura) 16%, var(--surface)); }
+.lv-zen .lv-bar i { background: var(--sakura); }
