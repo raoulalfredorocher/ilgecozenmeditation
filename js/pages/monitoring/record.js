@@ -53,7 +53,7 @@ function records() {
 function livello() {
   if (!L) return '<div class="card flat gz-empty">Preparo le tue sfide…</div>';
   const fatte = L.ch.filter(c => c.done).length;
-  const ring = (() => { const R = 22, C = 2 * Math.PI * R; return `<svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="${R}" fill="none" stroke="var(--surface)" stroke-width="6"/><circle cx="28" cy="28" r="${R}" fill="none" stroke="var(--sakura)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * fatte / 3).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 28 28)"/><text x="28" y="33" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text)">${fatte}/3</text></svg>`; })();
+  const ring = (() => { const R = 22, C = 2 * Math.PI * R; return `<svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="${R}" fill="none" stroke="var(--surface)" stroke-width="6"/>${fatte ? `<circle cx="28" cy="28" r="${R}" fill="none" stroke="var(--sakura)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * fatte / 3).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 28 28)"/>` : ''}<text x="28" y="33" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text)">${fatte}/3</text></svg>`; })();
   const cat = { mente: 'mente', corpo: 'corpo', cibo: 'alimentazione' };
   const fmtV = c => (c.id === 'passi' ? `${it(c.value)} / ${it(c.n)}` : c.id === 'meditazMin' ? `${it(c.value)} / ${it(c.n)} min` : `${it(c.value)} / ${it(c.n)}`);
   return `<div class="card gz-card">

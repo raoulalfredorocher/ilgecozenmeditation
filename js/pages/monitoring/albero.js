@@ -9,13 +9,14 @@ const RAMI = [[-1, .46, 34, 3], [1, .56, 38, 6], [-1, .68, 30, 10], [1, .75, 32,
 
 export function alberoSVG(level, fatte = 0) {
   const lv = Math.min(level, 40), X = 120, G = 205, r = rng(11);
-  let g = `<ellipse cx="${X}" cy="${G + 2}" rx="96" ry="9" fill="var(--surface)"/>`;
+  let g = `<ellipse cx="${X}" cy="${G + 2}" rx="96" ry="9" fill="var(--surface)"/>`, vtop = 150;
   if (level < 3) {
     // seme e primi germogli
     g += `<ellipse cx="${X}" cy="${G - 3}" rx="7" ry="4.5" fill="var(--bark)"/>`;
     if (level >= 2) g += `<path d="M${X} ${G - 6}Q${X} ${G - 24} ${X + 2} ${G - 34}" stroke="var(--success)" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="${X - 7}" cy="${G - 30}" rx="7" ry="3.4" transform="rotate(-25 ${X - 7} ${G - 30})" fill="var(--success)" opacity=".85"/><ellipse cx="${X + 9}" cy="${G - 36}" rx="7" ry="3.4" transform="rotate(20 ${X + 9} ${G - 36})" fill="var(--success)" opacity=".85"/>`;
   } else {
     const H = 30 + lv * 2.6, bw = 6 + lv * 0.34, tw = 2.4 + lv * 0.1, top = G - H;
+    vtop = Math.max(0, Math.min(150, Math.round(top - (13 + lv * 0.9) - 22)));
     g += `<path d="M${X - bw / 2} ${G}Q${X - bw / 2 - 2} ${G - H / 2} ${X - tw / 2} ${top}L${X + tw / 2} ${top}Q${X + bw / 2 + 2} ${G - H / 2} ${X + bw / 2} ${G}Z" fill="var(--bark)"/>`;
     const tips = [[X, top]];
     RAMI.filter(b => level >= b[3]).forEach(([d, f, len]) => {
@@ -39,5 +40,5 @@ export function alberoSVG(level, fatte = 0) {
       ? `<g class="tr-b"><circle cx="${x}" cy="${G - 4}" r="6.5" fill="var(--sakura)"/><circle cx="${x}" cy="${G - 4}" r="2.4" fill="var(--sakura-soft)"/></g>`
       : `<circle cx="${x}" cy="${G - 4}" r="5" fill="none" stroke="var(--muted)" stroke-width="1.2" opacity=".6"/>`;
   }
-  return `<svg class="tree" viewBox="0 0 240 220" role="img" aria-label="Il tuo ciliegio al livello ${level}">${g}</svg>`;
+  return `<svg class="tree" viewBox="0 ${vtop} 240 ${220 - vtop}" role="img" aria-label="Il tuo ciliegio al livello ${level}">${g}</svg>`;
 }
