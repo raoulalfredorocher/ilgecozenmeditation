@@ -5,7 +5,7 @@
  */
 
 export const OCCASIONS = [
-  { k: 'ufficio',   label: 'Lavoro',            f: 3,   words: ['lavoro', 'ufficio', 'riunione', 'meeting', 'cliente', 'presentazione'] },
+  { k: 'ufficio',   label: 'Lavoro',            f: 3,   words: ['lavoro', 'ufficio', 'riunione', 'meeting', 'cliente', 'presentazione', 'evento', 'speech', 'conferenza', 'convegno'] },
   { k: 'colloquio', label: 'Colloquio',         f: 4.5, words: ['colloquio', 'intervista', 'selezione'] },
   { k: 'cena',      label: 'Cena elegante',     f: 5,   words: ['cena', 'ristorante', 'teatro', 'opera', 'gala', 'elegante'] },
   { k: 'cerimonia', label: 'Cerimonia',         f: 6,   words: ['matrimonio', 'nozze', 'cerimonia', 'battesimo', 'comunione', 'laurea', 'funerale'] },
