@@ -36,5 +36,5 @@ export function dayBalance(profile, key, { passi, kcalAllenamento, ingerite }) {
   if (!base) return null;
   const kp = stepsKcal(passi ?? f.passi, f.peso), kw = Math.round(kcalAllenamento || 0);
   const tdee = base + kp + kw;
-  return { base, passi: kp, allenamento: kw, tdee, ingerite: Math.round(ingerite || 0), delta: Math.round((ingerite || 0) - tdee), passiDaOrologio: passi != null };
+  return { peso: parseFloat(f.peso) || 0, base, passi: kp, allenamento: kw, tdee, ingerite: Math.round(ingerite || 0), delta: Math.round((ingerite || 0) - tdee), passiDaOrologio: passi != null };
 }

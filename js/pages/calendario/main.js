@@ -95,6 +95,7 @@ function renderDay() {
       ${r('Metabolismo e vita quotidiana', `${kc(bil.base)} kcal`)}
       ${r('Fabbisogno totale (TDEE)', `${kc(bil.tdee)} kcal`, true)}
       ${r(bil.delta <= 0 ? 'Deficit' : 'Surplus', `${sg(bil.delta)} kcal`, true)}
+      ${bil.peso && d.cibo.prot ? r('Proteine per kg di peso', `${(d.cibo.prot / bil.peso).toLocaleString('it-IT', { maximumFractionDigits: 2 })} g/kg`) : ''}
       ${bil.passiDaOrologio ? '' : '<span class="s">Passi stimati dal profilo: l\'orologio non ha dati per questo giorno.</span>'}</span></div>`);
   }
   if (d?.salute) {

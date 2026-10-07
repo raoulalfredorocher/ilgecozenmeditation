@@ -1,14 +1,10 @@
-/** files.js — consegna di un file all'utente: foglio di condivisione di iOS ("Salva su File") oppure download. */
+/** files.js — consegna di un file all'utente: download diretto (finisce in Download / File), non il foglio di condivisione. */
 export async function deliver(file) {
-  if (navigator.canShare?.({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: file.name }); return true; }
-    catch (e) { if (e.name === 'AbortError') return false; /* altrimenti ripiega sul download */ }
-  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(file);
   a.download = file.name;
   document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
   return true;
 }
 
