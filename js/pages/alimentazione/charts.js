@@ -78,7 +78,7 @@ export function balanceBars(data) {
   const W = 320, H = 150, L = 34, R = 8, T = 12, B = 24;
   const n = data.length;
   const diffs = data.map(d => (d.kcal && d.tdee ? d.kcal - d.tdee : null));
-  const maxAbs = Math.max(400, ...diffs.filter(v => v != null).map(Math.abs)) * 1.15;
+  const maxAbs = Math.ceil(Math.max(400, ...diffs.filter(v => v != null).map(Math.abs)) / 500) * 500;
   const mid = T + (H - T - B) / 2;
   const half = (H - T - B) / 2;
   const bw = (W - L - R) / n, bar = Math.max(3, Math.min(20, bw * 0.62));

@@ -63,7 +63,7 @@ function mealCompare(key) {
   const plan = planSel(parseKey(key)), by = {};
   (plan.day.meals || []).map(fromDietMeal).forEach(m => { (by[m.slot] ||= { slot: m.slot, p: 0, d: 0 }).p += itemsTotals(m.items).kcal; });
   (state.diary[key] || []).map(fromDiaryMeal).forEach(m => { (by[m.slot] ||= { slot: m.slot, p: 0, d: 0 }).d += itemsTotals(m.items).kcal; });
-  return { plan, rows: Object.values(by).sort((a, b) => slotOrder(a.slot) - slotOrder(b.slot)) };
+  return { plan, rows: Object.values(by).filter(r => r.p || r.d).sort((a, b) => slotOrder(a.slot) - slotOrder(b.slot)) };
 }
 function openDetail(key) {
   const meals = state.diary[key];
@@ -75,7 +75,7 @@ function openDetail(key) {
   const mac = [['Proteine', t.prot - plan.prot, MC.prot], ['Carboidrati', t.carb - plan.carb, MC.carb], ['Grassi', t.fat - plan.fat, MC.fat]];
   const fatG = Math.abs(diff) / 7.7, weekKg = Math.abs(diff) * 7 / 7700;
   const T = hasProfile() ? tdeeFor(key, plan.day.type) : 0;
-  const body = `<div class="s" style="text-transform:capitalize">${when} · confronto con "${esc(dietName())}"</div>
+  const body = `<div class="s"><span style="text-transform:capitalize">${when}</span> · confronto con "${esc(dietName())}"</div>
     <p class="rs-dt-head">Hai mangiato <b>${kc(t.kcal)} kcal</b> contro <b>${kc(plan.kcal)}</b> della dieta: <b>${sign(diff)} kcal</b> (${pct(rel)}).</p>
     <div class="rs-dt-level ${level[1]}">${level[0]}${level[1] === 'ok' ? ' (entro il ±10% del piano: è la tolleranza, non un voto)' : ''}</div>
     ${rows.length ? `<div class="cap" style="margin:var(--space-4) 0 var(--space-2)">Pasto per pasto</div>
@@ -115,7 +115,7 @@ function render() {
     summary = card('Il periodo in sintesi', `${kc(aK)} <span class="s">kcal al giorno</span>`, story, `
       <div class="rs-today"><div class="rs-rings">${rings([
         { v: m.prot, t: p.prot, color: MC.prot }, { v: m.carb, t: p.carb, color: MC.carb }, { v: m.fat, t: p.fat, color: MC.fat },
-      ], kc(aK), 'kcal/giorno')}</div>
+      ], 'macro', 'media del giorno')}</div>
         <div class="rs-lines">${[['prot', 'Proteine'], ['carb', 'Carboidrati'], ['fat', 'Grassi']].map(([k, l]) => `<div class="rs-line"><span class="dot" style="--c:${MC[k]}"></span><span class="rl">${l}</span><span class="rv"><b>${g1(m[k])}</b><span class="s"> / ${g1(p[k])} g</span></span></div>`).join('')}
           <div class="s" style="margin-top:6px">media del giorno / piano della dieta</div></div></div>`);
   }
