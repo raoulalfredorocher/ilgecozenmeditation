@@ -1,8 +1,8 @@
 /**
  * risultati.js — scheda "Risultati": come stai andando rispetto alla dieta e al tuo fabbisogno (TDEE).
  *
- * Ordine di lettura: 1) il periodo in sintesi · 2) energia: calorie, bilancio, fabbisogno e attività ·
- * 3) macro · 4) aderenza alla dieta (tocca un giorno per capire cosa è successo).
+ * Ordine di lettura: energia (calorie, bilancio, fabbisogno e attività) · macro · aderenza alla dieta (tocca un giorno
+ * per capire cosa è successo).
  * Il periodo (7/30/90 giorni) vale per tutta la pagina. La dieta di confronto si può cambiare solo per guardare
  * (non cambia la dieta attiva).
  *   dieta = il piano del giorno · diario = ciò che hai registrato davvero · TDEE = il fabbisogno calcolato dal profilo
@@ -48,6 +48,8 @@ function buildDays(n) {
       tdee: T ? tdeeFor(key, plan.day.type) : 0, parts: T ? tdeeParts(key, plan.day.type) : null };
   });
 }
+/** Cos'è il "fabbisogno": il TDEE di quel giorno, non solo il metabolismo. */
+const TDEE_NOTE = `<p class="s rs-note"><b>Il fabbisogno è il TDEE</b>: le kcal che bruci in tutto in quel giorno. Cambia ogni giorno perché somma il <b>metabolismo</b> e la vita quotidiana (calcolati da età, altezza, peso e % di grasso), le kcal dei <b>passi</b> e quelle dell'<b>allenamento</b> misurate dall'orologio. Il solo metabolismo è la parte più chiara del grafico "Fabbisogno (TDEE) e attività".</p>`;
 const avg = (list, k) => (list.length ? list.reduce((a, x) => a + (x[k] || 0), 0) / list.length : 0);
 
 function card(title, headline, sub, body, foot = '') {
@@ -103,28 +105,11 @@ function render() {
   const controls = `<div class="segmented" role="group" aria-label="Periodo">${[7, 30, 90].map(n => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${n} giorni</button>`).join('')}</div>
     <button type="button" class="diet-pill" id="rs-diet" aria-label="Scegli la dieta di confronto">Confronto con: ${esc(dietName())}<span aria-hidden="true"> ▾</span></button>`;
 
-  // 1. Il periodo in sintesi (sostituisce "Oggi": si registra la sera, oggi è quasi sempre vuoto)
-  let summary;
-  if (!logged.length) {
-    summary = card('Il periodo in sintesi', '–', `Nessun giorno registrato negli ultimi ${period} giorni.`, '<p class="s">Registra il diario (il + in basso) per vedere qui le medie.</p>');
-  } else {
-    const aK = avg(logged, 'kcal'), aPlan = avg(logged, 'plan'), aT = hp ? avg(logged, 'tdee') : 0;
-    const m = { prot: avg(logged.map(d => d.t), 'prot'), carb: avg(logged.map(d => d.t), 'carb'), fat: avg(logged.map(d => d.t), 'fat') };
-    const p = { prot: avg(logged.map(d => d.planT), 'prot'), carb: avg(logged.map(d => d.planT), 'carb'), fat: avg(logged.map(d => d.planT), 'fat') };
-    const story = `${nTxt}. Rispetto alla dieta sei a <b>${sign(aK - aPlan)} kcal</b> al giorno${aT ? ` e rispetto al fabbisogno a <b>${sign(aK - aT)}</b>` : ''}.`;
-    summary = card('Il periodo in sintesi', `${kc(aK)} <span class="s">kcal al giorno</span>`, story, `
-      <div class="rs-today"><div class="rs-rings">${rings([
-        { v: m.prot, t: p.prot, color: MC.prot }, { v: m.carb, t: p.carb, color: MC.carb }, { v: m.fat, t: p.fat, color: MC.fat },
-      ], 'macro', 'media del giorno')}</div>
-        <div class="rs-lines">${[['prot', 'Proteine'], ['carb', 'Carboidrati'], ['fat', 'Grassi']].map(([k, l]) => `<div class="rs-line"><span class="dot" style="--c:${MC[k]}"></span><span class="rl">${l}</span><span class="rv"><b>${g1(m[k])}</b><span class="s"> / ${g1(p[k])} g</span></span></div>`).join('')}
-          <div class="s" style="margin-top:6px">media del giorno / piano della dieta</div></div></div>`);
-  }
-
   // 2a. Calorie
   const aK = avg(logged, 'kcal'), aPlan = avg(logged, 'plan');
-  const kcalStory = logged.length ? `Mangi in media ${kc(aK)} kcal: ${Math.abs(aK - aPlan) < aPlan * 0.05 ? 'in linea con la dieta' : aK > aPlan ? `${kc(aK - aPlan)} sopra la dieta` : `${kc(aPlan - aK)} sotto la dieta`}${anyT ? `, e ${aK < avg(logged, 'tdee') ? 'sotto' : 'sopra'} il fabbisogno (${kc(avg(logged, 'tdee'))})` : ''}.` : 'Registra qualche giorno per vedere il grafico.';
+  const kcalStory = logged.length ? `Mangi in media ${kc(aK)} kcal: ${Math.abs(aK - aPlan) < aPlan * 0.05 ? 'in linea con la dieta' : aK > aPlan ? `${kc(aK - aPlan)} sopra la dieta` : `${kc(aPlan - aK)} sotto la dieta`}${anyT ? `, e ${aK < avg(logged, 'tdee') ? 'sotto' : 'sopra'} il tuo fabbisogno giornaliero (TDEE) di ${kc(avg(logged, 'tdee'))} kcal` : ''}.` : 'Registra qualche giorno per vedere il grafico.';
   const kcalCard = card('Calorie', logged.length ? `${kc(aK)} <span class="s">kcal al giorno</span>` : '–', kcalStory, kcalBars(days),
-    legend([['var(--primary)', 'Diario'], ['var(--text)', 'Dieta'], ['var(--muted)', 'Fabbisogno', true]].filter(l => l[1] !== 'Fabbisogno' || anyT)));
+    legend([['var(--primary)', 'Diario'], ['var(--text)', 'Dieta'], ['var(--muted)', 'Fabbisogno (TDEE)', true]].filter(l => !l[1].startsWith('Fabbisogno') || anyT)));
 
   // 2b. Bilancio
   let balanceCard;
@@ -134,14 +119,14 @@ function render() {
     const sum = logged.reduce((a, d) => a + (d.kcal - d.tdee), 0), kg = sum / 7700;
     balanceCard = card('Bilancio', logged.length ? `${sign(sum)} <span class="s">kcal nel periodo</span>` : '–',
       logged.length ? `${sum < 0 ? 'Deficit' : 'Surplus'} medio di ${kc(Math.abs(sum / logged.length))} kcal al giorno: circa ${kg > 0 ? '+' : kg < 0 ? '−' : ''}${Math.abs(kg).toLocaleString('it-IT', { maximumFractionDigits: 1 })} kg di grasso in ${logged.length} ${logged.length === 1 ? 'giorno' : 'giorni'}.` : 'Registra qualche giorno',
-      balanceBars(days), legend([['var(--primary)', 'Sotto il fabbisogno'], ['var(--mc-fat)', 'Sopra il fabbisogno']]));
+      balanceBars(days), legend([['var(--primary)', 'Sotto il fabbisogno (TDEE)'], ['var(--mc-fat)', 'Sopra il fabbisogno (TDEE)']]) + TDEE_NOTE);
   }
 
   // 2c. Fabbisogno e attività
   const withParts = days.filter(d => d.parts);
   const A = k => (withParts.length ? withParts.reduce((a, d) => a + d.parts[k], 0) / withParts.length : 0);
   const realSteps = withParts.filter(d => d.parts.realSteps).length;
-  const stackCard = withParts.length ? card('Fabbisogno e attività', `${kc(A('base') + A('passi') + A('workout'))} <span class="s">kcal al giorno (TDEE medio)</span>`,
+  const stackCard = withParts.length ? card('Fabbisogno (TDEE) e attività', `${kc(A('base') + A('passi') + A('workout'))} <span class="s">kcal al giorno (TDEE medio)</span>`,
     `Metabolismo e vita quotidiana ${kc(A('base'))}, più ${kc(A('passi'))} dai passi e ${kc(A('workout'))} dall'allenamento${realSteps ? ` (passi veri dell'orologio in ${realSteps} giorni su ${withParts.length})` : ' (passi del profilo: l\'orologio non ha ancora mandato dati)'}.`,
     tdeeStack(days), legend([['var(--primary)', 'Metabolismo e vita quotidiana', false, 0.3], ['var(--primary)', 'Passi', false, 0.6], ['var(--primary)', 'Allenamento', false, 1], ['var(--text)', 'Calorie mangiate']])): '';
 
@@ -168,7 +153,6 @@ function render() {
   root.innerHTML = `
     ${hp ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il bilancio.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
     ${controls}
-    ${summary}
     <div class="cap rs-sec">Energia</div>${kcalCard}${balanceCard}${stackCard}
     <div class="cap rs-sec">Macro</div>${macroCard}
     <div class="cap rs-sec">Aderenza</div>${adhCard}

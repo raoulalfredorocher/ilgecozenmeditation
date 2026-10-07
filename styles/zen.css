@@ -700,3 +700,10 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .lv-up { text-align: center; padding: var(--space-3); border-radius: var(--radius-md); background: color-mix(in srgb, var(--sakura) 18%, var(--card)); font-size: var(--fs-sm); margin-bottom: var(--space-2); animation: tr-pop .6s ease-out both; }
 .lv-cat { font-size: .625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 :where(.text-btn) { background: none; border: 0; padding: 4px 2px; color: var(--geco-blue); font: inherit; font-weight: 600; cursor: pointer; }
+.gz-link { cursor: pointer; }
+.gz-link:active { opacity: .75; }
+.gz-go { margin-top: var(--space-2); color: var(--geco-blue); font-weight: 600; }
+.gz-refline { font-size: var(--fs-sm); line-height: 1.55; margin: var(--space-2) 0; }
+.gz-info { margin: var(--space-2) 0; font-size: var(--fs-sm); line-height: 1.55; }
+.gz-info summary { cursor: pointer; color: var(--geco-blue); font-weight: 600; }
+.gz-info p { margin: var(--space-2) 0 0; }

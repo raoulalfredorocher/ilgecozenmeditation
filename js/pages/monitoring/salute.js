@@ -14,6 +14,7 @@ import { createSheet, toast } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { seriesChart, dkey, it } from '../../core/salute-charts.js';
 import { csvFile, deliver } from '../alimentazione/files.js';
+import { INFO } from './esami-info.js';
 
 const root = document.getElementById('sl-root');
 let data = { pressione: {}, glicemia: {}, esami: {} };
@@ -88,9 +89,9 @@ function heartCard() {
   const hdl = lastOf(['Colesterolo HDL']), glu = lastOf(['Glicemia']);
   const crpHs = lastOf(['Proteina C reattiva ad alta sensibilità', 'PCR ad alta sensibilità']), crp = crpHs || lastOf(['Proteina C reattiva']);
   const lpa = lastOf(['Lipoproteina (a)']);
-  const tile = (title, x, status, why) => `<div class="card gz-card gz-heart"><div class="section-title" style="margin:0">${title}</div>
+  const tile = (title, x, status, why, go, goTab = 'esami') => `<div class="card gz-card gz-heart gz-link" data-go="${esc(go)}" data-gotab="${x ? goTab : 'fare'}" role="button" tabindex="0"><div class="section-title" style="margin:0">${title}</div>
     <div class="gz-big ${status && status[1] === 'out' ? 'gz-out' : ''}">${x ? `${val(x)} <small>${esc(x.u || '')}</small>` : '—'}</div>
-    <div class="s">${x ? fdate(x.d) : 'mai misurata'}${status ? ` · ${tag(...status)}` : ''}</div><p class="gz-rif">${why}</p></div>`;
+    <div class="s">${x ? fdate(x.d) : 'mai misurata'}${status ? ` · ${tag(...status)}` : ''}</div><p class="gz-rif">${why}</p><div class="s gz-go">${x ? 'Vedi tutti i valori' : 'Quando farla'} ›</div></div>`;
   const hdlSt = hdl && (hdl.v < 40 ? ['Basso', 'out'] : hdl.v < 60 ? ['Accettabile', 'in'] : ['Ottimo', 'in']);
   const gluSt = glu && (glu.v < 70 ? ['Bassa', 'out'] : glu.v < 100 ? ['Nella norma', 'in'] : ['Alterata', 'out']);
   let crpSt = null;
@@ -99,11 +100,11 @@ function heartCard() {
   if (lpa) { const hi = /nmol/i.test(lpa.u || '') ? 125 : 50; lpaSt = lpa.v > hi ? ['Alta', 'out'] : ['Nella norma', 'in']; }
   return `<div class="gz-sec"><div class="cap">Cuore e metabolismo: i 4 valori chiave</div>
     <div class="gz-heart-grid">
-    ${tile('Colesterolo HDL', hdl, hdlSt, 'È il colesterolo "buono". Per un uomo conta stare sopra 40 mg/dL; più alto è meglio e oltre 60 è protettivo. Si alza con attività aerobica, calo del grasso addominale e meno zuccheri raffinati.')}
-    ${tile('Glicemia a digiuno', glu, gluSt, 'Normale tra 70 e 99 mg/dL; da 100 a 125 è alterata. Per il quadro metabolico completo servono anche emoglobina glicata (HbA1c) e insulina.')}
-    ${tile('Proteina C reattiva', crp, crpSt, 'Per il cuore serve quella ad alta sensibilità (hs-CRP): sotto 1 mg/L rischio basso, 1–3 medio, sopra 3 alto. Se il referto dice solo "&lt;4" non permette di distinguere. Va misurata a distanza da infezioni o infiammazioni.')}
-    ${tile('Lipoproteina(a)', lpa, lpaSt, 'Dipende dai geni e non cambia con dieta e sport. Basta misurarla una volta nella vita (lo raccomandano le linee guida europee). Sopra 50 mg/dL (circa 125 nmol/L) il rischio cardiovascolare è più alto.')}
-    </div></div>`;
+    ${tile('Colesterolo HDL', hdl, hdlSt, 'È il colesterolo "buono". Per un uomo conta stare sopra 40 mg/dL; più alto è meglio e oltre 60 è protettivo. Si alza con attività aerobica, calo del grasso addominale e meno zuccheri raffinati.', 'Colesterolo HDL')}
+    ${tile('Glicemia a digiuno', glu, gluSt, 'Normale tra 70 e 99 mg/dL; da 100 a 125 è alterata. Per il quadro metabolico completo servono anche emoglobina glicata (HbA1c) e insulina.', 'Glicemia')}
+    ${tile('Proteina C reattiva', crp, crpSt, 'Per il cuore serve quella ad alta sensibilità (hs-CRP): sotto 1 mg/L rischio basso, 1–3 medio, sopra 3 alto. Se il referto dice solo "&lt;4" non permette di distinguere. Va misurata a distanza da infezioni o infiammazioni.', 'Proteina C reattiva')}
+    ${tile('Lipoproteina(a)', lpa, lpaSt, 'Dipende dai geni e non cambia con dieta e sport. Basta misurarla una volta nella vita (lo raccomandano le linee guida europee). Sopra 50 mg/dL (circa 125 nmol/L) il rischio cardiovascolare è più alto.', 'Lipoproteina (a)')}
+    </div><button type="button" class="text-btn" data-gotab="esami" data-go="" style="align-self:center">Vedi tutti gli esami ›</button></div>`;
 }
 
 // Altri nomi con cui si cerca un esame (es. "glucosio" trova Glicemia)
@@ -113,6 +114,17 @@ const ALIAS = { 'Glicemia': 'glucosio zucchero', 'Proteina C reattiva': 'pcr crp
   'Vitamina D': '25 oh', 'Vitamina B12': 'cobalamina', 'HbA1c': 'emoglobina glicata', 'HOMA': 'insulino resistenza', 'Insulina': 'insulino resistenza', 'Omocisteina': '', 'Cortisolo': 'stress surrene' };
 const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 let q = '';
+
+/** Il riferimento del laboratorio, a parole. */
+const refText = x => (x.min != null && x.max != null ? `${dec(x.min)} – ${dec(x.max)}` : x.max != null ? `fino a ${dec(x.max)}` : x.min != null ? `oltre ${dec(x.min)}` : '');
+/** Dove sta il valore rispetto al riferimento del laboratorio. */
+function labStatus(x) {
+  if (x.min == null && x.max == null) return null;
+  if (x.lt) return x.max != null && x.v <= x.max ? ['Sotto il limite', 'in'] : null;
+  if (x.min != null && x.v < x.min) return ['Sotto il riferimento', 'out'];
+  if (x.max != null && x.v > x.max) return ['Sopra il riferimento', 'out'];
+  return ['Nel riferimento', 'in'];
+}
 
 function labsList() {
   const by = {};
@@ -125,11 +137,14 @@ function labsList() {
     const out = (last.min != null && last.v < last.min) || (last.max != null && last.v > last.max);
     const band = last.min != null && last.max != null ? { min: last.min, max: last.max } : null;
     const delta = prev ? last.v - prev.v : null;
-    return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${esc(n)}</div>
+    const info = INFO[n], st = labStatus(last);
+    return `<div class="card gz-card" id="ex-${esc(n)}"><div class="gz-top"><div><div class="section-title" style="margin:0">${esc(n)}</div>
       <div class="gz-big ${out ? 'gz-out' : ''}">${val(last)} <small>${esc(last.u || '')}</small></div></div>
-      <div class="gz-avg">${last.min != null || last.max != null ? `rif. ${last.min ?? '…'}–${last.max ?? '…'}` : ''}<br><span>${fdate(last.d)}${delta != null ? ` · ${delta > 0 ? '+' : delta < 0 ? '−' : ''}${dec(Math.abs(delta))} dal precedente` : ''}</span></div></div>
+      <div class="gz-avg">${fdate(last.d)}${last.lab ? `<br><span>${esc(last.lab)}</span>` : ''}</div></div>
+      <div class="gz-refline"><b>Riferimento del laboratorio:</b> ${refText(last) ? `${refText(last)} ${esc(last.u || '')}` : 'non indicato nel referto'}${st ? ` · ${tag(...st)}` : ''}${delta != null ? `<br><span class="s">${delta > 0 ? '+' : delta < 0 ? '−' : ''}${dec(Math.abs(delta))} rispetto al precedente (${fdate(prev.d)})</span>` : ''}</div>
+      ${info ? `<details class="gz-info"><summary>Cos'è e valori ottimali</summary><p>${esc(info.cos)}</p><p><b>Valori:</b> ${esc(info.ott)}</p>${info.nota ? `<p class="s">${esc(info.nota)}</p>` : ''}<p class="s">Indicazioni generali, non una diagnosi: conta il riferimento del tuo laboratorio e il parere del medico.</p></details>` : ''}
       ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
-      ${L.slice(0, 3).map(x => row('esami', x.id, `${val(x)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}`)).join('')}</div>`;
+      ${L.slice(0, 4).map(x => row('esami', x.id, `${val(x)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}`)).join('')}</div>`;
   }).join('');
 }
 
@@ -221,6 +236,7 @@ sheet.$('#sl-form').addEventListener('click', async e => {
   try { await setDoc(ref, { [formKind]: { [newId()]: entry } }, { merge: true }); toast('Salvato'); } catch (err) { console.error(err); toast('Non sono riuscito a salvare'); }
 });
 
+root.addEventListener('keydown', e => { const gt = e.target.closest?.('[data-gotab]'); if (gt && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); gt.click(); } });
 root.addEventListener('input', e => {
   if (e.target.id !== 'sl-q') return;
   q = e.target.value;
@@ -247,6 +263,8 @@ moreSheet.el.addEventListener('click', e => { const b = e.target.closest('[data-
 
 let armed = null;
 root.addEventListener('click', async e => {
+  const gt = e.target.closest('[data-gotab]');
+  if (gt) { tab = gt.dataset.gotab; q = gt.dataset.go || ''; history.replaceState(null, '', '#' + tab); render(); return scrollTo({ top: 0 }); }
   const tb = e.target.closest('[data-tab]');
   if (tb) { tab = tb.dataset.tab; history.replaceState(null, '', '#' + tab); render(); return scrollTo({ top: 0 }); }
   const add = e.target.closest('[data-add]');
