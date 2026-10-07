@@ -31,7 +31,7 @@ export const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giug
   'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 
 /** Colori dei valori nutrizionali, gli stessi in tutta la sezione. */
-export const MC = { kcal: '#6EC6E0', prot: '#25739E', carb: '#EE9BB0', fat: '#D9A441' };
+export const MC = { kcal: 'var(--mc-kcal)', prot: 'var(--mc-prot)', carb: 'var(--mc-carb)', fat: 'var(--mc-fat)' };
 export const MACRO_LABEL = { prot: 'Proteine', carb: 'Carboidrati', fat: 'Grassi' };
 
 /** Momenti della giornata. `diary` è la stringa salvata nel diario (con emoji, come in passato). */

@@ -5,7 +5,7 @@
 import { waitForUser } from '../../core/auth-guard.js';
 import { watchHealth, health } from '../allenamento/salute.js';
 import { state, onChange, num, parseKey, startSync } from '../allenamento/state.js';
-import { METRICS, lastDays, metricCard, workoutKcalCard, baselineLine, it } from '../../core/salute-charts.js';
+import { METRICS, lastDays, metricCard, workoutKcalCard, baselineLine, bindChartReadouts, it } from '../../core/salute-charts.js';
 import { loadAll } from './dati.js';
 import { statoHtml } from './stato.js';
 import { collegamentiHtml } from './collegamenti.js';
@@ -49,6 +49,7 @@ root.addEventListener('click', e => {
   if (b) { range = +b.dataset.r; render(); }
 });
 
+bindChartReadouts(root);
 watchHealth(render);
 onChange(w => { if (w === 'log') render(); });
 render();

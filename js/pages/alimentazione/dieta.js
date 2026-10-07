@@ -95,6 +95,7 @@ function render() {
   root.innerHTML = `
     <button type="button" class="diet-pill" id="dt-diet" aria-label="Cambia dieta">${esc(state.diet.name)}<span aria-hidden="true"> ▾</span></button>
     <div class="wk">${bars}</div>
+    <div class="mc-legend" aria-label="Legenda dei colori"><span><i style="background:${MC.prot}"></i>Proteine</span><span><i style="background:${MC.carb}"></i>Carboidrati</span><span><i style="background:${MC.fat}"></i>Grassi</span><span class="s">· altezza = kcal del giorno</span></div>
     <section class="dt-day">
       <div class="dt-dayhead">
         <div><div class="dt-dayname">${esc(day.name || DAY_NAMES[selected])}</div>

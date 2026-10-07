@@ -671,3 +671,9 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-tabs { overflow-x: auto; scrollbar-width: none; margin-bottom: var(--space-2); }
 .gz-tabs::-webkit-scrollbar { display: none; }
 .gz-tabs > button { flex: 0 0 auto; padding: 0 14px; white-space: nowrap; }
+.mc-legend { display: flex; flex-wrap: wrap; gap: 4px var(--space-4); font-size: var(--fs-xs); color: var(--muted); padding: 0 var(--space-2); margin-top: calc(var(--space-2) * -1); }
+.mc-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mc-legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.gz-story { margin: 2px 0 var(--space-2); font-size: var(--fs-sm); color: var(--text); line-height: 1.45; }
+.gz-readout { min-height: 1.5em; margin-top: 2px; font-size: var(--fs-xs); color: var(--muted); }
+.gz-svg .gz-hit { cursor: crosshair; }

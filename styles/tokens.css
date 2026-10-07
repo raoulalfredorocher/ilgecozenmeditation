@@ -72,6 +72,9 @@
   --input-bg: var(--card);
   --overlay:  var(--bg);
   --cat-label: #5E86A0;
+
+  /* Macro: tre colori validati (differenza di colore anche per daltonici) */
+  --mc-prot: #2F7FAE; --mc-carb: #D4577A; --mc-fat: #C88A12; --mc-kcal: var(--text);
 }
 
 :root[data-theme="dark"] {
@@ -107,4 +110,6 @@
   --input-bg: var(--surface);
   --overlay:  var(--bg);
   --cat-label: #8AB4C8;
+
+  --mc-prot: #4E9BC8; --mc-carb: #DE6585; --mc-fat: #C28612; --mc-kcal: var(--text);
 }

@@ -102,6 +102,22 @@
     .ch-axis { stroke: var(--muted); stroke-width: .8; }
     .ch-track { fill: var(--border); }
     .ch-empty { stroke: var(--border); }
+    .rs-sec { margin: var(--space-4) 0 calc(var(--space-2) * -1); }
+    .rs-story { margin-top: 4px; line-height: 1.5; font-size: var(--fs-sm); color: var(--text); }
+    .rs-link { display: block; text-align: center; font-size: var(--fs-sm); color: var(--geco-blue); text-decoration: none; padding: var(--space-3) 0 var(--space-5); line-height: 1.5; }
+    .adh-dot { cursor: pointer; }
+    .rs-dt-head { font-size: var(--fs-md); line-height: 1.5; margin: var(--space-2) 0; }
+    .rs-dt-level { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: var(--fs-sm); background: var(--surface); }
+    .rs-dt-level.ok { background: color-mix(in srgb, var(--success) 16%, var(--surface)); }
+    .rs-dt-level.mid { background: color-mix(in srgb, var(--warning) 20%, var(--surface)); }
+    .rs-dt-level.big { background: color-mix(in srgb, var(--warning) 34%, var(--surface)); }
+    .rs-dt-row { display: flex; align-items: baseline; gap: var(--space-3); padding: 9px 0; border-top: .5px solid var(--border); font-size: var(--fs-sm); }
+    .rs-dt-row .s { margin-left: auto; }
+    .rs-dt-row b.up { color: var(--text); } .rs-dt-row b.dn { color: var(--muted); }
+    .rs-dt-mac { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    .rs-dt-mac > div { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-sm); }
+    .rs-dt-mac i { width: 10px; height: 10px; border-radius: 50%; }
+    .rs-dt-note { font-size: var(--fs-sm); line-height: 1.55; margin: var(--space-2) 0; }
     .rs-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: var(--space-3); font-size: var(--fs-xs); color: var(--muted); }
     .rs-legend i { display: inline-block; width: 12px; height: 6px; border-radius: 3px; margin-right: 6px; vertical-align: 1px; }
     .rs-today { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: var(--space-4); align-items: center; }

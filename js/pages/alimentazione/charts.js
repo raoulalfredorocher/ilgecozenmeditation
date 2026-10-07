@@ -5,7 +5,10 @@
  */
 import { MC } from './state.js';
 
-const SKY = MC.kcal, BLUE = MC.prot, ROSE = MC.carb, GOLD = MC.fat, BARK = '#8B5A6B';
+// Un colore per entità, uguale in tutti i grafici: Diario = blu, Dieta = inchiostro, Fabbisogno = grigio tratteggiato.
+// I macro (proteine, carboidrati, grassi) hanno i loro tre colori validati (--mc-*).
+const DIARY = 'var(--primary)', PLAN = 'var(--text)', NEED = 'var(--muted)';
+const SKY = 'var(--primary)', BLUE = MC.prot, ROSE = MC.carb, GOLD = MC.fat, BARK = 'var(--muted)';
 const kc = n => Math.round(n).toLocaleString('it-IT');
 
 const svg = (w, h, inner, label) =>
@@ -41,12 +44,12 @@ export function kcalBars(data) {
   const cx = i => L + bw * i + bw / 2;
   let grid = '';
   for (let v = 0; v <= top; v += step) grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="ch-grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ch-t">${v >= 1000 ? (v / 1000).toLocaleString('it-IT') + 'k' : v}</text>`;
-  const bars = data.map((d, i) => d.kcal ? `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y(d.kcal).toFixed(1)}" width="${bar.toFixed(1)}" height="${(y(0) - y(d.kcal)).toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${BLUE}"/>` : '').join('');
+  const bars = data.map((d, i) => d.kcal ? `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y(d.kcal).toFixed(1)}" width="${bar.toFixed(1)}" height="${(y(0) - y(d.kcal)).toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${DIARY}"/>` : '').join('');
   const planPts = data.map((d, i) => (d.plan ? `${cx(i).toFixed(1)},${y(d.plan).toFixed(1)}` : null)).filter(Boolean);
-  const plan = planPts.length > 1 ? `<polyline points="${planPts.join(' ')}" fill="none" stroke="${ROSE}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
-  const dots = n <= 14 ? data.map((d, i) => (d.plan ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.plan).toFixed(1)}" r="2.6" fill="${ROSE}"/>` : '')).join('') : '';
+  const plan = planPts.length > 1 ? `<polyline points="${planPts.join(' ')}" fill="none" stroke="${PLAN}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
+  const dots = n <= 14 ? data.map((d, i) => (d.plan ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.plan).toFixed(1)}" r="3" fill="${PLAN}" stroke="var(--card)" stroke-width="1.5"/>` : '')).join('') : '';
   const tp = data.map((d, i) => (d.tdee ? `${cx(i).toFixed(1)},${y(d.tdee).toFixed(1)}` : null)).filter(Boolean);
-  const tl = tp.length > 1 ? `<polyline points="${tp.join(' ')}" fill="none" stroke="${BARK}" stroke-width="1.5" stroke-dasharray="5 4" stroke-linejoin="round"/>` : '';
+  const tl = tp.length > 1 ? `<polyline points="${tp.join(' ')}" fill="none" stroke="${NEED}" stroke-width="1.5" stroke-dasharray="5 4" stroke-linejoin="round"/>` : '';
   const every = n <= 7 ? 1 : Math.ceil(n / 6);
   const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
   return svg(W, H, grid + tl + bars + plan + dots + xl, 'Calorie giornaliere: diario, dieta e fabbisogno');
@@ -83,7 +86,7 @@ export function balanceBars(data) {
   const bars = diffs.map((v, i) => {
     if (v == null) return '';
     const h = Math.max(1.5, (Math.abs(v) / maxAbs) * half);
-    return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${(v >= 0 ? mid - h : mid).toFixed(1)}" width="${bar.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${v >= 0 ? GOLD : SKY}"/>`;
+    return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${(v >= 0 ? mid - h : mid).toFixed(1)}" width="${bar.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${v >= 0 ? GOLD : DIARY}"/>`;
   }).join('');
   const labels = `<text x="${L - 6}" y="${T + 8}" text-anchor="end" class="ch-t">+${kc(maxAbs)}</text><text x="${L - 6}" y="${H - B}" text-anchor="end" class="ch-t">−${kc(maxAbs)}</text>`;
   const every = n <= 7 ? 1 : Math.ceil(n / 6);
@@ -96,12 +99,12 @@ export function balanceBars(data) {
 export function adherenceDots(days) {
   const cols = 14, r = 8, gap = 5, rows = Math.ceil(days.length / cols);
   const W = cols * (2 * r + gap) - gap, H = rows * (2 * r + gap) - gap;
-  const col = { ok: BLUE, over: GOLD, under: ROSE };
+  const col = { ok: 'var(--success)', over: 'var(--warning)', under: 'var(--primary)' };
   const dots = days.map((d, i) => {
     const x = (i % cols) * (2 * r + gap) + r, y = Math.floor(i / cols) * (2 * r + gap) + r;
     return d.state === 'none'
       ? `<circle cx="${x}" cy="${y}" r="${r - 1}" fill="none" class="ch-empty" stroke-width="1.5"/>`
-      : `<circle cx="${x}" cy="${y}" r="${r}" fill="${col[d.state]}"/>`;
+      : `<g class="adh-dot" data-k="${d.key}" role="button" tabindex="0" aria-label="${d.key}"><circle cx="${x}" cy="${y}" r="${r + 3}" fill="transparent"/><circle cx="${x}" cy="${y}" r="${r}" fill="${col[d.state]}"/></g>`;
   }).join('');
   return svg(W, H, dots, 'Giorni in linea con la dieta');
 }
@@ -142,15 +145,15 @@ export function tdeeStack(data) {
   const bars = data.map((d, i) => {
     if (!d.parts) return '';
     let acc = 0;
-    return [['base', BARK, 1], ['passi', SKY, 1], ['workout', BLUE, 1]].map(([k, col]) => {
+    return [['base', 'var(--primary)', .3], ['passi', 'var(--primary)', .6], ['workout', 'var(--primary)', 1]].map(([k, col, op]) => {
       const v = d.parts[k]; if (!v) return '';
       const y0 = y(acc + v), h = y(acc) - y0; acc += v;
-      return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y0.toFixed(1)}" width="${bar.toFixed(1)}" height="${Math.max(h, 0.5).toFixed(1)}" fill="${col}"/>`;
+      return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y0.toFixed(1)}" width="${bar.toFixed(1)}" height="${Math.max(h - 1.5, 0.5).toFixed(1)}" fill="${col}" opacity="${op}"/>`;
     }).join('');
   }).join('');
   const pts = data.map((d, i) => (d.kcal ? `${cx(i).toFixed(1)},${y(d.kcal).toFixed(1)}` : null)).filter(Boolean);
-  const line = pts.length > 1 ? `<polyline points="${pts.join(' ')}" fill="none" stroke="${GOLD}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
-  const dots = data.map((d, i) => (d.kcal ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.kcal).toFixed(1)}" r="${n > 14 ? 2 : 3}" fill="${GOLD}" stroke="var(--card)" stroke-width="1"/>` : '')).join('');
+  const line = pts.length > 1 ? `<polyline points="${pts.join(' ')}" fill="none" stroke="${PLAN}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
+  const dots = data.map((d, i) => (d.kcal ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.kcal).toFixed(1)}" r="${n > 14 ? 2.5 : 3.5}" fill="${PLAN}" stroke="var(--card)" stroke-width="1.5"/>` : '')).join('');
   const every = n <= 7 ? 1 : Math.ceil(n / 6);
   const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
   return svg(W, H, grid + bars + line + dots + xl, 'Fabbisogno giornaliero: metabolismo, passi e allenamento, con le calorie mangiate');
