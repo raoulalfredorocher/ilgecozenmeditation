@@ -1,16 +1,18 @@
 /**
- * flash.js — flashcard: 10 domande sui libri letti, generate dai tuoi dati
- * (titoli, autori, anno, genere, trame, voti, note e appunti). Nessuna AI.
+ * flash.js — flashcard: 10 domande SUL CONTENUTO dei libri che hai letto.
  *
- * Tipi di domanda: autore, libro di un autore, frase → libro, frase → autore,
- * parola mancante in una frase, trama → libro, anno, genere, "cosa ti ha lasciato?".
- * Le domande che sbagli ritornano più spesso; quelle che sai bene più di rado.
+ * Le domande stanno in users/{uid}/direction/libri_flash_deck:
+ *   cards: [{ bt: titolo, q, a: risposta giusta, o: [3 risposte sbagliate], w: spiegazione }]   (preparate per i tuoi libri)
+ *   mine:  [{ bt, q, r }]                                                                      (le tue domande: domanda + risposta)
+ * In più: «cosa ti ha lasciato?» (dalla tua nota) e frasi dei tuoi appunti con una parola mancante.
+ * Niente domande su autore, anno o genere. Le domande che sbagli ritornano più spesso.
  * Risultati: localStorage + users/{uid}/direction/libri_flash.
  */
 import { icon } from '../../ui/icons.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc } from '../../core/firestore.js';
+import { createSheet, toast } from '../../ui/dialog.js';
 
 const LS = 'zen_flash';
 const N = 10;
@@ -21,7 +23,7 @@ const clip = (s, n) => (s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '�
 const firstAuthor = a => String(a || '').split(/[;,&]| e /)[0].trim();
 const dayKey = () => new Date().toISOString().slice(0, 10);
 
-const TYPE_LABEL = { author: 'Autore', whose: 'Autore', quoteBook: 'Citazione', quoteAuthor: 'Citazione', cloze: 'Completa la frase', plot: 'Trama', year: 'Anno', genre: 'Genere', recall: 'I tuoi ricordi' };
+const TYPE_LABEL = { content: 'Dal libro', mine: 'La tua domanda', cloze: 'Completa la frase', recall: 'I tuoi ricordi' };
 
 export function initFlash(ctx) {
   let data = { sessions: [], cards: {} };
@@ -47,60 +49,31 @@ export function initFlash(ctx) {
     } catch { /* offline */ }
   };
 
-  // ─── Generazione delle domande ─────────────────────────────────────
+  // ─── Domande preparate e tue ───────────────────────────────────────
+  let deck = { cards: [], mine: [] };
+  const deckRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'libri_flash_deck');
+  const loadDeck = async () => { try { const s = await getDoc(deckRef()); if (s.exists()) deck = { cards: [], mine: [], ...s.data() }; } catch { /* offline */ } };
+  const norm = t => String(t || '').trim().toLowerCase();
+  const readBook = t => ctx.items().find(b => b.done && norm(b.title) === norm(t));
+
   async function buildCards() {
+    await loadDeck();
     const all = ctx.items();
     const subjects = all.filter(b => b.done);
     const learnt = all.filter(b => b.done || b.reading);
-    const titles = [...new Set(all.map(b => b.title).filter(Boolean))];
-    const authors = [...new Set(all.map(b => firstAuthor(b.author)).filter(Boolean))];
     const cards = [];
     const add = c => c && cards.push(c);
-    const opts = (right, pool, k = 3) => {
-      const wrong = sample(pool.filter(x => x !== right), k);
-      return wrong.length === k ? shuffle([right, ...wrong]) : null;
-    };
 
-    for (const b of subjects) {
-      const au = firstAuthor(b.author);
-      if (au) {
-        const o = opts(au, authors);
-        if (o) add({ key: `a:${b.id}`, type: 'author', book: b, q: `Chi ha scritto «${b.title}»?`, options: o, answer: au, why: `«${b.title}» è di ${au}.` });
-        const mine = all.filter(x => firstAuthor(x.author) === au).map(x => x.title);
-        const others = titles.filter(t => !mine.includes(t));
-        const o2 = opts(b.title, [b.title, ...others]);
-        if (o2 && others.length >= 3) add({ key: `w:${b.id}`, type: 'whose', book: b, q: `Quale di questi libri è stato scritto da ${au}?`, options: o2, answer: b.title, why: `${au} ha scritto «${b.title}».` });
-      }
-      if (b.plot && b.plot.length > 50) {
-        const o = opts(b.title, titles);
-        if (o) add({ key: `p:${b.id}`, type: 'plot', book: b, q: 'Di quale libro parla?', quote: clip(b.plot.replace(/\s+/g, ' '), 230), options: o, answer: b.title, why: `Parla di «${b.title}».` });
-      }
-      if (b.year) {
-        const y = parseInt(b.year);
-        const pool = new Set([y]);
-        while (pool.size < 4) pool.add(y + (rnd(2) ? 1 : -1) * (1 + rnd(18)));
-        add({ key: `y:${b.id}`, type: 'year', book: b, q: `In che anno è uscito «${b.title}»?`, options: shuffle([...pool].map(String)), answer: String(y), why: `«${b.title}» è del ${y}.` });
-      }
-      if (b.genre) {
-        const o = opts(b.genre, [...new Set(all.map(x => x.genre).filter(Boolean)), 'Giallo e thriller', 'Fantasy', 'Storico', 'Filosofia', 'Narrativa', 'Biografia', 'Fantascienza']);
-        if (o) add({ key: `g:${b.id}`, type: 'genre', book: b, q: `Di che genere è «${b.title}»?`, options: o, answer: b.genre, why: `È ${b.genre.toLowerCase()}.` });
-      }
-      if (b.note && b.note.length > 6) {
-        add({ key: `n:${b.id}`, type: 'recall', book: b, q: `Cosa ti ha lasciato «${b.title}»?`, reveal: b.note, why: '' });
-      }
-    }
+    deck.cards.forEach((c, n) => { const b = readBook(c.bt); if (b && c.o?.length >= 3) add({ key: `d:${norm(c.bt)}:${n}:${c.q.slice(0, 20)}`, type: 'content', book: b, q: c.q, options: shuffle([c.a, ...c.o.slice(0, 3)]), answer: c.a, why: c.w || '' }); });
+    deck.mine.forEach((c, n) => { const b = readBook(c.bt); if (b) add({ key: `m:${norm(c.bt)}:${n}:${c.q.slice(0, 20)}`, type: 'mine', book: b, q: c.q, reveal: c.r, why: '' }); });
+    for (const b of subjects) if (b.note && b.note.length > 6) add({ key: `n:${b.id}`, type: 'recall', book: b, q: `Cosa ti ha lasciato «${b.title}»?`, reveal: b.note, why: '' });
 
-    // Frasi dai tuoi appunti (testo)
+    // Frasi dai tuoi appunti, con una parola mancante
     const qs = (await ctx.quotes.loadMany(sample(learnt.filter(b => (b.quotesCount || 0) > 0), 10))).filter(q => q.text && q.text.length > 20 && q.text.length < 320);
-    const bookOf = q => all.find(b => b._docId === q._bookDocId);
     const words = qs.flatMap(q => q.text.split(/\s+/).map(w => w.replace(/[^\p{L}]/gu, '')).filter(w => w.length >= 5));
     for (const q of qs) {
-      const b = bookOf(q);
+      const b = all.find(x => x._docId === q._bookDocId);
       if (!b) continue;
-      const o = opts(b.title, titles);
-      if (o) add({ key: `q:${q._docId}`, type: 'quoteBook', book: b, q: 'Da quale libro viene questa frase?', quote: q.text, options: o, answer: b.title, why: `Viene da «${b.title}»${b.author ? ' di ' + b.author : ''}.` });
-      const au = firstAuthor(b.author), o2 = au && opts(au, authors);
-      if (o2) add({ key: `qa:${q._docId}`, type: 'quoteAuthor', book: b, q: 'Chi ha scritto questa frase?', quote: q.text, options: o2, answer: au, why: `È di ${au}, da «${b.title}».` });
       const toks = q.text.split(/(\s+)/);
       const idxs = toks.map((t, i) => [t.replace(/[^\p{L}]/gu, ''), i]).filter(([w, i]) => w.length >= 5 && i > 0 && i < toks.length - 2);
       if (idxs.length) {
@@ -141,23 +114,46 @@ export function initFlash(ctx) {
 
   // ─── Schermate ─────────────────────────────────────────────────────
   function landing(el) {
-    const read = ctx.items().filter(b => b.done).length;
+    const read = ctx.items().filter(b => b.done);
     const ss = data.sessions, last = ss[ss.length - 1];
     const avg = ss.length ? Math.round(ss.reduce((s, x) => s + x.ok / x.n, 0) / ss.length * 100) : null;
     el.innerHTML = `
       <div class="card fc-hero">
         <span class="dot-icon sakura" style="width:48px;height:48px">${icon('sparkles')}</span>
         <h3>Flashcard</h3>
-        <p>${N} domande sui libri che hai letto: autori, frasi, trame, anni e quello che ti hanno lasciato.</p>
-        ${read >= 3 ? `<button type="button" class="btn accent block" id="fc-start">${icon('play', 'sm')} Inizia le ${N} domande</button>`
-                    : `<p class="fa-hint">Servono almeno 3 libri segnati come letti. Ne hai ${read}.</p>`}
+        <p>${N} domande sul contenuto dei libri che hai letto: trama, personaggi, idee. Solo libri segnati come letti.</p>
+        ${read.length ? `<button type="button" class="btn accent block" id="fc-start">${icon('play', 'sm')} Inizia le ${N} domande</button>`
+                      : `<p class="fa-hint">Segna qualche libro come letto e potrai metterti alla prova.</p>`}
+        ${read.length ? `<button type="button" class="btn block" id="fc-add">${icon('plus', 'sm')} Aggiungi una tua domanda</button>` : ''}
       </div>
       ${ss.length ? `<div class="fa-stats">
         <div class="fa-stat"><b>${ss.length}</b><span>${ss.length === 1 ? 'sessione' : 'sessioni'}</span></div>
         <div class="fa-stat"><b>${last.ok}/${last.n}</b><span>ultima volta</span></div>
         <div class="fa-stat"><b>${avg}%</b><span>media</span></div></div>` : ''}`;
     el.querySelector('#fc-start')?.addEventListener('click', () => start(el));
+    el.querySelector('#fc-add')?.addEventListener('click', () => openAdd(el));
   }
+
+  // Una tua domanda: libro + domanda + risposta (si ripassa con "Mostra la risposta")
+  const addSheet = createSheet({ title: 'Una tua domanda', body: `<form class="stack" id="fq-form">
+    <div class="field"><label for="fq-book">Libro</label><select id="fq-book"></select></div>
+    <div class="field"><label for="fq-q">Domanda</label><textarea id="fq-q" rows="2" maxlength="240" placeholder="Es. Perché il protagonista lascia la città?"></textarea></div>
+    <div class="field"><label for="fq-r">Risposta</label><textarea id="fq-r" rows="3" maxlength="500" placeholder="La risposta giusta"></textarea></div>
+    <div class="zen-sheet-actions"><button class="btn primary block" type="submit">Salva</button></div></form>` });
+  let addHost = null;
+  function openAdd(el) {
+    addHost = el;
+    addSheet.$('#fq-book').innerHTML = ctx.items().filter(b => b.done).map(b => `<option>${esc(b.title)}</option>`).join('');
+    addSheet.$('#fq-q').value = ''; addSheet.$('#fq-r').value = '';
+    addSheet.open();
+  }
+  addSheet.$('#fq-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const bt = addSheet.$('#fq-book').value, q = addSheet.$('#fq-q').value.trim(), r = addSheet.$('#fq-r').value.trim();
+    if (!q || !r) return toast('Scrivi domanda e risposta');
+    addSheet.close();
+    try { await loadDeck(); deck.mine = [...(deck.mine || []), { bt, q, r }]; await setDoc(deckRef(), deck); toast('Domanda salvata'); } catch (err) { toast('Non riesco a salvare: ' + (err.message || err)); }
+  });
 
   async function start(el) {
     el.innerHTML = `<div class="fa-hint" style="text-align:center;padding:var(--space-8)">Preparo le domande…</div>`;
@@ -165,7 +161,7 @@ export function initFlash(ctx) {
     let deck;
     try { deck = pickDeck(await buildCards()); } catch (e) { console.warn(e); deck = []; }
     if (deck.length < 3) {
-      el.innerHTML = `<div class="empty">Per ora non riesco a fare abbastanza domande.<br/>Aggiungi autore, anno, genere e una nota ai libri letti, o salva qualche appunto.</div><button type="button" class="btn block" id="fc-back">Indietro</button>`;
+      el.innerHTML = `<div class="empty">Per ora non riesco a fare abbastanza domande.<br/>Scrivi una nota ai libri letti, aggiungi qualche tua domanda o salva degli appunti.</div><button type="button" class="btn block" id="fc-back">Indietro</button>`;
       el.querySelector('#fc-back').addEventListener('click', () => landing(el));
       return;
     }
@@ -185,7 +181,7 @@ export function initFlash(ctx) {
         <p>${ok === deck.length ? 'Perfetto! Ricordi tutto.' : ok >= deck.length * 0.7 ? 'Ottimo lavoro.' : ok >= deck.length * 0.4 ? 'Buon inizio: le domande sbagliate torneranno.' : 'Si impara ripetendo: ci riprovi?'}</p>
         <div class="zen-sheet-actions" style="width:100%"><button type="button" class="btn accent block" id="fc-again">${icon('refresh', 'sm')} Altre ${N} domande</button>
         <button type="button" class="btn ghost block" id="fc-end">Chiudi</button></div></div>
-        ${missed.length ? `<div class="zen-eyebrow">Da rivedere</div><div class="list">${missed.map(r => `<div class="list-row" style="min-height:56px"><span class="grow"><span class="small" style="display:block;font-weight:600">${esc(r.c.q)}</span><span class="xsmall zen-muted">${esc(r.c.reveal ? 'Rileggi la tua nota' : r.c.answer)}</span></span></div>`).join('')}</div>` : ''}`;
+        ${missed.length ? `<div class="zen-eyebrow">Da rivedere</div><div class="list">${missed.map(r => `<div class="list-row" style="min-height:56px"><span class="grow"><span class="small" style="display:block;font-weight:600">${esc(r.c.q)}</span><span class="xsmall zen-muted">${esc(r.c.reveal ? (r.c.type === 'mine' ? r.c.reveal : 'Rileggi la tua nota') : r.c.answer)}</span></span></div>`).join('')}</div>` : ''}`;
       el.querySelector('#fc-again').addEventListener('click', () => start(el));
       el.querySelector('#fc-end').addEventListener('click', () => landing(el));
     };

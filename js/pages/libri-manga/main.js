@@ -42,8 +42,9 @@ const GENRES = ['Narrativa', 'Giallo e thriller', 'Fantasy', 'Fantascienza', 'Ho
 const SUGGESTED_TAGS = ['Da regalare', 'In vacanza', 'Classici', 'Per ispirarmi', 'Con i bimbi'];
 
 let items = [];
-let tab = 'todo';            // todo | done | buy
-let doneView = 'list';       // list | stats
+let tab = 'lib';             // lib | year | notes | masters | flash | buy
+let lview = 'normal';        // normal | scaffale
+let statusFilter = 'all';    // all | unread | reading | done
 let kindFilter = 'all';
 let tagFilter = 'all';
 let search = '';
@@ -59,6 +60,10 @@ const toBuy = i => !i.done && String(i.purchase || '').toLowerCase() === BUY.toL
 const isReading = i => !!i.reading && !i.done;
 const isQueue = i => !i.done && !i.reading;
 const allTags = () => [...new Set([...SUGGESTED_TAGS, ...items.flatMap(i => i.tags || [])])];
+const STATUSES = [['all', 'Tutti'], ['unread', 'Non letti'], ['reading', 'Sto leggendo'], ['done', 'Letti']];
+const statusOf = i => (i.done ? 'done' : i.reading ? 'reading' : 'unread');
+/** Codice ASIN di un ebook Kindle (inizia per B0) dentro un link Amazon. */
+const kindleAsin = i => { const m = String(i.amazon || '').match(/\/(?:dp|gp\/product|d)\/(B0[A-Z0-9]{8})/i); return m ? m[1].toUpperCase() : ''; };
 const amazonUrl = i => safeUrl(i.amazon) || `https://www.amazon.it/s?k=${encodeURIComponent(i.isbn || `${i.title} ${i.author || ''}`.trim())}`;
 
 const STAR = on => `<svg class="fa-star${on ? ' on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.5 6.1 20.7l1.2-6.6L2.5 9.5l6.6-.9z"/></svg>`;
@@ -92,14 +97,13 @@ const nextVolume = i => setProgress(i, { vol: (parseInt(i.vol) || 0) + 1 });
 // ─── Elenchi filtrati ────────────────────────────────────────────────────
 function matches(i) {
   const q = search.trim().toLowerCase();
-  return (kindFilter === 'all' || kindOf(i) === kindFilter) &&
+  return (statusFilter === 'all' || statusOf(i) === statusFilter) &&
+    (kindFilter === 'all' || kindOf(i) === kindFilter) &&
     (tagFilter === 'all' || (i.tags || []).includes(tagFilter)) &&
     (!q || [i.title, i.author, i.genre].some(v => String(v || '').toLowerCase().includes(q)));
 }
-function baseForTab() {
-  if (tab === 'done') return items.filter(i => i.done).reverse();
-  return items.filter(i => !i.done).sort((a, b) => (b.prio ? 1 : 0) - (a.prio ? 1 : 0));
-}
+const RANK = { reading: 0, unread: 1, done: 2 };
+const libBase = () => items.filter(i => !toBuy(i)).sort((a, b) => (RANK[statusOf(a)] - RANK[statusOf(b)]) || ((b.prio ? 1 : 0) - (a.prio ? 1 : 0)));
 
 function renderChips(base) {
   const kinds = KINDS.filter(t => base.some(i => kindOf(i) === t));
@@ -115,35 +119,36 @@ function renderChips(base) {
 }
 
 // ─── Render ──────────────────────────────────────────────────────────────
+function renderStatusChips(base) {
+  $('fa-status').innerHTML = STATUSES.map(([v, l]) => `<button type="button" data-status="${v}" aria-pressed="${v === statusFilter}">${l} <span class="count">${v === 'all' ? base.length : base.filter(i => statusOf(i) === v).length}</span></button>`).join('');
+}
+
 function render() {
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
-  for (const k of ['todo', 'done', 'shelf', 'series', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
-  const listMode = tab === 'todo' || tab === 'shelf' || (tab === 'done' && doneView === 'list');
-  $('fa-tools').hidden = !listMode;
-  covers?.banner($('lb-covers')); $('lb-covers').hidden = !(tab === 'todo' || (tab === 'done' && doneView === 'list'));
+  for (const k of ['lib', 'year', 'notes', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
+  $('fa-tools').hidden = tab !== 'lib';
+  covers?.banner($('lb-covers')); $('lb-covers').hidden = tab !== 'lib';
   if (tab === 'buy') return renderBuy();
-  if (tab === 'series') return series?.renderList($('lb-series'));
   if (tab === 'masters') return masters?.renderList($('lb-masters'));
   if (tab === 'flash') { if (!flashShown) { flashShown = true; flash?.render($('lb-flash')); } return; }
+  if (tab === 'notes') return quotes?.renderAll($('fa-quotesview'));
+  if (tab === 'year') return renderStatsView();
 
-  if (tab === 'done') {
-    document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === doneView)));
-    $('fa-listview').hidden = doneView !== 'list';
-    $('fa-statsview').hidden = doneView !== 'stats';
-    $('fa-quotesview').hidden = doneView !== 'quotes';
-    if (doneView === 'stats') return renderStatsView();
-    if (doneView === 'quotes') return quotes?.renderAll($('fa-quotesview'));
-  }
-  if (tab === 'shelf') {
-    const base = items.filter(i => !toBuy(i)).sort((a, b) => (b.done - a.done) || String(a.series || a.title).localeCompare(String(b.series || b.title), 'it') || ((parseInt(a.seriesNo) || 0) - (parseInt(b.seriesNo) || 0)));
-    renderChips(base);
-    renderShelf($('lb-shelf'), base.filter(matches));
+  const base = libBase();
+  const inStatus = base.filter(i => statusFilter === 'all' || statusOf(i) === statusFilter);
+  renderStatusChips(base);
+  renderChips(inStatus);
+  document.querySelectorAll('[data-lview]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lview === lview)));
+  const list = base.filter(matches);
+  const shelf = lview === 'shelf';
+  $('fa-normal').hidden = shelf; $('lb-shelf').hidden = !shelf;
+  if (shelf) {
+    $('fa-now').innerHTML = ''; $('lb-news').innerHTML = '';
+    const sorted = [...list].sort((a, b) => (b.done - a.done) || String(a.series || a.title).localeCompare(String(b.series || b.title), 'it') || ((parseInt(a.seriesNo) || 0) - (parseInt(b.seriesNo) || 0)));
+    renderShelf($('lb-shelf'), sorted);
     return;
   }
-  const base = baseForTab();
-  renderChips(base);
-  const list = base.filter(matches);
-  tab === 'todo' ? renderTodo(base, list) : renderDone(base, list);
+  renderLib(base, list);
   timer?.paint();
 }
 
@@ -159,9 +164,10 @@ function renderNews() {
       </div></div>`).join('')}</div>` : '';
 }
 
-function renderTodo(base, list) {
+function renderLib(base, list) {
   renderNews();
-  const now = list.filter(isReading);
+  const showNow = statusFilter === 'all' || statusFilter === 'reading';
+  const now = showNow ? list.filter(isReading) : [];
   $('fa-now').innerHTML = now.length ? `<div class="fa-now-wrap"><span class="zen-eyebrow">Stai leggendo</span>
     <div class="fa-strip">${now.map(i => {
       const pr = progressOf(i);
@@ -175,51 +181,38 @@ function renderTodo(base, list) {
             <button type="button" class="btn sm accent" data-read="${i.id}">${icon('play', 'sm')} Leggo adesso <span data-clock="${i.id}"></span></button>
             ${isManga(i) ? `<button type="button" class="btn sm" data-vol="${i.id}">+1 vol.</button>`
                          : `<button type="button" class="btn sm" data-page="${i.id}">Pagina</button>`}
+            ${kindleBtn(i, true)}
           </div>
         </div></div>`;
     }).join('')}</div></div>` : '';
 
-  const queue = list.filter(i => !i.reading);
-  const all = base.filter(i => !i.reading).length;
-  $('fa-todo-count').innerHTML = all ? `<b class="fa-bign">${all}</b> da leggere` : '';
-  $('fa-tonight').hidden = !all;
-  const grid = $('fa-grid');
-  if (!base.length) { grid.innerHTML = `<div class="empty" style="grid-column:1/-1">Nessun libro ancora.<br/>Tocca + per aggiungerne uno, o scansiona il codice a barre.</div>`; return; }
-  if (!queue.length) { grid.innerHTML = now.length ? '' : `<div class="empty" style="grid-column:1/-1">Nessun risultato.</div>`; return; }
-  grid.innerHTML = queue.map(i => `<article class="photo-card fa-card">
+  const grid = list.filter(i => !(showNow && isReading(i)));
+  const unread = base.filter(i => !i.done && !i.reading).length;
+  $('fa-todo-count').innerHTML = `<b class="fa-bign">${list.length}</b> ${list.length === 1 ? 'titolo' : 'titoli'}`;
+  $('fa-tonight').hidden = !unread;
+  const el = $('fa-grid');
+  if (!base.length) { el.innerHTML = `<div class="empty" style="grid-column:1/-1">Nessun libro ancora.<br/>Tocca + per aggiungerne uno, o scansiona il codice a barre.</div>`; return; }
+  if (!grid.length) { el.innerHTML = now.length ? '' : `<div class="empty" style="grid-column:1/-1">Nessun risultato.</div>`; return; }
+  el.innerHTML = grid.map(i => `<article class="photo-card fa-card">
       <button type="button" class="ph ${toneOf(i)}" data-open="${i.id}" aria-label="Apri ${esc(i.title)}">${cover(i)}</button>
-      ${toBuy(i) ? `<span class="fa-badge buy">${icon('cart')} Da comprare</span>` : ''}
-      <button type="button" class="check fa-seen" data-seen="${i.id}" aria-pressed="false" aria-label="Segna ${esc(i.title)} come letto">${icon('check')}</button>
+      ${i.reading && !i.done ? `<span class="fa-badge">${icon('play')} In lettura</span>` : ''}
+      ${i.done ? '' : `<button type="button" class="check fa-seen" data-seen="${i.id}" aria-pressed="false" aria-label="Segna ${esc(i.title)} come letto">${icon('check')}</button>`}
       <button type="button" class="info" data-open="${i.id}">
         <span class="name">${i.prio ? PRIO : ''}${esc(i.title)}</span>
         <span class="meta">${esc(i.author || '')}</span>
-        <span class="meta">${esc([kindOf(i), i.genre, sizeLabel(i)].filter(Boolean).join(' · '))}</span>
+        ${i.done && i.stars ? stars(i.stars) : `<span class="meta">${esc([kindOf(i), i.genre, sizeLabel(i)].filter(Boolean).join(' · '))}</span>`}
       </button>
     </article>`).join('');
 }
 
-function renderDone(base, list) {
-  const rated = base.filter(i => i.stars);
-  const avg = rated.length ? rated.reduce((s, i) => s + i.stars, 0) / rated.length : 0;
-  const pages = base.reduce((s, i) => s + (parseInt(i.pages) || 0), 0);
-  $('fa-stats').innerHTML = `
-    <div class="fa-stat"><b>${base.length}</b><span>${base.length === 1 ? 'letto' : 'letti'}</span></div>
-    <div class="fa-stat"><b>${avg ? avg.toLocaleString('it-IT', { maximumFractionDigits: 1 }) : '—'}</b><span>voto medio</span></div>
-    <div class="fa-stat"><b>${pages ? pages.toLocaleString('it-IT') : '—'}</b><span>pagine</span></div>`;
-  const el = $('fa-done-list');
-  el.classList.toggle('list', list.length > 0);
-  if (!base.length) { el.innerHTML = `<div class="empty">Ancora nessuna lettura.<br/>Spunta un titolo dalla lista “Da leggere”.</div>`; return; }
-  if (!list.length) { el.innerHTML = `<div class="empty">Nessun risultato.</div>`; return; }
-  el.innerHTML = list.map(i => `<button type="button" class="list-row fa-row" data-open="${i.id}">
-      <span class="fa-thumb ${toneOf(i)}">${cover(i)}</span>
-      <span class="grow">
-        <span class="t">${esc(i.title)}</span>
-        <span class="m">${esc([i.author, kindOf(i)].filter(Boolean).join(' · '))}</span>
-        ${i.stars ? stars(i.stars) : ''}
-        ${i.note ? `<span class="q">${esc(i.note)}</span>` : ''}
-      </span>
-      <span class="chev">${icon('back', 'sm')}</span>
-    </button>`).join('');
+/** Pulsante "Leggi su Kindle": apre l'app Kindle sul libro; se non si apre, la versione web. */
+const kindleBtn = (i, small = false) => kindleAsin(i) ? `<button type="button" class="btn ${small ? 'sm' : 'block'}" data-kindle="${i.id}">${icon('book', 'sm')} Leggi su Kindle</button>` : '';
+function openKindle(i) {
+  const asin = kindleAsin(i); if (!asin) return;
+  const web = `https://read.amazon.it/?asin=${asin}`;
+  const t0 = Date.now();
+  location.href = `kindle://book?action=open&asin=${asin}`;
+  setTimeout(() => { if (!document.hidden && Date.now() - t0 < 2500) window.open(web, '_blank', 'noopener'); }, 1600);
 }
 
 function renderStatsView() {
@@ -239,16 +232,26 @@ function renderBuy() {
   $('fa-buy-count').textContent = list.length ? `${list.length} da comprare` : '';
   const el = $('fa-buy-list');
   el.classList.toggle('list', list.length > 0);
-  if (!list.length) { el.innerHTML = `<div class="empty">Nessun acquisto in programma.<br/>Quando aggiungi un libro scegli “Da Acquistare”: lo ritrovi qui.</div>`; return; }
+  if (!list.length) { el.innerHTML = `<div class="empty">La wish list è vuota.<br/>Tocca + per aggiungere un libro da comprare.</div>`; return; }
   el.innerHTML = list.map(i => `<div class="list-row fa-row fa-buy">
       <button type="button" class="fa-thumb ${toneOf(i)}" data-open="${i.id}" style="border:0;padding:0;cursor:pointer" aria-label="Apri ${esc(i.title)}">${cover(i)}</button>
-      <span class="grow"><span class="t">${esc(i.title)}</span><span class="m">${esc([i.author, kindOf(i)].filter(Boolean).join(' · '))}</span></span>
+      <span class="grow"><span class="t">${esc(i.title)}</span><span class="m">${esc([i.author, kindOf(i)].filter(Boolean).join(' · '))}</span>
+        <button type="button" class="chip fa-inamz" data-inamz="${i.id}" aria-pressed="${!!i.inAmazon}">${i.inAmazon ? '✓ Nella lista Amazon' : 'Non ancora nella lista Amazon'}</button></span>
       <span class="fa-buy-acts">
-        <a class="btn sm" href="${esc(amazonUrl(i))}" target="_blank" rel="noopener">${icon('cart', 'sm')} Cerca</a>
+        <a class="btn sm" href="${esc(amazonUrl(i))}" target="_blank" rel="noopener" data-amz="${i.id}">${icon('cart', 'sm')} Su Amazon</a>
         <button type="button" class="btn sm accent" data-bought="${i.id}">${icon('check', 'sm')} Comprato</button>
       </span>
     </div>`).join('');
 }
+
+// Link alla propria lista Amazon (si imposta una volta)
+const amzSheet = createSheet({ title: 'La tua lista Amazon', body: `<form class="stack" id="am-form">
+  <p class="fa-confirm-text" style="margin-top:0">Incolla il link della tua lista libri e manga di Amazon: da qui la apri con un tocco. Amazon non permette alle app di aggiungere libri alla lista da sole: dalla scheda del libro tocchi “Aggiungi a lista”, poi qui lo spunti come fatto.</p>
+  <input class="input" id="am-url" type="url" inputmode="url" placeholder="https://www.amazon.it/hz/wishlist/ls/…" autocomplete="off"/>
+  <div class="zen-sheet-actions"><button class="btn primary block" type="submit">Salva</button><button class="btn block" type="button" id="am-open">Apri la lista</button></div></form>` });
+const amzUrl = () => { try { return safeUrl(localStorage.getItem('zen_amz_list') || ''); } catch { return ''; } };
+amzSheet.$('#am-form').addEventListener('submit', e => { e.preventDefault(); try { localStorage.setItem('zen_amz_list', amzSheet.$('#am-url').value.trim()); } catch { /* ok */ } amzSheet.close(); toast('Lista salvata'); });
+amzSheet.$('#am-open').addEventListener('click', () => { const u = safeUrl(amzSheet.$('#am-url').value.trim()); if (u) window.open(u, '_blank', 'noopener'); });
 
 // ─── Conferma ────────────────────────────────────────────────────────────
 let confirmResolve = null, confirmValue = false;
@@ -397,6 +400,7 @@ function fillDetail(item) {
       <button class="btn block" type="button" id="dd-quotes">${icon('pen', 'sm')} Appunti${item.quotesCount ? ` (${item.quotesCount})` : ''}</button>
       ${toBuy(item) ? `<button class="btn block" type="button" id="dd-bought">${icon('check', 'sm')} L’ho comprato</button>` : ''}
       ${!item.done ? `<button class="btn ghost block" type="button" id="dd-prio">${item.prio ? 'Togli la priorità' : 'Metti in priorità alta'}</button>` : ''}
+      ${kindleBtn(item)}
       <a class="btn block" href="${esc(amazonUrl(item))}" target="_blank" rel="noopener">${icon('link', 'sm')} ${safeUrl(item.amazon) ? 'Apri su Amazon' : 'Cerca su Amazon'}</a>
       <div class="grid-2">
         <button class="btn" type="button" id="dd-edit">${icon('edit', 'sm')} Modifica</button>
@@ -405,6 +409,7 @@ function fillDetail(item) {
     </div>`);
 
   const $d = s => detail.$(s);
+  $d('[data-kindle]')?.addEventListener('click', () => openKindle(item));
   $d('#dd-start')?.addEventListener('click', () => updateLibroDoc(item._docId, { reading: true }));
   $d('#dd-read')?.addEventListener('click', async () => { if (!item.reading) await updateLibroDoc(item._docId, { reading: true }); detail.close(); timer.open(item); });
   $d('#dd-quotes')?.addEventListener('click', () => { detail.close(); quotes.openList(item); });
@@ -506,7 +511,7 @@ const editor = createSheet({
     <div class="field"><label for="ed-title">Titolo</label><input class="input" id="ed-title" maxlength="80" autocomplete="off" placeholder="es. Il nome della rosa"/></div>
     <div class="field"><label for="ed-author">Autore</label><input class="input" id="ed-author" maxlength="60" autocomplete="off" placeholder="es. Umberto Eco"/></div>
     <div class="grid-2">
-      <div class="field"><label for="ed-series">Serie o saga (facoltativa)</label><input class="input" id="ed-series" list="ed-series-list" maxlength="60" autocomplete="off" placeholder="es. One Piece"/><datalist id="ed-series-list"></datalist></div>
+      <div class="field"><label for="ed-series">Collana / serie (facoltativa)</label><input class="input" id="ed-series" list="ed-series-list" maxlength="60" autocomplete="off" placeholder="es. One Piece"/><datalist id="ed-series-list"></datalist></div>
       <div class="field"><label for="ed-sno">Numero</label><input class="input" id="ed-sno" type="number" inputmode="numeric" min="1" placeholder="es. 12"/></div>
     </div>
     <div class="field"><label>Tipo</label>${chipRow('ed-kind', KINDS)}</div>
@@ -518,7 +523,7 @@ const editor = createSheet({
     <div class="field"><label>Lingua</label>${chipRow('ed-lang', LANGS)}</div>
     <div class="field"><label>Formato</label>${chipRow('ed-format', FORMATS)}</div>
     <div class="field"><label>Acquisto</label>${chipRow('ed-buy', [OWNED, BUY])}</div>
-    <div class="field"><label for="ed-amazon">Link Amazon (facoltativo)</label><input class="input" id="ed-amazon" type="url" inputmode="url" autocomplete="off" placeholder="https://www.amazon.it/…"/></div>
+    <div class="field"><label for="ed-amazon">Link Amazon (per “Leggi su Kindle” incolla quello dell’ebook)</label><input class="input" id="ed-amazon" type="url" inputmode="url" autocomplete="off" placeholder="https://www.amazon.it/…"/></div>
     <div class="field"><label>Etichette</label><div class="chips fa-chips-sel" id="ed-tags"></div>
       <div class="row"><input class="input grow" id="ed-newtag" maxlength="24" placeholder="Nuova etichetta"/><button type="button" class="btn" id="ed-addtag">Aggiungi</button></div></div>
     <div class="chips"><button type="button" id="ed-prio" aria-pressed="false">★ Priorità alta</button></div>
@@ -643,17 +648,17 @@ editor.$('#ed-scan').addEventListener('click', async () => {
   }
 });
 
-function openEditor(item = null) {
+function openEditor(item = null, asWish = false) {
   editing = item;
   img = item?.img || null;
   meta = {};
   if (item) ONLINE_KEYS.forEach(k => { if (item[k] !== undefined) meta[k] = item[k]; });
   edLang = item?.lang || 'Italiano';
   edFormat = item?.format || 'Cartaceo';
-  edBuy = String(item?.purchase || '').toLowerCase() === BUY.toLowerCase() ? BUY : OWNED;
+  edBuy = item ? (String(item.purchase || '').toLowerCase() === BUY.toLowerCase() ? BUY : OWNED) : (asWish ? BUY : OWNED);
   edTags = new Set(item?.tags || []);
   edPrio = !!item?.prio;
-  editor.setTitle(item ? 'Modifica titolo' : 'Nuovo titolo');
+  editor.setTitle(item ? 'Modifica titolo' : asWish ? 'Nella wish list' : 'Nuovo titolo');
   editor.$('#ed-q').value = '';
   editor.$('#ed-hits').hidden = true;
   editor.$('#ed-ok').hidden = true;
@@ -691,12 +696,12 @@ editor.$('#ed-form').addEventListener('submit', async e => {
     if (editing) await updateLibroDoc(editing._docId, d);
     else await addLibroDoc({ ...d, id: Date.now(), done: false, doneDate: null, note: null, stars: null });
     editor.close();
-    if (!editing) toast('Aggiunto a “Da leggere”');
+    if (!editing) toast(edBuy === BUY ? 'Aggiunto alla wish list' : 'Aggiunto alla libreria');
   } catch (err) {
     toast('Errore nel salvataggio: ' + (err.message || err));
   } finally { btn.disabled = false; }
 });
-$('lb-add').addEventListener('click', () => openEditor(null));
+$('lb-add').addEventListener('click', () => openEditor(null, tab === 'buy'));
 
 // ─── Obiettivo di lettura ────────────────────────────────────────────────
 const goalRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'libri_goal');
@@ -727,13 +732,13 @@ try { goals = JSON.parse(localStorage.getItem('zen_book_goals') || '{}'); } catc
 // ─── Esporta CSV ─────────────────────────────────────────────────────────
 const csvQ = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
 function exportCsv() {
-  const read = tab === 'done';
-  const rows = items.filter(i => (read ? i.done : !i.done));
+  const read = statusFilter === 'done';
+  const rows = items.filter(i => (statusFilter === 'all' ? true : read ? i.done : statusOf(i) === statusFilter));
   const lines = [['Titolo', 'Autore', 'Tipo', 'Genere', 'Pagine', 'Volumi', 'Lingua', 'Formato', 'Acquisto', 'ISBN', 'Amazon', 'Voto', 'Nota', 'Data'].join(';')];
   rows.forEach(it => lines.push([csvQ(it.title), csvQ(it.author), kindOf(it), it.genre || '', it.pages || '', it.volumes || '', it.lang || '', it.format || '', it.purchase || '', it.isbn || '', it.amazon || '', it.stars || '', csvQ(it.note), it.doneDate || ''].join(';')));
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' }));
-  a.download = `libri_${read ? 'letti' : 'da_leggere'}.csv`;
+  a.download = `libri_${statusFilter === 'all' ? 'tutti' : read ? 'letti' : statusFilter}.csv`;
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   toast('CSV scaricato');
@@ -743,8 +748,15 @@ function exportCsv() {
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-tab]');
   if (t) { tab = t.dataset.tab; kindFilter = 'all'; tagFilter = 'all'; flashShown = false; render(); t.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: 'smooth' }); return; }
-  const v = e.target.closest('[data-view]');
-  if (v) { doneView = v.dataset.view; render(); return; }
+  const lv = e.target.closest('[data-lview]');
+  if (lv) { lview = lv.dataset.lview; render(); return; }
+  const st = e.target.closest('[data-status]');
+  if (st) { statusFilter = st.dataset.status; render(); return; }
+  const kd = e.target.closest('[data-kindle]');
+  if (kd) { const it = byId(kd.dataset.kindle); if (it) openKindle(it); return; }
+  const ia = e.target.closest('[data-inamz]');
+  if (ia) { const it = byId(ia.dataset.inamz); if (it) updateLibroDoc(it._docId, { inAmazon: !it.inAmazon }); return; }
+  if (e.target.closest('#fa-amz-list')) { amzSheet.$('#am-url').value = amzUrl(); amzSheet.open(); return; }
   const y = e.target.closest('[data-year]');
   if (y) { statsYear = Number(y.dataset.year); render(); return; }
   if (e.target.closest('[data-goal]')) return openGoal();

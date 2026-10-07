@@ -178,6 +178,9 @@
     .fa-buy-acts { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 
 
+    .fa-inamz { height: 28px; font-size: 11px; margin-top: 6px; border: 1px dashed var(--border); background: none; cursor: pointer; }
+    .fa-inamz[aria-pressed="true"] { border-style: solid; border-color: var(--success); color: var(--success); }
+
     /* Tab a scorrimento */
     .segmented.scroll { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .segmented.scroll::-webkit-scrollbar { display: none; }
@@ -368,13 +371,12 @@
   <main class="zen-main">
     <div class="page-tabs">
       <div class="segmented scroll" role="group" aria-label="Sezioni">
-        <button type="button" data-tab="todo" aria-pressed="true">Da leggere</button>
-        <button type="button" data-tab="done" aria-pressed="false">Letti</button>
-        <button type="button" data-tab="shelf" aria-pressed="false">Scaffale</button>
-        <button type="button" data-tab="series" aria-pressed="false">Serie</button>
+        <button type="button" data-tab="lib" aria-pressed="true">Libreria</button>
+        <button type="button" data-tab="year" aria-pressed="false">Il mio anno</button>
+        <button type="button" data-tab="notes" aria-pressed="false">Appunti</button>
         <button type="button" data-tab="masters" aria-pressed="false">Maestri</button>
         <button type="button" data-tab="flash" aria-pressed="false">Flashcard</button>
-        <button type="button" data-tab="buy" aria-pressed="false">Acquisti</button>
+        <button type="button" data-tab="buy" aria-pressed="false">Wish list</button>
       </div>
     </div>
 
@@ -383,48 +385,38 @@
         <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
         <input class="input" type="search" id="fa-q" placeholder="Cerca per titolo o autore" autocomplete="off" aria-label="Cerca"/>
       </div>
+      <div class="chips" id="fa-status" role="group" aria-label="Stato di lettura"></div>
       <div class="chips" id="fa-types" role="group" aria-label="Tipo"></div>
       <div class="chips" id="fa-tags" role="group" aria-label="Etichette" hidden></div>
+      <div class="segmented" id="fa-lview" role="group" aria-label="Vista">
+        <button type="button" data-lview="normal" aria-pressed="true">Normale</button>
+        <button type="button" data-lview="shelf" aria-pressed="false">Scaffale</button>
+      </div>
     </div>
 
     <div id="lb-covers"></div>
 
-    <section class="fa-panel" id="p-todo" aria-live="polite">
+    <section class="fa-panel" id="p-lib" aria-live="polite">
       <div id="lb-news"></div>
       <div id="fa-now"></div>
-      <div class="fa-head"><span class="zen-eyebrow" id="fa-todo-count"></span>
-        <button type="button" class="btn sm" id="fa-tonight"><svg class="icon sm" aria-hidden="true"><use href="#i-sparkles"/></svg> Cosa leggo?</button></div>
-      <div class="photo-grid" id="fa-grid"></div>
+      <div id="fa-normal" class="fa-panel">
+        <div class="fa-head"><span class="zen-eyebrow" id="fa-todo-count"></span>
+          <button type="button" class="btn sm" id="fa-tonight"><svg class="icon sm" aria-hidden="true"><use href="#i-sparkles"/></svg> Cosa leggo?</button></div>
+        <div class="photo-grid" id="fa-grid"></div>
+      </div>
+      <div id="lb-shelf" hidden></div>
     </section>
 
-    <section class="fa-panel" id="p-done" hidden aria-live="polite">
-      <div class="segmented" id="fa-doneview" role="group" aria-label="Vista">
-        <button type="button" data-view="list" aria-pressed="true">Elenco</button>
-        <button type="button" data-view="stats" aria-pressed="false">Il tuo anno</button>
-        <button type="button" data-view="quotes" aria-pressed="false">Appunti</button>
-      </div>
-      <div class="fa-panel" id="fa-listview">
-        <div class="fa-stats" id="fa-stats"></div>
-        <div class="list" id="fa-done-list"></div>
-      </div>
-      <div class="fa-panel" id="fa-quotesview" hidden></div>
-      <div class="fa-panel" id="fa-statsview" hidden>
-        <div class="chips" id="fa-years" role="group" aria-label="Anno"></div>
-        <div class="fa-panel" id="fa-statsbody"></div>
-      </div>
+    <section class="fa-panel" id="p-year" hidden aria-live="polite">
+      <div class="chips" id="fa-years" role="group" aria-label="Anno"></div>
+      <div class="fa-panel" id="fa-statsbody"></div>
     </section>
 
-    <section class="fa-panel" id="p-shelf" hidden aria-live="polite">
-      <div id="lb-shelf"></div>
-    </section>
-
-    <section class="fa-panel" id="p-series" hidden aria-live="polite">
-      <div class="fa-head"><span class="zen-eyebrow">Serie e saghe</span></div>
-      <div id="lb-series"></div>
+    <section class="fa-panel" id="p-notes" hidden aria-live="polite">
+      <div class="fa-panel" id="fa-quotesview"></div>
     </section>
 
     <section class="fa-panel" id="p-masters" hidden aria-live="polite">
-      <div class="fa-head"><span class="zen-eyebrow">I tuoi maestri</span></div>
       <div id="lb-masters" class="fa-panel"></div>
     </section>
 
@@ -433,7 +425,8 @@
     </section>
 
     <section class="fa-panel" id="p-buy" hidden aria-live="polite">
-      <div class="fa-head"><span class="zen-eyebrow" id="fa-buy-count"></span></div>
+      <div class="fa-head"><span class="zen-eyebrow" id="fa-buy-count"></span>
+        <button type="button" class="btn sm" id="fa-amz-list">Lista Amazon</button></div>
       <div class="list" id="fa-buy-list"></div>
     </section>
 
