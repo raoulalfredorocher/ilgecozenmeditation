@@ -16,7 +16,6 @@ export const METRICS = {
   spo2: { title: 'Ossigenazione', unit: '%', color: 'var(--success)', type: 'line', get: d => d.spo2, fmt: n => n.toFixed(0), min: 90, max: 100 },
   respiro: { title: 'Respirazione', unit: 'resp/min', color: 'var(--geco-blue, var(--primary))', type: 'line', get: d => d.respiro, fmt: n => n.toFixed(1) },
   sonno: { title: 'Sonno', unit: '', color: 'var(--bark, var(--primary))', type: 'bar', get: d => d.sonnoMin, fmt: hm },
-  kcal: { title: 'Calorie del giorno', unit: 'kcal', color: 'var(--warning)', type: 'bar', get: d => d.kcalGiorno, fmt: it },
 };
 
 /** Disegna un grafico: { svg, avg, last } (svg vuoto se non ci sono dati). `get` può sostituire quello della metrica. */
