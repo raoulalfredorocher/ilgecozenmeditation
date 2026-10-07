@@ -162,7 +162,7 @@
 
     /* ── Sezioni della Home: grandi schede numerate (stile "La mia storia") ── */
     const HOME = ['bucket-list.html', 'direzione.html', 'alimentazione.html', 'allenamento.html', 'meditazione.html',
-      'passioni.html', 'armonia-sociale.html', 'salute-mentale.html', 'contributo-al-mondo.html'];
+      'passioni.html', 'armonia-sociale.html', 'salute-mentale.html', 'contributo-al-mondo.html', 'monitoring.html'];
     const byHref = Object.fromEntries(SECTION_GROUPS.flatMap(g => g.items).map(s => [s.href, s]));
     renderCards(document.getElementById('home-tiles'), HOME.map(href => byHref[href]));
 

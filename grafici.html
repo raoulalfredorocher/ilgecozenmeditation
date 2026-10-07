@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Il Geco Zen"/>
+  <meta name="theme-color" content="#FAF7F2"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
+  <title>Il Geco Zen — Grafici</title>
+  <script src="js/ui/theme-boot.js"></script>
+  <link rel="stylesheet" href="styles/tokens.css"/>
+  <link rel="stylesheet" href="styles/zen.css"/>
+  <style>
+    .s { font-size: var(--fs-xs); color: var(--muted); }
+    .gz-sec { display: flex; flex-direction: column; gap: var(--space-3); }
+    .gz-sec > .cap { font-size: .6875rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin: var(--space-4) 0 0; }
+    .gz-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) 0; border-top: .5px solid var(--border); font-size: var(--fs-sm); }
+    .gz-row:first-of-type { border-top: 0; }
+    .gz-row .del { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: var(--fs-lg); padding: 4px 8px; }
+    .gz-add { display: flex; gap: 8px; flex-wrap: wrap; }
+    .gz-add button { height: 36px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--surface); color: var(--text); font-size: var(--fs-sm); font-weight: 500; cursor: pointer; }
+    .gz-add button.pri { background: var(--text); color: var(--bg); }
+    .zen-sheet .field { gap: 0; } .zen-sheet .stack { gap: var(--space-4); }
+    .zen-sheet .input, .zen-sheet select { width: 100%; min-height: 48px; }
+  </style>
+</head>
+<body class="zen zen-native" data-title="Grafici">
+  <script type="module" src="js/core/auth-guard.js"></script>
+  <script type="module" src="js/ui/shell.js"></script>
+
+  <main class="zen-main">
+    <div class="gz-sec" id="gz-root"></div>
+  </main>
+
+  <script type="module" src="js/pages/monitoring/grafici.js"></script>
+</body>
+</html>

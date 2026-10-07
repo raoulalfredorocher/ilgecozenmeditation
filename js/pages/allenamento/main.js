@@ -1,5 +1,5 @@
 /**
- * main.js — pagina Allenamento: tre schede (Schede, Avvia, Salute). Gli allenamenti fatti si vedono e si modificano nel calendario centrale..
+ * main.js — pagina Allenamento: due schede (Schede, Avvia). Gli allenamenti fatti si vedono e si modificano nel calendario centrale..
  * Il + della barra in basso esegue l'azione della scheda aperta.
  */
 import { waitForUser } from '../../core/auth-guard.js';
@@ -7,13 +7,12 @@ import { createSheet } from '../../ui/dialog.js';
 import { startSync, state, onChange } from './state.js';
 import * as schede from './schede.js';
 import * as avvia from './avvia.js';
-import * as salute from './grafici.js';
 import { flushPending } from './guida.js';
 
-const TABS = { schede, avvia, salute };
+const TABS = { schede, avvia };
 let current = 'avvia';
 
-const MENU = { schede: [], avvia: [], salute: [] };
+const MENU = { schede: [], avvia: [] };
 
 function showTab(name) {
   if (!TABS[name]) name = 'avvia';

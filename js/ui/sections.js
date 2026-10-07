@@ -7,11 +7,11 @@ export const SECTION_GROUPS = [
   { title: 'Obiettivi', items: [
     { href: 'bucket-list.html', desc: 'I sogni da realizzare.', title: 'Bucket List', sub: 'sogni da realizzare', icon: 'sparkles', tone: 'sakura' },
     { href: 'direzione.html', desc: 'Valori e rotta che ti guidano.', title: 'Direzione', sub: 'valori e rotta', icon: 'compass', tone: 'sky' },
-    { href: 'calendario.html', desc: 'Cosa hai fatto, giorno per giorno.', title: 'Il mio mese', sub: 'allenamento · cibo · mente', icon: 'calendar', tone: 'leaf' },
   ]},
   { title: 'Corpo', items: [
     { href: 'alimentazione.html', desc: 'Dieta, ricette e diario.', title: 'Alimentazione', sub: 'dieta · ricette', icon: 'salad', tone: 'leaf' },
     { href: 'allenamento.html', desc: 'Schede e sessioni di ogni giorno.', title: 'Allenamento', sub: 'schede · sessioni', icon: 'dumbbell', tone: 'sky' },
+    { href: 'monitoring.html', desc: 'Calendario, grafici e salute.', title: 'Monitoring', sub: 'calendario · grafici · salute', icon: 'chart', tone: 'sand' },
   ]},
   { title: 'Mente e spirito', items: [
     { href: 'meditazione.html', desc: 'Pratica e presenza.', title: 'Spiritualità', sub: 'pratica · presenza', icon: 'flower', tone: 'sakura' },

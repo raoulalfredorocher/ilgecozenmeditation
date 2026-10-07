@@ -657,3 +657,8 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .cm-bil b { color: var(--text); font-weight: 500; }
 .cm-bil.strong { color: var(--text); border-top: .5px solid var(--border); margin-top: 3px; padding-top: 6px; }
 .cm-bil.strong b { font-weight: 700; }
+.gz-rif { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; margin-top: var(--space-2); }
+.gz-note { font-size: var(--fs-xs); color: var(--muted); text-align: center; line-height: 1.5; }
+.gz-legend { display: flex; gap: var(--space-4); font-size: var(--fs-xs); color: var(--muted); margin-top: 4px; }
+.gz-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+.gz-in { color: var(--success); } .gz-out { color: var(--danger); }
