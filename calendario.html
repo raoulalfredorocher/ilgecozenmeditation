@@ -62,6 +62,10 @@
     .cm-note, .cm-text { white-space: pre-wrap; line-height: 1.6; margin-top: var(--space-3); }
     .cm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-2); }
     .cm-chip2 { background: var(--sakura-soft); color: var(--bark); border-radius: 999px; padding: 4px 12px; font-size: var(--fs-sm); }
+    .cm-mood { display: flex; align-items: center; gap: 6px; margin-top: var(--space-4); }
+    .cm-mood button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: var(--fs-sm); font-weight: 600; cursor: pointer; }
+    .cm-mood button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+    .cm-mood .s:last-child { margin-left: 6px; }
     .cm-add { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-4); }
     .cm-add button { height: 34px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--surface); color: var(--text); font-size: var(--fs-sm); font-weight: 500; cursor: pointer; }
     .cm-export { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-2) 0 var(--space-6); }

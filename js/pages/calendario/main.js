@@ -10,6 +10,8 @@ import { escapeHtml as esc } from '../../core/dom.js';
 import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey } from '../../core/attivita.js';
 import { dayBalance } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
+import { db, auth } from '../../core/db.js';
+import { doc, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { saveSessionDoc, deleteSessionDoc, loadSessions } from '../../core/db.js';
 import { startSync as startWorkouts } from '../allenamento/state.js';
 import * as sessione from '../allenamento/sessione.js';
@@ -115,6 +117,7 @@ function renderDay() {
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
     ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}
+    <div class="cm-mood" role="group" aria-label="Umore del giorno"><span class="s">Umore</span>${[1, 2, 3, 4, 5].map(n => `<button type="button" data-mood="${n}" aria-pressed="${d?.umore === n}">${n}</button>`).join('')}<span class="s">1 male · 5 benissimo</span></div>
     <div class="cm-add" role="group" aria-label="Aggiungi a questo giorno"><button type="button" data-add="allenamento">＋ Allenamento</button><button type="button" data-add="cibo">＋ ${d?.cibo ? 'Modifica diario' : 'Diario'}</button><button type="button" data-add="meditazione">＋ Meditazione</button></div>`;
 }
 
@@ -202,6 +205,15 @@ document.addEventListener('click', async e => {
     if (add.dataset.add === 'cibo') return registerDay(selected, refresh);
     medSheet.$('#md-date').value = selected; medSheet.$('#md-date').max = dateKey();
     return medSheet.open();
+  }
+  const mood = e.target.closest('[data-mood]');
+  if (mood) {
+    const v = +mood.dataset.mood, cur = data[selected]?.umore;
+    const ref = doc(db, 'users', auth.currentUser.uid, 'direction', 'umore_giorni');
+    if (cur === v) await updateDoc(ref, { [`days.${selected}`]: deleteField() }).catch(() => {});
+    else await setDoc(ref, { days: { [selected]: { v } } }, { merge: true });
+    (data[selected] ||= { allenamento: [], cibo: null, meditazione: null, journaling: [], salute: null }).umore = cur === v ? null : v;
+    return renderDay();
   }
   const act = e.target.closest('[data-act]');
   if (act?.dataset.act === 'diary') { sheet.close(); return setTimeout(() => registerDay(selected, refresh), 220); }

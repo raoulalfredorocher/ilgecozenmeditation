@@ -172,7 +172,13 @@ function labsCard() {
     <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
 }
 
-function render() { root.innerHTML = heartCard() + pressureCard() + glucoseCard() + labsCard() + checksCard(); }
+const TABS = [['chiave', 'Valori chiave'], ['esami', 'Esami'], ['misure', 'Pressione e glicemia'], ['fare', 'Da fare']];
+let tab = TABS.some(t => t[0] === location.hash.slice(1)) ? location.hash.slice(1) : 'chiave';
+const PANELS = { chiave: () => heartCard(), esami: () => labsCard(), misure: () => pressureCard() + glucoseCard(), fare: () => checksCard() };
+function render() {
+  const bar = `<div class="segmented gz-tabs" role="group" aria-label="Sezioni di Salute">${TABS.map(([k, l]) => `<button type="button" data-tab="${k}" aria-pressed="${k === tab}">${l}</button>`).join('')}</div>`;
+  root.innerHTML = bar + PANELS[tab]();
+}
 
 // ─── Inserimento ────────────────────────────────────────────────────────
 const nowTime = () => new Date().toTimeString().slice(0, 5);
@@ -241,6 +247,8 @@ moreSheet.el.addEventListener('click', e => { const b = e.target.closest('[data-
 
 let armed = null;
 root.addEventListener('click', async e => {
+  const tb = e.target.closest('[data-tab]');
+  if (tb) { tab = tb.dataset.tab; history.replaceState(null, '', '#' + tab); render(); return scrollTo({ top: 0 }); }
   const add = e.target.closest('[data-add]');
   if (add) return openForm(add.dataset.add);
   const del = e.target.closest('[data-del]');

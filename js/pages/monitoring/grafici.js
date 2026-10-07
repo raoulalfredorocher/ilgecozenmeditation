@@ -5,11 +5,15 @@
 import { waitForUser } from '../../core/auth-guard.js';
 import { watchHealth, health } from '../allenamento/salute.js';
 import { state, onChange, num, parseKey, startSync } from '../allenamento/state.js';
-import { METRICS, lastDays, metricCard, workoutKcalCard, it } from '../../core/salute-charts.js';
+import { METRICS, lastDays, metricCard, workoutKcalCard, baselineLine, it } from '../../core/salute-charts.js';
+import { loadAll } from './dati.js';
+import { statoHtml } from './stato.js';
+import { collegamentiHtml } from './collegamenti.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 
 const root = document.getElementById('gz-root');
 let range = 14;
+let ctx = null;      // dati completi (umore, meditazioni, ecc.) caricati una volta
 
 function workoutsSection(days) {
   const from = days[0];
@@ -36,8 +40,8 @@ function weekSummary() {
 function render() {
   const days = lastDays(range);
   const head = `<div class="segmented gz-range" role="group" aria-label="Periodo">${[7, 14, 30, 90].map(n => `<button type="button" data-r="${n}" aria-pressed="${n === range}">${n} giorni</button>`).join('')}</div>`;
-  const body = weekSummary() + workoutsSection(days) + Object.values(METRICS).map(m => metricCard(m, days, health.days)).join('');
-  root.innerHTML = head + (body || '<div class="card flat gz-empty">Ancora nessun dato dall\'orologio in questo periodo. La sincronizzazione con Zepp parte ogni 6 ore.</div>');
+  const body = weekSummary() + workoutsSection(days) + Object.values(METRICS).map(m => metricCard(m, days, health.days, baselineLine(m, health.days))).join('') + (ctx ? collegamentiHtml(ctx) : '');
+  root.innerHTML = statoHtml(ctx?.days || health.days, ctx?.sync) + head + (body || '<div class="card flat gz-empty">Ancora nessun dato dall\'orologio in questo periodo. La sincronizzazione con Zepp parte ogni 6 ore.</div>');
 }
 
 root.addEventListener('click', e => {
@@ -49,4 +53,4 @@ watchHealth(render);
 onChange(w => { if (w === 'log') render(); });
 render();
 root.insertAdjacentHTML('afterend', '<p class="gz-note">Indicazioni generali per un adulto in salute: non sono una diagnosi. Per dubbi sui tuoi valori parla con il medico.</p>');
-waitForUser().then(startSync);
+waitForUser().then(async () => { startSync(); ctx = await loadAll(); render(); });

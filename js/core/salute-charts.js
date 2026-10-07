@@ -58,12 +58,12 @@ export function chart(m, days, hd) {
 }
 
 /** Scheda con titolo, ultimo valore, media e grafico. Vuota se non ci sono dati. */
-export function metricCard(m, days, hd) {
+export function metricCard(m, days, hd, extra = '') {
   const c = chart(m, days, hd);
   if (!c.svg) return '';
   const u = m.unit ? ` <small>${m.unit}</small>` : '';
   return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${m.title}</div><div class="gz-big">${m.fmt(c.last)}${u}</div></div>
-    <div class="gz-avg">media ${m.fmt(c.avg)}${m.unit ? ' ' + m.unit : ''}${m.sub ? `<br><span>${m.sub}</span>` : ''}</div></div>${c.svg}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
+    <div class="gz-avg">media ${m.fmt(c.avg)}${m.unit ? ' ' + m.unit : ''}${m.sub ? `<br><span>${m.sub}</span>` : ''}</div></div>${c.svg}${extra}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
 }
 
 /** Barre dei kcal degli allenamenti per giorno. `byDay`: { 'AAAA-MM-GG': kcal }. */
@@ -100,4 +100,15 @@ export function seriesChart(series, { band, label = '', fmt = it } = {}) {
   const lab = ds.length > 1 ? [ds[0], ds[ds.length - 1]] : [ds[0]];
   g += lab.map((d, i) => `<text x="${x(d).toFixed(1)}" y="${H - 4}" font-size="9" fill="var(--muted)" text-anchor="${i ? 'end' : 'start'}">${short(d)}/${d.slice(2, 4)}</text>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${label}">${g}</svg>`;
+}
+
+/** Confronto con la tua media personale: l'ultimo valore contro gli ultimi 30 giorni precedenti. */
+export function baselineLine(m, hd) {
+  const vals = Object.keys(hd || {}).sort().map(k => Number(m.get(hd[k] || {}))).filter(v => v > 0);
+  if (vals.length < 8) return `<p class="gz-rif">Il confronto con la tua media personale compare dopo 7 giorni di dati (ne hai ${Math.max(0, vals.length - 1)}).</p>`;
+  const last = vals[vals.length - 1], prev = vals.slice(-31, -1);
+  const avg = prev.reduce((a, b) => a + b, 0) / prev.length;
+  const sd = Math.sqrt(prev.reduce((a, b) => a + (b - avg) ** 2, 0) / prev.length);
+  const pct = (last - avg) / avg * 100, odd = sd > 0 && Math.abs(last - avg) > 1.5 * sd;
+  return `<p class="gz-rif"><b>Rispetto alla tua media</b> degli ultimi ${prev.length} giorni (${m.fmt(avg)}): oggi ${m.fmt(last)}, ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(0)}%${odd ? ' — fuori dal tuo solito' : ''}.</p>`;
 }

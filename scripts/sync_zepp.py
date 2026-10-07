@@ -233,6 +233,9 @@ def main():
     except Exception as e:  # noqa: BLE001 - dati extra: non devono fermare il resto
         log(f"ossigeno/respirazione non disponibili ({type(e).__name__})")
 
+    # quando è girata la sincronizzazione (l'app mostra "ultimo aggiornamento" e avvisa se l'orologio non carica dati)
+    patch(token, f"users/{uid}/direction/salute_giorni", {"sync": {"ts": int(datetime.now(timezone.utc).timestamp() * 1000), "giorni": len(days)}}, ["sync.ts", "sync.giorni"])
+
     for d, o in days.items():
         # solo i campi di quel giorno (gli altri giorni e i campi non toccati restano com'erano)
         patch(token, f"users/{uid}/direction/salute_giorni", {"days": {d: o}}, [f"days.`{d}`.{k}" for k in o])

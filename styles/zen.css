@@ -665,3 +665,9 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-heart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
 .gz-heart .gz-big { font-size: 1.5rem; }
 @media (max-width: 420px) { .gz-heart-grid { grid-template-columns: 1fr; } }
+.gz-status { display: flex; align-items: flex-start; gap: 8px; font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; padding: 2px 2px var(--space-2); }
+.gz-status i { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; background: var(--success); }
+.gz-status.bad i { background: var(--warning); }
+.gz-tabs { overflow-x: auto; scrollbar-width: none; margin-bottom: var(--space-2); }
+.gz-tabs::-webkit-scrollbar { display: none; }
+.gz-tabs > button { flex: 0 0 auto; padding: 0 14px; white-space: nowrap; }
