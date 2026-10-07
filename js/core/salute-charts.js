@@ -95,7 +95,7 @@ export function seriesChart(series, { band, label = '', fmt = it } = {}) {
     g += pp.map(p => `<circle cx="${x(p.d).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="3" fill="${s.color}"/>`).join('');
   });
   const ds = [...new Set(pts.map(p => p.d))].sort();
-  const lab = [ds[0], ds[ds.length - 1]];
+  const lab = ds.length > 1 ? [ds[0], ds[ds.length - 1]] : [ds[0]];
   g += lab.map((d, i) => `<text x="${x(d).toFixed(1)}" y="${H - 4}" font-size="9" fill="var(--muted)" text-anchor="${i ? 'end' : 'start'}">${short(d)}/${d.slice(2, 4)}</text>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${label}">${g}</svg>`;
 }
