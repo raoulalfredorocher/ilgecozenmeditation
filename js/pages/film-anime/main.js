@@ -83,9 +83,10 @@ const maxSeasons = i => (i.seasonEps || []).length || parseInt(i.seasons) || 0; 
 const maxEps = (i, s) => (i.seasonEps || [])[s - 1] || 0;                                   // 0 = sconosciuto
 const clampProg = (i, p) => {
   const S = maxSeasons(i) || 40;
-  const s = Math.min(S, Math.max(1, parseInt(p?.s) || 1));
+  let s = parseInt(p?.s) || 1, e = parseInt(p?.e) || 0;
+  if (s < 1 || s > S) return { s: 1, e: 0 };                 // valore salvato impossibile (es. stagione 22 su 7): si riparte da capo
   const E = maxEps(i, s) || 400;
-  return { s, e: Math.min(E, Math.max(0, parseInt(p?.e) || 0)) };
+  return { s, e: Math.min(E, Math.max(0, e)) };
 };
 function progressOf(i) {
   const p = clampProg(i, i.prog), eps = i.seasonEps || [];
