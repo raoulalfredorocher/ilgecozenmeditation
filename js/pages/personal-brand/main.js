@@ -61,7 +61,8 @@ document.querySelector('.page-tabs').addEventListener('click', e => { const b = 
 
 // ═══ OUTFIT ══════════════════════════════════════════════════════════════
 const today = (add = 0) => { const d = new Date(); d.setDate(d.getDate() + add); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
-const O = { text: '', occ: null, date: today(), period: periodOfHour(new Date().getHours()), hour: null, hourLabel: '', city: lsGet('zen_pb_city', ''), geo: null, seed: 1, result: null, meta: null };
+const O = { text: '', occ: null, date: today(), period: periodOfHour(new Date().getHours()), hour: null, hourLabel: '', city: lsGet('zen_pb_city', ''), geo: null, place: null, seed: 1, result: null, meta: null };
+const MYPOS = 'La mia posizione';
 const prettyDate = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }); };
 
 function renderOutfit() {
@@ -77,18 +78,19 @@ function renderOutfit() {
     <section class="gz ask">
       <div class="blk">
         <div class="lbl">Raccontami l’occasione</div>
-        <textarea class="ask-in" id="of-text" rows="2" placeholder="Es. cena con i clienti a Milano, venerdì sera alle 20" autocomplete="off" enterkeyhint="go">${esc(O.text)}</textarea>
+        <textarea class="ask-in fld" id="of-text" rows="2" placeholder="Es. cena con i clienti a Milano, venerdì sera alle 20" autocomplete="off" enterkeyhint="go">${esc(O.text)}</textarea>
         <div class="hint">Scrivi cosa fai, con chi, dove e quando: leggo io città, giorno e ora dal testo.</div>
       </div>
       <div class="blk"><div class="lbl2">Che tipo di occasione</div>
         <div class="chips" id="of-occ">${OCCASIONS.map(o => `<button type="button" class="chip" data-occ="${o.k}" aria-pressed="${occ?.k === o.k}">${o.label}</button>`).join('')}</div></div>
       <div class="blk"><div class="lbl2">Quando</div>
-        <div class="row2"><input class="input" type="date" id="of-date" value="${esc(O.date)}" min="${today()}" max="${today(15)}" style="max-width:190px"/>
+        <div class="row2"><input class="fld" type="date" id="of-date" value="${esc(O.date)}" min="${today()}" max="${today(15)}" style="max-width:190px"/>
           ${O.hourLabel ? `<span class="pill c2">alle ${esc(O.hourLabel)}</span>` : ''}</div>
         <div class="chips wrap" id="of-per">${PERIODS.map(([k, l]) => `<button type="button" class="chip" data-per="${k}" aria-pressed="${O.period === k}">${l}</button>`).join('')}</div></div>
       <div class="blk"><div class="lbl2">Dove</div>
-        <div class="mrow"><input class="input" id="of-city" value="${esc(O.city)}" placeholder="Città (per il meteo)" autocomplete="off"/>
-          <button type="button" class="chip" id="of-geo" aria-label="Usa la mia posizione">${icon('map', 'sm')} Qui</button></div></div>
+        <div class="cityrow"><div class="cityw"><input class="fld" id="of-city" value="${esc(O.city)}" placeholder="Inizia a scrivere la città…" autocomplete="off" autocapitalize="words"/>
+          <div class="sug" id="of-sug" hidden></div></div>
+          <button type="button" class="geo" id="of-geo" aria-label="Usa la mia posizione">${icon('map')}</button></div></div>
       <button type="button" class="pbtn block" id="of-go">Consigliami</button>
     </section>
     <div id="of-result"></div>`;
@@ -128,13 +130,16 @@ async function recommend(again = false) {
     if (w.period) { O.period = w.period; O.hour = w.hour ?? null; O.hourLabel = w.hourLabel || ''; }
     if (w.city && !O.city) { O.city = w.city; O.geo = null; }
     O.seed = Date.now() % 100000;
+    const useGeo = O.geo && O.city === MYPOS;
     if (!O.city && !O.geo) { renderOutfit(); toast('Scrivi la città, o tocca “Qui”: mi serve per il meteo'); $('of-city').focus(); return; }
     const hour = O.hour ?? PERIODS.find(p => p[0] === O.period)[2];
     const b2 = $('of-go'); b2.disabled = true; b2.textContent = 'Guardo il meteo…';
     try {
-      const m = await weatherFor({ lat: O.city ? null : O.geo?.lat, lon: O.city ? null : O.geo?.lon, city: O.city, date: O.date, hour });
-      O.meta = m; if (O.city) lsSet('zen_pb_city', O.city);
-      if (m.city && O.city) O.city = m.city;
+      const pl = useGeo ? O.geo : (O.place && O.place.name === O.city ? O.place : null);
+      const m = await weatherFor({ lat: pl ? pl.lat : null, lon: pl ? pl.lon : null, city: pl ? '' : O.city, date: O.date, hour });
+      O.meta = m; if (O.city && !useGeo) lsSet('zen_pb_city', O.city);
+      if (useGeo) m.city = m.city || 'Qui';
+      if (!useGeo && m.city && O.city) O.city = m.city;
     } catch (e) { b2.disabled = false; b2.textContent = 'Consigliami'; toast(e.message || 'Meteo non disponibile: riprova'); return; }
   } else O.seed += 7;
   const occ = O.occ || guessOccasion(O.text);
@@ -143,8 +148,30 @@ async function recommend(again = false) {
   renderOutfit();
 }
 
+let sugTimer = 0, sugList = [], sugSeq = 0;
+function suggest_(q) {
+  clearTimeout(sugTimer);
+  const box = $('of-sug'); q = q.trim();
+  if (!box) return;
+  if (q.length < 2 || q === MYPOS) { box.hidden = true; return; }
+  sugTimer = setTimeout(async () => {
+    const seq = ++sugSeq;
+    try {
+      const r = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=it`)).json();
+      if (seq !== sugSeq || !$('of-sug')) return;
+      sugList = (r.results || []).map(x => ({ name: x.name, lat: x.latitude, lon: x.longitude, sub: [x.admin1, x.country].filter(Boolean).join(', ') }));
+      const b = $('of-sug');
+      b.hidden = !sugList.length;
+      b.innerHTML = sugList.map((x, i) => `<button type="button" data-sug="${i}"><b>${esc(x.name)}</b><small>${esc(x.sub)}</small></button>`).join('');
+    } catch { /* senza rete: scrivi pure a mano */ }
+  }, 220);
+}
+document.addEventListener('click', e => { if (!e.target.closest('.cityw')) { const b = $('of-sug'); if (b) b.hidden = true; } });
+
 $('tab-outfit').addEventListener('click', async e => {
   const t = e.target;
+  const sg = t.closest('[data-sug]');
+  if (sg) { const x = sugList[+sg.dataset.sug]; O.city = x.name; O.place = x; O.geo = null; $('of-city').value = x.name; $('of-sug').hidden = true; return; }
   const occ = t.closest('[data-occ]');
   if (occ) { readForm(); O.occ = O.occ?.k === occ.dataset.occ ? null : OCCASIONS.find(o => o.k === occ.dataset.occ); return renderOutfit(); }
   const per = t.closest('[data-per]');
@@ -153,8 +180,8 @@ $('tab-outfit').addEventListener('click', async e => {
     if (!navigator.geolocation) return toast('Posizione non disponibile su questo dispositivo');
     toast('Cerco dove sei…');
     navigator.geolocation.getCurrentPosition(p => {
-      readForm(); O.geo = { lat: p.coords.latitude, lon: p.coords.longitude }; O.city = '';
-      renderOutfit(); $('of-city').placeholder = 'La tua posizione'; toast('Fatto: userò il meteo di dove sei');
+      readForm(); O.geo = { lat: p.coords.latitude, lon: p.coords.longitude }; O.city = MYPOS; O.place = null;
+      renderOutfit();
     }, () => toast('Non riesco a leggere la posizione: scrivi la città'), { timeout: 8000 });
     return;
   }
@@ -172,10 +199,27 @@ $('tab-outfit').addEventListener('click', async e => {
 });
 $('tab-outfit').addEventListener('input', e => {
   if (e.target.id === 'of-date') { O.date = e.target.value; }
-  if (e.target.id === 'of-city') { O.city = e.target.value; O.geo = null; }
+  if (e.target.id === 'of-city') { O.city = e.target.value; O.place = null; if (O.city !== MYPOS) O.geo = null; suggest_(O.city); }
   if (e.target.id === 'of-text') O.text = e.target.value;
 });
 $('tab-outfit').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'of-text') { e.preventDefault(); e.target.blur(); recommend(false); } });
+
+/** Mosaico a 8 colonne: righe da 4, da 8, da 2 e un blocco con un capo verticale + 6 quadrati, a ripetizione. */
+function mosaic(items) {
+  const out = [], rest = [...items];
+  const take = n => rest.splice(0, n);
+  const spread = (arr, rs) => { const n = arr.length, base = Math.floor(8 / n), extra = 8 - base * n; arr.forEach((c, i) => out.push({ c, cs: base + (i < extra ? 1 : 0), rs })); };
+  const cycle = ['q4', 'q8', 'q2', 'v'];
+  for (let i = 0; rest.length; i++) {
+    const kind = cycle[i % 4];
+    if (kind === 'q4') { const g = take(4); spread(g, 2); }
+    else if (kind === 'q8') { const g = take(8); spread(g, g.length >= 8 ? 1 : 2); }
+    else if (kind === 'q2') { const g = take(2); spread(g, 3); }
+    else if (rest.length >= 7) { const g = take(7); out.push({ c: g[0], cs: 2, rs: 4 }); g.slice(1).forEach(c => out.push({ c, cs: 2, rs: 2 })); }
+    else { const g = take(Math.min(4, rest.length)); spread(g, 2); }
+  }
+  return out;
+}
 
 // ═══ GUARDAROBA ══════════════════════════════════════════════════════════
 const F = { q: '', cat: '', color: '', style: '' };
@@ -194,7 +238,7 @@ function renderGuardaroba() {
     ${list.length ? CATS.filter(k => list.some(c => c.categoria === k)).concat(list.some(c => !CATS.includes(c.categoria)) ? [''] : []).map(k => {
         const items = list.filter(c => (k ? c.categoria === k : !CATS.includes(c.categoria)));
         return `<section class="shelf"><div class="shelf-h"><span>${esc(k || 'Altro')}</span><small>${items.length}</small></div>
-          <div class="capi">${items.map(c => `<button type="button" class="cp ${pieceTint(c)}" data-capo="${esc(c._docId)}"><span class="ph">${photoBlock(c)}</span><span class="nm">${esc(c.nome)}</span></button>`).join('')}</div></section>`;
+          <div class="capi">${mosaic(items).map(({ c, cs, rs }) => `<button type="button" class="cp ${pieceTint(c)}${cs === 1 ? ' xs' : ''}" style="grid-column:span ${cs};grid-row:span ${rs}" data-capo="${esc(c._docId)}" aria-label="${esc(c.nome)}"><span class="ph">${photoBlock(c)}</span><span class="nm">${esc(c.nome)}</span></button>`).join('')}</div></section>`;
       }).join('')
       : `<div class="emptyx">${capi.length ? 'Nessun capo con questi filtri.' : 'Nessun capo ancora.<br/>Tocca + per aggiungere il primo.'}</div>`}`;
 }
