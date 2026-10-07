@@ -23,7 +23,7 @@ import {
   db, auth,
 } from '../../core/db.js';
 import { collection, query, where, onSnapshot, doc as fsDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import { ageFromBirth } from '../../core/vita.js';
+import { calcTdee, profileOn, stepsKcal } from '../../core/bilancio.js';
 
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
 export const DAY_SHORT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
@@ -83,32 +83,9 @@ export function totals(meals = []) {
   }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
 }
 
-/** TDEE: Katch-McArdle se c'è la % di grasso, altrimenti Mifflin-St Jeor. */
-export function calcTdee(f) {
-  if (!f) return 0;
-  const peso = parseFloat(f.peso), alt = parseFloat(f.altezza), eta = f.nascita ? ageFromBirth(f.nascita) : parseFloat(f.eta);
-  const bf = parseFloat(f.bf), lavoro = parseFloat(f.lavoro) || 1.2;
-  if (!peso || !alt || !eta) return 0;
-  const bmr = bf > 0
-    ? 370 + 21.6 * peso * (1 - bf / 100)
-    : (f.sesso === 'F' ? 10 * peso + 6.25 * alt - 5 * eta - 161 : 10 * peso + 6.25 * alt - 5 * eta + 5);
-  return Math.round(bmr * lavoro);
-}
-
-/**
- * Peso e % di grasso valevoli in una data: l'ultima misura dello storico fino a quel giorno
- * (la più vecchia se la data è precedente a tutte). Senza storico, i valori del profilo.
- */
-export function profileAt(key) {
-  const p = state.profile || {};
-  const h = (p.history || []).filter(x => x.date && parseFloat(x.peso)).sort((a, b) => a.date.localeCompare(b.date));
-  if (!h.length) return p;
-  let m = h[0];
-  for (const x of h) if (x.date <= key) m = x;
-  return { ...p, peso: m.peso, bf: m.bf ?? '' };
-}
-/** kcal bruciate dai passi: ~0,0005 kcal per passo per kg di peso. */
-export const stepsKcal = (passi, peso) => Math.round((parseFloat(passi) || 0) * 0.0005 * (parseFloat(peso) || 0));
+export { calcTdee, stepsKcal };
+/** Peso e % di grasso valevoli in una data (vedi core/bilancio.js). */
+export const profileAt = key => profileOn(state.profile, key);
 /**
  * L'allenamento di un giorno, con la sua origine:
  *   • oggi e giorni passati: contano solo le kcal misurate dall'orologio sugli allenamenti fatti davvero (mai stime);

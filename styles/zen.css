@@ -650,3 +650,10 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-avg span { font-size: .72rem; }
 .gz-svg { width: 100%; height: auto; display: block; }
 .gz-empty { color: var(--muted); text-align: center; }
+
+/* Calendario → bilancio calorico del giorno */
+.cm-balance { cursor: default; align-items: flex-start; }
+.cm-bil { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--fs-sm); color: var(--muted); padding: 3px 0; }
+.cm-bil b { color: var(--text); font-weight: 500; }
+.cm-bil.strong { color: var(--text); border-top: .5px solid var(--border); margin-top: 3px; padding-top: 6px; }
+.cm-bil.strong b { font-weight: 700; }

@@ -42,7 +42,7 @@ export async function loadRange(from, to) {
         if (!r.data) return;
         const sets = (r.es || []).reduce((a, e) => a + (e.s || []).filter(s => !s.f).length, 0);
         day(r.data).allenamento.push({
-          id: d.id, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets,
+          id: d.id, kcal: r.kcal ?? null, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets,
           es: r.es || null, rw: num(r.rw), st: num(r.st), acqua: num(r.acqua), feedback: r.feedback || null, note: r.note || '',
         });
       });
@@ -91,4 +91,14 @@ export async function loadRange(from, to) {
 export function areasOf(d) {
   if (!d) return [];
   return [d.allenamento?.length && 'allenamento', d.cibo && 'cibo', d.meditazione && 'meditazione', d.journaling?.length && 'journaling'].filter(Boolean);
+}
+
+/** Profilo dell'utente (peso, altezza, età, grasso…) per calcolare il fabbisogno calorico; null se manca. */
+export async function loadProfile() {
+  const uid = auth?.currentUser?.uid;
+  if (!db || !uid) return null;
+  try {
+    const snap = await getDoc(doc(db, 'users', uid, 'macros', 'profiles'));
+    return snap.exists() ? (snap.data().tdeeForm || null) : null;
+  } catch (e) { console.warn('calendario: profilo', e); return null; }
 }

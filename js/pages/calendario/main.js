@@ -7,7 +7,8 @@ import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
-import { AREAS, loadRange, areasOf, dateKey, parseKey } from '../../core/attivita.js';
+import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey } from '../../core/attivita.js';
+import { dayBalance } from '../../core/bilancio.js';
 
 const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
@@ -17,6 +18,7 @@ const g1 = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
 
 let month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let selected = dateKey();
+let profile = null;                              // per il bilancio calorico
 let data = {};                                   // giorni del mese mostrato
 let on = new Set(AREAS.map(a => a.id));          // aree visibili
 try { const s = JSON.parse(localStorage.getItem('zen_cal_filtri')); if (Array.isArray(s) && s.length) on = new Set(s); } catch { /* ok */ }
@@ -29,7 +31,8 @@ async function load() {
   const from = dateKey(new Date(y, m, 1)), to = dateKey(new Date(y, m + 1, 0));
   const token = from;
   render();                                       // subito lo scheletro del mese, poi arrivano i dati
-  const d = await loadRange(from, to);
+  const [d, pr] = await Promise.all([loadRange(from, to), loadProfile()]);
+  profile = pr;
   if (dateKey(new Date(month.getFullYear(), month.getMonth(), 1)) !== token) return;   // nel frattempo si è cambiato mese
   data = d;
   render();
@@ -76,9 +79,27 @@ function renderDay() {
   if (d?.cibo && on.has('cibo')) rows.push(row(A('cibo'), 'cibo', 0, `${kc(d.cibo.kcal)} kcal`, `P ${g1(d.cibo.prot)} · C ${g1(d.cibo.carb)} · G ${g1(d.cibo.fat)} · ${d.cibo.pasti} ${d.cibo.pasti === 1 ? 'pasto' : 'pasti'}`));
   if (d?.meditazione && on.has('meditazione')) rows.push(row(A('meditazione'), 'meditazione', 0, `${Math.round(d.meditazione.mins)} min di meditazione`, d.meditazione.n > 1 ? `${d.meditazione.n} sessioni` : '1 sessione'));
   if (d && on.has('journaling')) d.journaling.forEach((j, i) => rows.push(row(A('journaling'), 'journaling', i, esc(j.titolo), j.ora ? esc(j.ora) : 'Journaling')));
+  const bil = (() => {
+    if (!profile || !d) return null;
+    const kw = d.allenamento.reduce((a, t) => a + (+t.kcal || 0), 0);
+    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, ingerite: d.cibo?.kcal });
+  })();
+  if (bil && d.cibo) {
+    const r = (l, v, strong) => `<div class="cm-bil${strong ? ' strong' : ''}"><span>${l}</span><b>${v}</b></div>`;
+    const sg = n => (n > 0 ? '+' : n < 0 ? '−' : '') + kc(Math.abs(n));
+    const today = selected === dateKey();
+    rows.push(`<div class="cm-row cm-balance"><span class="grow"><b>Bilancio calorico${today ? ' (finora)' : ''}</b>
+      ${r('Ingerite (diario)', `${kc(bil.ingerite)} kcal`)}
+      ${r('Bruciate con l\'allenamento', `${kc(bil.allenamento)} kcal`)}
+      ${r('Bruciate con i passi', `${kc(bil.passi)} kcal`)}
+      ${r('Metabolismo e vita quotidiana', `${kc(bil.base)} kcal`)}
+      ${r('Fabbisogno totale (TDEE)', `${kc(bil.tdee)} kcal`, true)}
+      ${r(bil.delta <= 0 ? 'Deficit' : 'Surplus', `${sg(bil.delta)} kcal`, true)}
+      ${bil.passiDaOrologio ? '' : '<span class="s">Passi stimati dal profilo: l\'orologio non ha dati per questo giorno.</span>'}</span></div>`);
+  }
   if (d?.salute) {
     const h = d.salute, sonno = h.sonnoMin ? `${Math.floor(h.sonnoMin / 60)}h${String(h.sonnoMin % 60).padStart(2, '0')}` : '';
-    const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · riposo ${h.bpmRiposo}` : ''}` : '';
+    const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · a riposo ${h.bpmRiposo} bpm` : ''}` : '';
     const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
     rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}</b><span class="s">${sub}</span></span></div>`);
   }
