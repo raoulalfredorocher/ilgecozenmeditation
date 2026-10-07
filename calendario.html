@@ -72,6 +72,10 @@
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
+  <template id="zen-header-actions">
+    <button class="icon-btn" type="button" id="cm-more" aria-label="Altre azioni"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button>
+  </template>
+
   <main class="zen-main">
     <section class="cm-card" aria-label="Calendario">
       <div class="cm-head">
@@ -86,12 +90,6 @@
 
     <section class="cm-card" id="cm-day" aria-live="polite"></section>
 
-    <div class="cm-export" role="group" aria-label="Esporta">
-      <span class="s">Esporta in CSV</span>
-      <button type="button" class="text-btn" data-exp="allenamenti">Allenamenti</button>
-      <button type="button" class="text-btn" data-exp="diario">Diario alimentare</button>
-      <button type="button" class="text-btn" data-exp="meditazione">Meditazioni</button>
-    </div>
   </main>
 
   <script type="module" src="js/pages/calendario/main.js"></script>

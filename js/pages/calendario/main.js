@@ -187,6 +187,13 @@ async function exportMeditation() {
   await deliver(csvFile(rows, 'meditazioni.csv'));
 }
 
+// Menu ⋯: esportazioni
+const moreSheet = createSheet({ title: 'Calendario', body: `<div class="list">
+  <button type="button" class="list-row" data-exp="allenamenti"><span class="grow">Esporta gli allenamenti (CSV)</span></button>
+  <button type="button" class="list-row" data-exp="diario"><span class="grow">Esporta il diario alimentare (CSV)</span></button>
+  <button type="button" class="list-row" data-exp="meditazione"><span class="grow">Esporta le meditazioni (CSV)</span></button></div>` });
+document.getElementById('cm-more')?.addEventListener('click', () => moreSheet.open());
+
 let delArmed = null;
 document.addEventListener('click', async e => {
   const add = e.target.closest('[data-add]');
@@ -207,7 +214,7 @@ document.addEventListener('click', async e => {
     return refresh();
   }
   const ex = e.target.closest('[data-exp]');
-  if (ex) return ({ allenamenti: sessione.exportLog, diario: exportDiary, meditazione: exportMeditation })[ex.dataset.exp]();
+  if (ex) { moreSheet.close(); return setTimeout(() => ({ allenamenti: sessione.exportLog, diario: exportDiary, meditazione: exportMeditation })[ex.dataset.exp](), 220); }
   const op = e.target.closest('[data-open]');
   if (op) { const [k, i] = op.dataset.open.split(':'); return openDetail(k, +i); }
   const d = e.target.closest('[data-date]');

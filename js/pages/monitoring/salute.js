@@ -13,6 +13,7 @@ import { doc, onSnapshot, setDoc, updateDoc, deleteField } from 'https://www.gst
 import { createSheet, toast } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { seriesChart, dkey, it } from '../../core/salute-charts.js';
+import { csvFile, deliver } from '../alimentazione/files.js';
 
 const root = document.getElementById('sl-root');
 let data = { pressione: {}, glicemia: {}, esami: {} };
@@ -96,11 +97,21 @@ function heartCard() {
     </div></div>`;
 }
 
-function labsCard() {
+// Altri nomi con cui si cerca un esame (es. "glucosio" trova Glicemia)
+const ALIAS = { 'Glicemia': 'glucosio zucchero', 'Proteina C reattiva': 'pcr crp infiammazione', 'Colesterolo HDL': 'hdl buono', 'Colesterolo LDL': 'ldl cattivo', 'Colesterolo totale': 'colesterolemia',
+  'Trigliceridi': 'grassi', 'AST (GOT)': 'transaminasi fegato', 'ALT (GPT)': 'transaminasi fegato', 'GGT': 'fegato gamma', 'Emoglobina': 'hb globuli rossi anemia', 'Leucociti': 'globuli bianchi wbc',
+  'Piastrine': 'plt', 'Creatinina': 'reni rene', 'eGFR': 'reni filtrato glomerulare', 'Acido urico': 'uricemia', 'Ferro': 'sideremia', 'TSH': 'tiroide', 'FT3': 'tiroide', 'FT4': 'tiroide',
+  'Vitamina D': '25 oh', 'Vitamina B12': 'cobalamina', 'HbA1c': 'emoglobina glicata', 'HOMA': 'insulino resistenza', 'Insulina': 'insulino resistenza', 'Omocisteina': '', 'Cortisolo': 'stress surrene' };
+const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+let q = '';
+
+function labsList() {
   const by = {};
   list('esami').forEach(x => { (by[x.nome] ||= []).push(x); });
-  const names = Object.keys(by).sort((a, b) => a.localeCompare(b, 'it'));
-  const cards = names.map(n => {
+  const f = norm(q).trim();
+  const names = Object.keys(by).filter(n => !f || norm(n + ' ' + (ALIAS[n] || '')).includes(f)).sort((a, b) => a.localeCompare(b, 'it'));
+  if (!names.length) return `<div class="card flat gz-empty">${f ? `Nessun esame trovato per "${esc(q)}".` : 'Nessun esame ancora. Mandami il PDF del referto in chat e inserisco io i valori, oppure aggiungili a mano.'}</div>`;
+  return names.map(n => {
     const L = by[n], last = L[0], prev = L[1];
     const out = (last.min != null && last.v < last.min) || (last.max != null && last.v > last.max);
     const band = last.min != null && last.max != null ? { min: last.min, max: last.max } : null;
@@ -111,13 +122,48 @@ function labsCard() {
       ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
       ${L.slice(0, 3).map(x => row('esami', x.id, `${val(x)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}`)).join('')}</div>`;
   }).join('');
+}
+
+/** Esami consigliati per un quadro completo, con quando li hai fatti l'ultima volta. Indicativo: da decidere col medico. */
+const CHECKS = [
+  { t: 'Profilo lipidico con LDL', names: ['Colesterolo LDL'], m: 12, why: 'Colesterolo totale, HDL, LDL e trigliceridi sono la base per il rischio cardiovascolare. L’LDL manca nell’ultimo prelievo.' },
+  { t: 'Apolipoproteina B (ApoB)', names: ['Apolipoproteina B'], m: 24, why: 'Conta le particelle che danneggiano le arterie ed è spesso più precisa dell’LDL, soprattutto se i trigliceridi sono alti.' },
+  { t: 'Lipoproteina(a)', names: ['Lipoproteina (a)'], once: true, why: 'Dipende dai geni: basta misurarla una volta nella vita. Se è alta cambia quanto devi essere rigoroso su LDL e pressione.' },
+  { t: 'Proteina C reattiva ad alta sensibilità (hs-CRP)', names: ['Proteina C reattiva ad alta sensibilità'], m: 12, why: 'Misura l’infiammazione di fondo legata al cuore. La PCR dei tuoi referti ("<4") non è abbastanza sensibile.' },
+  { t: 'Emoglobina glicata (HbA1c) e insulina a digiuno', names: ['HbA1c'], m: 12, why: 'Dice come va la glicemia nei 3 mesi precedenti; con l’insulina permette di calcolare l’indice HOMA. L’ultima HbA1c è del 2018.' },
+  { t: 'Fegato (AST, ALT, GGT)', names: ['ALT (GPT)', 'GGT'], m: 12, why: 'Utile con trigliceridi alti: il fegato grasso è comune e silenzioso.' },
+  { t: 'Reni (creatinina, eGFR) e albuminuria', names: ['eGFR', 'Creatinina'], m: 12, why: 'Reni e vasi si danneggiano insieme: l’albuminuria è un segnale precoce.' },
+  { t: 'Emocromo completo', names: ['Emoglobina'], m: 12, why: 'Visione generale su globuli rossi, bianchi e piastrine.' },
+  { t: 'Ferro e ferritina', names: ['Ferritina'], m: 24, why: 'Riserve di ferro: utile se ti alleni molto o hai stanchezza.' },
+  { t: 'Vitamina D', names: ['Vitamina D'], m: 12, why: 'Nel 2022 era 22,1 ng/mL, sotto il livello sufficiente (30). Non è stata ripetuta.' },
+  { t: 'Vitamina B12', names: ['Vitamina B12'], m: 24, why: 'Importante soprattutto se mangi poca carne o pesce.' },
+  { t: 'Tiroide (TSH)', names: ['TSH'], m: 24, why: 'La tiroide regola metabolismo, colesterolo e frequenza cardiaca.' },
+  { t: 'Acido urico', names: ['Acido urico'], m: 24, why: 'Legato a metabolismo, pressione e gotta.' },
+  { t: 'Omocisteina', names: ['Omocisteina'], m: 36, why: 'Marcatore cardiovascolare e vitaminico: fatta nel 2016 (13,2 µmol/L, ai limiti alti della norma).' },
+];
+const monthsAgo = d => { const [y, m, dd] = d.split('-').map(Number); const n = new Date(); return (n.getFullYear() - y) * 12 + (n.getMonth() + 1 - m) - (n.getDate() < dd ? 1 : 0); };
+function checksCard() {
+  const E = list('esami');
+  const items = CHECKS.map(c => {
+    const last = E.filter(x => c.names.includes(x.nome)).sort((a, b) => b.d.localeCompare(a.d))[0];
+    const mo = last ? monthsAgo(last.d) : null;
+    const st = !last ? ['Mai fatto', 'out'] : (c.once ? ['Fatto', 'in'] : mo > c.m ? [`Da ripetere (ultimo ${fdate(last.d)})`, 'out'] : [`Aggiornato (${fdate(last.d)})`, 'in']);
+    return { ...c, st, rank: st[1] === 'out' ? 0 : 1 };
+  }).sort((a, b) => a.rank - b.rank);
+  return `<div class="gz-sec"><div class="cap">Quali esami fare</div><div class="card gz-card">
+    <p class="gz-rif" style="margin:0 0 var(--space-3)">Per un quadro completo del cuore e del metabolismo, confrontato con ciò che hai già fatto. Indicativo: la frequenza giusta la decide il medico in base a età, familiarità e risultati.</p>
+    ${items.map(c => `<div class="gz-row" style="align-items:flex-start"><span><b>${esc(c.t)}</b><br><span class="s">${esc(c.why)}</span></span><span class="s" style="text-align:right;flex-shrink:0;max-width:42%">${tag(...c.st)}</span></div>`).join('')}</div></div>`;
+}
+
+function labsCard() {
   return `<div class="gz-sec"><div class="cap">Esami del sangue</div>
-    ${cards || '<div class="card flat gz-empty">Nessun esame ancora. Mandami il PDF del referto in chat e inserisco io i valori, oppure aggiungili a mano.</div>'}
+    <input class="input" id="sl-q" type="search" placeholder="Cerca un esame (es. glicemia, colesterolo, tiroide)" value="${esc(q)}" autocomplete="off" aria-label="Cerca un esame"/>
+    <div class="gz-sec" id="sl-labs">${labsList()}</div>
     <div class="gz-add"><button type="button" class="pri" data-add="esami">＋ Valore a mano</button></div>
     <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
 }
 
-function render() { root.innerHTML = heartCard() + pressureCard() + glucoseCard() + labsCard(); }
+function render() { root.innerHTML = heartCard() + pressureCard() + glucoseCard() + labsCard() + checksCard(); }
 
 // ─── Inserimento ────────────────────────────────────────────────────────
 const nowTime = () => new Date().toTimeString().slice(0, 5);
@@ -159,6 +205,30 @@ sheet.$('#sl-form').addEventListener('click', async e => {
   sheet.close();
   try { await setDoc(ref, { [formKind]: { [newId()]: entry } }, { merge: true }); toast('Salvato'); } catch (err) { console.error(err); toast('Non sono riuscito a salvare'); }
 });
+
+root.addEventListener('input', e => {
+  if (e.target.id !== 'sl-q') return;
+  q = e.target.value;
+  root.querySelector('#sl-labs').innerHTML = labsList();
+});
+
+// Menu ⋯: esportazioni
+const stamp = () => dkey(new Date());
+const csvOf = (rows, name) => deliver(csvFile(rows, name));
+const exporters = {
+  esami: () => { const L = list('esami').sort((a, b) => a.d.localeCompare(b.d) || a.nome.localeCompare(b.nome)); if (!L.length) return toast('Nessun esame da esportare');
+    return csvOf([['Data', 'Esame', 'Valore', 'Unità', 'Riferimento min', 'Riferimento max', 'Laboratorio'], ...L.map(x => [x.d, x.nome, `${x.lt ? '<' : ''}${x.v}`, x.u || '', x.min ?? '', x.max ?? '', x.lab || ''])], `esami-del-sangue-${stamp()}.csv`); },
+  pressione: () => { const L = list('pressione').sort((a, b) => a.d.localeCompare(b.d)); if (!L.length) return toast('Nessuna misura di pressione');
+    return csvOf([['Data', 'Ora', 'Massima', 'Minima', 'Battiti'], ...L.map(x => [x.d, x.ora || '', x.sys, x.dia, x.fc ?? ''])], `pressione-${stamp()}.csv`); },
+  glicemia: () => { const L = list('glicemia').sort((a, b) => a.d.localeCompare(b.d)); if (!L.length) return toast('Nessuna misura di glicemia');
+    return csvOf([['Data', 'Ora', 'mg/dL', 'Quando'], ...L.map(x => [x.d, x.ora || '', x.v, CTX[x.ctx] || ''])], `glicemia-${stamp()}.csv`); },
+};
+const moreSheet = createSheet({ title: 'Salute', body: `<div class="list">
+  <button type="button" class="list-row" data-exp="esami"><span class="grow">Esporta gli esami del sangue (CSV)</span></button>
+  <button type="button" class="list-row" data-exp="pressione"><span class="grow">Esporta la pressione (CSV)</span></button>
+  <button type="button" class="list-row" data-exp="glicemia"><span class="grow">Esporta la glicemia (CSV)</span></button></div>` });
+document.getElementById('sl-more')?.addEventListener('click', () => moreSheet.open());
+moreSheet.el.addEventListener('click', e => { const b = e.target.closest('[data-exp]'); if (b) { moreSheet.close(); setTimeout(exporters[b.dataset.exp], 220); } });
 
 let armed = null;
 root.addEventListener('click', async e => {
