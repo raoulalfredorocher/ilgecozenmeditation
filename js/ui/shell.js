@@ -207,6 +207,9 @@ function buildProfileSheet() {
     <div class="zen-section" id="zen-notif-sec" style="margin-bottom:var(--space-6)">
       <div class="zen-eyebrow">Notifiche</div>
       <div class="list" id="zen-notif-list"></div>
+      <button type="button" class="notif-arch-btn" id="zen-notif-archbtn" hidden></button>
+      <div class="list" id="zen-notif-arch" hidden></div>
+      <p class="zen-muted" id="zen-notif-hint" style="font-size:var(--fs-xs);margin:var(--space-2) 0 0">Scorri a destra per archiviare, a sinistra per eliminare.</p>
     </div>
     <div class="zen-section" style="margin-bottom:var(--space-6)">
       <div class="zen-eyebrow">Aspetto</div>
@@ -400,18 +403,64 @@ waitForUser().then(fillProfile);
 waitForUser().then(() => setTimeout(refreshNotifiche, 1500));
 
 // ─── Notifiche nel profilo ───────────────────────────────────────────────
+let archOpen = false;
+const notifRow = (n, arch) => `<div class="notif-wrap"><div class="notif-bg"><span>${arch ? 'Ripristina' : 'Archivia'}</span><span>Elimina</span></div>
+  <div class="list-row notif-row" data-nid="${escapeHtml(n.id)}"><a class="grow" href="${escapeHtml(n.href)}" style="color:inherit"><span style="display:block">${escapeHtml(n.testo)}</span><span class="zen-muted" style="display:block;font-size:var(--fs-xs)">${escapeHtml(n.sub)}</span></a></div></div>`;
+
 async function refreshNotifiche(force = false) {
   const tab = document.getElementById('zen-tab-profile'), list = document.getElementById('zen-notif-list');
   if (!tab || !list) return;
   try {
-    const { caricaNotifiche, chiudi } = await import('./notifiche.js');
-    const items = await caricaNotifiche(force);
-    tab.classList.toggle('has-notif', items.length > 0);
-    list.innerHTML = items.length ? items.map(n => `<div class="list-row notif-row">
-        <a class="grow" href="${escapeHtml(n.href)}" style="color:inherit"><span style="display:block">${escapeHtml(n.testo)}</span><span class="zen-muted" style="display:block;font-size:var(--fs-xs)">${escapeHtml(n.sub)}</span></a>
-        <button type="button" class="notif-x" data-nx="${escapeHtml(n.id)}" aria-label="Nascondi">×</button></div>`).join('')
+    const N = await import('./notifiche.js');
+    const { attive, archiviate } = await N.caricaNotifiche(force);
+    tab.classList.toggle('has-notif', attive.length > 0);
+    list.innerHTML = attive.length ? attive.map(n => notifRow(n, false)).join('')
       : '<div class="zen-muted" style="font-size:var(--fs-sm);padding:var(--space-2) 0">Nessuna notifica. Tutto in ordine.</div>';
-    list.querySelectorAll('[data-nx]').forEach(b => b.addEventListener('click', () => { chiudi(b.dataset.nx); refreshNotifiche(); }));
+    const ab = document.getElementById('zen-notif-archbtn'), al = document.getElementById('zen-notif-arch');
+    ab.hidden = !archiviate.length;
+    if (!archiviate.length) archOpen = false;
+    ab.textContent = `${archOpen ? 'Nascondi' : 'Archiviate'} (${archiviate.length})`;
+    al.hidden = !archOpen || !archiviate.length;
+    al.innerHTML = archiviate.map(n => notifRow(n, true)).join('');
+    document.getElementById('zen-notif-hint').hidden = !attive.length && !archiviate.length;
+    const find = (id, arch) => (arch ? archiviate : attive).find(n => n.id === id);
+    bindSwipe(list, id => ({ right: () => { N.archivia(find(id, false)); refreshNotifiche(); }, left: () => confirmDelete(id, N) }));
+    bindSwipe(al, id => ({ right: () => { N.ripristina(id); refreshNotifiche(); }, left: () => confirmDelete(id, N) }));
   } catch (e) { console.warn('notifiche', e); }
 }
+
+async function confirmDelete(id, N) {
+  const { createSheet } = await import('./dialog.js');
+  const sh = createSheet({ title: 'Eliminare la notifica?', body: `<div class="stack"><p class="zen-muted" style="margin:0">Sparisce per sempre. Se vuoi tenerla, archiviala.</p>
+    <button type="button" class="btn block danger" id="nd-yes">Elimina</button><button type="button" class="btn block" id="nd-no">Annulla</button></div>` });
+  sh.$('#nd-yes').addEventListener('click', () => { N.elimina(id); sh.close(); refreshNotifiche(); });
+  sh.$('#nd-no').addEventListener('click', () => { sh.close(); refreshNotifiche(); });
+  sh.open();
+}
+
+/** Scorrimento di una riga: destra = azione 1, sinistra = azione 2. Un tocco senza trascinare apre il link. */
+function bindSwipe(host, actions) {
+  host.querySelectorAll('.notif-row').forEach(row => {
+    let x0 = 0, y0 = 0, dx = 0, on = false, locked = false;
+    const bg = row.parentElement.querySelector('.notif-bg');
+    row.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; dx = 0; on = true; locked = false; row.style.transition = 'none'; });
+    row.addEventListener('pointermove', e => {
+      if (!on) return;
+      const mx = e.clientX - x0, my = e.clientY - y0;
+      if (!locked && Math.abs(my) > Math.abs(mx) && Math.abs(my) > 8) { on = false; row.style.transform = ''; return; }
+      if (Math.abs(mx) > 8) { locked = true; try { row.setPointerCapture(e.pointerId); } catch { /* ok */ } }
+      if (!locked) return;
+      dx = mx; row.style.transform = `translateX(${dx}px)`;
+      bg.dataset.side = dx > 0 ? 'r' : 'l'; bg.style.opacity = Math.min(1, Math.abs(dx) / 80);
+    });
+    const end = () => {
+      if (!on) return; on = false;
+      row.style.transition = 'transform .2s'; row.style.transform = ''; bg.style.opacity = 0;
+      if (Math.abs(dx) > 80) { const a = actions(row.dataset.nid); (dx > 0 ? a.right : a.left)(); }
+    };
+    row.addEventListener('pointerup', end); row.addEventListener('pointercancel', end);
+    row.addEventListener('click', e => { if (locked) { e.preventDefault(); e.stopPropagation(); } }, true);
+  });
+}
+document.getElementById('zen-notif-archbtn')?.addEventListener('click', () => { archOpen = !archOpen; refreshNotifiche(); });
 document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', () => refreshNotifiche());

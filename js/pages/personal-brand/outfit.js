@@ -63,7 +63,7 @@ function colorMatch(a, b) {
  * @returns {{pieces:{slot:string,capo:object}[], notes:string[], missing:string[]}}
  */
 export function suggest(capi, q) {
-  const temp = q.temp - (q.evening ? 3 : 0);
+  const temp = q.temp;          // già la temperatura all'ora giusta
   const target = q.occ ? q.occ.f : 2;
   const rnd = mulberry(q.seed || 1);
   const now = Date.now();
@@ -115,7 +115,7 @@ export function suggest(capi, q) {
 
   // la motivazione, in poche parole
   const feel = temp >= 27 ? 'molto caldo' : temp >= 20 ? 'mite' : temp >= 12 ? 'fresco' : temp >= 5 ? 'freddo' : 'gelido';
-  notes.push(`${Math.round(q.temp)}° ${q.evening ? 'la sera' : 'di giorno'}: ${feel}${q.rain ? ', con possibile pioggia' : ''}.`);
+  notes.push(`${Math.round(q.temp)}° ${q.whenLabel || (q.evening ? 'la sera' : 'di giorno')}: ${feel}${q.rain ? ', con possibile pioggia' : ''}.`);
   if (needLayer && pieces.some(p => p.slot === 'layer')) notes.push(temp < 8 ? 'Ho aggiunto strati caldi.' : 'Ti serve qualcosa sopra: ho aggiunto uno strato.');
   if (!needLayer) notes.push('Niente strati: stai leggero.');
   const cols = pieces.map(p => p.capo.colore).filter(Boolean);
@@ -128,17 +128,45 @@ function mulberry(a) {
   return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
 
-// ─── Meteo (Open-Meteo, senza chiave) ────────────────────────────────────
-export async function weatherFor({ lat, lon, city, date }) {
+// ─── Quando e dove, letti dal testo libero ───────────────────────────────
+export const PERIODS = [['mattina', 'Mattina', 9], ['pomeriggio', 'Pomeriggio', 15], ['sera', 'Sera', 20], ['notte', 'Notte', 23]];
+export const periodOfHour = h => (h >= 5 && h < 12 ? 'mattina' : h >= 12 && h < 18 ? 'pomeriggio' : h >= 18 && h < 23 ? 'sera' : 'notte');
+const WEEK = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** "cena a Milano venerdì sera alle 20" → { date, period, hour, city } (solo ciò che trova). */
+export function parseWhen(text, now = new Date()) {
+  const t = String(text || '').toLowerCase(), out = {};
+  const plus = n => { const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + n); return iso(d); };
+  if (/\bdopodomani\b/.test(t)) out.date = plus(2);
+  else if (/\bdomani\b/.test(t)) out.date = plus(1);
+  else if (/\b(oggi|stasera|stanotte|stamattina)\b/.test(t)) out.date = plus(0);
+  else { const w = WEEK.findIndex(n => new RegExp(`\\b${n.replace('ì', '[ìi]')}\\b`).test(t)); if (w >= 0) out.date = plus(((w - now.getDay() + 7) % 7) || 7); }
+  const m = t.match(/\b(?:alle|ore|h)\s*(\d{1,2})(?:[:.](\d{2}))?/);
+  if (m && +m[1] < 24) { out.hour = +m[1] + (m[2] ? +m[2] / 60 : 0); out.hourLabel = `${m[1]}:${m[2] || '00'}`; out.period = periodOfHour(+m[1]); }
+  else if (/\b(stasera|sera)\b/.test(t)) out.period = 'sera';
+  else if (/\b(stanotte|notte)\b/.test(t)) out.period = 'notte';
+  else if (/\b(pomeriggio)\b/.test(t)) out.period = 'pomeriggio';
+  else if (/\b(mattina|stamattina|mattino)\b/.test(t)) out.period = 'mattina';
+  const cities = [...String(text || '').matchAll(/\b(?:a|ad|in)\s+([A-ZÀ-Ý][\p{L}']+(?:\s[A-ZÀ-Ý][\p{L}']+)?)/gu)];
+  if (cities.length) out.city = cities[cities.length - 1][1];
+  return out;
+}
+
+// ─── Meteo (Open-Meteo, senza chiave): temperatura e pioggia all'ora scelta ─
+export async function weatherFor({ lat, lon, city, date, hour = 12 }) {
   if (city && (lat == null || lon == null)) {
     const g = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=it`)).json();
     const r = g.results?.[0];
     if (!r) throw new Error('Città non trovata');
     lat = r.latitude; lon = r.longitude; city = r.name;
   }
-  const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`)).json();
-  const i = Math.max(0, d.daily.time.indexOf(date));
-  if (date && d.daily.time.indexOf(date) < 0) throw new Error('Previsioni disponibili solo per i prossimi 16 giorni');
-  const max = d.daily.temperature_2m_max[i], min = d.daily.temperature_2m_min[i];
-  return { city: city || '', max, min, temp: Math.round(min + (max - min) * 0.6), rain: (d.daily.precipitation_probability_max[i] || 0) >= 40, rainP: d.daily.precipitation_probability_max[i] || 0 };
+  const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=16`)).json();
+  const di = d.daily.time.indexOf(date);
+  if (date && di < 0) throw new Error('Previsioni disponibili solo per i prossimi 16 giorni');
+  const day = Math.max(0, di), h = Math.min(23, Math.round(hour));
+  const i = day * 24 + h;
+  const near = [i - 1, i, i + 1].filter(k => k >= 0 && k < d.hourly.time.length);
+  const rainP = Math.max(...near.map(k => d.hourly.precipitation_probability[k] || 0));
+  return { city: city || '', max: d.daily.temperature_2m_max[day], min: d.daily.temperature_2m_min[day], temp: Math.round(d.hourly.temperature_2m[i]), rain: rainP >= 40, rainP };
 }

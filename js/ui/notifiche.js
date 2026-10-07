@@ -10,9 +10,15 @@ const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}
 const lsGet = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ok */ } };
 
-/** Una notifica chiusa resta nascosta per il resto della giornata. */
-export const chiusaOggi = id => lsGet('zen_notif_off', {})[id] === dk(new Date());
-export function chiudi(id) { const o = lsGet('zen_notif_off', {}); o[id] = dk(new Date()); lsSet('zen_notif_off', o); }
+/** Stato di ogni notifica: archiviata ('a', con copia del contenuto) o eliminata ('d'). */
+const ST = 'zen_notif_st', ARCH = 'zen_notif_arch';
+export function archivia(n) { const st = lsGet(ST, {}), ar = lsGet(ARCH, {}); st[n.id] = 'a'; ar[n.id] = { ...n, ts: Date.now() }; lsSet(ST, st); lsSet(ARCH, ar); }
+export function ripristina(id) { const st = lsGet(ST, {}); delete st[id]; lsSet(ST, st); const ar = lsGet(ARCH, {}); delete ar[id]; lsSet(ARCH, ar); }
+export function elimina(id) {
+  const st = lsGet(ST, {}), ar = lsGet(ARCH, {}); st[id] = 'd'; delete ar[id];
+  const keys = Object.keys(st); if (keys.length > 400) delete st[keys[0]];
+  lsSet(ST, st); lsSet(ARCH, ar);
+}
 
 async function calcola() {
   const out = [], now = new Date(), oggi = dk(now), dow = now.getDay();
@@ -57,11 +63,15 @@ async function calcola() {
   return out;
 }
 
-/** Calcola al massimo ogni 30 minuti (poi usa la copia in memoria); filtra quelle chiuse. */
+/** Calcola al massimo ogni 30 minuti (poi usa la copia in memoria). Restituisce { attive, archiviate }. */
 export async function caricaNotifiche(force = false) {
-  const c = lsGet('zen_notif_cache', null);
+  const c = lsGet('zen_notif_cache', null), st = lsGet(ST, {});
   let list;
   if (!force && c && c.day === dk(new Date()) && Date.now() - c.ts < 30 * 60e3) list = c.list;
   else { list = await calcola(); lsSet('zen_notif_cache', { day: dk(new Date()), ts: Date.now(), list }); }
-  return list.filter(n => !chiusaOggi(n.id));
+  const ar = lsGet(ARCH, {});
+  return {
+    attive: list.filter(n => !st[n.id]),
+    archiviate: Object.values(ar).filter(n => st[n.id] === 'a').sort((x, y) => y.ts - x.ts),
+  };
 }

@@ -765,4 +765,11 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 /* Notifiche: pallino rosso sul profilo e righe nel foglio */
 .zen-tab.has-notif { position: relative; }
 .zen-tab.has-notif::after { content: ''; position: absolute; top: 8px; right: calc(50% - 20px); width: 10px; height: 10px; border-radius: 50%; background: #D9453B; box-shadow: 0 0 0 2px var(--bg, #fff); }
-.notif-x { flex: none; width: 32px; height: 32px; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; }
+
+.notif-wrap { position: relative; overflow: hidden; touch-action: pan-y; }
+.notif-bg { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-4); opacity: 0; font-size: var(--fs-sm); font-weight: 600; color: #fff; background: #5E9A6B; }
+.notif-bg[data-side="l"] { background: #D9453B; }
+.notif-bg span:first-child { display: none; } .notif-bg span:last-child { display: none; }
+.notif-bg[data-side="r"] span:first-child, .notif-bg[data-side="l"] span:last-child { display: block; }
+.notif-row { position: relative; background: var(--card); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.notif-arch-btn { margin-top: var(--space-2); border: 0; background: none; color: var(--muted); font: inherit; font-size: var(--fs-sm); padding: var(--space-2) 0; cursor: pointer; }

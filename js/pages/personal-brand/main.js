@@ -10,7 +10,7 @@ import {
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage, downloadCSV } from '../../ui/dialog.js';
-import { OCCASIONS, SLOT_LABEL, guessOccasion, suggest, weatherFor, slotOf } from './outfit.js';
+import { OCCASIONS, SLOT_LABEL, PERIODS, guessOccasion, suggest, weatherFor, slotOf, parseWhen, periodOfHour } from './outfit.js';
 
 const $ = id => document.getElementById(id);
 const CATS = ['Magliette', 'Polo', 'Camicie', 'Maglie Eleganti', 'Maglioni', 'Felpe', 'Giacche', 'Pantaloni', 'Pantaloncini corti', 'Scarpe', 'Accessori', 'Abbigliamento Tecnico', 'Intimo'];
@@ -60,9 +60,9 @@ function showTab(t) {
 document.querySelector('.page-tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
 
 // ═══ OUTFIT ══════════════════════════════════════════════════════════════
-const O = { text: '', occ: null, when: 'oggi', date: '', evening: false, city: lsGet('zen_pb_city', ''), geo: null, temp: 18, tempManual: false, metLabel: '', rain: false, seed: 1, result: null };
-const today = (add = 0) => { const d = new Date(); d.setDate(d.getDate() + add); return d.toISOString().slice(0, 10); };
-const dateOf = () => O.when === 'oggi' ? today() : O.when === 'domani' ? today(1) : (O.date || today());
+const today = (add = 0) => { const d = new Date(); d.setDate(d.getDate() + add); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const O = { text: '', occ: null, date: today(), period: periodOfHour(new Date().getHours()), hour: null, hourLabel: '', city: lsGet('zen_pb_city', ''), geo: null, seed: 1, result: null, meta: null };
+const prettyDate = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }); };
 
 function renderOutfit() {
   const root = $('tab-outfit');
@@ -75,25 +75,20 @@ function renderOutfit() {
   const occ = O.occ || guessOccasion(O.text);
   root.innerHTML = `
     <section class="gz ask">
-      <div class="lbl">Dove vai?</div>
-      <input class="ask-in" id="of-text" value="${esc(O.text)}" placeholder="una cena, il matrimonio di Luca…" autocomplete="off" enterkeyhint="go"/>
-      <div class="chips" id="of-occ">${OCCASIONS.map(o => `<button type="button" class="chip" data-occ="${o.k}" aria-pressed="${occ?.k === o.k}">${o.label}</button>`).join('')}</div>
-      <div class="row2">
-        <div class="chips wrap" id="of-when">
-          ${[['oggi', 'Oggi'], ['domani', 'Domani'], ['data', 'Altro giorno']].map(([k, l]) => `<button type="button" class="chip" data-when="${k}" aria-pressed="${O.when === k}">${l}</button>`).join('')}
-        </div>
-        ${O.when === 'data' ? `<input class="input" type="date" id="of-date" value="${esc(O.date || today())}" min="${today()}" max="${today(15)}" style="max-width:170px"/>` : ''}
+      <div class="blk">
+        <div class="lbl">Raccontami l’occasione</div>
+        <textarea class="ask-in" id="of-text" rows="2" placeholder="Es. cena con i clienti a Milano, venerdì sera alle 20" autocomplete="off" enterkeyhint="go">${esc(O.text)}</textarea>
+        <div class="hint">Scrivi cosa fai, con chi, dove e quando: leggo io città, giorno e ora dal testo.</div>
       </div>
-      <div class="chips wrap">
-        <button type="button" class="chip" data-ev="0" aria-pressed="${!O.evening}">Di giorno</button>
-        <button type="button" class="chip" data-ev="1" aria-pressed="${O.evening}">La sera</button>
-      </div>
-      <div class="meteo">
-        <div class="mrow"><b id="of-temp">${Math.round(O.temp)}°</b><span id="of-met">${esc(O.metLabel || 'Scrivi la città o usa la posizione: scelgo io in base al tempo.')}</span>
-          <div class="temp-step"><button type="button" data-t="-1" aria-label="Meno gradi">−</button><button type="button" data-t="1" aria-label="Più gradi">+</button></div></div>
-        <div class="mrow"><input class="input" id="of-city" value="${esc(O.city)}" placeholder="Città, per il meteo" autocomplete="off"/>
-          <button type="button" class="chip" id="of-geo" aria-label="Usa la mia posizione">${icon('map', 'sm')} Qui</button></div>
-      </div>
+      <div class="blk"><div class="lbl2">Che tipo di occasione</div>
+        <div class="chips" id="of-occ">${OCCASIONS.map(o => `<button type="button" class="chip" data-occ="${o.k}" aria-pressed="${occ?.k === o.k}">${o.label}</button>`).join('')}</div></div>
+      <div class="blk"><div class="lbl2">Quando</div>
+        <div class="row2"><input class="input" type="date" id="of-date" value="${esc(O.date)}" min="${today()}" max="${today(15)}" style="max-width:190px"/>
+          ${O.hourLabel ? `<span class="pill c2">alle ${esc(O.hourLabel)}</span>` : ''}</div>
+        <div class="chips wrap" id="of-per">${PERIODS.map(([k, l]) => `<button type="button" class="chip" data-per="${k}" aria-pressed="${O.period === k}">${l}</button>`).join('')}</div></div>
+      <div class="blk"><div class="lbl2">Dove</div>
+        <div class="mrow"><input class="input" id="of-city" value="${esc(O.city)}" placeholder="Città (per il meteo)" autocomplete="off"/>
+          <button type="button" class="chip" id="of-geo" aria-label="Usa la mia posizione">${icon('map', 'sm')} Qui</button></div></div>
       <button type="button" class="pbtn block" id="of-go">Consigliami</button>
     </section>
     <div id="of-result"></div>`;
@@ -103,59 +98,63 @@ function renderOutfit() {
 function drawResult() {
   const R = O.result, host = $('of-result');
   if (!R) { host.innerHTML = ''; return; }
-  const occ = O.occ || guessOccasion(O.text);
-  const title = O.text.trim() ? O.text.trim()[0].toUpperCase() + O.text.trim().slice(1) : (occ?.label || 'Il tuo look');
+  const occ = O.occ || guessOccasion(O.text), M = O.meta || {};
+  const title = occ?.label || (O.text.trim() ? O.text.trim().replace(/^./, c => c.toUpperCase()).slice(0, 48) : 'Il tuo look');
+  const perLabel = (PERIODS.find(p => p[0] === O.period) || [])[1] || '';
   host.innerHTML = `
     <section class="gz look c2"><span class="eb">Il tuo look</span><h2>${esc(title)}</h2>
-      <p>${esc(R.notes.join(' '))}</p><span class="big-n" aria-hidden="true">${Math.round(O.temp)}°</span></section>
+      <div class="pills lk-meta">${[M.city, prettyDate(O.date), O.hourLabel ? `ore ${O.hourLabel}` : perLabel].filter(Boolean).map(x => `<span class="pill">${esc(x)}</span>`).join('')}<span class="pill c4"><b>${Math.round(M.temp ?? 0)}°</b>${M.rain ? ` · pioggia ${M.rainP}%` : ''}</span></div>
+      <p>${esc(R.notes.join(' '))}</p></section>
     ${R.pieces.length ? `<div class="pieces">${R.pieces.map(({ slot, capo }, i) => `
       <button type="button" class="piece ${tint(i + 1)}" data-capo="${esc(capo._docId)}"><span class="sl">${SLOT_LABEL[slot]}</span>
         <span class="ph">${photoBlock(capo)}</span>
         <span class="tx"><span class="nm">${esc(capo.nome)}</span><span class="mt">${esc([capo.categoria, capo.colore].filter(Boolean).join(' · '))}</span></span></button>`).join('')}</div>` : ''}
     ${R.missing.length ? `<div class="gap">Per questa occasione ti manca ${esc(R.missing.join(', '))}: potresti aggiungerli al guardaroba.</div>` : ''}
-    ${R.pieces.length ? `<div class="row2" style="justify-content:center"><button type="button" class="pbtn soft" id="of-again">Un'altra proposta</button><button type="button" class="pbtn" id="of-wear">Lo indosso</button></div>` : ''}`;
+    ${R.pieces.length ? `<div class="act2"><button type="button" class="pbtn soft" id="of-again">Un’altra proposta</button><button type="button" class="pbtn" id="of-wear">Lo indosso</button></div>` : ''}`;
   host.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function readForm() {
+  O.text = $('of-text').value; O.date = $('of-date').value || O.date; O.city = $('of-city').value.trim();
+}
+
 async function recommend(again = false) {
-  const btn = $('of-go'); 
-  O.text = $('of-text').value;
+  const btn = $('of-go');
+  readForm();
   if (!again) {
+    // quello che hai scritto nel testo vale più dei campi: giorno, momento, ora e (se manca) la città
+    const w = parseWhen(O.text);
+    if (w.date && w.date >= today() && w.date <= today(15)) O.date = w.date;
+    if (w.period) { O.period = w.period; O.hour = w.hour ?? null; O.hourLabel = w.hourLabel || ''; }
+    if (w.city && !O.city) { O.city = w.city; O.geo = null; }
     O.seed = Date.now() % 100000;
-    const useWeather = !O.tempManual && ($('of-city').value.trim() || O.geo);
-    if (useWeather) {
-      btn.disabled = true; btn.textContent = 'Guardo il meteo…';
-      try {
-        const city = $('of-city').value.trim();
-        const w = await weatherFor({ lat: city ? null : O.geo?.lat, lon: city ? null : O.geo?.lon, city: city || '', date: dateOf() });
-        O.temp = w.temp; O.rain = w.rain; O.metLabel = `${w.city || 'Qui'}: tra ${Math.round(w.min)}° e ${Math.round(w.max)}°${w.rain ? `, pioggia ${w.rainP}%` : ''}`;
-        if (city) lsSet('zen_pb_city', city);
-      } catch (e) { toast(e.message || 'Meteo non disponibile: uso la temperatura che vedi'); O.metLabel = 'Meteo non disponibile, uso la temperatura impostata.'; }
-      btn.disabled = false; btn.textContent = 'Consigliami';
-    }
+    if (!O.city && !O.geo) { renderOutfit(); toast('Scrivi la città, o tocca “Qui”: mi serve per il meteo'); $('of-city').focus(); return; }
+    const hour = O.hour ?? PERIODS.find(p => p[0] === O.period)[2];
+    const b2 = $('of-go'); b2.disabled = true; b2.textContent = 'Guardo il meteo…';
+    try {
+      const m = await weatherFor({ lat: O.city ? null : O.geo?.lat, lon: O.city ? null : O.geo?.lon, city: O.city, date: O.date, hour });
+      O.meta = m; if (O.city) lsSet('zen_pb_city', O.city);
+      if (m.city && O.city) O.city = m.city;
+    } catch (e) { b2.disabled = false; b2.textContent = 'Consigliami'; toast(e.message || 'Meteo non disponibile: riprova'); return; }
   } else O.seed += 7;
   const occ = O.occ || guessOccasion(O.text);
-  const recent = lsGet('zen_pb_worn', {});
-  O.result = suggest(capi, { occ, temp: O.temp, rain: O.rain, evening: O.evening, recent, seed: O.seed });
+  const evening = ['sera', 'notte'].includes(O.period);
+  O.result = suggest(capi, { occ, temp: O.meta.temp, rain: O.meta.rain, evening, whenLabel: evening ? 'la sera' : O.period === 'mattina' ? 'al mattino' : 'di giorno', recent: lsGet('zen_pb_worn', {}), seed: O.seed });
   renderOutfit();
 }
 
 $('tab-outfit').addEventListener('click', async e => {
   const t = e.target;
   const occ = t.closest('[data-occ]');
-  if (occ) { O.occ = O.occ?.k === occ.dataset.occ ? null : OCCASIONS.find(o => o.k === occ.dataset.occ); O.text = $('of-text').value; return renderOutfit(); }
-  const w = t.closest('[data-when]');
-  if (w) { O.when = w.dataset.when; O.text = $('of-text').value; O.tempManual = false; return renderOutfit(); }
-  const ev = t.closest('[data-ev]');
-  if (ev) { O.evening = ev.dataset.ev === '1'; O.text = $('of-text').value; return renderOutfit(); }
-  const st = t.closest('[data-t]');
-  if (st) { O.temp = Math.max(-15, Math.min(45, O.temp + +st.dataset.t)); O.tempManual = true; O.metLabel = 'Temperatura impostata da te.'; $('of-temp').textContent = `${Math.round(O.temp)}°`; $('of-met').textContent = O.metLabel; return; }
+  if (occ) { readForm(); O.occ = O.occ?.k === occ.dataset.occ ? null : OCCASIONS.find(o => o.k === occ.dataset.occ); return renderOutfit(); }
+  const per = t.closest('[data-per]');
+  if (per) { readForm(); O.period = per.dataset.per; O.hour = null; O.hourLabel = ''; return renderOutfit(); }
   if (t.closest('#of-geo')) {
     if (!navigator.geolocation) return toast('Posizione non disponibile su questo dispositivo');
     toast('Cerco dove sei…');
     navigator.geolocation.getCurrentPosition(p => {
-      O.geo = { lat: p.coords.latitude, lon: p.coords.longitude }; O.city = ''; O.tempManual = false; O.text = $('of-text').value;
-      O.metLabel = 'Uso la tua posizione.'; renderOutfit(); toast('Fatto: userò il meteo di dove sei');
+      readForm(); O.geo = { lat: p.coords.latitude, lon: p.coords.longitude }; O.city = '';
+      renderOutfit(); $('of-city').placeholder = 'La tua posizione'; toast('Fatto: userò il meteo di dove sei');
     }, () => toast('Non riesco a leggere la posizione: scrivi la città'), { timeout: 8000 });
     return;
   }
@@ -165,15 +164,15 @@ $('tab-outfit').addEventListener('click', async e => {
     const worn = lsGet('zen_pb_worn', {});
     O.result.pieces.forEach(p => { worn[p.capo._docId] = Date.now(); });
     lsSet('zen_pb_worn', worn);
-    toast('Segnato: domani ti proporrò altro');
+    toast('Segnato: la prossima volta ti proporrò altro');
     return;
   }
   const c = t.closest('[data-capo]');
   if (c) openCapoDetail(c.dataset.capo);
 });
 $('tab-outfit').addEventListener('input', e => {
-  if (e.target.id === 'of-date') { O.date = e.target.value; O.tempManual = false; }
-  if (e.target.id === 'of-city') { O.city = e.target.value; O.geo = null; O.tempManual = false; }
+  if (e.target.id === 'of-date') { O.date = e.target.value; }
+  if (e.target.id === 'of-city') { O.city = e.target.value; O.geo = null; }
   if (e.target.id === 'of-text') O.text = e.target.value;
 });
 $('tab-outfit').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'of-text') { e.preventDefault(); e.target.blur(); recommend(false); } });
@@ -192,11 +191,11 @@ function renderGuardaroba() {
     <div class="search">${icon('search', 'sm')}<input class="input" type="search" id="g-q" value="${esc(F.q)}" placeholder="Cerca un capo o una marca" aria-label="Cerca"/></div>
     <div class="chips"><button type="button" class="chip" data-cat="" aria-pressed="${!F.cat}">Tutti</button>${CATS.filter(c => counts[c]).map(c => `<button type="button" class="chip" data-cat="${esc(c)}" aria-pressed="${F.cat === c}">${esc(c)} <small>${counts[c]}</small></button>`).join('')}</div>
     ${usedColors.length > 1 ? `<div class="chips" style="align-items:center"><button type="button" class="sw all" data-color="" aria-pressed="${!F.color}" aria-label="Tutti i colori"></button>${usedColors.map(c => `<button type="button" class="sw" data-color="${esc(c)}" style="background:${COLORS[c] || '#ccc'}" aria-pressed="${F.color === c}" aria-label="${esc(c)}"></button>`).join('')}</div>` : ''}
-    ${list.length ? `<div class="capi">${list.map((c, i) => `
-      <button type="button" class="piece ${tint(i)}" data-capo="${esc(c._docId)}">
-        <span class="ph">${photoBlock(c)}</span>${c.anno ? `<span class="yr">${esc(c.anno)}</span>` : ''}
-        <span class="tx"><span class="nm">${esc(c.nome)}</span><span class="mt">${esc([c.categoria, c.colore].filter(Boolean).join(' · '))}</span>
-          ${c.stelle ? `<span class="stars">${stars(c.stelle)}</span>` : ''}</span></button>`).join('')}</div>`
+    ${list.length ? CATS.filter(k => list.some(c => c.categoria === k)).concat(list.some(c => !CATS.includes(c.categoria)) ? [''] : []).map(k => {
+        const items = list.filter(c => (k ? c.categoria === k : !CATS.includes(c.categoria)));
+        return `<section class="shelf"><div class="shelf-h"><span>${esc(k || 'Altro')}</span><small>${items.length}</small></div>
+          <div class="capi">${items.map(c => `<button type="button" class="cp ${pieceTint(c)}" data-capo="${esc(c._docId)}"><span class="ph">${photoBlock(c)}</span><span class="nm">${esc(c.nome)}</span></button>`).join('')}</div></section>`;
+      }).join('')
       : `<div class="emptyx">${capi.length ? 'Nessun capo con questi filtri.' : 'Nessun capo ancora.<br/>Tocca + per aggiungere il primo.'}</div>`}`;
 }
 $('tab-guardaroba').addEventListener('click', e => {
