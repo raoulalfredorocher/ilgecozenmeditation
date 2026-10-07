@@ -117,7 +117,7 @@ function labsCard() {
     <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
 }
 
-function render() { root.innerHTML = pressureCard() + glucoseCard() + heartCard() + labsCard(); }
+function render() { root.innerHTML = heartCard() + pressureCard() + glucoseCard() + labsCard(); }
 
 // ─── Inserimento ────────────────────────────────────────────────────────
 const nowTime = () => new Date().toTimeString().slice(0, 5);
