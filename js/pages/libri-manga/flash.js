@@ -195,7 +195,7 @@ export function initFlash(ctx) {
       el.innerHTML = `<div class="fc">
         <div class="fc-top"><span>${i + 1} / ${deck.length}</span><div class="meter-track"><div class="meter-fill" style="width:${i / deck.length * 100}%"></div></div><button type="button" class="icon-btn" id="fc-x" aria-label="Esci">${icon('close')}</button></div>
         <div class="card fc-card">
-          <span class="chip">${esc(TYPE_LABEL[c.type])}</span>
+          <span class="chip">${esc(TYPE_LABEL[c.type])}${c.book ? " · " + esc(c.book.title) : ""}</span>
           <p class="fc-q">${esc(c.q)}</p>
           ${c.quote ? `<blockquote class="fc-quote">${esc(c.quote)}</blockquote>` : ''}
           ${c.options ? `<div class="fc-opts">${c.options.map((o, k) => `<button type="button" class="fc-opt" data-k="${k}">${esc(o)}</button>`).join('')}</div>`
