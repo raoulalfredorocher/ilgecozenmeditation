@@ -50,6 +50,7 @@ function records() {
   </div>`;
 }
 
+const SING = { giorni: 'giorno', notti: 'notte', settimane: 'settimana', allenamenti: 'allenamento' };
 // ─── Traguardi ──────────────────────────────────────────────────────────
 function traguardi() {
   const dayList = Object.entries(D.days).map(([d, v]) => ({ d, ...v }));
@@ -76,10 +77,10 @@ function traguardi() {
     { t: 'Diario fedele: 7 giorni di fila di diario alimentare', cur: diary.best, tgt: 7, d: diary.earned, now: diary.current, u: 'giorni' },
   ];
   const done = items.filter(i => i.cur >= i.tgt).length;
-  return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">Traguardi</div><div class="gz-big">${done} <small>su ${items.length}</small></div></div></div>
+  return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">Raggiunti</div><div class="gz-big">${done} <small>su ${items.length}</small></div></div></div>
     ${items.map(i => { const ok = i.cur >= i.tgt, pct = i.pct ?? Math.min(100, Math.round(i.cur / i.tgt * 100));
       return `<div class="gz-goal"><div class="gz-goal-h"><span>${ok ? '✓ ' : ''}<b>${esc(i.t)}</b></span><span class="s">${ok ? (i.d ? fdate(i.d) : 'raggiunto') : (i.prog || `${i.cur}/${i.tgt} ${i.u}`)}</span></div>
-        <div class="gz-bar"><i style="width:${pct}%"></i></div>${i.now ? `<div class="s">serie in corso: ${i.now} ${i.u}</div>` : ''}</div>`; }).join('')}</div>`;
+        <div class="gz-bar"><i style="width:${pct}%"></i></div>${i.now ? `<div class="s">serie in corso: ${i.now} ${i.now === 1 ? SING[i.u] || i.u : i.u}</div>` : ''}</div>`; }).join('')}</div>`;
 }
 
 // ─── Record storici ─────────────────────────────────────────────────────

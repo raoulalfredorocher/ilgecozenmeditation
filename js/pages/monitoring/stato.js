@@ -17,7 +17,7 @@ export function statoHtml(days, sync) {
   const last = keys[keys.length - 1];
   const today = dk(new Date());
   const hasToday = last === today;
-  const syncOld = !sync?.ts || Date.now() - sync.ts > 13 * 3600 * 1000;
+  const syncOld = !!sync?.ts && Date.now() - sync.ts > 13 * 3600 * 1000;   // senza informazione sulla sincronizzazione non si avvisa
   let msg, bad = false;
   if (!last) { msg = 'Nessun dato dall’orologio ancora.'; bad = true; }
   else if (!hasToday) { msg = `L’orologio ha mandato dati fino al ${last.split('-').reverse().slice(0, 2).join('/')}. Apri l’app Zepp sul telefono per sincronizzare.`; bad = true; }
