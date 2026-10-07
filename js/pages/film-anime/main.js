@@ -17,8 +17,8 @@ import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
 import { doc, getDoc, setDoc } from '../../core/firestore.js';
-import { searchOnline, detailsOnline, posterData, providersFor, hasTmdb, getKey, setKey, testKey } from './online.js';
-import { statsHtml, statsYears } from './stats.js';
+import { epRuntimeFor, searchOnline, detailsOnline, posterData, providersFor, hasTmdb, getKey, setKey, testKey } from './online.js';
+import { statsHtml, statsYears, totalMins, hoursLabel } from './stats.js';
 
 const $ = id => document.getElementById(id);
 
@@ -216,11 +216,11 @@ function renderTodo(base, list) {
 function renderDone(base, list) {
   const rated = base.flatMap(i => feedbacksOf(i).slice(-1)).filter(f => f.stars);
   const avg = rated.length ? rated.reduce((s, f) => s + f.stars, 0) / rated.length : 0;
-  const mins = base.reduce((s, i) => s + (parseInt(i.duration) || 0), 0);
+  const mins = totalMins(items);
   $('fa-stats').innerHTML = `
     <div class="fa-stat"><b>${base.length}</b><span>${base.length === 1 ? 'visto' : 'visti'}</span></div>
     <div class="fa-stat"><b>${avg ? avg.toLocaleString('it-IT', { maximumFractionDigits: 1 }) : '—'}</b><span>voto medio</span></div>
-    <div class="fa-stat"><b>${mins ? Math.round(mins / 60) : '—'}</b><span>ore di film</span></div>`;
+    <div class="fa-stat"><b>${hoursLabel(mins)}</b><span>ore davanti alla tv</span></div>`;
   const el = $('fa-done-list');
   el.classList.toggle('list', list.length > 0);
   if (!base.length) { el.innerHTML = `<div class="empty">Ancora nessun titolo visto.<br/>Spunta un titolo dalla lista “Da vedere”.</div>`; return; }
@@ -476,7 +476,7 @@ tonight.$('#tn-dur').addEventListener('click', e => { const b = e.target.closest
 tonight.$('#tn-tags').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tnTag = b.dataset.v; drawTonight(true); } });
 
 // ─── Nuovo / modifica ────────────────────────────────────────────────────
-const ONLINE_KEYS = ['year', 'plot', 'providers', 'providersAt', 'tmdbId', 'tmdbKind', 'seasonEps'];
+const ONLINE_KEYS = ['year', 'plot', 'providers', 'providersAt', 'tmdbId', 'tmdbKind', 'seasonEps', 'epRuntime'];
 let edWatching = false;
 let editing = null, img = null, meta = {}, edType = 'Film', edPlatform = 'Netflix', edDur = 'min', edTags = new Set(), edPrio = false;
 let hits = [], searchTimer = 0, searchSeq = 0;
@@ -763,9 +763,17 @@ $('fa-q').addEventListener('input', e => { search = e.target.value; render(); })
 // ─── Avvio ───────────────────────────────────────────────────────────────
 render();
 waitForUser().then(async () => {
+  let backfilled = false;
   subscribeFilm(list => {
     items = list;
     render();
+    if (!backfilled && list.length) {            // durata media dell'episodio per le serie salvate prima (una sola volta)
+      backfilled = true;
+      list.filter(i => (i.seasons || i.type === 'Serie TV') && !i.epRuntime && !i.epRuntimeTried).forEach(async i => {
+        const m = await epRuntimeFor(i.title);
+        updateFilmDoc(i._docId, m ? { epRuntime: String(m) } : { epRuntimeTried: true }).catch(() => {});
+      });
+    }
     if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
   });
   // La chiave TMDB vive nell'account: la stessa su telefono e computer

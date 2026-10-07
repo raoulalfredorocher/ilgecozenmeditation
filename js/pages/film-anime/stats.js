@@ -29,6 +29,28 @@ export function visions(items) {
 
 export const statsYears = items => [...new Set(visions(items).map(v => v.y))].sort((a, b) => b - a);
 
+// ─── Tempo davanti alla tv: film = durata; serie = tutti gli episodi × durata media di un episodio ───
+const EP_DEFAULT = { Anime: 24, Cartone: 22, 'Serie TV': 45, Documentario: 50 };
+const epMin = i => parseInt(i.epRuntime) || EP_DEFAULT[i.type] || 40;
+const isSer = i => !!i.seasons || i.type === 'Serie TV';
+/** Minuti di UNA visione completa. */
+export const viewMins = i => (isSer(i) ? (parseInt(i.episodes) || 0) * epMin(i) : parseInt(i.duration) || 0);
+/** Minuti totali: ogni visione completa (anche i rewatch) + gli episodi già visti di ciò che stai guardando. */
+export function totalMins(items) {
+  let t = 0;
+  for (const i of items) {
+    const fb = (i.feedbacks || (i.note ? [1] : [])).length;
+    const views = i.done ? Math.max(1, fb) : i.rewatch ? fb : 0;
+    t += views * viewMins(i);
+    if (i.watching && !i.done && isSer(i) && i.prog) {
+      const eps = i.seasonEps || [];
+      t += (eps.slice(0, Math.max(0, i.prog.s - 1)).reduce((a, b) => a + b, 0) + (i.prog.e || 0)) * epMin(i);
+    }
+  }
+  return t;
+}
+export const hoursLabel = mins => (mins ? (mins >= 6000 ? Math.round(mins / 60) : (Math.round(mins / 6) / 10).toLocaleString('it-IT')) : '—');
+
 const bar = (label, n, max, extra = '') =>
   `<div class="meter"><div class="meter-head"><span>${esc(label)}</span><span class="zen-muted">${n}${extra}</span></div>
    <div class="meter-track"><div class="meter-fill" style="width:${max ? n / max * 100 : 0}%"></div></div></div>`;
@@ -40,7 +62,7 @@ export function statsHtml(items, year) {
   const perMonth = Array.from({ length: 12 }, (_, m) => ev.filter(v => v.m === m).length);
   const maxM = Math.max(...perMonth);
   const bestMonth = perMonth.indexOf(maxM);
-  const mins = ev.reduce((s, v) => s + (parseInt(v.item.duration) || 0), 0);
+  const mins = ev.reduce((s, v) => s + viewMins(v.item), 0);
   const rated = ev.filter(v => v.stars);
   const avg = rated.length ? rated.reduce((s, v) => s + v.stars, 0) / rated.length : 0;
 
@@ -58,7 +80,7 @@ export function statsHtml(items, year) {
   return `
     <div class="fa-stats">
       <div class="fa-stat"><b>${ev.length}</b><span>${ev.length === 1 ? 'visione' : 'visioni'}</span></div>
-      <div class="fa-stat"><b>${mins ? Math.round(mins / 60) : '—'}</b><span>ore di film</span></div>
+      <div class="fa-stat"><b>${hoursLabel(mins)}</b><span>ore davanti alla tv</span></div>
       <div class="fa-stat"><b>${avg ? avg.toLocaleString('it-IT', { maximumFractionDigits: 1 }) : '—'}</b><span>voto medio</span></div>
     </div>
 

@@ -107,6 +107,7 @@ async function tmdbDetails(hit) {
     const eps = (d.seasons || []).filter(s => s.season_number > 0 && s.episode_count > 0).map(s => s.episode_count);
     out.seasons = String(d.number_of_seasons || eps.length || ''); out.episodes = String(d.number_of_episodes || eps.reduce((a, b) => a + b, 0) || '');
     out.seasonEps = eps;
+    const rt = (d.episode_run_time || []).filter(Boolean); out.epRuntime = String(rt.length ? Math.round(rt.reduce((a, b) => a + b, 0) / rt.length) : (d.last_episode_to_air?.runtime || ''));
   }
   return out;
 }
@@ -143,7 +144,18 @@ async function tvmazeDetails(hit) {
     // TVmaze dice su quale rete è nata la serie (es. NTV), non dove si guarda in Italia: niente piattaforme
     seasons: String(seasons.length || ''), episodes: String(eps.reduce((a, b) => a + b, 0) || ''),
     seasonEps: eps.every(n => n > 0) ? eps : [],
+    epRuntime: String(s.averageRuntime || s.runtime || ''),
   };
+}
+
+/** Durata media di un episodio di una serie già salvata (TVmaze, senza chiave). */
+export async function epRuntimeFor(title) {
+  try {
+    const r = await fetch('https://api.tvmaze.com/singlesearch/shows?q=' + encodeURIComponent(title));
+    if (!r.ok) return null;
+    const s = await r.json();
+    return s.averageRuntime || s.runtime || null;
+  } catch { return null; }
 }
 
 // ─── Interfaccia unica ───────────────────────────────────────────────────
