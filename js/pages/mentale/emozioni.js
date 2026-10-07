@@ -15,7 +15,7 @@
 import { EMOTIONS, FAMILIES, familyOf, labelOf } from './data.js';
 import { primaryWheelSVG, familyWheelSVG, setFamilyHub } from './wheel.js';
 import * as store from './store.js';
-import { $, esc, showSheet, hideSheet, armedButton, fmtDay, dayStr, withDay, noonOf } from './ui.js';
+import { $, esc, showSheet, hideSheet, armedButton, fmtDay, dayStr, timeStr, withDay, noonOf } from './ui.js';
 
 const cache = {};      // chiave di pagina → appunti (in tempo reale)
 const legacy = {};     // chiave di pagina → appunti vecchi delle emozioni figlie (letti una volta)
@@ -141,6 +141,11 @@ function fillNotes() {
     // prima si svuota il campo: l'aggiornamento dei dati ridisegna la lista e conserva ciò che c'è scritto
     ta.value = ''; date.value = dayStr(Date.now()); sync();
     await store.addDoc(store.emoCol(page.key), { kind: 'note', text, ts, tag, createdAt: Date.now() });
+    // l'appunto compare anche nel diario, come voce (con l'emozione collegata)
+    try {
+      const emo = tag || page.key;
+      await store.addDoc(store.diaryCol(), { titolo: `Emozione · ${labelOf(emo)}`, testo: text, data: dayStr(ts), ora: timeStr(ts), emozioni: [emo], createdAt: Date.now(), daEmozioni: true });
+    } catch (e) { console.warn('diario da emozioni', e); }
   });
 
   const list = host.querySelector('.note-list');

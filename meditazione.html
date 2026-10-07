@@ -207,15 +207,18 @@
     @media (prefers-reduced-motion: reduce) { .enso-glow { animation: none; } }
 
     /* ═══ Nuovo design Geco Zen: schede sfumate con barra colorata, numeri grandi, serif ═══ */
-    :root { --tn1:#25739E; --tn2:#E48AA3; --tn3:#7FAE82; --tn4:#D9A55B; }
-    html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6BC7C; }
+    :root { --tn1:#25739E; --tn2:#E48AA3; --tn3:#7FAE82; --tn4:#D9A55B;
+      /* template: colori tutti diversi tra loro e diversi dal blu della durata */
+      --tp1:#E48AA3; --tp2:#7FAE82; --tp3:#D9A55B; --tp4:#9B86C9; --tp5:#E0725A; --tp6:#4DA6A8; --tp7:#A5547A; --tp8:#A3A55B; --tp9:#B08968; --tp10:#6F8296; }
+    html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6BC7C;
+      --tp1:#F2A9BC; --tp2:#9CC79F; --tp3:#E6BC7C; --tp4:#B8A6E0; --tp5:#F09A84; --tp6:#74C3C5; --tp7:#C97FA0; --tp8:#C2C47B; --tp9:#CFA98A; --tp10:#93A7BA; }
     .tpl-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; }
-    .tpl { --t: var(--tn1); position: relative; overflow: hidden; flex: none; min-height: 112px; border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border));
+    .tpl { --t: var(--tp1); position: relative; overflow: hidden; flex: none; min-height: 112px; border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border));
       border-radius: var(--radius-lg); padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); gap: var(--space-2); justify-content: flex-end;
       background: linear-gradient(135deg, color-mix(in srgb, var(--t) 20%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
     .tpl::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
     .tpl::after { content: attr(data-n); position: absolute; top: 8px; right: var(--space-3); font-size: 2.75rem; font-weight: 200; letter-spacing: -.04em; line-height: 1; color: color-mix(in srgb, var(--t) 55%, transparent); font-variant-numeric: tabular-nums; }
-    .tpl:nth-child(4n+2) { --t: var(--tn2); } .tpl:nth-child(4n+3) { --t: var(--tn3); } .tpl:nth-child(4n+4) { --t: var(--tn4); }
+    .tpl:nth-child(10n+2) { --t: var(--tp2); } .tpl:nth-child(10n+3) { --t: var(--tp3); } .tpl:nth-child(10n+4) { --t: var(--tp4); } .tpl:nth-child(10n+5) { --t: var(--tp5); } .tpl:nth-child(10n+6) { --t: var(--tp6); } .tpl:nth-child(10n+7) { --t: var(--tp7); } .tpl:nth-child(10n+8) { --t: var(--tp8); } .tpl:nth-child(10n+9) { --t: var(--tp9); } .tpl:nth-child(10n) { --t: var(--tp10); }
     .tpl:first-child:nth-last-child(odd) { grid-column: 1 / -1; min-height: 124px; }
     .tpl[aria-pressed="true"] { border-color: var(--t); box-shadow: 0 0 0 1.5px var(--t); }
     .tpl-name { font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 500; min-height: 0; padding-right: 56px; }
@@ -262,9 +265,6 @@
   <!-- Il + (play) della barra in basso preme questo pulsante: avvia la pratica -->
   <button id="btn-add" type="button" hidden aria-hidden="true" tabindex="-1"></button>
 
-  <template id="zen-header-actions">
-    <button class="icon-btn" type="button" id="btn-more" aria-label="Suono e volume"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button>
-  </template>
 
   <main class="zen-main med-main">
     <!-- ═══ Imposta ═══ -->
@@ -272,7 +272,7 @@
       <div class="zen-section">
         <div class="block-title">
           <div class="zen-eyebrow">Template</div>
-          <button class="text-btn" type="button" id="btn-new-tpl">+ Nuovo</button>
+          <span><button class="text-btn" type="button" id="btn-dl-tpl">Scarica</button> <button class="text-btn" type="button" id="btn-new-tpl">+ Nuovo</button></span>
         </div>
         <div class="tpl-row" id="tpl-row"></div>
       </div>
@@ -283,6 +283,7 @@
         <div class="ruler-wrap"><div class="ruler" id="ruler" aria-label="Scorri per scegliere i minuti"></div><span class="ruler-mark" aria-hidden="true"></span></div>
       </div>
 
+      <div style="text-align:center"><button class="text-btn" type="button" id="btn-sound">Suono e campana ›</button></div>
       <p class="hint">Premi play in basso per iniziare</p>
     </section>
 

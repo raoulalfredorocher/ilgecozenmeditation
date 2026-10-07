@@ -4,6 +4,7 @@
  * Legge solo i dati dell'utente (users/{uid}/…) e solo l'intervallo di date richiesto.
  */
 import { db, auth } from './db.js';
+import { mergeManual } from './salute-merge.js';
 import {
   collection, query, where, getDocs, getDoc, doc, documentId,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -70,8 +71,8 @@ export async function loadRange(from, to) {
     })().catch(e => console.warn('calendario: meditazione', e)),
     // Dati dell'orologio (Zepp): un solo documento con tutti i giorni
     (async () => {
-      const snap = await getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni'));
-      const all = snap.exists() ? (snap.data().days || {}) : {};
+      const [snap, man] = await Promise.all([getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni')), getDoc(doc(db, 'users', uid, 'direction', 'salute_manuale'))]);
+      const all = mergeManual(snap.exists() ? (snap.data().days || {}) : {}, man.exists() ? (man.data().days || {}) : {});
       Object.keys(all).filter(k => k >= from && k <= to).forEach(k => { day(k).salute = all[k]; });
     })().catch(e => console.warn('calendario: salute', e)),
     // Umore del giorno (1-5): un solo documento con tutti i giorni

@@ -90,7 +90,8 @@ function renderPage() {
       <textarea rows="3" placeholder="Scrivi qualcosa…" aria-label="Nuova voce"></textarea>
       <div class="note-box-foot"><span></span><button type="button" class="btn accent sm" disabled>Aggiungi</button></div>
     </div>
-    <div class="note-list"></div>`;
+    <div class="note-list"></div>
+    <div class="sp-danger"></div>`;
   const ta = body.querySelector('textarea'), add = body.querySelector('.btn');
   ta.value = kept; add.disabled = !kept.trim();
   ta.addEventListener('input', () => { add.disabled = !ta.value.trim(); });
@@ -104,6 +105,11 @@ function renderPage() {
 
   const list = body.querySelector('.note-list');
   if (!sec.entries.length) list.innerHTML = '<p class="empty-line">Ancora niente qui. Scrivi la prima voce.</p>';
+  body.querySelector('.sp-danger').appendChild(armedButton(sec.entries.length ? `Elimina questo titolo e le sue ${sec.entries.length} ${sec.entries.length === 1 ? 'voce' : 'voci'}` : 'Elimina questo titolo', () => {
+    const i = STORIA.findIndex(x => x.id === sec.id);
+    if (i >= 0) STORIA.splice(i, 1);
+    closePage(); persist(); renderStoria();
+  }));
   newest(sec.entries).forEach(en => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'note-card';

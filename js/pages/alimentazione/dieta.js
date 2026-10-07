@@ -102,7 +102,7 @@ function render() {
           <div class="s">${esc(day.type || '')}${meals.length ? ` · ${kc(dt.kcal)} kcal` : ''}</div>
           ${meals.length ? dots(dt) : ''}
           ${meals.length && hasProfile() ? (() => { const T = tdeeFor(weekDate(selected), day.type), w = workoutOn(weekDate(selected), day.type); return `<div class="s wn">TDEE ${kc(T)} kcal · dieta <span class="dl ${dt.kcal > T ? 'up' : 'dn'}">${sgn(dt.kcal - T)} kcal</span></div>
-            <div class="s">${w.source === 'registro' ? `Ti sei allenato: +${kc(w.kcal)} kcal` : w.source === 'piano' ? `Allenamento previsto: +${kc(w.kcal)} kcal` : 'Giorno di riposo'}</div>`; })() : ''}</div>
+            <div class="s">${w.source === 'registro' ? `Ti sei allenato: +${kc(w.kcal)} kcal` : w.source === 'piano' ? 'Allenamento previsto' : 'Giorno di riposo'}</div>`; })() : ''}</div>
         <div class="dt-acts"><button type="button" class="text-btn" id="dt-edit">Modifica</button>
           <button type="button" class="dt-reg${state.diary[weekDate(selected)]?.length ? ' done' : ''}" id="dt-reg">${state.diary[weekDate(selected)]?.length ? 'Nel diario ✓' : 'Registra nel diario'}</button></div>
       </div>

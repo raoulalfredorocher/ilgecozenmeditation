@@ -10,8 +10,10 @@
 import { db, auth } from '../../core/db.js';
 import { doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { num } from './state.js';
+import { mergeManual } from '../../core/salute-merge.js';
 
-export const health = { days: {} };
+export const health = { days: {}, watch: {}, manual: {} };
+const recompute = () => { health.days = mergeManual(health.watch, health.manual); };
 
 /** Ascolta salute_giorni; `onChange` viene chiamata a ogni aggiornamento. */
 export function watchHealth(onChange) {
@@ -20,9 +22,13 @@ export function watchHealth(onChange) {
     if (!db || !uid) return void setTimeout(go, 400);
     try {
       onSnapshot(doc(db, 'users', uid, 'direction', 'salute_giorni'), snap => {
-        health.days = snap.exists() ? (snap.data().days || {}) : {};
-        onChange?.();
+        health.watch = snap.exists() ? (snap.data().days || {}) : {};
+        recompute(); onChange?.();
       }, err => console.warn('salute', err));
+      onSnapshot(doc(db, 'users', uid, 'direction', 'salute_manuale'), snap => {
+        health.manual = snap.exists() ? (snap.data().days || {}) : {};
+        recompute(); onChange?.();
+      }, err => console.warn('salute manuale', err));
     } catch (e) { console.warn('salute', e); }
   };
   go();

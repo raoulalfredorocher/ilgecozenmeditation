@@ -24,6 +24,7 @@ import {
 } from '../../core/db.js';
 import { collection, query, where, onSnapshot, doc as fsDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { calcTdee, profileOn, stepsKcal, netWorkoutKcal } from '../../core/bilancio.js';
+import { mergeManual } from '../../core/salute-merge.js';
 
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
 export const DAY_SHORT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
@@ -90,7 +91,7 @@ export const profileAt = key => profileOn(state.profile, key);
  * L'allenamento di un giorno, con la sua origine:
  *   • oggi e giorni passati: contano solo le kcal misurate dall'orologio sugli allenamenti fatti davvero (mai stime);
  *     senza allenamento, o senza kcal dall'orologio, sono 0;
- *   • giorni futuri: vale il piano (Workout / Riposo) con le kcal del profilo, solo come previsione.
+ *   • giorni futuri: il piano dice solo se è previsto un allenamento (Workout / Riposo), senza kcal inventate.
  */
 export function workoutOn(key, planType = 'Riposo') {
   const real = state.workouts[key], today = dateKey();
@@ -98,8 +99,7 @@ export function workoutOn(key, planType = 'Riposo') {
     if (!real) return { kcal: 0, source: null, n: 0 };
     return { kcal: real.kcal || 0, min: real.min || 0, source: 'registro', n: real.n };
   }
-  const perSession = parseFloat(profileAt(key).kcalWorkout) || 0;
-  return planType === 'Workout' ? { kcal: perSession, source: 'piano', n: 1 } : { kcal: 0, source: null, n: 0 };
+  return planType === 'Workout' ? { kcal: 0, source: 'piano', n: 1 } : { kcal: 0, source: null, n: 0 };
 }
 
 /**
@@ -306,7 +306,10 @@ export function startSync() {
   onAuthReady(() => {
     const uid = auth.currentUser?.uid;
     if (!db || !uid) return;
-    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_giorni'), snap => { state.health = snap.exists() ? (snap.data().days || {}) : {}; emit('health'); }, err => console.warn('salute', err)); } catch (e) { console.warn('salute', e); }
+    let watch = {}, manual = {};
+    const upd = () => { state.health = mergeManual(watch, manual); emit('health'); };
+    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_giorni'), snap => { watch = snap.exists() ? (snap.data().days || {}) : {}; upd(); }, err => console.warn('salute', err)); } catch (e) { console.warn('salute', e); }
+    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_manuale'), snap => { manual = snap.exists() ? (snap.data().days || {}) : {}; upd(); }, err => console.warn('salute manuale', err)); } catch (e) { console.warn('salute manuale', e); }
   });
   subscribeRecipes(list => { state.recipes = list; state.ready.recipes = true; emit('recipes'); });
   subscribeMacrosProfiles((profiles, activeIdx, tdeeForm) => {

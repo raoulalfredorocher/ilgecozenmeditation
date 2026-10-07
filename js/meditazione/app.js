@@ -66,7 +66,7 @@ function loadTemplates() {
     const known = new Set(old.map(p => p.name));
     list = [...DEFAULT_TEMPLATES.filter(p => !known.has(p.name)), ...old]
       .filter(p => p && p.name && Array.isArray(p.steps) && p.steps.length)
-      .map(p => ({ name: p.name, steps: p.steps.map(s => ({ mins: +s.mins || 1, name: s.name || 'Meditazione' })) }));
+      .map(p => ({ name: p.name, steps: p.steps.map(s => ({ mins: +s.mins || 1, name: s.name || 'Meditazione' })), ...(p.sound ? { sound: p.sound, bell: p.bell, volume: p.volume } : {}) }));
     write(TPL_KEY, list);
   }
   return list;
@@ -197,6 +197,7 @@ function openTemplate(t) {
 /** Crea o modifica un template: l'unico posto dove si compone una sequenza. */
 function editTemplate(t) {
   const steps = t ? t.steps.map(s => ({ ...s })) : [{ mins: 20, name: 'Meditazione' }];
+  const snd = { sound: t?.sound ?? S.sound, bell: t?.bell ?? S.bell, volume: t?.volume ?? S.volume };
   const MIN_OPTS = [...Array.from({ length: 60 }, (_, i) => i + 1), 75, 90];
   showSheet(t ? 'Modifica template' : 'Nuovo template', body => {
     const name = document.createElement('input');
@@ -232,12 +233,16 @@ function editTemplate(t) {
     save.addEventListener('click', () => {
       const n = name.value.trim();
       if (!n) { name.focus(); return; }
-      const entry = { name: n, steps: steps.map(s => ({ ...s })) };
+      const entry = { name: n, steps: steps.map(s => ({ ...s })), sound: snd.sound, bell: snd.bell, volume: snd.volume };
       templates = t ? templates.map(x => (x === t ? entry : x)) : [entry, ...templates.filter(x => x.name !== n)];
       write(TPL_KEY, templates);
       S.tpl = n; saveSettings(); closeAppSheet(); renderSetup();
     });
-    body.append(name, rows, addStep, save);
+    const sndBox = document.createElement('div');
+    sndBox.style.cssText = 'display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-3)';
+    sndBox.innerHTML = '<div class="field-lbl" style="margin:0">Suono di questo template</div>';
+    soundPickers(sndBox, snd);
+    body.append(name, rows, addStep, sndBox, save);
 
     const have = new Set(templates.map(x => x.name));
     if (!t && DEFAULT_TEMPLATES.some(d => !have.has(d.name))) {
@@ -253,60 +258,78 @@ function editTemplate(t) {
   });
 }
 
-/** Suono, volume e campana. Durante la pratica il cambio è immediato. */
-function openSound() {
-  showSheet('Suono', body => {
-    const mark = (box, attr, val) => box.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset[attr] === val)));
-
-    audio.SOUND_GROUPS.forEach(g => {
-      const box = document.createElement('div');
-      box.innerHTML = `<div class="field-lbl">${escapeHtml(g.title)}</div>`;
-      const chips = document.createElement('div');
-      chips.className = 'chips-wrap';
-      g.items.forEach(it => {
-        const b = document.createElement('button');
-        b.type = 'button'; b.className = 'pill'; b.textContent = it.label; b.dataset.sound = it.id;
-        b.setAttribute('aria-pressed', String(S.sound === it.id));
-        b.addEventListener('click', () => {
-          S.sound = it.id; saveSettings();
-          audio.initAudio();
-          if (session?.isRunning()) audio.startAmbient(S.sound);                 // in pratica: subito
-          else it.id === 'silence' ? audio.stopAmbient() : audio.preview(it.id); // fuori: anteprima
-          body.querySelectorAll('[data-sound]').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.sound === S.sound)));
-        });
-        chips.appendChild(b);
-      });
-      box.appendChild(chips);
-      body.appendChild(box);
-    });
-
-    const vol = document.createElement('div');
-    vol.innerHTML = `<div class="field-lbl">Volume</div><input type="range" min="0" max="100" step="1" aria-label="Volume del sottofondo" value="${Math.round(S.volume * 100)}"/>`;
-    const range = vol.querySelector('input');
-    range.addEventListener('input', () => { S.volume = range.value / 100; audio.setAmbientVolume(S.volume); });
-    range.addEventListener('change', saveSettings);
-    body.appendChild(vol);
-
-    const bells = document.createElement('div');
-    bells.innerHTML = '<div class="field-lbl">Campana</div>';
-    const bc = document.createElement('div');
-    bc.className = 'chips-wrap';
-    audio.BELLS.forEach(bl => {
+/**
+ * Selettori di suono, volume e campana. `t` è l'oggetto che li contiene: le impostazioni (S) oppure la bozza di un template.
+ * `persist` salva le impostazioni generali; durante la pratica (`live`) il cambio è immediato.
+ */
+function soundPickers(body, t, { persist = false, live = false } = {}) {
+  audio.SOUND_GROUPS.forEach(g => {
+    const box = document.createElement('div');
+    box.innerHTML = `<div class="field-lbl">${escapeHtml(g.title)}</div>`;
+    const chips = document.createElement('div');
+    chips.className = 'chips-wrap';
+    g.items.forEach(it => {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'pill'; b.textContent = bl.label; b.dataset.bell = bl.id;
-      b.setAttribute('aria-pressed', String(S.bell === bl.id));
+      b.type = 'button'; b.className = 'pill'; b.textContent = it.label; b.dataset.sound = it.id;
+      b.setAttribute('aria-pressed', String(t.sound === it.id));
       b.addEventListener('click', () => {
-        S.bell = bl.id; saveSettings(); audio.initAudio(); audio.ring(bl.id, 1);
-        bc.querySelectorAll('[data-bell]').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.bell === S.bell)));
+        t.sound = it.id; if (persist) saveSettings();
+        audio.initAudio();
+        if (live && session?.isRunning()) audio.startAmbient(t.sound);                 // in pratica: subito
+        else it.id === 'silence' ? audio.stopAmbient() : audio.preview(it.id);         // fuori: anteprima
+        body.querySelectorAll('[data-sound]').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.sound === t.sound)));
       });
-      bc.appendChild(b);
+      chips.appendChild(b);
     });
-    bells.appendChild(bc);
-    body.appendChild(bells);
+    box.appendChild(chips);
+    body.appendChild(box);
   });
+
+  const vol = document.createElement('div');
+  vol.innerHTML = `<div class="field-lbl">Volume</div><input type="range" min="0" max="100" step="1" aria-label="Volume del sottofondo" value="${Math.round(t.volume * 100)}"/>`;
+  const range = vol.querySelector('input');
+  range.addEventListener('input', () => { t.volume = range.value / 100; audio.setAmbientVolume(t.volume); });
+  if (persist) range.addEventListener('change', saveSettings);
+  body.appendChild(vol);
+
+  const bells = document.createElement('div');
+  bells.innerHTML = '<div class="field-lbl">Campana</div>';
+  const bc = document.createElement('div');
+  bc.className = 'chips-wrap';
+  audio.BELLS.forEach(bl => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'pill'; b.textContent = bl.label; b.dataset.bell = bl.id;
+    b.setAttribute('aria-pressed', String(t.bell === bl.id));
+    b.addEventListener('click', () => {
+      t.bell = bl.id; if (persist) saveSettings(); audio.initAudio(); audio.ring(bl.id, 1);
+      bc.querySelectorAll('[data-bell]').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.bell === t.bell)));
+    });
+    bc.appendChild(b);
+  });
+  bells.appendChild(bc);
+  body.appendChild(bells);
 }
 
-$('btn-more').addEventListener('click', openSound);
+/** Suono, volume e campana generali (usati senza template, e durante la pratica con cambio immediato). */
+function openSound() { showSheet('Suono e campana', body => soundPickers(body, S, { persist: true, live: true })); }
+
+/** Il suono del template scelto vale per quella pratica. */
+function applyTemplateSound() {
+  const t = templates.find(x => x.name === S.tpl);
+  if (t?.sound) { S.sound = t.sound; S.bell = t.bell || S.bell; S.volume = t.volume ?? S.volume; audio.setAmbientVolume(S.volume); }
+}
+
+/** Scarica i template come file (download diretto, non condivisione). */
+function downloadTemplates() {
+  const blob = new Blob([JSON.stringify(templates, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'template-meditazione.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+
+$('btn-sound').addEventListener('click', openSound);
+$('btn-dl-tpl').addEventListener('click', downloadTemplates);
 $('p-more').addEventListener('click', openSound);
 $('btn-new-tpl').addEventListener('click', () => editTemplate(null));
 
@@ -378,6 +401,7 @@ function setThemeColor(c) { if (themeMeta) themeMeta.content = c || themeMetaOri
 function startPractice() {
   if (session) return;
   current = plan().map(s => ({ ...s }));
+  applyTemplateSound();
   audio.initAudio();
   audio.stopAmbient(0.4);
 

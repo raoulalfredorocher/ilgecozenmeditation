@@ -5,7 +5,7 @@
  */
 import { waitForUser } from '../../core/auth-guard.js';
 import { watchHealth, health } from '../allenamento/salute.js';
-import { METRICS, lastDays, metricCard, baselineLine, bindChartReadouts, it } from '../../core/salute-charts.js';
+import { METRICS, lastDays, metricCard, baselineLine, bindChartReadouts, fmtAvg, it } from '../../core/salute-charts.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { loadAll, pk } from './dati.js';
 import { statoHtml } from './stato.js';
@@ -18,7 +18,9 @@ const open = { med: false, wk: false };
 const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
 const fdate = d => pk(d).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
 const tiles = items => `<div class="gz-tiles">${items.map(([b, l]) => `<div><b>${b}</b><span>${l}</span></div>`).join('')}</div>`;
-const cap = t => `<div class="cap gz-quadro">${t}</div>`;
+let col = {};          // quadri chiusi (si ricorda la scelta)
+try { col = JSON.parse(localStorage.getItem('zen_gz_chiusi')) || {}; } catch { col = {}; }
+const quadro = (key, title, html) => `<section class="gz-q"><button type="button" class="gz-qh" data-q="${key}" aria-expanded="${!col[key]}"><span>${title}</span><i aria-hidden="true">▾</i></button><div class="gz-qb"${col[key] ? ' hidden' : ''}>${html}</div></section>`;
 const more = (key, total, shown) => (total > shown ? `<button type="button" class="text-btn gz-more" data-more="${key}">${open[key] ? 'Mostra meno' : `Mostra tutte (${total})`}</button>` : '');
 /** Mappa { giorno: { campo: valore } } a partire da una lista di coppie [giorno, valore]. */
 const byDay = (pairs, field) => { const m = {}; pairs.forEach(([d, v]) => { m[d] = { [field]: (m[d]?.[field] || 0) + v }; }); return m; };
@@ -28,7 +30,7 @@ function meditazione(days) {
   const L = (ctx?.meditation || []).filter(s => set.has(s.d)).sort((a, b) => b.d.localeCompare(a.d));
   const tot = L.reduce((a, s) => a + s.mins, 0);
   const rows = (open.med ? L : L.slice(0, 8)).map(s => `<div class="list-row" style="min-height:44px"><span class="grow"><b>${fdate(s.d)}</b></span><span class="s">${it(s.mins)} min</span></div>`).join('');
-  return cap('Meditazione') + tiles([[it(tot), 'minuti'], [L.length, L.length === 1 ? 'meditazione' : 'meditazioni'], [L.length ? it(tot / L.length) : '–', 'minuti a sessione']])
+  return tiles([[it(tot), 'minuti in tutto'], [L.length, L.length === 1 ? 'meditazione' : 'meditazioni'], [fmtAvg(tot / days.length), `minuti al giorno (su ${days.length} giorni)`]])
     + metricCard(METRICS.meditazione, days, byDay(L.map(s => [s.d, s.mins]), 'm'))
     + (L.length ? `<div class="list">${rows}</div>${more('med', L.length, 8)}` : '<div class="card flat gz-empty">Nessuna meditazione in questo periodo.</div>');
 }
@@ -41,7 +43,9 @@ function allenamenti(days) {
   const rows = (open.wk ? L : L.slice(0, 8)).map(r => `<div class="list-row" style="min-height:44px"><span class="grow"><b>${esc(r.orologio || r.schedaNome || 'Allenamento')}</b>
     <span class="s">${fdate(r.data)}${num(r.durata) ? ` · ${it(num(r.durata))} min` : ''}</span></span>
     <span class="s">${[num(r.kcal) ? `${it(num(r.kcal))} kcal` : '', r.bpmMedio ? `❤ ${r.bpmMedio}${r.bpmMax ? `/${r.bpmMax}` : ''}` : ''].filter(Boolean).join(' · ')}</span></div>`).join('');
-  return cap('Allenamenti e passi') + tiles([[it(tot), 'minuti di allenamento'], [L.length, L.length === 1 ? 'allenamento' : 'allenamenti'], [it(steps), 'passi in tutto']])
+  const conDati = days.filter(k => health.days[k]?.passi != null).length;
+  return tiles([[it(tot), 'minuti di allenamento'], [L.length, L.length === 1 ? 'allenamento' : 'allenamenti'], [fmtAvg(tot / days.length), `minuti al giorno (su ${days.length} giorni)`],
+    [it(steps), 'passi in tutto'], [it(steps / days.length), `passi al giorno (su ${days.length} giorni)`], [`${conDati}/${days.length}`, 'giorni con dati dell\'orologio']])
     + metricCard(METRICS.allenamento, days, byDay(L.map(r => [r.data, num(r.durata)]), 'm'))
     + (L.length ? `<div class="list">${rows}</div>${more('wk', L.length, 8)}` : '<div class="card flat gz-empty">Nessun allenamento in questo periodo.</div>')
     + metricCard(METRICS.passi, days, health.days, baselineLine(METRICS.passi, health.days))
@@ -50,24 +54,26 @@ function allenamenti(days) {
 
 function alimentazione(days) {
   const kc = {}; days.forEach(k => { if (ctx?.diary?.[k]) kc[k] = { k: ctx.diary[k] }; });
-  return cap('Alimentazione') + (Object.keys(kc).length ? metricCard(METRICS.kcalDiario, days, kc) : '<div class="card flat gz-empty">Nessun diario alimentare in questo periodo.</div>');
+  return (Object.keys(kc).length ? metricCard(METRICS.kcalDiario, days, kc) : '<div class="card flat gz-empty">Nessun diario alimentare in questo periodo.</div>');
 }
 
 function salute(days) {
-  const cards = ['sonnoQ', 'bpm', 'respiro', 'stress'].map(k => metricCard(METRICS[k], days, health.days, baselineLine(METRICS[k], health.days))).join('');
-  return cap('Salute') + (cards || '<div class="card flat gz-empty">Ancora nessun dato dall\'orologio in questo periodo.</div>')
+  const cards = ['sonno', 'sonnoQ', 'bpm', 'respiro', 'stress'].map(k => metricCard(METRICS[k], days, health.days, baselineLine(METRICS[k], health.days))).join('');
+  return (cards || '<div class="card flat gz-empty">Ancora nessun dato dall\'orologio in questo periodo.</div>')
     + '<p class="gz-note">Indicazioni generali per un adulto in salute: non sono una diagnosi. Per dubbi sui tuoi valori parla sempre con il medico.</p>';
 }
 
 function render() {
   const days = lastDays(range);
   const head = `<div class="segmented gz-range" role="group" aria-label="Periodo">${[7, 14, 30, 90].map(n => `<button type="button" data-r="${n}" aria-pressed="${n === range}">${n} giorni</button>`).join('')}</div>`;
-  root.innerHTML = statoHtml(ctx?.days || health.days, ctx?.sync) + head + (ctx ? meditazione(days) + allenamenti(days) + alimentazione(days) + salute(days) : '<div class="card flat gz-empty">Carico i tuoi dati…</div>');
+  root.innerHTML = statoHtml(ctx?.daysWatch || health.watch, ctx?.sync) + head + (ctx ? quadro('med', 'Meditazione', meditazione(days)) + quadro('wk', 'Allenamenti e passi', allenamenti(days)) + quadro('cibo', 'Alimentazione', alimentazione(days)) + quadro('sal', 'Salute', salute(days)) : '<div class="card flat gz-empty">Carico i tuoi dati…</div>');
 }
 
 root.addEventListener('click', e => {
   const b = e.target.closest('[data-r]');
   if (b) { range = +b.dataset.r; return render(); }
+  const q = e.target.closest('[data-q]');
+  if (q) { const k = q.dataset.q; col[k] = !col[k]; try { localStorage.setItem('zen_gz_chiusi', JSON.stringify(col)); } catch { /* ok */ } q.setAttribute('aria-expanded', String(!col[k])); q.nextElementSibling.hidden = !!col[k]; return; }
   const m = e.target.closest('[data-more]');
   if (m) { open[m.dataset.more] = !open[m.dataset.more]; render(); }
 });

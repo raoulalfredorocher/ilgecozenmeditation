@@ -26,6 +26,7 @@ function niceScale(lo, hi, count = 4) {
   for (let v = min; v <= max + step / 2; v += step) ticks.push(+v.toFixed(6));
   return { min, max, ticks };
 }
+export const fmtAvg = v => (v < 10 ? (Math.round(v * 10) / 10).toLocaleString('it-IT') : it(v));
 const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
 const trendText = (vals, tol = 0.04) => {
   const real = vals.filter(v => v != null); if (real.length < 6) return '';
@@ -37,22 +38,22 @@ const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
 const generic = (s, m) => `Media ${m.fmt(s.avg)}${m.unit ? ' ' + m.unit : ''}, ultimo valore ${m.fmt(s.last)}${trendText(s.vals)}.`;
 
 export const METRICS = {
-  passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
-    story: (s, m) => `${plural(s.vals.filter(v => v >= 8000).length, 'giorno', 'giorni')} su ${s.n} oltre 8.000 passi · media ${it(s.avg)}${trendText(s.vals)}.` },
-  bpm: { title: 'Frequenza cardiaca a riposo', unit: 'bpm', type: 'line', get: d => d.bpmRiposo, fmt: it, band: { min: 50, max: 60, label: 'ottimo 50–60' },
+  passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, field: 'passi', avgAll: true, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
+    story: (s, m) => `Media di ${it(s.avg)} passi al giorno su ${s.total} giorni (i giorni senza dati contano 0). ${plural(s.vals.filter(v => v >= 8000).length, 'giorno', 'giorni')} oltre 8.000 passi${trendText(s.vals)}.` },
+  bpm: { title: 'Frequenza cardiaca a riposo', unit: 'bpm', type: 'line', get: d => d.bpmRiposo, field: 'bpmRiposo', fmt: it, band: { min: 50, max: 60, label: 'ottimo 50–60' },
     story: (s, m) => `A riposo in media ${it(s.avg)} bpm (da ${it(s.min)} a ${it(s.max)})${trendText(s.vals)}. Più basso, a parità di condizioni, è meglio.` },
   spo2: { title: 'Ossigenazione', unit: '%', type: 'line', get: d => d.spo2, fmt: n => n.toFixed(0), min: 90, max: 100, band: { min: 95, max: 100, label: 'normale 95–100' }, story: generic },
-  respiro: { title: 'Respirazione', unit: 'resp/min', type: 'line', get: d => d.respiro, fmt: n => n.toFixed(1), band: { min: 12, max: 20, label: 'norma 12–20' }, story: generic },
-  stress: { title: 'Stress', unit: '/100', type: 'line', get: d => d.stressMedio, fmt: it, min: 0, max: 100, story: generic },
+  respiro: { title: 'Respirazione', unit: 'resp/min', type: 'line', get: d => d.respiro, field: 'respiro', fmt: n => n.toFixed(1), band: { min: 12, max: 20, label: 'norma 12–20' }, story: generic },
+  stress: { title: 'Stress', unit: '/100', type: 'line', get: d => d.stressMedio, field: 'stressMedio', fmt: it, min: 0, max: 100, story: generic },
   vo2max: { title: 'VO₂ max', unit: 'ml/kg/min', type: 'line', get: d => d.vo2max, fmt: it, story: generic },
   sonnoQ: { title: 'Qualità del sonno', unit: '/100', type: 'line', get: d => d.sonnoPunteggio, fmt: it, min: 0, max: 100, story: generic },
-  meditazione: { title: 'Minuti di meditazione', unit: 'min', type: 'bar', get: d => d.m, fmt: it,
-    story: (s) => `${plural(s.n, 'giorno', 'giorni')} di pratica su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${it(s.avg)} nei giorni in cui mediti.` },
-  allenamento: { title: 'Minuti di allenamento', unit: 'min', type: 'bar', get: d => d.m, fmt: it,
-    story: (s) => `${plural(s.n, 'giorno', 'giorni')} di allenamento su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${it(s.avg)} nei giorni attivi.` },
+  meditazione: { title: 'Minuti di meditazione', unit: 'min', type: 'bar', get: d => d.m, avgAll: true, fmt: it,
+    story: (s) => `${plural(s.n, 'giorno', 'giorni')} di pratica su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${fmtAvg(s.avg)} al giorno in media sul periodo.` },
+  allenamento: { title: 'Minuti di allenamento', unit: 'min', type: 'bar', get: d => d.m, avgAll: true, fmt: it,
+    story: (s) => `${plural(s.n, 'giorno', 'giorni')} di allenamento su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${fmtAvg(s.avg)} al giorno in media sul periodo.` },
   kcalDiario: { title: 'Calorie mangiate', unit: 'kcal', type: 'bar', get: d => d.k, fmt: it,
-    story: (s) => `Media ${it(s.avg)} kcal nei ${plural(s.n, 'giorno registrato', 'giorni registrati')} su ${s.total}${trendText(s.vals)}.` },
-  sonno: { title: 'Sonno', unit: '', type: 'bar', get: d => d.sonnoMin, fmt: hm, div: 60, axisFmt: v => `${v / 60} h`, band: { min: 420, max: 540, label: 'obiettivo 7–9 h' },
+    story: (s) => `Media di ${it(s.avg)} kcal nei ${plural(s.n, 'giorno registrato', 'giorni registrati')} su ${s.total} (i giorni senza diario non contano)${trendText(s.vals)}.` },
+  sonno: { title: 'Durata del sonno', unit: '', type: 'bar', get: d => d.sonnoMin, field: 'sonnoMin', fmt: hm, div: 60, axisFmt: v => `${v / 60} h`, band: { min: 420, max: 540, label: 'obiettivo 7–9 h' },
     story: (s, m) => `${plural(s.vals.filter(v => v >= 420).length, 'notte', 'notti')} su ${s.n} da almeno 7 ore · media ${hm(s.avg)}${trendText(s.vals)}.` },
 };
 const RIF = {
@@ -69,12 +70,13 @@ Object.entries(RIF).forEach(([k, v]) => { METRICS[k].rif = v; });
 
 /** Disegna un grafico: { svg, stats } (svg vuoto se non ci sono dati). */
 export function chart(m, days, hd) {
-  const W = 340, H = 176, P = { l: 44, r: 16, t: 18, b: 28 }, iw = W - P.l - P.r, ih = H - P.t - P.b, n = days.length;
+  const n = days.length, W = 340, H = 176, P = { l: 44, r: 16, t: 18, b: n <= 8 ? 40 : 28 }, iw = W - P.l - P.r, ih = H - P.t - P.b;
   const vals = days.map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
   const real = vals.filter(v => v != null);
   if (!real.length) return { svg: '', stats: null };
-  const avg = mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
-  const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days };
+  const avg = m.avgAll ? real.reduce((a, b) => a + b, 0) / n : mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
+  const isMan = days.map((k, i) => vals[i] != null && !!m.field && !!hd[k]?._man?.[m.field]);
+  const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days, nMan: isMan.filter(Boolean).length };
   const div = m.div || 1;
   let lo = m.min ?? (m.type === 'bar' ? 0 : Math.min(...real, m.band?.min ?? Infinity)), hi = m.max ?? Math.max(...real, m.band?.max ?? -Infinity, m.target?.v ?? -Infinity);
   if (m.type !== 'bar' && m.min == null) { const p = (hi - lo || 1) * 0.1; lo -= p; hi += p; }
@@ -92,15 +94,15 @@ export function chart(m, days, hd) {
   if (m.type === 'bar') {
     const bw = Math.min(24, slot * 0.62), r = Math.min(4, bw / 2);
     g += vals.map((v, i) => { if (v == null) return ''; const x0 = cx(i) - bw / 2, y0 = y(v), yb = y(dmin), h = yb - y0; if (h < 0.5) return '';
-      return `<path d="M${x0.toFixed(1)} ${yb.toFixed(1)}V${(y0 + r).toFixed(1)}Q${x0.toFixed(1)} ${y0.toFixed(1)} ${(x0 + r).toFixed(1)} ${y0.toFixed(1)}H${(x0 + bw - r).toFixed(1)}Q${(x0 + bw).toFixed(1)} ${y0.toFixed(1)} ${(x0 + bw).toFixed(1)} ${(y0 + r).toFixed(1)}V${yb.toFixed(1)}Z" fill="${col}"${i === lastI ? '' : ' opacity=".62"'}/>`; }).join('');
+      return `<path d="M${x0.toFixed(1)} ${yb.toFixed(1)}V${(y0 + r).toFixed(1)}Q${x0.toFixed(1)} ${y0.toFixed(1)} ${(x0 + r).toFixed(1)} ${y0.toFixed(1)}H${(x0 + bw - r).toFixed(1)}Q${(x0 + bw).toFixed(1)} ${y0.toFixed(1)} ${(x0 + bw).toFixed(1)} ${(y0 + r).toFixed(1)}V${yb.toFixed(1)}Z" fill="${col}"${isMan[i] ? ' fill-opacity=".28" stroke="var(--primary)" stroke-width="1" stroke-dasharray="3 2"' : i === lastI ? '' : ' opacity=".62"'}/>`; }).join('');
   } else {
     let path = '', pen = false;
     vals.forEach((v, i) => { if (v == null) { pen = false; return; } path += `${pen ? 'L' : 'M'}${cx(i).toFixed(1)},${y(v).toFixed(1)}`; pen = true; });
     g += `<path d="${path}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-    if (n <= 31) g += vals.map((v, i) => v == null || i === lastI ? '' : `<circle cx="${cx(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2" fill="${col}"/>`).join('');
+    if (n <= 31) g += vals.map((v, i) => v == null || i === lastI ? '' : (isMan[i] ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="var(--card)" stroke="${col}" stroke-width="1.5"/>` : `<circle cx="${cx(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2" fill="${col}"/>`)).join('');
   }
   // media (sobria) con etichetta a destra
-  if (real.length > 2) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(avg).toFixed(1)}" y2="${y(avg).toFixed(1)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3" opacity=".75"/><text x="${W - P.r}" y="${(y(avg) + 12).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">media ${m.fmt(avg)}</text>`;
+  if (real.length > 2) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(avg).toFixed(1)}" y2="${y(avg).toFixed(1)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3" opacity=".75"/><text x="${W - P.r}" y="${(y(avg) + 12).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">media ${fmtAvg(avg)}${m.avgAll ? ' al giorno' : ''}</text>`;
   // ultimo punto con anello e valore
   const lx = cx(lastI), ly = y(last);
   if (m.type !== 'bar') g += `<circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="4.5" fill="${col}" stroke="var(--card)" stroke-width="2"/>`;
@@ -111,9 +113,11 @@ export function chart(m, days, hd) {
   // asse x: al massimo 6 etichette, senza sovrapporre l'ultima
   const every = Math.max(1, Math.ceil(n / 6)), idx = new Set([n - 1]);
   for (let i = 0; i < n; i += every) if (n - 1 - i >= every * 0.6) idx.add(i);
-  g += [...idx].map(i => `<text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${n <= 8 ? `${dowOf(days[i])} ${+days[i].slice(8)}` : short(days[i])}</text>`).join('');
+  g += [...idx].map(i => n <= 8
+    ? `<text x="${cx(i).toFixed(1)}" y="${H - 22}" font-size="10" font-weight="600" fill="var(--muted)" text-anchor="middle">${dowOf(days[i])}</text><text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`
+    : `<text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`).join('');
   // zone di tocco (una per giorno, più larghe del marchio)
-  g += days.map((k, i) => `<rect class="gz-hit" x="${(P.l + slot * i).toFixed(1)}" y="${P.t}" width="${slot.toFixed(1)}" height="${ih}" fill="transparent" data-t="${longDay(k)}: ${vals[i] == null ? 'nessun dato' : m.fmt(vals[i]) + (m.unit ? ' ' + m.unit : '')}"/>`).join('');
+  g += days.map((k, i) => `<rect class="gz-hit" x="${(P.l + slot * i).toFixed(1)}" y="${P.t}" width="${slot.toFixed(1)}" height="${ih}" fill="transparent" data-t="${longDay(k)}: ${vals[i] == null ? 'nessun dato' : m.fmt(vals[i]) + (m.unit ? ' ' + m.unit : '') + (isMan[i] ? ' (inserito a mano)' : '')}"/>`).join('');
   return { svg: `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${m.title}, ultimi ${n} giorni. ${m.story(stats, m).replace(/"/g, '')}">${g}</svg>`, stats };
 }
 
@@ -124,7 +128,7 @@ export function metricCard(m, days, hd, extra = '') {
   const u = m.unit ? ` <small>${m.unit}</small>` : '';
   const story = m.story(c.stats, m);
   return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${m.title}</div><div class="gz-big">${m.fmt(c.stats.last)}${u}</div></div></div>
-    <p class="gz-story">${story}</p>${c.svg}<div class="gz-readout" data-default="${story.replace(/"/g, '&quot;')}">Tocca un giorno per leggere il valore.</div>${extra}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
+    <p class="gz-story">${story}</p>${c.svg}<div class="gz-readout" data-default="${story.replace(/"/g, '&quot;')}">Tocca un giorno per leggere il valore.</div>${c.stats.nMan ? '<p class="gz-rif">Le parti tratteggiate sono valori inseriti a mano (se arrivano i dati dell\'orologio li sostituiscono).</p>' : ''}${extra}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
 }
 
 /** Collega i grafici: toccando (o passando sopra) un giorno, la riga sotto mostra il valore esatto. */

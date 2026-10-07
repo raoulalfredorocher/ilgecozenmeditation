@@ -707,3 +707,11 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .gz-info { margin: var(--space-2) 0; font-size: var(--fs-sm); line-height: 1.55; }
 .gz-info summary { cursor: pointer; color: var(--geco-blue); font-weight: 600; }
 .gz-info p { margin: var(--space-2) 0 0; }
+.gz-q { margin-top: var(--space-4); }
+.gz-qh { display: flex; width: 100%; align-items: center; justify-content: space-between; background: none; border: 0; padding: var(--space-2) 2px; cursor: pointer; font: 400 .6875rem var(--font); letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); }
+.gz-qh i { font-style: normal; font-size: 1rem; transition: transform .2s; }
+.gz-qh[aria-expanded="false"] i { transform: rotate(-90deg); }
+.gz-qb { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-2); }
+.gz-qb[hidden] { display: none; }
+.gz-tiles > div { min-width: 0; }
+.cm-manual { align-items: center; }

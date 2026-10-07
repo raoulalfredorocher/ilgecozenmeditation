@@ -6,6 +6,7 @@
 import { db, auth, loadSessions } from '../../core/db.js';
 import { doc, getDoc, getDocs, collection } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { unpackEs } from '../allenamento/state.js';
+import { mergeManual } from '../../core/salute-merge.js';
 
 export const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 export const pk = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
@@ -16,7 +17,7 @@ const safe = async (fn, fallback) => { try { return await fn(); } catch (e) { co
 export async function loadAll() {
   const uid = auth.currentUser.uid;
   const userDoc = (...p) => doc(db, 'users', uid, ...p);
-  const [salute, workouts, sessions, diary, umore, storici, misure] = await Promise.all([
+  const [salute, workouts, sessions, diary, umore, storici, misure, manuale] = await Promise.all([
     safe(() => getDoc(userDoc('direction', 'salute_giorni')), null),
     safe(() => getDocs(collection(db, 'users', uid, 'allenamenti_registro')), null),
     safe(() => loadSessions(), []),
@@ -24,6 +25,7 @@ export async function loadAll() {
     safe(() => getDoc(userDoc('direction', 'umore_giorni')), null),
     safe(() => getDoc(userDoc('direction', 'record_storici')), null),
     safe(() => getDoc(userDoc('direction', 'misure_salute')), null),
+    safe(() => getDoc(userDoc('direction', 'salute_manuale')), null),
   ]);
   const sd = salute?.exists() ? salute.data() : {};
   const log = [];
@@ -31,7 +33,7 @@ export async function loadAll() {
   const diaryDays = {};
   diary?.forEach(d => { const m = d.data().meals || []; if (m.length) diaryDays[d.id] = m.reduce((a, x) => a + (+x.kcal || 0), 0); });
   return {
-    days: sd.days || {}, sync: sd.sync || null,
+    days: mergeManual(sd.days || {}, manuale?.exists() ? manuale.data().days : {}), daysWatch: sd.days || {}, sync: sd.sync || null,
     log: log.sort((a, b) => a.data.localeCompare(b.data)),
     meditation: sessions.map(s => ({ d: dk(new Date(s.ts)), mins: +s.totalMins || 0 })),
     diary: diaryDays,

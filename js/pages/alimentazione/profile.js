@@ -17,11 +17,10 @@ const sheet = createSheet({ title: 'Il mio profilo', body: `
       <div class="field"><label class="field-lbl" for="pf-bf">Grasso (%)</label><input class="input" id="pf-bf" type="number" inputmode="decimal" min="3" max="60" step="0.1" placeholder="facoltativo"/></div>
       <div class="field"><label class="field-lbl" for="pf-date">Data misura</label><input class="input" id="pf-date" type="date"/></div>
       <div class="field"><label class="field-lbl" for="pf-passi">Passi al giorno</label><input class="input" id="pf-passi" type="number" inputmode="numeric" min="0" step="500"/></div>
-      <div class="field"><label class="field-lbl" for="pf-kw">kcal per allenamento</label><input class="input" id="pf-kw" type="number" inputmode="numeric" min="0" step="50"/></div>
     </div>
     <div class="field"><label class="field-lbl" for="pf-naz">Nazionalità</label><select id="pf-naz">${COUNTRIES.map(([c, n]) => `<option value="${c}">${n}</option>`).join('')}</select></div>
     <div class="field"><label class="field-lbl" for="pf-act">Vita quotidiana (senza passi e allenamento)</label><select id="pf-act">${ACTIVITY.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select></div>
-    <p class="note">Passi e allenamento si contano a parte: scegli qui l'attività del lavoro e della giornata, non dello sport. Le kcal dell'allenamento si sommano nei giorni in cui ti sei allenato davvero (le legge dal registro di Allenamento); per i giorni futuri vale il piano.</p>
+    <p class="note">Passi e allenamento si contano a parte: scegli qui l'attività del lavoro e della giornata, non dello sport.</p>
     <div class="de-sum" id="pf-sum"></div>
     <div id="pf-hist"></div>
     <button type="button" class="btn accent block" id="pf-ok">Salva</button>
@@ -30,7 +29,7 @@ let sex = 'M';
 const form = () => ({
   sesso: sex, eta: sheet.$('#pf-eta').value, altezza: sheet.$('#pf-alt').value, peso: sheet.$('#pf-peso').value,
   bf: sheet.$('#pf-bf').value, lavoro: sheet.$('#pf-act').value,
-  passi: sheet.$('#pf-passi').value, kcalWorkout: sheet.$('#pf-kw').value,
+  passi: sheet.$('#pf-passi').value,
   nascita: sheet.$('#pf-nasc').value, nazione: sheet.$('#pf-naz').value,
 });
 /** Con la data di nascita l'età si calcola da sola; senza, la si scrive a mano. */
@@ -48,9 +47,9 @@ function drawHistory() {
 }
 function preview() {
   const f = form();
-  const base = calcTdee(f) + stepsKcal(f.passi, f.peso), w = parseFloat(f.kcalWorkout) || 0;
+  const base = calcTdee(f) + stepsKcal(f.passi, f.peso);
   const k = n => n.toLocaleString('it-IT');
-  sheet.$('#pf-sum').innerHTML = base ? `<span class="de-kcal">${k(base)}</span><span class="s"> kcal nei giorni di riposo (TDEE)</span><div class="s">${k(base + w)} kcal nei giorni Workout</div>` : '<span class="s">Compila età, altezza e peso per calcolare il fabbisogno.</span>';
+  sheet.$('#pf-sum').innerHTML = base ? `<span class="de-kcal">${k(base)}</span><span class="s"> kcal al giorno senza allenamento (TDEE)</span><div class="s">Le kcal dell'allenamento si aggiungono dai dati veri dell'orologio.</div>` : '<span class="s">Compila età, altezza e peso per calcolare il fabbisogno.</span>';
 }
 sheet.el.addEventListener('input', e => { if (e.target.id === 'pf-nasc') syncAge(); preview(); });
 sheet.el.addEventListener('change', e => { if (e.target.id === 'pf-nasc') { syncAge(); preview(); } });
@@ -85,7 +84,6 @@ export function openProfile() {
   sheet.$('#pf-bf').value = p.bf || '';
   sheet.$('#pf-act').value = p.lavoro || '1.375';
   sheet.$('#pf-passi').value = p.passi || '';
-  sheet.$('#pf-kw').value = p.kcalWorkout || '';
   sheet.$('#pf-date').value = dateKey();
   history = (p.history || []).map(x => ({ ...x }));
   drawHistory();

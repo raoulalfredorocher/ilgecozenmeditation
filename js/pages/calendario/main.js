@@ -11,8 +11,8 @@ import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey } from '../..
 import { dayBalance } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
 import { db, auth } from '../../core/db.js';
-import { doc, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import { saveSessionDoc, deleteSessionDoc, loadSessions } from '../../core/db.js';
+import { doc, getDoc, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { deleteSessionDoc, loadSessions } from '../../core/db.js';
 import { startSync as startWorkouts } from '../allenamento/state.js';
 import * as sessione from '../allenamento/sessione.js';
 import { csvFile, deliver } from '../alimentazione/files.js';
@@ -110,15 +110,22 @@ function renderDay() {
       ${bil.passiDaOrologio ? '' : '<span class="s">Passi stimati dal profilo: l\'orologio non ha dati per questo giorno.</span>'}</span></div>`);
   }
   if (d?.salute) {
-    const h = d.salute, sonno = h.sonnoMin ? `${Math.floor(h.sonnoMin / 60)}h${String(h.sonnoMin % 60).padStart(2, '0')}` : '';
-    const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · a riposo ${h.bpmRiposo} bpm` : ''}` : '';
-    const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min` : '', h.stressMedio ? `stress ${h.stressMedio}/100 (max ${h.stressMax})` : '', h.vo2max ? `VO₂ max ${h.vo2max}` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
-    rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi` : 'Orologio'}</b><span class="s">${sub}</span></span></div>`);
+    const h = d.salute, mk = f => (h._man?.[f] ? ' (a mano)' : ''), sonno = h.sonnoMin ? `${Math.floor(h.sonnoMin / 60)}h${String(h.sonnoMin % 60).padStart(2, '0')}${mk('sonnoMin')}` : '';
+    const bpm = h.bpmMedio ? `❤ ${h.bpmMedio} medio${h.bpmMin && h.bpmMax ? ` (min ${h.bpmMin} · max ${h.bpmMax})` : ''}${h.bpmRiposo ? ` · a riposo ${h.bpmRiposo} bpm${mk('bpmRiposo')}` : ''}` : (h.bpmRiposo ? `❤ a riposo ${h.bpmRiposo} bpm${mk('bpmRiposo')}` : '');
+    const sub = [bpm, h.spo2 ? `O₂ ${Math.round(h.spo2)}%` : '', h.respiro ? `${g1(h.respiro)} resp/min${mk('respiro')}` : '', h.stressMedio ? `stress ${h.stressMedio}/100${h.stressMax ? ` (max ${h.stressMax})` : ''}${mk('stressMedio')}` : '', h.vo2max ? `VO₂ max ${h.vo2max}` : '', sonno ? `sonno ${sonno}` : ''].filter(Boolean).join(' · ');
+    rows.unshift(`<div class="cm-row"><span class="dotc" style="--c:var(--danger)"></span><span class="grow"><b>${h.passi ? `${kc(h.passi)} passi${mk('passi')}` : 'Orologio'}</b><span class="s">${sub}</span></span></div>`);
+  }
+  {
+    const h = d?.salute || {}, man = h._man ? Object.keys(h._man) : [];
+    const mancano = h.sonnoMin == null || h.passi == null || h.bpmRiposo == null;
+    if (selected <= dateKey() && (mancano || man.length)) {
+      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">${man.length ? `Alcuni valori sono inseriti a mano (${man.map(f => MAN_LABEL[f]).join(', ')}).` : 'L’orologio non ha mandato tutti i dati di questo giorno (scarico o non indossato?).'}</span></span><button type="button" class="text-btn" data-manual style="flex-shrink:0">${man.length ? 'Modifica' : 'Inserisci a mano'} ›</button></div>`);
+    }
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
     ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}
     <div class="cm-mood" role="group" aria-label="Umore del giorno"><span class="s">Umore</span>${[1, 2, 3, 4, 5].map(n => `<button type="button" data-mood="${n}" aria-pressed="${d?.umore === n}">${n}</button>`).join('')}</div>
-    <div class="cm-add" role="group" aria-label="Aggiungi a questo giorno"><button type="button" data-add="allenamento">＋ Allenamento</button><button type="button" data-add="cibo">＋ ${d?.cibo ? 'Modifica diario' : 'Diario'}</button><button type="button" data-add="meditazione">＋ Meditazione</button></div>`;
+`;
 }
 
 // ─── Dettaglio di ciò che hai fatto (foglio, senza lasciare il calendario) ───
@@ -166,19 +173,6 @@ const refresh = day => {
 };
 sessione.onSessionChange(refresh);
 
-const medSheet = createSheet({ title: 'Segna una meditazione', body: `<div class="stack">
-  <div class="field"><label class="field-lbl" for="md-date">Giorno</label><input class="input" type="date" id="md-date"/></div>
-  <div class="field"><label class="field-lbl" for="md-mins">Minuti</label><input class="input" type="number" id="md-mins" inputmode="numeric" min="1" max="600" value="20"/></div>
-  <button type="button" class="btn accent block" id="md-ok">Salva</button></div>` });
-medSheet.$('#md-ok').addEventListener('click', async () => {
-  const [y, m, d] = medSheet.$('#md-date').value.split('-').map(Number), mins = Math.round(+medSheet.$('#md-mins').value);
-  if (!y || !(mins >= 1)) return toast('Scegli giorno e minuti');
-  medSheet.close();
-  await saveSessionDoc({ totalMins: mins, steps: [{ mins, name: 'Meditazione' }], ts: new Date(y, m - 1, d, 12).getTime() });
-  toast('Meditazione salvata');
-  refresh(dateKey(new Date(y, m - 1, d)));
-});
-
 async function exportMeditation() {
   const list = await loadSessions();
   if (!list.length) return toast('Nessuna meditazione registrata');
@@ -190,6 +184,55 @@ async function exportMeditation() {
   await deliver(csvFile(rows, 'meditazioni.csv'));
 }
 
+// ─── Dati dell'orologio mancanti: inserimento a mano ─────────────────────────
+const MAN_LABEL = { sonnoMin: 'sonno', passi: 'passi', bpmRiposo: 'battiti a riposo', respiro: 'respiri', stressMedio: 'stress' };
+const manSheet = createSheet({ title: 'Dati inseriti a mano', body: `<div class="stack">
+  <p class="note" style="margin:0">Se l'orologio era scarico o non l'hai indossato puoi inserire tu i valori. Se poi arrivano i dati dell'orologio, li sostituiscono. Nei grafici i valori a mano sono tratteggiati.</p>
+  <div class="grid-2">
+    <div class="field"><label class="field-lbl" for="mn-sonno">Sonno (ore)</label><input class="input" id="mn-sonno" type="number" inputmode="decimal" step="0.25" min="0" max="16" placeholder="es. 7,5"/></div>
+    <div class="field"><label class="field-lbl" for="mn-passi">Passi</label><input class="input" id="mn-passi" type="number" inputmode="numeric" min="0" max="80000"/></div>
+    <div class="field"><label class="field-lbl" for="mn-bpm">Battiti a riposo</label><input class="input" id="mn-bpm" type="number" inputmode="numeric" min="30" max="130"/></div>
+    <div class="field"><label class="field-lbl" for="mn-resp">Respiri al minuto</label><input class="input" id="mn-resp" type="number" inputmode="decimal" step="0.1" min="6" max="40"/></div>
+    <div class="field"><label class="field-lbl" for="mn-stress">Stress (0–100)</label><input class="input" id="mn-stress" type="number" inputmode="numeric" min="0" max="100"/></div>
+  </div>
+  <button type="button" class="btn block" id="mn-avg">Compila i vuoti con la mia media</button>
+  <button type="button" class="btn accent block" id="mn-ok">Salva</button>
+  <button type="button" class="btn block text-danger" id="mn-del">Togli i valori inseriti a mano</button></div>` });
+const manRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_manuale');
+const MAN_IDS = { sonnoMin: 'mn-sonno', passi: 'mn-passi', bpmRiposo: 'mn-bpm', respiro: 'mn-resp', stressMedio: 'mn-stress' };
+const manVal = f => { const v = parseFloat(manSheet.$('#' + MAN_IDS[f]).value.replace(',', '.')); return Number.isFinite(v) && v >= 0 ? (f === 'sonnoMin' ? Math.round(v * 60) : v) : null; };
+function openManual() {
+  const h = data[selected]?.salute?._man ? data[selected].salute : {}, man = h._man || {};
+  Object.entries(MAN_IDS).forEach(([f, id]) => { const v = man[f] ? h[f] : ''; manSheet.$('#' + id).value = v === '' ? '' : (f === 'sonnoMin' ? +(v / 60).toFixed(2) : v); });
+  manSheet.$('#mn-del').hidden = !Object.keys(man).length;
+  manSheet.open();
+}
+manSheet.$('#mn-avg').addEventListener('click', async () => {
+  try {
+    const snap = await getDoc(doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_giorni'));
+    const days = Object.entries(snap.data()?.days || {}).filter(([k]) => k < selected).sort().slice(-30).map(([, v]) => v);
+    Object.keys(MAN_IDS).forEach(f => {
+      const vals = days.map(v => v[f]).filter(v => v > 0), el = manSheet.$('#' + MAN_IDS[f]);
+      if (!vals.length || el.value !== '') return;
+      const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+      el.value = f === 'sonnoMin' ? +(avg / 60).toFixed(2) : f === 'respiro' ? +avg.toFixed(1) : Math.round(avg);
+    });
+    toast(days.length ? `Medie degli ultimi ${days.length} giorni con dati` : 'Non ci sono ancora dati dell\'orologio per calcolare una media');
+  } catch (e) { console.error(e); toast('Non riesco a calcolare la media'); }
+});
+manSheet.$('#mn-ok').addEventListener('click', async () => {
+  const entry = {}; Object.keys(MAN_IDS).forEach(f => { const v = manVal(f); if (v != null) entry[f] = v; });
+  if (!Object.keys(entry).length) return toast('Scrivi almeno un valore');
+  manSheet.close();
+  try { await setDoc(manRef(), { days: { [selected]: entry } }, { merge: true }); toast('Salvato'); } catch (e) { console.error(e); toast('Non sono riuscito a salvare'); }
+  refresh();
+});
+manSheet.$('#mn-del').addEventListener('click', async () => {
+  manSheet.close();
+  try { await updateDoc(manRef(), { [`days.${selected}`]: deleteField() }); toast('Tolti'); } catch (e) { console.error(e); }
+  refresh();
+});
+
 // Menu ⋯: esportazioni
 const moreSheet = createSheet({ title: 'Calendario', body: `<div class="list">
   <button type="button" class="list-row" data-exp="allenamenti"><span class="grow">Esporta gli allenamenti (CSV)</span></button>
@@ -199,13 +242,7 @@ document.getElementById('cm-more')?.addEventListener('click', () => moreSheet.op
 
 let delArmed = null;
 document.addEventListener('click', async e => {
-  const add = e.target.closest('[data-add]');
-  if (add) {
-    if (add.dataset.add === 'allenamento') return sessione.addAction(selected);
-    if (add.dataset.add === 'cibo') return registerDay(selected, refresh);
-    medSheet.$('#md-date').value = selected; medSheet.$('#md-date').max = dateKey();
-    return medSheet.open();
-  }
+  if (e.target.closest('[data-manual]')) return openManual();
   const mood = e.target.closest('[data-mood]');
   if (mood) {
     const v = +mood.dataset.mood, cur = data[selected]?.umore;
