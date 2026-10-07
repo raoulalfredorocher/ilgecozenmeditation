@@ -13,7 +13,7 @@
  */
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
-import { state, planById, addSession, updateSession, num, exType, fmtClock, fmtKg, lastTimeFor, dateKey, DEFAULT_WARMUP, DEFAULT_STRETCH, FEEDBACK } from './state.js';
+import { state, planById, addSession, updateSession, num, exType, fmtClock, fmtKg, fmtDur, lastTimeFor, dateKey, DEFAULT_WARMUP, DEFAULT_STRETCH, FEEDBACK } from './state.js';
 
 const KEY = 'geco_wk', PENDING = 'geco_wk_pending', MAX_AGE = 8 * 3600e3, WATER_EVERY = 15 * 60e3;
 const RING = 2 * Math.PI * 88;
@@ -113,7 +113,7 @@ function build() {
     <div class="ed-bar">
       <div class="l"><button type="button" class="text-btn" data-act="end" style="color:var(--muted);font-weight:400">Termina</button></div>
       <div class="wk-total" id="wk-total">0:00</div>
-      <div class="r"><span class="s" id="wk-prog"></span></div>
+      <div class="r"><span class="s" id="wk-prog"></span><button type="button" class="icon-btn" data-act="macro" aria-label="Vedi la scheda completa"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button></div>
     </div>
     <div class="wk-progress"><i id="wk-bar"></i></div>
     <div class="ed-scroll wk-body" id="wk-body"></div>
@@ -302,9 +302,27 @@ async function onClick(ev) {
   if (a === 'rest-minus') { S.phaseEnd = Math.max(Date.now() + 1000, S.phaseEnd - 15000); S.total = Math.max(1, S.total - 15); save(); return tick(); }
   if (a === 'rest-skip') return endRest();
   if (a === 'drank') { S.acqua++; el.querySelector('#wk-banner').hidden = true; save(); return toast('Bene, continua così'); }
+  if (a === 'macro') return openMacro();
   if (a === 'end') return openEnd();
   if (a === 'finish') return finish();
   if (a === 'close') return closeDone();
+}
+
+// ─── Vista macro: la scheda completa, con quello che hai già fatto ──────────
+const macro = createSheet({ title: 'Scheda completa', body: '<div id="mc-body"></div>' });
+function openMacro() {
+  if (!S) return;
+  const { total, done } = progress();
+  const prog = e => `${e.p[0]} × ${e.t === 't' ? fmtDur(e.p[3]) : e.p[1]}${e.p[2] ? ` · ${fmtKg(e.p[2])} kg` : ''}${e.p[4] ? ` · rec. ${fmtDur(e.p[4])}` : ''}`;
+  macro.setTitle(`${S.planName} · ${S.schedaName}`);
+  macro.$('#mc-body').innerHTML = `<div class="s" style="margin-bottom:6px">${done} serie fatte su ${total}${S.rwMin ? ` · riscaldamento ${S.rwMin} min` : ''}${S.stMin ? ` · stretching ${S.stMin} min` : ''}</div>
+    <div class="wk-progress" style="position:static;margin-bottom:var(--space-3)"><i style="width:${total ? Math.round(done / total * 100) : 0}%"></i></div>
+    ${S.exs.map((e, i) => { const fatte = e.s.filter(x => !x[4]).length, now = S.stage === 'ex' || S.stage === 'rest' ? i === S.ei : false;
+      return `<div class="al-ex" style="${now ? 'border-color:var(--sakura)' : ''}"><div class="al-ex-h"><b>${i + 1}. ${esc(e.n)}${now ? ' <span class="s" style="color:var(--sakura)">· ora</span>' : ''}</b>
+        <span class="s">${esc(e.g)} · ${prog(e)}</span></div>
+        <div class="s">${e.s.length >= e.p[0] ? '✓ ' : ''}${fatte} su ${e.p[0]} serie${e.s.length ? ` · ${e.s.filter(x => !x[4]).map(x => (e.t === 't' ? fmtClock(x[2]) : `${x[0]}×${fmtKg(x[1])}`)).join(', ')}` : ''}</div>
+        ${e.d ? `<div class="s" style="margin-top:4px">${esc(e.d)}</div>` : ''}</div>`; }).join('')}`;
+  macro.open();
 }
 
 // ─── Termina prima del previsto ──────────────────────────────────────────

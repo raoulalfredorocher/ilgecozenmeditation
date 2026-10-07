@@ -16,13 +16,14 @@ const safe = async (fn, fallback) => { try { return await fn(); } catch (e) { co
 export async function loadAll() {
   const uid = auth.currentUser.uid;
   const userDoc = (...p) => doc(db, 'users', uid, ...p);
-  const [salute, workouts, sessions, diary, umore, storici] = await Promise.all([
+  const [salute, workouts, sessions, diary, umore, storici, misure] = await Promise.all([
     safe(() => getDoc(userDoc('direction', 'salute_giorni')), null),
     safe(() => getDocs(collection(db, 'users', uid, 'allenamenti_registro')), null),
     safe(() => loadSessions(), []),
     safe(() => getDocs(collection(db, 'users', uid, 'food_diary')), null),
     safe(() => getDoc(userDoc('direction', 'umore_giorni')), null),
     safe(() => getDoc(userDoc('direction', 'record_storici')), null),
+    safe(() => getDoc(userDoc('direction', 'misure_salute')), null),
   ]);
   const sd = salute?.exists() ? salute.data() : {};
   const log = [];
@@ -36,6 +37,7 @@ export async function loadAll() {
     diary: diaryDays,
     umore: umore?.exists() ? (umore.data().days || {}) : {},
     storici: storici?.exists() ? (storici.data().voci || {}) : {},
+    misure: misure?.exists() ? misure.data() : {},
   };
 }
 

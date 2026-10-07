@@ -1,5 +1,25 @@
 # Il Geco Zen
 
+> ## ⚠️ Avvertenza medica · Medical disclaimer
+>
+> **Italiano.** Il Geco Zen è un progetto personale, costruito da me per le mie esigenze, che sono diverse da quelle di chiunque altro.
+> **Non è un dispositivo medico, non fornisce diagnosi, terapie o consigli medici** e non sostituisce in alcun modo il parere di un medico o di un altro professionista sanitario.
+> I valori di riferimento, le fasce, i confronti e i suggerimenti mostrati (pressione, glicemia, esami del sangue, frequenza cardiaca, sonno, fabbisogno calorico, allenamento, ecc.)
+> sono indicazioni generali e indicative, calcolate con formule semplificate, e possono non essere adatti a te.
+> **Consulta sempre il tuo medico** prima di prendere decisioni su salute, alimentazione, farmaci, integratori o attività fisica,
+> e per interpretare qualsiasi esame o misura. In caso di sintomi o emergenza contatta subito un medico o i servizi di emergenza (112 in Italia).
+> Il codice è condiviso così com'è, senza alcuna garanzia; chi lo usa o lo adatta lo fa **a proprio rischio e sotto la propria responsabilità**.
+> Le misure dell'orologio e degli altri dispositivi possono essere imprecise o incomplete.
+>
+> **English.** Il Geco Zen is a personal project I built for my own needs, which are different for everyone.
+> **It is not a medical device and does not provide diagnosis, treatment or medical advice**, and it is no substitute for the advice of a physician or other qualified health professional.
+> Reference ranges, comparisons and suggestions shown in the app (blood pressure, glucose, blood tests, heart rate, sleep, calorie needs, training, etc.)
+> are general, indicative and based on simplified formulas; they may not be appropriate for you.
+> **Always consult your doctor** before making decisions about health, diet, medication, supplements or exercise, and to interpret any test or measurement.
+> In case of symptoms or emergency, contact a doctor or your local emergency services immediately.
+> The code is provided "as is", without warranty of any kind; anyone who uses or adapts it does so **at their own risk and responsibility**.
+> Data from watches and other devices may be inaccurate or incomplete.
+
 App personale per meditazione, benessere e crescita: alimentazione, allenamento,
 spiritualità, passioni, relazioni, finanza e altro. Funziona nel browser ed è
 installabile come app sul telefono (PWA). Ogni utente accede con Google e vede

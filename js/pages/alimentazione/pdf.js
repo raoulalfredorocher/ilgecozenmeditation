@@ -8,7 +8,7 @@ import { DAY_NAMES, slotLabel, slotOrder, totals, itemsTotals, daySupplements, f
 const JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 const BLUE = [37, 115, 158], INK = [28, 52, 68], MUTED = [107, 124, 136];
 
-function loadLib() {
+export function loadLib() {
   if (window.jspdf?.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
   return new Promise((resolve, reject) => {
     const s = document.createElement('script');

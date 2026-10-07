@@ -8,11 +8,12 @@ import { startSync, state, onChange } from './state.js';
 import * as schede from './schede.js';
 import * as avvia from './avvia.js';
 import { flushPending } from './guida.js';
+import { openScarica } from './scarica.js';
 
 const TABS = { schede, avvia };
 let current = 'avvia';
 
-const MENU = { schede: [], avvia: [] };
+const MENU = { schede: [['Scarica gli allenamenti…', openScarica]], avvia: [['Scarica gli allenamenti…', openScarica]] };
 
 function showTab(name) {
   if (!TABS[name]) name = 'avvia';

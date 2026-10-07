@@ -45,6 +45,13 @@ export const METRICS = {
   respiro: { title: 'Respirazione', unit: 'resp/min', type: 'line', get: d => d.respiro, fmt: n => n.toFixed(1), band: { min: 12, max: 20, label: 'norma 12–20' }, story: generic },
   stress: { title: 'Stress', unit: '/100', type: 'line', get: d => d.stressMedio, fmt: it, min: 0, max: 100, story: generic },
   vo2max: { title: 'VO₂ max', unit: 'ml/kg/min', type: 'line', get: d => d.vo2max, fmt: it, story: generic },
+  sonnoQ: { title: 'Qualità del sonno', unit: '/100', type: 'line', get: d => d.sonnoPunteggio, fmt: it, min: 0, max: 100, story: generic },
+  meditazione: { title: 'Minuti di meditazione', unit: 'min', type: 'bar', get: d => d.m, fmt: it,
+    story: (s) => `${plural(s.n, 'giorno', 'giorni')} di pratica su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${it(s.avg)} nei giorni in cui mediti.` },
+  allenamento: { title: 'Minuti di allenamento', unit: 'min', type: 'bar', get: d => d.m, fmt: it,
+    story: (s) => `${plural(s.n, 'giorno', 'giorni')} di allenamento su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${it(s.avg)} nei giorni attivi.` },
+  kcalDiario: { title: 'Calorie mangiate', unit: 'kcal', type: 'bar', get: d => d.k, fmt: it,
+    story: (s) => `Media ${it(s.avg)} kcal nei ${plural(s.n, 'giorno registrato', 'giorni registrati')} su ${s.total}${trendText(s.vals)}.` },
   sonno: { title: 'Sonno', unit: '', type: 'bar', get: d => d.sonnoMin, fmt: hm, div: 60, axisFmt: v => `${v / 60} h`, band: { min: 420, max: 540, label: 'obiettivo 7–9 h' },
     story: (s, m) => `${plural(s.vals.filter(v => v >= 420).length, 'notte', 'notti')} su ${s.n} da almeno 7 ore · media ${hm(s.avg)}${trendText(s.vals)}.` },
 };
@@ -55,6 +62,7 @@ const RIF = {
   respiro: 'Riferimento: a riposo o di notte 12–20 respiri al minuto è la norma per un adulto. Non è un valore da migliorare: conta che resti stabile.',
   sonno: 'Riferimento: 7–9 ore per notte, con orari regolari: la regolarità conta quanto la durata.',
   stress: 'Riferimento: scala 0–100 di Zepp, più basso è meglio. Guarda la tendenza, non il singolo giorno.',
+  sonnoQ: 'Punteggio del sonno calcolato da Zepp (0–100): conta la tendenza, non la singola notte.',
   vo2max: 'Riferimento: più alto è meglio, è uno dei migliori indicatori di longevità. Per un uomo sui 30 anni circa 40–50 è buono, oltre 50 ottimo (stima dell\'orologio).',
 };
 Object.entries(RIF).forEach(([k, v]) => { METRICS[k].rif = v; });

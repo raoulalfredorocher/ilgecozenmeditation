@@ -117,7 +117,7 @@ function renderDay() {
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
     ${rows.length ? rows.join('') : '<div class="cm-empty">Nessuna attività registrata in questo giorno.</div>'}
-    <div class="cm-mood" role="group" aria-label="Umore del giorno"><span class="s">Umore</span>${[1, 2, 3, 4, 5].map(n => `<button type="button" data-mood="${n}" aria-pressed="${d?.umore === n}">${n}</button>`).join('')}<span class="s">1 male · 5 benissimo</span></div>
+    <div class="cm-mood" role="group" aria-label="Umore del giorno"><span class="s">Umore</span>${[1, 2, 3, 4, 5].map(n => `<button type="button" data-mood="${n}" aria-pressed="${d?.umore === n}">${n}</button>`).join('')}</div>
     <div class="cm-add" role="group" aria-label="Aggiungi a questo giorno"><button type="button" data-add="allenamento">＋ Allenamento</button><button type="button" data-add="cibo">＋ ${d?.cibo ? 'Modifica diario' : 'Diario'}</button><button type="button" data-add="meditazione">＋ Meditazione</button></div>`;
 }
 
