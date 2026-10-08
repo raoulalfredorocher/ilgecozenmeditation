@@ -2335,7 +2335,11 @@
         m.bindTooltip(`${esc(site.name)} · ${esc(NAMES[site.iso])}`, { direction: 'top', offset: [0, -6], className: 'vg-tip', opacity: 1 });
         m.addTo(dotLayer); dots[id] = m;
       });
+      sizeDots();
     }
+    // Più piccoli da lontano (non si ammassano), più grandi da vicino
+    function sizeDots() { const z = map.getZoom(), r = z < 3 ? 3.5 : z < 5 ? 5 : 7; Object.values(dots).forEach(m => m.setRadius(r)); }
+    map.on('zoomend', sizeDots);
 
     // ── Panoramica ────────────────────────────────────────────────────────────
     const pct = n => (Math.round(n * 10) / 10).toLocaleString('it-IT', { maximumFractionDigits: 1 });
