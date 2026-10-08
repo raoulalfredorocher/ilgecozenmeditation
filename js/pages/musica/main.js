@@ -13,6 +13,7 @@ import { createSheet, toast } from '../../ui/dialog.js';
 import { NOTES, TYPES, parseChord, isChord, transposeChord, notesOf, guitarShape, ukeShape, chordSvg, pianoSvg, rootIdx, noteName, diatonic } from './chords.js';
 import { REPERTORIO, searchUrl } from './repertorio.js';
 import { convertPasted } from './convert.js';
+import { findChords, chordsToBody } from './chords-ai.js';
 
 const $ = id => document.getElementById(id);
 const lsGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -24,6 +25,8 @@ const INSTR = [['chitarra', 'Chitarra'], ['ukulele', 'Ukulele'], ['piano', 'Pian
 const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|&v=)([A-Za-z0-9_-]{11})/); return m ? m[1] : null; };
 
 let songs = [], media = [], tab = 'brani', q = '', fStatus = '';
+let groupBy = lsGet('zen_mu_group', 'none');          // none | artista | genere
+let vidSeen = 'todo';                                   // todo | seen | all (video da vedere / visti)
 let instr = lsGet('zen_mu_instr', 'chitarra');
 const setInstr = v => { instr = v; lsSet('zen_mu_instr', v); };
 
@@ -76,21 +79,31 @@ const statusLabel = k => (STATUS.find(s => s[0] === k) || STATUS[0])[1];
 
 function renderBrani() {
   const base = songs;
-  const list = base.filter(s => (!fStatus || (s.status || 'da') === fStatus) && (!q || `${s.title} ${s.author}`.toLowerCase().includes(q)))
+  const list = base.filter(s => (!fStatus || (s.status || 'da') === fStatus) && (!q || `${s.title} ${s.author} ${s.genre || ''}`.toLowerCase().includes(q)))
     .sort((a, b) => String(a.title).localeCompare(String(b.title), 'it'));
   const cnt = k => base.filter(s => (s.status || 'da') === k).length;
+  const row = s => { const ch = chordsIn(s.body).slice(0, 6); return `
+      <button type="button" class="gz rw ${tint(hash(s.title))}" data-song="${esc(s._docId)}"><span class="th">${s.img && safeUrl(s.img) ? `<img src="${esc(safeUrl(s.img))}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"/>` : `<b>${esc((s.title || '?')[0].toUpperCase())}</b>`}</span>
+        <span class="grow"><span class="nm">${esc(s.title || 'Senza titolo')}</span><span class="gmt">${esc([groupBy === 'artista' ? '' : s.author, groupBy === 'genere' ? '' : s.genre, s.key && 'in ' + s.key, s.capo ? 'capo ' + s.capo : ''].filter(Boolean).join(' · '))}</span>
+          ${ch.length ? `<span class="gpills" style="margin-top:4px">${ch.map(c => `<span class="gpill">${esc(c)}</span>`).join('')}</span>` : `<span class="s">${s.link ? 'Solo link agli accordi' : 'Accordi da trovare'}</span>`}</span>
+        <span class="gpill c3" style="align-self:flex-start">${s.status === 'so' ? 'So' : s.status === 'imparo' ? 'Imparo' : 'Da fare'}</span></button>`; };
+  let body;
+  if (!list.length) body = `<div class="emptyx">${base.length ? 'Nessun brano con questi filtri.' : 'Il repertorio è vuoto.<br/>Tocca + per aggiungere un brano: scrivi il titolo e ti propongo artista, genere e accordi.'}</div>`;
+  else if (groupBy === 'none') body = `<div class="rows">${list.map(row).join('')}</div>`;
+  else {
+    const groups = {};
+    list.forEach(s => { const k = (groupBy === 'artista' ? s.author : s.genre) || (groupBy === 'artista' ? 'Senza artista' : 'Senza genere'); (groups[k] ||= []).push(s); });
+    body = Object.entries(groups).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'it')).map(([k, l]) => `<div class="d-sec" style="margin:var(--space-3) 0 var(--space-2)">${esc(k)} <small>${l.length}</small></div><div class="rows">${l.map(row).join('')}</div>`).join('');
+  }
   $('p-brani').innerHTML = `
     <section class="gz head"><div><span class="big">${base.length}</span><span class="lbl">brani nel tuo repertorio</span></div>
       <button type="button" class="pbtn soft sm" id="mu-rep">${icon('sparkles', 'sm')} Repertorio</button></section>
-    <div class="search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input class="input" type="search" id="mu-q" value="${esc(q)}" placeholder="Cerca un brano o un artista" autocomplete="off" aria-label="Cerca"/></div>
+    <div class="search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input class="input" type="search" id="mu-q" value="${esc(q)}" placeholder="Cerca un brano, un artista o un genere" autocomplete="off" aria-label="Cerca"/></div>
     <div class="gchips"><button type="button" class="gchip" data-fs="" aria-pressed="${!fStatus}">Tutti</button>${STATUS.map(([k, l]) => `<button type="button" class="gchip" data-fs="${k}" aria-pressed="${fStatus === k}">${l} <small>${cnt(k)}</small></button>`).join('')}</div>
-    ${list.length ? `<div class="rows">${list.map(s => { const ch = chordsIn(s.body).slice(0, 6); return `
-      <button type="button" class="gz rw ${tint(hash(s.title))}" data-song="${esc(s._docId)}"><span class="th"><b>${esc((s.title || '?')[0].toUpperCase())}</b></span>
-        <span class="grow"><span class="nm">${esc(s.title || 'Senza titolo')}</span><span class="gmt">${esc([s.author, s.key && 'in ' + s.key, s.capo ? 'capo ' + s.capo : ''].filter(Boolean).join(' · '))}</span>
-          ${ch.length ? `<span class="gpills" style="margin-top:4px">${ch.map(c => `<span class="gpill">${esc(c)}</span>`).join('')}</span>` : `<span class="s">${s.link ? 'Solo link agli accordi' : 'Da scrivere'}</span>`}</span>
-        <span class="gpill c3" style="align-self:flex-start">${s.status === 'so' ? 'So' : s.status === 'imparo' ? 'Imparo' : 'Da fare'}</span></button>`; }).join('')}</div>`
-      : `<div class="emptyx">${base.length ? 'Nessun brano con questi filtri.' : 'Il repertorio è vuoto.<br/>Tocca + per scrivere un brano, o apri “Repertorio” per partire dai cantautori italiani.'}</div>`}`;
+    <div class="gchips">${[['none', 'Elenco'], ['artista', 'Per artista'], ['genere', 'Per genere']].map(([k, l]) => `<button type="button" class="gchip" data-grp="${k}" aria-pressed="${groupBy === k}">${l}</button>`).join('')}</div>
+    ${body}`;
 }
+document.addEventListener('click', e => { const g = e.target.closest('[data-grp]'); if (g) { groupBy = g.dataset.grp; lsSet('zen_mu_group', groupBy); renderBrani(); } });
 document.addEventListener('input', e => { if (e.target.id === 'mu-q') { q = e.target.value.trim().toLowerCase(); renderBrani(); const i = $('mu-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); } });
 
 // ─ lettore del brano
@@ -157,14 +170,19 @@ function openEdit(id, pre = {}) {
   eId = id; const s = id ? songs.find(x => x._docId === id) : pre; eStatus = s.status || 'da';
   edit.setTitle(id ? 'Modifica brano' : 'Nuovo brano');
   edit.setBody(`<form class="stack" id="s-form" novalidate style="display:flex;flex-direction:column;gap:var(--space-4)">
-    <div class="field"><label class="field-lbl" for="s-title">Titolo</label><input class="input" id="s-title" value="${esc(s.title || '')}" autocomplete="off"/></div>
-    <div class="field"><label class="field-lbl" for="s-author">Artista</label><input class="input" id="s-author" value="${esc(s.author || '')}" autocomplete="off"/></div>
+    <div class="field"><label class="field-lbl" for="s-title">Titolo</label><input class="input" id="s-title" value="${esc(s.title || '')}" placeholder="Scrivi il titolo: ti suggerisco artista e genere" autocomplete="off"/>
+      <div id="s-hits" style="margin-top:var(--space-2)"></div></div>
+    <div class="fgrid"><div class="field"><label class="field-lbl" for="s-author">Artista</label><input class="input" id="s-author" value="${esc(s.author || '')}" autocomplete="off"/></div>
+      <div class="field"><label class="field-lbl" for="s-genre">Genere</label><input class="input" id="s-genre" value="${esc(s.genre || '')}" list="s-genres" autocomplete="off"/><datalist id="s-genres">${[...new Set(songs.map(x => x.genre).filter(Boolean))].map(g => `<option value="${esc(g)}">`).join('')}</datalist></div></div>
+    <input type="hidden" id="s-img" value="${esc(s.img || '')}"/>
     <div class="fgrid"><div class="field"><label class="field-lbl" for="s-key">Tonalità</label><select id="s-key"><option value="">—</option>${NOTES.flatMap(n => [n, n + 'm']).map(n => `<option${s.key === n ? ' selected' : ''}>${n}</option>`).join('')}</select></div>
       <div class="field"><label class="field-lbl" for="s-capo">Capo</label><select id="s-capo">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<option value="${n}"${(+s.capo || 0) === n ? ' selected' : ''}>${n || 'nessuno'}</option>`).join('')}</select></div></div>
     <div class="field"><span class="field-lbl">A che punto sei</span><div class="gchips wrap" id="s-status"></div></div>
     <div class="field"><label class="field-lbl" for="s-body">Accordi</label>
       <textarea class="song-in" id="s-body" placeholder="# Strofa&#10;Am F C G&#10;[Am]parole [F]parole [C]parole" autocapitalize="off" spellcheck="false">${esc(s.body || '')}</textarea>
       <p class="s" style="line-height:1.5;margin:6px 0 0">Una riga con solo accordi: <b>Am F C G</b>. Accordi dentro il testo: <b>[Am]parole [F]parole</b>. Una riga che inizia con <b>#</b> è un titolo di sezione (Strofa, Ritornello…). Scrivi solo ciò che ti serve per suonare.</p></div>
+    <button type="button" class="pbtn block" id="s-ai">${icon('sparkles', 'sm')} Trova gli accordi con l'IA</button>
+    <p class="s" id="s-ai-msg" style="margin:0;line-height:1.5">Non esiste un servizio gratuito con gli accordi di ogni canzone: l'IA propone la progressione in forme semplici. È un aiuto da controllare con le orecchie.</p>
     <button type="button" class="pbtn soft block" id="s-paste">Incolla da un sito di accordi</button>
     <div class="field"><label class="field-lbl" for="s-link">Link agli accordi (facoltativo)</label><input class="input" id="s-link" type="url" value="${esc(s.link || '')}" placeholder="https://" autocomplete="off"/></div>
     <button class="pbtn block" type="submit">Salva</button></form>`);
@@ -174,7 +192,49 @@ function drawEdit() { edit.$('#s-status').innerHTML = STATUS.map(([k, l]) => `<b
 edit.el.addEventListener('click', e => {
   const b = e.target.closest('[data-st]'); if (b) { eStatus = b.dataset.st; drawEdit(); }
   if (e.target.closest('#s-paste')) { paste.$('#pa-text').value = ''; paste.open(); }
+  const h = e.target.closest('[data-sh]');
+  if (h) {
+    const x = sHits[+h.dataset.sh];
+    edit.$('#s-title').value = x.trackName.replace(/\s*[\(\[].*?[\)\]]\s*$/, '').trim();
+    edit.$('#s-author').value = x.artistName; edit.$('#s-genre').value = x.primaryGenreName || ''; edit.$('#s-img').value = (x.artworkUrl100 || '').replace('100x100', '300x300');
+    sHits = []; edit.$('#s-hits').innerHTML = '';
+  }
+  if (e.target.closest('#s-ai')) runAi();
 });
+// Suggerimenti del brano mentre scrivi (Apple Music: gratuito, senza registrazioni)
+let sHits = [], sTimer = 0, sSeq = 0;
+edit.el.addEventListener('input', e => {
+  if (e.target.id !== 's-title') return;
+  clearTimeout(sTimer);
+  const t = e.target.value.trim();
+  if (t.length < 3) { sHits = []; edit.$('#s-hits').innerHTML = ''; return; }
+  sTimer = setTimeout(async () => {
+    const seq = ++sSeq;
+    try {
+      const a = edit.$('#s-author').value.trim();
+      const r = await (await fetch(`https://itunes.apple.com/search?media=music&entity=song&country=IT&limit=8&term=${encodeURIComponent((t + ' ' + a).trim())}`)).json();
+      if (seq !== sSeq) return;
+      const seen = new Set(); sHits = (r.results || []).filter(x => { const k = (x.trackName + '|' + x.artistName).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+      edit.$('#s-hits').innerHTML = sHits.length ? `<div class="hits">${sHits.map((x, i) => `<button type="button" class="hit" data-sh="${i}"><span class="th"><img src="${esc(x.artworkUrl60 || x.artworkUrl100 || '')}" alt=""/></span><span><span class="nm">${esc(x.trackName)}</span><span class="mt">${esc([x.artistName, x.primaryGenreName, (x.releaseDate || '').slice(0, 4)].filter(Boolean).join(' · '))}</span></span></button>`).join('')}</div>` : '';
+    } catch { /* si scrive a mano */ }
+  }, 450);
+});
+async function runAi() {
+  const t = edit.$('#s-title').value.trim(), a = edit.$('#s-author').value.trim();
+  if (t.length < 2) return toast('Scrivi prima il titolo');
+  const btn = edit.$('#s-ai'), msg = edit.$('#s-ai-msg'), ta = edit.$('#s-body');
+  if (ta.value.trim() && !confirm('Ci sono già degli accordi scritti: li sostituisco con quelli proposti?')) return;
+  btn.disabled = true; msg.textContent = 'Cerco gli accordi… (qualche secondo)';
+  try {
+    const r = await findChords(t, a);
+    if (!r.sections.length) { msg.textContent = 'Non riconosco questo brano con sicurezza: prova con l\'artista giusto, oppure incolla gli accordi da un sito.'; return; }
+    ta.value = chordsToBody(r.sections);
+    if (r.key) edit.$('#s-key').value = r.key;
+    edit.$('#s-capo').value = String(r.capo || 0);
+    msg.textContent = `Proposta dall'IA${r.capo ? ` (capotasto ${r.capo})` : ''}: controllala con le orecchie e correggi quello che serve, poi salva.`;
+  } catch (err) { console.error(err); msg.textContent = 'Non sono riuscito a contattare l\'IA: ' + (err.message || err); }
+  finally { btn.disabled = false; }
+}
 const paste = createSheet({ title: 'Incolla da un sito', body: `<div class="stack" style="display:flex;flex-direction:column;gap:var(--space-3)">
   <p class="s" style="line-height:1.55;margin:0">Copia da un sito di accordi il brano com’è (accordi sopra le parole) e incollalo qui: lo converto in accordi trasponibili, con i diagrammi. Resta nel tuo repertorio, per tuo uso personale.</p>
   <textarea class="song-in" id="pa-text" placeholder="Am       F&#10;Parole della canzone&#10;..." spellcheck="false"></textarea>
@@ -189,7 +249,7 @@ edit.el.addEventListener('submit', async e => {
   const v = id => edit.$('#' + id).value.trim();
   if (!v('s-title')) return toast('Serve il titolo');
   let link = v('s-link'); if (link && !/^https?:\/\//.test(link)) link = 'https://' + link;
-  const data = { title: v('s-title'), author: v('s-author'), key: v('s-key'), capo: +v('s-capo') || 0, status: eStatus, body: edit.$('#s-body').value.replace(/\s+$/, ''), link };
+  const data = { title: v('s-title'), author: v('s-author'), genre: v('s-genre'), img: edit.$('#s-img').value || null, key: v('s-key'), capo: +v('s-capo') || 0, status: eStatus, body: edit.$('#s-body').value.replace(/\s+$/, ''), link };
   edit.close();
   try { eId ? await updateAccordoDoc(eId, data) : await addAccordoDoc({ ...data, plays: 0 }); toast('Salvato'); } catch (err) { console.error(err); toast('Errore nel salvataggio. Riprova.'); }
 });
@@ -248,17 +308,20 @@ function renderAscolta() {
   const areas = {}; vids.forEach(v => { const [a] = catParts(v); areas[a] = (areas[a] || 0) + 1; });
   const subs = {}; vids.filter(v => catParts(v)[0] === vidArea).forEach(v => { const [, sc] = catParts(v); if (sc) subs[sc] = (subs[sc] || 0) + 1; });
   const ql = vidQ.toLowerCase();
-  const shown = vids.filter(v => (!vidArea || catParts(v)[0] === vidArea) && (!vidSub || catParts(v)[1] === vidSub) && (!ql || `${v.title} ${v.author || ''}`.toLowerCase().includes(ql)));
+  const nSeen = vids.filter(v => v.seen).length;
+  const shown = vids.filter(v => (vidSeen === 'all' || (vidSeen === 'seen' ? v.seen : !v.seen)) && (!vidArea || catParts(v)[0] === vidArea) && (!vidSub || catParts(v)[1] === vidSub) && (!ql || `${v.title} ${v.author || ''}`.toLowerCase().includes(ql)));
   const page = shown.slice(0, vidLimit);
   $('p-ascolta').innerHTML = `
     <section class="gz head c3"><div><span class="big">${pods.length}</span><span class="lbl">podcast</span></div><button type="button" class="pbtn soft sm" id="mu-addpod">${icon('plus', 'sm')} Podcast</button></section>
     ${pods.length ? `<div class="pgrid">${pods.map(p => `<button type="button" class="pod" data-pod="${esc(p._docId)}"><span class="art">${p.img && safeUrl(p.img) ? `<img src="${esc(safeUrl(p.img))}" alt="" loading="lazy"/>` : `<b>${esc((p.title || '?')[0])}</b>`}</span><span class="nm">${esc(p.title)}</span></button>`).join('')}</div>`
       : '<div class="emptyx">Aggiungi i tuoi podcast: cerco io copertina ed episodi.</div>'}
     <section class="gz head c2"><div><span class="big">${vids.length}</span><span class="lbl">video</span></div><button type="button" class="pbtn soft sm" id="mu-addvid">${icon('plus', 'sm')} Video</button></section>
+    <div class="gchips">${[['todo', 'Da vedere', vids.length - nSeen], ['seen', 'Visti', nSeen], ['all', 'Tutti', vids.length]].map(([k, l, n]) => `<button type="button" class="gchip" data-vseen="${k}" aria-pressed="${vidSeen === k}">${l} <small>${n}</small></button>`).join('')}</div>
     <div class="search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input class="input" type="search" id="mu-vq" value="${esc(vidQ)}" placeholder="Cerca tra i video" autocomplete="off" aria-label="Cerca tra i video"/></div>
     ${Object.keys(areas).length > 1 ? `<div class="gchips"><button type="button" class="gchip" data-va="" aria-pressed="${!vidArea}">Tutti</button>${Object.entries(areas).sort((a, b) => a[0].localeCompare(b[0], 'it')).map(([a, n]) => `<button type="button" class="gchip" data-va="${esc(a)}" aria-pressed="${vidArea === a}">${esc(a)} <small>${n}</small></button>`).join('')}</div>` : ''}
     ${Object.keys(subs).length ? `<div class="gchips"><button type="button" class="gchip" data-vs2="" aria-pressed="${!vidSub}">Tutte</button>${Object.entries(subs).sort((a, b) => a[0].localeCompare(b[0], 'it')).map(([a, n]) => `<button type="button" class="gchip" data-vs2="${esc(a)}" aria-pressed="${vidSub === a}">${esc(a)} <small>${n}</small></button>`).join('')}</div>` : ''}
-    ${page.length ? `<div class="vgrid">${page.map(v => { const id = ytId(v.link); return `<a class="vid" href="${esc(safeUrl(v.link) || '#')}" target="_blank" rel="noopener" data-vedit="${esc(v._docId)}"><span class="th">${id ? `<img src="https://img.youtube.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy"/>` : '▶'}</span><span class="nm">${esc(v.title)}</span>${v.author || v.duration ? `<span class="who">${esc([v.author, v.duration].filter(Boolean).join(' · '))}</span>` : ''}</a>`; }).join('')}</div>${shown.length > page.length ? `<button type="button" class="pbtn soft block" id="mu-more">Mostra altri (${shown.length - page.length})</button>` : ''}` : '<div class="emptyx">Nessun video con questi filtri.</div>'}
+    ${page.length ? `<div class="vgrid">${page.map(v => { const id = ytId(v.link); return `<div class="vidw${v.seen ? ' seen' : ''}"><a class="vid" href="${esc(safeUrl(v.link) || '#')}" target="_blank" rel="noopener" data-vedit="${esc(v._docId)}" data-open="${esc(v._docId)}"><span class="th">${id ? `<img src="https://img.youtube.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy"/>` : '▶'}</span><span class="nm">${esc(v.title)}</span>${v.author || v.duration ? `<span class="who">${esc([v.author, v.duration].filter(Boolean).join(' · '))}</span>` : ''}</a>
+      <button type="button" class="seenbtn" data-seen="${esc(v._docId)}" aria-pressed="${!!v.seen}" aria-label="${v.seen ? 'Rimetti tra quelli da vedere' : 'Segna come visto'}">✓</button></div>`; }).join('')}</div>${shown.length > page.length ? `<button type="button" class="pbtn soft block" id="mu-more">Mostra altri (${shown.length - page.length})</button>` : ''}` : '<div class="emptyx">Nessun video con questi filtri.</div>'}
     <div class="d-sec" style="margin:0">Playlist</div>
     <div class="rows">${[...DEFAULT_PL.map(p => ({ ...p, link: `https://open.spotify.com/playlist/${p.id}`, def: true })), ...pls.map(p => ({ title: p.title, sub: p.category || 'Playlist', link: p.link, _docId: p._docId }))].map((p, i) => `
       <a class="gz rw ${tint(i + 1)}" href="${esc(safeUrl(p.link) || '#')}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="th"><b>♪</b></span><span class="grow"><span class="nm">${esc(p.title)}</span><span class="gmt">${esc(p.sub || '')}</span></span><span class="gpill">Apri</span></a>`).join('')}</div>
@@ -270,12 +333,30 @@ $('p-ascolta').addEventListener('click', e => {
   const va = t.closest('[data-va]'); if (va) { vidArea = va.dataset.va; vidSub = ''; vidLimit = 24; return renderAscolta(); }
   const vs2 = t.closest('[data-vs2]'); if (vs2) { vidSub = vs2.dataset.vs2; vidLimit = 24; return renderAscolta(); }
   if (t.closest('#mu-more')) { vidLimit += 24; return renderAscolta(); }
+  const vsn = t.closest('[data-vseen]'); if (vsn) { vidSeen = vsn.dataset.vseen; vidLimit = 24; return renderAscolta(); }
+  const sb = t.closest('[data-seen]'); if (sb) { const m = media.find(x => x._docId === sb.dataset.seen); if (m) updateMediaDoc(m._docId, { seen: !m.seen, seenAt: m.seen ? null : Date.now() }); return; }
+  const op = t.closest('[data-open]'); if (op) { const m = media.find(x => x._docId === op.dataset.open); if (m && !m.seen) pendingSeen = m._docId; }
   const pod = t.closest('[data-pod]'); if (pod) return openPod(pod.dataset.pod);
   if (t.closest('#mu-addpod')) return openAddPod();
   if (t.closest('#mu-addvid')) return openAddLink('video');
   if (t.closest('#mu-addpl')) return openAddLink('playlist');
 });
 $('p-ascolta').addEventListener('contextmenu', e => { const v = e.target.closest('[data-vedit]'); if (v) { e.preventDefault(); openEditLink(v.dataset.vedit); } });
+// Aperto un video e tornati nell'app: chiede se l'hai visto, per spostarlo tra i visti
+let pendingSeen = null;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden || !pendingSeen) return;
+  const m = media.find(x => x._docId === pendingSeen); pendingSeen = null;
+  if (!m || m.seen) return;
+  const bar = document.createElement('div');
+  bar.className = 'seen-ask';
+  bar.innerHTML = `<span>Hai visto «${esc((m.title || '').slice(0, 40))}»?</span><button type="button" data-y>Sì, visto</button><button type="button" data-n aria-label="No">✕</button>`;
+  document.body.append(bar);
+  const end = () => bar.remove();
+  bar.querySelector('[data-y]').addEventListener('click', () => { updateMediaDoc(m._docId, { seen: true, seenAt: Date.now() }); toast('Spostato tra i visti'); end(); });
+  bar.querySelector('[data-n]').addEventListener('click', end);
+  setTimeout(end, 12000);
+});
 let pressT = 0;
 $('p-ascolta').addEventListener('touchstart', e => { const v = e.target.closest('[data-vedit]'); if (v) pressT = setTimeout(() => openEditLink(v.dataset.vedit), 650); }, { passive: true });
 ['touchend', 'touchmove', 'touchcancel'].forEach(ev => $('p-ascolta').addEventListener(ev, () => clearTimeout(pressT), { passive: true }));

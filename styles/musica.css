@@ -71,3 +71,15 @@ body.has-player .zen-main { padding-bottom: calc(var(--space-6) + 96px); }
 textarea.song-in { width: 100%; font: 16px/1.5 ui-monospace, Menlo, monospace; min-height: 220px; }
 
 .vid .who { font-size: .6875rem; color: var(--muted); padding: 0 var(--space-3) var(--space-3); margin-top: -6px; }
+
+/* Video visti */
+.vidw { position: relative; min-width: 0; }
+.vidw .vid { height: 100%; transition: opacity .2s; }
+.vidw.seen .vid { opacity: .5; }
+.seenbtn { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border-radius: 50%; border: 0; cursor: pointer; font-size: 16px; line-height: 1; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--card) 85%, transparent); color: var(--muted); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.seenbtn[aria-pressed="true"] { background: var(--success, #4FA36C); color: #fff; }
+.seen-ask { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 9000; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px;
+  background: var(--text); color: var(--bg); box-shadow: 0 8px 28px rgba(0,0,0,.3); font-size: var(--fs-sm); }
+.seen-ask span { flex: 1; min-width: 0; } .seen-ask button { border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; background: var(--bg); color: var(--text); }
+.seen-ask button[data-n] { background: none; color: inherit; padding: 8px; opacity: .7; }
