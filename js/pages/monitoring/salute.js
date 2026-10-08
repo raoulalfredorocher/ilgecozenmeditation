@@ -15,6 +15,7 @@ import { escapeHtml as esc } from '../../core/dom.js';
 import { seriesChart, bindChartReadouts, dkey, it } from '../../core/salute-charts.js';
 import { csvFile, deliver } from '../alimentazione/files.js';
 import { INFO } from './esami-info.js';
+import { openVault, watch as watchPdf, count as pdfCount } from './esami-pdf.js';
 
 const root = document.getElementById('sl-root');
 let data = { pressione: {}, glicemia: {}, esami: {} };
@@ -231,7 +232,7 @@ function labsCard() {
       <p><span class="gz-luce l-grigio"></span>Grigio: un solo esame nel riferimento: serve il secondo.</p>
       <p class="s">Il riferimento è quello scritto sul referto del laboratorio. Indicazioni generali, non una diagnosi.</p></details>
     <div class="gz-sec" id="sl-labs">${labsList()}</div>
-    <div class="gz-add"><button type="button" class="pri" data-add="esami">＋ Valore a mano</button></div>
+    <div class="gz-add"><button type="button" class="pri" data-add="esami">＋ Valore a mano</button><button type="button" data-vault>Referti PDF${pdfCount() ? ` (${pdfCount()})` : ''}</button></div>
     <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
 }
 
@@ -304,11 +305,12 @@ const exporters = {
     return csvOf([['Data', 'Ora', 'mg/dL', 'Quando'], ...L.map(x => [x.d, x.ora || '', x.v, CTX[x.ctx] || ''])], `glicemia-${stamp()}.csv`); },
 };
 const moreSheet = createSheet({ title: 'Salute', body: `<div class="list">
+  <button type="button" class="list-row" data-vault2><span class="grow">Referti PDF degli esami</span></button>
   <button type="button" class="list-row" data-exp="esami"><span class="grow">Esporta gli esami del sangue (CSV)</span></button>
   <button type="button" class="list-row" data-exp="pressione"><span class="grow">Esporta la pressione (CSV)</span></button>
   <button type="button" class="list-row" data-exp="glicemia"><span class="grow">Esporta la glicemia (CSV)</span></button></div>` });
 document.getElementById('sl-more')?.addEventListener('click', () => moreSheet.open());
-moreSheet.el.addEventListener('click', e => { const b = e.target.closest('[data-exp]'); if (b) { moreSheet.close(); setTimeout(exporters[b.dataset.exp], 220); } });
+moreSheet.el.addEventListener('click', e => { if (e.target.closest('[data-vault2]')) { moreSheet.close(); return setTimeout(openVault, 220); } const b = e.target.closest('[data-exp]'); if (b) { moreSheet.close(); setTimeout(exporters[b.dataset.exp], 220); } });
 
 let armed = null;
 root.addEventListener('click', async e => {
@@ -318,6 +320,7 @@ root.addEventListener('click', async e => {
   if (gt) { tab = gt.dataset.gotab; q = gt.dataset.go || ''; history.replaceState(null, '', '#' + tab); render(); return scrollTo({ top: 0 }); }
   const tb = e.target.closest('[data-tab]');
   if (tb) { tab = tb.dataset.tab; history.replaceState(null, '', '#' + tab); render(); return scrollTo({ top: 0 }); }
+  if (e.target.closest('[data-vault]')) return openVault();
   const add = e.target.closest('[data-add]');
   if (add) return openForm(add.dataset.add);
   const del = e.target.closest('[data-del]');
@@ -333,5 +336,6 @@ bindChartReadouts(root);
 render();
 waitForUser().then(() => {
   ref = doc(db, 'users', auth.currentUser.uid, 'direction', 'misure_salute');
+  watchPdf(() => { if (tab === 'esami') render(); });
   onSnapshot(ref, snap => { const d = snap.exists() ? snap.data() : {}; data = { pressione: d.pressione || {}, glicemia: d.glicemia || {}, esami: d.esami || {} }; render(); }, err => console.warn('misure salute', err));
 });

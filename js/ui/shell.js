@@ -24,6 +24,7 @@ import { SECTION_GROUPS } from './sections.js';
 import { waitForUser, confirmAndSignOut } from '../core/auth-guard.js';
 import { escapeHtml, safeUrl } from '../core/dom.js';
 import { openAssistant } from './assistant-sheet.js';
+import './dl-gate.js';
 import { waitForPendingWrites } from '../core/firestore.js';
 import { db } from '../core/firebase.js';
 // Tiene la barra in basso attaccata al fondo dello schermo (vedi footer-guard.js)
@@ -220,6 +221,13 @@ function buildProfileSheet() {
       </div>
     </div>
     <div class="zen-section" style="margin-bottom:var(--space-6)">
+      <div class="zen-eyebrow">Sicurezza</div>
+      <div class="list"><button type="button" class="list-row" id="zen-pin-open">
+        <span class="dot-icon sakura">${icon('lock')}</span>
+        <span class="grow">PIN di download<span class="zen-muted" id="zen-pin-sub" style="display:block;font-size:var(--fs-xs)">Chiesto a ogni scarico di file</span></span>
+        ${icon('back', 'sm chev')}</button></div>
+    </div>
+    <div class="zen-section" style="margin-bottom:var(--space-6)">
       <div class="zen-eyebrow">Dati</div>
       <div class="list"><button type="button" class="list-row" id="zen-backup-open">
         <span class="dot-icon sky">${icon('download')}</span>
@@ -236,6 +244,13 @@ function buildProfileSheet() {
     b.addEventListener('click', () => setTheme(b.dataset.themeChoice)));
   document.getElementById('zen-logout').addEventListener('click', confirmAndSignOut);
   document.getElementById('zen-refresh').addEventListener('click', refreshApp);
+  document.getElementById('zen-pin-open').addEventListener('click', async () => {
+    closeSheet('zen-profile');
+    (await import('../core/pin.js')).openPinManager();
+  });
+  document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', async () => {
+    try { const P = await import('../core/pin.js'); await P.pinIsSet(); document.getElementById('zen-pin-sub').textContent = P.pinState().set ? 'Impostato · chiesto a ogni scarico' : 'Non impostato · lo creerai al primo scarico'; } catch { /* ok */ }
+  });
   document.getElementById('zen-backup-open').addEventListener('click', async () => {
     closeSheet('zen-profile');
     (await import('./backup-sheet.js')).openBackupSheet();
