@@ -14,6 +14,7 @@
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
+  <link rel="stylesheet" href="styles/obiettivi.css"/>
   <style>
     /* ── Direction: minimalismo giapponese ─────────────────────────────────
        Molto vuoto, linee sottili, un solo accento (sakura) e il blu del geco.
@@ -245,6 +246,12 @@
   <script type="module" src="js/ui/shell.js"></script>
 
   <main class="zen-main dir-main">
+    <div class="segmented ob-tabs" role="group" aria-label="Sezioni di Direzione">
+      <button type="button" data-otab="dir" aria-pressed="true">Direzione</button>
+      <button type="button" data-otab="obj" aria-pressed="false">Obiettivi</button>
+      <button type="button" data-otab="oggi" aria-pressed="false">Oggi</button>
+    </div>
+    <div id="tab-dir" class="dir-main" style="display:flex;flex-direction:column;gap:var(--space-8)">
 
     <!-- ── Barra della vita ── -->
     <section class="life" aria-label="Barra della vita">
@@ -298,7 +305,11 @@
     <div class="dir-footer">
       <a href="https://www.ilgecozen.it" target="_blank" rel="noopener">www.ilgecozen.it</a> · Il Geco Zen
     </div>
+    </div>
+    <div id="tab-obj" hidden></div>
+    <div id="tab-oggi" hidden></div>
   </main>
+  <script type="module" src="js/pages/direzione/main.js"></script>
 
   <!-- ── Foglio di modifica ── -->
   <div class="zen-sheet-overlay" id="edit-overlay">
