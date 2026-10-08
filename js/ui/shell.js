@@ -346,6 +346,11 @@ const WARM_VERSION = 'v9';
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator) || location.hostname === 'localhost') return;
   navigator.serviceWorker.register('/sw.js').catch(() => { /* facoltativo */ });
+  // Aggiornamento del service worker appena aperta la pagina: ricarica una volta per avere file tutti della stessa versione
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadController && performance.now() < 8000 && !sessionStorage.getItem('zen_cc')) { sessionStorage.setItem('zen_cc', '1'); location.reload(); }
+  });
   // Nuova versione pubblicata: ricarica una volta se la pagina è appena stata aperta
   navigator.serviceWorker.addEventListener('message', e => {
     if (e.data?.type === 'zen-warm-done') { try { localStorage.setItem('zen_warm', WARM_VERSION); } catch { /* ok */ } return; }
@@ -355,7 +360,7 @@ function registerServiceWorker() {
       location.reload();
     }
   });
-  addEventListener('pageshow', () => setTimeout(() => sessionStorage.removeItem('zen_reloaded'), 8000));
+  addEventListener('pageshow', () => setTimeout(() => { sessionStorage.removeItem('zen_reloaded'); sessionStorage.removeItem('zen_cc'); }, 8000));
 
   let warmed = null; try { warmed = localStorage.getItem('zen_warm'); } catch { /* ok */ }
   if (warmed !== WARM_VERSION) {

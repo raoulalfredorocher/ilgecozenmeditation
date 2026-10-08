@@ -22,6 +22,9 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
+      # Ogni pubblicazione ha la sua versione: il service worker svuota le copie vecchie e quelle nuove restano coerenti
+      - name: Versione del service worker
+        run: sed -i "s/^const VERSION = .*/const VERSION = 'geco-${GITHUB_SHA:0:8}';/" sw.js
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

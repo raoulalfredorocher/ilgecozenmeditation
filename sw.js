@@ -1,9 +1,9 @@
 /**
  * sw.js — service worker: apertura istantanea delle pagine e uso senza rete.
  *
- * File dell'app (HTML, JS, CSS, immagini): prima la rete, così le pagine sono
- * sempre aggiornate e i moduli sono della stessa versione; se la rete manca o
- * ci mette più di 2,5 secondi si usa la copia sul telefono.
+ * File dell'app (HTML, JS, CSS, immagini): prima la copia sul telefono (istantanea anche con rete
+ * lenta), poi la rete se manca. La VERSION viene riscritta a ogni pubblicazione (vedi il workflow),
+ * quindi dopo un aggiornamento le copie vecchie spariscono e le nuove si scaricano al primo uso.
  * Le librerie con versione nell'indirizzo (Firebase, Leaflet, topojson…) non cambiano
  * mai: dalla cache, altrimenti rete.
  * La configurazione di Firebase (/__/firebase/init.json) segue la regola delle pagine.
@@ -44,19 +44,22 @@ self.addEventListener('fetch', e => {
   // Indirizzi riservati di Firebase: solo la configurazione si tiene in copia
   if (url.pathname.startsWith('/__/') && !url.pathname.startsWith('/__/firebase/init')) return;
 
-  // Prima la rete (file sempre aggiornati e coerenti tra loro: niente mescolanze di versioni vecchie e nuove),
-  // la copia sul telefono solo se la rete manca o risponde in ritardo.
+  // Prima la copia sul telefono (apertura immediata, anche con rete lenta): la versione cambia a ogni pubblicazione
+  // (la scrive in automatico la pubblicazione stessa), quindi le copie sono sempre coerenti tra loro e svuotate a ogni aggiornamento.
+  // Una copia più vecchia di 12 ore si riprova dalla rete (se manca, resta buona quella che c'è).
   e.respondWith((async () => {
     const cache = await caches.open(APP);
     const key = keyOf(url);
     const cached = await cache.match(key);
-    const network = fetch(req).then(async res => {
+    const fresh = async () => {
+      const res = await fetch(req);
       if (res.ok && res.type === 'basic') await cache.put(key, res.clone());
       return res;
-    });
-    if (!cached) return network;
-    e.waitUntil(network.catch(() => {}));
-    return Promise.race([network, new Promise(resolve => setTimeout(() => resolve(cached), 2500))]).catch(() => cached);
+    };
+    if (!cached) return fresh();
+    const age = Date.now() - (Date.parse(cached.headers.get('date') || '') || 0);
+    if (age > 12 * 36e5) return fresh().catch(() => cached);
+    return cached;
   })());
 });
 
