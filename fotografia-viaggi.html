@@ -2290,18 +2290,29 @@
       }
       return first;
     }
-    async function nominatimFind(site) {
-      const q = `${site.name.replace(/\(.*?\)/g, ' ').replace(/[—–]/g, ' ')}, ${NAMES[site.iso]}`;
-      const r = await (await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`)).json();
-      return r[0] ? [+(+r[0].lat).toFixed(5), +(+r[0].lon).toFixed(5)] : null;
+    async function nominatimQuery(q, iso) {
+      const r = await (await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=3&q=${encodeURIComponent(q)}`)).json();
+      for (const x of r) { const pt = [+(+x.lat).toFixed(5), +(+x.lon).toFixed(5)]; if (inCountry(iso, pt[0], pt[1])) return pt; }
+      return null;
     }
+    /** Cerca con il nome intero e poi con i nomi di luogo dentro il titolo (parole con la maiuscola: «Poreč», «Stari Grad»). */
+    async function nominatimFind(site) {
+      const clean = site.name.replace(/\(.*?\)/g, ' ').replace(/[—–]/g, ' ');
+      const places = (clean.match(/\p{Lu}[\p{L}'’-]*(?:\s+\p{Lu}[\p{L}'’-]*)*/gu) || []).filter(w => w.length > 3 && !/^(Centro|Città|Paesaggio|Parco|Basilica|Complesso|Siti|Sito|Opere|Foresta|Foreste|Chiese|Chiesa|Palazzo|Castello|Tomba|Tumuli)\b/.test(w));
+      for (const q of [clean, ...places]) {
+        const pt = await nominatimQuery(`${q}, ${NAMES[site.iso]}`, site.iso);
+        if (pt) return pt;
+        await new Promise(r => setTimeout(r, 1100));          // Nominatim: al massimo una richiesta al secondo
+      }
+      return null;
+    }
+    const triedSites = new Set();
     async function resolveSite(id) {
       const site = SITE[id]; if (!site) return;
       let pt = null, src = 'wd';
       try { pt = await wikidataFind(site); } catch (e) { console.warn('wikidata', e); }
       if (!pt) { src = 'osm'; try { pt = await nominatimFind(site); } catch (e) { console.warn('nominatim', e); } }
-      if (!pt) { src = 'paese'; const c = pointOf(site.iso); pt = c ? [c.lat ?? c[0], c.lng ?? c[1]] : null; }
-      if (!pt) return;
+      if (!pt) return;                                          // meglio nessun pallino che uno nel posto sbagliato
       UC[id] = [...pt, src];
       try { await fsetDoc(ucRef(), { c: { [id]: UC[id] } }, { merge: true }); } catch (e) { console.warn('unesco coords salvataggio', e); }
     }
@@ -2318,7 +2329,7 @@
       want.forEach(id => {
         const c = UC[id], site = SITE[id];
         if (!site) return;
-        if (!c) { if (!noQueue && !resolving.has(id)) { resolving.add(id); queue.push(id); drain(); } return; }
+        if (!c || c[2] === 'paese') { if (!noQueue && !resolving.has(id) && !triedSites.has(id)) { triedSites.add(id); resolving.add(id); queue.push(id); drain(); } return; }
         if (dots[id]) return;
         const m = L.circleMarker([c[0], c[1]], { pane: 'unesco', radius: 6.5, color: '#ffffff', weight: 2, fillColor: '#E4749A', fillOpacity: 1 });
         m.bindTooltip(`${esc(site.name)} · ${esc(NAMES[site.iso])}`, { direction: 'top', offset: [0, -6], className: 'vg-tip', opacity: 1 });
