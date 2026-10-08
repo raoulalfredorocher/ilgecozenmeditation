@@ -50,10 +50,52 @@ async function viaWiki(q) {
     year: '', genre: '', platforms: [], desc: p.description || '',
   }));
 }
+// ─── Senza chiave: Wikidata (titolo, console, genere, anno) + Wikipedia (copertina) ───
+const WD = 'https://www.wikidata.org/w/api.php';
+const GAME_TYPES = new Set(['Q7889', 'Q15840545', 'Q1066519', 'Q1415040', 'Q10676069', 'Q131436', 'Q16070115', 'Q116741350']);
+const GENRE_MAP = [[/ruolo|rpg/i, 'GDR'], [/sparatutto|shooter/i, 'Sparatutto'], [/platform/i, 'Platform'], [/avventura|adventure/i, 'Avventura'], [/azione|action/i, 'Azione'], [/rompicapo|puzzle/i, 'Rompicapo'],
+  [/corse|racing|guida/i, 'Corse'], [/sport/i, 'Sport'], [/simulazione|simulation|gestionale/i, 'Simulazione'], [/strategia|strategy/i, 'Strategia'], [/picchiaduro|fighting|beat/i, 'Picchiaduro'], [/musical|ritmo|rhythm/i, 'Musicale'], [/survival|horror/i, 'Horror'], [/sandbox|open world/i, 'Avventura']];
+const wd = async params => (await fetch(`${WD}?${new URLSearchParams({ ...params, format: 'json', origin: '*' })}`)).json();
+const claimIds = (c, p) => (c?.[p] || []).map(x => x.mainsnak?.datavalue?.value?.id).filter(Boolean);
+
+async function viaWikidata(q) {
+  const found = await Promise.all(['it', 'en'].map(l => wd({ action: 'wbsearchentities', search: q, language: l, uselang: l, type: 'item', limit: 10 }).then(r => r.search || []).catch(() => [])));
+  const ids = [...new Set(found.flat().map(x => x.id))].slice(0, 20);
+  if (!ids.length) return [];
+  const e = (await wd({ action: 'wbgetentities', ids: ids.join('|'), props: 'claims|labels|sitelinks', languages: 'it|en' })).entities || {};
+  const games = ids.filter(id => { const c = e[id]?.claims; return claimIds(c, 'P31').some(t => GAME_TYPES.has(t)) || (c?.P400 && c?.P577); }).slice(0, 8);
+  if (!games.length) return [];
+  const refs = [...new Set(games.flatMap(id => [...claimIds(e[id].claims, 'P400'), ...claimIds(e[id].claims, 'P136')]))];
+  const lab = refs.length ? (await wd({ action: 'wbgetentities', ids: refs.slice(0, 50).join('|'), props: 'labels', languages: 'it|en' })).entities || {} : {};
+  const nameOf = id => lab[id]?.labels?.it?.value || lab[id]?.labels?.en?.value || '';
+  const hits = games.map(id => {
+    const ent = e[id], c = ent.claims;
+    const plats = platformsFrom(claimIds(c, 'P400').map(nameOf));
+    const g = claimIds(c, 'P136').map(nameOf).map(n => GENRE_MAP.find(([re]) => re.test(n))?.[1]).find(Boolean) || '';
+    const time = c.P577?.[0]?.mainsnak?.datavalue?.value?.time || '';
+    return { src: 'wd', id, title: ent.labels?.it?.value || ent.labels?.en?.value || '', img: '', year: (time.match(/\d{4}/) || [''])[0], genre: g, platforms: plats, desc: '',
+      _wiki: { en: ent.sitelinks?.enwiki?.title, it: ent.sitelinks?.itwiki?.title } };
+  }).filter(h => h.title);
+  // Copertina: l'immagine principale della pagina Wikipedia (inglese per prima: di solito è la copertina), poi l'italiana
+  for (const lang of ['en', 'it']) {
+    const todo = hits.filter(h => !h.img && h._wiki[lang]);
+    if (!todo.length) continue;
+    try {
+      const r = await (await fetch(`https://${lang}.wikipedia.org/w/api.php?${new URLSearchParams({ action: 'query', prop: 'pageimages', piprop: 'thumbnail', pithumbsize: 500, titles: todo.map(h => h._wiki[lang]).join('|'), redirects: 1, format: 'json', origin: '*' })}`)).json();
+      const pages = Object.values(r.query?.pages || {});
+      const back = {}; (r.query?.redirects || []).forEach(x => { back[x.to] = x.from; });
+      todo.forEach(h => { const t = h._wiki[lang]; const pg = pages.find(p => p.title === t || back[p.title] === t); if (pg?.thumbnail?.source) h.img = pg.thumbnail.source; });
+    } catch { /* senza copertina */ }
+  }
+  return hits.map(({ _wiki, ...h }) => h);
+}
+
 export async function searchGames(q) {
   q = String(q || '').trim();
   if (q.length < 2) return [];
-  return key ? viaRawg(q) : viaWiki(q);
+  if (key) return viaRawg(q);
+  try { const r = await viaWikidata(q); if (r.length) return r; } catch (e) { console.warn('wikidata giochi', e); }
+  return viaWiki(q);
 }
 /** Completa con descrizione (RAWG ha un secondo passaggio). */
 export async function detailsGame(hit) {
