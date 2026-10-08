@@ -4,7 +4,7 @@
  * Lettura una tantum (non in tempo reale): le pagine si ridisegnano quando si ricaricano.
  */
 import { db, auth, loadSessions } from '../../core/db.js';
-import { doc, getDoc, getDocs, collection } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { doc, getDoc as _getDoc, getDocs as _getDocs, getDocFromCache, getDocsFromCache, collection } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { unpackEs } from '../allenamento/state.js';
 import { mergeManual } from '../../core/salute-merge.js';
 
@@ -14,8 +14,14 @@ export const addDays = (k, n) => { const d = pk(k); d.setDate(d.getDate() + n); 
 
 const safe = async (fn, fallback) => { try { return await fn(); } catch (e) { console.warn('dati', e); return fallback; } };
 
-export async function loadAll() {
+/**
+ * Carica tutto. Con { cache: true } legge dalla copia già sul telefono (istantaneo, se c'è) e solo per ciò che manca
+ * va in rete: la pagina si disegna subito, poi si richiama loadAll() senza opzioni per i dati freschi.
+ */
+export async function loadAll({ cache = false } = {}) {
   const uid = auth.currentUser.uid;
+  const getDoc = cache ? ref => getDocFromCache(ref).catch(() => _getDoc(ref)) : _getDoc;
+  const getDocs = cache ? ref => getDocsFromCache(ref).then(s => (s.empty ? _getDocs(ref) : s)).catch(() => _getDocs(ref)) : _getDocs;
   const userDoc = (...p) => doc(db, 'users', uid, ...p);
   const [salute, workouts, sessions, diary, umore, storici, misure, manuale] = await Promise.all([
     safe(() => getDoc(userDoc('direction', 'salute_giorni')), null),

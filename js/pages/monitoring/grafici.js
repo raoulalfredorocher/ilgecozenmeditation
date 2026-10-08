@@ -80,4 +80,7 @@ root.addEventListener('click', e => {
 bindChartReadouts(root);
 watchHealth(render);
 render();
-waitForUser().then(async () => { ctx = await loadAll(); render(); });
+waitForUser().then(async () => {
+  ctx = await loadAll({ cache: true }); render();        // subito dalla copia sul telefono
+  ctx = await loadAll(); render();                        // poi i dati freschi
+});
