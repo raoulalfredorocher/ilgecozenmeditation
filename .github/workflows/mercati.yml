@@ -1,0 +1,35 @@
+# Aggiorna i prezzi di azioni ed ETF (pagina Finanza) ogni 30 minuti nei giorni di borsa, gratis.
+# Scarica i prezzi pubblici da Yahoo Finance (scripts/fetch_quotes.py), li mette in data/mercati.json e ripubblica il sito.
+# Si può lanciare a mano da Actions → "Aggiorna mercati" → Run workflow.
+name: Aggiorna mercati
+
+on:
+  schedule:
+    - cron: '7,37 6-21 * * 1-5'
+  workflow_dispatch:
+
+# Una pubblicazione alla volta (anche con quella del codice)
+concurrency:
+  group: pubblicazione
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  mercati:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/fetch_quotes.py
+      - run: ./scripts/stamp_sw.sh
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 }}
+          projectId: ilgecozen-b2df7
+          channelId: live

@@ -41,6 +41,8 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (url.origin !== location.origin) return;
+  // I prezzi di borsa cambiano di continuo: sempre dalla rete
+  if (url.pathname.startsWith('/data/')) return;
   // Indirizzi riservati di Firebase: solo la configurazione si tiene in copia
   if (url.pathname.startsWith('/__/') && !url.pathname.startsWith('/__/firebase/init')) return;
 

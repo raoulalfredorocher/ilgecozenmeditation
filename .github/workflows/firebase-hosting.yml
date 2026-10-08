@@ -4,6 +4,11 @@
 # Richiede il secret FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 (vedi docs/DEPLOY.md).
 name: Firebase Hosting
 
+# Una pubblicazione alla volta (anche con quella dei prezzi)
+concurrency:
+  group: pubblicazione
+  cancel-in-progress: false
+
 on:
   push:
     branches: [main]
@@ -22,9 +27,14 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
-      # Ogni pubblicazione ha la sua versione: il service worker svuota le copie vecchie e quelle nuove restano coerenti
-      - name: Versione del service worker
-        run: sed -i "s/^const VERSION = .*/const VERSION = 'geco-${GITHUB_SHA:0:8}';/" sw.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # Prezzi freschi dentro al sito (se Yahoo non risponde resta l'ultimo file salvato)
+      - run: python scripts/fetch_quotes.py
+        continue-on-error: true
+      # Versione del service worker = impronta del codice: le copie sul telefono si svuotano solo quando il codice cambia
+      - run: ./scripts/stamp_sw.sh
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

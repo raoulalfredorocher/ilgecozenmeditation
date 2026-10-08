@@ -140,6 +140,19 @@
     .asset-change.neu { color:var(--muted); }
     .chart-wrap { width:100%; height:90px; margin-top:10px; }
     .chart-wrap canvas { width:100% !important; }
+    .asset-card { cursor:pointer; }
+    .q-pill { display:inline-block; margin-top:4px; padding:3px 9px; border-radius:999px; font-size:.7rem; font-weight:700; font-variant-numeric:tabular-nums; }
+    .q-pill.pos { background:rgba(34,168,94,.14); color:#1f9a55; } .q-pill.neg { background:rgba(224,80,112,.14); color:var(--red); } .q-pill.neu { background:var(--surface); color:var(--muted); }
+    .spark { width:100%; height:100%; display:block; }
+    .q-sum { width:100%; display:flex; justify-content:space-between; align-items:baseline; padding:12px 16px; border-radius:16px; margin-bottom:12px; background:var(--surface); font-size:.62rem; letter-spacing:.08em; color:var(--muted); }
+    .q-sum b { font-size:1.35rem; font-weight:300; letter-spacing:-.02em; } .q-sum.pos b { color:#1f9a55; } .q-sum.neg b { color:var(--red); }
+    .q-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+    .q-grid div { display:flex; flex-direction:column; gap:2px; } .q-grid span { font-size:.5rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+    .q-grid b { font-size:.82rem; font-variant-numeric:tabular-nums; } .q-grid b.pos { color:#1f9a55; } .q-grid b.neg { color:var(--red); }
+    .rng { display:flex; align-items:center; gap:8px; margin-top:14px; font-size:.58rem; color:var(--muted); }
+    .rng-bar { flex:1; height:4px; border-radius:2px; background:var(--surface); position:relative; } .rng-bar i { position:absolute; top:-4px; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:var(--primary); border:2px solid var(--card); }
+    .rng-cap, .q-asof { font-size:.5rem; letter-spacing:.08em; color:var(--muted); margin-top:6px; }
+    .q-empty { text-align:center; padding:40px 12px; color:var(--muted); font-size:.78rem; line-height:1.7; }
     .status-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width:100%; }
     .last-updated { font-size:.52rem; color:var(--muted); letter-spacing:.08em; }
     .refresh-btn { background:none; border:1px solid var(--border); border-radius:20px;
@@ -298,11 +311,14 @@
 
   <!-- ═══ SCREEN: ANDAMENTO ═══ -->
   <div class="screen active" id="screen-andamento">
-    <div class="section-title" style="margin-top:6px;">Mercati in tempo reale</div>
+    <div class="section-title" style="margin-top:6px;">Mercati</div>
     <div class="filter-row" id="filter-row">
       <button class="filter-chip active" data-filter="all">Tutti</button>
       <button class="filter-chip" data-filter="azione">Azioni</button>
       <button class="filter-chip" data-filter="etf">ETF</button>
+    </div>
+    <div class="filter-row" id="period-row">
+      <button class="filter-chip active" data-p="day">Oggi</button><button class="filter-chip" data-p="w1">1 sett.</button><button class="filter-chip" data-p="m1">1 mese</button><button class="filter-chip" data-p="m3">3 mesi</button><button class="filter-chip" data-p="ytd">Da inizio anno</button><button class="filter-chip" data-p="y1">1 anno</button>
     </div>
     <div class="status-row">
       <button class="refresh-btn" id="btn-refresh">↻ Aggiorna</button>
@@ -475,16 +491,6 @@
     </div>
   </div>
 
-  <!-- Chart.js lazy loaded -->
-  <script>
-    (function(){
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js';
-      s.onload = function(){ window._chartjsReady = true; document.dispatchEvent(new Event('chartjsready')); };
-      document.head.appendChild(s);
-    })();
-  </script>
-
   <script type="module">
     import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
     import { waitForAuth } from './js/core/db.js';
@@ -520,8 +526,8 @@
 
     /* ══════════════════════════════════════════
        TAB 1 — ANDAMENTO
-       Dati via Yahoo Finance (CORS-friendly v8 endpoint)
-       Fallback a dati demo se la rete blocca il fetch
+       Prezzi veri (Yahoo Finance, ritardo ~15 min): li scarica ogni 30 minuti l'automazione di GitHub
+       (scripts/fetch_quotes.py) e li pubblica in data/mercati.json. Nessun numero inventato.
     ══════════════════════════════════════════ */
     const ASSETS = [
       { ticker:'IBM',    name:'IBM',                          type:'azione' },
@@ -537,170 +543,107 @@
       { ticker:'AGED.L', name:'Aging Population USD',         type:'etf'    },
       { ticker:'VAPX.L', name:'FTSE Dev Asia & Pac Ex Japan', type:'etf'    },
     ];
+    const PERIODS = [['day', 'Oggi'], ['w1', '1 sett.'], ['m1', '1 mese'], ['m3', '3 mesi'], ['ytd', 'Da inizio anno'], ['y1', '1 anno']];
 
-    /* Seed deterministico per demo prezzi realistici */
-    const DEMO_BASE = {
-      'IBM':226,'MSFT':460,'AAPL':215,'GOOGL':170,
-      'IUIT.L':9.8,'ISPY.L':21.5,'HWWD.L':7.6,'CSPX.L':570,
-      'VWRL.L':118,'CXSE':28,'AGED.L':12.4,'VAPX.L':32,
+    let quotes = {}, quotesAt = null, quotesErr = false;
+    let activeFilter = 'all', period = 'day', openTicker = null;
+
+    const fmtPrice = (price, currency) => {
+      try { return new Intl.NumberFormat('it-IT', { style:'currency', currency, minimumFractionDigits:2, maximumFractionDigits:2 }).format(price); }
+      catch { return price.toFixed(2) + ' ' + currency; }
     };
+    const fmtPct = v => v == null ? '—' : `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString('it-IT', { minimumFractionDigits:2, maximumFractionDigits:2 })}%`;
+    const cls = v => v == null ? 'neu' : v > 0 ? 'pos' : v < 0 ? 'neg' : 'neu';
 
-    function demoData(ticker) {
-      const base = DEMO_BASE[ticker] || 100;
-      const spark = [];
-      let p = base * 0.94;
-      for (let i = 0; i < 30; i++) {
-        p = p * (1 + (Math.random() - 0.48) * 0.012);
-        spark.push(+p.toFixed(3));
-      }
-      spark[spark.length - 1] = base;
-      const prev = spark[spark.length - 2];
-      return {
-        price: base, currency: ticker.endsWith('.L') ? 'GBP' : 'USD',
-        changeDay: +((base - prev) / prev * 100).toFixed(2),
-        change7d:  +((base - spark[spark.length - 8]) / spark[spark.length - 8] * 100).toFixed(2),
-        sparkline: spark, demo: true,
-      };
+    /** Linea sottile dell'ultimo periodo, disegnata a mano (niente librerie). */
+    function sparkSvg(series, up) {
+      if (!series || series.length < 2) return '';
+      const w = 300, h = 54, min = Math.min(...series), max = Math.max(...series), r = max - min || 1;
+      const pts = series.map((v, i) => [i / (series.length - 1) * w, h - 4 - (v - min) / r * (h - 8)]);
+      const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
+      const c = up ? '#22a85e' : '#e05070';
+      return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="spark" aria-hidden="true">
+        <path d="${d}L${w} ${h}L0 ${h}Z" fill="${c}" opacity=".10"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
     }
-
-    async function fetchYahoo(ticker) {
-      // Yahoo Finance v8 chart — funziona direttamente nel browser (no proxy) per molti ticker
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1mo&includePrePost=false`;
-      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const j = await r.json();
-      const res = j?.chart?.result?.[0];
-      if (!res) throw new Error('no result');
-      const meta   = res.meta;
-      const closes = (res.indicators?.quote?.[0]?.close || []).filter(v => v != null);
-      if (closes.length < 2) throw new Error('not enough data');
-      const price   = meta.regularMarketPrice ?? closes.at(-1);
-      const prev    = meta.chartPreviousClose  ?? closes.at(-2);
-      const c7start = closes.at(-8) ?? closes[0];
-      return {
-        price,
-        currency: meta.currency ?? 'USD',
-        changeDay: +((price - prev) / prev * 100).toFixed(2),
-        change7d:  +((price - c7start) / c7start * 100).toFixed(2),
-        sparkline: closes.slice(-30),
-        demo: false,
-      };
-    }
-
-    let assetData = {};
-    let activeFilter = 'all';
-    const chartInstances = {};
-
-    function fmtPrice(price, currency) {
-      try {
-        return new Intl.NumberFormat('it-IT', { style:'currency', currency,
-          minimumFractionDigits:2, maximumFractionDigits:2 }).format(price);
-      } catch { return price.toFixed(2) + ' ' + currency; }
-    }
-
-    function buildChart(canvasId, sparkline) {
-      // wait for Chart.js
-      const tryBuild = () => {
-        if (!window.Chart) { setTimeout(tryBuild, 200); return; }
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (chartInstances[canvasId]) { chartInstances[canvasId].destroy(); delete chartInstances[canvasId]; }
-        const isUp = sparkline.at(-1) >= sparkline[0];
-        const color = isUp ? '#22a85e' : '#e05070';
-        const grad = ctx.createLinearGradient(0, 0, 0, 90);
-        grad.addColorStop(0, isUp ? 'rgba(34,168,94,.22)' : 'rgba(224,80,112,.22)');
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        chartInstances[canvasId] = new window.Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: sparkline.map((_, i) => i),
-            datasets: [{ data: sparkline, borderColor: color, borderWidth: 2,
-              pointRadius: 0, fill: true, backgroundColor: grad, tension: 0.3 }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false, animation: false,
-            plugins: { legend: { display:false }, tooltip: { enabled:false } },
-            scales: { x: { display:false }, y: { display:false } }
-          }
-        });
-      };
-      tryBuild();
+    function rangeBar(q) {
+      if (!q.hi52 || q.hi52 === q.lo52) return '';
+      const pos = Math.max(0, Math.min(100, (q.price - q.lo52) / (q.hi52 - q.lo52) * 100));
+      return `<div class="rng"><span>${fmtPrice(q.lo52, q.currency)}</span><div class="rng-bar"><i style="left:${pos}%"></i></div><span>${fmtPrice(q.hi52, q.currency)}</span></div>
+        <div class="rng-cap">Minimo e massimo degli ultimi 12 mesi</div>`;
     }
 
     function renderAssets() {
       const container = document.getElementById('assets-container');
-      const filtered = ASSETS.filter(a => activeFilter === 'all' || a.type === activeFilter);
-      container.innerHTML = '';
-      filtered.forEach(asset => {
-        const d = assetData[asset.ticker];
-        const id = asset.ticker.replace(/\./g, '_');
-        const card = document.createElement('div');
-        card.className = 'asset-card';
-
-        if (!d) {
-          card.innerHTML = `
+      const list = ASSETS.filter(a => activeFilter === 'all' || a.type === activeFilter);
+      if (quotesErr && !Object.keys(quotes).length) {
+        container.innerHTML = `<div class="q-empty">I prezzi non sono ancora disponibili.<br/>Si aggiornano da soli ogni 30 minuti: riprova tra poco.</div>`;
+        return;
+      }
+      // media del periodo scelto sui titoli mostrati
+      const vals = list.map(a => quotes[a.ticker]?.[period]).filter(v => v != null);
+      const avg = vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
+      const plabel = PERIODS.find(p => p[0] === period)[1];
+      container.innerHTML = `
+        <div class="q-sum ${cls(avg)}"><span>${esc(plabel)} · media dei ${list.length} titoli</span><b>${fmtPct(avg)}</b></div>
+        ${list.map(a => {
+          const q = quotes[a.ticker];
+          if (!q) return `<div class="asset-card"><div class="asset-header"><div><span class="asset-name">${esc(a.name)}</span><div class="asset-ticker">${a.ticker}</div></div><div class="asset-right"><div class="asset-price" style="font-size:.8rem;color:var(--muted)">Non disponibile</div></div></div></div>`;
+          const v = q[period], open = openTicker === a.ticker;
+          const up = (q.spark.at(-1) ?? 0) >= (q.spark[0] ?? 0);
+          return `<div class="asset-card${open ? ' open' : ''}" data-t="${a.ticker}">
             <div class="asset-header">
               <div>
-                <span class="asset-name loading-pulse">${esc(asset.name)}</span>
-                <span class="asset-type-badge">${esc(asset.type === 'etf' ? 'ETF' : 'Stock')}</span>
-                <div class="asset-ticker">${asset.ticker}</div>
+                <span class="asset-name">${esc(a.name)}</span><span class="asset-type-badge">${a.type === 'etf' ? 'ETF' : 'Azione'}</span>
+                <div class="asset-ticker">${a.ticker}</div>
               </div>
               <div class="asset-right">
-                <div class="asset-price loading-pulse" style="font-size:.82rem;color:var(--muted);">Caricamento…</div>
+                <div class="asset-price">${fmtPrice(q.price, q.currency)}</div>
+                <div class="q-pill ${cls(v)}">${fmtPct(v)}</div>
               </div>
             </div>
-            <div class="chart-wrap" style="opacity:.3;background:var(--surface);border-radius:8px;"></div>`;
-        } else {
-          const chDayCls = d.changeDay > 0 ? 'pos' : d.changeDay < 0 ? 'neg' : 'neu';
-          const ch7Cls   = d.change7d  > 0 ? 'pos' : d.change7d  < 0 ? 'neg' : 'neu';
-          card.innerHTML = `
-            <div class="asset-header">
-              <div>
-                <span class="asset-name">${esc(asset.name)}</span>
-                <span class="asset-type-badge">${esc(asset.type === 'etf' ? 'ETF' : 'Stock')}</span>
-                <div class="asset-ticker">${asset.ticker}${d.demo ? ' <span style="color:var(--muted);font-size:.46rem;">(demo)</span>' : ''}</div>
-              </div>
-              <div class="asset-right">
-                <div class="asset-price">${fmtPrice(d.price, d.currency)}</div>
-                <div class="asset-change ${chDayCls}">${d.changeDay >= 0 ? '+' : ''}${d.changeDay}% oggi</div>
-                <div class="asset-change ${ch7Cls}" style="font-size:.56rem;">${d.change7d >= 0 ? '+' : ''}${d.change7d}% 7gg</div>
-              </div>
-            </div>
-            <div class="chart-wrap"><canvas id="ch-${id}" height="90"></canvas></div>`;
-        }
-        container.appendChild(card);
-        if (d) buildChart(`ch-${id}`, d.sparkline);
-      });
+            <div class="chart-wrap">${sparkSvg(q.spark, up)}</div>
+            ${open ? `<div class="q-grid">${PERIODS.map(([k, l]) => `<div><span>${esc(l)}</span><b class="${cls(q[k])}">${fmtPct(q[k])}</b></div>`).join('')}</div>${rangeBar(q)}
+              <div class="q-asof">Ultimo prezzo: ${new Date(q.asof).toLocaleString('it-IT', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}</div>` : ''}
+          </div>`;
+        }).join('')}`;
     }
 
     async function loadAllAssets() {
       const label = document.getElementById('last-updated-label');
-      label.textContent = 'Aggiornamento…';
-      document.getElementById('btn-refresh').disabled = true;
-      renderAssets(); // mostra skeleton
-      const jobs = ASSETS.map(async a => {
-        try {
-          const d = await fetchYahoo(a.ticker);
-          assetData[a.ticker] = d;
-        } catch {
-          // fallback demo se Yahoo è bloccato (CORS mobile o rete)
-          assetData[a.ticker] = demoData(a.ticker);
-        }
-        renderAssets(); // aggiorna card appena arriva
-      });
-      await Promise.allSettled(jobs);
-      const now = new Date();
-      label.textContent = `Aggiornato ${now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
-      document.getElementById('btn-refresh').disabled = false;
+      const btn = document.getElementById('btn-refresh');
+      label.textContent = 'Aggiornamento…'; btn.disabled = true;
+      try {
+        const r = await fetch('data/mercati.json?_=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const j = await r.json();
+        quotes = j.quotes || {}; quotesAt = j.updated ? new Date(j.updated) : null; quotesErr = false;
+      } catch { quotesErr = true; }
+      renderAssets();
+      label.textContent = quotesAt
+        ? `Prezzi di ${quotesAt.toLocaleString('it-IT', { weekday:'short', hour:'2-digit', minute:'2-digit' })} · ritardo ~15 min`
+        : '';
+      btn.disabled = false;
     }
 
     document.getElementById('filter-row').addEventListener('click', e => {
       const chip = e.target.closest('.filter-chip');
       if (!chip) return;
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('#filter-row .filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       activeFilter = chip.dataset.filter;
+      renderAssets();
+    });
+    document.getElementById('period-row').addEventListener('click', e => {
+      const chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+      document.querySelectorAll('#period-row .filter-chip').forEach(c => c.classList.toggle('active', c === chip));
+      period = chip.dataset.p;
+      renderAssets();
+    });
+    document.getElementById('assets-container').addEventListener('click', e => {
+      const c = e.target.closest('.asset-card[data-t]');
+      if (!c) return;
+      openTicker = openTicker === c.dataset.t ? null : c.dataset.t;
       renderAssets();
     });
     document.getElementById('btn-refresh').addEventListener('click', loadAllAssets);
