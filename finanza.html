@@ -130,18 +130,30 @@
     .mp-bc { display:flex; align-items:center; flex-wrap:wrap; gap:4px; min-height:26px; margin-bottom:8px; font-size:.7rem; color:var(--muted); }
     .mp-bc button { border:0; background:none; font:inherit; color:var(--primary); cursor:pointer; padding:2px 4px; }
     .mp-bc b { color:var(--text); font-weight:600; padding:2px 4px; }
-    .tm { position:relative; width:100%; border-radius:14px; overflow:hidden; }
-    .tm-cell { position:absolute; border:0; border-radius:12px; color:#fff; text-align:left; padding:8px 9px; cursor:pointer; overflow:hidden; display:flex; flex-direction:column; gap:1px; justify-content:flex-start;
-      font-family:inherit; line-height:1.2; box-shadow:inset 0 0 0 1px rgba(255,255,255,.18); animation:tm-in .45s cubic-bezier(.2,.8,.2,1) both; transition:filter .15s, transform .15s; }
-    .tm-cell:hover { filter:brightness(1.07); } .tm-cell:active { transform:scale(.985); }
-    .tm-cell.neg { background-image:repeating-linear-gradient(135deg, rgba(0,0,0,.12) 0 6px, transparent 6px 12px); }
-    .tm-n { font-weight:600; letter-spacing:-.01em; text-shadow:0 1px 2px rgba(0,0,0,.25); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-    .tm-v { font-size:.82em; opacity:.95; font-variant-numeric:tabular-nums; font-weight:300; }
-    .tm-p { font-size:.68em; opacity:.8; margin-top:auto; }
-    .tm-go { position:absolute; right:8px; top:4px; font-size:1.3em; opacity:.75; }
-    .tm .tm-cell, .tm .tm-cell span { color:#fff !important; text-shadow:0 1px 3px rgba(0,0,0,.35); }
+    .mp-seg button.move { border-style:dashed; color:#7C5CD8; border-color:#7C5CD8; }
+    .fl-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px; scrollbar-width:thin; }
+    .fl-stage { position:relative; }
+    .fl-stage svg { position:absolute; inset:0; pointer-events:none; }
+    .fl-link { transition:stroke-opacity .25s; }
+    .fl-h { position:absolute; top:8px; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); width:124px; text-align:center; }
+    .fl-node { position:absolute; border:0; border-radius:12px; padding:6px 10px; display:flex; flex-direction:column; justify-content:center; gap:1px; text-align:left; cursor:pointer; font-family:inherit; overflow:hidden;
+      background:color-mix(in srgb, var(--c) 18%, var(--card)); color:var(--text); box-shadow:inset 3px 0 0 var(--c), 0 0 0 1px color-mix(in srgb, var(--c) 28%, var(--border)); transition:opacity .25s, transform .15s, box-shadow .2s; }
+    .fl-node.acc { background:color-mix(in srgb, var(--c) 30%, var(--card)); }
+    .fl-node:active { transform:scale(.97); } .fl-node.dim { opacity:.3; }
+    .fl-node.sel { box-shadow:inset 3px 0 0 var(--c), 0 0 0 2px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 35%, transparent); }
+    .fl-t { font-size:.72rem; font-weight:600; line-height:1.2; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .fl-a { font-size:.66rem; font-variant-numeric:tabular-nums; opacity:.8; }
+    .fl-det { margin-top:14px; border-top:1px solid var(--border); padding-top:12px; }
+    .fl-det-h { display:flex; flex-direction:column; gap:8px; margin-bottom:6px; } .fl-det-h b { font-size:1rem; }
+    .fl-pill { display:inline-block; margin:0 6px 4px 0; padding:3px 10px; border-radius:999px; font-size:.62rem; font-weight:600; background:color-mix(in srgb, var(--c) 16%, var(--card)); color:var(--text); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--c) 40%, transparent); }
+    .pl-bar { display:flex; height:14px; border-radius:7px; overflow:hidden; gap:2px; margin:6px 0 14px; } .pl-bar i { display:block; min-width:3px; }
+    .pl-cat { border-top:1px solid var(--border); padding:4px 0 8px; } .pl-cat:first-child { border-top:0; }
+    .pl-head { display:flex; align-items:center; gap:10px; width:100%; border:0; background:none; font:inherit; color:var(--text); text-align:left; padding:8px 2px 4px; cursor:pointer; }
+    .pl-head .n { flex:1; font-size:.84rem; font-weight:600; } .pl-head .n small { display:block; font-weight:400; font-size:.6rem; color:var(--muted); }
+    .pl-head .a { font-size:.84rem; font-weight:600; font-variant-numeric:tabular-nums; } .pl-head .a.pos { color:#22a85e; } .pl-head .a.neg { color:var(--red); }
+    .pl-fill { height:4px; border-radius:2px; background:var(--surface); margin:0 2px; } .pl-fill i { display:block; height:100%; border-radius:2px; }
+    .pl-ex { margin-top:6px; padding-left:22px; }
     .tm-empty { padding:50px 10px; text-align:center; color:var(--muted); font-size:.78rem; }
-    @keyframes tm-in { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:none; } }
     .mp-list { margin-top:12px; display:flex; flex-direction:column; }
     .mp-row { display:flex; align-items:center; gap:10px; padding:10px 2px; border:0; border-top:1px solid var(--border); background:none; font:inherit; color:var(--text); text-align:left; width:100%; cursor:pointer; }
     .mp-row:first-child { border-top:0; }
@@ -503,7 +515,7 @@
     import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
     import { waitForAuth } from './js/core/db.js';
     import { createSheet } from './js/ui/dialog.js';
-    import { mountTreemap, PALETTE } from './js/pages/finanza/treemap.js';
+    import { mountFlow } from './js/pages/finanza/flow.js';
     import {
       subscribeFinanzaAccounts, addFinanzaAccount, updateFinanzaAccount, deleteFinanzaAccount,
       subscribeFinanzaCategories, addFinanzaCategory, updateFinanzaCategory, deleteFinanzaCategory,
@@ -1000,111 +1012,130 @@
     });
 
     /* ══════════════════════════════════════════
-       MAPPE (treemap): Patrimonio e Planning
-       Ogni rettangolo è grande quanto il suo valore; si tocca per entrare nel dettaglio.
+       MAPPA DEI FLUSSI (Patrimonio) e RIPARTIZIONE (Planning)
     ══════════════════════════════════════════ */
+    const PALETTE = ['#6F9FD8', '#9B86C9', '#7FAE82', '#E0A15A', '#D77A8F', '#5FB3AE', '#C9B458', '#A98B6C', '#8E9AA8', '#D98B6A'];
     const annual = e => monthly(e) * 12;
     const isOut = e => e.tipo !== 'entrata' && e.tipo !== 'giroconto';
     const catName = id => (categories.find(c => c._docId === id) || {}).name || '';
     const accName = id => (accounts.find(a => a._docId === id) || {}).name || '';
-    const GREENS = ['#4FA36C', '#6BB886', '#3E8F5C', '#86C79C', '#5DAE78'], WARMS = ['#D9786A', '#E3935E', '#C9615A', '#E8A87C', '#D4806F'];
     const eur0 = n => '€ ' + Math.round(n).toLocaleString('it-IT');
 
     function openLeaf(e) {
-      const acc = accName(e.accountId), cat = catName(e.catId), isEnt = e.tipo === 'entrata';
+      const isMove = e.tipo === 'giroconto', isEnt = e.tipo === 'entrata';
+      const sign = isEnt ? '+' : isMove ? '' : '−', col = isEnt ? '#22a85e' : isMove ? '#7C5CD8' : 'var(--red)';
       const sh = createSheet({ title: e.title, body: `<div class="mp-det">
-        <div><span>${isEnt ? 'Entrata' : 'Uscita'} al mese</span><b style="color:${isEnt ? '#22a85e' : 'var(--red)'}">${isEnt ? '+' : '−'}${fmtEur(monthly(e))}</b></div>
-        <div><span>All'anno</span><b>${isEnt ? '+' : '−'}${fmtEur(annual(e))}</b></div>
-        <div><span>Conto</span><b style="font-size:.85rem">${esc(acc || '—')}</b></div>
-        <div><span>Categoria</span><b style="font-size:.85rem">${esc(cat || '—')}</b></div></div>
+        <div><span>${isEnt ? 'Entrata' : isMove ? 'Spostamento' : 'Uscita'} al mese</span><b style="color:${col}">${sign}${fmtEur(monthly(e))}</b></div>
+        <div><span>All'anno</span><b>${sign}${fmtEur(annual(e))}</b></div>
+        <div><span>${isMove ? 'Da' : 'Conto'}</span><b style="font-size:.85rem">${esc(accName(e.accountId) || '—')}</b></div>
+        <div><span>${isMove ? 'Verso' : 'Categoria'}</span><b style="font-size:.85rem">${esc(isMove ? accName(e.toAccountId) || '—' : catName(e.catId) || '—')}</b></div></div>
         <button type="button" class="btn-primary" id="lf-edit" style="width:100%">Modifica</button>` });
       sh.$('#lf-edit').addEventListener('click', () => { sh.close(); window.openEditExp(e._docId); });
       sh.open();
     }
-    const crumbs = (path, root) => `<div class="mp-bc">${path.length ? `<button type="button" data-go="-1">${esc(root)}</button>` + path.map((p, i) => ` › ${i === path.length - 1 ? `<b>${esc(p.label)}</b>` : `<button type="button" data-go="${i}">${esc(p.label)}</button>`}`).join('') : `<b>${esc(root)}</b>`}</div>`;
-    const listRows = nodes => `<div class="mp-list">${[...nodes].sort((a, b) => b.value - a.value).map(n => `<button type="button" class="mp-row" data-id="${esc(n.id)}"><span class="mp-dot" style="background:${n.shade != null ? `color-mix(in srgb, ${n.color} ${n.shade}%, var(--card))` : n.color}"></span><span class="n">${esc(n.label)}${n.sub ? `<small>${esc(n.sub)}</small>` : ''}</span><span class="a ${n.kind || ''}">${esc(n.show || eur0(n.value))}</span></button>`).join('')}</div>`;
 
-    /* ── PATRIMONIO ── */
-    let patPath = [], patTm = null, patNodes = [];
-    function accountData() {
-      return accounts.map((a, i) => {
-        const ex = expenses.filter(e => e.accountId === a._docId && e.tipo !== 'giroconto');
-        const ent = ex.filter(e => e.tipo === 'entrata').reduce((s, e) => s + annual(e), 0), out = ex.filter(isOut).reduce((s, e) => s + annual(e), 0);
-        return { a, ex, ent, out, net: ent - out, color: PALETTE[i % PALETTE.length] };
+    /* ── PATRIMONIO: diagramma dei flussi ── */
+    const patState = { per: 'year', sel: null };
+    let patFlow = null, patModel = null;
+    function buildFlow() {
+      const k = patState.per === 'year' ? 12 : 1, v = e => monthly(e) * k;
+      const accs = accounts.map((a, i) => ({ id: 'a:' + a._docId, label: a.name, color: PALETTE[i % PALETTE.length], _acc: a._docId }));
+      const orphan = expenses.some(e => !e.accountId && e.tipo !== 'giroconto');
+      if (orphan) accs.push({ id: 'a:none', label: 'Senza conto', color: '#8E9AA8', _acc: '' });
+      const accId = id => (id ? 'a:' + id : 'a:none');
+      const ins = expenses.filter(e => e.tipo === 'entrata'), outs = expenses.filter(isOut), moves = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
+      // entrate: una per voce (se sono tante, per categoria)
+      const byCatIn = ins.length > 8;
+      const incMap = {};
+      ins.forEach(e => { const id = byCatIn ? 'i:' + e.catId : 'i:' + e._docId; (incMap[id] ||= { id, label: byCatIn ? (catName(e.catId) || 'Entrate') : e.title, value: 0, color: '#4FA36C', exps: [] }); incMap[id].value += v(e); incMap[id].exps.push(e); });
+      const outMap = {};
+      outs.forEach(e => { const id = 'o:' + e.catId; (outMap[id] ||= { id, label: catName(e.catId) || 'Altro', value: 0, color: '#D9786A', exps: [] }); outMap[id].value += v(e); outMap[id].exps.push(e); });
+      const links = [];
+      ins.forEach(e => links.push({ from: byCatIn ? 'i:' + e.catId : 'i:' + e._docId, to: accId(e.accountId), value: v(e), kind: 'in', exps: [e] }));
+      outs.forEach(e => links.push({ from: accId(e.accountId), to: 'o:' + e.catId, value: v(e), kind: 'out', exps: [e] }));
+      moves.forEach(e => links.push({ from: accId(e.accountId), to: accId(e.toAccountId), value: v(e), kind: 'move', exps: [e] }));
+      // colori delle uscite: sfumature di corallo/arancio
+      const WARM = ['#D9786A', '#E3935E', '#C9615A', '#E8A87C', '#D4806F', '#B9584F'];
+      const expenses2 = Object.values(outMap).sort((a, b) => b.value - a.value).map((n, i) => ({ ...n, color: WARM[i % WARM.length] }));
+      const GREEN = ['#4FA36C', '#6BB886', '#3E8F5C', '#86C79C', '#5DAE78'];
+      const incomes2 = Object.values(incMap).sort((a, b) => b.value - a.value).map((n, i) => ({ ...n, color: GREEN[i % GREEN.length] }));
+      return { incomes: incomes2, accounts: accs, expenses: expenses2, links };
+    }
+    function flowDetail(model, sel) {
+      const box = document.getElementById('pat-detail');
+      if (!sel) { box.innerHTML = '<p class="mp-note">Tocca un rettangolo per isolare i suoi flussi: vedi da dove arrivano i soldi e dove vanno. Tocca di nuovo o sullo sfondo per tornare alla vista completa. Il diagramma si fa scorrere con il dito.</p>'; return; }
+      const node = [...model.incomes, ...model.accounts, ...model.expenses].find(n => n.id === sel); if (!node) { box.innerHTML = ''; return; }
+      const rows = [];
+      model.links.filter(l => l.from === sel || l.to === sel).forEach(l => {
+        const other = [...model.incomes, ...model.accounts, ...model.expenses].find(n => n.id === (l.from === sel ? l.to : l.from));
+        const incoming = l.to === sel;
+        l.exps.forEach(e => rows.push({ e, k: l.kind, incoming, other: other?.label || '', val: l.exps.length === 1 ? l.value : monthly(e) * (patState.per === 'year' ? 12 : 1) }));
       });
+      const sumIn = rows.filter(r => r.incoming && r.k !== 'move').reduce((s, r) => s + r.val, 0), sumOut = rows.filter(r => !r.incoming && r.k !== 'move').reduce((s, r) => s + r.val, 0);
+      const mvIn = rows.filter(r => r.k === 'move' && r.incoming).reduce((s, r) => s + r.val, 0), mvOut = rows.filter(r => r.k === 'move' && !r.incoming).reduce((s, r) => s + r.val, 0);
+      const pill = (t, v, c) => v ? `<span class="fl-pill" style="--c:${c}">${t} ${eur0(v)}</span>` : '';
+      box.innerHTML = `<div class="fl-det"><div class="fl-det-h"><b>${esc(node.label)}</b><div>${pill('Entra', sumIn, '#4FA36C')}${pill('Esce', sumOut, '#D9786A')}${pill('Spostamenti in', mvIn, '#7C5CD8')}${pill('Spostamenti out', mvOut, '#7C5CD8')}</div></div>
+        <div class="mp-list">${rows.sort((a, b) => b.val - a.val).map((r, i) => `<button type="button" class="mp-row" data-r="${i}"><span class="mp-dot" style="background:${r.k === 'in' ? '#4FA36C' : r.k === 'move' ? '#7C5CD8' : '#D9786A'}"></span>
+          <span class="n">${esc(r.e.title)}<small>${r.k === 'move' ? (r.incoming ? 'da ' : 'verso ') + esc(r.other) : esc(r.incoming ? 'da ' + r.other : 'verso ' + r.other)}</small></span><span class="a ${r.k === 'in' ? 'pos' : r.k === 'move' ? '' : 'neg'}">${r.k === 'in' ? '+' : r.k === 'move' ? '' : '−'}${eur0(r.val)}</span></button>`).join('')}</div></div>`;
+      box._rows = rows.sort((a, b) => b.val - a.val);
     }
     function renderPatrimonio() {
       const root = document.getElementById('pat-root');
-      if (!accounts.length) { root.innerHTML = '<div class="mp-card"><div class="tm-empty">Aggiungi dei conti nel tab <b>Planning</b> per vedere qui la mappa del tuo patrimonio.</div></div>'; patTm = null; return; }
-      const D = accountData(), total = D.reduce((s, d) => s + d.net, 0);
-      const cur = patPath[0] ? D.find(d => d.a._docId === patPath[0].id) : null;
-      if (patPath[0] && !cur) patPath = [];
-      if (!root.querySelector('#pat-tm')) {
-        root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div><div id="pat-bc"></div><div id="pat-tm"></div><div id="pat-list"></div><p class="mp-note" id="pat-note"></p></div>`;
-        patTm = mountTreemap(root.querySelector('#pat-tm'), { onPick: n => pickPat(n), fmt: v => eur0(v) });
-        root.querySelector('#pat-bc').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { patPath = patPath.slice(0, +b.dataset.go + 1); renderPatrimonio(); } });
-        root.querySelector('#pat-list').addEventListener('click', e => { const r = e.target.closest('.mp-row'); if (r) pickPat(patNodes.find(n => n.id === r.dataset.id)); });
+      if (!accounts.length) { root.innerHTML = '<div class="mp-card"><div class="tm-empty">Aggiungi dei conti nel tab <b>Planning</b> per vedere qui la mappa del tuo patrimonio.</div></div>'; patFlow = null; return; }
+      if (!root.querySelector('#pat-fl')) {
+        root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div>
+          <div class="mp-seg" id="pat-seg"><button data-p="month">Al mese</button><button data-p="year">All'anno</button><button data-move class="move">⇄ Registra uno spostamento</button></div>
+          <div id="pat-fl"></div><div id="pat-detail"></div></div>`;
+        patFlow = mountFlow(root.querySelector('#pat-fl'), { fmt: v => eur0(v), onSelect: id => { patState.sel = id; flowDetail(patModel, id); } });
+        root.querySelector('#pat-seg').addEventListener('click', e => {
+          const p = e.target.closest('[data-p]'); if (p) { patState.per = p.dataset.p; renderPatrimonio(); return; }
+          if (e.target.closest('[data-move]')) {
+            if (!categories.length) return alert('Crea prima una categoria (per esempio "Mutuo" o "Spostamenti") nel tab Planning: ti serve per registrare lo spostamento.');
+            window.openNewExp(categories[0]._docId);
+            document.getElementById('tipo-giroconto').checked = true; document.getElementById('giroconto-row').classList.add('visible');
+          }
+        });
+        root.querySelector('#pat-detail').addEventListener('click', e => { const r = e.target.closest('[data-r]'); const box = document.getElementById('pat-detail'); if (r && box._rows) openLeaf(box._rows[+r.dataset.r].e); });
       }
-      const v = cur ? cur.net : total;
-      document.getElementById('pat-hero').innerHTML = `<div class="mp-hero"><span class="l">${cur ? esc(cur.a.name) : 'Patrimonio stimato'}</span><span class="v ${v < 0 ? 'neg' : ''}">${v < 0 ? '−' : ''}${eur0(Math.abs(v))}</span><span class="s">${cur ? `Entrate ${eur0(cur.ent)} · Uscite ${eur0(cur.out)} all'anno` : `Saldo annuo di ${accounts.length} ${accounts.length === 1 ? 'conto' : 'conti'} (entrate − uscite × 12)`}</span></div>`;
-      document.getElementById('pat-bc').innerHTML = crumbs(patPath, 'Patrimonio');
-      if (!cur) {
-        patNodes = D.map(d => ({ id: d.a._docId, label: d.a.name, value: Math.abs(d.net), color: d.color, drill: true, neg: d.net < 0, kind: d.net < 0 ? 'neg' : 'pos', show: (d.net < 0 ? '−' : '') + eur0(Math.abs(d.net)), sub: `${d.ex.length} voci`, _acc: true }));
-        document.getElementById('pat-note').textContent = 'Tocca un conto per vedere da dove entrano e dove escono i soldi. I rettangoli a righe sono conti con saldo negativo.';
-      } else {
-        const ins = cur.ex.filter(e => e.tipo === 'entrata'), outs = cur.ex.filter(isOut);
-        patNodes = [
-          ...ins.map((e, k) => ({ id: e._docId, label: e.title, value: annual(e), color: GREENS[k % GREENS.length], sub: catName(e.catId), kind: 'pos', show: '+' + eur0(annual(e)), _exp: e })),
-          ...outs.map((e, k) => ({ id: e._docId, label: e.title, value: annual(e), color: WARMS[k % WARMS.length], sub: catName(e.catId), kind: 'neg', show: '−' + eur0(annual(e)), _exp: e })),
-        ];
-        document.getElementById('pat-note').textContent = "Verde: entrate. Rosso e arancio: uscite. Tutto calcolato all'anno. Tocca una voce per i dettagli.";
-      }
-      patTm.show(patNodes);
-      document.getElementById('pat-list').innerHTML = listRows(patNodes);
-    }
-    function pickPat(n) {
-      if (!n) return;
-      if (n._acc) { patPath = [{ id: n.id, label: n.label }]; renderPatrimonio(); scrollTo({ top: 0, behavior: 'smooth' }); }
-      else if (n._exp) openLeaf(n._exp);
+      const k = patState.per === 'year' ? 12 : 1;
+      const net = expenses.filter(e => e.tipo !== 'giroconto').reduce((s, e) => s + monthlyNet(e) * 12, 0);
+      document.getElementById('pat-hero').innerHTML = `<div class="mp-hero"><span class="l">Patrimonio stimato</span><span class="v ${net < 0 ? 'neg' : ''}">${net < 0 ? '−' : ''}${eur0(Math.abs(net))}</span><span class="s">Saldo annuo (entrate − uscite × 12) · ${accounts.length} ${accounts.length === 1 ? 'conto' : 'conti'}</span></div>`;
+      root.querySelectorAll('#pat-seg [data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === patState.per));
+      patModel = buildFlow();
+      if (patState.sel && ![...patModel.incomes, ...patModel.accounts, ...patModel.expenses].some(n => n.id === patState.sel)) patState.sel = null;
+      patFlow.show({ ...patModel, selected: patState.sel });
+      flowDetail(patModel, patState.sel);
     }
 
-    /* ── PLANNING: mappa delle spese per categoria ── */
-    const plState = { tipo: 'uscita', per: 'month', cat: null };
-    let plTm = null, plNodes = [];
+    /* ── PLANNING: ripartizione di entrate e uscite ── */
+    const plState = { tipo: 'uscita', per: 'month', open: null };
     function renderPlanMap() {
       const host = document.getElementById('pl-map');
       if (!host) return;
-      if (!host.querySelector('#pl-tm')) {
+      if (!host.querySelector('#pl-body')) {
         host.innerHTML = `<div class="mp-card"><div class="mp-seg" id="pl-seg1"><button data-t="uscita">Uscite</button><button data-t="entrata">Entrate</button></div>
-          <div class="mp-seg" id="pl-seg2"><button data-p="month">Al mese</button><button data-p="year">All'anno</button></div>
-          <div id="pl-hero"></div><div id="pl-bc"></div><div id="pl-tm"></div><div id="pl-list"></div></div>`;
-        plTm = mountTreemap(host.querySelector('#pl-tm'), { onPick: n => pickPlan(n), fmt: v => eur0(v) });
-        host.querySelector('#pl-seg1').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (b) { plState.tipo = b.dataset.t; plState.cat = null; renderPlanMap(); } });
-        host.querySelector('#pl-seg2').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) { plState.per = b.dataset.p; renderPlanMap(); } });
-        host.querySelector('#pl-bc').addEventListener('click', e => { if (e.target.closest('[data-go]')) { plState.cat = null; renderPlanMap(); } });
-        host.querySelector('#pl-list').addEventListener('click', e => { const r = e.target.closest('.mp-row'); if (r) pickPlan(plNodes.find(n => n.id === r.dataset.id)); });
+          <div class="mp-seg" id="pl-seg2"><button data-p="month">Al mese</button><button data-p="year">All'anno</button></div><div id="pl-body"></div></div>`;
+        host.addEventListener('click', e => {
+          const t = e.target.closest('[data-t]'); if (t) { plState.tipo = t.dataset.t; plState.open = null; return renderPlanMap(); }
+          const p = e.target.closest('[data-p]'); if (p) { plState.per = p.dataset.p; return renderPlanMap(); }
+          const c = e.target.closest('[data-cat]'); if (c) { plState.open = plState.open === c.dataset.cat ? null : c.dataset.cat; return renderPlanMap(); }
+          const x = e.target.closest('[data-exp]'); if (x) { const ex = expenses.find(q => q._docId === x.dataset.exp); if (ex) openLeaf(ex); }
+        });
       }
-      const k = plState.per === 'year' ? 12 : 1, ent = plState.tipo === 'entrata';
       host.querySelectorAll('#pl-seg1 button').forEach(b => b.classList.toggle('on', b.dataset.t === plState.tipo));
       host.querySelectorAll('#pl-seg2 button').forEach(b => b.classList.toggle('on', b.dataset.p === plState.per));
-      const all = expenses.filter(e => (ent ? e.tipo === 'entrata' : isOut(e))), totalAll = all.reduce((s, e) => s + monthly(e) * k, 0);
-      const cat = plState.cat ? categories.find(c => c._docId === plState.cat) : null;
-      if (plState.cat && !cat) plState.cat = null;
-      const shown = cat ? all.filter(e => e.catId === cat._docId) : all;
-      const sum = shown.reduce((s, e) => s + monthly(e) * k, 0);
-      document.getElementById('pl-hero').innerHTML = `<div class="mp-hero"><span class="l">${cat ? esc(cat.name) : (ent ? 'Entrate' : 'Uscite')} · ${plState.per === 'year' ? "all'anno" : 'al mese'}</span><span class="v ${ent ? '' : 'neg'}">${ent ? '+' : '−'}${eur0(sum)}</span><span class="s">${shown.length} ${shown.length === 1 ? 'voce' : 'voci'}${cat && totalAll ? ` · ${Math.round(sum / totalAll * 100)}% del totale` : ''}</span></div>`;
-      document.getElementById('pl-bc').innerHTML = crumbs(cat ? [{ label: cat.name }] : [], ent ? 'Tutte le entrate' : 'Tutte le uscite');
-      if (!cat) {
-        plNodes = categories.map((c, i) => ({ id: c._docId, label: c.name, value: all.filter(e => e.catId === c._docId).reduce((s, e) => s + monthly(e) * k, 0), color: PALETTE[i % PALETTE.length], drill: true, kind: ent ? 'pos' : 'neg', _cat: true })).filter(n => n.value > 0);
-        plNodes.forEach(n => { n.show = (ent ? '+' : '−') + eur0(n.value); });
-      } else {
-        const base = PALETTE[categories.indexOf(cat) % PALETTE.length];
-        plNodes = shown.map((e, i) => ({ id: e._docId, label: e.title, value: monthly(e) * k, color: base, shade: Math.max(72, 100 - i * 7), sub: accName(e.accountId), kind: ent ? 'pos' : 'neg', show: (ent ? '+' : '−') + eur0(monthly(e) * k), _exp: e }));
-      }
-      plTm.show(plNodes);
-      document.getElementById('pl-list').innerHTML = plNodes.length ? listRows(plNodes) : `<div class="tm-empty">Nessuna ${ent ? 'entrata' : 'uscita'} registrata.</div>`;
+      const k = plState.per === 'year' ? 12 : 1, ent = plState.tipo === 'entrata';
+      const all = expenses.filter(e => (ent ? e.tipo === 'entrata' : isOut(e)));
+      const total = all.reduce((s, e) => s + monthly(e) * k, 0);
+      const cats = categories.map((c, i) => ({ c, color: PALETTE[i % PALETTE.length], ex: all.filter(e => e.catId === c._docId) })).map(x => ({ ...x, v: x.ex.reduce((s, e) => s + monthly(e) * k, 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+      document.getElementById('pl-body').innerHTML = `<div class="mp-hero"><span class="l">${ent ? 'Entrate' : 'Uscite'} · ${plState.per === 'year' ? "all'anno" : 'al mese'}</span><span class="v ${ent ? '' : 'neg'}">${ent ? '+' : '−'}${eur0(total)}</span><span class="s">${all.length} ${all.length === 1 ? 'voce' : 'voci'} in ${cats.length} ${cats.length === 1 ? 'categoria' : 'categorie'}</span></div>
+        ${cats.length ? `<div class="pl-bar">${cats.map(x => `<i style="flex:${x.v};background:${x.color}" title="${esc(x.c.name)}"></i>`).join('')}</div>
+        <div class="pl-rows">${cats.map(x => `<div class="pl-cat${plState.open === x.c._docId ? ' open' : ''}"><button type="button" class="pl-head" data-cat="${esc(x.c._docId)}"><span class="mp-dot" style="background:${x.color}"></span>
+          <span class="n">${esc(x.c.name)}<small>${Math.round(x.v / total * 100)}% · ${x.ex.length} ${x.ex.length === 1 ? 'voce' : 'voci'}</small></span><span class="a ${ent ? 'pos' : 'neg'}">${ent ? '+' : '−'}${eur0(x.v)}</span></button>
+          <div class="pl-fill"><i style="width:${x.v / total * 100}%;background:${x.color}"></i></div>
+          ${plState.open === x.c._docId ? `<div class="pl-ex">${x.ex.sort((a, b) => b.amount - a.amount).map(e => `<button type="button" class="mp-row" data-exp="${esc(e._docId)}"><span class="n">${esc(e.title)}<small>${esc(accName(e.accountId))}${e.freq === 'annual' ? ' · annuale' : ''}</small></span><span class="a">${eur0(monthly(e) * k)}</span></button>`).join('')}</div>` : ''}</div>`).join('')}</div>`
+          : `<div class="tm-empty">Nessuna ${ent ? 'entrata' : 'uscita'} registrata.</div>`}`;
     }
-    function pickPlan(n) { if (!n) return; if (n._cat) { plState.cat = n.id; renderPlanMap(); } else if (n._exp) openLeaf(n._exp); }
 
     /* ── helpers ── */
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
