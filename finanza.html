@@ -139,6 +139,7 @@
     .tm-v { font-size:.82em; opacity:.95; font-variant-numeric:tabular-nums; font-weight:300; }
     .tm-p { font-size:.68em; opacity:.8; margin-top:auto; }
     .tm-go { position:absolute; right:8px; top:4px; font-size:1.3em; opacity:.75; }
+    .tm .tm-cell, .tm .tm-cell span { color:#fff !important; text-shadow:0 1px 3px rgba(0,0,0,.35); }
     .tm-empty { padding:50px 10px; text-align:center; color:var(--muted); font-size:.78rem; }
     @keyframes tm-in { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:none; } }
     .mp-list { margin-top:12px; display:flex; flex-direction:column; }
@@ -1098,7 +1099,7 @@
         plNodes.forEach(n => { n.show = (ent ? '+' : '−') + eur0(n.value); });
       } else {
         const base = PALETTE[categories.indexOf(cat) % PALETTE.length];
-        plNodes = shown.map((e, i) => ({ id: e._docId, label: e.title, value: monthly(e) * k, color: base, shade: Math.max(55, 100 - i * 9), sub: accName(e.accountId), kind: ent ? 'pos' : 'neg', show: (ent ? '+' : '−') + eur0(monthly(e) * k), _exp: e }));
+        plNodes = shown.map((e, i) => ({ id: e._docId, label: e.title, value: monthly(e) * k, color: base, shade: Math.max(72, 100 - i * 7), sub: accName(e.accountId), kind: ent ? 'pos' : 'neg', show: (ent ? '+' : '−') + eur0(monthly(e) * k), _exp: e }));
       }
       plTm.show(plNodes);
       document.getElementById('pl-list').innerHTML = plNodes.length ? listRows(plNodes) : `<div class="tm-empty">Nessuna ${ent ? 'entrata' : 'uscita'} registrata.</div>`;
