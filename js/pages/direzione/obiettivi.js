@@ -49,7 +49,7 @@ function areaBlock(ar, color) {
 }
 export function render() {
   if (!root) return;
-  if (!S.pillars.length) { root.innerHTML = `<div class="card ob-intro"><h3>Obiettivi</h3><p>Qui metti a terra la tua direzione: ogni pilastro ha dei macro goal, ogni macro goal ha dei micro goal da fare davvero.</p><p class="ob-empty">Non ci sono ancora obiettivi. Importali da Notion e li trovi qui.</p></div>`; return; }
+  if (!S.pillars.length) { root.innerHTML = `<div class="card ob-intro"><h3>Obiettivi</h3><p>Qui metti a terra la tua direzione: ogni pilastro ha dei macro goal, ogni macro goal ha dei micro goal da fare davvero.</p><p class="ob-empty">Non ci sono ancora obiettivi. Importa il file preparato dal tuo Notion.</p><label class="btn btn-primary" style="align-self:flex-start;cursor:pointer">Importa da file<input type="file" accept=".json,application/json" id="ob-file" hidden></label></div>`; return; }
   const all = S.micros, a = avg(all), done = all.filter(m => progress(m).done).length;
   root.innerHTML = `<section class="ob-hero"><div><span class="ob-big">${pct(a)}</span><span class="ob-cap">avanzamento dei micro goal</span></div>
       <div class="ob-hs"><span><b>${S.macros.length}</b> macro</span><span><b>${all.length}</b> micro</span><span><b>${done}</b> fatti</span></div>
@@ -161,8 +161,19 @@ ssheet.el.addEventListener('click', async e => {
   await saveMain(); drawSug(); render();
 });
 
+async function importFile(f) {
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.pillars) || !Array.isArray(d.macros)) throw new Error('formato');
+    S.pillars = d.pillars; S.macros = d.macros;
+    S.micros = (d.micros || []).map(m => { const g = m.auto ? null : guessAuto(m.title); return { id: newId(), ...m, ...(g || {}) }; });
+    await saveMain(); toast('Obiettivi importati'); render();
+  } catch (e) { toast('File non valido'); console.warn(e); }
+}
+
 export function init(el) {
   root = el;
+  root.addEventListener('change', e => { if (e.target.id === 'ob-file' && e.target.files[0]) importFile(e.target.files[0]); });
   root.addEventListener('click', e => {
     const tg = e.target.closest('[data-tg]');
     if (tg) { const k = tg.dataset.tg; open.has(k) ? open.delete(k) : open.add(k); lsSet('zen_ob_open', [...open]); return render(); }
