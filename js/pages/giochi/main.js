@@ -571,7 +571,7 @@ $('gx-add').addEventListener('click', () => { (tab === 'tavolo' || tab === 'idee
 const more = createSheet({ title: 'Giochi', body: `<div class="list">
   <button type="button" class="list-row" id="x-csv">${icon('download', 'sm')}<span class="grow">Esporta in CSV<span class="xsmall zen-muted" style="display:block">videogiochi e giochi da tavolo</span></span></button>
   <button type="button" class="list-row" id="x-key">${icon('settings', 'sm')}<span class="grow">Copertine e dati automatici<span class="xsmall zen-muted" style="display:block" id="x-keystate"></span></span></button></div>` });
-$('gx-more')?.addEventListener('click', () => { more.$('#x-keystate').textContent = getKey() ? 'Chiave RAWG attiva' : 'Senza chiave: cerca su Wikipedia'; more.open(); });
+$('gx-more')?.addEventListener('click', () => { more.$('#x-keystate').textContent = getKey() ? 'Chiave RAWG attiva' : 'Senza chiave: cerco su Wikidata e Wikipedia'; more.open(); });
 more.$('#x-csv').addEventListener('click', () => {
   const d = new Date().toISOString().slice(0, 10);
   downloadCSV([['Nome', 'Piattaforme', 'Genere', 'Anno', 'Formato', 'Stato', 'Voto', 'Ore'], ...games.map(g => [g.name, platformsOf(g).join(' + '), g.genre, g.year, g.format,
@@ -580,7 +580,7 @@ more.$('#x-csv').addEventListener('click', () => {
   more.close();
 });
 const keySheet = createSheet({ title: 'Copertine e dati automatici', body: `<div class="stack" style="display:flex;flex-direction:column;gap:var(--space-3)">
-  <p class="s" style="line-height:1.6;margin:0">Per trovare da solo copertina, anno, genere e piattaforme (anche Switch e Switch 2) serve una chiave gratuita di <b>RAWG</b>: vai su <b>rawg.io/apidocs</b>, registrati, copia la chiave e incollala qui. Senza chiave cerco su Wikipedia.</p>
+  <p class="s" style="line-height:1.6;margin:0">Per trovare da solo copertina, anno, genere e piattaforme (anche Switch e Switch 2) serve una chiave gratuita di <b>RAWG</b>: vai su <b>rawg.io/apidocs</b>, registrati, copia la chiave e incollala qui. Senza chiave cerco su Wikidata e Wikipedia (meno completo).</p>
   <input class="input" id="k-in" placeholder="Chiave RAWG" autocomplete="off" autocapitalize="off"/>
   <button type="button" class="pbtn block" id="k-save">Salva</button><button type="button" class="pbtn soft block" id="k-del">Togli la chiave</button></div>` });
 more.$('#x-key').addEventListener('click', () => { more.close(); keySheet.$('#k-in').value = getKey(); keySheet.open(); });
