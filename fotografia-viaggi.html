@@ -205,6 +205,18 @@
     .vg-mile.on { background: var(--sakura-soft); color: color-mix(in srgb, var(--sakura) 55%, var(--bark)); }
     .vg-conts { display: flex; flex-direction: column; gap: var(--space-4); }
     .vg-tiles2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .vg-sec-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--space-3); }
+    .vg-sec-n { font-size: 1.6rem; font-weight: 300; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--primary); }
+    .vg-sec-n small, .vg-cr-n small { font-size: .55em; font-weight: 400; color: var(--muted); }
+    .vg-cr { border-top: .5px solid var(--border); padding: var(--space-3) 0; }
+    .vg-cr:first-child { border-top: 0; padding-top: 0; }
+    .vg-cr summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 6px var(--space-3); align-items: center; }
+    .vg-cr summary::-webkit-details-marker { display: none; }
+    .vg-cr-t { font-weight: 500; } .vg-cr-n { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .vg-cr .meter-track { grid-column: 1 / -1; height: 6px; display: block; }
+    .vg-cr .meter-fill { display: block; height: 100%; }
+    .vg-cr-l { display: flex; flex-wrap: wrap; gap: 6px; padding-top: var(--space-3); }
+    .vg-chip2 { font-size: var(--fs-xs); padding: 4px 10px; border-radius: 999px; background: var(--surface); }
     .vg-tile2 { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 2px; }
     .vg-tile2 b { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
     .vg-tile2 span { font-size: var(--fs-xs); color: var(--muted); }
@@ -293,6 +305,8 @@
     import { waitForAuth, addBucketItem, updateBucketItem, deleteBucketItem } from './js/core/db.js';
     import { createSheet } from './js/ui/dialog.js';
     import { subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
+    import { db as fdb, auth as fauth } from './js/core/db.js';
+    import { doc as fdoc, getDoc as fgetDoc, setDoc as fsetDoc } from './js/core/firestore.js';
     import { icon } from './js/ui/icons.js';
     import { safeUrl } from './js/core/dom.js';
 
@@ -2014,7 +2028,10 @@
         o = { color: amber, weight: 1.4, opacity: 1, fillColor: amber, fillOpacity: detail ? .22 : .4, dashArray: '4 3' };
       }
       if (sel) { o.color = complete ? rootVar('--text') : pink; o.weight = 2.6; o.dashArray = null; if (!visited && !wish) { o.fillColor = pink; o.fillOpacity = detail ? .3 : .55; } }
-      if (isMarker) {   // cerchio dei paesi minuscoli: appena visibile finché il paese non è visitato o selezionato
+      if (isMarker && visited) {   // paesi minuscoli visitati: pallino verde (diverso dal blu della mappa)
+        const green = rootVar('--success') || '#4F9A6B';
+        o = { ...o, color: '#ffffff', weight: 2, opacity: 1, fillColor: green, fillOpacity: .95 };
+      } else if (isMarker) {   // cerchio dei paesi minuscoli: appena visibile finché il paese non è visitato o selezionato
         if (!visited && !wish && !sel) { o.fillColor = mapVar('--line'); o.fillOpacity = rings ? .22 : 0; o.opacity = rings ? 1 : 0; o.weight = 1; }
         else o.fillOpacity = Math.max(o.fillOpacity, .7);
       }
@@ -2235,38 +2252,144 @@
       });
     }
 
+    // ── Pallini rosa: i siti UNESCO che hai visitato ──────────────────────────
+    // Compaiono quando spunti un sito e spariscono se lo togli. Le coordinate si cercano una volta sola (Wikidata, poi OpenStreetMap)
+    // e restano salvate nel tuo account (direction/unesco_coords).
+    const SITE = {};
+    Object.entries(COUNTRIES).forEach(([, cs]) => Object.entries(cs).forEach(([iso, c]) => c.sites.forEach(x => { SITE[x.id] = { ...x, iso }; })));
+    let UC = {}, ucLoaded = false;
+    const ucRef = () => fdoc(fdb, 'users', fauth.currentUser.uid, 'direction', 'unesco_coords');
+    map.createPane('unesco').style.zIndex = 640;
+    const dotLayer = L.layerGroup().addTo(map), dots = {}, resolving = new Set(), queue = [];
+
+    async function loadUC() {
+      try { const sn = await fgetDoc(ucRef()); UC = sn.exists() ? (sn.data().c || {}) : {}; } catch (e) { console.warn('unesco coords', e); }
+      ucLoaded = true; syncUnescoDots();
+    }
+    const inCountry = (iso, lat, lon) => {
+      const b = (isoLayers[iso] || [])[0]?.getBounds?.();
+      return !b || b.pad(0.5).contains([lat, lon]);
+    };
+    async function wikidataFind(site) {
+      const name = site.name.replace(/\(.*?\)/g, ' ').trim();
+      const tries = [...new Set([name.replace(/[—–]/g, ' '), ...name.split(/\s[—–-]\s/)])].filter(t => t.length > 3);
+      let first = null;
+      for (const q of tries) {
+        const r = await (await fetch(`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(q)}&language=it&uselang=it&type=item&limit=8&format=json&origin=*`)).json();
+        const ids = (r.search || []).map(x => x.id);
+        if (!ids.length) continue;
+        const e = await (await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${ids.join('|')}&props=claims&format=json&origin=*`)).json();
+        for (const id of ids) {
+          const cl = e.entities?.[id]?.claims;
+          const c = cl?.P625?.[0]?.mainsnak?.datavalue?.value;
+          if (!cl?.P757 || !c) continue;               // deve essere un sito UNESCO con coordinate
+          const pt = [+c.latitude.toFixed(5), +c.longitude.toFixed(5)];
+          if (inCountry(site.iso, pt[0], pt[1])) return pt;
+          first ||= pt;
+        }
+      }
+      return first;
+    }
+    async function nominatimFind(site) {
+      const q = `${site.name.replace(/\(.*?\)/g, ' ').replace(/[—–]/g, ' ')}, ${NAMES[site.iso]}`;
+      const r = await (await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`)).json();
+      return r[0] ? [+(+r[0].lat).toFixed(5), +(+r[0].lon).toFixed(5)] : null;
+    }
+    async function resolveSite(id) {
+      const site = SITE[id]; if (!site) return;
+      let pt = null, src = 'wd';
+      try { pt = await wikidataFind(site); } catch (e) { console.warn('wikidata', e); }
+      if (!pt) { src = 'osm'; try { pt = await nominatimFind(site); } catch (e) { console.warn('nominatim', e); } }
+      if (!pt) { src = 'paese'; const c = pointOf(site.iso); pt = c ? [c.lat ?? c[0], c.lng ?? c[1]] : null; }
+      if (!pt) return;
+      UC[id] = [...pt, src];
+      try { await fsetDoc(ucRef(), { c: { [id]: UC[id] } }, { merge: true }); } catch (e) { console.warn('unesco coords salvataggio', e); }
+    }
+    async function drain() {
+      if (drain.busy) return; drain.busy = true;
+      while (queue.length) { const id = queue.shift(); await resolveSite(id); resolving.delete(id); syncUnescoDots(true); await new Promise(r => setTimeout(r, 400)); }
+      drain.busy = false;
+    }
+    function syncUnescoDots(noQueue) {
+      if (!ucLoaded) return;
+      const want = new Set();
+      Object.values(S).forEach(s => (s.unescoIds || []).forEach(id => want.add(id)));
+      Object.keys(dots).forEach(id => { if (!want.has(id)) { dotLayer.removeLayer(dots[id]); delete dots[id]; } });
+      want.forEach(id => {
+        const c = UC[id], site = SITE[id];
+        if (!site) return;
+        if (!c) { if (!noQueue && !resolving.has(id)) { resolving.add(id); queue.push(id); drain(); } return; }
+        if (dots[id]) return;
+        const m = L.circleMarker([c[0], c[1]], { pane: 'unesco', radius: 6.5, color: '#ffffff', weight: 2, fillColor: '#E4749A', fillOpacity: 1 });
+        m.bindTooltip(`${esc(site.name)} · ${esc(NAMES[site.iso])}`, { direction: 'top', offset: [0, -6], className: 'vg-tip', opacity: 1 });
+        m.addTo(dotLayer); dots[id] = m;
+      });
+    }
+
     // ── Panoramica ────────────────────────────────────────────────────────────
     const pct = n => (Math.round(n * 10) / 10).toLocaleString('it-IT', { maximumFractionDigits: 1 });
+    const SOUTH_AM = new Set(['AR', 'BO', 'BR', 'CL', 'CO', 'EC', 'GY', 'PY', 'PE', 'SR', 'UY', 'VE']);
+    const CONT_ORDER = ['Europa', 'Asia', 'Africa', 'Nord America', 'Sud America', 'Oceania'];
+    const contOf = (c, iso) => (c === 'Americhe' ? (SOUTH_AM.has(iso) ? 'Sud America' : 'Nord America') : c);
+    const openRows = new Set();                       // righe aperte della panoramica (restano aperte quando i dati si aggiornano)
+
+    /** Una riga per continente: barra + numeri, e sotto (si apre toccando) l'elenco di ciò che hai visitato. */
+    const contRow = (key, label, v, tot, items, emptyText) => `<details class="vg-cr" data-k="${esc(key)}"${openRows.has(key) ? ' open' : ''}>
+      <summary><span class="vg-cr-t">${esc(label)}</span><span class="vg-cr-n">${v}<small> / ${tot}</small></span>
+        <span class="meter-track"><span class="meter-fill" style="width:${tot ? v / tot * 100 : 0}%"></span></span></summary>
+      <div class="vg-cr-l">${items.length ? items.join('') : `<span class="s">${esc(emptyText)}</span>`}</div></details>`;
+
     function renderOverview() {
       const n = visitedCountries.size, p = TOTAL ? n / TOTAL * 100 : 0;
       const next = MILESTONES.find(m => m > n);
       let unDone = 0, unTot = 0, trips = 0, wish = 0;
       Object.entries(S).forEach(([iso, s]) => { unDone += s.unescoDone; unTot += s.unescoTot; trips += s.trips.length; if (s.wish && !visitedCountries.has(iso)) wish++; });
-      // Continenti visitati su 6 (senza Antartide): le Americhe si dividono in Nord e Sud
-      const SOUTH_AM = new Set(['AR', 'BO', 'BR', 'CL', 'CO', 'EC', 'GY', 'PY', 'PE', 'SR', 'UY', 'VE']);
-      const seen = new Set();
-      for (const [c, list] of Object.entries(COUNTRIES)) for (const k of Object.keys(list)) if (visitedCountries.has(k)) seen.add(c === 'Americhe' ? (SOUTH_AM.has(k) ? 'Sud America' : 'Nord America') : c);
-      const contN = seen.size;
-      const conts = Object.keys(COUNTRIES).map(c => {
-        const keys = Object.keys(COUNTRIES[c]), v = keys.filter(k => visitedCountries.has(k)).length;
-        return `<div class="meter"><div class="meter-head"><span>${c}</span><span class="zen-muted">${v}/${keys.length}</span></div>
-          <div class="meter-track"><div class="meter-fill" style="width:${keys.length ? v / keys.length * 100 : 0}%"></div></div></div>`;
-      }).join('');
+
+      // Raggruppa per continente (6, senza Antartide: le Americhe si dividono in Nord e Sud)
+      const G = Object.fromEntries(CONT_ORDER.map(c => [c, { countries: [], sitesTot: 0, sitesDone: [] }]));
+      for (const [c, list] of Object.entries(COUNTRIES)) {
+        for (const [iso, info] of Object.entries(list)) {
+          const g = G[contOf(c, iso)]; if (!g) continue;
+          g.countries.push({ iso, name: info.name, flag: info.flag, v: visitedCountries.has(iso) });
+          g.sitesTot += info.sites.length;
+          const ids = S[iso]?.unescoIds || [];
+          info.sites.filter(x => ids.includes(x.id)).forEach(x => g.sitesDone.push({ ...x, iso, flag: info.flag, country: info.name }));
+        }
+      }
+      const contN = CONT_ORDER.filter(c => G[c].countries.some(x => x.v)).length;
+      const chip = t => `<span class="vg-chip2">${t}</span>`;
+
+      const paesiRows = CONT_ORDER.map(c => { const g = G[c], v = g.countries.filter(x => x.v);
+        return contRow('p-' + c, c, v.length, g.countries.length, v.sort((a, b) => a.name.localeCompare(b.name, 'it')).map(x => chip(`${x.flag} ${esc(x.name)}`)), 'Nessun paese visitato'); }).join('');
+      const unRows = CONT_ORDER.map(c => { const g = G[c];
+        return contRow('u-' + c, c, g.sitesDone.length, g.sitesTot, g.sitesDone.sort((a, b) => a.name.localeCompare(b.name, 'it')).map(x => chip(`${x.flag} ${esc(x.name)}`)), 'Nessun sito visitato'); }).join('');
+
       document.getElementById('panel-over').innerHTML = `
         <div class="card vg-hero">
+          <div class="zen-eyebrow">Paesi</div>
           <div class="vg-hero-top"><div><span class="vg-big">${n}</span><span class="vg-of">su ${TOTAL} paesi</span></div><span class="vg-pct">${pct(p)}%</span></div>
           <div class="meter-track"><div class="meter-fill" style="width:${p}%"></div></div>
           <p class="vg-next">${next ? `Ancora ${next - n} ${next - n === 1 ? 'paese' : 'paesi'} al traguardo dei ${next}.` : 'Hai superato tutti i traguardi. Complimenti, viaggiatore!'}</p>
           <div class="vg-miles">${MILESTONES.map(m => `<span class="vg-mile${n >= m ? ' on' : ''}">${n >= m ? icon('check') : ''}${m}</span>`).join('')}</div>
         </div>
+        <div class="card">
+          <div class="vg-sec-h"><span class="zen-eyebrow">Continenti</span><span class="vg-sec-n">${contN}<small> / 6</small></span></div>
+          <div class="vg-conts">${paesiRows}</div>
+        </div>
+        <div class="card">
+          <div class="vg-sec-h"><span class="zen-eyebrow">Patrimoni UNESCO</span><span class="vg-sec-n" style="color:#D6527F">${unDone}<small> / ${unTot}</small></span></div>
+          <div class="meter-track" style="height:8px;margin:var(--space-2) 0 var(--space-4)"><div class="meter-fill" style="width:${unTot ? unDone / unTot * 100 : 0}%;background:linear-gradient(90deg,#F1A0BC,#D6527F)"></div></div>
+          <div class="vg-conts">${unRows}</div>
+        </div>
         <div class="vg-tiles2">
-          <div class="vg-tile2"><b>${contN}<small style="font-size:.5em;font-weight:400;opacity:.6"> / 6</small></b><span>continenti</span></div>
-          <div class="vg-tile2"><b>${unDone}</b><span>UNESCO</span></div>
           <div class="vg-tile2"><b>${trips}</b><span>${trips === 1 ? 'viaggio' : 'viaggi'}</span></div>
           <div class="vg-tile2"><b>${wish}</b><span>da visitare</span></div>
-        </div>
-        <div class="card"><div class="zen-eyebrow" style="margin-bottom:var(--space-4)">Per continente</div><div class="vg-conts">${conts}</div></div>`;
+        </div>`;
     }
+    document.getElementById('panel-over').addEventListener('toggle', e => {
+      const d = e.target.closest?.('.vg-cr'); if (!d) return;
+      d.open ? openRows.add(d.dataset.k) : openRows.delete(d.dataset.k);
+    }, true);
 
     // ── Cronologia: tutti i viaggi in ordine di data + paesi da visitare ──────
     const fmtDate = d => {
@@ -2597,6 +2720,7 @@
         s.drive = data?.driveUrl || '';
         s.visitedAt = data?.visitedAt || 0;
         s.unescoDone = visitedIds.length;
+        s.unescoIds = visitedIds;
 
         setCountryVisited(iso2, data?.visited || false);
         syncPin(iso2);
@@ -2608,6 +2732,7 @@
         renderUnesco(iso2, info.sites, visitedIds);
         setUnescoProgress(iso2, visitedIds.length, info.sites.length);
         updateUnescoStats();
+        syncUnescoDots();
       });
 
       globalUnsubs[iso2 + '_t'] = subscribeTrips(iso2, trips => {
@@ -2652,6 +2777,8 @@
           btn.setAttribute('aria-pressed', String(btn.getAttribute('aria-pressed') !== 'true'));
           const newV = [...el.querySelectorAll('.vg-site[aria-pressed="true"]')].map(e => e.dataset.id);
           st(iso2).unescoDone = newV.length;
+          st(iso2).unescoIds = newV;
+          syncUnescoDots();
           setUnescoProgress(iso2, newV.length, sites.length);
           updateUnescoStats();
           paintGeo(); scheduleRefresh();
@@ -2699,6 +2826,7 @@
       buildCountriesList();
       renderOverview();
       renderTimeline();
+      loadUC();
       // Sottoscrive tutti i paesi subito: servono per mappa colorata e contatori globali
       Object.values(COUNTRIES).forEach(countries => {
         Object.entries(countries).forEach(([iso2, info]) => startSubs(iso2, info));
