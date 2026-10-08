@@ -17,8 +17,8 @@ const canSpeak = 'speechSynthesis' in window;
 
 let brain = null;
 const loadBrain = () => (brain ??= import('../pages/assistente/brain.js'));
-// Precarica il cervello quando il dispositivo è libero, così la prima risposta è rapida
-(window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => loadBrain().catch(() => { brain = null; }));
+// Precarica il cervello solo dopo un po', a pagina ormai caricata: non deve rubare rete e processore all'apertura
+setTimeout(() => (window.requestIdleCallback || (f => f()))(() => loadBrain().catch(() => { brain = null; })), 25000);
 
 let messages = [];
 try { messages = JSON.parse(sessionStorage.getItem(STORE_KEY) || '[]'); } catch { messages = []; }
