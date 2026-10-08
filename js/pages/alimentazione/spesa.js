@@ -34,6 +34,24 @@ let lastCat = 'Altro';
 let view = 'all';          // 'all' = lista completa, 'cart' = prodotti segnati
 let catFilter = null;      // categoria scelta nei chip, oppure null = tutte
 let drag = null;
+let q = '';               // ricerca nel negozio aperto
+const fold = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+
+/** Elenco dei prodotti visibili: vista (lista/carrello) + categoria + ricerca. */
+function bodyHtml() {
+  const cart = items.filter(i => i.bought);
+  const inView = view === 'cart' ? cart : items;
+  const needle = fold(q.trim());
+  const shown = needle ? inView.filter(i => fold(i.name).includes(needle)) : inView.filter(i => !catFilter || catOf(i) === catFilter);
+  return (shown.length ? `<div class="list" id="sp-list">${shown.map(it => `
+      <div class="list-row sp-row" data-item="${esc(it._docId)}">
+        <span class="drag-handle" data-drag role="button" aria-label="Trascina per spostare"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g></svg></span>
+        <button type="button" class="sp-check" data-toggle aria-pressed="${!!it.bought}" aria-label="${it.bought ? 'Togli dal carrello' : 'Metti nel carrello'}"></button>
+        <button type="button" class="sp-name grow" data-edit><span>${esc(it.name)}</span><span class="s">${it.qty ? `${esc(it.qty)} · ` : ''}${esc(catOf(it))}</span></button>
+      </div>`).join('')}</div>`
+      : `<div class="empty">${view === 'cart' ? 'Il carrello è vuoto. Spunta i prodotti nella lista completa.' : needle ? `Nessun prodotto per “${esc(q.trim())}”.` : items.length ? 'Nessun prodotto in questa categoria.' : 'La lista è vuota. Tocca + per aggiungere un prodotto.'}</div>`);
+}
 
 // ─── Vista negozi / vista lista ──────────────────────────────────────────
 function render() {
@@ -52,7 +70,8 @@ function render() {
   const inView = view === 'cart' ? cart : items;
   const cats = CATEGORIES.filter(c => inView.some(i => catOf(i) === c));
   if (catFilter && !cats.includes(catFilter)) catFilter = null;
-  const shown = inView.filter(i => !catFilter || catOf(i) === catFilter);
+  const searchBar = `<div class="sp-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input class="input" type="search" id="sp-q" value="${esc(q)}" placeholder="Cerca un prodotto" autocomplete="off" aria-label="Cerca un prodotto"/></div>`;
+  const hadFocus = document.activeElement?.id === 'sp-q';
   const chipsScroll = root.querySelector('.sp-cats')?.scrollLeft || 0;
   root.innerHTML = `
     <div class="sp-top">
@@ -68,19 +87,15 @@ function render() {
       <button type="button" class="pill" data-cat="" aria-pressed="${!catFilter}">Tutte</button>
       ${cats.map(c => `<button type="button" class="pill" data-cat="${esc(c)}" aria-pressed="${catFilter === c}">${esc(c)} <span class="sp-n">${inView.filter(i => catOf(i) === c).length}</span></button>`).join('')}
     </div>` : ''}
-    ${shown.length ? `<div class="list" id="sp-list">${shown.map(it => `
-      <div class="list-row sp-row" data-item="${esc(it._docId)}">
-        <span class="drag-handle" data-drag role="button" aria-label="Trascina per spostare"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g></svg></span>
-        <button type="button" class="sp-check" data-toggle aria-pressed="${!!it.bought}" aria-label="${it.bought ? 'Togli dal carrello' : 'Metti nel carrello'}"></button>
-        <button type="button" class="sp-name grow" data-edit><span>${esc(it.name)}</span><span class="s">${it.qty ? `${esc(it.qty)} · ` : ''}${esc(catOf(it))}</span></button>
-      </div>`).join('')}</div>`
-      : `<div class="empty">${view === 'cart' ? 'Il carrello è vuoto. Spunta i prodotti nella lista completa.' : items.length ? 'Nessun prodotto in questa categoria.' : 'La lista è vuota. Tocca + per aggiungere un prodotto.'}</div>`}`;
+    ${searchBar}
+    <div id="sp-body">${bodyHtml()}</div>`;
   const chips = root.querySelector('.sp-cats');
   if (chips) chips.scrollLeft = chipsScroll;
+  if (hadFocus) { const i = root.querySelector('#sp-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
 }
 
 function openStore(s) {
-  store = s; items = []; view = 'all'; catFilter = null;
+  store = s; items = []; view = 'all'; catFilter = null; q = '';
   unsubItems?.();
   unsubItems = subscribeShoppingItems(s._docId, list => { items = list; if (store) render(); });
   render(); scrollTo({ top: 0 });
@@ -90,6 +105,13 @@ function closeStore() {
   render();
 }
 
+root.addEventListener('input', e => {
+  if (e.target.id !== 'sp-q') return;
+  q = e.target.value;
+  const body = root.querySelector('#sp-body');
+  if (body) body.innerHTML = bodyHtml();               // solo l'elenco: la barra di ricerca resta dov'è
+  const cats = root.querySelector('.sp-cats'); if (cats) cats.hidden = !!q.trim();   // mentre cerchi, i filtri per categoria stanno da parte
+});
 root.addEventListener('click', async e => {
   const t = e.target;
   const st = t.closest('[data-store]');
