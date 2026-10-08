@@ -118,6 +118,37 @@
     .modal-actions .btn-primary { flex:1; }
     .modal-actions .btn-outline { flex:1; }
 
+    /* ── MAPPA (treemap) ── */
+    .mp-card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:20px; padding:16px; margin-bottom:14px; }
+    .mp-hero { display:flex; flex-direction:column; gap:2px; margin-bottom:12px; }
+    .mp-hero .l { font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+    .mp-hero .v { font-size:2.3rem; font-weight:300; letter-spacing:-.03em; line-height:1.1; font-variant-numeric:tabular-nums; }
+    .mp-hero .v.neg { color:var(--red); } .mp-hero .s { font-size:.66rem; color:var(--muted); }
+    .mp-seg { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+    .mp-seg button { border:1.5px solid var(--border); background:none; color:var(--muted); font:inherit; font-size:.62rem; letter-spacing:.08em; padding:5px 12px; border-radius:999px; cursor:pointer; }
+    .mp-seg button.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .mp-bc { display:flex; align-items:center; flex-wrap:wrap; gap:4px; min-height:26px; margin-bottom:8px; font-size:.7rem; color:var(--muted); }
+    .mp-bc button { border:0; background:none; font:inherit; color:var(--primary); cursor:pointer; padding:2px 4px; }
+    .mp-bc b { color:var(--text); font-weight:600; padding:2px 4px; }
+    .tm { position:relative; width:100%; border-radius:14px; overflow:hidden; }
+    .tm-cell { position:absolute; border:0; border-radius:12px; color:#fff; text-align:left; padding:8px 9px; cursor:pointer; overflow:hidden; display:flex; flex-direction:column; gap:1px; justify-content:flex-start;
+      font-family:inherit; line-height:1.2; box-shadow:inset 0 0 0 1px rgba(255,255,255,.18); animation:tm-in .45s cubic-bezier(.2,.8,.2,1) both; transition:filter .15s, transform .15s; }
+    .tm-cell:hover { filter:brightness(1.07); } .tm-cell:active { transform:scale(.985); }
+    .tm-cell.neg { background-image:repeating-linear-gradient(135deg, rgba(0,0,0,.12) 0 6px, transparent 6px 12px); }
+    .tm-n { font-weight:600; letter-spacing:-.01em; text-shadow:0 1px 2px rgba(0,0,0,.25); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .tm-v { font-size:.82em; opacity:.95; font-variant-numeric:tabular-nums; font-weight:300; }
+    .tm-p { font-size:.68em; opacity:.8; margin-top:auto; }
+    .tm-go { position:absolute; right:8px; top:4px; font-size:1.3em; opacity:.75; }
+    .tm-empty { padding:50px 10px; text-align:center; color:var(--muted); font-size:.78rem; }
+    @keyframes tm-in { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:none; } }
+    .mp-list { margin-top:12px; display:flex; flex-direction:column; }
+    .mp-row { display:flex; align-items:center; gap:10px; padding:10px 2px; border:0; border-top:1px solid var(--border); background:none; font:inherit; color:var(--text); text-align:left; width:100%; cursor:pointer; }
+    .mp-row:first-child { border-top:0; }
+    .mp-dot { width:12px; height:12px; border-radius:4px; flex:0 0 12px; }
+    .mp-row .n { flex:1; min-width:0; font-size:.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .mp-row .n small { display:block; font-size:.58rem; color:var(--muted); }
+    .mp-row .a { font-size:.8rem; font-weight:600; font-variant-numeric:tabular-nums; } .mp-row .a.pos { color:#22a85e; } .mp-row .a.neg { color:var(--red); }
+    .mp-note { font-size:.6rem; color:var(--muted); line-height:1.6; margin-top:10px; }
+    .mp-det { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0 14px; } .mp-det div { background:var(--surface); border-radius:12px; padding:10px 12px; } .mp-det span { display:block; font-size:.54rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); } .mp-det b { font-size:1.05rem; font-weight:600; }
     /* ── ANDAMENTO ── */
     .filter-row { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; padding-bottom:2px; width:100%; }
     .filter-chip { flex-shrink:0; background:var(--card); border:1.5px solid var(--border);
@@ -330,6 +361,9 @@
   <!-- ═══ SCREEN: PLANNING SPESA ═══ -->
   <div class="screen" id="screen-planning">
 
+    <!-- MAPPA DELLE SPESE -->
+    <div id="pl-map" style="width:100%;margin-top:6px"></div>
+
     <!-- RIEPILOGO GLOBALE -->
     <div class="grand-summary" id="grand-summary" style="margin-top:6px;">
       <div class="grand-summary-title">Riepilogo totale</div>
@@ -367,34 +401,7 @@
   </div>
 
   <!-- ═══ SCREEN: PATRIMONIO ═══ -->
-  <div class="screen" id="screen-patrimonio">
-    <div id="patrimonio-total-card" class="patrimonio-total" style="display:none;margin-top:6px;">
-      <div class="patrimonio-total-label">Patrimonio totale stimato</div>
-      <div class="patrimonio-total-value" id="patrimonio-total-val">€ 0</div>
-    </div>
-    <div class="pat-svg-wrap" id="pat-svg-wrap">
-      <svg id="pat-svg"></svg>
-    </div>
-    <div class="patrimonio-empty-state" id="patrimonio-empty-state">
-      <div style="font-size:3rem;margin-bottom:16px;">🏦</div>
-      <div style="font-size:.78rem;color:var(--muted);line-height:1.8;">
-        Aggiungi dei conti nel tab<br/><strong>Planning</strong> per vedere<br/>qui il tuo patrimonio.
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal dettaglio conto — patrimonio -->
-  <div class="pat-modal-overlay" id="pat-modal">
-    <div class="pat-modal-sheet" id="pat-modal-sheet">
-      <div class="pat-modal-handle" id="pat-modal-handle"></div>
-      <div class="pat-modal-accent" id="pat-modal-accent"></div>
-      <div class="pat-modal-title" id="pat-modal-title"></div>
-      <div class="pat-modal-sub" id="pat-modal-sub"></div>
-      <div class="pat-modal-kpi" id="pat-modal-kpi"></div>
-      <div class="pat-modal-list-title">Voci associate</div>
-      <div id="pat-modal-list"></div>
-    </div>
-  </div>
+  <div class="screen" id="screen-patrimonio"><div id="pat-root" style="width:100%"></div></div>
 
   <!-- TAB BAR -->
   <nav class="tab-bar">
@@ -494,6 +501,8 @@
   <script type="module">
     import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
     import { waitForAuth } from './js/core/db.js';
+    import { createSheet } from './js/ui/dialog.js';
+    import { mountTreemap, PALETTE } from './js/pages/finanza/treemap.js';
     import {
       subscribeFinanzaAccounts, addFinanzaAccount, updateFinanzaAccount, deleteFinanzaAccount,
       subscribeFinanzaCategories, addFinanzaCategory, updateFinanzaCategory, deleteFinanzaCategory,
@@ -830,6 +839,7 @@
     }
 
     function updateGrandSummary() {
+      try { renderPlanMap(); } catch (e) { console.warn('mappa spese', e); }
       const netMonthly  = expenses.reduce((s, e) => s + monthlyNet(e), 0);
       const totEntrate  = expenses.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
       const totUscite   = expenses.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
@@ -989,262 +999,111 @@
     });
 
     /* ══════════════════════════════════════════
-       TAB 3 — PATRIMONIO (bubble map)
+       MAPPE (treemap): Patrimonio e Planning
+       Ogni rettangolo è grande quanto il suo valore; si tocca per entrare nel dettaglio.
     ══════════════════════════════════════════ */
-    const BUBBLE_COLORS = [
-      '#3b82d4','#7c5cd8','#22a85e','#e07b39',
-      '#d43b6a','#0ea5a0','#c49b1e','#7b4f9e'
-    ];
+    const annual = e => monthly(e) * 12;
+    const isOut = e => e.tipo !== 'entrata' && e.tipo !== 'giroconto';
+    const catName = id => (categories.find(c => c._docId === id) || {}).name || '';
+    const accName = id => (accounts.find(a => a._docId === id) || {}).name || '';
+    const GREENS = ['#4FA36C', '#6BB886', '#3E8F5C', '#86C79C', '#5DAE78'], WARMS = ['#D9786A', '#E3935E', '#C9615A', '#E8A87C', '#D4806F'];
+    const eur0 = n => '€ ' + Math.round(n).toLocaleString('it-IT');
 
+    function openLeaf(e) {
+      const acc = accName(e.accountId), cat = catName(e.catId), isEnt = e.tipo === 'entrata';
+      const sh = createSheet({ title: e.title, body: `<div class="mp-det">
+        <div><span>${isEnt ? 'Entrata' : 'Uscita'} al mese</span><b style="color:${isEnt ? '#22a85e' : 'var(--red)'}">${isEnt ? '+' : '−'}${fmtEur(monthly(e))}</b></div>
+        <div><span>All'anno</span><b>${isEnt ? '+' : '−'}${fmtEur(annual(e))}</b></div>
+        <div><span>Conto</span><b style="font-size:.85rem">${esc(acc || '—')}</b></div>
+        <div><span>Categoria</span><b style="font-size:.85rem">${esc(cat || '—')}</b></div></div>
+        <button type="button" class="btn-primary" id="lf-edit" style="width:100%">Modifica</button>` });
+      sh.$('#lf-edit').addEventListener('click', () => { sh.close(); window.openEditExp(e._docId); });
+      sh.open();
+    }
+    const crumbs = (path, root) => `<div class="mp-bc">${path.length ? `<button type="button" data-go="-1">${esc(root)}</button>` + path.map((p, i) => ` › ${i === path.length - 1 ? `<b>${esc(p.label)}</b>` : `<button type="button" data-go="${i}">${esc(p.label)}</button>`}`).join('') : `<b>${esc(root)}</b>`}</div>`;
+    const listRows = nodes => `<div class="mp-list">${[...nodes].sort((a, b) => b.value - a.value).map(n => `<button type="button" class="mp-row" data-id="${esc(n.id)}"><span class="mp-dot" style="background:${n.shade != null ? `color-mix(in srgb, ${n.color} ${n.shade}%, var(--card))` : n.color}"></span><span class="n">${esc(n.label)}${n.sub ? `<small>${esc(n.sub)}</small>` : ''}</span><span class="a ${n.kind || ''}">${esc(n.show || eur0(n.value))}</span></button>`).join('')}</div>`;
+
+    /* ── PATRIMONIO ── */
+    let patPath = [], patTm = null, patNodes = [];
+    function accountData() {
+      return accounts.map((a, i) => {
+        const ex = expenses.filter(e => e.accountId === a._docId && e.tipo !== 'giroconto');
+        const ent = ex.filter(e => e.tipo === 'entrata').reduce((s, e) => s + annual(e), 0), out = ex.filter(isOut).reduce((s, e) => s + annual(e), 0);
+        return { a, ex, ent, out, net: ent - out, color: PALETTE[i % PALETTE.length] };
+      });
+    }
     function renderPatrimonio() {
-      const svgEl     = document.getElementById('pat-svg');
-      const emptyEl   = document.getElementById('patrimonio-empty-state');
-      const totalCard = document.getElementById('patrimonio-total-card');
-      const totalVal  = document.getElementById('patrimonio-total-val');
-      const wrap      = document.getElementById('pat-svg-wrap');
-
-      if (!accounts.length) {
-        svgEl.innerHTML = '';
-        emptyEl.style.display   = '';
-        totalCard.style.display = 'none';
-        wrap.style.display      = 'none';
-        return;
+      const root = document.getElementById('pat-root');
+      if (!accounts.length) { root.innerHTML = '<div class="mp-card"><div class="tm-empty">Aggiungi dei conti nel tab <b>Planning</b> per vedere qui la mappa del tuo patrimonio.</div></div>'; patTm = null; return; }
+      const D = accountData(), total = D.reduce((s, d) => s + d.net, 0);
+      const cur = patPath[0] ? D.find(d => d.a._docId === patPath[0].id) : null;
+      if (patPath[0] && !cur) patPath = [];
+      if (!root.querySelector('#pat-tm')) {
+        root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div><div id="pat-bc"></div><div id="pat-tm"></div><div id="pat-list"></div><p class="mp-note" id="pat-note"></p></div>`;
+        patTm = mountTreemap(root.querySelector('#pat-tm'), { onPick: n => pickPat(n), fmt: v => eur0(v) });
+        root.querySelector('#pat-bc').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { patPath = patPath.slice(0, +b.dataset.go + 1); renderPatrimonio(); } });
+        root.querySelector('#pat-list').addEventListener('click', e => { const r = e.target.closest('.mp-row'); if (r) pickPat(patNodes.find(n => n.id === r.dataset.id)); });
       }
-      emptyEl.style.display   = 'none';
-      totalCard.style.display = '';
-      wrap.style.display      = '';
-
-      // ── Calcola dati per ogni conto ──
-      const accData = accounts.map((a, i) => {
-        const accExps = expenses.filter(e => e.accountId === a._docId);
-        const totEntM = accExps.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
-        const totUscM = accExps.filter(e => e.tipo !== 'entrata' && e.tipo !== 'giroconto').reduce((s, e) => s + monthly(e), 0);
-        const saldoM  = totEntM - totUscM;
-        const saldoA  = saldoM * 12;
-        return { a, accExps, totEntM, totUscM, saldoM, saldoA,
-                 color: BUBBLE_COLORS[i % BUBBLE_COLORS.length] };
-      });
-
-      const grandTotal = accData.reduce((s, d) => s + d.saldoA, 0);
-      totalVal.textContent = fmtEur(grandTotal);
-
-      // ── Raggi proporzionali (sqrt per area visiva proporzionale) ──
-      const vals   = accData.map(d => Math.abs(d.saldoA) || 1);
-      const maxVal = Math.max(...vals);
-      const R_MAX  = 64, R_MIN = 38;
-      const radii  = vals.map(v => R_MIN + (R_MAX - R_MIN) * Math.sqrt(v / maxVal));
-
-      // ── Posizionamento ──
-      const n  = accData.length;
-      const W  = 320;
-      const cx = W / 2;
-      let positions;
-      if (n === 1) {
-        positions = [{ x: cx, y: R_MAX + 10 }];
-      } else if (n === 2) {
-        const y = R_MAX + 10;
-        positions = [
-          { x: cx - radii[0] - 8, y },
-          { x: cx + radii[1] + 8, y },
-        ];
+      const v = cur ? cur.net : total;
+      document.getElementById('pat-hero').innerHTML = `<div class="mp-hero"><span class="l">${cur ? esc(cur.a.name) : 'Patrimonio stimato'}</span><span class="v ${v < 0 ? 'neg' : ''}">${v < 0 ? '−' : ''}${eur0(Math.abs(v))}</span><span class="s">${cur ? `Entrate ${eur0(cur.ent)} · Uscite ${eur0(cur.out)} all'anno` : `Saldo annuo di ${accounts.length} ${accounts.length === 1 ? 'conto' : 'conti'} (entrate − uscite × 12)`}</span></div>`;
+      document.getElementById('pat-bc').innerHTML = crumbs(patPath, 'Patrimonio');
+      if (!cur) {
+        patNodes = D.map(d => ({ id: d.a._docId, label: d.a.name, value: Math.abs(d.net), color: d.color, drill: true, neg: d.net < 0, kind: d.net < 0 ? 'neg' : 'pos', show: (d.net < 0 ? '−' : '') + eur0(Math.abs(d.net)), sub: `${d.ex.length} voci`, _acc: true }));
+        document.getElementById('pat-note').textContent = 'Tocca un conto per vedere da dove entrano e dove escono i soldi. I rettangoli a righe sono conti con saldo negativo.';
       } else {
-        const angleStep = (2 * Math.PI) / n;
-        const ringR     = Math.min(cx - R_MAX - 12, 100);
-        const cy        = ringR + R_MAX + 10;
-        positions = accData.map((_, i) => ({
-          x: cx + ringR * Math.cos(angleStep * i - Math.PI / 2),
-          y: cy + ringR * Math.sin(angleStep * i - Math.PI / 2),
-        }));
+        const ins = cur.ex.filter(e => e.tipo === 'entrata'), outs = cur.ex.filter(isOut);
+        patNodes = [
+          ...ins.map((e, k) => ({ id: e._docId, label: e.title, value: annual(e), color: GREENS[k % GREENS.length], sub: catName(e.catId), kind: 'pos', show: '+' + eur0(annual(e)), _exp: e })),
+          ...outs.map((e, k) => ({ id: e._docId, label: e.title, value: annual(e), color: WARMS[k % WARMS.length], sub: catName(e.catId), kind: 'neg', show: '−' + eur0(annual(e)), _exp: e })),
+        ];
+        document.getElementById('pat-note').textContent = "Verde: entrate. Rosso e arancio: uscite. Tutto calcolato all'anno. Tocca una voce per i dettagli.";
       }
-
-      const H = Math.max(...positions.map((p, i) => p.y + radii[i])) + 16;
-      svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-
-      // ── Frecce marker ──
-      let s = `<defs>
-        <marker id="pat-arr" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
-          <path d="M0,0 L0,5 L7,2.5 z" fill="#8899aa"/>
-        </marker>
-      </defs>`;
-
-      // ── Frecce giroconto (disegnate PRIMA dei cerchi, così stanno sotto) ──
-      const transfers = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
-      transfers.forEach(t => {
-        const fi = accounts.findIndex(a => a._docId === t.accountId);
-        const ti = accounts.findIndex(a => a._docId === t.toAccountId);
-        if (fi < 0 || ti < 0) return;
-        const fp = positions[fi], tp = positions[ti];
-        const dx = tp.x - fp.x, dy = tp.y - fp.y;
-        const dist = Math.hypot(dx, dy) || 1;
-        const ux = dx / dist, uy = dy / dist;
-        const x1 = fp.x + ux * (radii[fi] + 3);
-        const y1 = fp.y + uy * (radii[fi] + 3);
-        const x2 = tp.x - ux * (radii[ti] + 9);
-        const y2 = tp.y - uy * (radii[ti] + 9);
-        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-        const lbl = fmtEur(monthly(t));
-        const lblW = Math.min(lbl.length * 5.2 + 8, 72);
-        s += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}"
-                    x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
-                    stroke="#8899aa" stroke-width="1.5" stroke-dasharray="5,3"
-                    marker-end="url(#pat-arr)" opacity=".8"/>
-              <rect x="${(mx - lblW/2).toFixed(1)}" y="${(my - 8).toFixed(1)}"
-                    width="${lblW}" height="14" rx="4"
-                    fill="var(--card)" stroke="#8899aa" stroke-width=".6" opacity=".9"/>
-              <text x="${mx.toFixed(1)}" y="${(my + 4).toFixed(1)}"
-                    text-anchor="middle" font-size="8"
-                    fill="var(--muted)" font-family="-apple-system,sans-serif">${lbl}</text>`;
-      });
-
-      // ── Cerchi + testo tutto in SVG ──
-      accData.forEach((d, i) => {
-        const { x, y } = positions[i];
-        const r   = radii[i];
-        const docId = d.a._docId;
-        // Nome conto: tronca se lungo
-        const nome = d.a.name.length > 12 ? d.a.name.slice(0, 11) + '…' : d.a.name;
-        const val  = fmtEur(d.saldoA);
-        // font size scala col raggio
-        const fsNome = Math.max(7, Math.min(9, r * 0.16));
-        const fsVal  = Math.max(9, Math.min(13, r * 0.22));
-        s += `<g style="cursor:pointer" onclick="openPatModal('${docId}')">
-          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"
-                  fill="${d.color}"/>
-          <text x="${x.toFixed(1)}" y="${(y - fsVal*0.6).toFixed(1)}"
-                text-anchor="middle" dominant-baseline="middle"
-                font-size="${fsNome}" font-weight="700"
-                font-family="-apple-system,sans-serif"
-                fill="rgba(255,255,255,0.85)" letter-spacing=".04em"
-                style="text-transform:uppercase;pointer-events:none;">${nome}</text>
-          <text x="${x.toFixed(1)}" y="${(y + fsVal*0.7).toFixed(1)}"
-                text-anchor="middle" dominant-baseline="middle"
-                font-size="${fsVal}" font-weight="700"
-                font-family="-apple-system,sans-serif"
-                fill="#fff" style="pointer-events:none;">${val}</text>
-        </g>`;
-      });
-
-      svgEl.innerHTML = s;
+      patTm.show(patNodes);
+      document.getElementById('pat-list').innerHTML = listRows(patNodes);
+    }
+    function pickPat(n) {
+      if (!n) return;
+      if (n._acc) { patPath = [{ id: n.id, label: n.label }]; renderPatrimonio(); scrollTo({ top: 0, behavior: 'smooth' }); }
+      else if (n._exp) openLeaf(n._exp);
     }
 
-    /* ── Apertura modal patrimonio ── */
-    window.openPatModal = function(docId) {
-      const idx    = accounts.findIndex(a => a._docId === docId);
-      const a      = accounts[idx];
-      const color  = BUBBLE_COLORS[idx % BUBBLE_COLORS.length];
-      const accExps = expenses.filter(e => e.accountId === docId);
-      const totEntM = accExps.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
-      const totUscM = accExps.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
-      const saldoM  = totEntM - totUscM;
-      const saldoA  = saldoM * 12;
-
-      document.getElementById('pat-modal-accent').style.background = color;
-      document.getElementById('pat-modal-title').textContent = a.name;
-      document.getElementById('pat-modal-sub').textContent =
-        (a.holder ? a.holder : '') + (a.iban ? '  ·  ' + a.iban : '');
-
-      const balCls = saldoM >= 0 ? '#22a85e' : 'var(--red)';
-      document.getElementById('pat-modal-kpi').innerHTML = `
-        <div class="pat-kpi-card">
-          <div class="pat-kpi-label">Entrate / mese</div>
-          <div class="pat-kpi-value" style="color:#22a85e;">+${fmtEur(totEntM)}</div>
-        </div>
-        <div class="pat-kpi-card">
-          <div class="pat-kpi-label">Uscite / mese</div>
-          <div class="pat-kpi-value" style="color:var(--red);">-${fmtEur(totUscM)}</div>
-        </div>
-        <div class="pat-kpi-card">
-          <div class="pat-kpi-label">Saldo mensile</div>
-          <div class="pat-kpi-value" style="color:${balCls};">${saldoM >= 0 ? '+' : ''}${fmtEur(saldoM)}</div>
-        </div>
-        <div class="pat-kpi-card">
-          <div class="pat-kpi-label">Saldo annuale</div>
-          <div class="pat-kpi-value" style="color:${balCls};">${saldoA >= 0 ? '+' : ''}${fmtEur(saldoA)}</div>
-        </div>`;
-
-      // Includi anche giroconti in uscita da questo conto
-      const giroOut = expenses.filter(e => e.tipo === 'giroconto' && e.accountId   === docId);
-      const giroIn  = expenses.filter(e => e.tipo === 'giroconto' && e.toAccountId === docId);
-      const allExps = [...accExps, ...giroIn];
-
-      document.getElementById('pat-modal-list').innerHTML = allExps.length
-        ? allExps.map(exp => {
-            const isGiro = exp.tipo === 'giroconto';
-            const isEnt  = exp.tipo === 'entrata';
-            const m = monthly(exp);
-            let badgeClass = isGiro ? 'giroconto' : (isEnt ? 'entrata' : 'uscita');
-            let badgeLabel, amountCls, prefix;
-            if (isGiro) {
-              const isIn = exp.toAccountId === docId;
-              const otherAcc = accounts.find(a => a._docId === (isIn ? exp.accountId : exp.toAccountId));
-              badgeLabel = isIn ? '← giroconto' : '→ giroconto';
-              amountCls  = isIn ? 'pos' : 'neg';
-              prefix     = isIn ? '+' : '-';
-            } else {
-              badgeLabel = isEnt ? 'entrata' : 'uscita';
-              amountCls  = isEnt ? 'pos' : 'neg';
-              prefix     = isEnt ? '+' : '-';
-            }
-            return `<div class="pat-exp-row">
-              <span class="pat-exp-label">${esc(exp.title)}</span>
-              <span class="pat-exp-badge ${badgeClass}" style="${isGiro ? 'background:rgba(90,126,148,.15);color:var(--muted);' : ''}">${badgeLabel}</span>
-              <span class="pat-exp-amount ${amountCls}">${prefix}${fmtEur(m)}</span>
-            </div>`;
-          }).join('')
-        : '<div style="font-size:.7rem;color:var(--muted);padding:8px 0;">Nessuna voce associata a questo conto.</div>';
-
-      const overlay = document.getElementById('pat-modal');
-      const sheet   = document.getElementById('pat-modal-sheet');
-      sheet.style.transform = '';
-      overlay.classList.add('open');
-    };
-
-    /* ── Drag-to-dismiss stile iOS ── */
-    (function() {
-      const overlay = document.getElementById('pat-modal');
-      const sheet   = document.getElementById('pat-modal-sheet');
-      let startY = 0, curY = 0, dragging = false;
-
-      function close() {
-        sheet.style.transition = 'transform .28s cubic-bezier(.32,1,.28,1)';
-        sheet.style.transform  = 'translateY(110%)';
-        setTimeout(() => {
-          overlay.classList.remove('open');
-          sheet.style.transform  = '';
-          sheet.style.transition = '';
-        }, 300);
+    /* ── PLANNING: mappa delle spese per categoria ── */
+    const plState = { tipo: 'uscita', per: 'month', cat: null };
+    let plTm = null, plNodes = [];
+    function renderPlanMap() {
+      const host = document.getElementById('pl-map');
+      if (!host) return;
+      if (!host.querySelector('#pl-tm')) {
+        host.innerHTML = `<div class="mp-card"><div class="mp-seg" id="pl-seg1"><button data-t="uscita">Uscite</button><button data-t="entrata">Entrate</button></div>
+          <div class="mp-seg" id="pl-seg2"><button data-p="month">Al mese</button><button data-p="year">All'anno</button></div>
+          <div id="pl-hero"></div><div id="pl-bc"></div><div id="pl-tm"></div><div id="pl-list"></div></div>`;
+        plTm = mountTreemap(host.querySelector('#pl-tm'), { onPick: n => pickPlan(n), fmt: v => eur0(v) });
+        host.querySelector('#pl-seg1').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (b) { plState.tipo = b.dataset.t; plState.cat = null; renderPlanMap(); } });
+        host.querySelector('#pl-seg2').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) { plState.per = b.dataset.p; renderPlanMap(); } });
+        host.querySelector('#pl-bc').addEventListener('click', e => { if (e.target.closest('[data-go]')) { plState.cat = null; renderPlanMap(); } });
+        host.querySelector('#pl-list').addEventListener('click', e => { const r = e.target.closest('.mp-row'); if (r) pickPlan(plNodes.find(n => n.id === r.dataset.id)); });
       }
-
-      // Tap fuori dal sheet
-      overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-
-      // Touch drag
-      sheet.addEventListener('touchstart', e => {
-        startY   = e.touches[0].clientY;
-        curY     = startY;
-        dragging = true;
-        sheet.style.transition = 'none';
-      }, { passive: true });
-
-      sheet.addEventListener('touchmove', e => {
-        if (!dragging) return;
-        curY       = e.touches[0].clientY;
-        const dy   = Math.max(0, curY - startY);
-        sheet.style.transform = `translateY(${dy}px)`;
-      }, { passive: true });
-
-      sheet.addEventListener('touchend', () => {
-        if (!dragging) return;
-        dragging = false;
-        const dy = Math.max(0, curY - startY);
-        if (dy > 90) {
-          close();
-        } else {
-          sheet.style.transition = 'transform .22s cubic-bezier(.32,1,.28,1)';
-          sheet.style.transform  = '';
-        }
-      });
-    })();
+      const k = plState.per === 'year' ? 12 : 1, ent = plState.tipo === 'entrata';
+      host.querySelectorAll('#pl-seg1 button').forEach(b => b.classList.toggle('on', b.dataset.t === plState.tipo));
+      host.querySelectorAll('#pl-seg2 button').forEach(b => b.classList.toggle('on', b.dataset.p === plState.per));
+      const all = expenses.filter(e => (ent ? e.tipo === 'entrata' : isOut(e))), totalAll = all.reduce((s, e) => s + monthly(e) * k, 0);
+      const cat = plState.cat ? categories.find(c => c._docId === plState.cat) : null;
+      if (plState.cat && !cat) plState.cat = null;
+      const shown = cat ? all.filter(e => e.catId === cat._docId) : all;
+      const sum = shown.reduce((s, e) => s + monthly(e) * k, 0);
+      document.getElementById('pl-hero').innerHTML = `<div class="mp-hero"><span class="l">${cat ? esc(cat.name) : (ent ? 'Entrate' : 'Uscite')} · ${plState.per === 'year' ? "all'anno" : 'al mese'}</span><span class="v ${ent ? '' : 'neg'}">${ent ? '+' : '−'}${eur0(sum)}</span><span class="s">${shown.length} ${shown.length === 1 ? 'voce' : 'voci'}${cat && totalAll ? ` · ${Math.round(sum / totalAll * 100)}% del totale` : ''}</span></div>`;
+      document.getElementById('pl-bc').innerHTML = crumbs(cat ? [{ label: cat.name }] : [], ent ? 'Tutte le entrate' : 'Tutte le uscite');
+      if (!cat) {
+        plNodes = categories.map((c, i) => ({ id: c._docId, label: c.name, value: all.filter(e => e.catId === c._docId).reduce((s, e) => s + monthly(e) * k, 0), color: PALETTE[i % PALETTE.length], drill: true, kind: ent ? 'pos' : 'neg', _cat: true })).filter(n => n.value > 0);
+        plNodes.forEach(n => { n.show = (ent ? '+' : '−') + eur0(n.value); });
+      } else {
+        const base = PALETTE[categories.indexOf(cat) % PALETTE.length];
+        plNodes = shown.map((e, i) => ({ id: e._docId, label: e.title, value: monthly(e) * k, color: base, shade: Math.max(55, 100 - i * 9), sub: accName(e.accountId), kind: ent ? 'pos' : 'neg', show: (ent ? '+' : '−') + eur0(monthly(e) * k), _exp: e }));
+      }
+      plTm.show(plNodes);
+      document.getElementById('pl-list').innerHTML = plNodes.length ? listRows(plNodes) : `<div class="tm-empty">Nessuna ${ent ? 'entrata' : 'uscita'} registrata.</div>`;
+    }
+    function pickPlan(n) { if (!n) return; if (n._cat) { plState.cat = n.id; renderPlanMap(); } else if (n._exp) openLeaf(n._exp); }
 
     /* ── helpers ── */
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
