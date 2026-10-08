@@ -349,13 +349,13 @@ function registerServiceWorker() {
   // Aggiornamento del service worker appena aperta la pagina: ricarica una volta per avere file tutti della stessa versione
   const hadController = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (hadController && performance.now() < 8000 && !sessionStorage.getItem('zen_cc')) { sessionStorage.setItem('zen_cc', '1'); location.reload(); }
+    if (hadController && performance.now() < 20000 && !sessionStorage.getItem('zen_cc')) { sessionStorage.setItem('zen_cc', '1'); location.reload(); }
   });
   // Nuova versione pubblicata: ricarica una volta se la pagina è appena stata aperta
   navigator.serviceWorker.addEventListener('message', e => {
     if (e.data?.type === 'zen-warm-done') { try { localStorage.setItem('zen_warm', WARM_VERSION); } catch { /* ok */ } return; }
     if (e.data?.type !== 'zen-updated') return;
-    if (performance.now() < 6000 && !sessionStorage.getItem('zen_reloaded')) {
+    if (performance.now() < 20000 && !sessionStorage.getItem('zen_reloaded')) {
       sessionStorage.setItem('zen_reloaded', '1');
       location.reload();
     }

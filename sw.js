@@ -25,8 +25,11 @@ const LIB_HOSTS = ['www.gstatic.com', 'unpkg.com', 'cdnjs.cloudflare.com', 'cdn.
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => {
   e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (!k.startsWith(VERSION)) await caches.delete(k);
+    let cleaned = false;
+    for (const k of await caches.keys()) if (!k.startsWith(VERSION)) { await caches.delete(k); cleaned = true; }
     await self.clients.claim();
+    // Aggiornamento vero: le pagine appena aperte si ricaricano da sole con i file nuovi (vedi shell.js)
+    if (cleaned) (await self.clients.matchAll({ type: 'window' })).forEach(c => c.postMessage({ type: 'zen-updated' }));
   })());
 });
 
