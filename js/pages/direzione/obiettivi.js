@@ -32,19 +32,18 @@ function microRow(m) {
 }
 function macroBlock(n, color) {
   const mc = macroOf(n); if (!mc) return '';
-  const list = microsOf(n), a = avg(list), k = 'm' + n, isOpen = open.has(k);
-  return `<div class="ob-ma"><button type="button" class="ob-mh" data-tg="${k}"><span class="ob-num" style="color:${color}">${n}</span><span class="ob-mt2">${esc(mc.title)}</span>
-      <span class="ob-pc">${list.length ? pct(a) : '—'}</span></button>
-    ${isOpen ? `<div class="ob-micros">${list.map(microRow).join('') || '<p class="ob-empty">Nessun micro goal ancora: aggiungine uno per metterlo a terra.</p>'}
+  const list = microsOf(n), a = avg(list);
+  return `<div class="ob-ma"><div class="ob-mh"><span class="ob-num" style="color:${color}">${n}</span><span class="ob-mt2">${esc(mc.title)}</span>
+      <span class="ob-pc">${list.length ? pct(a) : '—'}</span></div>
+    <div class="ob-micros">${list.map(microRow).join('') || '<p class="ob-empty">Nessun micro goal ancora: aggiungine uno per metterlo a terra.</p>'}
       <button type="button" class="ob-add" data-addmicro="${n}">+ Micro goal</button>
-      <button type="button" class="ob-edit" data-editmacro="${n}">Modifica macro</button></div>` : ''}</div>`;
+      <button type="button" class="ob-edit" data-editmacro="${n}">Modifica macro</button></div></div>`;
 }
 function areaBlock(ar, color) {
   const ms = ar.macros.flatMap(microsOf), a = avg(ms), k = 'a' + ar.id, isOpen = open.has(k);
   const why = (lab, t) => (t ? `<div class="ob-why"><span>${lab}</span><p>${esc(t)}</p></div>` : '');
   return `<div class="ob-ar"><button type="button" class="ob-ah" data-tg="${k}"><span class="ob-an">${esc(ar.name)}</span><span class="ob-sub">${ar.macros.length} macro · ${ms.length} micro</span><span class="ob-pc">${pct(a)}</span></button>
     ${isOpen ? `<div class="ob-abody">${why('Direction · il perché', ar.direction)}${why('Goal semplice', ar.goal)}${why('Sistema · il come', ar.sistema)}
-      ${ar.simple?.length ? `<div class="ob-why"><span>Regole semplici</span><ul>${ar.simple.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
       <div class="ob-macros">${ar.macros.map(n => macroBlock(n, color)).join('')}</div></div>` : ''}</div>`;
 }
 export function render() {
