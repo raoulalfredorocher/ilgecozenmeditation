@@ -62,18 +62,19 @@ async function viaWikidata(q) {
   const found = await Promise.all(['it', 'en'].map(l => wd({ action: 'wbsearchentities', search: q, language: l, uselang: l, type: 'item', limit: 10 }).then(r => r.search || []).catch(() => [])));
   const ids = [...new Set(found.flat().map(x => x.id))].slice(0, 20);
   if (!ids.length) return [];
-  const e = (await wd({ action: 'wbgetentities', ids: ids.join('|'), props: 'claims|labels|sitelinks', languages: 'it|en' })).entities || {};
+  const e = (await wd({ action: 'wbgetentities', ids: ids.join('|'), props: 'claims|labels|sitelinks', languages: 'it|en|mul' })).entities || {};
   const games = ids.filter(id => { const c = e[id]?.claims; return claimIds(c, 'P31').some(t => GAME_TYPES.has(t)) || (c?.P400 && c?.P577); }).slice(0, 8);
   if (!games.length) return [];
   const refs = [...new Set(games.flatMap(id => [...claimIds(e[id].claims, 'P400'), ...claimIds(e[id].claims, 'P136')]))];
-  const lab = refs.length ? (await wd({ action: 'wbgetentities', ids: refs.slice(0, 50).join('|'), props: 'labels', languages: 'it|en' })).entities || {} : {};
-  const nameOf = id => lab[id]?.labels?.it?.value || lab[id]?.labels?.en?.value || '';
+  const lab = refs.length ? (await wd({ action: 'wbgetentities', ids: refs.slice(0, 50).join('|'), props: 'labels', languages: 'it|en|mul' })).entities || {} : {};
+  const pick = l => l?.it?.value || l?.en?.value || l?.mul?.value || '';
+  const nameOf = id => pick(lab[id]?.labels);
   const hits = games.map(id => {
     const ent = e[id], c = ent.claims;
     const plats = platformsFrom(claimIds(c, 'P400').map(nameOf));
     const g = claimIds(c, 'P136').map(nameOf).map(n => GENRE_MAP.find(([re]) => re.test(n))?.[1]).find(Boolean) || '';
     const time = c.P577?.[0]?.mainsnak?.datavalue?.value?.time || '';
-    return { src: 'wd', id, title: ent.labels?.it?.value || ent.labels?.en?.value || '', img: '', year: (time.match(/\d{4}/) || [''])[0], genre: g, platforms: plats, desc: '',
+    return { src: 'wd', id, title: pick(ent.labels), img: '', year: (time.match(/\d{4}/) || [''])[0], genre: g, platforms: plats, desc: '',
       _wiki: { en: ent.sitelinks?.enwiki?.title, it: ent.sitelinks?.itwiki?.title } };
   }).filter(h => h.title);
   // Copertina: l'immagine principale della pagina Wikipedia (inglese per prima: di solito è la copertina), poi l'italiana
