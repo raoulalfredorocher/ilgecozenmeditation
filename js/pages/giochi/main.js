@@ -363,6 +363,18 @@ edit.el.addEventListener('click', async e => {
     if (hit.img) { eImg = await coverData(hit.img); drawEdit(); }
   }
 });
+// Suggerimenti mentre scrivi il nome (dopo una breve pausa), come nei film e nei libri
+let sugTimer = 0, sugSeq = 0;
+edit.el.addEventListener('input', e => {
+  if (e.target.id !== 'e-name') return;
+  clearTimeout(sugTimer);
+  const nm = e.target.value.trim();
+  if (nm.length < 3) { if (eHits.length) { eHits = []; drawEdit(); } return; }
+  sugTimer = setTimeout(async () => {
+    const seq = ++sugSeq;
+    try { const r = await searchGames(nm); if (seq !== sugSeq || !edit.el.isConnected) return; eHits = r; drawEdit(); } catch { /* si può sempre usare il pulsante Cerca */ }
+  }, 450);
+});
 edit.el.addEventListener('change', async e => {
   if (!['e-cam', 'e-gal'].includes(e.target.id)) return;
   const f = e.target.files[0]; if (!f) return;
