@@ -35,7 +35,8 @@ let pending = null;                                         // file scelti, in a
 function draw() {
   const box = sheet.$('#rp');
   if (pending) {
-    box.innerHTML = `<div class="stack"><p class="zen-muted" style="margin:0">Controlla l'anno di ogni referto (l'ho letto dal nome del file).</p>
+    box.innerHTML = `<div class="stack"><p class="zen-muted" style="margin:0">Controlla l'anno di ogni referto (l'ho letto dal nome del file; se non c'è, ho messo quello di quest'anno).</p>
+      <div class="row" style="display:flex;gap:8px;align-items:center"><span class="s grow">Stesso anno per tutti:</span><select class="input" id="rp-all" style="max-width:120px"><option value="">—</option>${Array.from({ length: yearNow - 2009 }, (_, k) => yearNow - k).map(y => `<option>${y}</option>`).join('')}</select></div>
       ${pending.map((p, i) => `<div class="card" style="padding:var(--space-3);display:grid;gap:8px">
         <input class="input" data-pn="${i}" value="${esc(p.label)}" aria-label="Nome"/>
         <div class="row" style="display:flex;gap:8px;align-items:center"><select class="input" data-py="${i}" aria-label="Anno">${Array.from({ length: yearNow - 2009 }, (_, k) => yearNow - k).map(y => `<option${y === p.year ? ' selected' : ''}>${y}</option>`).join('')}</select>
@@ -121,6 +122,7 @@ sheet.el.addEventListener('change', e => {
     pending = ok.map(file => ({ file, label: file.name.replace(/\.pdf$/i, ''), year: guessYear(file.name) }));
     draw();
   }
+  if (e.target.id === 'rp-all' && e.target.value) { pending.forEach(p => { p.year = +e.target.value; }); const all = e.target.value; draw(); sheet.$('#rp-all').value = all; return; }
   if (e.target.dataset.pn != null) pending[+e.target.dataset.pn].label = e.target.value.trim() || pending[+e.target.dataset.pn].label;
   if (e.target.dataset.py != null) pending[+e.target.dataset.py].year = +e.target.value;
 });
