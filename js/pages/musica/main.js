@@ -13,7 +13,7 @@ import { createSheet, toast } from '../../ui/dialog.js';
 import { NOTES, TYPES, parseChord, isChord, transposeChord, notesOf, guitarShape, ukeShape, chordSvg, pianoSvg, rootIdx, noteName, diatonic } from './chords.js';
 import { REPERTORIO, searchUrl } from './repertorio.js';
 import { convertPasted } from './convert.js';
-import { findChords, chordsToBody } from './chords-ai.js';
+import { findChords, chordsToBody, isQuotaError, hasGroq, setGroqKey } from './chords-ai.js';
 
 const $ = id => document.getElementById(id);
 const lsGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -183,6 +183,9 @@ function openEdit(id, pre = {}) {
       <p class="s" style="line-height:1.5;margin:6px 0 0">Una riga con solo accordi: <b>Am F C G</b>. Accordi dentro il testo: <b>[Am]parole [F]parole</b>. Una riga che inizia con <b>#</b> è un titolo di sezione (Strofa, Ritornello…). Scrivi solo ciò che ti serve per suonare.</p></div>
     <button type="button" class="pbtn block" id="s-ai">${icon('sparkles', 'sm')} Trova gli accordi con l'IA</button>
     <p class="s" id="s-ai-msg" style="margin:0;line-height:1.5">Non esiste un servizio gratuito con gli accordi di ogni canzone: l'IA propone la progressione in forme semplici. È un aiuto da controllare con le orecchie.</p>
+    <div id="s-groq" hidden style="display:none;flex-direction:column;gap:var(--space-2)">
+      <p class="s" style="margin:0;line-height:1.5">Le richieste gratuite dell'IA di oggi sono finite. Con una chiave gratuita di <b>Groq</b> (console.groq.com → API Keys → Create) ne hai circa 1000 al giorno: incollala qui.</p>
+      <div style="display:flex;gap:var(--space-2)"><input class="input" id="s-groq-key" placeholder="gsk_…" autocomplete="off" autocapitalize="off" style="flex:1"/><button type="button" class="pbtn soft sm" id="s-groq-save">Salva</button></div></div>
     <button type="button" class="pbtn soft block" id="s-paste">Incolla da un sito di accordi</button>
     <div class="field"><label class="field-lbl" for="s-link">Link agli accordi (facoltativo)</label><input class="input" id="s-link" type="url" value="${esc(s.link || '')}" placeholder="https://" autocomplete="off"/></div>
     <button class="pbtn block" type="submit">Salva</button></form>`);
@@ -200,6 +203,7 @@ edit.el.addEventListener('click', e => {
     sHits = []; edit.$('#s-hits').innerHTML = '';
   }
   if (e.target.closest('#s-ai')) runAi();
+  if (e.target.closest('#s-groq-save')) { const v = edit.$('#s-groq-key').value.trim(); if (v) setGroqKey(v).then(() => { edit.$('#s-groq').style.display = 'none'; toast('Chiave salvata: riprova'); }); }
 });
 // Suggerimenti del brano mentre scrivi (Apple Music: gratuito, senza registrazioni)
 let sHits = [], sTimer = 0, sSeq = 0;
@@ -231,8 +235,12 @@ async function runAi() {
     ta.value = chordsToBody(r.sections);
     if (r.key) edit.$('#s-key').value = r.key;
     edit.$('#s-capo').value = String(r.capo || 0);
-    msg.textContent = `Proposta dall'IA${r.capo ? ` (capotasto ${r.capo})` : ''}: controllala con le orecchie e correggi quello che serve, poi salva.`;
-  } catch (err) { console.error(err); msg.textContent = 'Non sono riuscito a contattare l\'IA: ' + (err.message || err); }
+    msg.textContent = `${r.from === 'cache' ? 'Già cercata: ' : 'Proposta dall\'IA'}${r.capo ? ` (capotasto ${r.capo})` : ''}: controllala con le orecchie e correggi quello che serve, poi salva.`;
+  } catch (err) {
+    console.error(err);
+    if (isQuotaError(err) && !hasGroq()) { msg.textContent = 'Richieste gratuite finite per oggi.'; const g = edit.$('#s-groq'); g.style.display = 'flex'; g.hidden = false; }
+    else msg.textContent = 'Non sono riuscito a trovarli: ' + (err.message || err);
+  }
   finally { btn.disabled = false; }
 }
 const paste = createSheet({ title: 'Incolla da un sito', body: `<div class="stack" style="display:flex;flex-direction:column;gap:var(--space-3)">
