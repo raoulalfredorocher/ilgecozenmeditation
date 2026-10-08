@@ -773,3 +773,10 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 .notif-bg[data-side="r"] span:first-child, .notif-bg[data-side="l"] span:last-child { display: block; }
 .notif-row { position: relative; background: var(--card); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .notif-arch-btn { margin-top: var(--space-2); border: 0; background: none; color: var(--muted); font: inherit; font-size: var(--fs-sm); padding: var(--space-2) 0; cursor: pointer; }
+
+/* Dieta: il giorno scorre entrando da destra (si va avanti) o da sinistra (si torna indietro) */
+.dt-day.slide-l { animation: dt-in-l .28s cubic-bezier(.2,.8,.2,1); }
+.dt-day.slide-r { animation: dt-in-r .28s cubic-bezier(.2,.8,.2,1); }
+@keyframes dt-in-l { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes dt-in-r { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+.dt-day { touch-action: pan-y; }

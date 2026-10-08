@@ -18,6 +18,7 @@ import { buildDietPDF } from './pdf.js';
 
 const root = document.getElementById('tab-dieta');
 let selected = weekdayIdx(new Date());
+let slide = '';                       // direzione dell'ultimo cambio giorno ('l' | 'r'), per l'animazione
 
 const kc = n => Math.round(n).toLocaleString('it-IT');
 const sgn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.round(Math.abs(n)).toLocaleString('it-IT');
@@ -96,7 +97,7 @@ function render() {
     <button type="button" class="diet-pill" id="dt-diet" aria-label="Cambia dieta">${esc(state.diet.name)}<span aria-hidden="true"> ▾</span></button>
     <div class="wk">${bars}</div>
     <div class="mc-legend" aria-label="Legenda dei colori"><span><i style="background:${MC.prot}"></i>Proteine</span><span><i style="background:${MC.carb}"></i>Carboidrati</span><span><i style="background:${MC.fat}"></i>Grassi</span><span class="s">· altezza = kcal del giorno</span></div>
-    <section class="dt-day">
+    <section class="dt-day${slide ? ' slide-' + slide : ''}">
       <div class="dt-dayhead">
         <div><div class="dt-dayname">${esc(day.name || DAY_NAMES[selected])}</div>
           <div class="s">${esc(day.type || '')}${meals.length ? ` · ${kc(dt.kcal)} kcal` : ''}</div>
@@ -115,11 +116,27 @@ function render() {
       ${supp.length ? `<p class="dt-supp">Integratori: ${esc(supp.join(', '))}</p>` : ''}
     </section>
     ${weekNumbers(days, dayTotals)}`;
+  slide = '';
 }
+
+// Scorri a sinistra/destra per cambiare giorno (come girare pagina)
+let sx = 0, sy = 0, st = 0, sw = false;
+root.addEventListener('touchstart', e => {
+  if (e.touches.length !== 1 || e.target.closest('input, textarea, select, .wk')) { sw = false; return; }
+  sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now(); sw = true;
+}, { passive: true });
+root.addEventListener('touchend', e => {
+  if (!sw) return; sw = false;
+  const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+  if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.5 || Date.now() - st > 700) return;
+  const next = selected + (dx < 0 ? 1 : -1);
+  if (next < 0 || next > 6 || next >= state.diet.days.length) return;
+  slide = dx < 0 ? 'l' : 'r'; selected = next; render();
+}, { passive: true });
 
 root.addEventListener('click', e => {
   const d = e.target.closest('[data-day]');
-  if (d) { selected = +d.dataset.day; return render(); }
+  if (d) { const n = +d.dataset.day; slide = n > selected ? 'l' : n < selected ? 'r' : ''; selected = n; return render(); }
   if (e.target.closest('#dt-edit')) return editDay(selected);
   if (e.target.closest('#dt-reg')) return registerToday(weekDate(selected));
   if (e.target.closest('#dt-diet')) return openDiets();
