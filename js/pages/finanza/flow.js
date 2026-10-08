@@ -14,7 +14,7 @@
  *   f.select(id|null)
  */
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const NW = 124, GAPY = 12, PADY = 34;
+const NW = 108, GAPY = 12, PADY = 34;
 
 export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {}) {
   el.classList.add('fl');
@@ -25,7 +25,7 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
   function draw() {
     if (!model) return;
     const { incomes, accounts, expenses, links } = model;
-    const width = Math.max(el.clientWidth || 340, 620);
+    const width = Math.max(el.clientWidth || 340, 540);
     const val = { };
     // totali per nodo
     const L = { in: {}, out: {}, mvOut: {}, mvIn: {} };
@@ -39,7 +39,7 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
     const colH = col => col.length * GAPY + 2 * PADY;
     const avail = Math.max(300, Math.max(colH(incomes), colH(accounts), colH(expenses)) + 220);
     const scale = Math.max(0.0001, (avail - Math.max(colH(incomes), colH(accounts), colH(expenses))) / maxSum);
-    const MIN = 34;
+    const MIN = 42;
     const place = (col, x) => { let y = PADY; col.forEach(n => { n.h = Math.max(MIN, (n.value ?? n.v) * scale); n.x = x; n.y = y; y += n.h + GAPY; }); return y; };
     const xs = [0, (width - NW) / 2, width - NW];
     const H = Math.max(place(incomes, xs[0]), place(accounts, xs[1]), place(expenses, xs[2])) + PADY;
@@ -67,7 +67,7 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
     stage.style.width = width + 'px'; stage.style.height = H + 'px';
     const svg = `<svg width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" aria-hidden="true">${paths.map(p => `<path d="${p.d}" fill="none" stroke="${p.color}" stroke-width="${p.w}" stroke-opacity="${isLit(p.l) ? (selected ? .62 : .38) : .07}" ${p.l.kind === 'move' ? 'stroke-dasharray="0"' : ''} class="fl-link"/>`
       + (p.arrow ? `<path d="M${p.arrow.x + 1} ${p.arrow.y} l9 -6 l0 12 z" fill="${p.color}" fill-opacity="${isLit(p.l) ? .9 : .1}"/>` : '')).join('')}</svg>`;
-    const node = (n, kind) => `<button type="button" class="fl-node ${kind}${selected === n.id ? ' sel' : ''}${selected && !linked.has(n.id) ? ' dim' : ''}" data-id="${esc(n.id)}"
+    const node = (n, kind) => `<button type="button" class="fl-node ${kind}${n.h < 56 ? ' c' : ''}${selected === n.id ? ' sel' : ''}${selected && !linked.has(n.id) ? ' dim' : ''}" data-id="${esc(n.id)}"
       style="left:${n.x}px;top:${n.y}px;width:${NW}px;height:${n.h}px;--c:${n.color || '#8E9AA8'}"><span class="fl-t">${esc(n.label)}</span><span class="fl-a">${esc(n.show ?? fmt(n.value ?? n.v))}</span></button>`;
     stage.innerHTML = svg + incomes.map(n => node(n, 'in')).join('') + accounts.map(n => node(n, 'acc')).join('') + expenses.map(n => node(n, 'out')).join('')
       + `<span class="fl-h" style="left:${xs[0]}px">Entrate</span><span class="fl-h" style="left:${xs[1]}px">Conti</span><span class="fl-h" style="left:${xs[2]}px">Uscite</span>`;

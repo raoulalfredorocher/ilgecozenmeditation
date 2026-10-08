@@ -135,13 +135,16 @@
     .fl-stage { position:relative; }
     .fl-stage svg { position:absolute; inset:0; pointer-events:none; }
     .fl-link { transition:stroke-opacity .25s; }
-    .fl-h { position:absolute; top:8px; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); width:124px; text-align:center; }
+    .fl-h { position:absolute; top:8px; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); width:108px; text-align:center; }
     .fl-node { position:absolute; border:0; border-radius:12px; padding:6px 10px; display:flex; flex-direction:column; justify-content:center; gap:1px; text-align:left; cursor:pointer; font-family:inherit; overflow:hidden;
-      background:color-mix(in srgb, var(--c) 18%, var(--card)); color:var(--text); box-shadow:inset 3px 0 0 var(--c), 0 0 0 1px color-mix(in srgb, var(--c) 28%, var(--border)); transition:opacity .25s, transform .15s, box-shadow .2s; }
+      background:color-mix(in srgb, var(--c) 18%, var(--card)); color:var(--text) !important; box-shadow:inset 3px 0 0 var(--c), 0 0 0 1px color-mix(in srgb, var(--c) 28%, var(--border)); transition:opacity .25s, transform .15s, box-shadow .2s; }
     .fl-node.acc { background:color-mix(in srgb, var(--c) 30%, var(--card)); }
     .fl-node:active { transform:scale(.97); } .fl-node.dim { opacity:.3; }
     .fl-node.sel { box-shadow:inset 3px 0 0 var(--c), 0 0 0 2px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 35%, transparent); }
     .fl-t { font-size:.72rem; font-weight:600; line-height:1.2; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .fl-node .fl-t, .fl-node .fl-a { color:var(--text) !important; }
+    .fl-node.c .fl-t { -webkit-line-clamp:1; }
+    .fl-hint { font-size:.58rem; color:var(--muted); text-align:right; margin:2px 4px 0; }
     .fl-a { font-size:.66rem; font-variant-numeric:tabular-nums; opacity:.8; }
     .fl-det { margin-top:14px; border-top:1px solid var(--border); padding-top:12px; }
     .fl-det-h { display:flex; flex-direction:column; gap:8px; margin-bottom:6px; } .fl-det-h b { font-size:1rem; }
@@ -1085,7 +1088,7 @@
       if (!root.querySelector('#pat-fl')) {
         root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div>
           <div class="mp-seg" id="pat-seg"><button data-p="month">Al mese</button><button data-p="year">All'anno</button><button data-move class="move">⇄ Registra uno spostamento</button></div>
-          <div id="pat-fl"></div><div id="pat-detail"></div></div>`;
+          <div id="pat-fl"></div><div class="fl-hint">scorri il diagramma con il dito →</div><div id="pat-detail"></div></div>`;
         patFlow = mountFlow(root.querySelector('#pat-fl'), { fmt: v => eur0(v), onSelect: id => { patState.sel = id; flowDetail(patModel, id); } });
         root.querySelector('#pat-seg').addEventListener('click', e => {
           const p = e.target.closest('[data-p]'); if (p) { patState.per = p.dataset.p; renderPatrimonio(); return; }
