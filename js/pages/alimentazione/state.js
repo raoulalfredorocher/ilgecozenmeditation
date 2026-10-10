@@ -23,7 +23,7 @@ import {
   db, auth,
 } from '../../core/db.js';
 import { collection, query, where, onSnapshot, doc as fsDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import { calcTdee, profileOn, stepsKcal, netWorkoutKcal } from '../../core/bilancio.js';
+import { calcTdee, profileOn, stepsKcal, netWorkoutKcal, isForza } from '../../core/bilancio.js';
 import { mergeManual } from '../../core/salute-merge.js';
 
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
@@ -97,7 +97,7 @@ export function workoutOn(key, planType = 'Riposo') {
   const real = state.workouts[key], today = dateKey();
   if (key <= today) {
     if (!real) return { kcal: 0, source: null, n: 0 };
-    return { kcal: real.kcal || 0, min: real.min || 0, source: 'registro', n: real.n };
+    return { kcal: real.kcal || 0, min: real.min || 0, forza: real.forza, source: 'registro', n: real.n };
   }
   return planType === 'Workout' ? { kcal: 0, source: 'piano', n: 1 } : { kcal: 0, source: null, n: 0 };
 }
@@ -112,7 +112,7 @@ export function tdeeParts(key = dateKey(), planType = 'Riposo') {
   if (!base) return null;
   const passi = state.health?.[key]?.passi ?? f.passi;          // i passi veri dell'orologio, se ci sono
   const w = workoutOn(key, planType);
-  return { base, passi: stepsKcal(passi, f.peso), workout: w.source === 'registro' ? netWorkoutKcal(w.kcal, w.min, base) : Math.round(w.kcal), realSteps: state.health?.[key]?.passi != null, source: w.source };
+  return { base, passi: stepsKcal(passi, f.peso, f.lavoro), workout: w.source === 'registro' ? netWorkoutKcal(w.kcal, w.min, base, parseFloat(f.peso), w.forza) : Math.round(w.kcal), realSteps: state.health?.[key]?.passi != null, source: w.source };
 }
 export function tdeeFor(key = dateKey(), planType = 'Riposo') {
   const p = tdeeParts(key, planType);
@@ -293,8 +293,9 @@ export function startSync() {
       snap.forEach(d => {
         const r = d.data();
         if (!r.data) return;
-        const o = w[r.data] ||= { n: 0, kcal: null, min: 0 };
+        const o = w[r.data] ||= { n: 0, kcal: null, min: 0, forza: true };
         o.n++;
+        o.forza = o.forza && isForza(r);
         o.min += Number(r.durata) || 0;
         if (Number.isFinite(+r.kcal) && r.kcal !== null && r.kcal !== '') o.kcal = (o.kcal || 0) + (+r.kcal);   // quando arriveranno dall'orologio
       });

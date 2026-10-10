@@ -43,10 +43,22 @@ export function loadFoods() {
   return loaded;
 }
 
+/**
+ * Un alimento = una sola voce. Questi nomi sono doppioni di un alimento già presente (con valori diversi):
+ * non compaiono più nella ricerca e, se un diario o una dieta li usano ancora, si leggono come l'alimento giusto.
+ */
+export const ALIAS = {
+  'verdura (broccolo)': 'Broccolo', 'broccoli': 'Broccolo', 'patate americane': 'Patate dolci', 'patate': 'Patate bianche',
+  'riso bianco (crudo)': 'Riso a crudo', 'pasta integrale (cruda)': 'Pasta integrale', 'uova (intere)': 'Uova',
+  'parmigiano reggiano': 'Parmigiano', "olio extravergine d'oliva": 'Olio EVO', 'burro di arachidi': "Burro d'arachidi",
+  'pomodori': 'Pomodorini', 'ceci in scatola (sgocciolati)': 'Ceci', 'proteine in polvere (whey)': 'Whey vegetale',
+};
+export const canonicalName = name => ALIAS[String(name).toLowerCase()] || name;
+
 export const allFoods = () => {
-  const mine = state.customFoods.map(normalizeFood).filter(Boolean);
+  const mine = state.customFoods.map(normalizeFood).filter(f => f && !ALIAS[f.n.toLowerCase()]);
   const names = new Set(mine.map(f => f.n.toLowerCase()));
-  return [...mine, ...base.filter(f => !names.has(f.n.toLowerCase()))];
+  return [...mine, ...base.filter(f => !names.has(f.n.toLowerCase()) && !ALIAS[f.n.toLowerCase()])];
 };
 
 const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -76,4 +88,4 @@ export function macrosFor(food, grams) {
 }
 
 /** Alimento del database dal nome esatto (per ricalcolare un alimento già inserito). */
-export const findFood = name => allFoods().find(f => f.n.toLowerCase() === String(name).toLowerCase());
+export const findFood = name => { const n = canonicalName(name).toLowerCase(); return allFoods().find(f => f.n.toLowerCase() === n); };

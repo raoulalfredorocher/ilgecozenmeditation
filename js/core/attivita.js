@@ -43,7 +43,7 @@ export async function loadRange(from, to) {
         if (!r.data) return;
         const sets = (r.es || []).reduce((a, e) => a + (e.s || []).filter(s => !s.f).length, 0);
         day(r.data).allenamento.push({
-          id: d.id, kcal: r.kcal ?? null, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets,
+          id: d.id, orologio: r.orologio || '', kcal: r.kcal ?? null, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets,
           es: r.es || null, rw: num(r.rw), st: num(r.st), acqua: num(r.acqua), feedback: r.feedback || null, note: r.note || '',
         });
       });

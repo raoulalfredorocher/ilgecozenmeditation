@@ -49,7 +49,7 @@ function buildDays(n) {
   });
 }
 /** Cos'è il "fabbisogno": il TDEE di quel giorno, non solo il metabolismo. */
-const TDEE_NOTE = `<p class="s rs-note"><b>Il fabbisogno è il TDEE</b>: le kcal che bruci in tutto in quel giorno. Cambia ogni giorno perché somma il <b>metabolismo</b> e la vita quotidiana (calcolati da età, altezza, peso e % di grasso), le kcal dei <b>passi</b> e quelle dell'<b>allenamento</b> misurate dall'orologio. Il solo metabolismo è la parte più chiara del grafico "Fabbisogno (TDEE) e attività".</p>`;
+const TDEE_NOTE = `<p class="s rs-note"><b>Il fabbisogno è il TDEE</b>: le kcal che bruci in tutto in quel giorno. Cambia ogni giorno perché somma il <b>metabolismo</b> e la vita quotidiana (calcolati da età, altezza, peso e % di grasso), le kcal dei <b>passi in più</b> rispetto a quelli già compresi nel livello di attività (circa 4.000 al giorno se sei sedentario) e quelle dell'<b>allenamento</b>: per i pesi l'orologio sovrastima, quindi si contano al massimo 3 kcal per kg all'ora oltre il riposo. Il solo metabolismo è la parte più chiara del grafico "Fabbisogno (TDEE) e attività".</p>`;
 const avg = (list, k) => (list.length ? list.reduce((a, x) => a + (x[k] || 0), 0) / list.length : 0);
 
 function card(title, headline, sub, body, foot = '') {

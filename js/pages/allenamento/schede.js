@@ -280,9 +280,9 @@ exSheet.el.addEventListener('click', e => {
 });
 const readEx = () => {
   const nome = exSheet.$('#ex-nome').value.trim();
-  if (!nome) { exSheet.$('#ex-nome').focus(); return null; }
+  if (!nome) { toast('Scrivi il nome dell’esercizio'); exSheet.$('#ex-nome').focus(); return null; }
   const tempo = exTipo === 't' ? num(exSheet.$('#ex-min').value) * 60 + num(exSheet.$('#ex-sec').value) : 0;
-  if (exTipo === 't' && !tempo) { exSheet.$('#ex-min').focus(); return null; }
+  if (exTipo === 't' && !tempo) { toast('Indica la durata dell’esercizio a tempo'); exSheet.$('#ex-min').focus(); return null; }
   return {
     nome, gruppo: exGroup, tipo: exTipo, serie: num(exSheet.$('#ex-serie').value) || 3,
     rep: exTipo === 'r' ? num(exSheet.$('#ex-rep').value) || 10 : 0,
@@ -296,7 +296,8 @@ async function commitEx(mutate) {
   mutate(sch[view.sc].esercizi);
   p.schede = sch;
   render();
-  await saveSchede(p._docId, sch);
+  try { await saveSchede(p._docId, sch); return true; }
+  catch (err) { console.error('scheda', err); toast(`Non sono riuscito a salvare (${err.code || err.message}). Riprova.`); return false; }
 }
 exSheet.$('#ex-ok').addEventListener('click', async () => {
   const data = readEx();
@@ -307,7 +308,7 @@ exSheet.$('#ex-ok').addEventListener('click', async () => {
 exSheet.$('#ex-more').addEventListener('click', async () => {
   const data = readEx();
   if (!data) return;
-  await commitEx(list => list.push(data));
+  if (!(await commitEx(list => list.push(data)))) return;
   toast(`Aggiunto: ${data.nome}`);
   exSheet.$('#ex-nome').value = '';
   exSheet.$('#ex-nome').focus();

@@ -8,7 +8,7 @@ import { icon } from '../../ui/icons.js';
 import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey } from '../../core/attivita.js';
-import { dayBalance } from '../../core/bilancio.js';
+import { dayBalance, isForza } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -94,7 +94,7 @@ function renderDay() {
   const bil = (() => {
     if (!profile || !d) return null;
     const kw = d.allenamento.reduce((a, t) => a + (+t.kcal || 0), 0);
-    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: d.allenamento.reduce((a, t) => a + (+t.durata || 0), 0), ingerite: d.cibo?.kcal });
+    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: d.allenamento.reduce((a, t) => a + (+t.durata || 0), 0), forza: d.allenamento.every(isForza), ingerite: d.cibo?.kcal });
   })();
   if (bil && d.cibo) {
     const r = (l, v, strong) => `<div class="cm-bil${strong ? ' strong' : ''}"><span>${l}</span><b>${v}</b></div>`;

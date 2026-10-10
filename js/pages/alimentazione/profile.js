@@ -47,7 +47,7 @@ function drawHistory() {
 }
 function preview() {
   const f = form();
-  const base = calcTdee(f) + stepsKcal(f.passi, f.peso);
+  const base = calcTdee(f) + stepsKcal(f.passi, f.peso, f.lavoro);
   const k = n => n.toLocaleString('it-IT');
   sheet.$('#pf-sum').innerHTML = base ? `<span class="de-kcal">${k(base)}</span><span class="s"> kcal al giorno senza allenamento (TDEE)</span><div class="s">Le kcal dell'allenamento si aggiungono dai dati veri dell'orologio.</div>` : '<span class="s">Compila età, altezza e peso per calcolare il fabbisogno.</span>';
 }
