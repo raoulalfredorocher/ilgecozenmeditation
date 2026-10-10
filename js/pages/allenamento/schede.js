@@ -149,12 +149,28 @@ function planMenu(id) {
     ['Elimina allenamento', async () => { await deletePlan(id); if (view.plan === id) view = { plan: null, sc: null }; render(); toast('Allenamento eliminato'); }, true],
   ]);
 }
+/** Sposta (o copia) una scheda in un altro allenamento: si sceglie la destinazione da un elenco. */
+function pickPlan(i, move) {
+  const from = planById(view.plan), s = from?.schede[i];
+  const others = state.plans.filter(q => q._docId !== view.plan);
+  if (!s) return;
+  if (!others.length) return toast('Non c’è un altro allenamento: creane uno prima');
+  setTimeout(() => openMenu(`${move ? 'Sposta' : 'Copia'} “${s.nome}” in…`, others.map(q => [q.nome, async () => {
+    try {
+      await saveSchede(q._docId, [...clone(q.schede), clone(s)]);
+      if (move) { const rest = from.schede.filter((_, k) => k !== i); from.schede = rest; view.sc = null; render(); await saveSchede(from._docId, rest); }
+      toast(`${move ? 'Spostata' : 'Copiata'} in ${q.nome}`);
+    } catch (err) { console.error('sposta scheda', err); toast(`Non sono riuscito a ${move ? 'spostarla' : 'copiarla'} (${err.code || err.message})`); }
+  }])), 220);
+}
 function schedaMenu(i) {
   const p = planById(view.plan), s = p?.schede[i];
   if (!s) return;
   openMenu(s.nome, [
     ['Rinomina', () => setTimeout(() => openSchedaSheet(i), 220)],
     ['Duplica', async () => { const sch = clone(p.schede); sch.splice(i + 1, 0, { ...clone(s), nome: `${s.nome} (copia)` }); p.schede = sch; render(); await saveSchede(p._docId, sch); toast('Scheda duplicata'); }],
+    ['Sposta in un altro allenamento…', () => pickPlan(i, true)],
+    ['Copia in un altro allenamento…', () => pickPlan(i, false)],
     ['Elimina scheda', async () => { const sch = p.schede.filter((_, k) => k !== i); p.schede = sch; view.sc = null; render(); await saveSchede(p._docId, sch); toast('Scheda eliminata'); }, true],
   ]);
 }
