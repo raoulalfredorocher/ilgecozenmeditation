@@ -780,3 +780,8 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 @keyframes dt-in-l { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes dt-in-r { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
 .dt-day { touch-action: pan-y; }
+
+/* Esami: scheda informativa a quattro voci */
+.gz-dl { margin: var(--space-2) 0 0; }
+.gz-dl dt { margin-top: var(--space-3); font-size: .625rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.gz-dl dd { margin: 2px 0 0; font-size: var(--fs-sm); line-height: 1.5; }

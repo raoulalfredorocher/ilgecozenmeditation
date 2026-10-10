@@ -181,8 +181,8 @@ function labsList() {
       <div class="gz-avg">${fdate(last.d)}${last.lab ? `<br><span>${esc(last.lab)}</span>` : ''}</div></div>
       ${sem ? `<div class="gz-semline">${dot(sem.luce)}<span>${esc(sem.why)}</span></div>` : ''}
       <div class="gz-refline"><b>Riferimento del laboratorio:</b> ${refText(last) ? `${refText(last)} ${esc(last.u || '')}` : 'non indicato nel referto'}${st ? ` · ${tag(...st)}` : ''}${delta != null ? `<br><span class="s">${delta > 0 ? '+' : delta < 0 ? '−' : ''}${dec(Math.abs(delta))} rispetto al precedente (${fdate(prev.d)})</span>` : ''}</div>
-      ${info ? `<details class="gz-info"><summary>Cos'è e valori ottimali</summary><p>${esc(info.cos)}</p><p><b>Valori:</b> ${esc(info.ott)}</p>${info.nota ? `<p class="s">${esc(info.nota)}</p>` : ''}<p class="s">Indicazioni generali, non una diagnosi: conta il riferimento del tuo laboratorio e il parere del medico.</p></details>` : ''}
-      ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v, t: `${fdate(x.d)} · ${val(x)} ${x.u || ''}${x.lab ? ' · ' + x.lab : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}` })) }], { band, label: n, fmt: v => dec(v) }) : '<p class="s">Un solo valore finora: dal prossimo esame vedrai l’andamento.</p>'}
+      ${info ? `<details class="gz-info"><summary>Cos'è, valori e cosa comporta</summary><dl class="gz-dl"><dt>Cos'è</dt><dd>${esc(info.cos)}</dd><dt>Valori di riferimento</dt><dd>${esc(info.rif)}</dd><dt>Se è alto</dt><dd>${esc(info.alto)}</dd><dt>Se è basso</dt><dd>${esc(info.basso)}</dd></dl></details>` : ''}
+      ${L.length > 1 ? seriesChart([{ name: n, color: 'var(--primary)', points: L.map(x => ({ d: x.d, y: x.v, t: `${fdate(x.d)} · ${val(x)} ${x.u || ''}${x.lab ? ' · ' + x.lab : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}` })) }], { band, label: n, fmt: v => dec(v) }) : ''}
       ${L.slice(0, 4).map(x => row('esami', x.id, `${val(x)} ${esc(x.u || '')}`, `${fdate(x.d)}${x.lab ? ' · ' + esc(x.lab) : ''}${refText(x) ? ` · rif. ${refText(x)}` : ''}`)).join('')}</div>`;
   }).join('');
 }
@@ -214,7 +214,7 @@ function checksCard() {
     return { ...c, st, rank: st[1] === 'out' ? 0 : 1 };
   }).sort((a, b) => a.rank - b.rank);
   return `<div class="gz-sec"><div class="cap">Quali esami fare</div><div class="card gz-card">
-    <p class="gz-rif" style="margin:0 0 var(--space-3)">Per un quadro completo del cuore e del metabolismo, confrontato con ciò che hai già fatto. Indicativo: la frequenza giusta la decide il medico in base a età, familiarità e risultati.</p>
+    <p class="gz-rif" style="margin:0 0 var(--space-3)">Per un quadro completo del cuore e del metabolismo, confrontato con ciò che hai già fatto.</p>
     ${items.map(c => `<div class="gz-row" style="align-items:flex-start"><span><b>${esc(c.t)}</b><br><span class="s">${esc(c.why)}</span></span><span class="s" style="text-align:right;flex-shrink:0;max-width:42%">${tag(...c.st)}</span></div>`).join('')}</div></div>`;
 }
 
@@ -229,11 +229,9 @@ function labsCard() {
       <p><span class="gz-luce l-verde"></span>Verde: nel riferimento in almeno 2 esami consecutivi.</p>
       <p><span class="gz-luce l-giallo"></span>Giallo: appena fuori dal riferimento (entro il 10%), oppure rientrato dopo un valore fuori: da monitorare. Dopo un giallo, anche un valore corretto resta giallo; torna verde alla misura giusta successiva.</p>
       <p><span class="gz-luce l-rosso"></span>Rosso: fuori dal riferimento di oltre il 10%.</p>
-      <p><span class="gz-luce l-grigio"></span>Grigio: un solo esame nel riferimento: serve il secondo.</p>
-      <p class="s">Il riferimento è quello scritto sul referto del laboratorio. Indicazioni generali, non una diagnosi.</p></details>
+      <p><span class="gz-luce l-grigio"></span>Grigio: un solo esame nel riferimento: serve il secondo.</p></details>
     <div class="gz-sec" id="sl-labs">${labsList()}</div>
-    <div class="gz-add"><button type="button" class="pri" data-add="esami">＋ Valore a mano</button><button type="button" data-vault>Referti PDF${pdfCount() ? ` (${pdfCount()})` : ''}</button></div>
-    <p class="gz-note">Il riferimento di ogni valore è quello scritto sul referto del tuo laboratorio. Indicazioni generali, non una diagnosi.</p></div>`;
+    <div class="gz-add"><button type="button" class="pri" data-add="esami">＋ Valore a mano</button><button type="button" data-vault>Referti PDF${pdfCount() ? ` (${pdfCount()})` : ''}</button></div></div>`;
 }
 
 const TABS = [['chiave', 'Valori chiave'], ['esami', 'Esami'], ['misure', 'Pressione e glicemia'], ['fare', 'Da fare']];

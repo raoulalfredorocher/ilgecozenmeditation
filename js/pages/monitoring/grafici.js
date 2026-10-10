@@ -64,13 +64,22 @@ function salute(days) {
     + '<p class="gz-note">Indicazioni generali per un adulto in salute: non sono una diagnosi. Per dubbi sui tuoi valori parla sempre con il medico.</p>';
 }
 
+/** Il quadro non si calcola da solo: lo costruisce il pulsante, con i dati di quel momento. */
+let analisi = null;       // { html, ora }
+function quadroBox() {
+  const btn = `<button type="button" class="btn btn-primary" data-analizza>${analisi ? 'Analizza di nuovo' : 'Analizza i miei dati'}</button>`;
+  if (!analisi) return `<div class="card gz-card"><p class="gz-story">Mette insieme sonno, cuore, stress, movimento, meditazione, alimentazione ed esami in un punteggio, ti dice cosa lo frena e le 3 azioni migliori.</p>${btn}</div>`;
+  return `<div class="gz-rif" style="display:flex;align-items:center;gap:var(--space-3);justify-content:space-between;margin:0 0 var(--space-2)"><span>Analisi delle ${analisi.ora}</span>${btn}</div>${analisi.html}`;
+}
+
 function render() {
   const days = lastDays(range);
   const head = `<div class="segmented gz-range" role="group" aria-label="Periodo">${[7, 14, 30, 90].map(n => `<button type="button" data-r="${n}" aria-pressed="${n === range}">${n} giorni</button>`).join('')}</div>`;
-  root.innerHTML = head + (ctx ? quadro('qs', 'Il tuo quadro di salute', quadroHtml(health.days, ctx)) + quadro('med', 'Meditazione', meditazione(days)) + quadro('wk', 'Allenamenti e passi', allenamenti(days)) + quadro('cibo', 'Alimentazione', alimentazione(days)) + quadro('sal', 'Salute', salute(days)) : '<div class="card flat gz-empty">Carico i tuoi dati…</div>');
+  root.innerHTML = head + (ctx ? quadro('qs', 'Il tuo quadro di salute', quadroBox()) + quadro('med', 'Meditazione', meditazione(days)) + quadro('wk', 'Allenamenti e passi', allenamenti(days)) + quadro('cibo', 'Alimentazione', alimentazione(days)) + quadro('sal', 'Salute', salute(days)) : '<div class="card flat gz-empty">Carico i tuoi dati…</div>');
 }
 
 root.addEventListener('click', e => {
+  if (e.target.closest('[data-analizza]')) { analisi = { html: quadroHtml(health.days, ctx), ora: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) }; return render(); }
   const hit = e.target.closest('.gz-hit');
   if (hit && hit.dataset.day && ['sonno', 'sonnoQ'].includes(hit.closest('svg')?.dataset.m)) {
     return sonnoSheet(hit.dataset.day, health.days);

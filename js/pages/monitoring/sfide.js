@@ -10,7 +10,7 @@
  */
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc, getDocs, collection, query, where } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import { FAMILIES, OTHERS } from '../mentale/data.js';
+import { EMOTIONS } from '../mentale/data.js';
 import { dk } from './dati.js';
 
 const scale = (lv, base, every, max) => Math.min(max, base + Math.floor((lv - 1) / every));
@@ -32,7 +32,7 @@ export const CATALOGO = {
       Object.values(d.compass || {}).forEach(v => { if (v) k++; }); if (d.mission) k++;
       (d.sections || []).forEach(sec => { if (sec.goal) k++; (sec.areas || []).forEach(a => { if (a.text) k++; }); }); return k; } catch { return 0; } } },
   emozioni:    { cat: 'mente', n: lv => scale(lv, 1, 8, 6), text: n => `Registra ${n} ${pl(n, 'emozione', 'emozioni')} nella ruota`,
-    measure: async (c, x) => { const keys = [...FAMILIES.map(f => f.key), ...OTHERS.map(o => o.key)]; let t = 0;
+    measure: async (c, x) => { const keys = Object.keys(EMOTIONS); let t = 0;
       await Promise.all(keys.map(async k => { try { t += (await getDocs(query(collection(db, 'users', auth.currentUser.uid, 'emozioni_entries', k.replace(/[^a-zA-Z0-9_À-ɏ]/g, '_'), 'log'), where('createdAt', '>=', x.since)))).size; } catch { /* ok */ } })); return t; } },
   umore:       { cat: 'mente', n: lv => scale(lv, 3, 8, 10), text: n => `Segna l'umore per ${n} giorni nel Calendario`,
     measure: async (c, x) => Object.keys(x.D.umore || {}).filter(k => k >= x.sinceDay).length },
