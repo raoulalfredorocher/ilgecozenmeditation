@@ -32,8 +32,9 @@ export const CATALOGO = {
       Object.values(d.compass || {}).forEach(v => { if (v) k++; }); if (d.mission) k++;
       (d.sections || []).forEach(sec => { if (sec.goal) k++; (sec.areas || []).forEach(a => { if (a.text) k++; }); }); return k; } catch { return 0; } } },
   emozioni:    { cat: 'mente', n: lv => scale(lv, 1, 8, 6), text: n => `Registra ${n} ${pl(n, 'emozione', 'emozioni')} nella ruota`,
-    measure: async (c, x) => { const keys = Object.keys(EMOTIONS); let t = 0;
-      await Promise.all(keys.map(async k => { try { t += (await getDocs(query(collection(db, 'users', auth.currentUser.uid, 'emozioni_entries', k.replace(/[^a-zA-Z0-9_À-ɏ]/g, '_'), 'log'), where('createdAt', '>=', x.since)))).size; } catch { /* ok */ } })); return t; } },
+    measure: async (c, x) => { const keys = Object.keys(EMOTIONS);
+      const sizes = await Promise.all(keys.map(async k => { try { return (await getDocs(query(collection(db, 'users', auth.currentUser.uid, 'emozioni_entries', k.replace(/[^a-zA-Z0-9_À-ɏ]/g, '_'), 'log'), where('createdAt', '>=', x.since)))).size; } catch { return 0; } }));
+      return sizes.reduce((a, n) => a + n, 0); } },
   umore:       { cat: 'mente', n: lv => scale(lv, 3, 8, 10), text: n => `Segna l'umore per ${n} giorni nel Calendario`,
     measure: async (c, x) => Object.keys(x.D.umore || {}).filter(k => k >= x.sinceDay).length },
   meditaz:     { cat: 'mente', n: lv => scale(lv, 2, 10, 7), text: n => `Medita ${n} ${pl(n, 'volta', 'volte')}`,
