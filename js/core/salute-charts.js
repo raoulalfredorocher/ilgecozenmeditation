@@ -37,36 +37,56 @@ const trendText = (vals, tol = 0.04) => {
 const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
 const generic = (s, m) => `Media ${m.fmt(s.avg)}${m.unit ? ' ' + m.unit : ''}, ultimo valore ${m.fmt(s.last)}${trendText(s.vals)}.`;
 
+/** Fascia "normale per te": mediana di tutti i tuoi giorni ± un'escursione stretta (non l'intervallo clinico, troppo largo per leggere i cambiamenti). */
+function personalBand(delta, label) {
+  return (all, m) => {
+    const v = all.filter(x => x != null).sort((a, b) => a - b);
+    if (v.length < 5) return null;
+    const med = v[v.length >> 1];
+    return { min: +(med - delta).toFixed(1), max: +(med + delta).toFixed(1), label: `${label} ${(med - delta).toFixed(1).replace('.', ',')}–${(med + delta).toFixed(1).replace('.', ',')}` };
+  };
+}
+/** Zone dello stress secondo Zepp: 1–25 rilassato, 26–50 normale, 51–79 medio, 80–100 alto. */
+export const stressZone = v => (v <= 25 ? 'rilassato' : v <= 50 ? 'normale' : v <= 79 ? 'medio' : 'alto');
+/** Fasce del punteggio del sonno (indicative): 90+ ottimo, 80–89 buono, 60–79 discreto, sotto 60 scarso. */
+export const sleepZone = v => (v >= 90 ? 'ottimo' : v >= 80 ? 'buono' : v >= 60 ? 'discreto' : 'scarso');
+
 export const METRICS = {
   passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, field: 'passi', avgAll: true, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
     story: (s, m) => `Media di ${it(s.avg)} passi al giorno su ${s.total} giorni (i giorni senza dati contano 0). ${plural(s.vals.filter(v => v >= 8000).length, 'giorno', 'giorni')} oltre 8.000 passi${trendText(s.vals)}.` },
   bpm: { title: 'Frequenza cardiaca a riposo', unit: 'bpm', type: 'line', get: d => d.bpmRiposo, field: 'bpmRiposo', fmt: it, band: { min: 50, max: 60, label: 'ottimo 50–60' },
     story: (s, m) => `A riposo in media ${it(s.avg)} bpm (da ${it(s.min)} a ${it(s.max)})${trendText(s.vals)}. Più basso, a parità di condizioni, è meglio.` },
   spo2: { title: 'Ossigenazione', unit: '%', type: 'line', get: d => d.spo2, fmt: n => n.toFixed(0), min: 90, max: 100, band: { min: 95, max: 100, label: 'normale 95–100' }, story: generic },
-  respiro: { title: 'Respirazione', unit: 'resp/min', type: 'line', get: d => d.respiro, field: 'respiro', fmt: n => n.toFixed(1), band: { min: 12, max: 20, label: 'norma 12–20' }, story: generic },
-  stress: { title: 'Stress', unit: '/100', type: 'line', get: d => d.stressMedio, field: 'stressMedio', fmt: it, min: 0, max: 100, story: generic },
+  respiro: { title: 'Respirazione', unit: 'resp/min', type: 'line', get: d => d.respiro, field: 'respiro', fmt: n => n.toFixed(1), band: personalBand(1.5, 'la tua norma'),
+    story: (s, m) => `Media ${m.fmt(s.avg)} resp/min${s.band ? `; il tuo valore tipico è ${m.fmt(s.band.min)}–${m.fmt(s.band.max)} e ${s.vals.filter(v => v != null && v >= s.band.min && v <= s.band.max).length} notti su ${s.n} ci rientrano` : ''}${trendText(s.vals)}.` },
+  stress: { title: 'Stress', unit: '/100', type: 'line', get: d => d.stressMedio, field: 'stressMedio', fmt: it, min: 0, max: 100, band: { min: 0, max: 25, label: 'rilassato 0–25' },
+    note: v => stressZone(v),
+    story: (s, m) => `Media ${it(s.avg)}/100 (${stressZone(s.avg)}), ultimo valore ${it(s.last)} (${stressZone(s.last)})${trendText(s.vals)}.` },
   vo2max: { title: 'VO₂ max', unit: 'ml/kg/min', type: 'line', get: d => d.vo2max, fmt: it, story: generic },
-  sonnoQ: { title: 'Qualità del sonno', unit: '/100', type: 'line', get: d => d.sonnoPunteggio, fmt: it, min: 0, max: 100, story: generic },
+  sonnoQ: { title: 'Qualità del sonno', unit: '/100', type: 'line', get: d => d.sonnoPunteggio, fmt: it, min: 0, max: 100, band: { min: 80, max: 100, label: 'buono 80–100' }, tap: true,
+    note: v => sleepZone(v),
+    story: (s, m) => `Media ${it(s.avg)}/100 (${sleepZone(s.avg)}), ultima notte ${it(s.last)} (${sleepZone(s.last)})${trendText(s.vals)}.` },
   meditazione: { title: 'Minuti di meditazione', unit: 'min', type: 'bar', get: d => d.m, avgAll: true, fmt: it,
     story: (s) => `${plural(s.n, 'giorno', 'giorni')} di pratica su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${fmtAvg(s.avg)} al giorno in media sul periodo.` },
   allenamento: { title: 'Minuti di allenamento', unit: 'min', type: 'bar', get: d => d.m, avgAll: true, fmt: it,
     story: (s) => `${plural(s.n, 'giorno', 'giorni')} di allenamento su ${s.total} · ${it(s.vals.reduce((a, v) => a + (v || 0), 0))} minuti in tutto, ${fmtAvg(s.avg)} al giorno in media sul periodo.` },
   kcalDiario: { title: 'Calorie mangiate', unit: 'kcal', type: 'bar', get: d => d.k, fmt: it,
     story: (s) => `Media di ${it(s.avg)} kcal nei ${plural(s.n, 'giorno registrato', 'giorni registrati')} su ${s.total} (i giorni senza diario non contano)${trendText(s.vals)}.` },
-  sonno: { title: 'Durata del sonno', unit: '', type: 'bar', get: d => d.sonnoMin, field: 'sonnoMin', fmt: hm, div: 60, axisFmt: v => `${v / 60} h`, band: { min: 420, max: 540, label: 'obiettivo 7–9 h' },
+  sonno: { title: 'Durata del sonno', unit: '', type: 'bar', get: d => d.sonnoMin, field: 'sonnoMin', fmt: hm, div: 60, axisFmt: v => `${v / 60} h`, band: { min: 420, max: 540, label: 'obiettivo 7–9 h' }, tap: true,
     story: (s, m) => `${plural(s.vals.filter(v => v >= 420).length, 'notte', 'notti')} su ${s.n} da almeno 7 ore · media ${hm(s.avg)}${trendText(s.vals)}.` },
 };
 const RIF = {
   passi: 'Riferimento: 8.000–10.000 passi al giorno sotto i 60 anni; oltre i 10.000 i benefici crescono poco. Sotto i 5.000 il rischio per la salute è più alto.',
   bpm: 'Riferimento: a riposo 50–60 bpm è un ottimo valore per un adulto allenato (60–100 è la norma). Stabile o in lieve calo nel tempo è un buon segno; se sale per più giorni di fila può voler dire stanchezza o malattia.',
   spo2: 'Riferimento: 95–100%. Valori ripetuti sotto il 94% vanno fatti vedere al medico.',
-  respiro: 'Riferimento: a riposo o di notte 12–20 respiri al minuto è la norma per un adulto. Non è un valore da migliorare: conta che resti stabile.',
+  respiro: 'La fascia verde è la TUA norma (la mediana dei tuoi giorni ± 1,5 respiri). Per un adulto sano l\'intervallo clinico è 12–20 a riposo, ma è troppo largo per accorgersi di un cambiamento: qui conta uscire dal tuo solito per più notti di fila.',
   sonno: 'Riferimento: 7–9 ore per notte, con orari regolari: la regolarità conta quanto la durata.',
-  stress: 'Riferimento: scala 0–100 di Zepp, più basso è meglio. Guarda la tendenza, non il singolo giorno.',
-  sonnoQ: 'Punteggio del sonno calcolato da Zepp (0–100): conta la tendenza, non la singola notte.',
+  stress: 'Come si legge: lo stress di Zepp (0–100) si stima dalla variabilità del battito (HRV) misurata più volte al giorno: a battiti più regolari corrisponde più stress, a battiti più variabili più relax. Zepp non pubblica la formula esatta. Zone: 1–25 rilassato, 26–50 normale, 51–79 medio, 80–100 alto. Il tuo valore è la media del giorno.',
+  sonnoQ: 'Come si legge: punteggio 0–100 calcolato da Zepp su durata, sonno profondo, REM, risvegli e regolarità (la formula esatta non è pubblica). 90+ ottimo, 80–89 buono, 60–79 discreto, sotto 60 scarso. Tocca una notte per vedere da cosa è fatto.',
   vo2max: 'Riferimento: più alto è meglio, è uno dei migliori indicatori di longevità. Per un uomo sui 30 anni circa 40–50 è buono, oltre 50 ottimo (stima dell\'orologio).',
 };
 Object.entries(RIF).forEach(([k, v]) => { METRICS[k].rif = v; });
+Object.entries(METRICS).forEach(([k, m]) => { m.key = k; });
 
 /** Disegna un grafico: { svg, stats } (svg vuoto se non ci sono dati). */
 export function chart(m, days, hd) {
@@ -74,18 +94,20 @@ export function chart(m, days, hd) {
   const vals = days.map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
   const real = vals.filter(v => v != null);
   if (!real.length) return { svg: '', stats: null };
+  const allVals = Object.keys(hd).map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
+  const band = typeof m.band === 'function' ? m.band(allVals, m) : m.band;
   const avg = m.avgAll ? real.reduce((a, b) => a + b, 0) / n : mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
   const isMan = days.map((k, i) => vals[i] != null && !!m.field && !!hd[k]?._man?.[m.field]);
-  const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days, nMan: isMan.filter(Boolean).length };
+  const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days, nMan: isMan.filter(Boolean).length, band };
   const div = m.div || 1;
-  let lo = m.min ?? (m.type === 'bar' ? 0 : Math.min(...real, m.band?.min ?? Infinity)), hi = m.max ?? Math.max(...real, m.band?.max ?? -Infinity, m.target?.v ?? -Infinity);
+  let lo = m.min ?? (m.type === 'bar' ? 0 : Math.min(...real, band?.min ?? Infinity)), hi = m.max ?? Math.max(...real, band?.max ?? -Infinity, m.target?.v ?? -Infinity);
   if (m.type !== 'bar' && m.min == null) { const p = (hi - lo || 1) * 0.1; lo -= p; hi += p; }
   const sc = niceScale(lo / div, hi / div, 4), dmin = sc.min * div, dmax = sc.max * div;
   const y = v => P.t + ih * (1 - (v - dmin) / (dmax - dmin));
   const slot = iw / n, cx = i => P.l + slot * (i + 0.5);
   let g = '';
   // fascia di riferimento (sotto a tutto)
-  if (m.band) g += `<rect x="${P.l}" y="${y(m.band.max).toFixed(1)}" width="${iw}" height="${Math.max(1, y(m.band.min) - y(m.band.max)).toFixed(1)}" fill="var(--success)" opacity=".11"/><text x="${P.l + 4}" y="${(y(m.band.max) + 11).toFixed(1)}" font-size="9.5" fill="var(--muted)">${m.band.label}</text>`;
+  if (band) g += `<rect x="${P.l}" y="${y(band.max).toFixed(1)}" width="${iw}" height="${Math.max(1, y(band.min) - y(band.max)).toFixed(1)}" fill="var(--success)" opacity=".11"/><text x="${P.l + 4}" y="${(y(band.max) + 11).toFixed(1)}" font-size="9.5" fill="var(--muted)">${band.label}</text>`;
   // linee guida e asse y
   g += sc.ticks.map(t => { const v = t * div; return `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="var(--border)" stroke-width=".7"/><text x="${P.l - 7}" y="${(y(v) + 3.5).toFixed(1)}" font-size="10" fill="var(--muted)" text-anchor="end">${(m.axisFmt || (x => x >= 1000 ? Math.round(x).toLocaleString('it-IT') : +x.toFixed(1)))(v)}</text>`; }).join('');
   if (m.target) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(m.target.v).toFixed(1)}" y2="${y(m.target.v).toFixed(1)}" stroke="var(--success)" stroke-width="1"/><text x="${W - P.r}" y="${(y(m.target.v) - 4).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">${m.target.label}</text>`;
@@ -102,7 +124,7 @@ export function chart(m, days, hd) {
     if (n <= 31) g += vals.map((v, i) => v == null || i === lastI ? '' : (isMan[i] ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="var(--card)" stroke="${col}" stroke-width="1.5"/>` : `<circle cx="${cx(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2" fill="${col}"/>`)).join('');
   }
   // media (sobria) con etichetta a destra
-  if (real.length > 2) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(avg).toFixed(1)}" y2="${y(avg).toFixed(1)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3" opacity=".75"/><text x="${W - P.r}" y="${(y(avg) + 12).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">media ${fmtAvg(avg)}${m.avgAll ? ' al giorno' : ''}</text>`;
+  if (real.length > 2) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(avg).toFixed(1)}" y2="${y(avg).toFixed(1)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3" opacity=".75"/><text x="${W - P.r}" y="${(y(avg) + 12).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">media ${m.avgAll ? fmtAvg(avg) : m.fmt(avg)}${m.avgAll ? ' al giorno' : ''}</text>`;
   // ultimo punto con anello e valore
   const lx = cx(lastI), ly = y(last);
   if (m.type !== 'bar') g += `<circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="4.5" fill="${col}" stroke="var(--card)" stroke-width="2"/>`;
@@ -117,8 +139,8 @@ export function chart(m, days, hd) {
     ? `<text x="${cx(i).toFixed(1)}" y="${H - 22}" font-size="10" font-weight="600" fill="var(--muted)" text-anchor="middle">${dowOf(days[i])}</text><text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`
     : `<text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`).join('');
   // zone di tocco (una per giorno, più larghe del marchio)
-  g += days.map((k, i) => `<rect class="gz-hit" x="${(P.l + slot * i).toFixed(1)}" y="${P.t}" width="${slot.toFixed(1)}" height="${ih}" fill="transparent" data-t="${longDay(k)}: ${vals[i] == null ? 'nessun dato' : m.fmt(vals[i]) + (m.unit ? ' ' + m.unit : '') + (isMan[i] ? ' (inserito a mano)' : '')}"/>`).join('');
-  return { svg: `<svg viewBox="0 0 ${W} ${H}" class="gz-svg" role="img" aria-label="${m.title}, ultimi ${n} giorni. ${m.story(stats, m).replace(/"/g, '')}">${g}</svg>`, stats };
+  g += days.map((k, i) => `<rect class="gz-hit" x="${(P.l + slot * i).toFixed(1)}" y="${P.t}" width="${slot.toFixed(1)}" height="${ih}" fill="transparent" data-day="${k}" data-t="${longDay(k)}: ${vals[i] == null ? 'nessun dato' : m.fmt(vals[i]) + (m.unit ? ' ' + m.unit : '') + (m.note ? ' · ' + m.note(vals[i]) : '') + (isMan[i] ? ' (inserito a mano)' : '') + (m.tap ? '' : '')}"/>`).join('');
+  return { svg: `<svg viewBox="0 0 ${W} ${H}" class="gz-svg"${m.key ? ` data-m="${m.key}"` : ''} role="img" aria-label="${m.title}, ultimi ${n} giorni. ${m.story(stats, m).replace(/"/g, '')}">${g}</svg>`, stats };
 }
 
 /** Scheda: titolo, ultimo valore, frase che racconta il grafico, grafico, riga con il giorno toccato. */
@@ -128,7 +150,7 @@ export function metricCard(m, days, hd, extra = '') {
   const u = m.unit ? ` <small>${m.unit}</small>` : '';
   const story = m.story(c.stats, m);
   return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${m.title}</div><div class="gz-big">${m.fmt(c.stats.last)}${u}</div></div></div>
-    <p class="gz-story">${story}</p>${c.svg}<div class="gz-readout" data-default="${story.replace(/"/g, '&quot;')}">Tocca un giorno per leggere il valore.</div>${c.stats.nMan ? '<p class="gz-rif">Le parti tratteggiate sono valori inseriti a mano (se arrivano i dati dell\'orologio li sostituiscono).</p>' : ''}${extra}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
+    <p class="gz-story">${story}</p>${c.svg}<div class="gz-readout" data-default="${story.replace(/"/g, '&quot;')}">${m.tap ? 'Tocca una notte per aprire i dettagli: orari, risvegli, fasi.' : 'Tocca un giorno per leggere il valore.'}</div>${c.stats.nMan ? '<p class="gz-rif">Le parti tratteggiate sono valori inseriti a mano (se arrivano i dati dell\'orologio li sostituiscono).</p>' : ''}${extra}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
 }
 
 /** Collega i grafici: toccando (o passando sopra) un giorno, la riga sotto mostra il valore esatto. */

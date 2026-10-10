@@ -169,6 +169,21 @@ def parse_stress(items):
     return out
 
 
+def fasi_notte(row):
+    """Fasi del sonno in una stringa compatta: 'tipo+inizio+durata' (minuti dall'inizio della notte), es. 'l0+47 d47+30'."""
+    try:
+        slp = (decode.decode_band_summary(row.get("summary") or "") or {}).get("slp") or {}
+        st = [x for x in (slp.get("stage") or []) if isinstance(x, dict) and "start" in x and "stop" in x]
+        if not st:
+            return ""
+        st.sort(key=lambda x: x["start"])
+        t0 = st[0]["start"]
+        lettera = {4: "l", 5: "d", 7: "w", 8: "r"}
+        return " ".join(f'{lettera.get(x.get("mode"), "w")}{x["start"] - t0}+{x["stop"] - x["start"] + 1}' for x in st)[:4000]
+    except Exception:  # noqa: BLE001 - dettaglio facoltativo: non deve fermare la sincronizzazione
+        return ""
+
+
 def main():
     for k in ("ZEPP_EMAIL", "ZEPP_PASSWORD", "ZEPP_SYNC_PASSWORD", "FIREBASE_UID"):
         if not os.environ.get(k):
@@ -206,6 +221,15 @@ def main():
             if sl.get("resting_heart_rate_bpm"): o["bpmRiposo"] = int(sl["resting_heart_rate_bpm"])
             if sl.get("total_asleep_minutes"): o["sonnoMin"] = int(sl["total_asleep_minutes"])
             if sl.get("sleep_score"): o["sonnoPunteggio"] = int(sl["sleep_score"])
+            # dettagli della notte: orari, fasi, risvegli (servono al dettaglio del sonno nei Grafici)
+            if sl.get("start_local") and sl.get("end_local"):
+                o["sonnoInizio"] = str(sl["start_local"])[:16]
+                o["sonnoFine"] = str(sl["end_local"])[:16]
+            for src, dst in (("deep_minutes", "sonnoProf"), ("light_minutes", "sonnoLeg"), ("rem_minutes", "sonnoRem"),
+                             ("awake_minutes", "sonnoSveglio"), ("wake_count", "risvegli")):
+                if sl.get(src) is not None: o[dst] = int(sl[src])
+            fasi = fasi_notte(row)
+            if fasi: o["sonnoFasi"] = fasi
             if o:
                 days[str(d)] = o
     else:
