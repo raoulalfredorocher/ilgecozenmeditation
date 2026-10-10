@@ -124,7 +124,7 @@ export function quadroHtml(hd, ctx) {
   const prima = punteggio(hd, ctx, windowDays(addDays(oggi, -W), W)), delta = prima ? cur.score - prima.score : null;
   // evoluzione: un punteggio per settimana (finestre di 7 giorni) nelle ultime 12 settimane
   const punti = [];
-  for (let i = 11; i >= 0; i--) { const end = addDays(oggi, -7 * i), p = punteggio(hd, ctx, windowDays(end, 7)); if (p) punti.push({ d: end, y: Math.round(p.score), t: `Settimana al ${pk(end).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} · ${Math.round(p.score)}/100 (${stato(p.score).toLowerCase()})` }); }
+  for (let i = 11; i >= 0; i--) { const end = addDays(oggi, -7 * i), p = punteggio(hd, ctx, windowDays(end, 7)); if (p && p.parti.some(x => ['sonno', 'cuore', 'stress'].includes(x.p.id))) punti.push({ d: end, y: Math.round(p.score), t: `Settimana al ${pk(end).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} · ${Math.round(p.score)}/100 (${stato(p.score).toLowerCase()})` }); }
   const evo = punti.length >= 2 ? `<div class="section-title" style="margin:var(--space-4) 0 var(--space-1)">Come cambia nel tempo</div>${seriesChart([{ name: 'Punteggio', color: 'var(--success, #4FA36C)', points: punti }], { band: { min: 70, max: 100 }, label: 'Punteggio di salute per settimana' })}` : '<p class="gz-rif">L’andamento nel tempo compare dopo almeno due settimane di dati.</p>';
   const pil = cur.parti.sort((a, b) => b.p.w - a.p.w).map(({ p, r }) => `<div class="qs-p"><b>${p.nome}</b><span>${Math.round(r.score)}</span><span class="bar"><i style="width:${Math.round(r.score)}%"></i></span></div>`).join('');
   const mancanti = PILASTRI.filter(p => !cur.parti.some(x => x.p.id === p.id)).map(p => p.nome);
