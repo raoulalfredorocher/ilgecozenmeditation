@@ -17,6 +17,7 @@ import { doc, getDoc, setDoc } from '../../core/firestore.js';
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage, downloadCSV } from '../../ui/dialog.js';
+import { armed, debounce } from '../comune.js';
 import { searchGames, detailsGame, coverData, getKey, setKey } from './online.js';
 import { CATALOGO, KINDS } from './catalogo.js';
 import { yearData, yearsOf, annoHtml, shareCard } from './anno.js';
@@ -57,18 +58,6 @@ const lastFb = g => (g.feedbacks || []).slice(-1)[0];
 const hoursOf = g => (g.feedbacks || []).reduce((s, f) => s + (parseFloat(f.hours) || 0), 0);
 const byDoc = (list, id) => list.find(x => x._docId === id);
 
-/** Pulsante a due tocchi: il primo chiede conferma, il secondo esegue `fn`. */
-function armed(label, fn) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'danger-btn'; b.textContent = label;
-  let on = false, t;
-  b.addEventListener('click', () => {
-    if (on) { clearTimeout(t); fn(); return; }
-    on = true; b.textContent = 'Tocca ancora per confermare';
-    t = setTimeout(() => { on = false; b.textContent = label; }, 3500);
-  });
-  return b;
-}
 const matchQ = (...t) => !q || t.join(' ').toLowerCase().includes(q);
 
 // ═══ Schede ═════════════════════════════════════════════════════════════
@@ -80,7 +69,9 @@ function showTab(t) {
   render(); scrollTo({ top: 0 });
 }
 document.querySelector('.page-tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
-$('gx-q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); const i = $('gx-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); });
+// la ricerca ridisegna solo quando si smette di scrivere (200 ms)
+const redrawSearch = debounce(render);
+$('gx-q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); redrawSearch(); });
 $('gx-chips').addEventListener('click', e => {
   const b = e.target.closest('[data-f]'); if (!b) return;
   if (tab === 'tavolo' || tab === 'idee') kind = b.dataset.f; else plat = b.dataset.f;
@@ -562,8 +553,8 @@ let pImg = '';
 function openPartita() {
   pImg = '';
   part.setBody(`<form class="stack" id="p-form" novalidate style="display:flex;flex-direction:column;gap:var(--space-4)">
-    <div class="field"><label class="field-lbl" for="p-players">Chi ha giocato</label><input class="input" id="p-players" placeholder="es. Raoul, Michela, Emma" autocomplete="off"/></div>
-    <div class="fgrid"><div class="field"><label class="field-lbl" for="p-win">Vincitore</label><input class="input" id="p-win" placeholder="es. Raoul" autocomplete="off"/></div>
+    <div class="field"><label class="field-lbl" for="p-players">Chi ha giocato</label><input class="input" id="p-players" placeholder="es. Anna, Marco, Sara" autocomplete="off"/></div>
+    <div class="fgrid"><div class="field"><label class="field-lbl" for="p-win">Vincitore</label><input class="input" id="p-win" placeholder="es. Anna" autocomplete="off"/></div>
       <div class="field"><label class="field-lbl" for="p-dur">Durata (min)</label><input class="input" id="p-dur" type="number" inputmode="numeric" min="1"/></div></div>
     <div class="field"><label class="field-lbl" for="p-note">Note</label><textarea id="p-note" rows="2" placeholder="Momenti divertenti, strategie…"></textarea></div>
     <div class="field"><span class="field-lbl">Foto</span><div class="photo-row"><label>${icon('camera', 'sm')} Scatta<input type="file" id="p-cam" accept="image/*" capture="environment" hidden/></label><label>${icon('image', 'sm')} Galleria<input type="file" id="p-gal" accept="image/*" hidden/></label></div><div class="photo-prev" id="p-prev" hidden></div></div>

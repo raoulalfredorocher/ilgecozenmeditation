@@ -12,11 +12,11 @@
  * Ricerca online e codice a barre: online.js e scanner.js.  Statistiche: stats.js.
  */
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
-import { subscribeLibri, addLibroDoc, updateLibroDoc, deleteLibroDoc, db, auth } from '../../core/db.js';
+import { subscribeLibri, addLibroDoc, updateLibroDoc, deleteLibroDoc } from '../../core/db.js';
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
-import { doc, getDoc, setDoc } from '../../core/firestore.js';
+import { makeConfirm, debounce } from '../comune.js';
 import { searchOnline, detailsOnline, lookupIsbn, posterData, fetchMangaStatus } from './online.js';
 import { scanIsbn } from './scanner.js';
 import { statsHtml, statsYears } from './stats.js';
@@ -49,7 +49,6 @@ let kindFilter = 'all';
 let tagFilter = 'all';
 let search = '';
 let statsYear = null;
-let goals = {};              // { 2026: 24 }
 let timer, series, quotes, flash, masters, covers;
 let flashShown = false;   // moduli collegati in fondo (initTimer, initSeries, initQuotes)
 
@@ -237,7 +236,7 @@ function renderStatsView() {
   }
   if (!years.includes(statsYear)) statsYear = years[0];
   $('fa-years').innerHTML = years.map(y => `<button type="button" data-year="${y}" aria-pressed="${y === statsYear}">${y}</button>`).join('');
-  $('fa-statsbody').innerHTML = statsHtml(items, statsYear, 0);
+  $('fa-statsbody').innerHTML = statsHtml(items, statsYear);
 }
 
 /** Wish list: link ad Amazon, "nella lista Amazon" e "Comprato". */
@@ -268,27 +267,8 @@ amzSheet.$('#am-form').addEventListener('submit', e => { e.preventDefault(); try
 amzSheet.$('#am-open').addEventListener('click', () => { const u = safeUrl(amzSheet.$('#am-url').value.trim()); if (u) window.open(u, '_blank', 'noopener'); });
 
 // ─── Conferma ────────────────────────────────────────────────────────────
-let confirmResolve = null, confirmValue = false;
-const confirmSheet = createSheet({
-  body: `<p class="fa-confirm-text" id="cf-text"></p>
-    <div class="zen-sheet-actions"><button type="button" class="btn primary block" id="cf-ok"></button>
-    <button type="button" class="btn ghost block" id="cf-no">Annulla</button></div>`,
-  onClose: () => { confirmResolve?.(confirmValue); confirmResolve = null; },
-});
-confirmSheet.$('#cf-ok').addEventListener('click', () => { confirmValue = true; confirmSheet.close(); });
-confirmSheet.$('#cf-no').addEventListener('click', () => confirmSheet.close());
-/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude. */
-function askConfirm(title, text, label, danger = false) {
-  confirmValue = false;
-  confirmSheet.setTitle(title);
-  confirmSheet.$('#cf-text').textContent = text;
-  const ok = confirmSheet.$('#cf-ok');
-  ok.textContent = label;
-  ok.classList.toggle('primary', !danger);
-  ok.classList.toggle('danger', danger);
-  confirmSheet.open();
-  return new Promise(res => { confirmResolve = res; });
-}
+/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude (comune.js). */
+const askConfirm = makeConfirm();
 
 // ─── Letto: voto e nota ──────────────────────────────────────────────────
 let fbItem = null, fbStars = 0;
@@ -731,33 +711,6 @@ editor.$('#ed-form').addEventListener('submit', async e => {
 });
 $('lb-add').addEventListener('click', () => openEditor(null, tab === 'buy'));
 
-// ─── Obiettivo di lettura ────────────────────────────────────────────────
-const goalRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'libri_goal');
-const goalSheet = createSheet({
-  title: 'Obiettivo di lettura',
-  body: `<form class="stack" id="gl-form">
-    <p class="fa-confirm-text" id="gl-text" style="margin-top:0"></p>
-    <input class="input" id="gl-n" type="number" inputmode="numeric" min="1" max="999" placeholder="es. 24"/>
-    <div class="zen-sheet-actions"><button class="btn primary block" type="submit">Salva</button></div>
-  </form>`,
-});
-/** Foglio dell'obiettivo di titoli per l'anno mostrato (salvato in locale e in direction/libri_goal). */
-function openGoal() {
-  goalSheet.$('#gl-text').textContent = `Quanti libri e manga vuoi leggere nel ${statsYear}?`;
-  goalSheet.$('#gl-n').value = goals[statsYear] || '';
-  goalSheet.open();
-}
-goalSheet.$('#gl-form').addEventListener('submit', async e => {
-  e.preventDefault();
-  const n = parseInt(goalSheet.$('#gl-n').value) || 0;
-  if (n) goals[statsYear] = n; else delete goals[statsYear];
-  try { localStorage.setItem('zen_book_goals', JSON.stringify(goals)); } catch { /* ok */ }
-  goalSheet.close();
-  render();
-  try { await setDoc(goalRef(), { goals }); } catch (err) { console.warn('obiettivo', err); }
-});
-try { goals = JSON.parse(localStorage.getItem('zen_book_goals') || '{}'); } catch { goals = {}; }
-
 // ─── Esporta CSV ─────────────────────────────────────────────────────────
 const csvQ = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
 /** Scarica in CSV (separatore ;) i titoli dello stato filtrato. */
@@ -822,7 +775,8 @@ document.addEventListener('click', e => {
   const o = e.target.closest('[data-open]');
   if (o) openDetail(byId(o.dataset.open));
 });
-$('fa-q').addEventListener('input', e => { search = e.target.value; render(); });
+const redrawSearch = debounce(render);   // ridisegna solo quando si smette di scrivere (200 ms)
+$('fa-q').addEventListener('input', e => { search = e.target.value; redrawSearch(); });
 
 // ─── Novità sui volumi dei manga (AniList, al massimo ogni 12 ore) ───────
 /**
@@ -884,19 +838,14 @@ flash = initFlash(ctx);
 masters = initMaestri(ctx);
 covers = initCovers(ctx);
 render();
-waitForUser().then(async () => {
+waitForUser().then(() => {
   let first = true;
   subscribeLibri(list => {
     items = list;
     render();
     series.refresh();
-    if (tab === 'masters') masters.renderList($('lb-masters'));
     if (first && list.length) { first = false; checkNewVolumes(); }
     if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
   });
   masters.load().then(ok => { if (ok && tab === 'masters') render(); });
-  try {                                   // obiettivo di lettura: lo stesso su tutti i dispositivi
-    const snap = await getDoc(goalRef());
-    if (snap.exists() && snap.data().goals) { goals = snap.data().goals; localStorage.setItem('zen_book_goals', JSON.stringify(goals)); render(); }
-  } catch { /* offline: si usa quello locale */ }
 });

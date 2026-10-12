@@ -10,6 +10,7 @@ import {
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage, downloadCSV } from '../../ui/dialog.js';
+import { armed, debounce } from '../comune.js';
 import { OCCASIONS, SLOT_LABEL, PERIODS, guessOccasion, suggest, weatherFor, slotOf, parseWhen, periodOfHour } from './outfit.js';
 
 const $ = id => document.getElementById(id);
@@ -30,18 +31,6 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 
 let capi = [], insp = [], tab = 'outfit';
 
-/** Un'armata di due tocchi: il primo chiede conferma, il secondo esegue. */
-function armed(label, fn) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'danger-btn'; b.textContent = label;
-  let on = false, t;
-  b.addEventListener('click', () => {
-    if (on) { clearTimeout(t); fn(); return; }
-    on = true; b.textContent = 'Tocca ancora per confermare';
-    t = setTimeout(() => { on = false; b.textContent = label; }, 3500);
-  });
-  return b;
-}
 
 /** Foto del capo, o l'iniziale del nome se manca. */
 const photoBlock = (c, cls = '') => c.foto && safeUrl(c.foto)
@@ -260,10 +249,15 @@ $('tab-guardaroba').addEventListener('click', e => {
   const cat = e.target.closest('[data-cat]'); if (cat) { F.cat = cat.dataset.cat; return renderGuardaroba(); }
   const col = e.target.closest('[data-color]'); if (col) { F.color = col.dataset.color; return renderGuardaroba(); }
 });
+// la ricerca ridisegna il guardaroba solo quando si smette di scrivere (200 ms)
+const redrawGuardaroba = debounce(() => {
+  const typing = document.activeElement?.id === 'g-q';   // il campo viene ricreato: se ci stavi scrivendo, il cursore torna lì
+  renderGuardaroba();
+  const i = $('g-q'); if (!typing || !i) return; i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+});
 $('tab-guardaroba').addEventListener('input', e => {
   if (e.target.id !== 'g-q') return;
-  F.q = e.target.value.trim().toLowerCase(); renderGuardaroba();
-  const i = $('g-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+  F.q = e.target.value.trim().toLowerCase(); redrawGuardaroba();
 });
 
 // ─ scheda del capo

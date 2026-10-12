@@ -30,7 +30,7 @@ export function yearData(games, year, platformsOf) {
   // un gioco conta una volta per anno (l'ultimo feedback dell'anno)
   const last = new Map();
   rows.sort((a, b) => a.d - b.d).forEach(r => last.set(r.g._docId, r));
-  const finished = [...last.values()].filter(r => r.g.done || r.g.replay || true);
+  const finished = [...last.values()];
   const hours = rows.reduce((s, r) => s + (parseFloat(r.f.hours) || 0), 0);
   const stars = finished.map(r => r.f.stars).filter(Boolean);
   const months = Array(12).fill(0);

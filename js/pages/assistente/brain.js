@@ -12,7 +12,7 @@
 import {
   getAI, getGenerativeModel, GoogleAIBackend, Schema,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js';
-import { doc, getDoc, getDocs, collection, query, where } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { doc, getDoc, getDocs, collection, query, where } from '../../core/firestore.js';
 import { app, db, auth } from '../../core/firebase.js';
 import { getBirthdayContacts } from '../../core/db.js';
 
@@ -49,7 +49,11 @@ function weekdayIdx(key) {
 // ─── Strumenti ───────────────────────────────────────────────────────────
 /** Strumenti che Gemini può chiamare: girano nel browser e restituiscono oggetti con chiavi in italiano. */
 const TOOLS = {
-  async get_weather({ city = 'Pandino' }) {
+  async get_weather({ city = '' }) {
+    if (!city) {                         // senza luogo: la prima città salvata nel meteo della Home (direction/meteo)
+      try { city = (await getDoc(userDocRef('direction', 'meteo'))).data()?.cities?.[0]?.name || ''; } catch { /* offline */ }
+      if (!city) return { errore: 'Nessuna città salvata: chiedi all\'utente per quale città vuole il meteo.' };
+    }
     const geo = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=it&format=json`)).json();
     const p = geo.results?.[0];
     if (!p) return { errore: `Località "${city}" non trovata` };
@@ -138,8 +142,8 @@ const S = Schema;
 const dateParam = S.string({ description: 'Data nel formato YYYY-MM-DD' });
 /** Descrizioni degli strumenti per Gemini (nome, scopo, parametri). */
 const functionDeclarations = [
-  { name: 'get_weather', description: 'Meteo attuale e previsioni dei prossimi 2 giorni per una località. Se l\'utente non indica un luogo usa "Pandino".',
-    parameters: S.object({ properties: { city: S.string({ description: 'Località, es. Pandino, Milano' }) } }) },
+  { name: 'get_weather', description: 'Meteo attuale e previsioni dei prossimi 2 giorni per una località. Se l\'utente non indica un luogo lascia vuoto "city": si usa la sua prima città salvata.',
+    parameters: S.object({ properties: { city: S.string({ description: 'Località, es. Milano' }) } }) },
   { name: 'get_diet_plan', description: 'Piano alimentare dell\'utente per una data (pasti previsti con kcal e macro, integratori, obiettivi). Usalo per domande tipo "cosa mangio oggi a pranzo".',
     parameters: S.object({ properties: { date: dateParam } }) },
   { name: 'get_food_diary', description: 'Cosa ha effettivamente mangiato l\'utente in una data, con i totali.',
@@ -166,7 +170,7 @@ Rispondi sempre in italiano, con tono caldo, calmo e diretto.
 Le risposte vengono spesso lette ad alta voce: sii breve (di solito 1-4 frasi), niente elenchi lunghi, niente markdown, niente emoji.
 Per meteo, alimentazione, compleanni, obiettivi, ricette e spesa usa gli strumenti per leggere i dati reali: non inventare.
 Riporta numeri, date e giorni della settimana esattamente come li restituiscono gli strumenti, senza ricalcolarli.
-Se un dato non c'è, dillo con semplicità. Non dare consigli medici: per dubbi di salute suggerisci un professionista.
+Se un dato non c'è, dillo con semplicità.
 Oggi è ${fmt({ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} (${dateKey()}), ore ${fmt({ hour: '2-digit', minute: '2-digit' })}. Domani è ${dateKey(1)}.
 Nome dell'utente: ${auth.currentUser?.displayName || 'non noto'}.`;
 }

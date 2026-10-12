@@ -16,6 +16,7 @@ import { subscribeFilm, addFilmDoc, updateFilmDoc, deleteFilmDoc, db, auth } fro
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
+import { makeConfirm, debounce } from '../comune.js';
 import { doc, getDoc, setDoc } from '../../core/firestore.js';
 import { epRuntimeFor, searchOnline, detailsOnline, posterData, providersFor, hasTmdb, getKey, setKey, testKey } from './online.js';
 import { statsHtml, statsYears, totalMins, hoursLabel } from './stats.js';
@@ -296,27 +297,8 @@ document.addEventListener('click', e => {
 });
 
 // ─── Conferma ────────────────────────────────────────────────────────────
-let confirmResolve = null, confirmValue = false;
-const confirmSheet = createSheet({
-  body: `<p class="fa-confirm-text" id="cf-text"></p>
-    <div class="zen-sheet-actions"><button type="button" class="btn primary block" id="cf-ok"></button>
-    <button type="button" class="btn ghost block" id="cf-no">Annulla</button></div>`,
-  onClose: () => { confirmResolve?.(confirmValue); confirmResolve = null; },
-});
-confirmSheet.$('#cf-ok').addEventListener('click', () => { confirmValue = true; confirmSheet.close(); });
-confirmSheet.$('#cf-no').addEventListener('click', () => confirmSheet.close());
-/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude. */
-function askConfirm(title, text, label, danger = false) {
-  confirmValue = false;
-  confirmSheet.setTitle(title);
-  confirmSheet.$('#cf-text').textContent = text;
-  const ok = confirmSheet.$('#cf-ok');
-  ok.textContent = label;
-  ok.classList.toggle('primary', !danger);
-  ok.classList.toggle('danger', danger);
-  confirmSheet.open();
-  return new Promise(res => { confirmResolve = res; });
-}
+/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude (comune.js). */
+const askConfirm = makeConfirm();
 
 // ─── Feedback (visto / rewatch) ──────────────────────────────────────────
 let fbItem = null, fbStars = 0;
@@ -785,23 +767,45 @@ document.addEventListener('click', e => {
   const o = e.target.closest('[data-open]');
   if (o) openDetail(byId(o.dataset.open));
 });
-$('fa-q').addEventListener('input', e => { search = e.target.value; render(); });
+const redrawSearch = debounce(render);   // ridisegna solo quando si smette di scrivere (200 ms)
+$('fa-q').addEventListener('input', e => { search = e.target.value; redrawSearch(); });
 
 // ─── Avvio ───────────────────────────────────────────────────────────────
 render();
+/** Esegue `job` su ogni elemento con al massimo `max` richieste insieme e una pausa di `gap` ms tra una e l'altra (TVmaze: ~20 richieste ogni 10 s). */
+async function inQueue(list, job, max = 3, gap = 1500) {
+  const todo = [...list];
+  const worker = async () => {
+    while (todo.length) {
+      await job(todo.shift()).catch(() => {});
+      await new Promise(r => setTimeout(r, gap));
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(max, todo.length) }, worker));
+}
+let drawPending = false;
+/** Un solo ridisegno per frame anche quando arrivano molti aggiornamenti di fila (es. i salvataggi del recupero durate). */
+function scheduleDraw() {
+  if (drawPending) return;
+  drawPending = true;
+  requestAnimationFrame(() => {
+    drawPending = false;
+    render();
+    if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
+  });
+}
 waitForUser().then(async () => {
   let backfilled = false;
   subscribeFilm(list => {
     items = list;
-    render();
+    scheduleDraw();
     if (!backfilled && list.length) {            // durata media dell'episodio per le serie salvate prima (una sola volta)
       backfilled = true;
-      list.filter(i => (i.seasons || i.type === 'Serie TV') && !i.epRuntime && !i.epRuntimeTried).forEach(async i => {
+      inQueue(list.filter(i => (i.seasons || i.type === 'Serie TV') && !i.epRuntime && !i.epRuntimeTried), async i => {
         const m = await epRuntimeFor(i.title);
-        updateFilmDoc(i._docId, m ? { epRuntime: String(m) } : { epRuntimeTried: true }).catch(() => {});
+        await updateFilmDoc(i._docId, m ? { epRuntime: String(m) } : { epRuntimeTried: true });
       });
     }
-    if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
   });
   // La chiave TMDB vive nell'account: la stessa su telefono e computer
   try {

@@ -67,8 +67,8 @@ const bar = (label, n, max) =>
   `<div class="meter"><div class="meter-head"><span>${esc(label)}</span><span class="zen-muted">${n}</span></div>
    <div class="meter-track"><div class="meter-fill" style="width:${max ? n / max * 100 : 0}%"></div></div></div>`;
 
-/** HTML della scheda "il tuo anno" di letture; `goal` = obiettivo di titoli dell'anno (opzionale). */
-export function statsHtml(items, year, goal) {
+/** HTML della scheda "il tuo anno" di letture. */
+export function statsHtml(items, year) {
   const ev = readings(items).filter(r => r.y === year);
   const time = timeHtml(items, year);
   if (!ev.length) return time || `<div class="empty">Nessuna lettura datata nel ${year}.</div>`;
@@ -89,7 +89,6 @@ export function statsHtml(items, year, goal) {
   const kinds = count(i => i.kind || 'Libro');
   const fav = [...ev].sort((a, b) => b.stars - a.stars || (b.m - a.m) || (b.d - a.d))[0];
   const favSafe = fav.item.img ? safeUrl(fav.item.img) : '';
-  const pct = goal ? Math.min(100, Math.round(ev.length / goal * 100)) : null;
 
   return `
     ${time}

@@ -11,10 +11,17 @@ const LS = 'zen_tavolo_tools';
 const load = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch { return {}; } };
 const save = s => { try { localStorage.setItem(LS, JSON.stringify(s)); } catch { /* ok */ } };
 const rnd = n => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };       // casuale vero, senza distorsioni evidenti
+let actx = null;
+/** Un solo AudioContext per la pagina, creato al primo uso e riattivato (resume) se sospeso. */
+const audio = () => {
+  actx ||= new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === 'suspended') actx.resume().catch(() => {});
+  return actx;
+};
 /** Suono di fine timer (880 Hz) più vibrazione, dove disponibili. */
 const beep = () => {
   try {
-    const A = new (window.AudioContext || window.webkitAudioContext)(), o = A.createOscillator(), g = A.createGain();
+    const A = audio(), o = A.createOscillator(), g = A.createGain();
     o.connect(g); g.connect(A.destination); o.frequency.value = 880; g.gain.setValueAtTime(.25, A.currentTime); g.gain.exponentialRampToValueAtTime(.001, A.currentTime + 1.2);
     o.start(); o.stop(A.currentTime + 1.2);
   } catch { /* senza audio */ }
@@ -97,7 +104,7 @@ export function initTools({ games, addPartita }) {
       if (tm.run) { tm.run = false; clearInterval(tm.id); return draw(); }
       if (!tm.left || tm.left <= 0) { tm.left = st.mins * 60; tm.total = tm.left; }
       tm.end = Date.now() + tm.left * 1000; tm.run = true; clearInterval(tm.id); tm.id = setInterval(tick, 250);
-      try { new (window.AudioContext || window.webkitAudioContext)().resume(); } catch { /* sblocca l'audio al primo tocco */ }
+      try { audio(); } catch { /* sblocca l'audio al primo tocco */ }
       return draw();
     }
     if (t.closest('#t-reset')) { clearInterval(tm.id); tm = { left: 0, run: false, end: 0, total: 0, id: 0 }; return draw(); }

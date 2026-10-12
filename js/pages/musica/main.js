@@ -10,6 +10,7 @@ import { subscribeAccordi, addAccordoDoc, updateAccordoDoc, deleteAccordoDoc, su
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast } from '../../ui/dialog.js';
+import { armed, debounce } from '../comune.js';
 import { NOTES, TYPES, parseChord, isChord, transposeChord, notesOf, guitarShape, ukeShape, chordSvg, pianoSvg, rootIdx, noteName, diatonic } from './chords.js';
 import { REPERTORIO, searchUrl } from './repertorio.js';
 import { convertPasted } from './convert.js';
@@ -30,15 +31,6 @@ let groupBy = lsGet('zen_mu_group', 'none');          // none | artista | genere
 let vidSeen = 'todo';                                   // todo | seen | all (video da vedere / visti)
 let instr = lsGet('zen_mu_instr', 'chitarra');
 const setInstr = v => { instr = v; lsSet('zen_mu_instr', v); };
-
-/** Pulsante a due tocchi: il primo chiede conferma, il secondo esegue `fn`. */
-function armed(label, fn) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'danger-btn'; b.textContent = label;
-  let on = false, t;
-  b.addEventListener('click', () => { if (on) { clearTimeout(t); fn(); return; } on = true; b.textContent = 'Tocca ancora per confermare'; t = setTimeout(() => { on = false; b.textContent = label; }, 3500); });
-  return b;
-}
 
 // ═══ Schede ═════════════════════════════════════════════════════════════
 /** Mostra una scheda (brani, accordi, ascolta, strumenti) e la ridisegna. */
@@ -110,10 +102,16 @@ function renderBrani() {
     ${body}`;
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-grp]'); if (g) { groupBy = g.dataset.grp; lsSet('zen_mu_group', groupBy); renderBrani(); } });
-document.addEventListener('input', e => { if (e.target.id === 'mu-q') { q = e.target.value.trim().toLowerCase(); renderBrani(); const i = $('mu-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); } });
+// la ricerca ridisegna l'elenco solo quando si smette di scrivere (200 ms)
+const redrawBrani = debounce(() => {
+  const typing = document.activeElement?.id === 'mu-q';   // il campo viene ricreato: se ci stavi scrivendo, il cursore torna lì
+  renderBrani();
+  const i = $('mu-q'); if (!typing || !i) return; i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+});
+document.addEventListener('input', e => { if (e.target.id === 'mu-q') { q = e.target.value.trim().toLowerCase(); redrawBrani(); } });
 
 // ─ lettore del brano
-const view = createSheet({ body: '' });
+const view = createSheet({ body: '', onClose: () => stopScroll() });   // lo scorrimento si ferma a ogni chiusura (anche con lo swipe)
 let vId = null, vShift = 0, vCapo = 0, vFlats = false, vSize = lsGet('zen_mu_size', 17), vScroll = 0, vTimer = 0, vChord = '';
 /** Apre il lettore del brano (capo dal brano, bemolle se la tonalità li usa). */
 function openSong(id) {

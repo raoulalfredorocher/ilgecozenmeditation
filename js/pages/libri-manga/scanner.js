@@ -46,9 +46,11 @@ export function scanIsbn() {
     const video = el.querySelector('video'), msg = el.querySelector('#lb-msg');
     let stream = null, stopped = false, controls = null, timer = 0;
 
+    const onKey = e => { if (e.key === 'Escape') cancel(); };
     const stop = () => {
       stopped = true;
       clearTimeout(timer);
+      removeEventListener('keydown', onKey);   // tolto a ogni chiusura: X, Esc, ISBN trovato o scritto
       try { controls?.stop?.(); } catch { /* ok */ }
       try { stream?.getTracks().forEach(t => t.stop()); } catch { /* ok */ }
       el.remove();
@@ -67,7 +69,7 @@ export function scanIsbn() {
       const v = el.querySelector('input').value;
       if (cleanIsbn(v)) done(cleanIsbn(v)); else msg.textContent = 'ISBN non valido: controlla le cifre';
     });
-    addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { removeEventListener('keydown', esc); cancel(); } });
+    addEventListener('keydown', onKey);
 
     (async () => {
       if (!navigator.mediaDevices?.getUserMedia) { msg.textContent = 'La fotocamera non è disponibile qui: scrivi l’ISBN.'; return; }

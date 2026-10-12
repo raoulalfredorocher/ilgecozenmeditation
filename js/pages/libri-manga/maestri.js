@@ -6,6 +6,7 @@
  * (localStorage come copia). Foto e bio: Wikipedia in italiano, tenute 30 giorni sul dispositivo.
  */
 import { createSheet, toast } from '../../ui/dialog.js';
+import { debounce } from '../comune.js';
 import { icon } from '../../ui/icons.js';
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 import { db, auth } from '../../core/db.js';
@@ -37,8 +38,14 @@ export function groupMasters(items) {
 }
 
 // ─── Wikipedia ───────────────────────────────────────────────────────────
+const wikiLoading = new Map();   // richieste già in corso, per nome: non si rilanciano
 /** Sommario Wikipedia (it) di un autore { title, extract, thumb, url } o null; cache locale 30 giorni (anche "non trovato"). */
-async function wiki(name) {
+function wiki(name) {
+  const k = norm(name);
+  if (!wikiLoading.has(k)) wikiLoading.set(k, wikiFetch(name).finally(() => wikiLoading.delete(k)));
+  return wikiLoading.get(k);
+}
+async function wikiFetch(name) {
   const key = LS_WIKI + norm(name);
   try {
     const c = JSON.parse(localStorage.getItem(key) || 'null');
@@ -75,6 +82,13 @@ export function initMaestri(ctx) {
   };
 
   let query = '';
+  // la ricerca ridisegna l'elenco solo quando si smette di scrivere (200 ms)
+  const redrawList = debounce(el => {
+    const typing = document.activeElement?.id === 'ms-q';
+    renderList(el);
+    const n = el.querySelector('#ms-q'); if (!typing || !n) return; n.focus(); n.setSelectionRange(n.value.length, n.value.length);
+  });
+  /** Elenco dei maestri (autori dei libri) con ricerca; scarica da Wikipedia le foto mancanti dei primi 12. */
   function renderList(el) {
     const all = groupMasters(ctx.items());
     if (!all.length) { el.innerHTML = `<div class="empty">I tuoi maestri compariranno qui.<br/>Basta aggiungere libri con l’autore.</div>`; return; }
@@ -93,7 +107,7 @@ export function initMaestri(ctx) {
           <span class="chev">${icon('back', 'sm')}</span></button>`;
       }).join('') || `<div class="empty">Nessun autore trovato.</div>`}</div>`;
     const inp = el.querySelector('#ms-q');
-    inp.addEventListener('input', e => { query = e.target.value; renderList(el); const n = el.querySelector('#ms-q'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
+    inp.addEventListener('input', e => { query = e.target.value; redrawList(el); });
     // le foto già note compaiono subito; le altre si scaricano per i primi autori e il disegno si aggiorna
     list.slice(0, 12).filter(m => !cachedThumb(m.name)).forEach(m => wiki(m.name).then(v => { if (v?.thumb && el.isConnected) renderListSoft(el); }));
   }

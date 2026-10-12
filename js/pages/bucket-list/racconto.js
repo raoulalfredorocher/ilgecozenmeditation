@@ -4,6 +4,7 @@
  * Il montaggio nel foglio di dettaglio è in bucket-list/main.js (mount).
  */
 import { createSheet, toast } from '../../ui/dialog.js';
+import { showAudio } from '../comune.js';
 import { icon } from '../../ui/icons.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import {
@@ -156,7 +157,7 @@ export function initRacconto(ctx) {
         btn.disabled = true; btn.textContent = 'Carico l’audio…';
         try {
           const blob = aud.chunksToBlob(await loadDreamAudio(item._docId, note._docId), note.audio.mime);
-          btn.parentElement.innerHTML = `<audio controls autoplay preload="auto" src="${URL.createObjectURL(blob)}"></audio>`;
+          showAudio(btn.parentElement, blob);   // l'indirizzo blob: si libera quando il lettore esce dalla pagina
         } catch { btn.disabled = false; btn.textContent = 'Audio non disponibile'; }
       });
     });

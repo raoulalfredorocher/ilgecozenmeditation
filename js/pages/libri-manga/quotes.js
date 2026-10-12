@@ -8,6 +8,7 @@
  * solo i libri che hanno appunti.
  */
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
+import { debounce, showAudio } from '../comune.js';
 import { icon } from '../../ui/icons.js';
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 import { listQuotes, addQuoteDoc, updateQuoteDoc, deleteQuoteDoc, saveQuoteAudio, loadQuoteAudio, deleteQuoteAudio } from '../../core/db.js';
@@ -82,7 +83,7 @@ export function initQuotes(ctx) {
         btn.disabled = true; btn.textContent = 'Carico l’audio…';
         try {
           const blob = await audioBlob(bookDoc, find());
-          btn.parentElement.innerHTML = `<audio controls autoplay preload="auto" src="${URL.createObjectURL(blob)}"></audio>`;
+          showAudio(btn.parentElement, blob);   // l'indirizzo blob: si libera quando il lettore esce dalla pagina
         } catch { btn.disabled = false; btn.textContent = 'Audio non disponibile'; }
       });
       fig.querySelector('[data-qshare]')?.addEventListener('click', async () => {
@@ -233,6 +234,11 @@ export function initQuotes(ctx) {
 
   // ─── Vista "Appunti" di tutti i libri ────────────────────────────────
   let randomPick = 0, filter = '';
+  // la ricerca ridisegna solo quando si smette di scrivere (200 ms)
+  const redrawAll = debounce(el => {
+    const typing = document.activeElement?.id === 'qa-q';
+    renderAll(el).then(() => { const n = el.querySelector('#qa-q'); if (!typing || !n) return; n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
+  });
   /** Vista con gli appunti di tutti i libri: frase a caso, ricerca ed esportazione. */
   async function renderAll(el) {
     const books = ctx.items().filter(b => (b.quotesCount || 0) > 0);
@@ -258,7 +264,7 @@ export function initQuotes(ctx) {
     el.querySelector('#qa-again')?.addEventListener('click', () => { randomPick = Math.floor(Math.random() * textual.length); renderAll(el); });
     el.querySelector('#qa-export').addEventListener('click', () => ctx.exportAll());
     const inp = el.querySelector('#qa-q');
-    inp.addEventListener('input', e => { filter = e.target.value; renderAll(el).then(() => { const n = el.querySelector('#qa-q'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }); });
+    inp.addEventListener('input', e => { filter = e.target.value; redrawAll(el); });
     wire(el, null, () => renderAll(el));
   }
 

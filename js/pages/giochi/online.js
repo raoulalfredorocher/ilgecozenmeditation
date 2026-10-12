@@ -5,17 +5,14 @@
  * La chiave NON sta nel codice: la incolla l'utente nell'app; resta sul suo dispositivo e nel suo account (direction/rawg).
  */
 import { compressImage } from '../../ui/dialog.js';
+import { storedKey } from '../comune.js';
 
 const LS_KEY = 'zen_rawg';
-let key = '';
-try { key = localStorage.getItem(LS_KEY) || ''; } catch { /* ok */ }
+const rawgKey = storedKey(LS_KEY);
 /** Chiave RAWG corrente ('' se assente). */
-export const getKey = () => key;
+export const getKey = rawgKey.get;
 /** Imposta la chiave RAWG e la ricorda sul dispositivo; vuota = la cancella. */
-export function setKey(k) {
-  key = String(k || '').trim();
-  try { key ? localStorage.setItem(LS_KEY, key) : localStorage.removeItem(LS_KEY); } catch { /* ok */ }
-}
+export const setKey = rawgKey.set;
 
 /** Nomi delle piattaforme di RAWG → quelle dell'app. */
 export function platformsFrom(list) {
@@ -37,7 +34,7 @@ const GENRE_IT = { Action: 'Azione', Adventure: 'Avventura', RPG: 'GDR', Strateg
 
 /** Ricerca con RAWG (serve la chiave). */
 async function viaRawg(q) {
-  const r = await fetch(`https://api.rawg.io/api/games?key=${encodeURIComponent(key)}&search=${encodeURIComponent(q)}&page_size=8&search_precise=true`);
+  const r = await fetch(`https://api.rawg.io/api/games?key=${encodeURIComponent(getKey())}&search=${encodeURIComponent(q)}&page_size=8&search_precise=true`);
   if (r.status === 401 || r.status === 403) throw new Error('Chiave RAWG non valida');
   if (!r.ok) throw new Error('RAWG non raggiungibile');
   return ((await r.json()).results || []).map(g => ({
@@ -100,7 +97,7 @@ async function viaWikidata(q) {
 export async function searchGames(q) {
   q = String(q || '').trim();
   if (q.length < 2) return [];
-  if (key) return viaRawg(q);
+  if (getKey()) return viaRawg(q);
   try { const r = await viaWikidata(q); if (r.length) return r; } catch (e) { console.warn('wikidata giochi', e); }
   return viaWiki(q);
 }
@@ -108,7 +105,7 @@ export async function searchGames(q) {
 export async function detailsGame(hit) {
   if (hit.src !== 'rawg' || hit.desc) return hit;
   try {
-    const r = await fetch(`https://api.rawg.io/api/games/${hit.id}?key=${encodeURIComponent(key)}`);
+    const r = await fetch(`https://api.rawg.io/api/games/${hit.id}?key=${encodeURIComponent(getKey())}`);
     if (r.ok) { const d = await r.json(); return { ...hit, desc: String(d.description_raw || '').slice(0, 420).replace(/\s+\S*$/, '…') }; }
   } catch { /* ok */ }
   return hit;

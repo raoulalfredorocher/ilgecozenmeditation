@@ -10,22 +10,19 @@
  * nel suo account (users/{uid}/direction/tmdb) e in locale sul dispositivo.
  */
 import { compressImage } from '../../ui/dialog.js';
+import { storedKey } from '../comune.js';
 
 const LS_KEY = 'zen_tmdb';
 const IMG = 'https://image.tmdb.org/t/p/w500';
 
-let key = '';
-try { key = localStorage.getItem(LS_KEY) || ''; } catch { /* storage non disponibile */ }
+const tmdbKey = storedKey(LS_KEY);
 
 /** Chiave TMDB corrente ('' se assente). */
-export const getKey = () => key;
+export const getKey = tmdbKey.get;
 /** true se l'utente ha inserito una chiave TMDB (abilita film e piattaforme). */
-export const hasTmdb = () => !!key;
+export const hasTmdb = () => !!getKey();
 /** Imposta la chiave TMDB e la ricorda sul dispositivo; vuota = la cancella. */
-export function setKey(k) {
-  key = String(k || '').trim();
-  try { key ? localStorage.setItem(LS_KEY, key) : localStorage.removeItem(LS_KEY); } catch { /* ok */ }
-}
+export const setKey = tmdbKey.set;
 
 // ─── Nomi: piattaforme e generi in italiano, come nell'app ────────────────
 const PROVIDERS = {
@@ -66,6 +63,7 @@ async function tmdb(path, params = {}) {
   Object.entries({ language: 'it-IT', ...params }).forEach(([k, v]) => url.searchParams.set(k, v));
   const headers = {};
   // Token di lettura (lungo) oppure chiave API v3 (32 caratteri)
+  const key = getKey();
   if (key.length > 40) headers.Authorization = 'Bearer ' + key; else url.searchParams.set('api_key', key);
   const r = await fetch(url, { headers });
   if (r.status === 401) throw new Error('Chiave TMDB non valida');
@@ -123,7 +121,7 @@ async function tmdbDetails(hit) {
 
 /** Piattaforme disponibili in Italia per un titolo già salvato (solo con TMDB). */
 export async function providersFor(item) {
-  if (!key || !item.tmdbId || !item.tmdbKind) return null;
+  if (!getKey() || !item.tmdbId || !item.tmdbKind) return null;
   const d = await tmdb(`/${item.tmdbKind}/${item.tmdbId}/watch/providers`, {});
   return itProviders({ 'watch/providers': d });
 }
@@ -170,7 +168,7 @@ export async function epRuntimeFor(title) {
 // ─── Interfaccia unica ───────────────────────────────────────────────────
 /** Cerca con TMDB se c'è la chiave, altrimenti con TVmaze (solo serie). Risultati: { src, id, kind, title, year, poster, overview }. */
 export async function searchOnline(q) {
-  return key ? tmdbSearch(q) : tvmazeSearch(q);
+  return getKey() ? tmdbSearch(q) : tvmazeSearch(q);
 }
 /** Dettagli del risultato scelto, dal servizio da cui arriva; forma pronta per il modulo. */
 export async function detailsOnline(hit) {

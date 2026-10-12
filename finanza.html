@@ -46,12 +46,6 @@
     .header-icon { font-size:1.8rem; line-height:1; }
     .app-title { font-size:.95rem; letter-spacing:.16em; color:var(--primary); font-weight:700; }
     .app-sub { font-size:.48rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; }
-    .theme-toggle { background:none; border:1.5px solid var(--border); border-radius:20px;
-      cursor:pointer; width:52px; height:28px; position:relative; flex-shrink:0; }
-    .theme-toggle .knob { position:absolute; top:3px; left:3px; width:20px; height:20px;
-      border-radius:50%; background:var(--accent); transition:transform .3s;
-      display:flex; align-items:center; justify-content:center; font-size:.7rem; }
-    html[data-theme="dark"] .theme-toggle .knob { transform:translateX(24px); }
 
     /* TAB BAR */
     .tab-bar { position:fixed; bottom:0; left:0; right:0;
@@ -351,9 +345,6 @@
       <div class="app-title">Finanza</div>
       <div class="app-sub">il geco zen</div>
     </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Cambia tema">
-      <div class="knob" id="theme-knob">☀️</div>
-    </button>
   </header>
 
   <!-- ═══ SCREEN: ANDAMENTO ═══ -->
@@ -527,19 +518,7 @@
       subscribeFinanzaExpenses, addFinanzaExpense, updateFinanzaExpense, deleteFinanzaExpense,
     } from './js/core/db.js';
 
-    /* ══ THEME ══ */
-    const htmlEl = document.documentElement;
-    const btnTheme = document.getElementById('theme-toggle');
-    const knob = document.getElementById('theme-knob');
-    let isDark = localStorage.getItem('zen_theme') === 'dark';
-    function applyTheme() {
-      htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      knob.textContent = isDark ? '🌙' : '☀️';
-      document.querySelector('meta[name="theme-color"]').content = isDark ? '#0b1620' : '#f0f7fb';
-      localStorage.setItem('zen_theme', isDark ? 'dark' : 'light');
-    }
-    applyTheme();
-    btnTheme.addEventListener('click', () => { isDark = !isDark; applyTheme(); });
+    /* Tema: come nelle altre pagine (theme-boot.js + shell.js, scelta nel Profilo). */
 
     /* ══ TAB NAV ══ */
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1086,7 +1065,7 @@
     }
     function renderPatrimonio() {
       const root = document.getElementById('pat-root');
-      if (!accounts.length) { root.innerHTML = '<div class="mp-card"><div class="tm-empty">Aggiungi dei conti nel tab <b>Planning</b> per vedere qui la mappa del tuo patrimonio.</div></div>'; patFlow = null; return; }
+      if (!accounts.length) { root.innerHTML = '<div class="mp-card"><div class="tm-empty">Aggiungi dei conti nel tab <b>Planning</b> per vedere qui la mappa del tuo patrimonio.</div></div>'; patFlow?.destroy(); patFlow = null; return; }
       if (!root.querySelector('#pat-fl')) {
         root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div>
           <div class="mp-seg" id="pat-seg"><button data-p="month">Al mese</button><button data-p="year">All'anno</button><button data-move class="move">⇄ Registra uno spostamento</button></div>

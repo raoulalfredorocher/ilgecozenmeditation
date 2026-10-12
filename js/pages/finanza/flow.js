@@ -12,12 +12,17 @@
  *     incomes/expenses: [{ id, label, value, color }]    accounts: [{ id, label, color }]
  *     links: [{ from, to, value, kind: 'in'|'out'|'move' }]       (id dei nodi)
  *   f.select(id|null)
+ *   f.destroy()          scollega l'osservatore delle dimensioni (lo fa da sé se si rimonta o se `el` esce dalla pagina)
+ *
+ * Il modello ricevuto non viene modificato: il disegno lavora su una copia dei nodi.
  */
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const NW = 108, GAPY = 12, PADY = 34;
+const observers = new WeakMap();   // elemento → ResizeObserver del suo diagramma
 
-/** Monta il diagramma dei flussi in `el`; `fmt` formatta gli importi. Restituisce { show(model), select(id), selected }. */
+/** Monta il diagramma dei flussi in `el`; `fmt` formatta gli importi. Restituisce { show(model), select(id), selected, destroy() }. */
 export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {}) {
+  observers.get(el)?.disconnect();   // montato di nuovo sullo stesso elemento: via il vecchio osservatore
   el.classList.add('fl');
   el.innerHTML = '<div class="fl-scroll"><div class="fl-stage"></div></div>';
   const stage = el.querySelector('.fl-stage');
@@ -77,6 +82,15 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
   }
   const choose = id => { selected = id === selected ? null : id; draw(); onSelect?.(selected); };
   stage.addEventListener('click', e => { const b = e.target.closest('.fl-node'); if (b) return choose(b.dataset.id); if (selected) { selected = null; draw(); onSelect?.(null); } });
-  new ResizeObserver(() => draw()).observe(el);
-  return { show(m) { model = m; if (m.selected !== undefined) selected = m.selected; draw(); }, select(id) { selected = id; draw(); }, get selected() { return selected; } };
+  const ro = new ResizeObserver(() => { if (!el.isConnected) { ro.disconnect(); observers.delete(el); return; } draw(); });
+  ro.observe(el);
+  observers.set(el, ro);
+  /** Copia dei nodi: draw() vi scrive posizioni e altezze senza toccare il modello di chi chiama. */
+  const copy = m => ({ ...m, incomes: m.incomes.map(n => ({ ...n })), accounts: m.accounts.map(n => ({ ...n })), expenses: m.expenses.map(n => ({ ...n })) });
+  return {
+    show(m) { model = copy(m); if (m.selected !== undefined) selected = m.selected; draw(); },
+    select(id) { selected = id; draw(); },
+    get selected() { return selected; },
+    destroy() { ro.disconnect(); observers.delete(el); },
+  };
 }
