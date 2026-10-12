@@ -38,7 +38,6 @@ solo i propri dati.
 ├── <sezione>.html          Una pagina per sezione (alimentazione, allenamento, ...)
 ├── manifest.json           Manifest PWA (nome, icone, colori)
 ├── assets/
-│   ├── brand/              Logo sorgente in alta risoluzione (non caricato dalle pagine)
 │   ├── icons/              Favicon e icone dell'app (192, 512, maskable, Apple)
 │   ├── img/                Immagini usate dalle pagine (logo, geco, ruota emozioni)
 │   └── data/               Dati statici (confini dei paesi per la mappa viaggi)
