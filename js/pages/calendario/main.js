@@ -15,7 +15,7 @@ import { doc, getDoc, setDoc, updateDoc, deleteField } from 'https://www.gstatic
 import { deleteSessionDoc, loadSessions } from '../../core/db.js';
 import { startSync as startWorkouts } from '../allenamento/state.js';
 import * as sessione from '../allenamento/sessione.js';
-import { csvFile, deliver } from '../alimentazione/files.js';
+import { csvFile, deliver } from '../../ui/files.js';
 import { startSync as startFood } from '../alimentazione/state.js';
 import { registerDay, exportDiary } from '../alimentazione/diario.js';
 import { buildDiaryPDF } from '../alimentazione/diario-pdf.js';

@@ -7,11 +7,14 @@ import { db, auth, loadSessions } from '../../core/db.js';
 import { doc, getDoc as _getDoc, getDocs as _getDocs, getDocFromCache, getDocsFromCache, collection } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { unpackEs } from '../allenamento/state.js';
 import { mergeManual } from '../../core/salute-merge.js';
+import { dateKey, parseKey } from '../../core/attivita.js';
+import { addDays } from '../../core/attivita.js';
 
-/** Date → 'AAAA-MM-GG' (dk), 'AAAA-MM-GG' → Date locale (pk), chiave spostata di `n` giorni (addDays). */
-export const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-export const pk = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
-export const addDays = (k, n) => { const d = pk(k); d.setDate(d.getDate() + n); return dk(d); };
+/** Date → 'AAAA-MM-GG' (dk), 'AAAA-MM-GG' → Date locale (pk), chiave spostata di `n` giorni (addDays):
+ *  alias di dateKey/parseKey (core/attivita.js) e di addDays (core/attivita.js), per chi li importa da qui. */
+export const dk = dateKey;
+export const pk = parseKey;
+export { addDays };
 
 const safe = async (fn, fallback) => { try { return await fn(); } catch (e) { console.warn('dati', e); return fallback; } };
 

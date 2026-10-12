@@ -9,7 +9,7 @@ import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
 import { addRecipeDoc, updateRecipeDoc, deleteRecipeDoc } from '../../core/db.js';
 import { state, onChange, RECIPE_CATS, MC } from './state.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 
 const root = document.getElementById('tab-ricette');
 const catLabel = Object.fromEntries(RECIPE_CATS);

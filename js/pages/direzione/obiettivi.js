@@ -4,7 +4,7 @@
  */
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
-import { S, AUTO, PER_LABEL, PER_NOW, progress, avg, microsOf, saveMain, saveLog, tick, doneToday, newId, guessAuto, today } from './dati.js';
+import { S, AUTO, PER_LABEL, PER_NOW, progress, microsOf, saveMain, saveLog, tick, doneToday, newId, guessAuto, today } from './dati.js';
 
 const COLORS = ['#7FAE82', '#D77A8F', '#6F9FD8', '#E0A15A', '#9B86C9', '#5FB3AE'];
 const lsGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -13,9 +13,20 @@ let open = new Set(lsGet('zen_ob_open', []));
 let root;
 
 const pct = v => (v == null ? '–' : v + '%');
+// Avanzamento memorizzato durante un render (lo stesso micro compare in macro, area, pilastro e totale): la Map nasce
+// e si svuota a ogni render; fuori dal render (schede aperte) si ricalcola sempre.
+let memo = null;
+const prog = m => {
+  if (!memo) return progress(m);
+  let p = memo.get(m);
+  if (!p) memo.set(m, p = progress(m));
+  return p;
+};
+/** Come avg di dati.js (media delle percentuali), ma con prog. */
+const avg = list => (list.length ? Math.round(list.reduce((s, m) => s + prog(m).pct, 0) / list.length) : null);
 const macroOf = n => S.macros.find(m => m.n === n);
 const microLabel = m => {
-  const p = progress(m);
+  const p = prog(m);
   if (p.once) return p.done ? 'Fatto' : (m.due ? `Entro il ${m.due.split('-').reverse().join('/')}` : 'Da fare');
   if (m.kind === 'count') return p.value == null ? 'Dato non ancora disponibile' : `${fmtN(p.value)} / ${fmtN(p.target)}`;
   return p.value == null ? 'Dato non ancora disponibile' : `${fmtN(p.value)} / ${p.target} ${PER_NOW[m.per || 'week']}`;
@@ -23,7 +34,7 @@ const microLabel = m => {
 const fmtN = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
 
 function microRow(m) {
-  const p = progress(m);
+  const p = prog(m);
   return `<div class="ob-mi${p.done ? ' done' : ''}" data-micro="${esc(m.id)}">
     <button type="button" class="ob-ck" data-quick="${esc(m.id)}" aria-label="${m.auto ? 'Automatico' : 'Segna'}"${m.auto ? ' disabled' : ''}>${p.done ? '✓' : ''}</button>
     <span class="ob-mt"><span class="ob-mn">${esc(m.title)}</span>
@@ -49,8 +60,12 @@ function areaBlock(ar, color) {
 /** Ridisegna la scheda: hero con l'avanzamento medio, poi pilastri e aree aperti/chiusi (lo stato aperto resta in localStorage). */
 export function render() {
   if (!root) return;
+  memo = new Map();
+  try { draw(); } finally { memo = null; }
+}
+function draw() {
   if (!S.pillars.length) { root.innerHTML = `<div class="card ob-intro"><h3>Obiettivi</h3><p>Qui metti a terra la tua direzione: ogni pilastro ha dei macro goal, ogni macro goal ha dei micro goal da fare davvero.</p><p class="ob-empty">Non ci sono ancora obiettivi. Importa il file preparato dal tuo Notion.</p><label class="btn btn-primary" style="align-self:flex-start;cursor:pointer">Importa da file<input type="file" accept=".json,application/json" id="ob-file" hidden></label></div>`; return; }
-  const all = S.micros, a = avg(all), done = all.filter(m => progress(m).done).length;
+  const all = S.micros, a = avg(all), done = all.filter(m => prog(m).done).length;
   root.innerHTML = `<section class="ob-hero"><div><span class="ob-big">${pct(a)}</span><span class="ob-cap">avanzamento dei micro goal</span></div>
       <div class="ob-hs"><span><b>${S.macros.length}</b> macro</span><span><b>${all.length}</b> micro</span><span><b>${done}</b> fatti</span></div>
       <div class="ob-hb"><button type="button" class="btn sm" data-sug>${'✦'} Suggeriti</button></div></section>
@@ -139,7 +154,7 @@ export const SUGGESTED = [
   { macro: 13, title: 'Misurare la pressione 1 volta al mese e registrarla in Salute', kind: 'rec', per: 'month', target: 1 },
   { macro: 17, title: 'Ogni giorno 1 ora di lavoro profondo, un’attività alla volta e senza notifiche', kind: 'rec', per: 'day', target: 1 },
   { macro: 22, title: 'Scrivere 3 cose per cui sono grato ogni sera', kind: 'rec', per: 'day', target: 1 },
-  { macro: 27, title: 'Una serata a settimana solo io e Michela, senza telefono', kind: 'rec', per: 'week', target: 1 },
+  { macro: 27, title: 'Una serata a settimana in coppia, senza telefono', kind: 'rec', per: 'week', target: 1 },
   { macro: 39, title: 'Sentire o vedere un amico a cui tengo almeno 1 volta a settimana', kind: 'rec', per: 'week', target: 1 },
   { macro: 53, title: 'Dedicare 2 ore a settimana a una passione, senza nessun obiettivo', kind: 'rec', per: 'week', target: 2 },
   { macro: 44, title: 'Guardare l’andamento dei miei ETF e titoli 1 volta al mese', kind: 'rec', per: 'month', target: 1 },

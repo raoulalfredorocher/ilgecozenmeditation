@@ -7,7 +7,7 @@
  *       kcalGiorno, sonnoMin, sonnoPunteggio, spo2, respiro } } }
  * Qui si leggono, in tempo reale, per mostrarli nel Registro.
  */
-import { db, auth } from '../../core/db.js';
+import { db, waitForAuth } from '../../core/db.js';
 import { doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { num } from './state.js';
 import { mergeManual } from '../../core/salute-merge.js';
@@ -16,11 +16,11 @@ import { mergeManual } from '../../core/salute-merge.js';
 export const health = { days: {}, watch: {}, manual: {} };
 const recompute = () => { health.days = mergeManual(health.watch, health.manual); };
 
-/** Ascolta salute_giorni; `onChange` viene chiamata a ogni aggiornamento. */
+/** Ascolta salute_giorni e salute_manuale (appena Auth è pronto, via onAuthStateChanged); `onChange` viene chiamata a ogni aggiornamento. */
 export function watchHealth(onChange) {
-  const go = () => {
-    const uid = auth?.currentUser?.uid;
-    if (!db || !uid) return void setTimeout(go, 400);
+  waitForAuth().then(user => {
+    const uid = user?.uid;
+    if (!db || !uid) return;
     try {
       onSnapshot(doc(db, 'users', uid, 'direction', 'salute_giorni'), snap => {
         health.watch = snap.exists() ? (snap.data().days || {}) : {};
@@ -31,8 +31,7 @@ export function watchHealth(onChange) {
         recompute(); onChange?.();
       }, err => console.warn('salute manuale', err));
     } catch (e) { console.warn('salute', e); }
-  };
-  go();
+  });
 }
 
 /** Riga breve dei dati dell'orologio di una sessione: battito medio/massimo e kcal; '' se non ci sono. */

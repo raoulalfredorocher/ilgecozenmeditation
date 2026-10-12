@@ -17,6 +17,7 @@
  *     Sessioni vecchie: `dettagli` nella sotto-collezione dettagli_chunks (si leggono ancora).
  */
 import { subscribeAllenamenti, subscribeRegistro, updateAllenamentoDoc, addAllenamentoDoc, deleteAllenamentoDoc, addRegistroDoc, updateRegistroDoc } from '../../core/db.js';
+import { dateKey, parseKey } from '../../core/attivita.js';
 
 /** Gruppi muscolari, feedback [valore, etichetta], mesi, iniziali dei giorni (0 = lunedì) e minuti predefiniti di riscaldamento/stretching. */
 export const GROUPS = ['Petto', 'Schiena', 'Spalle', 'Bicipiti', 'Tricipiti', 'Gambe', 'Glutei', 'Addome', 'Cardio', 'Altro'];
@@ -34,9 +35,8 @@ export const onChange = fn => listeners.add(fn);
 const emit = what => listeners.forEach(fn => fn(what));
 
 // ─── Utilità ─────────────────────────────────────────────────────────────
-export const dateKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-/** 'AAAA-MM-GG' → Date a mezzanotte locale. */
-export const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+/** Date → 'AAAA-MM-GG' e 'AAAA-MM-GG' → Date locale: da core/attivita.js, ri-esportate per chi le importa da qui. */
+export { dateKey, parseKey };
 /** Numero da testo o valore libero (accetta la virgola); 0 se non valido. */
 export const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return Number.isFinite(n) ? n : 0; };
 /** Secondi → "m:ss". */
@@ -109,8 +109,11 @@ export const sessionVolume = r => (r.es || []).reduce((a, e) => a + (e.s || []).
 export const sessionSets = r => (r.es || []).reduce((a, e) => a + (e.s || []).filter(s => !s[4]).length, 0);
 
 // ─── Avvio sincronizzazione ──────────────────────────────────────────────
-/** Avvia gli ascolti di piani e registro (tutto il registro, senza limite di date). Da chiamare una volta, dopo il login. */
+let started = false;
+/** Avvia gli ascolti di piani e registro (tutto il registro, senza limite di date). Da chiamare dopo il login: le chiamate successive non fanno niente. */
 export function startSync() {
+  if (started) return;
+  started = true;
   subscribeAllenamenti(list => {
     state.plans = list.map(normPlan).sort((a, b) => orderOf(a) - orderOf(b));
     state.ready.plans = true;

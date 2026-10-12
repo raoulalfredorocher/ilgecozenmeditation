@@ -1,5 +1,6 @@
 /** ui.js — piccoli strumenti condivisi: fogli, conferme, date. */
 import { openSheet, closeSheet } from '../../ui/shell.js';
+import { dateKey } from '../../core/attivita.js';
 export { escapeHtml as esc } from '../../core/dom.js';
 
 /** document.getElementById abbreviato. */
@@ -42,7 +43,7 @@ export const mese = m => MESI[m];
 
 const pad = n => String(n).padStart(2, '0');
 /** 'YYYY-MM-DD' (formato dei campi data) di un timestamp. */
-export const dayStr = ts => { const d = new Date(ts); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+export const dayStr = ts => dateKey(new Date(ts));
 /** 'HH:MM' di un timestamp. */
 export const timeStr = ts => { const d = new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 /** '12 ott 2026' */

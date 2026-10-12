@@ -8,7 +8,7 @@ import {
   slotOrder, slotLabel,
 } from './state.js';
 import { openDayEditor } from './dayeditor.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 
 /** Apre l'editor del diario per `date`. Parte da ciò che hai già registrato, altrimenti dal piano del giorno. `onDone(data)` dopo il salvataggio. */
 export function registerDay(date = dateKey(), onDone) {

@@ -13,7 +13,7 @@ import { doc, onSnapshot, setDoc, updateDoc, deleteField } from 'https://www.gst
 import { createSheet, toast } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { seriesChart, bindChartReadouts, dkey, it } from '../../core/salute-charts.js';
-import { csvFile, deliver } from '../alimentazione/files.js';
+import { csvFile, deliver } from '../../ui/files.js';
 import { INFO } from './esami-info.js';
 import { openVault, watch as watchPdf, count as pdfCount } from './esami-pdf.js';
 

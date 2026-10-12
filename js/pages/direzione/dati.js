@@ -16,7 +16,7 @@
  */
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc, collection, getDocs } from '../../core/firestore.js';
-import { loadRange, dateKey, parseKey } from '../../core/attivita.js';
+import { loadRange, dateKey, parseKey, addDays } from '../../core/attivita.js';
 
 /** Stato condiviso della pagina: obiettivi, log, to-do (da loadAll) e `ctx` = dati delle sorgenti automatiche (da loadCtx). */
 export const S = { ready: false, pillars: [], macros: [], micros: [], log: {}, todos: [], ctx: null };
@@ -40,7 +40,7 @@ export const saveLog = () => setDoc(ref('obiettivi_log'), { l: S.log });
 export const saveTodos = () => setDoc(ref('obiettivi_todo'), { items: S.todos });
 
 // ─── Periodi ─────────────────────────────────────────────────────────────
-const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); };
+export { addDays };
 /** Lunedì della settimana che contiene `k`. */
 export const weekStart = (k = today()) => { const d = parseKey(k); return addDays(k, -((d.getDay() + 6) % 7)); };
 /** Primo e ultimo giorno del periodo in corso. */
@@ -81,15 +81,18 @@ export function guessAuto(title) {
   if (/(diario|journal|brain dump).*(settiman|volte)|scrivere.*settiman/.test(t)) return { auto: 'journal_week', kind: 'rec', per: 'week', target: +(t.match(/(\d+)\s*volt/) || [])[1] || 1 };
   return null;
 }
-const hasSnap = false;
-
-/** Legge i dati dell'app che servono alle sorgenti automatiche (una volta, poi si riusa per 5 minuti). */
+/** Legge i dati dell'app che servono alle sorgenti automatiche (una volta, poi si riusa per 5 minuti).
+ *  Le tre letture (attività dell'anno, esami, paesi) partono insieme; una che fallisce lascia i suoi valori a zero/null. */
 export async function loadCtx(force = false) {
   if (S.ctx && !force && Date.now() - S.ctx.at < 5 * 60e3) return S.ctx;
   const t = today(), y0 = t.slice(0, 4) + '-01-01', w0 = weekStart(t);
   const c = { at: Date.now(), workoutsYear: 0, workoutsWeek: 0, meditWeek: 0, meditToday: 0, journalWeek: 0, foodWeek: 0, stepsAvg: null, sleepAvg: null, bloodYear: 0, countries: 0, unesco: 0 };
-  try {
-    const days = await loadRange(y0, t);
+  const [days, misure, paesi] = await Promise.all([
+    loadRange(y0, t).catch(e => { console.warn('obiettivi: attività', e); return null; }),
+    getDoc(ref('misure_salute')).catch(e => { console.warn('obiettivi: esami', e); return null; }),
+    getDocs(collection(db, 'users', uid(), 'countries')).catch(e => { console.warn('obiettivi: paesi', e); return null; }),
+  ]);
+  if (days) {
     const steps = [], sleep = [], d30 = addDays(t, -30), d14 = addDays(t, -14);
     for (const [k, d] of Object.entries(days)) {
       c.workoutsYear += d.allenamento?.length ? 1 : 0;
@@ -103,15 +106,12 @@ export async function loadCtx(force = false) {
     }
     if (steps.length) c.stepsAvg = Math.round(steps.reduce((a, b) => a + b, 0) / steps.length);
     if (sleep.length) c.sleepAvg = Math.round(sleep.reduce((a, b) => a + b, 0) / sleep.length * 10) / 10;
-  } catch (e) { console.warn('obiettivi: attività', e); }
-  try {
-    const m = await getDoc(ref('misure_salute')), ex = m.exists() ? Object.values(m.data().esami || {}) : [];
+  }
+  if (misure) {
+    const ex = misure.exists() ? Object.values(misure.data().esami || {}) : [];
     const lim = addDays(t, -365); c.bloodYear = ex.some(x => x.d >= lim) ? 1 : 0;
-  } catch (e) { console.warn('obiettivi: esami', e); }
-  try {
-    const s = await getDocs(collection(db, 'users', uid(), 'countries'));
-    s.forEach(d => { const v = d.data(); if (v.visited) c.countries++; c.unesco += (v.visitedUnescoIds || []).length; });
-  } catch (e) { console.warn('obiettivi: paesi', e); }
+  }
+  if (paesi) paesi.forEach(d => { const v = d.data(); if (v.visited) c.countries++; c.unesco += (v.visitedUnescoIds || []).length; });
   S.ctx = c; return c;
 }
 

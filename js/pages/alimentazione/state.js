@@ -20,10 +20,11 @@ import {
   subscribeRecipes, subscribeDiary, subscribeDietFull, subscribeSavedDiets, subscribeMacrosProfiles,
   subscribeCustomFoods, saveDietCurrent, saveDiaryDay, saveMacrosProfiles, saveCustomFoods,
   addSavedDietDoc, updateSavedDietDoc, deleteSavedDietDoc,
-  db, auth,
+  db, waitForAuth,
 } from '../../core/db.js';
 import { collection, query, where, onSnapshot, doc as fsDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import { calcTdee, profileOn, stepsKcal, netWorkoutKcal, isForza } from '../../core/bilancio.js';
+import { calcTdee, profileOn, stepsKcal, dayBalance, isForza } from '../../core/bilancio.js';
+import { dateKey, parseKey, addDays } from '../../core/attivita.js';
 import { mergeManual } from '../../core/salute-merge.js';
 
 /** Nomi dei giorni (indice 0 = lunedì, come nella dieta), loro iniziali e mesi in minuscolo. */
@@ -70,18 +71,11 @@ export const RECIPE_CATS = [['antipasti', 'Antipasti'], ['primi', 'Primi'], ['se
 export const ACTIVITY = [['1.2', 'Sedentario'], ['1.375', 'Leggero (in piedi)'], ['1.55', 'Moderato (fisico)'], ['1.725', 'Molto attivo']];
 
 // ─── Date ────────────────────────────────────────────────────────────────
-export function dateKey(d = new Date()) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-/** 'AAAA-MM-GG' → Date a mezzanotte locale. */
-export function parseKey(key) {
-  const [y, m, d] = key.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
+/** dateKey (Date → 'AAAA-MM-GG'), parseKey ('AAAA-MM-GG' → Date locale) e addDays (chiave spostata di `n` giorni):
+ *  un'unica versione, in core/attivita.js; qui si ri-esportano per chi le importa da state.js. */
+export { dateKey, parseKey, addDays };
 /** Indice del giorno nella dieta (0 = lunedì). */
 export const weekdayIdx = date => (date.getDay() + 6) % 7;
-/** Chiave 'AAAA-MM-GG' spostata di `n` giorni (anche negativi). */
-export const addDays = (key, n) => { const d = parseKey(key); d.setDate(d.getDate() + n); return dateKey(d); };
 
 // ─── Calcoli ─────────────────────────────────────────────────────────────
 const num = v => +v || 0;
@@ -112,15 +106,17 @@ export function workoutOn(key, planType = 'Riposo') {
 
 /**
  * Fabbisogno di un giorno: metabolismo basale × attività quotidiana (con il peso e il grasso di quel giorno)
- * + passi + kcal dell'allenamento (vedi workoutOn).
+ * + passi + kcal dell'allenamento (vedi workoutOn). Il calcolo è quello di dayBalance (core/bilancio.js);
+ * per i giorni futuri l'allenamento previsto dal piano vale 0 kcal.
  */
 export function tdeeParts(key = dateKey(), planType = 'Riposo') {
-  const f = profileAt(key);
-  const base = calcTdee(f);
-  if (!base) return null;
-  const passi = state.health?.[key]?.passi ?? f.passi;          // i passi veri dell'orologio, se ci sono
-  const w = workoutOn(key, planType);
-  return { base, passi: stepsKcal(passi, f.peso, f.lavoro), workout: w.source === 'registro' ? netWorkoutKcal(w.kcal, w.min, base, parseFloat(f.peso), w.forza) : Math.round(w.kcal), realSteps: state.health?.[key]?.passi != null, source: w.source };
+  const w = workoutOn(key, planType), reg = w.source === 'registro';
+  const b = dayBalance(state.profile, key, {
+    passi: state.health?.[key]?.passi,                           // i passi veri dell'orologio, se ci sono (altrimenti quelli del profilo)
+    kcalAllenamento: reg ? w.kcal : 0, minutiAllenamento: reg ? w.min : 0, forza: w.forza,
+  });
+  if (!b) return null;
+  return { base: b.base, passi: b.passi, workout: b.allenamento, realSteps: b.passiDaOrologio, source: w.source };
 }
 /** TDEE del giorno in kcal intere (base + passi + allenamento di tdeeParts); 0 se il profilo è incompleto. */
 export function tdeeFor(key = dateKey(), planType = 'Riposo') {
@@ -290,15 +286,17 @@ export async function addCustomFood(food) {
   emit('foods');
 }
 
-/** Esegue `fn` appena c'è l'utente collegato, riprovando ogni 250 ms. */
-const onAuthReady = fn => (auth?.currentUser ? fn() : setTimeout(() => onAuthReady(fn), 250));
+let started = false;
 
 // ─── Avvio sincronizzazione ──────────────────────────────────────────────
 /**
  * Avvia gli ascolti Firestore (dieta attiva, raccolta delle diete, diario, ricette, profilo, alimenti a mano,
- * allenamenti degli ultimi 120 giorni, salute dall'orologio + inserimenti a mano). Da chiamare una volta, dopo il login.
+ * allenamenti degli ultimi 120 giorni, salute dall'orologio + inserimenti a mano). Da chiamare dopo il login:
+ * le chiamate successive non fanno niente (gli ascolti restano aperti finché la pagina è aperta).
  */
 export function startSync() {
+  if (started) return;
+  started = true;
   subscribeDietFull(data => {
     const days = Array.isArray(data?.days) && data.days.length === 7 ? data.days : makeDefaultDiet();
     state.diet = { days, name: data?.name || 'La mia dieta', dietId: data?.dietId || null };
@@ -313,10 +311,12 @@ export function startSync() {
     ensureLibrary().catch(e => console.error('diete', e));
   });
   subscribeDiary(obj => { state.diary = obj; state.ready.diary = true; emit('diary'); });
-  // allenamenti fatti davvero (ultimi 120 giorni): il TDEE di ogni giorno ne tiene conto
-  onAuthReady(() => {
-    const uid = auth.currentUser?.uid, from = dateKey(new Date(Date.now() - 120 * 86400000));
+  // Ascolti che servono l'uid: si attende lo stato di Auth (onAuthStateChanged), senza tentativi a vuoto.
+  waitForAuth().then(user => {
+    const uid = user?.uid;
     if (!db || !uid) return;
+    // allenamenti fatti davvero (ultimi 120 giorni): il TDEE di ogni giorno ne tiene conto
+    const from = dateKey(new Date(Date.now() - 120 * 86400000));
     try { onSnapshot(query(collection(db, 'users', uid, 'allenamenti_registro'), where('data', '>=', from)), snap => {
       const w = {};
       snap.forEach(d => {
@@ -331,15 +331,12 @@ export function startSync() {
       state.workouts = w;
       emit('workouts');
     }, err => console.warn('allenamenti', err)); } catch (e) { console.warn('allenamenti', e); }
-  });
-  // passi veri dall'orologio (importati in Allenamento da Apple Salute)
-  onAuthReady(() => {
-    const uid = auth.currentUser?.uid;
-    if (!db || !uid) return;
-    let watch = {}, manual = {};
-    const upd = () => { state.health = mergeManual(watch, manual); emit('health'); };
-    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_giorni'), snap => { watch = snap.exists() ? (snap.data().days || {}) : {}; upd(); }, err => console.warn('salute', err)); } catch (e) { console.warn('salute', e); }
-    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_manuale'), snap => { manual = snap.exists() ? (snap.data().days || {}) : {}; upd(); }, err => console.warn('salute manuale', err)); } catch (e) { console.warn('salute manuale', e); }
+    // passi veri dall'orologio (salute_giorni) + inserimenti a mano (salute_manuale): un solo 'health' all'avvio,
+    // quando sono arrivati entrambi (o uno dei due ha dato errore); poi uno a ogni aggiornamento.
+    let watch = {}, manual = {}, gotW = false, gotM = false;
+    const upd = () => { if (!gotW || !gotM) return; state.health = mergeManual(watch, manual); emit('health'); };
+    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_giorni'), snap => { watch = snap.exists() ? (snap.data().days || {}) : {}; gotW = true; upd(); }, err => { console.warn('salute', err); gotW = true; upd(); }); } catch (e) { console.warn('salute', e); gotW = true; }
+    try { onSnapshot(fsDoc(db, 'users', uid, 'direction', 'salute_manuale'), snap => { manual = snap.exists() ? (snap.data().days || {}) : {}; gotM = true; upd(); }, err => { console.warn('salute manuale', err); gotM = true; upd(); }); } catch (e) { console.warn('salute manuale', e); gotM = true; upd(); }
   });
   subscribeRecipes(list => { state.recipes = list; state.ready.recipes = true; emit('recipes'); });
   subscribeMacrosProfiles((profiles, activeIdx, tdeeForm) => {

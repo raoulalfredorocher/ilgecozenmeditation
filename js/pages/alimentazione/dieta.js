@@ -13,7 +13,7 @@ import {
 import { openDayEditor } from './dayeditor.js';
 import { registerDay } from './diario.js';
 import { workoutBars } from './charts.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 import { buildDietPDF } from './pdf.js';
 
 const root = document.getElementById('tab-dieta');
@@ -258,5 +258,12 @@ export async function downloadCSV() {
 export const addAction = () => registerToday();
 export const newDietAction = newDiet;
 
-onChange(what => { if (['diet', 'diets', 'diary', 'profile', 'workouts', 'health'].includes(what)) render(); });
+// Con la scheda nascosta non si ridisegna: si segna e si ridisegna quando torna visibile (onShow, da main.js).
+let stale = false;
+/** Chiamata da main.js quando la scheda diventa visibile: ridisegna se i dati sono cambiati nel frattempo. */
+export function onShow() { if (stale) { stale = false; render(); } }
+onChange(what => {
+  if (!['diet', 'diets', 'diary', 'profile', 'workouts', 'health'].includes(what)) return;
+  if (root.hidden) stale = true; else render();
+});
 render();

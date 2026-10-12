@@ -388,21 +388,33 @@ async function finish() {
     if (n) n.textContent = r === 'ok' ? 'Salvato nel registro.' : 'Salvataggio in attesa di rete: lo ritento da solo.';
   });
 }
+/**
+ * Chiude la fine sessione salvando feedback e note, senza perderli se il salvataggio è lento:
+ *   • si scrivono subito anche nella copia in PENDING (se il documento è ancora lì, flushPending lo salverà con loro);
+ *   • quando il salvataggio arriva (senza limite di tempo), si aggiorna il documento con il suo id.
+ */
 async function closeDone() {
-  const note = el.querySelector('#wk-note')?.value.trim() || '', fb = S.feedback, data = S.saveDoc.data;
+  const note = el.querySelector('#wk-note')?.value.trim() || '', fb = S.feedback, doc = S.saveDoc, data = doc.data, p = savePromise;
   close();
   window.dispatchEvent(new CustomEvent('al:saved', { detail: { data } }));
+  if (!fb && !note) return;
+  const pend = store.get(PENDING) || [];
+  if (pend.some(d => d.fine === doc.fine)) store.set(PENDING, pend.map(d => (d.fine === doc.fine ? { ...d, feedback: fb, note } : d)));
   try {
-    const id = await Promise.race([savePromise, new Promise((_, rej) => setTimeout(() => rej(new Error('slow')), 4000))]);
-    if (fb || note) await updateSession(id, { feedback: fb, note });
-  } catch { /* se il salvataggio è ancora in corso, feedback e note si possono aggiungere dal registro */ }
+    const id = await p;
+    await updateSession(id, { feedback: fb, note });
+  } catch (err) { console.warn('feedback e note', err); /* restano nella copia in PENDING: flushPending li salva alla prossima apertura */ }
 }
 
 /** Salvataggi rimasti in sospeso (rete assente): si ritentano all'apertura della pagina. */
 export async function flushPending() {
   const pend = store.get(PENDING) || [];
   for (const doc of pend) {
-    if (state.log.some(r => r.fine === doc.fine)) { store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); continue; }   // era già arrivato
+    const got = state.log.find(r => r.fine === doc.fine);
+    if (got) {                                                       // era già arrivato: se mancano feedback e note scritti dopo, si aggiungono
+      if ((doc.feedback || doc.note) && !got.feedback && !got.note) { try { await updateSession(got._docId, { feedback: doc.feedback, note: doc.note }); } catch { continue; } }
+      store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); continue;
+    }
     try { if (await addSession(doc)) store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); } catch { /* riprova la prossima volta */ }
   }
 }

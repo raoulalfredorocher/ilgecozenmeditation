@@ -17,7 +17,7 @@ import {
   subscribeShoppingStores, addShoppingStore, updateShoppingStore, deleteShoppingStore,
   subscribeShoppingItems, addShoppingItem, updateShoppingItem, deleteShoppingItem,
 } from '../../core/db.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 
 /** Categorie fisse, nell'ordine in cui compaiono nella lista. */
 export const CATEGORIES = ['Frutta', 'Verdura', 'Legumi', 'Carne', 'Pesce', 'Latticini', 'Uova', 'Cereali e pasta', 'Pane', 'Dispensa', 'Surgelati', 'Bevande', 'Snack e dolci', 'Casa e igiene', 'Altro'];

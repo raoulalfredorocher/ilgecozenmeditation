@@ -5,7 +5,7 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import { state, num, exType, exSummary, fmtDur, DEFAULT_WARMUP, DEFAULT_STRETCH } from './state.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 import { loadLib } from '../alimentazione/pdf.js';
 
 const sel = new Set();
