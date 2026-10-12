@@ -28,11 +28,10 @@ export function profileOn(profile, key) {
 }
 
 /**
- * Passi già "contati" dal fattore di attività: il metabolismo × 1,2 (sedentario) include già circa 4.000 passi al giorno,
- * e così via per gli altri livelli. Contare tutti i passi sopra il fattore li metterebbe due volte.
+ * Passi già "contati" dal fattore di attività `lavoro`: il metabolismo × 1,2 (sedentario) include già circa 4.000 passi al giorno,
+ * × 1,375 circa 6.000, × 1,55 circa 8.000, × 1,725 (o più) circa 10.000; i fattori intermedi vanno alla soglia superiore.
+ * Contare tutti i passi sopra il fattore li metterebbe due volte.
  */
-export const STEPS_BASE = { 1.2: 4000, 1.375: 6000, 1.55: 8000, 1.725: 10000 };
-/** Passi già inclusi nel fattore di attività `lavoro` (stessi valori di STEPS_BASE, con le soglie intermedie). */
 export const stepsBase = lavoro => { const l = parseFloat(lavoro) || 1.2; return l <= 1.2 ? 4000 : l <= 1.375 ? 6000 : l <= 1.55 ? 8000 : 10000; };
 /** kcal bruciate dai passi oltre quelli già inclusi nel fattore di attività: ~0,0005 kcal per passo per kg di peso. */
 export const stepsKcal = (passi, peso, lavoro) => Math.max(0, Math.round(((parseFloat(passi) || 0) - stepsBase(lavoro)) * 0.0005 * (parseFloat(peso) || 0)));

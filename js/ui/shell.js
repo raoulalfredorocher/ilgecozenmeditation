@@ -143,14 +143,15 @@ export function openSheet(id) {
   document.documentElement.style.overflow = 'hidden';
 }
 
-/** Chiude un pannello (elemento o id). */
+/** Chiude un pannello (elemento o id). La pagina torna a scorrere solo se non resta aperto nessun altro pannello (anche di dialog.js). */
 export function closeSheet(el) {
   (typeof el === 'string' ? document.getElementById(el) : el)?.classList.remove('open');
-  document.documentElement.style.overflow = '';
+  if (!document.querySelector('.zen-sheet-overlay.open')) document.documentElement.style.overflow = '';
 }
 
+// Esc: i pannelli di dialog.js (data-dialog) si chiudono da soli, con il loro onClose
 addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.zen-sheet-overlay.open').forEach(closeSheet);
+  if (e.key === 'Escape') document.querySelectorAll('.zen-sheet-overlay.open:not([data-dialog])').forEach(closeSheet);
 });
 document.addEventListener('click', e => {
   const opener = e.target.closest('[data-open-sheet]');
@@ -257,13 +258,14 @@ function buildProfileSheet() {
     closeSheet('zen-profile');
     (await import('./backup-sheet.js')).openBackupSheet();
   });
-  // Quando ha sincronizzato l'orologio l'ultima volta (e se è fermo da troppo)
+  // Quando ha sincronizzato l'orologio l'ultima volta (e se è fermo da troppo).
+  // sync.ts sta nello stesso documento di tutti i giorni dell'orologio (l'SDK non legge un campo solo):
+  // lo si legge una volta per sessione e si tiene in memoria / sessionStorage.
   document.querySelector('[data-open-sheet="zen-profile"]')?.addEventListener('click', async () => {
     const el = document.getElementById('zen-watch-note');
     try {
-      const { doc, getDoc } = await import('../core/firestore.js'), { auth } = await import('../core/firebase.js');
-      const snap = await getDoc(doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_giorni'));
-      const ts = snap.exists() ? snap.data().sync?.ts : null;
+      const { auth } = await import('../core/firebase.js');
+      const ts = await watchSyncTs(auth.currentUser.uid);
       if (!ts) { el.textContent = 'Orologio: nessuna sincronizzazione'; return; }
       const m = Math.round((Date.now() - ts) / 60000), h = Math.round(m / 60), d = Math.round(h / 24);
       const ago = m < 2 ? 'adesso' : m < 60 ? `${m} minuti fa` : h < 24 ? `${h} ${h === 1 ? 'ora' : 'ore'} fa` : `${d} ${d === 1 ? 'giorno' : 'giorni'} fa`;
@@ -278,6 +280,23 @@ function buildProfileSheet() {
     document.getElementById('zen-backup-sub').textContent = days === null ? 'Non hai ancora fatto un backup'
       : days <= 0 ? 'Ultimo backup: oggi' : days === 1 ? 'Ultimo backup: ieri' : `Ultimo backup: ${days} giorni fa`;
   });
+}
+
+let watchSync = null;   // { uid, ts, at } — ultima sincronizzazione dell'orologio e quando l'abbiamo letta
+const WATCH_SYNC_TTL = 30 * 60e3;   // la sincronizzazione gira ogni 6 ore: rileggere ogni 30 minuti basta
+/** Ora (ms) dell'ultima sincronizzazione dell'orologio, o null: legge direction/salute_giorni (documento grande) al massimo ogni 30 minuti. */
+async function watchSyncTs(uid) {
+  const KEY = 'zen_watch_sync';
+  const fresh = c => c?.uid === uid && Date.now() - (c.at || 0) < WATCH_SYNC_TTL;
+  if (!fresh(watchSync)) {
+    try { const c = JSON.parse(sessionStorage.getItem(KEY)); if (fresh(c)) watchSync = c; } catch { /* ok */ }
+  }
+  if (fresh(watchSync)) return watchSync.ts;
+  const { doc, getDoc } = await import('../core/firestore.js');
+  const snap = await getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni'));
+  watchSync = { uid, ts: (snap.exists() ? snap.data().sync?.ts : null) ?? null, at: Date.now() };
+  try { sessionStorage.setItem(KEY, JSON.stringify(watchSync)); } catch { /* ok */ }
+  return watchSync.ts;
 }
 
 function fillProfile(user) {
@@ -455,7 +474,7 @@ async function refreshNotifiche(force = false) {
 async function confirmDelete(id, N) {
   const { createSheet } = await import('./dialog.js');
   const sh = createSheet({ title: 'Eliminare la notifica?', body: `<div class="stack"><p class="zen-muted" style="margin:0">Sparisce per sempre. Se vuoi tenerla, archiviala.</p>
-    <button type="button" class="btn block danger" id="nd-yes">Elimina</button><button type="button" class="btn block" id="nd-no">Annulla</button></div>` });
+    <button type="button" class="btn block danger" id="nd-yes">Elimina</button><button type="button" class="btn block" id="nd-no">Annulla</button></div>`, removeOnClose: true });
   sh.$('#nd-yes').addEventListener('click', () => { N.elimina(id); sh.close(); refreshNotifiche(); });
   sh.$('#nd-no').addEventListener('click', () => { sh.close(); refreshNotifiche(); });
   sh.open();

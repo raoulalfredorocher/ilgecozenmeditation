@@ -21,14 +21,18 @@ export const AREAS = [
 export const dateKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 /** 'AAAA-MM-GG' → Date a mezzanotte locale. */
 export const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+/** Chiave 'AAAA-MM-GG' spostata di n giorni (n negativo = indietro), sul calendario locale. */
+export const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); };
 const num = v => +v || 0;
 
 /**
  * Attività dal giorno `from` al giorno `to` (compresi, 'AAAA-MM-GG').
  * Restituisce { 'AAAA-MM-GG': { allenamento: [...], cibo: {...}|null, meditazione: {...}|null, journaling: [...], salute: {...}|null (dati dell'orologio) } }
  * solo per i giorni in cui c'è qualcosa. Un'area che non si riesce a leggere viene saltata.
+ * `fonti` (facoltativo): elenco delle sole fonti da leggere, tra 'allenamento', 'cibo', 'meditazione',
+ * 'salute', 'umore', 'journaling'; se manca le legge tutte. I campi delle fonti non lette restano vuoti.
  */
-export async function loadRange(from, to) {
+export async function loadRange(from, to, fonti = null) {
   const uid = auth?.currentUser?.uid;
   const days = {};
   if (!db || !uid) return days;
@@ -37,9 +41,9 @@ export async function loadRange(from, to) {
   const t0 = parseKey(from).getTime(), t1 = parseKey(to).getTime() + 86400000;
 
   // Le letture partono insieme; ognuna scrive solo il proprio campo di day(k), quindi non si sovrascrivono.
-  await Promise.all([
+  const loaders = {
     // Allenamento
-    (async () => {
+    allenamento: async () => {
       const snap = await getDocs(query(col('allenamenti_registro'), where('data', '>=', from), where('data', '<=', to)));
       snap.forEach(d => {
         const r = d.data();
@@ -50,9 +54,9 @@ export async function loadRange(from, to) {
           es: r.es || null, rw: num(r.rw), st: num(r.st), acqua: num(r.acqua), feedback: r.feedback || null, note: r.note || '',
         });
       });
-    })().catch(e => console.warn('calendario: allenamento', e)),
+    },
     // Diario alimentare (un documento per giorno)
-    (async () => {
+    cibo: async () => {
       const snap = await getDocs(query(col('food_diary'), where(documentId(), '>=', from), where(documentId(), '<=', to)));
       snap.forEach(d => {
         const meals = d.data().meals || [];
@@ -61,9 +65,9 @@ export async function loadRange(from, to) {
           kcal: a.kcal + num(m.kcal), prot: a.prot + num(m.prot), carb: a.carb + num(m.carb), fat: a.fat + num(m.fat), pasti: a.pasti + 1,
         }), { kcal: 0, prot: 0, carb: 0, fat: 0, pasti: 0, meals });
       });
-    })().catch(e => console.warn('calendario: diario alimentare', e)),
+    },
     // Meditazione
-    (async () => {
+    meditazione: async () => {
       const snap = await getDocs(query(col('meditation_sessions'), where('ts', '>=', t0), where('ts', '<', t1)));
       snap.forEach(d => {
         const r = d.data();
@@ -71,29 +75,33 @@ export async function loadRange(from, to) {
         m.mins += num(r.totalMins); m.n++;
         m.sessions.push({ id: d.id, ts: num(r.ts), mins: num(r.totalMins), steps: (r.steps || []).map(x => ({ mins: num(x.mins), name: x.name || '' })) });
       });
-    })().catch(e => console.warn('calendario: meditazione', e)),
+    },
     // Dati dell'orologio (Zepp): un solo documento con tutti i giorni
-    (async () => {
+    salute: async () => {
       const [snap, man] = await Promise.all([getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni')), getDoc(doc(db, 'users', uid, 'direction', 'salute_manuale'))]);
       const all = mergeManual(snap.exists() ? (snap.data().days || {}) : {}, man.exists() ? (man.data().days || {}) : {});
       Object.keys(all).filter(k => k >= from && k <= to).forEach(k => { day(k).salute = all[k]; });
-    })().catch(e => console.warn('calendario: salute', e)),
+    },
     // Umore del giorno (1-5): un solo documento con tutti i giorni
-    (async () => {
+    umore: async () => {
       const snap = await getDoc(doc(db, 'users', uid, 'direction', 'umore_giorni'));
       const all = snap.exists() ? (snap.data().days || {}) : {};
       Object.keys(all).filter(k => k >= from && k <= to).forEach(k => { day(k).umore = all[k].v; });
-    })().catch(e => console.warn('calendario: umore', e)),
+    },
     // Journaling (diario di Salute mentale)
-    (async () => {
+    journaling: async () => {
       const snap = await getDocs(query(col('mental_diary'), where('data', '>=', from), where('data', '<=', to)));
       snap.forEach(d => {
         const r = d.data();
         if (!r.data) return;
         day(r.data).journaling.push({ id: d.id, titolo: r.titolo || (r.testo || '').slice(0, 40) || 'Senza titolo', ora: r.ora || '', testo: r.testo || '', emozioni: Array.isArray(r.emozioni) ? r.emozioni : [] });
       });
-    })().catch(e => console.warn('calendario: journaling', e)),
-  ]);
+    },
+  };
+  const LABEL = { cibo: 'diario alimentare' };
+  await Promise.all(Object.entries(loaders)
+    .filter(([id]) => !fonti || fonti.includes(id))
+    .map(([id, load]) => load().catch(e => console.warn(`calendario: ${LABEL[id] || id}`, e))));
   return days;
 }
 

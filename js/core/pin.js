@@ -9,7 +9,7 @@
  *   openPinManager()  → foglio per impostare / cambiare / togliere / reimpostare il PIN
  */
 import { db, auth } from './firebase.js';
-import { doc, getDoc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { doc, getDoc, setDoc, deleteDoc } from './firestore.js';
 import { createSheet, toast } from '../ui/dialog.js';
 
 const LS = 'zen_pin', LS_FAIL = 'zen_pin_fail', ITER = 150000;
@@ -65,7 +65,7 @@ function askPin(title, text) {
     const sh = createSheet({ title, body: `<div class="stack"><p class="zen-muted" style="margin:0">${text}</p>${field('pn-in', 'PIN')}
       <p id="pn-msg" class="s" style="min-height:1.3em;margin:0;color:var(--danger)"></p>
       <button type="button" class="btn accent block" id="pn-ok">Conferma</button>
-      <button type="button" class="btn ghost block" id="pn-forgot">Ho dimenticato il PIN</button></div>`, onClose: () => { if (!done) resolve(false); } });
+      <button type="button" class="btn ghost block" id="pn-forgot">Ho dimenticato il PIN</button></div>`, onClose: () => { if (!done) resolve(false); }, removeOnClose: true });
     const msg = t => { sh.$('#pn-msg').textContent = t; };
     const tick = () => { const w = waitLeft(); if (w) { msg(`Troppi tentativi. Riprova tra ${w} s.`); return true; } return false; };
     const go = async () => {
@@ -95,7 +95,7 @@ function createPin(title = 'Crea il PIN di download') {
     const sh = createSheet({ title, body: `<div class="stack"><p class="zen-muted" style="margin:0">Da 4 a 6 cifre. Ti verrà chiesto ogni volta che scarichi un file (PDF, esportazioni…).</p>
       ${field('pn-a', 'Nuovo PIN')}${field('pn-b', 'Ripeti il PIN')}
       <p id="pn-msg" class="s" style="min-height:1.3em;margin:0;color:var(--danger)"></p>
-      <button type="button" class="btn accent block" id="pn-save">Salva il PIN</button></div>`, onClose: () => { if (!done) resolve(false); } });
+      <button type="button" class="btn accent block" id="pn-save">Salva il PIN</button></div>`, onClose: () => { if (!done) resolve(false); }, removeOnClose: true });
     sh.$('#pn-save').addEventListener('click', async () => {
       const a = sh.$('#pn-a').value.trim(), b = sh.$('#pn-b').value.trim();
       if (!validNew(a)) return (sh.$('#pn-msg').textContent = 'Usa da 4 a 6 cifre.');
@@ -133,7 +133,7 @@ export async function requirePin() {
 /** Foglio del Profilo: imposta, cambia o toglie il PIN; poi avvisa la pagina con l'evento 'zen-pin-changed'. */
 export async function openPinManager() {
   await load();
-  const sh = createSheet({ title: 'PIN di download', body: '<div class="stack" id="pm"></div>' });
+  const sh = createSheet({ title: 'PIN di download', body: '<div class="stack" id="pm"></div>', removeOnClose: true });
   const draw = () => {
     sh.$('#pm').innerHTML = `<p class="zen-muted" style="margin:0">${cache ? 'Il PIN è impostato: ti viene chiesto a ogni scarico di file.' : 'Non hai ancora un PIN. Senza, i file non si scaricano: te lo chiederà al primo scarico.'}</p>
       ${cache ? `<button type="button" class="btn block" id="pm-change">Cambia il PIN</button><button type="button" class="btn block text-danger" id="pm-remove">Togli il PIN</button>`

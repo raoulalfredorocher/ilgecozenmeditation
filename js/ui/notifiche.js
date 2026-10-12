@@ -5,8 +5,7 @@
  */
 import { db, auth } from '../core/db.js';
 import { doc, getDoc } from '../core/firestore.js';
-
-const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+import { dateKey as dk, loadRange } from '../core/attivita.js';
 const lsGet = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ok */ } };
 
@@ -41,8 +40,7 @@ async function calcola() {
 
   // Allenamento, meditazione, diario: una sola lettura degli ultimi giorni
   try {
-    const { loadRange } = await import('../core/attivita.js');
-    const days = await loadRange(giorniFa(3), oggi);
+    const days = await loadRange(giorniFa(3), oggi, ['allenamento', 'cibo', 'meditazione']);
     const oggiD = days[oggi] || {};
     if ([1, 3, 5].includes(dow) && !oggiD.allenamento?.length)
       out.push({ id: `wo-${oggi}`, testo: 'Oggi è giorno di allenamento', sub: 'Lunedì, mercoledì e venerdì', href: 'allenamento.html' });

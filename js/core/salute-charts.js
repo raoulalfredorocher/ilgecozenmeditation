@@ -6,13 +6,14 @@
  * fascia o linea di riferimento etichettata, media tratteggiata sobria, etichette solo sull'ultimo valore e sul massimo,
  * e una frase che racconta cosa dice il grafico. Toccando un giorno si legge il valore esatto.
  */
+import { dateKey } from './attivita.js';
+
 /** Numero intero all'italiana (1.234). */
 export const it = n => Math.round(n).toLocaleString('it-IT');
 /** Minuti → '7h05'. */
 export const hm = m => `${Math.floor(m / 60)}h${String(Math.round(m % 60)).padStart(2, '0')}`;
-const pad = n => String(n).padStart(2, '0');
-/** Data → 'AAAA-MM-GG' nell'ora locale. */
-export const dkey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+/** Data → 'AAAA-MM-GG' nell'ora locale: è dateKey di core/attivita.js, col vecchio nome per chi la importa da qui. */
+export const dkey = dateKey;
 /** Gli ultimi n giorni, dal più vecchio a oggi. */
 export const lastDays = n => Array.from({ length: n }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (n - 1 - i)); return dkey(d); });
 const short = k => { const [, m, d] = k.split('-'); return `${+d}/${+m}`; };
@@ -105,8 +106,10 @@ export function chart(m, days, hd) {
   const vals = days.map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
   const real = vals.filter(v => v != null);
   if (!real.length) return { svg: '', stats: null };
-  const allVals = Object.keys(hd).map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
-  const band = typeof m.band === 'function' ? m.band(allVals, m) : m.band;
+  // fascia personale (funzione): si calcola su tutti i giorni, quindi i valori si raccolgono solo in quel caso
+  const band = typeof m.band === 'function'
+    ? m.band(Object.keys(hd).map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; }), m)
+    : m.band;
   const avg = m.avgAll ? real.reduce((a, b) => a + b, 0) / n : mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
   const isMan = days.map((k, i) => vals[i] != null && !!m.field && !!hd[k]?._man?.[m.field]);
   const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days, nMan: isMan.filter(Boolean).length, band };

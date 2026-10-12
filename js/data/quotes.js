@@ -376,10 +376,8 @@ export const QUOTES = [
  */
 export function getDailyQuote() {
   const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now - start;
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay); // 1–366
+  // giorno dell'anno sui componenti locali in UTC: niente ore "mancanti" o "doppie" dell'ora legale
+  const dayOfYear = (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(now.getFullYear(), 0, 0)) / 86400000; // 1–366
   const index = Math.min(dayOfYear, QUOTES.length) - 1;
   return QUOTES[index];
 }

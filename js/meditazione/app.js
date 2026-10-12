@@ -6,6 +6,7 @@
  * (collezione meditation_sessions, tramite js/core/db.js).
  */
 import { saveSessionDoc } from '../core/db.js';
+import { dateKey } from '../core/attivita.js';
 import { escapeHtml } from '../core/dom.js';
 import { openSheet, closeSheet } from '../ui/shell.js';
 import { icon } from '../ui/icons.js';
@@ -343,7 +344,7 @@ $('btn-new-tpl').addEventListener('click', () => editTemplate(null));
 // SCHERMATE
 // ═══════════════════════════════════════════════════════════════════════════
 /** Le sessioni fatte si vedono e si gestiscono nel calendario centrale. */
-const openCalendar = (d = new Date()) => { location.href = `calendario.html?d=${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const openCalendar = (d = new Date()) => { location.href = `calendario.html?d=${dateKey(d)}`; };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PRATICA
