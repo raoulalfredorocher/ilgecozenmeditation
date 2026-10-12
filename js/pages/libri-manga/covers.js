@@ -24,6 +24,7 @@ export function similar(a, b) {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const missing = items => items.filter(i => !i.img);
 
+/** Cerca la copertina di un titolo: { auto: { img, title } } se è sicura, altrimenti { auto: null, cands: [proposte] }. */
 async function findFor(item) {
   const isbn = cleanIsbn(item.isbn);
   if (isbn) {
@@ -44,10 +45,12 @@ async function findFor(item) {
 }
 async function store(url) { return (await posterData(url)) || url; }   // se il sito non permette il download si tiene il link
 
+/** Ricerca automatica delle copertine mancanti. ctx = { items(), update(docId, campi) }. Restituisce { banner(host), open }. */
 export function initCovers(ctx) {
   const sheet = createSheet({ title: 'Copertine mancanti', body: '' });
   let running = false;
 
+  /** Avviso "N copertine mancanti" col pulsante per cercarle (vuoto se non ne mancano). */
   function banner(host) {
     const n = missing(ctx.items()).length;
     host.innerHTML = n ? `<div class="cv-banner"><div><div class="t">${n} ${n === 1 ? 'copertina mancante' : 'copertine mancanti'}</div>
@@ -55,6 +58,7 @@ export function initCovers(ctx) {
       <button type="button" class="btn sm accent" data-covers>${icon('sparkles', 'sm')} Trova copertine</button></div>` : '';
   }
 
+  /** Scorre i titoli senza copertina uno alla volta (pausa 350 ms per non sovraccaricare i servizi). */
   async function run() {
     if (running) return;
     const list = missing(ctx.items());
@@ -80,6 +84,7 @@ export function initCovers(ctx) {
     showResults(applied, review, none);
   }
 
+  /** Riepilogo: quante aggiunte da sola, quali da scegliere tra le proposte, quali non trovate. */
   function showResults(applied, review, none) {
     sheet.setBody(`
       <p class="cv-sum"><b>${applied}</b> ${applied === 1 ? 'copertina aggiunta' : 'copertine aggiunte'} da sola.</p>

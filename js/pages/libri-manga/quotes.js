@@ -8,6 +8,7 @@
  * solo i libri che hanno appunti.
  */
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
+import { debounce, showAudio } from '../comune.js';
 import { icon } from '../../ui/icons.js';
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 import { listQuotes, addQuoteDoc, updateQuoteDoc, deleteQuoteDoc, saveQuoteAudio, loadQuoteAudio, deleteQuoteAudio } from '../../core/db.js';
@@ -15,6 +16,10 @@ import * as aud from '../mentale/audio.js';
 
 const today = () => new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 
+/**
+ * Appunti dei libri. ctx = { items(), byId(id), update(docId, campi), askConfirm(), exportBook(libro), exportAll() }.
+ * Restituisce { openList, openAdd, renderAll, loadMany, audioBlob, card, wire, invalidate }.
+ */
 export function initQuotes(ctx) {
   const cache = new Map();                    // docId del libro → appunti
   let allCache = null;                        // appunti di tutti i libri
@@ -26,6 +31,7 @@ export function initQuotes(ctx) {
   const loadMany = books => Promise.all(books.filter(b => (b.quotesCount || 0) > 0).map(load)).then(l => l.flat());
   const audioBlob = async (bookDocId, q) => aud.chunksToBlob(await loadQuoteAudio(bookDocId, q._docId), q.audio.mime);
 
+  /** HTML di un appunto (testo, foto, audio, didascalia); `actions` mostra condividi/modifica/elimina. */
   function card(q, book, { actions = true, showBook = false } = {}) {
     const ph = q.photo ? safeUrl(q.photo) : '';
     return `<figure class="qt" data-q="${esc(q._docId)}" data-book="${esc(q._bookDocId || book?._docId || '')}">
@@ -51,6 +57,7 @@ export function initQuotes(ctx) {
     listSheet.open();
     await drawList();
   }
+  /** Ricarica gli appunti del libro aperto e ridisegna il foglio. */
   async function drawList() {
     const item = ctx.byId(listBook.id) || listBook;
     const qs = await load(item);
@@ -76,7 +83,7 @@ export function initQuotes(ctx) {
         btn.disabled = true; btn.textContent = 'Carico l’audio…';
         try {
           const blob = await audioBlob(bookDoc, find());
-          btn.parentElement.innerHTML = `<audio controls autoplay preload="auto" src="${URL.createObjectURL(blob)}"></audio>`;
+          showAudio(btn.parentElement, blob);   // l'indirizzo blob: si libera quando il lettore esce dalla pagina
         } catch { btn.disabled = false; btn.textContent = 'Audio non disponibile'; }
       });
       fig.querySelector('[data-qshare]')?.addEventListener('click', async () => {
@@ -133,6 +140,7 @@ export function initQuotes(ctx) {
     });
   }
 
+  /** Area audio del modulo: registrazione in corso, audio pronto/salvato, oppure pulsante "Nota vocale". */
   function drawAudio(err = '') {
     const box = editSheet.$('#qe-audio');
     if (recOn) {
@@ -179,6 +187,7 @@ export function initQuotes(ctx) {
     }
   });
 
+  /** Apre il modulo per un nuovo appunto (quote = null) o per modificarne uno; `then` si chiama dopo il salvataggio. */
   function openEdit(book, quote, then) {
     editBook = book; editQuote = quote; after = then || (() => listBook && listSheet.isOpen() && drawList());
     photo = quote?.photo || null;
@@ -225,6 +234,12 @@ export function initQuotes(ctx) {
 
   // ─── Vista "Appunti" di tutti i libri ────────────────────────────────
   let randomPick = 0, filter = '';
+  // la ricerca ridisegna solo quando si smette di scrivere (200 ms)
+  const redrawAll = debounce(el => {
+    const typing = document.activeElement?.id === 'qa-q';
+    renderAll(el).then(() => { const n = el.querySelector('#qa-q'); if (!typing || !n) return; n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
+  });
+  /** Vista con gli appunti di tutti i libri: frase a caso, ricerca ed esportazione. */
   async function renderAll(el) {
     const books = ctx.items().filter(b => (b.quotesCount || 0) > 0);
     if (!books.length) { el.innerHTML = `<div class="empty">I tuoi appunti compariranno qui.<br/>Apri un libro e tocca «Appunti» per scrivere, fotografare o registrare.</div>`; return; }
@@ -249,7 +264,7 @@ export function initQuotes(ctx) {
     el.querySelector('#qa-again')?.addEventListener('click', () => { randomPick = Math.floor(Math.random() * textual.length); renderAll(el); });
     el.querySelector('#qa-export').addEventListener('click', () => ctx.exportAll());
     const inp = el.querySelector('#qa-q');
-    inp.addEventListener('input', e => { filter = e.target.value; renderAll(el).then(() => { const n = el.querySelector('#qa-q'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }); });
+    inp.addEventListener('input', e => { filter = e.target.value; redrawAll(el); });
     wire(el, null, () => renderAll(el));
   }
 

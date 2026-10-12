@@ -20,6 +20,7 @@ const pad2 = n => String(n).padStart(2, '0');
 /** Sequenza dei blocchi: w = tutta larghezza, L = alto a sinistra, R = alto a destra. */
 const BLOCKS = ['w', 'L', 'w', 'R', 'w'];
 
+/** Assegna a ogni voce un posto nella griglia secondo BLOCKS: [{ e, kind: 'w' | 't' | 'h', css }]. */
 function place(entries) {
   const out = [];
   let row = 1, i = 0;
@@ -37,6 +38,7 @@ function place(entries) {
   return out;
 }
 
+/** Disegna in `el` le schede delle sezioni nella composizione a blocchi; il numero di ogni scheda segue l'ordine di `entries`. */
 export function renderCards(el, entries) {
   el.classList.add('hc-grid');
   const nums = new Map(entries.map((e, n) => [e, n + 1]));        // il numero segue l'ordine dell'elenco, non la posizione

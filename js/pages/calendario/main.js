@@ -15,7 +15,7 @@ import { doc, getDoc, setDoc, updateDoc, deleteField } from 'https://www.gstatic
 import { deleteSessionDoc, loadSessions } from '../../core/db.js';
 import { startSync as startWorkouts } from '../allenamento/state.js';
 import * as sessione from '../allenamento/sessione.js';
-import { csvFile, deliver } from '../alimentazione/files.js';
+import { csvFile, deliver } from '../../ui/files.js';
 import { startSync as startFood } from '../alimentazione/state.js';
 import { registerDay, exportDiary } from '../alimentazione/diario.js';
 import { buildDiaryPDF } from '../alimentazione/diario-pdf.js';
@@ -38,6 +38,8 @@ try { const s = JSON.parse(localStorage.getItem('zen_cal_filtri')); if (Array.is
 $('cm-prev').innerHTML = icon('back');
 $('cm-next').innerHTML = icon('back');
 
+// ─── Caricamento e disegno del mese ───
+/** Carica i giorni del mese mostrato e il profilo; scarta la risposta se nel frattempo si è cambiato mese. */
 async function load() {
   const y = month.getFullYear(), m = month.getMonth();
   const from = dateKey(new Date(y, m, 1)), to = dateKey(new Date(y, m + 1, 0));
@@ -50,6 +52,7 @@ async function load() {
   render();
 }
 
+/** Ridisegna filtri, griglia del mese con i puntini, riepilogo del mese e il giorno selezionato. */
 function render() {
   const y = month.getFullYear(), m = month.getMonth();
   const offset = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate();
@@ -80,6 +83,7 @@ function render() {
   renderDay();
 }
 
+/** Riepilogo del giorno selezionato: righe per area, bilancio calorico, dati dell'orologio, umore. */
 function renderDay() {
   const d = data[selected];
   const dt = parseKey(selected);
@@ -135,6 +139,7 @@ const foot = (a, label) => `<a class="cm-open" href="${a.href}">${label} ›</a>
 const actBtn = (act, label, cls = '') => `<button type="button" class="btn block ${cls}" data-act="${act}" style="margin-top:var(--space-4)">${label}</button>`;
 const stat = (b, l) => `<div><b>${b}</b><span class="s">${l}</span></div>`;
 
+/** Corpo del foglio "Diario alimentare": totali e pasti del giorno. */
 function detailFood(c) {
   const meals = (c.meals || []).map(m => {
     const items = Array.isArray(m.items) && m.items.length ? m.items.map(i => `${esc(i.name)}${i.g ? ` ${i.g} g` : ''}`).join(' · ') : esc(m.desc || '');
@@ -143,17 +148,20 @@ function detailFood(c) {
   }).join('');
   return `<div class="cm-stats">${stat(kc(c.kcal), 'kcal')}${stat(g1(c.prot), 'proteine')}${stat(g1(c.carb), 'carbo')}${stat(g1(c.fat), 'grassi')}</div>${meals}${actBtn('diary', 'Modifica il diario')}`;
 }
+/** Corpo del foglio "Meditazione": sessioni del giorno con pulsante per eliminarle. */
 function detailMed(m) {
   const list = [...m.sessions].sort((a, b) => a.ts - b.ts).map(x => `<section class="cm-ex"><div class="cm-ex-h cm-between"><b>${new Date(x.ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</b><span class="s">${Math.round(x.mins)} min</span></div>
     ${x.steps.length ? `<p class="cm-items">${x.steps.map(s => `${esc(s.name || 'Meditazione')} ${Math.round(s.mins)} min`).join(' · ')}</p>` : ''}
     <button type="button" class="btn block text-danger" data-med-del="${esc(x.id)}" style="margin-top:var(--space-2)">Elimina sessione</button></section>`).join('');
   return `<div class="cm-stats">${stat(Math.round(m.mins), 'minuti')}${stat(m.n, m.n === 1 ? 'sessione' : 'sessioni')}</div>${list}`;
 }
+/** Corpo del foglio di una voce di journaling (sola lettura, si modifica nel diario). */
 function detailJournal(j) {
   return `<div class="s">${j.ora ? esc(j.ora) : ''}</div>
     ${j.emozioni.length ? `<div class="cm-chips">${j.emozioni.map(e => `<span class="cm-chip2">${esc(typeof e === 'string' ? e : (e.nome || e.name || ''))}</span>`).join('')}</div>` : ''}
     <div class="cm-text">${esc(j.testo) || '<span class="s">Nessun testo.</span>'}</div>${foot(AREAS[3], 'Apri il diario per modificare')}`;
 }
+/** Apre il dettaglio di una riga del giorno; l'allenamento usa il foglio della pagina allenamento. */
 function openDetail(kind, i) {
   const d = data[selected];
   if (!d) return;
@@ -168,12 +176,14 @@ function openDetail(kind, i) {
 }
 
 // ─── Aggiungere, modificare, eliminare, esportare ───────────────────────────
+/** Ricarica il mese; con `day` seleziona prima quel giorno (e il suo mese). */
 const refresh = day => {
   if (day) { selected = day; const [y, m] = day.split('-').map(Number); month = new Date(y, m - 1, 1); }
   return load();
 };
 sessione.onSessionChange(refresh);
 
+/** Esporta tutte le meditazioni in CSV (data, ora, minuti, intervalli). */
 async function exportMeditation() {
   const list = await loadSessions();
   if (!list.length) return toast('Nessuna meditazione registrata');
@@ -201,7 +211,9 @@ const manSheet = createSheet({ title: 'Dati inseriti a mano', body: `<div class=
   <button type="button" class="btn block text-danger" id="mh-del">Togli i valori inseriti a mano</button></div>` });
 const manRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'salute_manuale');
 const MAN_IDS = { sonnoMin: 'mh-sonno', passi: 'mh-passi', bpmRiposo: 'mh-bpm', respiro: 'mh-resp', stressMedio: 'mh-stress' };
+/** Valore di un campo del foglio manuale (il sonno da ore a minuti) oppure null. */
 const manVal = f => { const v = parseFloat(manSheet.$('#' + MAN_IDS[f]).value.replace(',', '.')); return Number.isFinite(v) && v >= 0 ? (f === 'sonnoMin' ? Math.round(v * 60) : v) : null; };
+/** Apre il foglio con i valori già inseriti a mano per il giorno selezionato. */
 function openManual() {
   const h = data[selected]?.salute?._man ? data[selected].salute : {}, man = h._man || {};
   Object.entries(MAN_IDS).forEach(([f, id]) => { const v = man[f] ? h[f] : ''; manSheet.$('#' + id).value = v === '' ? '' : (f === 'sonnoMin' ? +(v / 60).toFixed(2) : v); });
@@ -248,6 +260,7 @@ const pdfSheet = createSheet({ title: 'Diario alimentare in PDF', body: `<div cl
   <div class="grid-2"><div class="field"><label class="field-lbl" for="pd-da">Dal</label><input class="input" id="pd-da" type="date"/></div>
   <div class="field"><label class="field-lbl" for="pd-a">Al</label><input class="input" id="pd-a" type="date"/></div></div>
   <button type="button" class="btn accent block" id="pd-ok">Scarica il PDF</button></div>` });
+/** Apre il foglio del PDF con le date del mese mostrato (al massimo fino a oggi). */
 function openPdf() {
   const y = month.getFullYear(), m = month.getMonth();
   pdfSheet.$('#pd-da').value = dateKey(new Date(y, m, 1)); pdfSheet.$('#pd-a').value = dateKey(new Date(y, m + 1, 0) > new Date() ? new Date() : new Date(y, m + 1, 0));
@@ -264,6 +277,8 @@ pdfSheet.$('#pd-ok').addEventListener('click', async () => {
   } catch (e) { console.error(e); toast(e.message || 'Non sono riuscito a creare il PDF'); }
 });
 
+// ─── Tocchi (un solo ascoltatore per tutta la pagina) ───
+// Eliminare una meditazione richiede due tocchi sullo stesso pulsante.
 let delArmed = null;
 document.addEventListener('click', async e => {
   if (e.target.closest('[data-pdf]')) { moreSheet.close(); return setTimeout(openPdf, 220); }

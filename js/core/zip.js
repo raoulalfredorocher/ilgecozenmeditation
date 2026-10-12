@@ -9,8 +9,10 @@ const CRC = (() => {
   for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
   return t;
 })();
+/** CRC-32 dei dati (tabella precalcolata sopra), richiesto dal formato zip. */
 const crc32 = bytes => { let c = 0xFFFFFFFF; for (let i = 0; i < bytes.length; i++) c = CRC[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
 
+/** Crea lo zip: files = [{ name: 'cartella/file', data: stringa | Uint8Array }] → Blob 'application/zip'. */
 export function makeZip(files) {
   const enc = new TextEncoder();
   const parts = [], central = [];

@@ -6,10 +6,14 @@
  * fascia o linea di riferimento etichettata, media tratteggiata sobria, etichette solo sull'ultimo valore e sul massimo,
  * e una frase che racconta cosa dice il grafico. Toccando un giorno si legge il valore esatto.
  */
+import { dateKey } from './attivita.js';
+
+/** Numero intero all'italiana (1.234). */
 export const it = n => Math.round(n).toLocaleString('it-IT');
+/** Minuti → '7h05'. */
 export const hm = m => `${Math.floor(m / 60)}h${String(Math.round(m % 60)).padStart(2, '0')}`;
-const pad = n => String(n).padStart(2, '0');
-export const dkey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+/** Data → 'AAAA-MM-GG' nell'ora locale: è dateKey di core/attivita.js, col vecchio nome per chi la importa da qui. */
+export const dkey = dateKey;
 /** Gli ultimi n giorni, dal più vecchio a oggi. */
 export const lastDays = n => Array.from({ length: n }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (n - 1 - i)); return dkey(d); });
 const short = k => { const [, m, d] = k.split('-'); return `${+d}/${+m}`; };
@@ -26,8 +30,10 @@ function niceScale(lo, hi, count = 4) {
   for (let v = min; v <= max + step / 2; v += step) ticks.push(+v.toFixed(6));
   return { min, max, ticks };
 }
+/** Media leggibile: un decimale sotto 10, altrimenti intero. */
 export const fmtAvg = v => (v < 10 ? (Math.round(v * 10) / 10).toLocaleString('it-IT') : it(v));
 const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+/** ' · in aumento' / ' · in calo' / ' · stabile': prima metà dei valori contro la seconda (servono almeno 6 valori). */
 const trendText = (vals, tol = 0.04) => {
   const real = vals.filter(v => v != null); if (real.length < 6) return '';
   const h = real.length >> 1, a = mean(real.slice(0, h)), b = mean(real.slice(h));
@@ -51,6 +57,12 @@ export const stressZone = v => (v <= 25 ? 'rilassato' : v <= 50 ? 'normale' : v 
 /** Fasce del punteggio del sonno (indicative): 90+ ottimo, 80–89 buono, 60–79 discreto, sotto 60 scarso. */
 export const sleepZone = v => (v >= 90 ? 'ottimo' : v >= 80 ? 'buono' : v >= 60 ? 'discreto' : 'scarso');
 
+/**
+ * Metriche dei grafici, per chiave. Ogni voce: { title, unit, type: 'bar' | 'line', get(giorno) → valore, fmt, story(stats, m) → frase,
+ *   field? (campo per riconoscere i valori a mano), avgAll? (media su tutti i giorni, quelli vuoti contano 0),
+ *   band? / target? (riferimento), min? / max? (scala fissa), tap? (la notte si apre), note? (zona del valore) }.
+ * Qui sotto si aggiungono `rif` (testo di riferimento) e `key`.
+ */
 export const METRICS = {
   passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, field: 'passi', avgAll: true, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
     story: (s, m) => `Media di ${it(s.avg)} passi al giorno su ${s.total} giorni (i giorni senza dati contano 0). ${plural(s.vals.filter(v => v >= 8000).length, 'giorno', 'giorni')} oltre 8.000 passi${trendText(s.vals)}.` },
@@ -94,8 +106,10 @@ export function chart(m, days, hd) {
   const vals = days.map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
   const real = vals.filter(v => v != null);
   if (!real.length) return { svg: '', stats: null };
-  const allVals = Object.keys(hd).map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
-  const band = typeof m.band === 'function' ? m.band(allVals, m) : m.band;
+  // fascia personale (funzione): si calcola su tutti i giorni, quindi i valori si raccolgono solo in quel caso
+  const band = typeof m.band === 'function'
+    ? m.band(Object.keys(hd).map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; }), m)
+    : m.band;
   const avg = m.avgAll ? real.reduce((a, b) => a + b, 0) / n : mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
   const isMan = days.map((k, i) => vals[i] != null && !!m.field && !!hd[k]?._man?.[m.field]);
   const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days, nMan: isMan.filter(Boolean).length, band };

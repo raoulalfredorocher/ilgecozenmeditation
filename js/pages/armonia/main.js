@@ -13,7 +13,7 @@ import { subscribeContacts, addContactDoc, updateContactDoc, deleteContactDoc } 
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
-import { exportContacts } from './export.js';
+import { exportContacts, parseVCard, contactKeys } from './export.js';
 
 const MAX_BESTIES = 10;
 const $ = id => document.getElementById(id);
@@ -48,11 +48,13 @@ function view(c) {
 }
 const initials = v => ((v.nome[0] || '') + (v.cognome[0] || '')).toUpperCase() || '?';
 const sortKey = v => `${v.nome} ${v.cognome}`.trim().toLowerCase();   // ordine per nome, poi cognome
+/** Foto del contatto oppure le iniziali, nel quadrato di `size` px. */
 const avatar = (v, size = 40) => v.photo
   ? `<img class="avatar" src="${esc(v.photo)}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px" loading="lazy" referrerpolicy="no-referrer"/>`
   : `<span class="initials" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .36)}px">${esc(initials(v))}</span>`;
 
 // ─── Elenco ──────────────────────────────────────────────────────────────
+/** Ridisegna l'elenco (tutti o Besties) diviso per lettera, con ricerca su nome, interessi e città. */
 function render() {
   const all = contacts.map(view);
   const besties = all.filter(v => v.bestie);
@@ -91,6 +93,7 @@ function render() {
 }
 
 const shownTags = v => v.tags;
+/** Hash stabile di una stringa: sceglie il colore della scheda del contatto. */
 const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 
 /** Prossimo compleanno + fila dei Besties, in cima all'elenco. */
@@ -132,18 +135,21 @@ document.querySelector('.page-tabs').addEventListener('click', e => {
 const detail = createSheet({ body: '' });
 let detailId = null;
 
+/** Numero per wa.me: senza + o 00; ai numeri italiani brevi aggiunge il prefisso 39. */
 function waNumber(phone) {
   let n = String(phone || '').replace(/[^\d+]/g, '');
   if (n.startsWith('+')) return n.slice(1);
   if (n.startsWith('00')) return n.slice(2);
   return n.length <= 10 ? '39' + n : n;
 }
+/** "1990-05-12" → "12 maggio 1990" (senza anno se è prima del 1900, cioè sconosciuto). */
 function formatBirthday(b) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(b || '');
   if (!m) return b;
   return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: m[1] > '1900' ? 'numeric' : undefined });
 }
 
+/** Scheda del contatto: azioni rapide (chiama, WhatsApp, email…), informazioni, interessi e memorie. */
 function openDetail(id) {
   const c = contacts.find(x => x._docId === id);
   if (!c) return;
@@ -229,6 +235,7 @@ const memSheet = createSheet({ body: `
     <button class="btn primary block" type="submit">Salva</button>
   </form>` });
 let memContact = null, memEntry = null;
+/** Modulo per una nuova memoria (entry = null) o per modificarne una. */
 function openMemory(c, entry) {
   memContact = c;
   memEntry = entry;
@@ -272,6 +279,7 @@ function showAvatar() {
     ? `<img class="avatar" src="${esc(safeUrl(photo))}" alt="" style="width:84px;height:84px"/>`
     : `<span class="initials" style="width:84px;height:84px">${icon('user', 'lg')}</span>`;
 }
+/** Modulo contatto, nuovo (c = null) o esistente; precompila dalla vista normalizzata. */
 function openEditor(c = null) {
   editing = c;
   const v = c ? view(c) : null;
@@ -311,31 +319,7 @@ editor.$('#ce-form').addEventListener('submit', async e => {
 $('ar-add').addEventListener('click', () => openEditor(null));
 
 // ─── Import vCard (esportazione contatti iPhone) ─────────────────────────
-function parseVCard(text) {
-  const out = [];
-  for (const card of text.split(/BEGIN:VCARD/i)) {
-    if (!/END:VCARD/i.test(card)) continue;
-    const lines = card.replace(/\r\n[ \t]|\n[ \t]/g, '').split(/\r\n|\r|\n/);
-    const c = { nome: '', cognome: '', cellulare: '', email: '', paese: '', compleanno: '', instagram: '', linkedin: '', foto: '', interessi: [] };
-    for (const line of lines) {
-      const value = line.slice(line.indexOf(':') + 1).trim();
-      if (/^N[;:]/i.test(line)) { const p = value.split(';'); c.cognome = (p[0] || '').trim(); c.nome = (p[1] || '').trim(); }
-      else if (/^FN[;:]/i.test(line) && !c.nome && !c.cognome) { const p = value.split(' '); c.nome = p[0] || ''; c.cognome = p.slice(1).join(' '); }
-      else if (/^TEL/i.test(line) && !c.cellulare) c.cellulare = value;
-      else if (/^EMAIL/i.test(line) && !c.email) c.email = value;
-      else if (/^BDAY/i.test(line)) c.compleanno = /^\d{8}$/.test(value) ? `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}` : value;
-      else if (/^ADR/i.test(line)) { const p = value.split(';'); c.paese = [p[3], p[6]].map(x => (x || '').trim()).filter(Boolean).join(', '); }
-      else if (/^PHOTO.*(ENCODING=b|BASE64)/i.test(line)) c.foto = value.startsWith('data:') ? value : `data:image/jpeg;base64,${value}`;
-      else if (/^NOTE/i.test(line) && value) c.interessi = [value];
-      else if (/^URL/i.test(line)) {
-        if (value.includes('instagram.com')) c.instagram = value.split('instagram.com/')[1]?.replace(/\/$/, '') || '';
-        if (value.includes('linkedin.com')) c.linkedin = value;
-      }
-    }
-    if (c.nome || c.cognome) out.push(c);
-  }
-  return out;
-}
+// La lettura del file è in export.js (`parseVCard`): NOTE → memorie, come le scrive l'export.
 const actionsSheet = createSheet({ title: 'Armonia sociale', body: `
   <div class="zen-section">
     <div class="zen-eyebrow">Esporta</div>
@@ -369,8 +353,17 @@ actionsSheet.$('#ar-vcf').addEventListener('change', async e => {
   e.target.value = '';
   if (!list.length) return toast('Nessun contatto valido nel file');
   actionsSheet.close();
-  for (const c of list) await addContactDoc({ ...c, isBestie: false, interazioni: [], createdAt: Date.now() });
-  toast(`Importati ${list.length} contatti`);
+  // salta chi c'è già: stesso nome+cognome e stesso telefono o email (anche ripetuti nel file)
+  const seen = new Set(contacts.flatMap(contactKeys));
+  let added = 0, skipped = 0;
+  for (const c of list) {
+    const keys = contactKeys(c);
+    if (keys.some(k => seen.has(k))) { skipped++; continue; }
+    keys.forEach(k => seen.add(k));
+    await addContactDoc({ ...c, isBestie: false, createdAt: Date.now() });
+    added++;
+  }
+  toast(`Importati ${added} contatti${skipped ? ` · ${skipped} già presenti, saltati` : ''}`);
 });
 $('ar-more')?.addEventListener('click', () => {
   actionsSheet.$('#ar-exp-count').textContent = contacts.length

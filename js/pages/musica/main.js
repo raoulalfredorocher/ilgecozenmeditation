@@ -10,6 +10,7 @@ import { subscribeAccordi, addAccordoDoc, updateAccordoDoc, deleteAccordoDoc, su
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast } from '../../ui/dialog.js';
+import { armed, debounce } from '../comune.js';
 import { NOTES, TYPES, parseChord, isChord, transposeChord, notesOf, guitarShape, ukeShape, chordSvg, pianoSvg, rootIdx, noteName, diatonic } from './chords.js';
 import { REPERTORIO, searchUrl } from './repertorio.js';
 import { convertPasted } from './convert.js';
@@ -22,6 +23,7 @@ const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>>
 const tint = i => ['', 'c2', 'c3', 'c4'][i % 4];
 const STATUS = [['da', 'Da imparare'], ['imparo', 'Lo sto imparando'], ['so', 'Lo so']];
 const INSTR = [['chitarra', 'Chitarra'], ['ukulele', 'Ukulele'], ['piano', 'Piano']];
+/** Id (11 caratteri) di un video YouTube dal link, oppure null. */
 const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|&v=)([A-Za-z0-9_-]{11})/); return m ? m[1] : null; };
 
 let songs = [], media = [], tab = 'brani', q = '', fStatus = '';
@@ -30,15 +32,8 @@ let vidSeen = 'todo';                                   // todo | seen | all (vi
 let instr = lsGet('zen_mu_instr', 'chitarra');
 const setInstr = v => { instr = v; lsSet('zen_mu_instr', v); };
 
-function armed(label, fn) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'danger-btn'; b.textContent = label;
-  let on = false, t;
-  b.addEventListener('click', () => { if (on) { clearTimeout(t); fn(); return; } on = true; b.textContent = 'Tocca ancora per confermare'; t = setTimeout(() => { on = false; b.textContent = label; }, 3500); });
-  return b;
-}
-
 // ═══ Schede ═════════════════════════════════════════════════════════════
+/** Mostra una scheda (brani, accordi, ascolta, strumenti) e la ridisegna. */
 function showTab(t) {
   tab = t;
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
@@ -65,7 +60,9 @@ function parseBody(body) {
     return { segs: out.length ? out : [{ ch: '', tx: line }] };
   });
 }
+/** Accordi distinti di un brano, nell'ordine in cui compaiono. */
 const chordsIn = body => { const set = []; parseBody(body).forEach(r => { (r.only || []).forEach(c => set.push(c)); (r.segs || []).forEach(s => s.ch && set.push(s.ch)); }); return [...new Set(set)]; };
+/** HTML del brano trasposto di `shift` semitoni: sezioni, righe di accordi e accordi sopra le sillabe. */
 function songHtml(body, shift, flats) {
   const T = c => transposeChord(c, shift, flats);
   return parseBody(body).map(r => {
@@ -77,6 +74,7 @@ function songHtml(body, shift, flats) {
 }
 const statusLabel = k => (STATUS.find(s => s[0] === k) || STATUS[0])[1];
 
+/** Elenco dei brani con ricerca, filtro per stato e raggruppamento per artista o genere. */
 function renderBrani() {
   const base = songs;
   const list = base.filter(s => (!fStatus || (s.status || 'da') === fStatus) && (!q || `${s.title} ${s.author} ${s.genre || ''}`.toLowerCase().includes(q)))
@@ -104,16 +102,24 @@ function renderBrani() {
     ${body}`;
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-grp]'); if (g) { groupBy = g.dataset.grp; lsSet('zen_mu_group', groupBy); renderBrani(); } });
-document.addEventListener('input', e => { if (e.target.id === 'mu-q') { q = e.target.value.trim().toLowerCase(); renderBrani(); const i = $('mu-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); } });
+// la ricerca ridisegna l'elenco solo quando si smette di scrivere (200 ms)
+const redrawBrani = debounce(() => {
+  const typing = document.activeElement?.id === 'mu-q';   // il campo viene ricreato: se ci stavi scrivendo, il cursore torna lì
+  renderBrani();
+  const i = $('mu-q'); if (!typing || !i) return; i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+});
+document.addEventListener('input', e => { if (e.target.id === 'mu-q') { q = e.target.value.trim().toLowerCase(); redrawBrani(); } });
 
 // ─ lettore del brano
-const view = createSheet({ body: '' });
+const view = createSheet({ body: '', onClose: () => stopScroll() });   // lo scorrimento si ferma a ogni chiusura (anche con lo swipe)
 let vId = null, vShift = 0, vCapo = 0, vFlats = false, vSize = lsGet('zen_mu_size', 17), vScroll = 0, vTimer = 0, vChord = '';
+/** Apre il lettore del brano (capo dal brano, bemolle se la tonalità li usa). */
 function openSong(id) {
   vId = id; const s = songs.find(x => x._docId === id); if (!s) return;
   vCapo = +s.capo || 0; vShift = 0; vChord = ''; vFlats = /b$|^F$/.test(s.key || '') || (s.key || '').includes('b');
   drawSong(); view.open();
 }
+/** Diagramma dell'accordo per lo strumento scelto (manico o tastiera) con le sue note. */
 const instrDiag = sym => {
   const c = parseChord(sym); if (!c) return '';
   const notes = notesOf(c).join(' · ');
@@ -121,9 +127,11 @@ const instrDiag = sym => {
   const sh = instr === 'ukulele' ? ukeShape(c) : guitarShape(c);
   return `<div class="gz diag">${sh ? chordSvg(sh, instr === 'ukulele' ? 4 : 6) : '<div class="serif-i" style="width:132px">Forma non disponibile: guarda il piano</div>'}<div><span class="dn">${esc(sym)}</span><span class="nt">${esc(notes)}</span>${sh?.k ? `<span class="s">Barré alla casella ${sh.k}</span>` : ''}</div></div>`;
 };
+/** Suggerimenti per un brano senza accordi: link salvato oppure ricerca sul web/Chordify. */
 const emptyHelp = s => (s.link
   ? `<a href="${esc(safeUrl(s.link) || '#')}" target="_blank" rel="noopener">Apri gli accordi online</a>, poi usa “Modifica” → “Incolla da un sito”.`
   : `<a href="${esc(searchUrl(s.title, s.author))}" target="_blank" rel="noopener">Cercali sul web</a> o prova <a href="https://chordify.net/search/${encodeURIComponent(s.title + ' ' + (s.author || ''))}" target="_blank" rel="noopener">Chordify</a>, poi usa “Modifica” → “Incolla da un sito”.`);
+/** Lettore del brano: trasposizione, capo, strumento, dimensione, scorrimento automatico e azioni. */
 function drawSong() {
   const s = songs.find(x => x._docId === vId); if (!s) return view.close();
   const shift = vShift - vCapo;                               // con il capo suoni forme più basse
@@ -166,6 +174,7 @@ view.el.addEventListener('click', e => {
 // ─ modulo del brano
 const edit = createSheet({ body: '' });
 let eId = null, eStatus = 'da';
+/** Modulo del brano, nuovo (id = null, `pre` = valori iniziali) o esistente. */
 function openEdit(id, pre = {}) {
   eId = id; const s = id ? songs.find(x => x._docId === id) : pre; eStatus = s.status || 'da';
   edit.setTitle(id ? 'Modifica brano' : 'Nuovo brano');
@@ -223,6 +232,7 @@ edit.el.addEventListener('input', e => {
     } catch { /* si scrive a mano */ }
   }, 450);
 });
+/** Chiede gli accordi all'IA e li scrive nel modulo; se la quota è finita mostra il campo per la chiave Groq. */
 async function runAi() {
   const t = edit.$('#s-title').value.trim(), a = edit.$('#s-author').value.trim();
   if (t.length < 2) return toast('Scrivi prima il titolo');
@@ -264,6 +274,7 @@ edit.el.addEventListener('submit', async e => {
 
 // ─ repertorio consigliato
 const rep = createSheet({ title: 'Repertorio consigliato', body: '' });
+/** Foglio del repertorio consigliato: segna i brani già presenti, gli altri si aggiungono con un tocco. */
 function drawRep() {
   const mine = new Set(songs.map(s => `${s.title}|${s.author}`.toLowerCase()));
   rep.setBody(`<p class="serif-i" style="margin:0 0 var(--space-3);line-height:1.5">Titoli del cantautorato italiano da imparare. Aggiungili al repertorio e scrivi gli accordi che trovi: da qui “Cerca” apre la ricerca sul web.</p>
@@ -285,6 +296,7 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 
 // ═══ ACCORDI ════════════════════════════════════════════════════════════
 let aRoot = lsGet('zen_mu_root', 0), aType = lsGet('zen_mu_type', '');
+/** Libreria accordi: radice, tipo, diagramma e accordi della tonalità (maggiore e minore naturale). */
 function renderAccordi() {
   const c = { root: aRoot, type: aType, bass: null };
   const sym = noteName(aRoot, false) + aType;
@@ -308,9 +320,12 @@ $('p-accordi').addEventListener('click', e => {
 
 // ═══ ASCOLTA ════════════════════════════════════════════════════════════
 const DEFAULT_PL = [{ title: 'Playlist Rock', sub: 'Summer Rock 26', id: '450jCqgY0RmUDztCyO1EwZ' }, { title: 'Playlist Natale', sub: 'Spotify', id: '6MnZOtcOrMg5jgwL54lInX' }];
+/** Tipo di un elemento di musica_media; i dati vecchi senza `kind` diventano video se il link è YouTube. */
 const kindOf = m => m.kind || (ytId(m.link) ? 'video' : 'link');
 let vidArea = '', vidSub = '', vidQ = '', vidLimit = 24;
+/** Categoria "Area › Sottocategoria" → [area, sotto]. */
 const catParts = v => { const c = (v.category || 'Generale').trim(); const i = c.indexOf(' › '); return i < 0 ? [c, ''] : [c.slice(0, i), c.slice(i + 3)]; };
+/** Podcast, video (filtri visti/area/ricerca, 24 alla volta) e playlist. */
 function renderAscolta() {
   const pods = media.filter(m => kindOf(m) === 'podcast'), vids = media.filter(m => ['video', 'link'].includes(kindOf(m))), pls = media.filter(m => kindOf(m) === 'playlist');
   const areas = {}; vids.forEach(v => { const [a] = catParts(v); areas[a] = (areas[a] || 0) + 1; });
@@ -401,6 +416,7 @@ const link = createSheet({ body: '' });
 let lId = null, lKind = 'video';
 function openAddLink(kind) { openLink(null, kind); }
 function openEditLink(id) { const m = media.find(x => x._docId === id); if (m) openLink(id, kindOf(m)); }
+/** Modulo per video o playlist, nuovo (id = null) o esistente. */
 function openLink(id, kind) {
   lId = id; lKind = kind === 'playlist' ? 'playlist' : 'video'; const m = id ? media.find(x => x._docId === id) : {};
   link.setTitle(id ? 'Modifica' : lKind === 'playlist' ? 'Nuova playlist' : 'Nuovo video');
@@ -428,6 +444,7 @@ let podId = null, eps = [];
 const done = lsGet('zen_pod_done', {}), pos = lsGet('zen_pod_pos', {});
 const fmtDur = ms => { const m = Math.round(ms / 60000); return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min`; };
 const fmtDate = s => new Date(s).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
+/** Apre un podcast e scarica gli ultimi 25 episodi da Apple (iTunes lookup). */
 async function openPod(id) {
   podId = id; const p = media.find(x => x._docId === id); if (!p) return; eps = [];
   pod.setTitle(''); drawPod(true); pod.open();
@@ -437,6 +454,7 @@ async function openPod(id) {
   } catch { eps = []; }
   if (podId === id) drawPod(false);
 }
+/** Corpo del foglio podcast: copertina, episodi (fatti e posizione salvata), link e "Togli dalla lista". */
 function drawPod(loading) {
   const p = media.find(x => x._docId === podId); if (!p) return;
   pod.setBody(`<div style="display:flex;gap:var(--space-4);align-items:center"><span class="art" style="width:96px;height:96px;border-radius:var(--radius-md);overflow:hidden;flex-shrink:0;display:grid;place-items:center;background:var(--surface)">${p.img && safeUrl(p.img) ? `<img src="${esc(safeUrl(p.img))}" alt="" style="width:100%;height:100%;object-fit:cover"/>` : ''}</span>
@@ -452,6 +470,7 @@ pod.el.addEventListener('click', e => { const b = e.target.closest('[data-ep]');
 
 const audio = $('mu-audio'), plr = $('mu-player');
 let cur = null;
+/** Riproduce un episodio nel lettore in basso, ripartendo dalla posizione salvata. */
 function play(ep, p) {
   if (!ep) return;
   cur = ep; audio.src = ep.episodeUrl; plr.hidden = false; document.body.classList.add('has-player');
@@ -475,12 +494,14 @@ if ('mediaSession' in navigator) { navigator.mediaSession.setActionHandler('play
 // ═══ STRUMENTI ══════════════════════════════════════════════════════════
 const M = { bpm: lsGet('zen_mu_bpm', 100), beats: lsGet('zen_mu_beats', 4), run: false, n: 0, next: 0, id: 0, taps: [] };
 let ac = null;
+/** AudioContext unico della pagina, creato al primo uso. */
 const ctx = () => (ac ||= new (window.AudioContext || window.webkitAudioContext)());
 function click(accent, t) {
   const o = ctx().createOscillator(), g = ctx().createGain();
   o.frequency.value = accent ? 1500 : 1000; o.connect(g); g.connect(ctx().destination);
   g.gain.setValueAtTime(accent ? .5 : .32, t); g.gain.exponentialRampToValueAtTime(.001, t + .06); o.start(t); o.stop(t + .07);
 }
+/** Programma in anticipo (120 ms) i clic del metronomo sull'orologio audio e accende il puntino del battito. */
 function schedule() {
   while (M.next < ctx().currentTime + 0.12) {
     const b = M.n % M.beats; click(b === 0, M.next);
@@ -495,12 +516,14 @@ function metroToggle() {
   const b = $('mt-go'); if (b) b.textContent = M.run ? 'Stop' : 'Avvia';
 }
 const TUNINGS = { chitarra: [['E', 82.41, '6ª'], ['A', 110, '5ª'], ['D', 146.83, '4ª'], ['G', 196, '3ª'], ['B', 246.94, '2ª'], ['E', 329.63, '1ª']], ukulele: [['G', 392, '4ª'], ['C', 261.63, '3ª'], ['E', 329.63, '2ª'], ['A', 440, '1ª']] };
+/** Suona una nota di riferimento (onda triangolare, circa 3 s) e illumina il pulsante. */
 function tone(f, btn) {
   const o = ctx().createOscillator(), g = ctx().createGain(), t = ctx().currentTime;
   o.type = 'triangle'; o.frequency.value = f; o.connect(g); g.connect(ctx().destination);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.45, t + .03); g.gain.exponentialRampToValueAtTime(.0001, t + 3.2); o.start(t); o.stop(t + 3.3);
   btn.classList.add('on'); setTimeout(() => btn.classList.remove('on'), 1500);
 }
+/** Metronomo (bpm, tempo, tap) e note di riferimento per accordare. */
 function renderStrumenti() {
   const tu = TUNINGS[instr === 'ukulele' ? 'ukulele' : 'chitarra'];
   $('p-strumenti').innerHTML = `

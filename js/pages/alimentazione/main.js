@@ -31,6 +31,7 @@ function showTab(name) {
   current = name;
   document.querySelectorAll('[data-tab-btn]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tabBtn === name)));
   document.querySelectorAll('.tab-panel').forEach(p => { p.hidden = p.id !== 'tab-' + name; });
+  TABS[name].onShow?.();                       // ridisegna se i dati sono cambiati mentre era nascosta
   const more = document.getElementById('alim-more');
   if (more) more.hidden = !MENU[name].length;
   history.replaceState(null, '', '#' + name);

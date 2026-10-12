@@ -4,18 +4,15 @@
  * poi un blocco per ogni giorno con pasti, alimenti e macro. Usa jsPDF (caricata solo quando serve).
  * Niente trattini lunghi o simboli speciali: i font base del PDF non li hanno.
  */
-import { state, totals, fromDiaryMeal, itemsTotals, slotLabel, slotOrder, MC } from './state.js';
+import { state, totals, fromDiaryMeal, itemsTotals, slotLabel, slotOrder, MONTHS as MESI, parseKey as pk } from './state.js';
 import { loadLib } from './pdf.js';
 
 const INK = [28, 52, 68], MUTED = [107, 124, 136], LINE = [229, 222, 211], SAKURA = [238, 155, 176], SOFT = [252, 238, 242], PAPER = [250, 247, 242];
 const C = { prot: [47, 127, 174], carb: [212, 87, 122], fat: [200, 138, 18] };
 const GIORNI = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
-const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const n0 = v => Math.round(v).toLocaleString('it-IT'), n1 = v => (Math.round(v * 10) / 10).toLocaleString('it-IT');
-const pk = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
 const long = k => { const d = pk(k); return `${GIORNI[d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]} ${d.getFullYear()}`; };
 const short = k => { const d = pk(k); return `${d.getDate()}/${d.getMonth() + 1}`; };
-void MC;
 
 /** `from` e `to` sono date 'AAAA-MM-GG'. Restituisce un File PDF, oppure null se nel periodo non c'è niente. */
 export async function buildDiaryPDF(from, to, nome = '') {

@@ -36,16 +36,16 @@ function planSel(date) {
 
 /** I giorni del periodo (dal più vecchio a oggi) con diario, piano e fabbisogno. */
 function buildDays(n) {
-  const today = dateKey();
+  const today = dateKey(), T = hasProfile();
   return Array.from({ length: n }, (_, i) => {
     const key = addDays(today, -(n - 1 - i));
     const d = parseKey(key);
     const meals = state.diary[key];
     const t = meals?.length ? totals(meals) : null;
     const plan = planSel(d);
-    const T = hasProfile();
+    const parts = T ? tdeeParts(key, plan.day.type) : null;         // calcolato una volta: tdee = la sua somma (come tdeeFor)
     return { key, label: n <= 7 ? DAY_SHORT[weekdayIdx(d)] : `${d.getDate()}/${d.getMonth() + 1}`, t, kcal: t?.kcal || null, plan: plan.kcal || 0, planT: plan,
-      tdee: T ? tdeeFor(key, plan.day.type) : 0, parts: T ? tdeeParts(key, plan.day.type) : null };
+      tdee: parts ? Math.round(parts.base + parts.passi + parts.workout) : 0, parts };
   });
 }
 /** Cos'è il "fabbisogno": il TDEE di quel giorno, non solo il metabolismo. */
@@ -184,7 +184,15 @@ root.addEventListener('click', e => {
 });
 root.addEventListener('keydown', e => { const dot = e.target.closest?.('[data-k]'); if (dot && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(dot.dataset.k); } });
 
+/** Azione del + quando la scheda è attiva: registra oggi nel diario. */
 export const addAction = () => registerToday();
 
-onChange(what => { if (['diary', 'diet', 'diets', 'profile', 'workouts', 'health'].includes(what)) render(); });
+// Con la scheda nascosta non si ridisegna: si segna e si ridisegna quando torna visibile (onShow, da main.js).
+let stale = false;
+/** Chiamata da main.js quando la scheda diventa visibile: ridisegna se i dati sono cambiati nel frattempo. */
+export function onShow() { if (stale) { stale = false; render(); } }
+onChange(what => {
+  if (!['diary', 'diet', 'diets', 'profile', 'workouts', 'health'].includes(what)) return;
+  if (root.hidden) stale = true; else render();
+});
 render();

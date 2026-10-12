@@ -77,6 +77,5 @@ export function addAction() {
   startSession(sel.plan, sel.sc);
 }
 
-export const refresh = render;
 onChange(what => { if (what === 'plans' || what === 'log') render(); });
 render();

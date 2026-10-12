@@ -7,8 +7,10 @@ import { isChord } from './chords.js';
 const SECTION = /^\s*\[?\s*(intro|strofa|strofe|verso|ritornello|coro|special|bridge|ponte|finale|outro|assolo|solo|interludio|pre-?ritornello|verse|chorus|pre-?chorus|riff)\b[^\]]*\]?\s*:?\s*$/i;
 const clean = t => String(t || '').replace(/\[\/?(ch|tab)\]/gi, '').replace(/ /g, ' ').replace(/\t/g, '    ').replace(/\r/g, '');
 const tokens = line => { const out = []; const re = /\S+/g; let m; while ((m = re.exec(line))) out.push({ t: m[0], i: m.index }); return out; };
+/** true se la riga contiene solo accordi (ignorando barre, trattini e numeri di battuta). */
 const isChordLine = line => { const tk = tokens(line).filter(x => !/^[|\-–—/:.,()x\d]+$/.test(x.t) || isChord(x.t)); return tk.length > 0 && tk.every(x => isChord(x.t.replace(/[()]/g, ''))); };
 
+/** Testo incollato con gli accordi sopra le parole → formato dell'app con [Accordo] dentro il testo e titoli "# Sezione". */
 export function convertPasted(text) {
   const lines = clean(text).split('\n');
   const out = [];

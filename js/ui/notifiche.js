@@ -1,25 +1,28 @@
 /**
  * notifiche.js — centro notifiche nel Profilo (calcolate all'apertura dell'app, non sono push).
- *   caricaNotifiche()  → [{ id, testo, sub, href }]  già senza quelle chiuse oggi
- *   chiudi(id)         → la nasconde fino a domani
+ *   caricaNotifiche(force?) → { attive: [{ id, testo, sub, href }], archiviate: [...] }
+ *   archivia(n) · ripristina(id) · elimina(id) → stato salvato sul dispositivo (localStorage)
  */
 import { db, auth } from '../core/db.js';
 import { doc, getDoc } from '../core/firestore.js';
-
-const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+import { dateKey as dk, loadRange } from '../core/attivita.js';
 const lsGet = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ok */ } };
 
 /** Stato di ogni notifica: archiviata ('a', con copia del contenuto) o eliminata ('d'). */
 const ST = 'zen_notif_st', ARCH = 'zen_notif_arch';
+/** Archivia una notifica, tenendone una copia per l'elenco "Archiviate". */
 export function archivia(n) { const st = lsGet(ST, {}), ar = lsGet(ARCH, {}); st[n.id] = 'a'; ar[n.id] = { ...n, ts: Date.now() }; lsSet(ST, st); lsSet(ARCH, ar); }
+/** La rimette tra le attive (toglie stato e copia archiviata). */
 export function ripristina(id) { const st = lsGet(ST, {}); delete st[id]; lsSet(ST, st); const ar = lsGet(ARCH, {}); delete ar[id]; lsSet(ARCH, ar); }
+/** La nasconde per sempre; lo stato tiene al massimo circa 400 id (si scarta il più vecchio). */
 export function elimina(id) {
   const st = lsGet(ST, {}), ar = lsGet(ARCH, {}); st[id] = 'd'; delete ar[id];
   const keys = Object.keys(st); if (keys.length > 400) delete st[keys[0]];
   lsSet(ST, st); lsSet(ARCH, ar);
 }
 
+/** Calcola le notifiche di adesso: compleanni, allenamento / meditazione / diario alimentare, sfide del ciliegio. */
 async function calcola() {
   const out = [], now = new Date(), oggi = dk(now), dow = now.getDay();
   const giorniFa = n => dk(new Date(now.getFullYear(), now.getMonth(), now.getDate() - n));
@@ -37,8 +40,7 @@ async function calcola() {
 
   // Allenamento, meditazione, diario: una sola lettura degli ultimi giorni
   try {
-    const { loadRange } = await import('../core/attivita.js');
-    const days = await loadRange(giorniFa(3), oggi);
+    const days = await loadRange(giorniFa(3), oggi, ['allenamento', 'cibo', 'meditazione']);
     const oggiD = days[oggi] || {};
     if ([1, 3, 5].includes(dow) && !oggiD.allenamento?.length)
       out.push({ id: `wo-${oggi}`, testo: 'Oggi è giorno di allenamento', sub: 'Lunedì, mercoledì e venerdì', href: 'allenamento.html' });

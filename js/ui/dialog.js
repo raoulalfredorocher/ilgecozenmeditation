@@ -6,14 +6,18 @@
  *
  * I pannelli si chiudono toccando fuori, con Esc o trascinando in basso
  * (sheet.js). `onClose` viene chiamato a ogni chiusura.
+ * Con `removeOnClose: true` il pannello esce dal DOM a chiusura finita
+ * (per i pannelli usa-e-getta); se si riapre, viene rimesso nella pagina.
  */
 import { escapeHtml } from '../core/dom.js';
 
-let openCount = 0;
+const CLOSE_MS = 400;   // poco più della transizione di chiusura in zen.css (.32s)
 
-export function createSheet({ title = '', body = '', className = '', onClose } = {}) {
+/** Crea un pannello e lo aggiunge alla pagina (resta nel DOM anche da chiuso, salvo removeOnClose). Restituisce { el, sheet, $, $$, setTitle, setBody, open, close, isOpen }. */
+export function createSheet({ title = '', body = '', className = '', onClose, removeOnClose = false } = {}) {
   const overlay = document.createElement('div');
   overlay.className = 'zen-sheet-overlay';
+  overlay.dataset.dialog = '';   // riconoscibile da shell.js (Esc)
   overlay.innerHTML = `
     <div class="zen-sheet ${className}" role="dialog" aria-modal="true">
       <div class="zen-sheet-handle"></div>
@@ -36,9 +40,10 @@ export function createSheet({ title = '', body = '', className = '', onClose } =
     isOpen: () => overlay.classList.contains('open'),
     open() {
       if (api.isOpen()) return api;
+      if (!overlay.isConnected) document.body.append(overlay);
       overlay.style.removeProperty('display');
       overlay.classList.add('open');
-      openCount++;
+      addEventListener('keydown', onKey);   // Esc: ascoltato solo mentre il pannello è aperto
       document.documentElement.style.overflow = 'hidden';
       overlay.querySelector('.zen-sheet').scrollTop = 0;
       return api;
@@ -46,15 +51,17 @@ export function createSheet({ title = '', body = '', className = '', onClose } =
     close() {
       if (!api.isOpen()) return api;
       overlay.classList.remove('open');
-      openCount = Math.max(0, openCount - 1);
-      if (!openCount) document.documentElement.style.overflow = '';
+      removeEventListener('keydown', onKey);
+      // la pagina torna a scorrere solo se non resta aperto nessun pannello (di qui o di shell.js)
+      if (!document.querySelector('.zen-sheet-overlay.open')) document.documentElement.style.overflow = '';
+      if (removeOnClose) setTimeout(() => { if (!api.isOpen()) overlay.remove(); }, CLOSE_MS);
       onClose?.();
       return api;
     },
   };
+  function onKey(e) { if (e.key === 'Escape' && api.isOpen()) api.close(); }
   api.setTitle(title);
   overlay.addEventListener('click', e => { if (e.target === overlay) api.close(); });
-  addEventListener('keydown', e => { if (e.key === 'Escape' && api.isOpen()) api.close(); });
   return api;
 }
 

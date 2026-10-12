@@ -48,6 +48,7 @@ export function currentDeficit() {
 }
 
 let last = -1;
+/** Scrive il difetto misurato in --deficit e data-deficit, solo se è cambiato. */
 export function settle() {
   const d = currentDeficit();
   if (d === last) return;
@@ -62,6 +63,7 @@ const vpMeta = () => document.querySelector('meta[name="viewport"]');
 const clean = c => String(c || '').replace(/,\s*maximum-scale=1/g, '');
 const originalViewport = clean(vpMeta()?.getAttribute('content'));
 
+/** Cambia e ripristina il meta viewport, poi scorre di 1 px avanti e indietro: costringe iOS a ricalcolare la finestra. */
 function kick() {
   const meta = vpMeta();
   if (!meta || kicking) return;
@@ -96,15 +98,26 @@ export function report() {
   ].join('\n');
 }
 
+/** Avvio: misura, "scosse" ripetute e controlli a ogni evento che può cambiare la finestra. */
 function start() {
   settle();
   kick();
   setTimeout(kick, 250);
   setTimeout(() => { kick(); settle(); }, 900);
   // la finestra può correggersi (o sbagliare) in qualsiasi momento: si ricontrolla spesso, costa quasi nulla
-  setInterval(settle, 600);
-  for (const ev of ['resize', 'scroll', 'orientationchange', 'pageshow', 'touchend']) addEventListener(ev, () => { settle(); setTimeout(settle, 450); }, { passive: true });
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { kick(); setTimeout(settle, 400); } });
+  // (solo con la pagina visibile: da nascosta il controllo periodico si ferma)
+  let tick = null;
+  const poll = on => { clearInterval(tick); tick = on ? setInterval(settle, 600) : null; };
+  if (document.visibilityState !== 'hidden') poll(true);
+  // dopo ogni evento si ricontrolla tra 450 ms: un solo controllo in attesa, il nuovo evento lo rimanda
+  let later = null;
+  const settleLater = (ms = 450) => { clearTimeout(later); later = setTimeout(settle, ms); };
+  for (const ev of ['resize', 'scroll', 'orientationchange', 'pageshow', 'touchend']) addEventListener(ev, () => { settle(); settleLater(); }, { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    const visible = document.visibilityState === 'visible';
+    poll(visible);
+    if (visible) { kick(); settleLater(400); }
+  });
   visualViewport?.addEventListener('resize', settle);
   visualViewport?.addEventListener('scroll', settle);
 }

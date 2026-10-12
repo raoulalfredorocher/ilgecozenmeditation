@@ -21,6 +21,7 @@ const toNum = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); re
 let base = [];
 let loaded = null;
 
+/** Voce grezza (nomi dei campi liberi) → { n, k, p, c, g, u? } per 100 g; null se manca il nome. */
 export function normalizeFood(o) {
   const n = String(pick(o, ['n', 'nome', 'name', 'alimento', 'Nome', 'Alimento']) ?? '').trim();
   if (!n) return null;
@@ -53,8 +54,10 @@ export const ALIAS = {
   'parmigiano reggiano': 'Parmigiano', "olio extravergine d'oliva": 'Olio EVO', 'burro di arachidi': "Burro d'arachidi",
   'pomodori': 'Pomodorini', 'ceci in scatola (sgocciolati)': 'Ceci', 'proteine in polvere (whey)': 'Whey vegetale',
 };
+/** Nome dell'alimento con i vecchi doppioni ricondotti alla voce giusta (vedi ALIAS). */
 export const canonicalName = name => ALIAS[String(name).toLowerCase()] || name;
 
+/** Tutti gli alimenti: prima quelli aggiunti a mano (vincono sul database a parità di nome), senza i nomi in ALIAS. */
 export const allFoods = () => {
   const mine = state.customFoods.map(normalizeFood).filter(f => f && !ALIAS[f.n.toLowerCase()]);
   const names = new Set(mine.map(f => f.n.toLowerCase()));

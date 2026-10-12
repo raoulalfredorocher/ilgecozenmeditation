@@ -18,12 +18,15 @@ const root = () => {
 };
 const emoSafe = key => key.replace(/[^a-zA-Z0-9_À-ɏ]/g, '_');
 
+/** C'è un utente collegato? Tutti i riferimenti qui sotto restituiscono null finché non c'è. */
 export const ready = () => !!root();
+/** Riferimenti Firestore: documento della Storia, raccolta / voce del diario. */
 export const storiaRef = () => { const r = root(); return r && doc(db, ...r, 'salute_mentale', 'storia'); };
 export const diaryCol  = () => { const r = root(); return r && collection(db, ...r, 'mental_diary'); };
 export const diaryRef  = id => { const r = root(); return r && doc(db, ...r, 'mental_diary', id); };
 // note vocali: pezzi base64 in mental_diary/{voce}/audio/{0000, 0001, …}
 export const diaryAudioCol = id => { const r = root(); return r && collection(db, ...r, 'mental_diary', id, 'audio'); };
 export const diaryAudioRef = (id, n) => { const r = root(); return r && doc(db, ...r, 'mental_diary', id, 'audio', typeof n === 'number' ? String(n).padStart(4, '0') : n); };
+/** Raccolta / voce degli appunti di un'emozione (la chiave è ripulita dai caratteri non ammessi). */
 export const emoCol    = key => { const r = root(); return r && collection(db, ...r, 'emozioni_entries', emoSafe(key), 'log'); };
 export const emoRef    = (key, id) => { const r = root(); return r && doc(db, ...r, 'emozioni_entries', emoSafe(key), 'log', id); };

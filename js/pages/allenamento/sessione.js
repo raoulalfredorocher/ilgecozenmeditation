@@ -10,7 +10,7 @@ import {
   addSession, updateSession as updateRegistroDoc, state, planById, FEEDBACK, dateKey, parseKey, num, fmtKg, fmtClock, fmtDur, exType,
   sessionVolume, sessionSets,
 } from './state.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 
 const legacy = {};     // dettagli delle sessioni vecchie, caricati al bisogno
 let selected = dateKey();
@@ -43,6 +43,7 @@ const detail = createSheet({ title: 'Sessione', className: 'al-detail', body: '<
 let curId = null, delArmed = false;
 const recordOf = id => state.log.find(r => r._docId === id);
 
+/** Apre il dettaglio di una sessione del registro; per le sessioni vecchie carica i dettagli dalla sotto-collezione. */
 export async function openDetail(id) {
   curId = id; delArmed = false;
   const r = recordOf(id);
@@ -105,7 +106,8 @@ detail.el.addEventListener('click', async e => {
   if (del) {
     if (!delArmed) { delArmed = true; del.textContent = 'Tocca ancora'; return; }
     detail.close();
-    await deleteRegistroDoc(curId);
+    try { await deleteRegistroDoc(curId); }
+    catch (err) { console.error('elimina allenamento', err); return toast(`Non sono riuscito a eliminare l'allenamento (${err.code || err.message}). Riprova.`); }
     toast('Allenamento eliminato');
     afterChange();
   }
@@ -181,6 +183,7 @@ const fillSchede = () => {
   manual.$('#mn-sc').innerHTML = (p?.schede || []).map((s, i) => `<option value="${i}">${esc(s.nome)}</option>`).join('');
 };
 manual.$('#mn-pl').addEventListener('change', fillSchede);
+/** Registra a mano una sessione (nel giorno `date`, se dato): parte dai valori della scheda, poi si corregge. */
 export function addAction(date) {
   if (date) selected = date;
   if (!state.plans.length) return toast('Crea prima un allenamento nella scheda Schede');
@@ -207,8 +210,12 @@ manual.$('#mn-ok').addEventListener('click', async () => {
 export async function exportLog() {
   if (!state.log.length) return toast('Il registro è ancora vuoto');
   const rows = [['Data', 'Allenamento', 'Scheda', 'Durata (min)', 'Feedback', 'Note', 'Esercizio', 'Gruppo', 'Serie', 'Ripetizioni', 'Kg', 'Esecuzione (s)', 'Recupero (s)', 'Saltata']];
-  for (const r of [...state.log].sort((a, b) => a.data.localeCompare(b.data))) {
-    if (!r.es && r.hasDettagli && !legacy[r._docId]) legacy[r._docId] = await loadRegistroDettagli(r._docId);
+  const sorted = [...state.log].sort((a, b) => a.data.localeCompare(b.data));
+  // dettagli delle sessioni vecchie: tutti insieme, poi si usano (niente await nel ciclo)
+  const need = sorted.filter(r => !r.es && r.hasDettagli && !legacy[r._docId]);
+  const got = await Promise.all(need.map(r => loadRegistroDettagli(r._docId)));
+  need.forEach((r, i) => { legacy[r._docId] = got[i]; });
+  for (const r of sorted) {
     const v = viewOf(r), head = [r.data, r.allenamentoNome || '', r.schedaNome || '', r.durata || '', fbLabel(r.feedback), r.note || ''];
     if (!v || !v.es.length) { rows.push([...head, '', '', '', '', '', '', '', '']); continue; }
     v.es.forEach(e => e.s.forEach((s, i) => rows.push([...head, e.n, e.g || '', i + 1, s[0], s[1], s[2], s[3], s[4] ? (s[4] === 2 ? 'esercizio' : 'serie') : ''])));

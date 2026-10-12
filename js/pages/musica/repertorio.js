@@ -2,6 +2,7 @@
  * repertorio.js — cantautorato italiano da imparare: SOLO titoli (nessun testo, nessuna tablatura).
  * Gli accordi li scrivi tu in ogni brano; da qui parte la ricerca degli accordi sul web.
  */
+/** Artisti e titoli da imparare: { a: artista, t: [titoli] }. */
 export const REPERTORIO = [
   { a: 'Lucio Battisti', t: ['Emozioni', 'Il mio canto libero', 'Acqua azzurra, acqua chiara', 'La canzone del sole', 'Pensieri e parole', 'Ancora tu', 'Mi ritorni in mente', 'Una donna per amico', 'I giardini di marzo', 'Un’avventura', '29 settembre', 'Dieci ragazze'] },
   { a: 'Vasco Rossi', t: ['Albachiara', 'Vita spericolata', 'Sally', 'Un senso', 'Siamo solo noi', 'Come stai', 'Vivere', 'Senza parole', 'Un mondo migliore', 'Gli spari sopra', 'Liberi liberi', 'Rewind'] },
@@ -20,4 +21,5 @@ export const REPERTORIO = [
   { a: 'Gianna Nannini', t: ['Bello e impossibile', 'I maschi', 'Meravigliosa creatura', 'Sei nell’anima'] },
   { a: 'Renato Zero', t: ['Il cielo', 'Triangolo', 'I migliori anni della nostra vita', 'Mi vendo'] },
 ];
+/** Link a una ricerca Google "accordi titolo artista". */
 export const searchUrl = (title, artist) => `https://www.google.com/search?q=${encodeURIComponent(`accordi ${title} ${artist}`)}`;

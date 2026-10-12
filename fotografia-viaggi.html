@@ -302,9 +302,11 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module">
+    /* Fotografia e viaggi: mappa (Leaflet) dei paesi visitati e desiderati, siti UNESCO, viaggi e cartelle foto.
+       Un documento per paese in users/{uid}/countries/{ISO2} con i viaggi in sotto-raccolta. */
     import { waitForAuth, addBucketItem, updateBucketItem, deleteBucketItem } from './js/core/db.js';
     import { createSheet } from './js/ui/dialog.js';
-    import { subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
+    import { subscribeAllCountries, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';
     import { db as fdb, auth as fauth } from './js/core/db.js';
     import { doc as fdoc, getDoc as fgetDoc, setDoc as fsetDoc } from './js/core/firestore.js';
     import { icon } from './js/ui/icons.js';
@@ -2724,32 +2726,50 @@
     }
 
     // ── Sottoscrizioni Firebase ───────────────────────────────────────────────
-    function startSubs(iso2, info) {
-      if (globalUnsubs[iso2 + '_c']) return;
-
-      globalUnsubs[iso2 + '_c'] = subscribeCountry(iso2, data => {
-        const visitedIds = data?.visitedUnescoIds || [];
-        const s = st(iso2);
-        s.wish = !!data?.wish;
-        s.bucketId = data?.wishBucketId || null;
-        s.drive = data?.driveUrl || '';
-        s.visitedAt = data?.visitedAt || 0;
-        s.unescoDone = visitedIds.length;
-        s.unescoIds = visitedIds;
-
-        setCountryVisited(iso2, data?.visited || false);
-        syncPin(iso2);
-
-        const inputEl = document.getElementById(`di-${iso2}`);
-        if (inputEl && document.activeElement !== inputEl) inputEl.value = s.drive;
-        renderDriveLink(iso2, s.drive);
-
-        renderUnesco(iso2, info.sites, visitedIds);
-        setUnescoProgress(iso2, visitedIds.length, info.sites.length);
-        updateUnescoStats();
-        syncUnescoDots();
+    // Dati dei paesi: un solo ascolto sulla raccolta `countries` (non uno per paese); a ogni
+    // aggiornamento si ridisegnano solo i paesi il cui documento è cambiato, e i contatori/pallini
+    // UNESCO una volta sola. I viaggi restano un ascolto per paese (sotto-raccolta countries/{iso}/trips).
+    const INFO = {};
+    Object.values(COUNTRIES).forEach(cs => Object.entries(cs).forEach(([iso2, info]) => { INFO[iso2] = info; }));
+    const lastCountry = {};   // iso2 → JSON dell'ultimo documento disegnato
+    function startCountriesSub() {
+      if (globalUnsubs._countries) return;
+      globalUnsubs._countries = subscribeAllCountries(all => {
+        let changed = false;
+        Object.entries(INFO).forEach(([iso2, info]) => {
+          const data = all[iso2] || {};
+          const json = JSON.stringify(data);
+          if (lastCountry[iso2] === json) return;
+          lastCountry[iso2] = json; changed = true;
+          applyCountry(iso2, info, data);
+        });
+        if (changed) { updateUnescoStats(); syncUnescoDots(); }
       });
+    }
+    /** Dati di un paese (visitato, voglio andarci, foto, siti UNESCO) → interfaccia. */
+    function applyCountry(iso2, info, data) {
+      const visitedIds = data?.visitedUnescoIds || [];
+      const s = st(iso2);
+      s.wish = !!data?.wish;
+      s.bucketId = data?.wishBucketId || null;
+      s.drive = data?.driveUrl || '';
+      s.visitedAt = data?.visitedAt || 0;
+      s.unescoDone = visitedIds.length;
+      s.unescoIds = visitedIds;
 
+      setCountryVisited(iso2, data?.visited || false);
+      syncPin(iso2);
+
+      const inputEl = document.getElementById(`di-${iso2}`);
+      if (inputEl && document.activeElement !== inputEl) inputEl.value = s.drive;
+      renderDriveLink(iso2, s.drive);
+
+      renderUnesco(iso2, info.sites, visitedIds);
+      setUnescoProgress(iso2, visitedIds.length, info.sites.length);
+    }
+
+    function startSubs(iso2, info) {
+      if (globalUnsubs[iso2 + '_t']) return;
       globalUnsubs[iso2 + '_t'] = subscribeTrips(iso2, trips => {
         st(iso2).trips = trips;
         renderTrips(iso2, trips);
@@ -2842,7 +2862,9 @@
       renderOverview();
       renderTimeline();
       loadUC();
-      // Sottoscrive tutti i paesi subito: servono per mappa colorata e contatori globali
+      // Paesi: un ascolto solo. Viaggi: uno per paese, subito, perché servono a mappa, cronologia e contatori
+      // (un viaggio può esistere anche senza il documento del paese: addTripDoc non lo crea).
+      startCountriesSub();
       Object.values(COUNTRIES).forEach(countries => {
         Object.entries(countries).forEach(([iso2, info]) => startSubs(iso2, info));
       });

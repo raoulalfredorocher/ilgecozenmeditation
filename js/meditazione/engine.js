@@ -15,6 +15,7 @@ export function createSession(steps, hooks) {
 
   const elapsed = () => ((running ? Date.now() : pausedAt) - startedAt - pausedTotal) / 1000;
 
+  /** Dove cade il secondo `e`: { i, into, left } nell'intervallo i, oppure null se la pratica è finita. */
   function locate(e) {
     let acc = 0;
     for (let i = 0; i < secs.length; i++) {

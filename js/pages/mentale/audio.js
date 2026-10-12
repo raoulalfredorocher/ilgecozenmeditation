@@ -10,11 +10,14 @@
  * e le sue emozioni, e non dipende da servizi con limiti o costi.
  */
 
+/** Limiti: registrazione al massimo 20 minuti, file scelto dal telefono al massimo 12 MB, pezzi da 600.000 caratteri base64. */
 export const MAX_RECORD_SEC = 20 * 60;
 export const MAX_FILE_BYTES = 12 * 1024 * 1024;
 export const CHUNK_CHARS = 600_000;           // multiplo di 4: i pezzi base64 si riuniscono senza errori
 
+/** Secondi → "m:ss". */
 export const fmtDur = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+/** Il browser sa registrare dal microfono (getUserMedia + MediaRecorder)? */
 export const recordingSupported = () => !!(navigator.mediaDevices?.getUserMedia && window.MediaRecorder);
 
 // ─── Registrazione ──────────────────────────────────────────────────────────
@@ -70,6 +73,7 @@ export function fileDuration(blob) {
 }
 
 // ─── Salvataggio a pezzi ────────────────────────────────────────────────────
+/** Blob → stringa base64 (senza il prefisso "data:…;base64,"). */
 export function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const r = new FileReader();
@@ -79,12 +83,14 @@ export function blobToBase64(blob) {
   });
 }
 
+/** Base64 → pezzi da CHUNK_CHARS caratteri, uno per documento Firestore. */
 export function splitChunks(b64) {
   const out = [];
   for (let i = 0; i < b64.length; i += CHUNK_CHARS) out.push(b64.slice(i, i + CHUNK_CHARS));
   return out;
 }
 
+/** Pezzi base64 (in ordine) → Blob ascoltabile del tipo `mime`. */
 export function chunksToBlob(parts, mime) {
   const bin = atob(parts.join(''));
   const bytes = new Uint8Array(bin.length);

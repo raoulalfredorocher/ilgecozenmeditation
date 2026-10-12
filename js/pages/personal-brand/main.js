@@ -10,6 +10,7 @@ import {
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage, downloadCSV } from '../../ui/dialog.js';
+import { armed, debounce } from '../comune.js';
 import { OCCASIONS, SLOT_LABEL, PERIODS, guessOccasion, suggest, weatherFor, slotOf, parseWhen, periodOfHour } from './outfit.js';
 
 const $ = id => document.getElementById(id);
@@ -30,25 +31,16 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 
 let capi = [], insp = [], tab = 'outfit';
 
-/** Un'armata di due tocchi: il primo chiede conferma, il secondo esegue. */
-function armed(label, fn) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'danger-btn'; b.textContent = label;
-  let on = false, t;
-  b.addEventListener('click', () => {
-    if (on) { clearTimeout(t); fn(); return; }
-    on = true; b.textContent = 'Tocca ancora per confermare';
-    t = setTimeout(() => { on = false; b.textContent = label; }, 3500);
-  });
-  return b;
-}
 
+/** Foto del capo, o l'iniziale del nome se manca. */
 const photoBlock = (c, cls = '') => c.foto && safeUrl(c.foto)
   ? `<img src="${esc(safeUrl(c.foto))}" alt="" loading="lazy"/>` : `<b>${esc((c.nome || '?')[0].toUpperCase())}</b>`;
 const colorHex = c => (COLORS[c] && !COLORS[c].startsWith('conic')) ? COLORS[c] : null;
+/** Tinta stabile (c1…c4) per la scheda di un capo, ricavata dall'id. */
 const pieceTint = c => ['c1', 'c2', 'c3', 'c4'][Math.abs([...String(c._docId || c.nome)].reduce((h, ch) => h + ch.charCodeAt(0), 0)) % 4];
 
 // ═══ Tab ═════════════════════════════════════════════════════════════════
+/** Mostra una scheda (outfit, guardaroba, ispirazione) e la ridisegna. */
 function showTab(t) {
   tab = t;
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
@@ -61,10 +53,12 @@ document.querySelector('.page-tabs').addEventListener('click', e => { const b = 
 
 // ═══ OUTFIT ══════════════════════════════════════════════════════════════
 const today = (add = 0) => { const d = new Date(); d.setDate(d.getDate() + add); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+/** Stato del consigliere: testo, occasione, data, momento/ora, città o posizione, seme e ultimo risultato con meteo. */
 const O = { text: '', occ: null, date: today(), period: periodOfHour(new Date().getHours()), hour: null, hourLabel: '', city: lsGet('zen_pb_city', ''), geo: null, place: null, seed: 1, result: null, meta: null };
 const MYPOS = 'La mia posizione';
 const prettyDate = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }); };
 
+/** Modulo "Raccontami l'occasione" e, se c'è, l'ultima proposta. */
 function renderOutfit() {
   const root = $('tab-outfit');
   if (!capi.length) {
@@ -97,6 +91,7 @@ function renderOutfit() {
   if (O.result) drawResult();
 }
 
+/** Il look proposto: titolo, meteo, capi scelti, cosa manca e i pulsanti "Un'altra" / "Lo indosso". */
 function drawResult() {
   const R = O.result, host = $('of-result');
   if (!R) { host.innerHTML = ''; return; }
@@ -116,10 +111,15 @@ function drawResult() {
   host.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+/** Copia nel modulo O testo, data e città scritti. */
 function readForm() {
   O.text = $('of-text').value; O.date = $('of-date').value || O.date; O.city = $('of-city').value.trim();
 }
 
+/**
+ * Compone il look. La prima volta legge giorno/ora/città dal testo e scarica il meteo;
+ * con again = true cambia solo il seme e riusa il meteo già letto.
+ */
 async function recommend(again = false) {
   const btn = $('of-go');
   readForm();
@@ -149,6 +149,7 @@ async function recommend(again = false) {
 }
 
 let sugTimer = 0, sugList = [], sugSeq = 0;
+/** Suggerimenti di città mentre scrivi (Open-Meteo, senza chiave), dopo 220 ms; ignora le risposte arrivate tardi. */
 function suggest_(q) {
   clearTimeout(sugTimer);
   const box = $('of-sug'); q = q.trim();
@@ -223,6 +224,7 @@ function mosaic(items) {
 
 // ═══ GUARDAROBA ══════════════════════════════════════════════════════════
 const F = { q: '', cat: '', color: '', style: '' };
+/** Guardaroba: contatori, ricerca, filtri per categoria e colore, poi gli scaffali per categoria a mosaico. */
 function renderGuardaroba() {
   const root = $('tab-guardaroba');
   const cats = new Set(capi.map(c => c.categoria).filter(Boolean));
@@ -247,14 +249,20 @@ $('tab-guardaroba').addEventListener('click', e => {
   const cat = e.target.closest('[data-cat]'); if (cat) { F.cat = cat.dataset.cat; return renderGuardaroba(); }
   const col = e.target.closest('[data-color]'); if (col) { F.color = col.dataset.color; return renderGuardaroba(); }
 });
+// la ricerca ridisegna il guardaroba solo quando si smette di scrivere (200 ms)
+const redrawGuardaroba = debounce(() => {
+  const typing = document.activeElement?.id === 'g-q';   // il campo viene ricreato: se ci stavi scrivendo, il cursore torna lì
+  renderGuardaroba();
+  const i = $('g-q'); if (!typing || !i) return; i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+});
 $('tab-guardaroba').addEventListener('input', e => {
   if (e.target.id !== 'g-q') return;
-  F.q = e.target.value.trim().toLowerCase(); renderGuardaroba();
-  const i = $('g-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+  F.q = e.target.value.trim().toLowerCase(); redrawGuardaroba();
 });
 
 // ─ scheda del capo
 const detail = createSheet({ body: '' });
+/** Scheda di un capo con i dettagli, Modifica ed Elimina (a due tocchi). */
 function openCapoDetail(id) {
   const c = capi.find(x => x._docId === id); if (!c) return;
   const rows = [['Marca', c.marca], ['Taglia', c.taglia], ['Vestibilità', c.vestibilita], ['Stile', c.stile], ['Anno', c.anno]].filter(([, v]) => v);
@@ -274,6 +282,7 @@ function openCapoDetail(id) {
 // ─ modulo capo
 const capoSheet = createSheet({ body: '' });
 let capoId = null, capoPhoto = '', capoStars = 0;
+/** Modulo capo, nuovo (id = null) o esistente. */
 function openCapoEditor(id) {
   capoId = id; const c = id ? capi.find(x => x._docId === id) : {};
   capoPhoto = c.foto || ''; capoStars = c.stelle || 0;
@@ -298,6 +307,7 @@ function openCapoEditor(id) {
   capoSheet.open();
 }
 function drawStarPick() { capoSheet.$('#c-stars').innerHTML = [1, 2, 3, 4, 5].map(i => `<button type="button" data-s="${i}" aria-label="${i} stelle">${i <= capoStars ? '★' : '☆'}</button>`).join(''); }
+/** Anteprima della foto scelta dentro il foglio `sheet`. */
 function drawPrev(src, sel, sheet) { const el = sheet.$(sel); el.innerHTML = src && safeUrl(src) ? `<img src="${esc(safeUrl(src))}" alt=""/>` : ''; el.hidden = !src; }
 capoSheet.el.addEventListener('click', e => { const s = e.target.closest('[data-s]'); if (s) { capoStars = capoStars === +s.dataset.s ? 0 : +s.dataset.s; drawStarPick(); } });
 capoSheet.el.addEventListener('change', async e => {
@@ -317,6 +327,7 @@ capoSheet.el.addEventListener('submit', async e => {
 });
 
 // ═══ ISPIRAZIONE ═════════════════════════════════════════════════════════
+/** Le sezioni di ispirazione (capelli, barba, …) con le loro immagini e il pulsante +. */
 function renderIspirazione() {
   $('tab-ispirazione').innerHTML = SECTIONS.map(([name, sub], si) => {
     const items = insp.filter(i => i.section === name);
@@ -332,6 +343,7 @@ $('tab-ispirazione').addEventListener('click', e => {
 });
 
 const inspView = createSheet({ body: '' });
+/** Scheda di una ispirazione con foto, note, Modifica ed Elimina. */
 function openInspView(id) {
   const it = insp.find(x => x._docId === id); if (!it) return;
   inspView.setTitle('');
@@ -346,6 +358,7 @@ function openInspView(id) {
 }
 const inspSheet = createSheet({ body: '' });
 let inspId = null, inspSection = '', inspPhoto = '';
+/** Modulo ispirazione, nuova (nella sezione indicata) o esistente. */
 function openInspEditor(id, section) {
   inspId = id; const it = id ? insp.find(x => x._docId === id) : {};
   inspSection = it.section || section; inspPhoto = it.foto || '';

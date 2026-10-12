@@ -34,6 +34,7 @@ DAYS_BACK = int(os.environ.get("ZEPP_DAYS_BACK", "10"))
 
 
 def log(msg):
+    """Stampa subito (flush) nel log di GitHub Actions. Solo conteggi: il repo è pubblico."""
     print(msg, flush=True)
 
 
@@ -44,6 +45,7 @@ DOCS = f"https://firestore.googleapis.com/v1/projects/{PROJECT}/databases/(defau
 
 
 def http(method, url, body=None, token=None):
+    """Richiesta JSON a Firestore REST; in errore solleva RuntimeError con codice e coda del percorso (mai il corpo)."""
     req = urllib.request.Request(url, method=method, data=None if body is None else json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json", **({"Authorization": f"Bearer {token}"} if token else {})})
     try:
@@ -54,6 +56,7 @@ def http(method, url, body=None, token=None):
 
 
 def enc(v):
+    """Valore Python → formato tipizzato di Firestore REST ({"integerValue": "3"}, {"mapValue": …})."""
     if v is None: return {"nullValue": None}
     if isinstance(v, bool): return {"booleanValue": v}
     if isinstance(v, int): return {"integerValue": str(v)}
@@ -65,6 +68,7 @@ def enc(v):
 
 
 def dec(v):
+    """Formato tipizzato di Firestore REST → valore Python (inverso di enc)."""
     k = next(iter(v))
     x = v[k]
     if k == "nullValue": return None
@@ -84,11 +88,13 @@ def sign_in():
 
 
 def patch(token, path, fields, mask):
+    """Aggiorna solo i campi in mask (updateMask): gli altri campi del documento restano intatti."""
     q = "&".join("updateMask.fieldPaths=" + urllib.parse.quote(m, safe="") for m in mask)
     return http("PATCH", f"{DOCS}/{path}?{q}", {"fields": {k: enc(v) for k, v in fields.items()}}, token)
 
 
 def sport_label(raw):
+    """Nome dello sport di Zepp → etichetta dell'app (Pesi, Cyclette, Bici, …); se non riconosciuto resta il nome originale."""
     t = str(raw or "").strip()
     l = t.lower()
     if re.search(r"strength|forza|pesi|weight|gym", l): return "Pesi"
@@ -104,6 +110,7 @@ def sport_label(raw):
 
 
 def to_dt(s):
+    """Data ISO → datetime con fuso; senza fuso si assume TZ. None se vuota o non valida."""
     if not s:
         return None
     try:
@@ -114,6 +121,7 @@ def to_dt(s):
 
 
 def num(v):
+    """Numero o 0.0 se il valore manca o non è numerico."""
     try:
         return float(v)
     except (TypeError, ValueError):

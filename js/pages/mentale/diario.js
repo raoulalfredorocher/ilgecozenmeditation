@@ -9,6 +9,7 @@ import { MOODS, labelOf } from './data.js';
 import * as store from './store.js';
 import * as audio from './audio.js';
 import { $, esc, armedButton, showSheet, hideSheet, dayStr, timeStr, GIORNI_BREVI, mese } from './ui.js';
+import { parseKey as parseDay } from '../../core/attivita.js';
 
 const DRAFT_KEY = 'zen_diary_draft';
 let entries = [];
@@ -18,7 +19,6 @@ let st = null;                // stato dell'editor
 
 const entryDay = e => e.data || dayStr(e.createdAt || Date.now());
 const sortKey = e => `${entryDay(e)} ${e.ora || '00:00'} ${String(e.createdAt || 0).padStart(14, '0')}`;
-const parseDay = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
 
 function streak() {
   const days = new Set(entries.map(entryDay));
@@ -191,6 +191,7 @@ function syncMeta() {
     : '<button type="button" class="text-btn" id="ed-photo">Aggiungi una foto</button>';
 }
 
+/** Apre la scrittura a tutto schermo: voce esistente oppure nuova (riparte dalla bozza; `presetDay` 'AAAA-MM-GG' = giorno scelto nella vista calendario). */
 export function openEditor(entry = null, presetDay = null) {
   editing = entry;
   const draft = entry ? null : readDraft();
@@ -261,6 +262,7 @@ function readPhoto(file) {
   });
 }
 
+/** Salva la voce (nuova o modificata); l'audio nuovo va a pezzi nella sotto-raccolta e la voce lo indica solo a scrittura finita. */
 async function save() {
   if (st.rec) await endRecord();                           // registrazione ancora in corso: prima si chiude
   const titolo = st.titolo.trim(), testo = st.testo.trim();
@@ -464,6 +466,7 @@ export function initDiario() {
   $('ed-save').addEventListener('click', save);
 }
 
+/** Ascolta in tempo reale tutte le voci del diario (le più recenti prima) e ridisegna. Da chiamare dopo il login. */
 export function startDiary() {
   const col = store.diaryCol();
   if (!col) return;

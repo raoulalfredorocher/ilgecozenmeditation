@@ -86,6 +86,7 @@ export const OTHERS = [
   ['fiducia', 'Fiducia'], ['anticipazione', 'Anticipazione'],
 ].map(([key, label]) => ({ key, label, level: 0, family: null, parent: null, children: [] }));
 
+/** Testo → chiave: minuscolo, senza accenti, spazi e simboli come "_" ("Senso di colpa" → "senso_di_colpa"). */
 export const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 
 /** key → { key, label, level (1-3, 0 = fuori ruota), family, parent, children[] } */
@@ -105,7 +106,9 @@ FAMILIES.forEach(f => {
   });
 });
 
+/** Famiglia (voce di FAMILIES) di un'emozione, oppure null per quelle fuori ruota. */
 export const familyOf = key => FAMILIES.find(f => f.key === EMOTIONS[key]?.family) || null;
+/** Nome leggibile di un'emozione (la chiave stessa se sconosciuta). */
 export const labelOf = key => EMOTIONS[key]?.label || key;
 
 /** Emozioni offerte nel diario per dire "come ti senti". */

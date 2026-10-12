@@ -27,6 +27,7 @@ function settle(write) {
   return Promise.race([write, new Promise(resolve => setTimeout(resolve, ACK_MS))]);
 }
 
+/** Come nell'SDK, ma la Promise si risolve subito offline e al massimo dopo ACK_MS online (vedi settle). */
 export const setDoc = (ref, data, options) => settle(options ? fs.setDoc(ref, data, options) : fs.setDoc(ref, data));
 export const updateDoc = (...args) => settle(fs.updateDoc(...args));
 export const deleteDoc = ref => settle(fs.deleteDoc(ref));
@@ -37,6 +38,7 @@ export function addDoc(col, data) {
   return settle(fs.setDoc(ref, data)).then(() => ref);
 }
 
+/** Come writeBatch dell'SDK, ma commit() passa da settle: non blocca offline né su rete lenta. */
 export function writeBatch(db) {
   const batch = fs.writeBatch(db);
   const commit = batch.commit.bind(batch);

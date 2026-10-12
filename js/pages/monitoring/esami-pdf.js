@@ -24,7 +24,9 @@ const yearNow = new Date().getFullYear();
 /** Anno dal nome del file (es. «Luglio 2021»); ignora i numeri lunghi come 20261007150403. */
 const guessYear = name => { const m = String(name).match(/(?<!\d)(20[0-2]\d)(?!\d)/); return m ? +m[1] : yearNow; };
 
+/** Quanti referti ci sono nell'indice già letto da watch(). */
 export const count = () => Object.keys(files).length;
+/** Ascolta l'indice dei referti (solo i metadati, non i pezzi dei file); restituisce la funzione per smettere. */
 export function watch(onChange) {
   return onSnapshot(idxRef(), s => { files = s.exists() ? (s.data().files || {}) : {}; onChange?.(); }, e => console.warn('referti pdf', e));
 }
@@ -128,4 +130,5 @@ sheet.el.addEventListener('change', e => {
 });
 sheet.el.addEventListener('input', e => { if (e.target.dataset.pn != null) pending[+e.target.dataset.pn].label = e.target.value; });
 
+/** Apre il foglio dei referti (senza file in attesa di conferma). */
 export function openVault() { pending = null; draw(); sheet.open(); }

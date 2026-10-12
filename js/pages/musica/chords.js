@@ -4,10 +4,13 @@
  *  • chitarra e ukulele: forme "base" verificate nota per nota, che si spostano sul manico per qualsiasi radice.
  * Funzioni: parseChord, transposeChord, notesOf, guitarShape, ukeShape, chordSvg, pianoSvg.
  */
+/** Le 12 note con i diesis (indice 0 = Do). */
 export const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const FLAT = { Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#', Cb: 'B', Fb: 'E', 'E#': 'F', 'B#': 'C' };
+/** Nome di nota ("Bb", "F#") → indice 0-11, oppure -1. */
 export const rootIdx = r => { const n = FLAT[r] || r; return NOTES.indexOf(n); };
 const FLAT_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+/** Indice (anche fuori 0-11) → nome della nota, con diesis o bemolle. */
 export const noteName = (i, flats = false) => (flats ? FLAT_NAMES : NOTES)[((i % 12) + 12) % 12];
 
 /** Tipi di accordo → intervalli (semitoni dalla radice) ed etichetta. */
@@ -28,6 +31,7 @@ export function parseChord(sym) {
   const t = ALIAS[m[2]]; if (t === undefined) return null;
   return { root, type: t, bass: m[3] ? rootIdx(m[3]) : null, text: sym };
 }
+/** true se il simbolo è un accordo riconosciuto. */
 export const isChord = s => !!parseChord(s);
 
 /** Trasporta un simbolo di `n` semitoni, mantenendo il tipo scritto. */
@@ -37,6 +41,7 @@ export function transposeChord(sym, n, flats = false) {
   const r = rootIdx(m[1]); if (r < 0) return sym;
   return noteName(r + n, flats) + m[2] + (m[3] ? '/' + noteName(rootIdx(m[3]) + n, flats) : '');
 }
+/** Note di un accordo già analizzato da parseChord (es. ['A', 'C', 'E']). */
 export const notesOf = c => TYPES[c.type].iv.map(i => noteName(c.root + i, false));
 
 // ─── Forme base: frets per corda, dalla più grave. -1 = non suonata. `r` = radice della forma ───────
@@ -60,6 +65,7 @@ const U = [ // ukulele G C E A
   ['sus4', 0, [0, 0, 1, 3]], ['sus4', 7, [0, 2, 3, 3]], ['sus4', 9, [2, 2, 0, 0]],
 ];
 
+/** Sposta le forme base sulla radice voluta e sceglie quella spostata di meno: { frets, k (spostamento), mx, open } o null. */
 function best(table, c, maxFret = 12) {
   const cands = [];
   for (const [t, r, f] of table) {
@@ -72,7 +78,9 @@ function best(table, c, maxFret = 12) {
   cands.sort((a, b) => a.k - b.k || a.mx - b.mx);
   return cands[0] || null;
 }
+/** Diteggiatura per chitarra di un accordo analizzato, o null se non c'è una forma per quel tipo. */
 export const guitarShape = c => best(G, c);
+/** Diteggiatura per ukulele (G C E A), o null. */
 export const ukeShape = c => best(U, c);
 
 // ─── Disegno ────────────────────────────────────────────────────────────

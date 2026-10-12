@@ -4,6 +4,7 @@
  * Logica pura, senza DOM: la pagina si occupa solo di mostrare il risultato.
  */
 
+/** Occasioni: k = chiave, f = formalità attesa (−2 sport … 6 cerimonia), words = parole che la riconoscono nel testo. */
 export const OCCASIONS = [
   { k: 'ufficio',   label: 'Lavoro',            f: 3,   words: ['lavoro', 'ufficio', 'riunione', 'meeting', 'cliente', 'presentazione', 'evento', 'speech', 'conferenza', 'convegno'] },
   { k: 'colloquio', label: 'Colloquio',         f: 4.5, words: ['colloquio', 'intervista', 'selezione'] },
@@ -26,6 +27,7 @@ export function guessOccasion(text) {
 }
 
 const SLOT = { top: 'Sopra', layer: 'Strato', bottom: 'Sotto', shoes: 'Scarpe', acc: 'Extra' };
+/** Etichette dei posti dell'outfit (top, layer, bottom, shoes, acc). */
 export const SLOT_LABEL = SLOT;
 
 // formalità di base per categoria (0 = sportivo, 6 = molto elegante)
@@ -33,6 +35,7 @@ const CAT_F = { 'Maglie Eleganti': 4, Camicie: 3, Polo: 2, Maglioni: 2, Giacche:
 const STYLE_F = { Elegante: 2, Minimal: 1, Americano: 0, Giapponese: 0, Casual: 0, Streetwear: -1, Outdoor: -1, Sportivo: -2 };
 const NEUTRAL = new Set(['Bianco', 'Nero', 'Grigio', 'Beige', 'Blu', 'Marrone']);
 
+/** Posto di un capo nell'outfit secondo la categoria; null = da non consigliare. */
 export function slotOf(c) {
   const cat = c.categoria;
   if (['Magliette', 'Polo', 'Camicie', 'Maglie Eleganti'].includes(cat)) return 'top';
@@ -124,12 +127,15 @@ export function suggest(capi, q) {
   return { pieces, notes, missing };
 }
 
+/** Generatore pseudo-casuale con seme (stesso seme = stessa proposta). */
 function mulberry(a) {
   return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
 
 // ─── Quando e dove, letti dal testo libero ───────────────────────────────
+/** Momenti della giornata: [chiave, etichetta, ora tipica]. */
 export const PERIODS = [['mattina', 'Mattina', 9], ['pomeriggio', 'Pomeriggio', 15], ['sera', 'Sera', 20], ['notte', 'Notte', 23]];
+/** Ora (0-23) → 'mattina' | 'pomeriggio' | 'sera' | 'notte'. */
 export const periodOfHour = h => (h >= 5 && h < 12 ? 'mattina' : h >= 12 && h < 18 ? 'pomeriggio' : h >= 18 && h < 23 ? 'sera' : 'notte');
 const WEEK = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -154,6 +160,7 @@ export function parseWhen(text, now = new Date()) {
 }
 
 // ─── Meteo (Open-Meteo, senza chiave): temperatura e pioggia all'ora scelta ─
+/** Temperatura e pioggia all'ora scelta: { city, max, min, temp, rain (prob. ≥ 40%), rainP }. Cerca le coordinate se c'è solo la città. */
 export async function weatherFor({ lat, lon, city, date, hour = 12 }) {
   if (city && (lat == null || lon == null)) {
     const g = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=it`)).json();

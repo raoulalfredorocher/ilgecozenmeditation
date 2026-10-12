@@ -33,6 +33,7 @@ function hypnogram(d) {
 
 const ok = (good, warn) => (good ? '✓' : warn ? '•' : '!');
 
+/** Apre il foglio della notte `day` ('AAAA-MM-GG') con i dati di `days`: durata, orari, ipnogramma, risvegli. Il foglio si rimuove dal DOM alla chiusura. */
 export function sonnoSheet(day, days) {
   const d = days[day] || {};
   const sh = createSheet({ title: `Notte di ${longDay(day)}`, body: '', onClose: () => setTimeout(() => sh.el.remove(), 300) });

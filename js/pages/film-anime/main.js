@@ -16,6 +16,7 @@ import { subscribeFilm, addFilmDoc, updateFilmDoc, deleteFilmDoc, db, auth } fro
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage } from '../../ui/dialog.js';
+import { makeConfirm, debounce } from '../comune.js';
 import { doc, getDoc, setDoc } from '../../core/firestore.js';
 import { epRuntimeFor, searchOnline, detailsOnline, posterData, providersFor, hasTmdb, getKey, setKey, testKey } from './online.js';
 import { statsHtml, statsYears, totalMins, hoursLabel } from './stats.js';
@@ -63,15 +64,19 @@ const isPending = i => !i.done || i.rewatch;
 const isWatching = i => !!i.watching && isPending(i);
 const isQueue = i => isPending(i) && !i.watching;
 const isSeries = i => !!i.seasons || i.type === 'Serie TV';
+/** Visioni salvate; per i dati vecchi senza `feedbacks` ricostruisce l'unica visione da stars/note/doneDate. */
 const feedbacksOf = i => i.feedbacks || (i.note ? [{ stars: i.stars, note: i.note, date: i.doneDate }] : []);
 const lastFb = i => feedbacksOf(i).slice(-1)[0] || null;
+/** "3 stag. · 24 ep." per le serie, "124 min" per i film. */
 const durLabel = i => i.seasons ? `${i.seasons} stag. · ${i.episodes || '?'} ep.` : i.duration ? `${i.duration} min` : '';
+/** Etichette suggerite più quelle già usate. */
 const allTags = () => [...new Set([...SUGGESTED_TAGS, ...items.flatMap(i => i.tags || [])])];
 
 const STAR = on => `<svg class="fa-star${on ? ' on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.5 6.1 20.7l1.2-6.6L2.5 9.5l6.6-.9z"/></svg>`;
 const stars = n => `<span class="fa-stars" role="img" aria-label="${n || 0} stelle su 5">${[1, 2, 3, 4, 5].map(k => STAR(k <= (n || 0))).join('')}</span>`;
 const PRIO = `<span class="fa-prio" title="Priorità alta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.5 6.1 20.7l1.2-6.6L2.5 9.5l6.6-.9z"/></svg></span>`;
 
+/** Locandina del titolo o l'icona del suo tipo. */
 function poster(i, cls = '') {
   const safe = i.img ? safeUrl(i.img) : '';
   return safe ? `<img src="${esc(safe)}" alt="" loading="lazy"/>` : icon(TYPE_ICON[i.type] || 'film', cls);
@@ -88,6 +93,7 @@ const clampProg = (i, p) => {
   const E = maxEps(i, s) || 400;
   return { s, e: Math.min(E, Math.max(0, e)) };
 };
+/** Avanzamento di una serie: { s, e, pct (% sugli episodi totali, se noti), text }. */
 function progressOf(i) {
   const p = clampProg(i, i.prog), eps = i.seasonEps || [];
   let pct = null;
@@ -100,6 +106,7 @@ function progressOf(i) {
 }
 const isLastEpisode = (i, p) => { const eps = i.seasonEps || []; return eps.length && p.s >= eps.length && p.e >= eps[eps.length - 1]; };
 
+/** Salva l'avanzamento; se è l'ultimo episodio chiede se segnarla come vista. */
 async function setProgress(i, p) {
   p = clampProg(i, p);
   await updateFilmDoc(i._docId, { prog: p });
@@ -107,6 +114,7 @@ async function setProgress(i, p) {
     openFeedback({ ...i, prog: p });
   }
 }
+/** +1 episodio; a fine stagione passa al primo episodio della successiva. */
 function nextEpisode(i) {
   const p = clampProg(i, i.prog), eps = i.seasonEps || [];
   const E = maxEps(i, p.s);
@@ -116,6 +124,7 @@ function nextEpisode(i) {
 }
 
 // ─── Elenchi filtrati ────────────────────────────────────────────────────
+/** true se il titolo passa ricerca e filtri (stato, tipo, etichetta). */
 function matches(i) {
   const q = search.trim().toLowerCase();
   return (tab !== 'todo' || statusFilter === 'all' || (statusFilter === 'watching' ? isWatching(i) : !isWatching(i))) &&
@@ -123,11 +132,13 @@ function matches(i) {
     (tagFilter === 'all' || (i.tags || []).includes(tagFilter)) &&
     (!q || [i.title, i.genre, i.platform].some(v => String(v || '').toLowerCase().includes(q)));
 }
+/** Titoli della scheda: visti dal più recente, oppure da vedere con la priorità in cima. */
 function baseForTab() {
   if (tab === 'done') return items.filter(isSeen).reverse();
   return items.filter(isPending).sort((a, b) => (b.prio ? 1 : 0) - (a.prio ? 1 : 0));
 }
 
+/** Filtri per tipo (con i conteggi) ed etichette; azzera un filtro che non ha più titoli. */
 function renderChips(base) {
   const types = TYPES.filter(t => base.some(i => i.type === t));
   if (typeFilter !== 'all' && !types.includes(typeFilter)) typeFilter = 'all';
@@ -142,6 +153,7 @@ function renderChips(base) {
 }
 
 // ─── Render ──────────────────────────────────────────────────────────────
+/** Ridisegna la scheda attiva (da vedere, visti con elenco/statistiche, streaming). */
 function render() {
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
   $('p-todo').hidden = tab !== 'todo';
@@ -165,6 +177,7 @@ function render() {
   tab === 'todo' ? renderTodo(base, list) : renderDone(base, list);
 }
 
+/** Da vedere: striscia "Continua a guardare" e griglia delle locandine. */
 function renderTodo(base, list) {
   $('fa-status').innerHTML = [['all', 'Tutti', base.length], ['new', 'Da iniziare', base.filter(i => !isWatching(i)).length], ['watching', 'In corso', base.filter(isWatching).length]]
     .map(([v, l, n]) => `<button type="button" data-status="${v}" aria-pressed="${v === statusFilter}">${l} <span class="count">${n}</span></button>`).join('');
@@ -213,6 +226,7 @@ function renderTodo(base, list) {
   }).join('');
 }
 
+/** Visti: numeri in alto (visti, voto medio, ore) ed elenco con l'ultima recensione. */
 function renderDone(base, list) {
   const rated = base.flatMap(i => feedbacksOf(i).slice(-1)).filter(f => f.stars);
   const avg = rated.length ? rated.reduce((s, f) => s + f.stars, 0) / rated.length : 0;
@@ -240,6 +254,7 @@ function renderDone(base, list) {
   }).join('');
 }
 
+/** Statistiche "il tuo anno" con la scelta dell'anno. */
 function renderStatsView() {
   const years = statsYears(items.filter(i => i.done || i.rewatch));
   if (!years.length) {
@@ -252,6 +267,7 @@ function renderStatsView() {
   $('fa-statsbody').innerHTML = statsHtml(items, statsYear);
 }
 
+/** Scheda Streaming: le app principali più quelle con titoli da vedere. */
 function renderApps() {
   const count = a => items.filter(i => isPending(i) && (i.platform === a.name || (i.providers || []).includes(a.name))).length;
   $('fa-apps').innerHTML = APPS.filter(a => a.main || count(a)).map(a => {
@@ -281,26 +297,8 @@ document.addEventListener('click', e => {
 });
 
 // ─── Conferma ────────────────────────────────────────────────────────────
-let confirmResolve = null, confirmValue = false;
-const confirmSheet = createSheet({
-  body: `<p class="fa-confirm-text" id="cf-text"></p>
-    <div class="zen-sheet-actions"><button type="button" class="btn primary block" id="cf-ok"></button>
-    <button type="button" class="btn ghost block" id="cf-no">Annulla</button></div>`,
-  onClose: () => { confirmResolve?.(confirmValue); confirmResolve = null; },
-});
-confirmSheet.$('#cf-ok').addEventListener('click', () => { confirmValue = true; confirmSheet.close(); });
-confirmSheet.$('#cf-no').addEventListener('click', () => confirmSheet.close());
-function askConfirm(title, text, label, danger = false) {
-  confirmValue = false;
-  confirmSheet.setTitle(title);
-  confirmSheet.$('#cf-text').textContent = text;
-  const ok = confirmSheet.$('#cf-ok');
-  ok.textContent = label;
-  ok.classList.toggle('primary', !danger);
-  ok.classList.toggle('danger', danger);
-  confirmSheet.open();
-  return new Promise(res => { confirmResolve = res; });
-}
+/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude (comune.js). */
+const askConfirm = makeConfirm();
 
 // ─── Feedback (visto / rewatch) ──────────────────────────────────────────
 let fbItem = null, fbStars = 0;
@@ -319,6 +317,7 @@ fbSheet.$('#fb-stars').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (b) { fbStars = Number(b.dataset.v); paintStars(); }
 });
+/** Foglio voto + nota: salvando il titolo diventa visto e si aggiunge una visione. */
 function openFeedback(item) {
   fbItem = item; fbStars = 0; paintStars();
   fbSheet.setTitle(item.rewatch ? 'Com’è andato il rewatch?' : item.title);
@@ -343,6 +342,7 @@ fbSheet.$('#fb-form').addEventListener('submit', async e => {
 const detail = createSheet({ body: '' });
 let detailId = null;
 
+/** Riempie il dettaglio: dati, dove guardarlo, avanzamento della serie, visioni e azioni secondo lo stato. */
 function fillDetail(item) {
   detailId = item.id;
   detail.setTitle('');
@@ -413,6 +413,7 @@ function fillDetail(item) {
   $d('#pg-e')?.addEventListener('change', e => setProgress(item, { s: progressOf(item).s, e: Number(e.target.value) }));
 }
 
+/** Apre il dettaglio e, con TMDB, aggiorna le piattaforme se hanno più di 7 giorni. */
 function openDetail(item) {
   if (!item) return;
   fillDetail(item);
@@ -434,6 +435,7 @@ const tonight = createSheet({
     <div id="tn-result"></div>
   </div>`,
 });
+/** Titoli in coda adatti ai filtri di durata ed etichetta. */
 function tonightPool() {
   return items.filter(isQueue).filter(i => {
     const m = parseInt(i.duration) || 0;
@@ -444,6 +446,7 @@ function tonightPool() {
     return true;
   }).filter(i => tnTag === 'all' || (i.tags || []).includes(tnTag));
 }
+/** Propone un titolo a caso (la priorità alta conta tre volte); reroll = true ne sceglie un altro. */
 function drawTonight(reroll = false) {
   tonight.$$('#tn-dur button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === tnDur)));
   const tags = [...new Set(items.filter(isQueue).flatMap(i => i.tags || []))];
@@ -476,6 +479,7 @@ tonight.$('#tn-dur').addEventListener('click', e => { const b = e.target.closest
 tonight.$('#tn-tags').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tnTag = b.dataset.v; drawTonight(true); } });
 
 // ─── Nuovo / modifica ────────────────────────────────────────────────────
+/** Campi che arrivano dalla ricerca online e si conservano nel titolo. */
 const ONLINE_KEYS = ['year', 'plot', 'providers', 'providersAt', 'tmdbId', 'tmdbKind', 'seasonEps', 'epRuntime'];
 let edWatching = false;
 let editing = null, img = null, meta = {}, edType = 'Film', edPlatform = 'Netflix', edDur = 'min', edTags = new Set(), edPrio = false;
@@ -532,6 +536,7 @@ const drawEdTags = () => {
   const tags = [...new Set([...allTags(), ...edTags])];
   editor.$('#ed-tags').innerHTML = tags.map(t => `<button type="button" data-v="${esc(t)}" aria-pressed="${edTags.has(t)}">${esc(t)}</button>`).join('');
 };
+/** Avviso "Collega TMDB" quando manca la chiave. */
 const hintText = () => {
   const el = editor.$('#ed-hint');
   el.innerHTML = hasTmdb() ? '' : `Senza TMDB cerco solo serie e anime. <button type="button" id="ed-link">Collega TMDB</button> (gratis) per trovare anche i film e sapere dove guardarli.`;
@@ -612,6 +617,7 @@ editor.$('#ed-hits').addEventListener('click', async e => {
   }
 });
 
+/** Modulo titolo, nuovo (item = null) o esistente. */
 function openEditor(item = null) {
   editing = item;
   img = item?.img || null;
@@ -664,6 +670,7 @@ editor.$('#ed-form').addEventListener('submit', async e => {
 $('fa-add').addEventListener('click', () => openEditor(null));
 
 // ─── Impostazioni: chiave TMDB ───────────────────────────────────────────
+/** La chiave TMDB la incolla l'utente nell'app: resta sul dispositivo e nel suo account (direction/tmdb), mai nel repo. */
 const keyRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'tmdb');
 const settings = createSheet({
   title: 'Ricerca online',
@@ -681,6 +688,7 @@ const settings = createSheet({
     <p class="fa-hint">Questo prodotto usa le API di TMDB ma non è approvato né certificato da TMDB. I dati sulle piattaforme sono forniti da JustWatch.</p>
   </div>`,
 });
+/** Foglio per collegare o scollegare TMDB. */
 function openSettings() {
   settings.$('#st-key').value = '';
   settings.$('#st-status').textContent = hasTmdb() ? '✓ TMDB è collegato. Incolla un nuovo token solo se vuoi cambiarlo.' : 'TMDB non è ancora collegato.';
@@ -715,6 +723,7 @@ settings.$('#st-del').addEventListener('click', async () => {
 
 // ─── Esporta CSV (la lista che stai guardando) ───────────────────────────
 const csvQ = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+/** Scarica in CSV (separatore ;) la lista mostrata: visti oppure da vedere, con le prime tre visioni. */
 function exportCsv() {
   const seen = tab === 'done';
   const rows = items.filter(seen ? isSeen : isPending);
@@ -758,23 +767,45 @@ document.addEventListener('click', e => {
   const o = e.target.closest('[data-open]');
   if (o) openDetail(byId(o.dataset.open));
 });
-$('fa-q').addEventListener('input', e => { search = e.target.value; render(); });
+const redrawSearch = debounce(render);   // ridisegna solo quando si smette di scrivere (200 ms)
+$('fa-q').addEventListener('input', e => { search = e.target.value; redrawSearch(); });
 
 // ─── Avvio ───────────────────────────────────────────────────────────────
 render();
+/** Esegue `job` su ogni elemento con al massimo `max` richieste insieme e una pausa di `gap` ms tra una e l'altra (TVmaze: ~20 richieste ogni 10 s). */
+async function inQueue(list, job, max = 3, gap = 1500) {
+  const todo = [...list];
+  const worker = async () => {
+    while (todo.length) {
+      await job(todo.shift()).catch(() => {});
+      await new Promise(r => setTimeout(r, gap));
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(max, todo.length) }, worker));
+}
+let drawPending = false;
+/** Un solo ridisegno per frame anche quando arrivano molti aggiornamenti di fila (es. i salvataggi del recupero durate). */
+function scheduleDraw() {
+  if (drawPending) return;
+  drawPending = true;
+  requestAnimationFrame(() => {
+    drawPending = false;
+    render();
+    if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
+  });
+}
 waitForUser().then(async () => {
   let backfilled = false;
   subscribeFilm(list => {
     items = list;
-    render();
+    scheduleDraw();
     if (!backfilled && list.length) {            // durata media dell'episodio per le serie salvate prima (una sola volta)
       backfilled = true;
-      list.filter(i => (i.seasons || i.type === 'Serie TV') && !i.epRuntime && !i.epRuntimeTried).forEach(async i => {
+      inQueue(list.filter(i => (i.seasons || i.type === 'Serie TV') && !i.epRuntime && !i.epRuntimeTried), async i => {
         const m = await epRuntimeFor(i.title);
-        updateFilmDoc(i._docId, m ? { epRuntime: String(m) } : { epRuntimeTried: true }).catch(() => {});
+        await updateFilmDoc(i._docId, m ? { epRuntime: String(m) } : { epRuntimeTried: true });
       });
     }
-    if (detail.isOpen()) { const it = byId(detailId); it ? fillDetail(it) : detail.close(); }
   });
   // La chiave TMDB vive nell'account: la stessa su telefono e computer
   try {

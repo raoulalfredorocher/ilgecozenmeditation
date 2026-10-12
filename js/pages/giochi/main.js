@@ -17,6 +17,7 @@ import { doc, getDoc, setDoc } from '../../core/firestore.js';
 import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast, compressImage, downloadCSV } from '../../ui/dialog.js';
+import { armed, debounce } from '../comune.js';
 import { searchGames, detailsGame, coverData, getKey, setKey } from './online.js';
 import { CATALOGO, KINDS } from './catalogo.js';
 import { yearData, yearsOf, annoHtml, shareCard } from './anno.js';
@@ -46,27 +47,21 @@ function platformsOf(g) {
   if (/mobile|ios|android/.test(c)) out.push('Mobile');
   return out.length ? out : (g.console ? [String(g.console).trim()] : []);
 }
+/** Tinta della scheda secondo la prima piattaforma (Switch, Xbox, PC…), altrimenti dal nome. */
 const platTint = g => { const p = platformsOf(g)[0]; return p === 'Switch' ? 'c2' : p === 'Xbox' ? 'c3' : p === 'PC' ? 'c4' : (p === 'Switch 2' || p === 'PS5' || p === 'PS4') ? '' : tint(hash(g.name)); };
 const platCls = p => (p === 'Switch' ? 'plat sw' : p === 'Switch 2' ? 'plat sw2' : 'plat');
+/** Copertina del gioco o l'iniziale del campo `big` (di solito il nome). */
 const cover = (g, big = 'name') => (g.img && safeUrl(g.img) ? `<img src="${esc(safeUrl(g.img))}" alt="" loading="lazy"/>` : `<b>${esc((g[big] || '?')[0].toUpperCase())}</b>`);
+/** Ultimo feedback (voto, ore, data) di un gioco. */
 const lastFb = g => (g.feedbacks || []).slice(-1)[0];
+/** Ore totali di gioco sommando tutti i feedback (anche i re-play). */
 const hoursOf = g => (g.feedbacks || []).reduce((s, f) => s + (parseFloat(f.hours) || 0), 0);
 const byDoc = (list, id) => list.find(x => x._docId === id);
 
-function armed(label, fn) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'danger-btn'; b.textContent = label;
-  let on = false, t;
-  b.addEventListener('click', () => {
-    if (on) { clearTimeout(t); fn(); return; }
-    on = true; b.textContent = 'Tocca ancora per confermare';
-    t = setTimeout(() => { on = false; b.textContent = label; }, 3500);
-  });
-  return b;
-}
 const matchQ = (...t) => !q || t.join(' ').toLowerCase().includes(q);
 
 // ═══ Schede ═════════════════════════════════════════════════════════════
+/** Mostra una scheda (todo, done, wish, coll, tavolo, idee), azzera i filtri e la ridisegna. */
 function showTab(t) {
   tab = t; plat = ''; kind = ''; collFmt = '';
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
@@ -74,13 +69,16 @@ function showTab(t) {
   render(); scrollTo({ top: 0 });
 }
 document.querySelector('.page-tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
-$('gx-q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); const i = $('gx-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); });
+// la ricerca ridisegna solo quando si smette di scrivere (200 ms)
+const redrawSearch = debounce(render);
+$('gx-q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); redrawSearch(); });
 $('gx-chips').addEventListener('click', e => {
   const b = e.target.closest('[data-f]'); if (!b) return;
   if (tab === 'tavolo' || tab === 'idee') kind = b.dataset.f; else plat = b.dataset.f;
   render();
 });
 
+/** Filtri con i conteggi: piattaforme (videogiochi) o tipi (da tavolo); vuoto se c'è un solo valore. */
 function chipsFor(list, isKind) {
   const counts = {};
   list.forEach(x => (isKind ? [x.kind || x.k || 'Altro'] : platformsOf(x)).forEach(p => { counts[p] = (counts[p] || 0) + 1; }));
@@ -93,6 +91,7 @@ function chipsFor(list, isKind) {
     keys.map(k => `<button type="button" class="gchip" data-f="${esc(k)}" aria-pressed="${cur === k}">${esc(k)} <small>${counts[k]}</small></button>`).join('');
 }
 
+/** Scheda di un videogioco nella griglia "Da giocare". */
 function gameCard(g, i) {
   const ps = platformsOf(g), fb = lastFb(g), tc = platTint(g);
   return `<article class="gcard ${tc}">
@@ -105,6 +104,7 @@ function gameCard(g, i) {
       ${fb ? `<span class="stars">${stars(fb.stars)}</span>` : ''}</button></article>`;
 }
 
+/** Ridisegna la scheda attiva. */
 function render() {
   $('gx-tools').hidden = tab === 'coll' || (tab === 'done' && doneView === 'anno');
   $('gx-q').placeholder = tab === 'tavolo' || tab === 'idee' ? 'Cerca un gioco da tavolo' : 'Cerca un gioco';
@@ -116,6 +116,7 @@ function render() {
   else renderIdee();
 }
 
+/** Da giocare: prima quelli in corso, poi gli altri (inclusi i re-play). */
 function renderTodo() {
   const base = games.filter(g => !g.wish && (!g.done || g.replay));
   $('gx-chips').innerHTML = chipsFor(base, false);
@@ -132,6 +133,7 @@ function renderTodo() {
 }
 
 const doneSwitch = () => `<div class="segmented" role="group" aria-label="Vista"><button type="button" data-dv="list" aria-pressed="${doneView === 'list'}">Elenco</button><button type="button" data-dv="anno" aria-pressed="${doneView === 'anno'}">Il tuo anno</button></div>`;
+/** Finiti: elenco con ore e voto medio, oppure la vista "Il tuo anno". */
 function renderDone() {
   const base = games.filter(g => g.done && !g.replay);
   if (doneView === 'anno') {
@@ -160,6 +162,7 @@ function renderDone() {
       : `<div class="emptyx">${base.length ? 'Nessun risultato.' : 'Ancora nessun gioco finito.<br/>Spunta un gioco dalla lista “Da giocare”.'}</div>`}`;
 }
 
+/** Wishlist con il pulsante "Preso". */
 function renderWish() {
   const base = games.filter(g => g.wish && !g.done);
   $('gx-chips').innerHTML = chipsFor(base, false);
@@ -176,6 +179,7 @@ function renderWish() {
 
 // ═══ Collezione Switch e Switch 2 ═══════════════════════════════════════
 const isNin = g => platformsOf(g).some(p => p === 'Switch' || p === 'Switch 2');
+/** Collezione Switch/Switch 2: conteggi, formati e giochi Switch di cui controllare l'edizione Switch 2. */
 function renderColl() {
   const mine = games.filter(g => !g.wish && isNin(g));
   const sw = mine.filter(g => platformsOf(g).includes('Switch')), sw2 = mine.filter(g => platformsOf(g).includes('Switch 2'));
@@ -198,14 +202,18 @@ function renderColl() {
 }
 
 // ═══ Da tavolo ══════════════════════════════════════════════════════════
+/** "2–4" giocatori di un gioco da tavolo ('' se non indicato). */
 const range = t => (t.pmin ? (t.pmax && t.pmax !== t.pmin ? `${t.pmin}–${t.pmax}` : `${t.pmin}`) : '');
+/** "30–45" minuti di un gioco da tavolo ('' se non indicato). */
 const timeR = t => (t.tmin ? (t.tmax && t.tmax !== t.tmin ? `${t.tmin}–${t.tmax}` : `${t.tmin}`) : '');
+/** Scheda di un gioco da tavolo nella griglia. */
 function tavCard(t) {
   const meta = [range(t) && `${range(t)} giocatori`, timeR(t) && `${timeR(t)} min`].filter(Boolean).join(' · ');
   return `<article class="gcard ${tint(hash(t.name))}"><button type="button" class="cv" data-tav="${esc(t._docId)}" style="aspect-ratio:1" aria-label="Apri ${esc(t.name)}">${cover(t)}</button>
     ${t.kind ? `<div class="pl"><span class="plat">${esc(t.kind)}</span></div>` : ''}
     <button type="button" class="tx" data-tav="${esc(t._docId)}"><span class="nm">${esc(t.name)}</span><span class="gmt">${esc(meta || t.rules?.slice(0, 40) || '')}</span></button></article>`;
 }
+/** I tuoi giochi da tavolo, con "Cosa giochiamo?" e gli strumenti. */
 function renderTavolo() {
   $('gx-chips').innerHTML = chipsFor(tavolo, true);
   const list = tavolo.filter(t => (!kind || (t.kind || 'Altro') === kind) && matchQ(t.name, t.rules, t.kind));
@@ -216,6 +224,7 @@ function renderTavolo() {
     ${list.length ? `<div class="grid tv">${list.map(tavCard).join('')}</div>`
       : `<div class="emptyx">${tavolo.length ? 'Nessun risultato.' : 'Nessun gioco da tavolo ancora.<br/>Tocca + oppure guarda le <b>Idee</b>.'}</div>`}`;
 }
+/** Idee dal catalogo, segnando quelle che hai già. */
 function renderIdee() {
   $('gx-chips').innerHTML = chipsFor(CATALOGO, true);
   const mine = new Set(tavolo.map(t => t.name.toLowerCase()));
@@ -258,6 +267,7 @@ document.querySelector('.zen-main').addEventListener('click', async e => {
 // ═══ Dettaglio videogioco ═══════════════════════════════════════════════
 const detail = createSheet({ body: '' });
 let detailId = null;
+/** Dettaglio di un videogioco: diario di gioco, feedback e azioni secondo lo stato. */
 function openGame(id) {
   const g = byDoc(games, id); if (!g) return;
   detailId = id;
@@ -306,6 +316,7 @@ detail.el.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.i
 // ═══ Modulo videogioco ══════════════════════════════════════════════════
 const edit = createSheet({ body: '' });
 let editId = null, eImg = '', eS2 = '', ePlats = [], eFormat = '', eFlags = { playing: false, wish: false }, eHits = [];
+/** Modulo videogioco, nuovo (id = null) o esistente. */
 function openEdit(id) {
   editId = id; const g = id ? byDoc(games, id) : {};
   eImg = g.img || ''; eS2 = g.s2 || ''; ePlats = id ? [...platformsOf(g)] : []; eFormat = g.format || '';
@@ -330,6 +341,7 @@ function openEdit(id) {
     <button class="pbtn block" type="submit">Salva</button></form>`);
   drawEdit(); edit.open();
 }
+/** Ridisegna le parti variabili del modulo: piattaforme, formato, Switch 2, stato, copertina e risultati della ricerca. */
 function drawEdit() {
   edit.$('#e-plats').innerHTML = PLATFORMS.map(([k]) => `<button type="button" class="gchip" data-p="${esc(k)}" aria-pressed="${ePlats.includes(k)}">${esc(k)}</button>`).join('');
   edit.$('#e-format').innerHTML = FORMATS.map(f => `<button type="button" class="gchip" data-fm="${f}" aria-pressed="${eFormat === f}">${f}</button>`).join('');
@@ -400,6 +412,7 @@ edit.el.addEventListener('submit', async e => {
 // ═══ Finito ═════════════════════════════════════════════════════════════
 const finish = createSheet({ title: 'Com’è andata?', body: '' });
 let finId = null, finStars = 0;
+/** Foglio "L'ho finito": voto, ore e nota diventano un nuovo feedback. */
 function openFinish(id) {
   finId = id; finStars = 0; const g = byDoc(games, id);
   finish.setTitle(g?.replay ? 'Feedback Re-play' : 'L’ho finito');
@@ -425,11 +438,13 @@ finish.el.addEventListener('click', async e => {
 // ═══ Cosa gioco stasera? ════════════════════════════════════════════════
 const pick = createSheet({ title: 'Cosa gioco stasera?', body: '' });
 let pickPlat = '', pickCur = null;
+/** "Cosa gioco stasera?": un gioco a caso tra quelli da giocare (non in corso). */
 function openPick() {
   const pool = games.filter(g => !g.wish && !g.playing && (!g.done || g.replay));
   if (!pool.length) return toast('Non hai giochi da giocare');
   pickPlat = plat; drawPick(true); pick.open();
 }
+/** Ridisegna la proposta; fresh = true ne estrae una nuova. */
 function drawPick(fresh) {
   const pool = games.filter(g => !g.wish && !g.playing && (!g.done || g.replay) && (!pickPlat || platformsOf(g).includes(pickPlat)));
   if (fresh || !pickCur || !pool.includes(pickCur)) pickCur = pool[Math.floor(Math.random() * pool.length)] || null;
@@ -448,11 +463,13 @@ pick.el.addEventListener('click', async e => {
 // ═══ Dettaglio gioco da tavolo + partite ════════════════════════════════
 let tavId = null, partite = [], unsubPartite = null;
 const tav = createSheet({ body: '', onClose: () => { unsubPartite?.(); unsubPartite = null; } });
+/** Classifica dei vincitori di un gioco da tavolo (più nomi separati da virgola, & o "e"). */
 function winnersOf(list) {
   const m = {};
   list.forEach(p => String(p.winner || '').split(/[,&]| e /).map(s => s.trim()).filter(Boolean).forEach(w => { const k = w[0].toUpperCase() + w.slice(1); m[k] = (m[k] || 0) + 1; }));
   return Object.entries(m).sort((a, b) => b[1] - a[1]);
 }
+/** Dettaglio del gioco da tavolo: info, partite, classifica e azioni. */
 function drawTav() {
   const t = byDoc(tavolo, tavId); if (!t) return tav.close();
   const meta = [range(t) && `${range(t)} giocatori`, timeR(t) && `${timeR(t)} min`].filter(Boolean);
@@ -476,6 +493,7 @@ function drawTav() {
   btn('Modifica', 'soft', () => { tav.close(); openTavEdit(tavId); });
   acts.append(armed('Elimina gioco', async () => { const id = tavId; tav.close(); await deleteGiocoTavoloDoc(id); toast('Eliminato'); }));
 }
+/** Apre il gioco da tavolo e ascolta le sue partite (l'ascolto si chiude con il foglio). */
 function openTav(id) {
   tavId = id; partite = []; drawTav(); tav.open();
   unsubPartite?.();
@@ -489,6 +507,7 @@ tav.el.addEventListener('click', async e => {
 // ═══ Modulo gioco da tavolo ═════════════════════════════════════════════
 const tedit = createSheet({ body: '' });
 let tId = null, tImg = '', tKind = '';
+/** Modulo gioco da tavolo, nuovo (id = null) o esistente. */
 function openTavEdit(id) {
   tId = id; const t = id ? byDoc(tavolo, id) : {}; tImg = t.img || ''; tKind = t.kind || '';
   tedit.setTitle(id ? 'Modifica gioco' : 'Nuovo gioco da tavolo');
@@ -530,11 +549,12 @@ tedit.el.addEventListener('submit', async e => {
 // ═══ Nuova partita ══════════════════════════════════════════════════════
 const part = createSheet({ title: 'Nuova partita', body: '' });
 let pImg = '';
+/** Modulo "Nuova partita" per il gioco da tavolo aperto. */
 function openPartita() {
   pImg = '';
   part.setBody(`<form class="stack" id="p-form" novalidate style="display:flex;flex-direction:column;gap:var(--space-4)">
-    <div class="field"><label class="field-lbl" for="p-players">Chi ha giocato</label><input class="input" id="p-players" placeholder="es. Raoul, Michela, Emma" autocomplete="off"/></div>
-    <div class="fgrid"><div class="field"><label class="field-lbl" for="p-win">Vincitore</label><input class="input" id="p-win" placeholder="es. Raoul" autocomplete="off"/></div>
+    <div class="field"><label class="field-lbl" for="p-players">Chi ha giocato</label><input class="input" id="p-players" placeholder="es. Anna, Marco, Sara" autocomplete="off"/></div>
+    <div class="fgrid"><div class="field"><label class="field-lbl" for="p-win">Vincitore</label><input class="input" id="p-win" placeholder="es. Anna" autocomplete="off"/></div>
       <div class="field"><label class="field-lbl" for="p-dur">Durata (min)</label><input class="input" id="p-dur" type="number" inputmode="numeric" min="1"/></div></div>
     <div class="field"><label class="field-lbl" for="p-note">Note</label><textarea id="p-note" rows="2" placeholder="Momenti divertenti, strategie…"></textarea></div>
     <div class="field"><span class="field-lbl">Foto</span><div class="photo-row"><label>${icon('camera', 'sm')} Scatta<input type="file" id="p-cam" accept="image/*" capture="environment" hidden/></label><label>${icon('image', 'sm')} Galleria<input type="file" id="p-gal" accept="image/*" hidden/></label></div><div class="photo-prev" id="p-prev" hidden></div></div>
@@ -558,6 +578,7 @@ part.el.addEventListener('submit', async e => {
 // ═══ Cosa giochiamo? (da tavolo) ════════════════════════════════════════
 const tpick = createSheet({ title: 'Cosa giochiamo?', body: '' });
 let tpN = 4, tpT = 0;
+/** "Cosa giochiamo?": giochi adatti a numero di giocatori e tempo, più qualche idea dal catalogo. */
 function drawTpick() {
   const fits = tavolo.filter(t => (!t.pmin || tpN >= t.pmin) && (!t.pmax || tpN <= t.pmax) && (!tpT || !t.tmin || t.tmin <= tpT));
   const ideas = CATALOGO.filter(c => tpN >= c.p[0] && tpN <= c.p[1] && (!tpT || c.t[0] <= tpT) && !tavolo.some(t => t.name.toLowerCase() === c.n.toLowerCase())).slice(0, 4);
@@ -596,6 +617,7 @@ const keySheet = createSheet({ title: 'Copertine e dati automatici', body: `<div
   <input class="input" id="k-in" placeholder="Chiave RAWG" autocomplete="off" autocapitalize="off"/>
   <button type="button" class="pbtn block" id="k-save">Salva</button><button type="button" class="pbtn soft block" id="k-del">Togli la chiave</button></div>` });
 more.$('#x-key').addEventListener('click', () => { more.close(); keySheet.$('#k-in').value = getKey(); keySheet.open(); });
+/** La chiave RAWG la incolla l'utente nell'app: resta sul dispositivo e nel suo account (direction/rawg), mai nel repo. */
 const keyRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'rawg');
 keySheet.$('#k-save').addEventListener('click', async () => {
   setKey(keySheet.$('#k-in').value); keySheet.close(); toast(getKey() ? 'Chiave salvata' : 'Chiave tolta');

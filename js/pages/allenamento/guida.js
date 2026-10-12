@@ -26,12 +26,15 @@ const store = {
 };
 
 // ─── Avvio, ripresa, stato ───────────────────────────────────────────────
+/** Sessione salvata in localStorage e non più vecchia di 8 ore: { allenamento, scheda, stage }, altrimenti null. */
 export function activeInfo() {
   const s = store.get(KEY);
   if (!s || Date.now() - (s.updated || 0) > MAX_AGE) { if (s) store.del(KEY); return null; }
   return { allenamento: s.planName, scheda: s.schedaName, stage: s.stage };
 }
+/** C'è una sessione da riprendere? */
 export const hasActive = () => !!activeInfo();
+/** Scarta la sessione in corso (solo quella salvata nel telefono, il registro non cambia). */
 export function discard() { store.del(KEY); S = null; }
 
 const busy = createSheet({ title: 'Allenamento in corso', body: `
@@ -42,6 +45,7 @@ let bzNext = null;
 busy.$('#bz-resume').addEventListener('click', () => { busy.close(); resume(); });
 busy.$('#bz-new').addEventListener('click', () => { busy.close(); discard(); bzNext?.(); });
 
+/** Avvia la guida su una scheda; se un'altra sessione è aperta chiede prima se riprenderla o scartarla. */
 export function startSession(planId, schedaIdx) {
   if (hasActive()) {
     const a = activeInfo();
@@ -61,6 +65,7 @@ export function startSession(planId, schedaIdx) {
   };
   open();
 }
+/** Riapre la sessione salvata in localStorage da dove eri. */
 export function resume() {
   const s = store.get(KEY);
   if (!s) return;
@@ -85,6 +90,7 @@ function close() {
   wake?.release?.().catch(() => {}); wake = null;
   S = null;
 }
+/** Salva lo stato della guida in localStorage a ogni passaggio (per riprendere se l'app si chiude). */
 function save() { if (S) { S.updated = Date.now(); store.set(KEY, S); } }
 
 // ─── Schermo acceso, suoni, vibrazione ───────────────────────────────────
@@ -194,6 +200,7 @@ function render() {
 }
 
 // ─── Orologio ────────────────────────────────────────────────────────────
+/** Ogni 250 ms: tempo totale, conto alla rovescia e anello, bip di fine recupero e promemoria dell'acqua. */
 function tick() {
   if (!S || !el?.classList.contains('on')) return;
   const now = Date.now();
@@ -233,6 +240,7 @@ function onTimeUp() {
 // ─── Passaggi ────────────────────────────────────────────────────────────
 function go(stage, extra = {}) { Object.assign(S, { stage }, extra); save(); render(); }
 
+/** Prepara la serie: ripetizioni dal programma, carico dall'ultima serie, altrimenti dal programma o dall'ultima volta. */
 function prepSet() {
   const e = cur(), prev = e.s.filter(s => !s[4]).at(-1);
   S.reps = e.p[1] || 0;
@@ -354,6 +362,10 @@ function buildDoc() {
     feedback: null, note: '',
   };
 }
+/**
+ * Fine sessione: il documento va subito in PENDING (localStorage) e poi nel registro;
+ * se la rete tarda più di 5 s si mostra "in attesa" e flushPending lo ritenta alla prossima apertura.
+ */
 async function finish() {
   const doc = buildDoc();
   S.durata = doc.durata; S.feedback = null; S.note = ''; S.saveDoc = doc;
@@ -376,21 +388,33 @@ async function finish() {
     if (n) n.textContent = r === 'ok' ? 'Salvato nel registro.' : 'Salvataggio in attesa di rete: lo ritento da solo.';
   });
 }
+/**
+ * Chiude la fine sessione salvando feedback e note, senza perderli se il salvataggio è lento:
+ *   • si scrivono subito anche nella copia in PENDING (se il documento è ancora lì, flushPending lo salverà con loro);
+ *   • quando il salvataggio arriva (senza limite di tempo), si aggiorna il documento con il suo id.
+ */
 async function closeDone() {
-  const note = el.querySelector('#wk-note')?.value.trim() || '', fb = S.feedback, data = S.saveDoc.data;
+  const note = el.querySelector('#wk-note')?.value.trim() || '', fb = S.feedback, doc = S.saveDoc, data = doc.data, p = savePromise;
   close();
   window.dispatchEvent(new CustomEvent('al:saved', { detail: { data } }));
+  if (!fb && !note) return;
+  const pend = store.get(PENDING) || [];
+  if (pend.some(d => d.fine === doc.fine)) store.set(PENDING, pend.map(d => (d.fine === doc.fine ? { ...d, feedback: fb, note } : d)));
   try {
-    const id = await Promise.race([savePromise, new Promise((_, rej) => setTimeout(() => rej(new Error('slow')), 4000))]);
-    if (fb || note) await updateSession(id, { feedback: fb, note });
-  } catch { /* se il salvataggio è ancora in corso, feedback e note si possono aggiungere dal registro */ }
+    const id = await p;
+    await updateSession(id, { feedback: fb, note });
+  } catch (err) { console.warn('feedback e note', err); /* restano nella copia in PENDING: flushPending li salva alla prossima apertura */ }
 }
 
 /** Salvataggi rimasti in sospeso (rete assente): si ritentano all'apertura della pagina. */
 export async function flushPending() {
   const pend = store.get(PENDING) || [];
   for (const doc of pend) {
-    if (state.log.some(r => r.fine === doc.fine)) { store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); continue; }   // era già arrivato
+    const got = state.log.find(r => r.fine === doc.fine);
+    if (got) {                                                       // era già arrivato: se mancano feedback e note scritti dopo, si aggiungono
+      if ((doc.feedback || doc.note) && !got.feedback && !got.note) { try { await updateSession(got._docId, { feedback: doc.feedback, note: doc.note }); } catch { continue; } }
+      store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); continue;
+    }
     try { if (await addSession(doc)) store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)); } catch { /* riprova la prossima volta */ }
   }
 }

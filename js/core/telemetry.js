@@ -17,21 +17,40 @@ const t0 = performance.now();
 const entries = [];
 let sent = 0;
 let flushTimer = null;
+// Ultimo token ottenuto: su pagehide lo si usa subito, senza await (la pagina potrebbe chiudersi prima).
+let tok = null;                                      // { uid, value, exp } — exp in ms
+/** Il token in memoria, se è dello stesso utente e vale ancora almeno 1 minuto; altrimenti null. */
+const freshToken = user => (tok && tok.uid === user.uid && tok.exp - Date.now() > 60e3 ? tok.value : null);
+/** Scadenza (ms) letta dal token; se illeggibile, prudenza: 5 minuti. */
+function expiry(value) {
+  try { return JSON.parse(atob(value.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000 || 0; }
+  catch { return Date.now() + 5 * 60e3; }
+}
+/** Chiede il token (dalla cache dell'SDK quando valido) e lo tiene in memoria. */
+async function getToken(user) {
+  const value = await user.getIdToken();
+  tok = { uid: user.uid, value, exp: expiry(value) };
+  return value;
+}
 
+/** Accoda una voce diagnostica (tipo, messaggio, extra facoltativo) e la invia dopo 2,5 s senza altre voci; al massimo MAX per pagina. */
 export function track(kind, message, extra) {
   if (entries.length + sent >= MAX) return;
   entries.push({ kind, message: String(message).slice(0, 600), extra: extra ? JSON.stringify(extra).slice(0, 900) : '', t: Math.round(performance.now() - t0) });
   clearTimeout(flushTimer);
   flushTimer = setTimeout(flush, 2500);
+  const user = auth.currentUser;
+  if (user && !freshToken(user)) getToken(user).catch(() => {});   // pronto per un eventuale pagehide
 }
 
+/** Invia le voci accodate in un documento di debug_logs (POST REST, keepalive: può partire anche mentre la pagina si chiude). Con un token recente in memoria il fetch parte subito, senza await. */
 async function flush() {
   const user = auth.currentUser;
   if (!user || !entries.length) return;
   const batch = entries.splice(0);
   sent += batch.length;
   try {
-    const token = await user.getIdToken();
+    const token = freshToken(user) || await getToken(user);
     const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/users/${user.uid}/debug_logs`;
     const str = v => ({ stringValue: String(v) });
     await fetch(url, {

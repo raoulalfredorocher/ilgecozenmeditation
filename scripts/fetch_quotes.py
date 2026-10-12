@@ -19,6 +19,7 @@ UA = 'Mozilla/5.0 (compatible; GecoZen/1.0)'
 
 
 def fetch(ticker):
+    """Un anno di chiusure giornaliere di un titolo da Yahoo → prezzo, valuta, variazioni per periodo e serie per il grafico."""
     url = f'https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d&range=1y&includePrePost=false'
     req = urllib.request.Request(url, headers={'User-Agent': UA})
     with urllib.request.urlopen(req, timeout=25) as r:
@@ -61,6 +62,7 @@ def fetch(ticker):
 
 
 def main():
+    """Aggiorna data/mercati.json titolo per titolo; chi non risponde tiene il valore precedente."""
     try:
         with open(OUT, encoding='utf-8') as f:
             data = json.load(f)

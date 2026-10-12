@@ -4,8 +4,10 @@
  * (direction/salute_manuale). I valori dell'orologio hanno sempre la precedenza: se arrivano dopo, sostituiscono quelli a mano.
  * Nel risultato, `_man` elenca i campi di quel giorno che vengono dall'inserimento manuale.
  */
+/** Campi che si possono inserire a mano. */
 export const MANUAL_FIELDS = ['sonnoMin', 'passi', 'bpmRiposo', 'respiro', 'stressMedio'];
 
+/** Unisce i giorni dell'orologio (`days`) con quelli a mano (`man`): un campo a mano entra solo se l'orologio non ce l'ha o vale 0. Non modifica gli argomenti. */
 export function mergeManual(days = {}, man = {}) {
   const out = { ...days };
   Object.entries(man || {}).forEach(([d, m]) => {

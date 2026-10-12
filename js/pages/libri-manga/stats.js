@@ -9,6 +9,7 @@ import { icon } from '../../ui/icons.js';
 const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const INITIALS = 'GFMAMGLASOND';
 
+/** "12 marzo 2026" → { y, m (0-11), d } oppure null. */
 function parseDate(text) {
   const m = String(text || '').toLowerCase().match(/(\d{1,2})\s+([a-zà]+)\s+(\d{4})/);
   if (!m) return null;
@@ -16,8 +17,11 @@ function parseDate(text) {
   return mo < 0 ? null : { y: +m[3], m: mo, d: +m[1] };
 }
 
+/** Letture concluse e datate: { item, stars, y, m, d }. */
 export const readings = items => items.filter(i => i.done).map(i => ({ item: i, stars: i.stars || 0, ...parseDate(i.doneDate) })).filter(r => r.y);
+/** Sessioni di lettura (timer) di tutti i titoli, con l'anno ricavato dalla data. */
 const sessionsOf = items => items.flatMap(i => (i.sessions || []).filter(s => s.d).map(s => ({ ...s, y: +String(s.d).slice(0, 4) })));
+/** Anni con letture o sessioni, dal più recente. */
 export const statsYears = items => [...new Set([...readings(items).map(r => r.y), ...sessionsOf(items).map(s => s.y)])].sort((a, b) => b - a);
 
 const pad2 = n => String(n).padStart(2, '0');
@@ -63,7 +67,8 @@ const bar = (label, n, max) =>
   `<div class="meter"><div class="meter-head"><span>${esc(label)}</span><span class="zen-muted">${n}</span></div>
    <div class="meter-track"><div class="meter-fill" style="width:${max ? n / max * 100 : 0}%"></div></div></div>`;
 
-export function statsHtml(items, year, goal) {
+/** HTML della scheda "il tuo anno" di letture. */
+export function statsHtml(items, year) {
   const ev = readings(items).filter(r => r.y === year);
   const time = timeHtml(items, year);
   if (!ev.length) return time || `<div class="empty">Nessuna lettura datata nel ${year}.</div>`;
@@ -84,7 +89,6 @@ export function statsHtml(items, year, goal) {
   const kinds = count(i => i.kind || 'Libro');
   const fav = [...ev].sort((a, b) => b.stars - a.stars || (b.m - a.m) || (b.d - a.d))[0];
   const favSafe = fav.item.img ? safeUrl(fav.item.img) : '';
-  const pct = goal ? Math.min(100, Math.round(ev.length / goal * 100)) : null;
 
   return `
     ${time}

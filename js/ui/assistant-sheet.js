@@ -79,6 +79,7 @@ function render() {
 }
 const setStatus = t => { status.textContent = t; };
 
+/** Apre il pannello dell'assistente (costruito al primo uso) e accende subito il microfono: va chiamata dentro un tocco. */
 export function openAssistant() {
   if (!el) build();
   render();
@@ -122,6 +123,7 @@ function listen({ auto = false } = {}) {
   try { recognition.start(); } catch { if (auto) setStatus('Tocca il microfono quando vuoi chiedere altro.'); }
 }
 
+/** Invia la conversazione al cervello e mostra la risposta; poi la legge e riaccende il microfono. Una domanda alla volta (busy). */
 async function ask(text) {
   text = String(text || '').trim();
   if (!text || busy) return;
@@ -175,6 +177,7 @@ function toggleVoice() {
   if (!voiceOn) stopSpeaking();
   updateVoiceBtn();
 }
+/** Legge il testo con una voce italiana (preferisce quelle "migliorate"); onDone dopo la lettura, o subito se la voce è spenta. */
 function speak(text, onDone) {
   if (!canSpeak || !voiceOn || !text) { onDone && setTimeout(onDone, 300); return; }
   stopSpeaking();

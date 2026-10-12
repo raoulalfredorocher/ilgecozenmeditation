@@ -7,12 +7,10 @@
  */
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
-import { S, progress, tick, doneToday, saveMain, saveTodos, newId, today, period, weekStart, PER_NOW } from './dati.js';
+import { S, progress, tick, doneToday, saveMain, saveTodos, newId, today, period, weekStart, PER_NOW, addDays } from './dati.js';
 
 let root;
 const DAYS = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
-const dkey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const addDays = (k, n) => { const [y, m, d] = k.split('-').map(Number); const x = new Date(y, m - 1, d + n); return dkey(x); };
 const daysLeft = (per, k = today()) => { const [, e] = period(per, k); const [y, m, d] = k.split('-').map(Number); const [y2, m2] = e.split('-').map(Number); if (per === 'week') return Math.round((new Date(y2, m2 - 1, +e.slice(8)) - new Date(y, m - 1, d)) / 864e5); if (per === 'month') return new Date(y, m, 0).getDate() - d; if (per === 'year') return Math.round((new Date(y, 11, 31) - new Date(y, m - 1, d)) / 864e5); return 0; };
 const macroLabel = m => { const n = (m.macros || [])[0]; return n ? (S.macros.find(x => x.n === n)?.title || '') : ''; };
 
@@ -43,6 +41,7 @@ function week() {
       <span class="od-dots">${DAYS.map((l, i) => { const k = addDays(w0, i), on = (S.log[m.id] || []).includes(k); return `<i class="${on ? 'on' : ''}${k === today() ? ' now' : ''}" title="${k}"></i>`; }).join('')}</span></div>`).join('')}</div></section>`;
 }
 
+/** Ridisegna la scheda Oggi: avanzamento del giorno, cose da fare, fatte oggi e la settimana. */
 export function render() {
   if (!root) return;
   const d = new Date(), dt = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -62,6 +61,7 @@ export function render() {
     ${!S.micros.length ? '<p class="ob-empty" style="text-align:center">Quando avrai dei micro goal, qui compare ciò che conta oggi.</p>' : ''}`;
 }
 
+/** Collega la scheda al suo contenitore (aggiunta to-do, spunte, eliminazione) e la disegna. */
 export function init(el) {
   root = el;
   root.addEventListener('submit', async e => {

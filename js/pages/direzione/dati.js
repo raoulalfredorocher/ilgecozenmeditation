@@ -16,13 +16,16 @@
  */
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc, collection, getDocs } from '../../core/firestore.js';
-import { loadRange, dateKey, parseKey } from '../../core/attivita.js';
+import { loadRange, dateKey, parseKey, addDays } from '../../core/attivita.js';
 
+/** Stato condiviso della pagina: obiettivi, log, to-do (da loadAll) e `ctx` = dati delle sorgenti automatiche (da loadCtx). */
 export const S = { ready: false, pillars: [], macros: [], micros: [], log: {}, todos: [], ctx: null };
+/** Chiave 'AAAA-MM-GG' di oggi. */
 export const today = () => dateKey(new Date());
 const uid = () => auth.currentUser.uid;
 const ref = n => doc(db, 'users', uid(), 'direction', n);
 
+/** Legge i tre documenti (obiettivi, log, to-do) in parallelo e riempie S. Una lettura sola, nessun ascolto. */
 export async function loadAll() {
   const [a, l, t] = await Promise.all([getDoc(ref('obiettivi')), getDoc(ref('obiettivi_log')), getDoc(ref('obiettivi_todo'))]);
   const d = a.exists() ? a.data() : {};
@@ -31,12 +34,14 @@ export async function loadAll() {
   S.ready = true;
   return S;
 }
+/** Riscrivono per intero il documento corrispondente da S (obiettivi, log, to-do). */
 export const saveMain = () => setDoc(ref('obiettivi'), { v: 1, pillars: S.pillars, macros: S.macros, micros: S.micros });
 export const saveLog = () => setDoc(ref('obiettivi_log'), { l: S.log });
 export const saveTodos = () => setDoc(ref('obiettivi_todo'), { items: S.todos });
 
 // ─── Periodi ─────────────────────────────────────────────────────────────
-const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); };
+export { addDays };
+/** Lunedì della settimana che contiene `k`. */
 export const weekStart = (k = today()) => { const d = parseKey(k); return addDays(k, -((d.getDay() + 6) % 7)); };
 /** Primo e ultimo giorno del periodo in corso. */
 export function period(per, k = today()) {
@@ -45,6 +50,7 @@ export function period(per, k = today()) {
   if (per === 'month') return [k.slice(0, 8) + '01', k.slice(0, 8) + '31'];
   return [k.slice(0, 4) + '-01-01', k.slice(0, 4) + '-12-31'];
 }
+/** Testi dei periodi dei micro che si ripetono: "3 a settimana", "2 questa settimana". */
 export const PER_LABEL = { day: 'al giorno', week: 'a settimana', month: 'al mese', year: 'all’anno' };
 export const PER_NOW = { day: 'oggi', week: 'questa settimana', month: 'questo mese', year: 'quest’anno' };
 
@@ -75,15 +81,18 @@ export function guessAuto(title) {
   if (/(diario|journal|brain dump).*(settiman|volte)|scrivere.*settiman/.test(t)) return { auto: 'journal_week', kind: 'rec', per: 'week', target: +(t.match(/(\d+)\s*volt/) || [])[1] || 1 };
   return null;
 }
-const hasSnap = false;
-
-/** Legge i dati dell'app che servono alle sorgenti automatiche (una volta, poi si riusa per 5 minuti). */
+/** Legge i dati dell'app che servono alle sorgenti automatiche (una volta, poi si riusa per 5 minuti).
+ *  Le tre letture (attività dell'anno, esami, paesi) partono insieme; una che fallisce lascia i suoi valori a zero/null. */
 export async function loadCtx(force = false) {
   if (S.ctx && !force && Date.now() - S.ctx.at < 5 * 60e3) return S.ctx;
   const t = today(), y0 = t.slice(0, 4) + '-01-01', w0 = weekStart(t);
   const c = { at: Date.now(), workoutsYear: 0, workoutsWeek: 0, meditWeek: 0, meditToday: 0, journalWeek: 0, foodWeek: 0, stepsAvg: null, sleepAvg: null, bloodYear: 0, countries: 0, unesco: 0 };
-  try {
-    const days = await loadRange(y0, t);
+  const [days, misure, paesi] = await Promise.all([
+    loadRange(y0, t).catch(e => { console.warn('obiettivi: attività', e); return null; }),
+    getDoc(ref('misure_salute')).catch(e => { console.warn('obiettivi: esami', e); return null; }),
+    getDocs(collection(db, 'users', uid(), 'countries')).catch(e => { console.warn('obiettivi: paesi', e); return null; }),
+  ]);
+  if (days) {
     const steps = [], sleep = [], d30 = addDays(t, -30), d14 = addDays(t, -14);
     for (const [k, d] of Object.entries(days)) {
       c.workoutsYear += d.allenamento?.length ? 1 : 0;
@@ -97,15 +106,12 @@ export async function loadCtx(force = false) {
     }
     if (steps.length) c.stepsAvg = Math.round(steps.reduce((a, b) => a + b, 0) / steps.length);
     if (sleep.length) c.sleepAvg = Math.round(sleep.reduce((a, b) => a + b, 0) / sleep.length * 10) / 10;
-  } catch (e) { console.warn('obiettivi: attività', e); }
-  try {
-    const m = await getDoc(ref('misure_salute')), ex = m.exists() ? Object.values(m.data().esami || {}) : [];
+  }
+  if (misure) {
+    const ex = misure.exists() ? Object.values(misure.data().esami || {}) : [];
     const lim = addDays(t, -365); c.bloodYear = ex.some(x => x.d >= lim) ? 1 : 0;
-  } catch (e) { console.warn('obiettivi: esami', e); }
-  try {
-    const s = await getDocs(collection(db, 'users', uid(), 'countries'));
-    s.forEach(d => { const v = d.data(); if (v.visited) c.countries++; c.unesco += (v.visitedUnescoIds || []).length; });
-  } catch (e) { console.warn('obiettivi: paesi', e); }
+  }
+  if (paesi) paesi.forEach(d => { const v = d.data(); if (v.visited) c.countries++; c.unesco += (v.visitedUnescoIds || []).length; });
   S.ctx = c; return c;
 }
 
@@ -124,7 +130,9 @@ export function progress(m) {
   const v = m.auto ? auto : logIn(m.id, a, b);
   return { value: v, target: tg, pct: v == null ? 0 : Math.min(100, Math.round(v / tg * 100)), done: v != null && v >= tg, auto: !!m.auto, per: m.per || 'week' };
 }
+/** Il micro è segnato nel log di oggi? */
 export const doneToday = m => (S.log[m.id] || []).includes(today());
+/** Segna o toglie il giorno `k` nel log del micro (tiene le ultime 800 date) e salva il log. */
 export function tick(id, k = today()) {
   const l = S.log[id] || (S.log[id] = []);
   const i = l.indexOf(k); i >= 0 ? l.splice(i, 1) : l.push(k);
@@ -133,5 +141,7 @@ export function tick(id, k = today()) {
 }
 /** Avanzamento di un gruppo di micro (media delle percentuali). */
 export const avg = list => (list.length ? Math.round(list.reduce((s, m) => s + progress(m).pct, 0) / list.length) : null);
+/** Micro goal collegati al macro numero `macroN`. */
 export const microsOf = macroN => S.micros.filter(m => (m.macros || []).includes(macroN));
+/** Id breve e casuale per micro e to-do. */
 export const newId = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);

@@ -5,15 +5,14 @@
  * La chiave NON sta nel codice: la incolla l'utente nell'app; resta sul suo dispositivo e nel suo account (direction/rawg).
  */
 import { compressImage } from '../../ui/dialog.js';
+import { storedKey } from '../comune.js';
 
 const LS_KEY = 'zen_rawg';
-let key = '';
-try { key = localStorage.getItem(LS_KEY) || ''; } catch { /* ok */ }
-export const getKey = () => key;
-export function setKey(k) {
-  key = String(k || '').trim();
-  try { key ? localStorage.setItem(LS_KEY, key) : localStorage.removeItem(LS_KEY); } catch { /* ok */ }
-}
+const rawgKey = storedKey(LS_KEY);
+/** Chiave RAWG corrente ('' se assente). */
+export const getKey = rawgKey.get;
+/** Imposta la chiave RAWG e la ricorda sul dispositivo; vuota = la cancella. */
+export const setKey = rawgKey.set;
 
 /** Nomi delle piattaforme di RAWG → quelle dell'app. */
 export function platformsFrom(list) {
@@ -33,8 +32,9 @@ export function platformsFrom(list) {
 const GENRE_IT = { Action: 'Azione', Adventure: 'Avventura', RPG: 'GDR', Strategy: 'Strategia', Shooter: 'Sparatutto', Puzzle: 'Rompicapo', Racing: 'Corse',
   Sports: 'Sport', Simulation: 'Simulazione', Platformer: 'Platform', Fighting: 'Picchiaduro', Arcade: 'Arcade', Family: 'Famiglia', Indie: 'Indie', 'Massively Multiplayer': 'Online', Casual: 'Casual', Educational: 'Educativo', 'Board Games': 'Da tavolo', Card: 'Carte' };
 
+/** Ricerca con RAWG (serve la chiave). */
 async function viaRawg(q) {
-  const r = await fetch(`https://api.rawg.io/api/games?key=${encodeURIComponent(key)}&search=${encodeURIComponent(q)}&page_size=8&search_precise=true`);
+  const r = await fetch(`https://api.rawg.io/api/games?key=${encodeURIComponent(getKey())}&search=${encodeURIComponent(q)}&page_size=8&search_precise=true`);
   if (r.status === 401 || r.status === 403) throw new Error('Chiave RAWG non valida');
   if (!r.ok) throw new Error('RAWG non raggiungibile');
   return ((await r.json()).results || []).map(g => ({
@@ -42,6 +42,7 @@ async function viaRawg(q) {
     genre: GENRE_IT[g.genres?.[0]?.name] || g.genres?.[0]?.name || '', platforms: platformsFrom(g.platforms), desc: '',
   }));
 }
+/** Ultima risorsa: titoli di pagine di Wikipedia italiana con miniatura. */
 async function viaWiki(q) {
   const r = await fetch(`https://it.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(q + ' videogioco')}&limit=6`);
   if (!r.ok) throw new Error('Ricerca non disponibile');
@@ -58,6 +59,7 @@ const GENRE_MAP = [[/ruolo|rpg/i, 'GDR'], [/sparatutto|shooter/i, 'Sparatutto'],
 const wd = async params => (await fetch(`${WD}?${new URLSearchParams({ ...params, format: 'json', origin: '*' })}`)).json();
 const claimIds = (c, p) => (c?.[p] || []).map(x => x.mainsnak?.datavalue?.value?.id).filter(Boolean);
 
+/** Ricerca su Wikidata (it+en): tiene solo le voci che sono videogiochi, poi aggiunge console, genere, anno e copertina. */
 async function viaWikidata(q) {
   const found = await Promise.all(['it', 'en'].map(l => wd({ action: 'wbsearchentities', search: q, language: l, uselang: l, type: 'item', limit: 10 }).then(r => r.search || []).catch(() => [])));
   const ids = [...new Set(found.flat().map(x => x.id))].slice(0, 20);
@@ -91,10 +93,11 @@ async function viaWikidata(q) {
   return hits.map(({ _wiki, ...h }) => h);
 }
 
+/** Cerca un gioco: RAWG se c'è la chiave, altrimenti Wikidata e, se vuoto, Wikipedia. Risultati: { src, id, title, img, year, genre, platforms, desc }. */
 export async function searchGames(q) {
   q = String(q || '').trim();
   if (q.length < 2) return [];
-  if (key) return viaRawg(q);
+  if (getKey()) return viaRawg(q);
   try { const r = await viaWikidata(q); if (r.length) return r; } catch (e) { console.warn('wikidata giochi', e); }
   return viaWiki(q);
 }
@@ -102,7 +105,7 @@ export async function searchGames(q) {
 export async function detailsGame(hit) {
   if (hit.src !== 'rawg' || hit.desc) return hit;
   try {
-    const r = await fetch(`https://api.rawg.io/api/games/${hit.id}?key=${encodeURIComponent(key)}`);
+    const r = await fetch(`https://api.rawg.io/api/games/${hit.id}?key=${encodeURIComponent(getKey())}`);
     if (r.ok) { const d = await r.json(); return { ...hit, desc: String(d.description_raw || '').slice(0, 420).replace(/\s+\S*$/, '…') }; }
   } catch { /* ok */ }
   return hit;

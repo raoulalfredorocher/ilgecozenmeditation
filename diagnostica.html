@@ -25,6 +25,8 @@
     addEventListener('unhandledrejection', e => __diagErrors.push(`promise: ${e.reason?.code || ''} ${e.reason?.message || e.reason}`));
   </script>
   <script type="module">
+    /* Diagnostica: controlla browser e memoria locale, Firebase, accesso Google e letture Firestore
+       (dal server e in tempo reale) e mostra un rapporto riga per riga. */
     const out = document.getElementById('out');
     const lines = [];
     const log = (k, v, ok) => {

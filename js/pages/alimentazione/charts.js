@@ -33,7 +33,7 @@ export function rings(list, centerTop, centerBottom) {
 }
 
 // ─── 2. Calorie: diario, dieta, TDEE ─────────────────────────────────────
-/** data: [{ label, kcal|null, plan }] */
+/** data: [{ label, kcal|null, plan, tdee }] — barre del diario, linea della dieta, linea tratteggiata del fabbisogno. */
 export function kcalBars(data) {
   const W = 320, H = 168, L = 34, R = 8, T = 10, B = 24;
   const n = data.length;
@@ -57,6 +57,7 @@ export function kcalBars(data) {
 
 // ─── 3. Ripartizione dei macro (dieta contro diario) ─────────────────────
 const split = t => { const p = t.prot * 4, c = t.carb * 4, f = t.fat * 9, s = p + c + f || 1; return [['prot', p / s, BLUE], ['carb', c / s, ROSE], ['fat', f / s, GOLD]]; };
+/** Due barre (Dieta, Diario) con la quota di kcal da proteine, carboidrati e grassi (4/4/9 kcal per g); plan/diary: { prot, carb, fat } oppure null. */
 export function macroSplit(plan, diary) {
   const W = 320, rowH = 30, L = 58;
   const row = (label, t, y0) => {
@@ -74,6 +75,7 @@ export function macroSplit(plan, diary) {
 }
 
 // ─── 4. Bilancio calorico (diario meno TDEE) ─────────────────────────────
+/** data: [{ label, kcal|null, tdee }] — barre di diario meno TDEE, sopra (surplus) o sotto (deficit) lo zero. */
 export function balanceBars(data) {
   const W = 320, H = 150, L = 34, R = 8, T = 12, B = 24;
   const n = data.length;

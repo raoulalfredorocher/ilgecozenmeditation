@@ -5,7 +5,7 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import { state, num, exType, exSummary, fmtDur, DEFAULT_WARMUP, DEFAULT_STRETCH } from './state.js';
-import { deliver, csvFile } from './files.js';
+import { deliver, csvFile } from '../../ui/files.js';
 import { loadLib } from '../alimentazione/pdf.js';
 
 const sel = new Set();
@@ -75,4 +75,5 @@ sheet.$('#dl-pdf').addEventListener('click', async () => {
   try { toast('Preparo il PDF…'); await deliver(await pdf(l)); sheet.close(); } catch (e) { console.error(e); toast(e.message || 'Non sono riuscito a creare il PDF'); }
 });
 
+/** Apre la scelta degli allenamenti da scaricare (la prima volta sono tutti selezionati). */
 export function openScarica() { if (!sel.size) state.plans.forEach(p => sel.add(p._docId)); draw(); sheet.open(); }

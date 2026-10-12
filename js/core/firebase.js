@@ -68,8 +68,10 @@ function loadConfig() {
     'In locale crea __/firebase/init.json come descritto nel README.');
 }
 
+/** Configurazione Firebase (apiKey, projectId, …) letta da init.json o dalla copia sul dispositivo. */
 export const firebaseConfig = loadConfig();
 
+/** L'app Firebase: riusa quella già creata se il modulo viene valutato due volte. */
 export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 /**
@@ -82,10 +84,12 @@ export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfi
  */
 const APP_CHECK_V3_SITE_KEY = '';
 if (APP_CHECK_V3_SITE_KEY && location.hostname === 'localhost') self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+/** Istanza App Check, oppure null se la chiave del sito è vuota. */
 export const appCheck = APP_CHECK_V3_SITE_KEY
   ? initializeAppCheck(app, { provider: new ReCaptchaV3Provider(APP_CHECK_V3_SITE_KEY), isTokenAutoRefreshEnabled: true })
   : null;
 
+/** Firebase Auth condiviso da tutta l'app. */
 export const auth = getAuth(app);
 
 /**

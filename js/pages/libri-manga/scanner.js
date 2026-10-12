@@ -12,6 +12,7 @@ import { cleanIsbn } from './online.js';
 
 const ZXING_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
 let zxingLoading = null;
+/** Carica ZXing una volta sola (serve dove manca BarcodeDetector). */
 function loadZxing() {
   if (window.ZXing) return Promise.resolve(window.ZXing);
   return (zxingLoading ||= new Promise((resolve, reject) => {
@@ -25,6 +26,7 @@ function loadZxing() {
 
 const CLOSE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 
+/** Apre la fotocamera a schermo intero; si risolve con l'ISBN letto o scritto, rifiuta con { cancelled: true }. */
 export function scanIsbn() {
   return new Promise((resolve, reject) => {
     const el = document.createElement('div');
@@ -44,9 +46,11 @@ export function scanIsbn() {
     const video = el.querySelector('video'), msg = el.querySelector('#lb-msg');
     let stream = null, stopped = false, controls = null, timer = 0;
 
+    const onKey = e => { if (e.key === 'Escape') cancel(); };
     const stop = () => {
       stopped = true;
       clearTimeout(timer);
+      removeEventListener('keydown', onKey);   // tolto a ogni chiusura: X, Esc, ISBN trovato o scritto
       try { controls?.stop?.(); } catch { /* ok */ }
       try { stream?.getTracks().forEach(t => t.stop()); } catch { /* ok */ }
       el.remove();
@@ -65,7 +69,7 @@ export function scanIsbn() {
       const v = el.querySelector('input').value;
       if (cleanIsbn(v)) done(cleanIsbn(v)); else msg.textContent = 'ISBN non valido: controlla le cifre';
     });
-    addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { removeEventListener('keydown', esc); cancel(); } });
+    addEventListener('keydown', onKey);
 
     (async () => {
       if (!navigator.mediaDevices?.getUserMedia) { msg.textContent = 'La fotocamera non è disponibile qui: scrivi l’ISBN.'; return; }
