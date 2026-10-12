@@ -6,9 +6,12 @@
  * fascia o linea di riferimento etichettata, media tratteggiata sobria, etichette solo sull'ultimo valore e sul massimo,
  * e una frase che racconta cosa dice il grafico. Toccando un giorno si legge il valore esatto.
  */
+/** Numero intero all'italiana (1.234). */
 export const it = n => Math.round(n).toLocaleString('it-IT');
+/** Minuti → '7h05'. */
 export const hm = m => `${Math.floor(m / 60)}h${String(Math.round(m % 60)).padStart(2, '0')}`;
 const pad = n => String(n).padStart(2, '0');
+/** Data → 'AAAA-MM-GG' nell'ora locale. */
 export const dkey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 /** Gli ultimi n giorni, dal più vecchio a oggi. */
 export const lastDays = n => Array.from({ length: n }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (n - 1 - i)); return dkey(d); });
@@ -26,8 +29,10 @@ function niceScale(lo, hi, count = 4) {
   for (let v = min; v <= max + step / 2; v += step) ticks.push(+v.toFixed(6));
   return { min, max, ticks };
 }
+/** Media leggibile: un decimale sotto 10, altrimenti intero. */
 export const fmtAvg = v => (v < 10 ? (Math.round(v * 10) / 10).toLocaleString('it-IT') : it(v));
 const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+/** ' · in aumento' / ' · in calo' / ' · stabile': prima metà dei valori contro la seconda (servono almeno 6 valori). */
 const trendText = (vals, tol = 0.04) => {
   const real = vals.filter(v => v != null); if (real.length < 6) return '';
   const h = real.length >> 1, a = mean(real.slice(0, h)), b = mean(real.slice(h));
@@ -51,6 +56,12 @@ export const stressZone = v => (v <= 25 ? 'rilassato' : v <= 50 ? 'normale' : v 
 /** Fasce del punteggio del sonno (indicative): 90+ ottimo, 80–89 buono, 60–79 discreto, sotto 60 scarso. */
 export const sleepZone = v => (v >= 90 ? 'ottimo' : v >= 80 ? 'buono' : v >= 60 ? 'discreto' : 'scarso');
 
+/**
+ * Metriche dei grafici, per chiave. Ogni voce: { title, unit, type: 'bar' | 'line', get(giorno) → valore, fmt, story(stats, m) → frase,
+ *   field? (campo per riconoscere i valori a mano), avgAll? (media su tutti i giorni, quelli vuoti contano 0),
+ *   band? / target? (riferimento), min? / max? (scala fissa), tap? (la notte si apre), note? (zona del valore) }.
+ * Qui sotto si aggiungono `rif` (testo di riferimento) e `key`.
+ */
 export const METRICS = {
   passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, field: 'passi', avgAll: true, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
     story: (s, m) => `Media di ${it(s.avg)} passi al giorno su ${s.total} giorni (i giorni senza dati contano 0). ${plural(s.vals.filter(v => v >= 8000).length, 'giorno', 'giorni')} oltre 8.000 passi${trendText(s.vals)}.` },

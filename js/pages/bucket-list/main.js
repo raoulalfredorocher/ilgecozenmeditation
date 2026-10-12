@@ -21,6 +21,7 @@ let search = '';
 
 // ─── Date di realizzazione ("15 maggio 2025" ⇄ "2025-05-15") ─────────────
 const formatDoneDate = d => d.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+/** "15 maggio 2025" → "2025-05-15" ('' se non si riconosce); serve per ordinare e per il campo data. */
 function doneDateToISO(text) {
   const m = String(text || '').toLowerCase().match(/(\d{1,2})\s+([a-zà]+)\s+(\d{4})/);
   if (!m) return '';
@@ -29,6 +30,7 @@ function doneDateToISO(text) {
 }
 
 // ─── Render ──────────────────────────────────────────────────────────────
+/** Ridisegna contatore, barra di avanzamento e griglia dei sogni secondo filtro e ricerca. */
 function render() {
   const total = items.length;
   const done = items.filter(i => i.done).length;
@@ -95,6 +97,7 @@ function placeBento(list) {
 // ─── Azioni ──────────────────────────────────────────────────────────────
 const byId = id => items.find(i => String(i.id) === String(id));
 
+/** Segna un sogno come realizzato (con la data di oggi) o lo riporta da realizzare. */
 async function setDone(item, done) {
   await updateBucketItem(item._docId, done
     ? { done: true, doneDate: formatDoneDate(new Date()) }
@@ -122,6 +125,7 @@ const cfSheet = createSheet({
 cfSheet.el.style.zIndex = '430';
 cfSheet.$('#cf-ok').addEventListener('click', () => { cfValue = true; cfSheet.close(); });
 cfSheet.$('#cf-no').addEventListener('click', () => cfSheet.close());
+/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude. */
 function askConfirm(title, text, label, danger = false) {
   cfValue = false; cfSheet.setTitle(title); cfSheet.$('#cf-text').textContent = text;
   const ok = cfSheet.$('#cf-ok'); ok.textContent = label; ok.classList.toggle('primary', !danger); ok.classList.toggle('danger', danger);
@@ -133,6 +137,7 @@ const racconto = initRacconto({ byId: id => items.find(i => String(i.id) === Str
 // ─── Dettaglio ───────────────────────────────────────────────────────────
 const detail = createSheet({ body: '' });
 let detailItem = null;
+/** Foglio di dettaglio del sogno: foto, descrizione, data, racconto e azioni. */
 function openDetail(item) {
   if (!item) return;
   detailItem = item;
@@ -198,6 +203,7 @@ const editor = createSheet({ body: `
     <div class="zen-sheet-actions"><button class="btn primary block" type="submit" id="ed-save">Salva</button></div>
   </form>` });
 const showPhoto = src => { editor.$('#ed-ph').innerHTML = src ? `<img src="${esc(safeUrl(src))}" alt=""/>` : icon('image', 'lg'); };
+/** Modulo per un nuovo sogno (item = null) o per modificarne uno. */
 function openEditor(item = null) {
   editing = item;
   photo = item?.img || null;

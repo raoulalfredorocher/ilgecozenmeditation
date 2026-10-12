@@ -12,6 +12,7 @@ import { cleanIsbn } from './online.js';
 
 const ZXING_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
 let zxingLoading = null;
+/** Carica ZXing una volta sola (serve dove manca BarcodeDetector). */
 function loadZxing() {
   if (window.ZXing) return Promise.resolve(window.ZXing);
   return (zxingLoading ||= new Promise((resolve, reject) => {
@@ -25,6 +26,7 @@ function loadZxing() {
 
 const CLOSE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 
+/** Apre la fotocamera a schermo intero; si risolve con l'ISBN letto o scritto, rifiuta con { cancelled: true }. */
 export function scanIsbn() {
   return new Promise((resolve, reject) => {
     const el = document.createElement('div');

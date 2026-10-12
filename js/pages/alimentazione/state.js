@@ -26,6 +26,7 @@ import { collection, query, where, onSnapshot, doc as fsDoc } from 'https://www.
 import { calcTdee, profileOn, stepsKcal, netWorkoutKcal, isForza } from '../../core/bilancio.js';
 import { mergeManual } from '../../core/salute-merge.js';
 
+/** Nomi dei giorni (indice 0 = lunedì, come nella dieta), loro iniziali e mesi in minuscolo. */
 export const DAY_NAMES = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
 export const DAY_SHORT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
 export const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio',
@@ -33,6 +34,7 @@ export const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giug
 
 /** Colori dei valori nutrizionali, gli stessi in tutta la sezione. */
 export const MC = { kcal: 'var(--mc-kcal)', prot: 'var(--mc-prot)', carb: 'var(--mc-carb)', fat: 'var(--mc-fat)' };
+/** Nome esteso di ogni macro, per chiave. */
 export const MACRO_LABEL = { prot: 'Proteine', carb: 'Carboidrati', fat: 'Grassi' };
 
 /** Momenti della giornata. `diary` è la stringa salvata nel diario (con emoji, come in passato). */
@@ -46,7 +48,9 @@ export const MEAL_SLOTS = [
   { key: 'cena',         label: 'Cena',         diary: '🌙 Cena' },
   { key: 'pre_nanna',    label: 'Pre nanna',    diary: '🌛 Pre Nanna' },
 ];
+/** Momento della giornata dalla chiave: 'pranzo' → { key, label, diary }. */
 export const slotByKey = Object.fromEntries(MEAL_SLOTS.map(s => [s.key, s]));
+/** Posizione del momento nella giornata, per ordinare i pasti (chiavi sconosciute in fondo: 99). */
 export const slotOrder = key => {
   const i = MEAL_SLOTS.findIndex(s => s.key === key);
   return i === -1 ? 99 : i;
@@ -61,6 +65,7 @@ export function diaryTypeLabel(type = '') {
   return type.replace(/^[^\p{L}\p{N}]+/u, '').trim() || type;
 }
 
+/** Coppie [valore, etichetta]: categorie delle ricette e fattori di attività quotidiana (moltiplicano il metabolismo basale). */
 export const RECIPE_CATS = [['antipasti', 'Antipasti'], ['primi', 'Primi'], ['secondi', 'Secondi'], ['dolci', 'Dolci']];
 export const ACTIVITY = [['1.2', 'Sedentario'], ['1.375', 'Leggero (in piedi)'], ['1.55', 'Moderato (fisico)'], ['1.725', 'Molto attivo']];
 
@@ -68,16 +73,19 @@ export const ACTIVITY = [['1.2', 'Sedentario'], ['1.375', 'Leggero (in piedi)'],
 export function dateKey(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
+/** 'AAAA-MM-GG' → Date a mezzanotte locale. */
 export function parseKey(key) {
   const [y, m, d] = key.split('-').map(Number);
   return new Date(y, m - 1, d);
 }
 /** Indice del giorno nella dieta (0 = lunedì). */
 export const weekdayIdx = date => (date.getDay() + 6) % 7;
+/** Chiave 'AAAA-MM-GG' spostata di `n` giorni (anche negativi). */
 export const addDays = (key, n) => { const d = parseKey(key); d.setDate(d.getDate() + n); return dateKey(d); };
 
 // ─── Calcoli ─────────────────────────────────────────────────────────────
 const num = v => +v || 0;
+/** Somma kcal e macro di una lista di pasti (valori mancanti = 0, senza arrotondare). */
 export function totals(meals = []) {
   return meals.reduce((a, m) => ({
     kcal: a.kcal + num(m.kcal), prot: a.prot + num(m.prot), carb: a.carb + num(m.carb), fat: a.fat + num(m.fat),
@@ -114,6 +122,7 @@ export function tdeeParts(key = dateKey(), planType = 'Riposo') {
   const w = workoutOn(key, planType);
   return { base, passi: stepsKcal(passi, f.peso, f.lavoro), workout: w.source === 'registro' ? netWorkoutKcal(w.kcal, w.min, base, parseFloat(f.peso), w.forza) : Math.round(w.kcal), realSteps: state.health?.[key]?.passi != null, source: w.source };
 }
+/** TDEE del giorno in kcal intere (base + passi + allenamento di tdeeParts); 0 se il profilo è incompleto. */
 export function tdeeFor(key = dateKey(), planType = 'Riposo') {
   const p = tdeeParts(key, planType);
   return p ? Math.round(p.base + p.passi + p.workout) : 0;
@@ -130,12 +139,14 @@ export function daySupplements(day) {
 
 // ─── Alimenti dei pasti ──────────────────────────────────────────────────
 const r1 = n => Math.round(n * 10) / 10;
+/** Somma degli alimenti di un pasto: kcal intere, macro a un decimale. */
 export function itemsTotals(items = []) {
   const t = items.reduce((a, i) => ({
     kcal: a.kcal + num(i.kcal), prot: a.prot + num(i.prot), carb: a.carb + num(i.carb), fat: a.fat + num(i.fat),
   }), { kcal: 0, prot: 0, carb: 0, fat: 0 });
   return { kcal: Math.round(t.kcal), prot: r1(t.prot), carb: r1(t.carb), fat: r1(t.fat) };
 }
+/** Descrizione del pasto dai suoi alimenti: "Riso 80 g · Uova". */
 export const mealDesc = items => items.map(i => (i.g ? `${i.name} ${i.g} g` : i.name)).join(' · ');
 
 /** Pasto della dieta → pasto nell'editor { slot, items, supp }. I dati vecchi diventano un alimento a mano. */
@@ -147,6 +158,7 @@ export function fromDietMeal(m) {
       : []);
   return { slot: m.slot, items, supp: m.supp || '' };
 }
+/** Pasto dell'editor → pasto della dieta, con descrizione e totali ricalcolati dagli alimenti. */
 export function toDietMeal(e) {
   const t = itemsTotals(e.items);
   return { slot: e.slot, desc: mealDesc(e.items), supp: e.supp || '', ...t, items: e.items };
@@ -156,6 +168,7 @@ export function fromDiaryMeal(m) {
   const slot = MEAL_SLOTS.find(s => s.diary === m.type)?.key || `custom:${diaryTypeLabel(m.type)}`;
   return fromDietMeal({ ...m, slot });
 }
+/** Pasto dell'editor → pasto del diario (type con emoji), con descrizione e totali ricalcolati. */
 export function toDiaryMeal(e) {
   const t = itemsTotals(e.items);
   return { type: slotByKey[e.slot]?.diary || slotLabel(e.slot), desc: mealDesc(e.items), ...t, items: e.items };
@@ -167,6 +180,7 @@ export function makeDefaultDiet() {
 }
 const clone = v => JSON.parse(JSON.stringify(v));
 
+/** Stato condiviso della sezione: lo riempiono gli ascolti di startSync() e le funzioni save*; ogni cambio si annuncia a onChange. */
 export const state = {
   diet: { days: makeDefaultDiet(), name: 'La mia dieta', dietId: null },
   diets: [],            // raccolta delle diete (saved_diets)
@@ -192,6 +206,7 @@ export function planFor(date) {
 
 // ─── Profilo ─────────────────────────────────────────────────────────────
 export const hasProfile = () => !!(state.profile?.peso && state.profile?.altezza && (state.profile?.eta || state.profile?.nascita));
+/** TDEE di oggi, con il tipo di giorno (Workout/Riposo) della dieta attiva. */
 export const tdee = () => tdeeFor(dateKey(), planFor(new Date()).day.type);
 
 /** Media del piano (sui giorni con pasti): serve a tenere aggiornato il riepilogo che legge l'assistente. */
@@ -202,10 +217,12 @@ function planAverage() {
   const n = withMeals.length;
   return { kcal: Math.round(sum.kcal / n), prot: Math.round(sum.prot / n), carb: Math.round(sum.carb / n), fat: Math.round(sum.fat / n) };
 }
+/** Riscrive macros/profiles: il profilo più la media del piano (il riepilogo che legge l'assistente). */
 async function writeProfileDoc() {
   const form = state.profile || {};
   await saveMacrosProfiles([{ name: state.diet.name, ...planAverage(), tdee: form }], 0, form);
 }
+/** Salva il profilo (con lo storico delle misure) e avvisa con 'profile'. */
 export async function saveProfile(form) {
   state.profile = form;
   await writeProfileDoc();
@@ -213,6 +230,7 @@ export async function saveProfile(form) {
 }
 
 // ─── Diete ───────────────────────────────────────────────────────────────
+/** Salva i giorni della dieta attiva in diet/current e nella sua copia in saved_diets; poi aggiorna il riepilogo del profilo. */
 export async function saveDietDays(days) {
   state.diet = { ...state.diet, days };
   await saveDietCurrent({ days, name: state.diet.name, dietId: state.diet.dietId || null });
@@ -220,20 +238,24 @@ export async function saveDietDays(days) {
   writeProfileDoc().catch(() => {});
   emit('diet');
 }
+/** Rende attiva una dieta della raccolta: si scrive diet/current, lo stato si aggiorna dal suo ascolto. */
 export async function activateDiet(id) {
   const d = state.diets.find(x => x._docId === id);
   if (!d) return;
   await saveDietCurrent({ days: d.diet, name: d.name, dietId: d._docId });
 }
+/** Crea una dieta nella raccolta (vuota o copia dell'attuale) e la rende attiva. */
 export async function createDiet(name, copyCurrent = false) {
   const days = copyCurrent ? clone(state.diet.days) : makeDefaultDiet();
   const id = await addSavedDietDoc({ name, date: dateKey(), goal: '', diet: days });
   await saveDietCurrent({ days, name, dietId: id });
 }
+/** Rinomina una dieta; se è quella attiva, aggiorna anche diet/current. */
 export async function renameDiet(id, name) {
   await updateSavedDietDoc(id, { name });
   if (state.diet.dietId === id) await saveDietCurrent({ days: state.diet.days, name, dietId: id });
 }
+/** Elimina una dieta; se era l'attiva, passa a un'altra della raccolta o a una dieta vuota. */
 export async function deleteDiet(id) {
   await deleteSavedDietDoc(id);
   if (state.diet.dietId !== id) return;
@@ -253,6 +275,7 @@ async function ensureLibrary() {
 }
 
 // ─── Diario ──────────────────────────────────────────────────────────────
+/** Sostituisce il diario di un giorno ('AAAA-MM-GG') con `meals` (formato del diario). */
 export async function saveDiary(key, meals) {
   state.diary[key] = meals;
   await saveDiaryDay(key, meals);
@@ -260,15 +283,21 @@ export async function saveDiary(key, meals) {
 }
 
 // ─── Alimenti aggiunti a mano ────────────────────────────────────────────
+/** Aggiunge (o sostituisce, stesso nome) un alimento in macros/foods: ha la precedenza sul database. */
 export async function addCustomFood(food) {
   state.customFoods = [...state.customFoods.filter(f => f.n.toLowerCase() !== food.n.toLowerCase()), food];
   await saveCustomFoods(state.customFoods);
   emit('foods');
 }
 
+/** Esegue `fn` appena c'è l'utente collegato, riprovando ogni 250 ms. */
 const onAuthReady = fn => (auth?.currentUser ? fn() : setTimeout(() => onAuthReady(fn), 250));
 
 // ─── Avvio sincronizzazione ──────────────────────────────────────────────
+/**
+ * Avvia gli ascolti Firestore (dieta attiva, raccolta delle diete, diario, ricette, profilo, alimenti a mano,
+ * allenamenti degli ultimi 120 giorni, salute dall'orologio + inserimenti a mano). Da chiamare una volta, dopo il login.
+ */
 export function startSync() {
   subscribeDietFull(data => {
     const days = Array.isArray(data?.days) && data.days.length === 7 ? data.days : makeDefaultDiet();

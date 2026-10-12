@@ -48,6 +48,7 @@ export function currentDeficit() {
 }
 
 let last = -1;
+/** Scrive il difetto misurato in --deficit e data-deficit, solo se è cambiato. */
 export function settle() {
   const d = currentDeficit();
   if (d === last) return;
@@ -62,6 +63,7 @@ const vpMeta = () => document.querySelector('meta[name="viewport"]');
 const clean = c => String(c || '').replace(/,\s*maximum-scale=1/g, '');
 const originalViewport = clean(vpMeta()?.getAttribute('content'));
 
+/** Cambia e ripristina il meta viewport, poi scorre di 1 px avanti e indietro: costringe iOS a ricalcolare la finestra. */
 function kick() {
   const meta = vpMeta();
   if (!meta || kicking) return;
@@ -96,6 +98,7 @@ export function report() {
   ].join('\n');
 }
 
+/** Avvio: misura, "scosse" ripetute e controlli a ogni evento che può cambiare la finestra. */
 function start() {
   settle();
   kick();

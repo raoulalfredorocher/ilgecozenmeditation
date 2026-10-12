@@ -10,6 +10,7 @@ import { icon } from '../../ui/icons.js';
 const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 const INITIALS = 'GFMAMGLASOND';
 
+/** "12 marzo 2026" → { y, m (0-11), d } oppure null. */
 function parseDate(text) {
   const m = String(text || '').toLowerCase().match(/(\d{1,2})\s+([a-zà]+)\s+(\d{4})/);
   if (!m) return null;
@@ -17,6 +18,7 @@ function parseDate(text) {
   return mo < 0 ? null : { y: +m[3], m: mo, d: +m[1] };
 }
 
+/** Tutte le visioni datate: una per feedback (i rewatch ne aggiungono), forma { item, stars, y, m, d }. */
 export function visions(items) {
   const out = [];
   items.forEach(i => {
@@ -27,6 +29,7 @@ export function visions(items) {
   return out;
 }
 
+/** Anni con almeno una visione datata, dal più recente. */
 export const statsYears = items => [...new Set(visions(items).map(v => v.y))].sort((a, b) => b - a);
 
 // ─── Tempo davanti alla tv: film = durata; serie = tutti gli episodi × durata media di un episodio ───
@@ -50,12 +53,14 @@ export function totalMins(items) {
   }
   return t;
 }
+/** Minuti → ore da mostrare: decimali sotto le 100 ore, intere sopra; '—' se zero. */
 export const hoursLabel = mins => (mins ? (mins >= 6000 ? Math.round(mins / 60) : (Math.round(mins / 6) / 10).toLocaleString('it-IT')) : '—');
 
 const bar = (label, n, max, extra = '') =>
   `<div class="meter"><div class="meter-head"><span>${esc(label)}</span><span class="zen-muted">${n}${extra}</span></div>
    <div class="meter-track"><div class="meter-fill" style="width:${max ? n / max * 100 : 0}%"></div></div></div>`;
 
+/** HTML della scheda "il tuo anno" per l'anno scelto (o un messaggio vuoto). */
 export function statsHtml(items, year) {
   const ev = visions(items).filter(v => v.y === year);
   if (!ev.length) return `<div class="empty">Nessuna visione datata nel ${year}.</div>`;

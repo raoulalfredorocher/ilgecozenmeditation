@@ -58,6 +58,7 @@ export function cleanIsbn(raw) {
 // ─── Open Library ────────────────────────────────────────────────────────
 const FIELDS = 'key,title,author_name,first_publish_year,number_of_pages_median,cover_i,language,subject,isbn';
 
+/** Risultato di ricerca Open Library → formato comune del modulo. */
 function olHit(d) {
   return {
     src: 'ol', id: d.key, kind: 'Libro', title: d.title || '', author: (d.author_name || []).join(', '),
@@ -67,6 +68,7 @@ function olHit(d) {
   };
 }
 
+/** Ricerca Open Library: massimo 6, prima quelli con copertina e in italiano. */
 async function olSearch(q) {
   const r = await fetch(`${OL}/search.json?q=${encodeURIComponent(q)}&limit=10&lang=it&fields=${FIELDS}`);
   if (!r.ok) throw new Error('Open Library non raggiungibile');
@@ -76,6 +78,7 @@ async function olSearch(q) {
   return docs.map((d, i) => [d, i]).sort((a, b) => score(b[0]) - score(a[0]) || a[1] - b[1]).slice(0, 6).map(x => olHit(x[0]));
 }
 
+/** Trama dell'opera (key "/works/…"), ripulita e accorciata; '' se manca. */
 async function olWorkText(key) {
   try {
     const r = await fetch(`${OL}${key}.json`);
@@ -115,6 +118,7 @@ const ANI_QUERY = `query($q:String){Page(perPage:6){media(search:$q,type:MANGA,i
   id title{romaji english} format status volumes chapters genres description(asHtml:false) startDate{year}
   coverImage{large extraLarge} staff(perPage:4,sort:RELEVANCE){edges{role node{name{full}}}}}}}`;
 
+/** Ricerca manga su AniList (GraphQL), già nel formato comune. */
 async function aniSearch(q) {
   const r = await fetch('https://graphql.anilist.co', {
     method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },

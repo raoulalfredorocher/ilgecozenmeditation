@@ -17,8 +17,11 @@ const IMG = 'https://image.tmdb.org/t/p/w500';
 let key = '';
 try { key = localStorage.getItem(LS_KEY) || ''; } catch { /* storage non disponibile */ }
 
+/** Chiave TMDB corrente ('' se assente). */
 export const getKey = () => key;
+/** true se l'utente ha inserito una chiave TMDB (abilita film e piattaforme). */
 export const hasTmdb = () => !!key;
+/** Imposta la chiave TMDB e la ricorda sul dispositivo; vuota = la cancella. */
 export function setKey(k) {
   key = String(k || '').trim();
   try { key ? localStorage.setItem(LS_KEY, key) : localStorage.removeItem(LS_KEY); } catch { /* ok */ }
@@ -35,6 +38,7 @@ const PROVIDERS = {
   'mediaset infinity': 'Mediaset Infinity', 'infinity+': 'Mediaset Infinity',
   'crunchyroll': 'Crunchyroll', 'youtube': 'YouTube', 'dazn': 'DAZN', 'sky go': 'Sky Go',
 };
+/** Nome della piattaforma uniformato a quello dell'app (es. "Prime Video" → "Amazon Prime"). */
 export const canonProvider = name => PROVIDERS[String(name || '').toLowerCase().trim()] || String(name || '').trim();
 
 const GENRE_IT = {
@@ -47,6 +51,7 @@ const GENRE_IT = {
   'musica': 'Musicale', 'music': 'Musicale', 'musical': 'Musicale', 'sports': 'Sportivo', 'sport': 'Sportivo',
   'azione': 'Azione', 'avventura': 'Avventura', 'commedia': 'Commedia', 'kids': 'Famiglia', 'bambini': 'Famiglia',
 };
+/** Primo genere riconosciuto, tradotto nel nome dell'app; '' se nessuno. */
 const pickGenre = names => {
   for (const n of names) { const g = GENRE_IT[String(n).toLowerCase()]; if (g) return g; }
   return '';
@@ -55,6 +60,7 @@ const pickGenre = names => {
 const stripHtml = s => String(s || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, '’').trim();
 
 // ─── TMDB ────────────────────────────────────────────────────────────────
+/** Chiamata GET a TMDB in italiano; errore leggibile se la chiave è sbagliata o il servizio non risponde. */
 async function tmdb(path, params = {}) {
   const url = new URL('https://api.themoviedb.org/3' + path);
   Object.entries({ language: 'it-IT', ...params }).forEach(([k, v]) => url.searchParams.set(k, v));
@@ -67,8 +73,10 @@ async function tmdb(path, params = {}) {
   return r.json();
 }
 
+/** Prova la chiave con una richiesta leggera: true se valida, altrimenti lancia l'errore. */
 export async function testKey() { await tmdb('/configuration', {}); return true; }
 
+/** Piattaforme italiane (abbonamento, gratis, con pubblicità) senza doppioni. */
 const itProviders = d => {
   const it = d?.['watch/providers']?.results?.IT;
   const names = [...(it?.flatrate || []), ...(it?.free || []), ...(it?.ads || [])].map(p => canonProvider(p.provider_name));
@@ -84,6 +92,7 @@ async function tmdbSearch(q) {
   }));
 }
 
+/** Scheda completa da TMDB: tipo (Anime/Cartone/Documentario…), durata o stagioni ed episodi, piattaforme. */
 async function tmdbDetails(hit) {
   const d = await tmdb(`/${hit.kind}/${hit.id}`, { append_to_response: 'watch/providers' });
   const ids = (d.genres || []).map(g => g.id);
@@ -159,9 +168,11 @@ export async function epRuntimeFor(title) {
 }
 
 // ─── Interfaccia unica ───────────────────────────────────────────────────
+/** Cerca con TMDB se c'è la chiave, altrimenti con TVmaze (solo serie). Risultati: { src, id, kind, title, year, poster, overview }. */
 export async function searchOnline(q) {
   return key ? tmdbSearch(q) : tvmazeSearch(q);
 }
+/** Dettagli del risultato scelto, dal servizio da cui arriva; forma pronta per il modulo. */
 export async function detailsOnline(hit) {
   return hit.src === 'tmdb' ? tmdbDetails(hit) : tvmazeDetails(hit);
 }

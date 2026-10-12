@@ -58,6 +58,7 @@ const read = (key, fallback) => {
 };
 const write = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch { /* storage pieno o bloccato */ } };
 
+/** Template salvati sul dispositivo; al primo avvio li crea dai predefiniti più quelli della vecchia app. */
 function loadTemplates() {
   let list = read(TPL_KEY, null);
   if (!list) {
@@ -364,6 +365,7 @@ function setPauseButton(paused) {
   $('practice').classList.toggle('paused', paused);
 }
 
+/** Aggiorna tempo, intervallo, ensō e segmenti a ogni tick del motore. */
 function renderTick(t) {
   $('p-time').textContent = clock(Math.ceil(t.left));
   $('p-step').textContent = kindOf(t.step.name).label;
@@ -403,6 +405,7 @@ const themeMetaOrig = themeMeta?.content;
 /** Colora la barra di stato del telefono come la pratica; null = ripristina. */
 function setThemeColor(c) { if (themeMeta) themeMeta.content = c || themeMetaOrig; }
 
+/** Avvia la pratica: schermata a tutto schermo, campana e sottofondo, wake lock; a fine pratica salva la sessione. */
 function startPractice() {
   if (session) return;
   current = plan().map(s => ({ ...s }));
@@ -449,6 +452,7 @@ function showDone() {
   $('practice').classList.add('done');
 }
 
+/** Chiude la schermata della pratica e spegne audio e wake lock (il salvataggio è a parte). */
 function closePractice() {
   const el = $('practice');
   el.classList.remove('show');

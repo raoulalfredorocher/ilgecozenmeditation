@@ -18,24 +18,32 @@
  */
 import { subscribeAllenamenti, subscribeRegistro, updateAllenamentoDoc, addAllenamentoDoc, deleteAllenamentoDoc, addRegistroDoc, updateRegistroDoc } from '../../core/db.js';
 
+/** Gruppi muscolari, feedback [valore, etichetta], mesi, iniziali dei giorni (0 = lunedì) e minuti predefiniti di riscaldamento/stretching. */
 export const GROUPS = ['Petto', 'Schiena', 'Spalle', 'Bicipiti', 'Tricipiti', 'Gambe', 'Glutei', 'Addome', 'Cardio', 'Altro'];
 export const FEEDBACK = [['pos', 'Bene'], ['neu', 'Così così'], ['neg', 'Male']];
 export const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 export const DAY_SHORT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
 export const DEFAULT_WARMUP = 10, DEFAULT_STRETCH = 5;     // minuti
 
+/** Stato condiviso: piani (ordinati) e registro (dal più recente, serie già come liste: vedi unpackEs). */
 export const state = { plans: [], log: [], ready: { plans: false, log: false } };
 
 const listeners = new Set();
+/** Registra una funzione chiamata a ogni cambio ('plans' | 'log'). */
 export const onChange = fn => listeners.add(fn);
 const emit = what => listeners.forEach(fn => fn(what));
 
 // ─── Utilità ─────────────────────────────────────────────────────────────
 export const dateKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+/** 'AAAA-MM-GG' → Date a mezzanotte locale. */
 export const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+/** Numero da testo o valore libero (accetta la virgola); 0 se non valido. */
 export const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return Number.isFinite(n) ? n : 0; };
+/** Secondi → "m:ss". */
 export const fmtClock = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+/** Kg a un decimale, in formato italiano. */
 export const fmtKg = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
+/** Secondi → "2 min", "1′30″" oppure "45 s". */
 export const fmtDur = s => { s = Math.round(s); return s >= 120 && s % 60 === 0 ? `${s / 60} min` : s >= 90 ? `${Math.floor(s / 60)}′${String(s % 60).padStart(2, '0')}″` : `${s} s`; };
 
 /** Tipo dell'esercizio: 'r' a ripetizioni, 't' a tempo. */
@@ -51,15 +59,19 @@ export function exSummary(ex) {
 // ─── Piani ───────────────────────────────────────────────────────────────
 const normPlan = p => ({ ...p, schede: (p.schede || []).map(s => ({ ...s, esercizi: s.esercizi || [] })) });
 const orderOf = p => p.order ?? p.createdAt ?? 0;
+/** Allenamento (piano) dal suo id Firestore, dallo stato già caricato. */
 export const planById = id => state.plans.find(p => p._docId === id);
 const clone = v => JSON.parse(JSON.stringify(v));
 
+/** Crea un allenamento vuoto (senza schede), in fondo all'elenco; restituisce l'id. */
 export async function createPlan(fields) {
   return addAllenamentoDoc({ nome: fields.nome, obiettivo: fields.obiettivo || '', settimane: fields.settimane || 12, riscaldamento: fields.riscaldamento ?? DEFAULT_WARMUP, stretching: fields.stretching ?? DEFAULT_STRETCH, order: Date.now(), schede: [] });
 }
+/** Scritture dirette su allenamenti_piani: lo stato si aggiorna dall'ascolto, non qui. */
 export const updatePlan = (id, fields) => updateAllenamentoDoc(id, fields);
 export const saveSchede = (id, schede) => updateAllenamentoDoc(id, { schede });
 export const deletePlan = id => deleteAllenamentoDoc(id);
+/** Copia un allenamento con tutte le schede, in fondo all'elenco; null se non esiste. */
 export async function duplicatePlan(id) {
   const p = planById(id);
   if (!p) return null;
@@ -78,6 +90,7 @@ export async function reorderPlans(ids) {
 export const packEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x => (Array.isArray(x) ? { r: x[0], k: x[1], e: x[2], c: x[3], f: x[4] } : x)) }));
 /** Il contrario: dal documento alle liste usate dall'app. */
 export const unpackEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x => (Array.isArray(x) ? x : [x.r || 0, x.k || 0, x.e || 0, x.c || 0, x.f || 0])) }));
+/** Aggiunge / aggiorna una sessione del registro, convertendo le serie per Firestore (packEs). */
 export const addSession = doc => addRegistroDoc(doc.es ? { ...doc, es: packEs(doc.es) } : doc);
 export const updateSession = (id, fields) => updateRegistroDoc(id, fields.es ? { ...fields, es: packEs(fields.es) } : fields);
 
@@ -92,9 +105,11 @@ export function lastTimeFor(name) {
 }
 /** Volume totale di una sessione nuova (rep × kg). */
 export const sessionVolume = r => (r.es || []).reduce((a, e) => a + (e.s || []).reduce((b, s) => b + (s[4] ? 0 : num(s[0]) * num(s[1])), 0), 0);
+/** Numero di serie fatte (non saltate) in una sessione nuova. */
 export const sessionSets = r => (r.es || []).reduce((a, e) => a + (e.s || []).filter(s => !s[4]).length, 0);
 
 // ─── Avvio sincronizzazione ──────────────────────────────────────────────
+/** Avvia gli ascolti di piani e registro (tutto il registro, senza limite di date). Da chiamare una volta, dopo il login. */
 export function startSync() {
   subscribeAllenamenti(list => {
     state.plans = list.map(normPlan).sort((a, b) => orderOf(a) - orderOf(b));

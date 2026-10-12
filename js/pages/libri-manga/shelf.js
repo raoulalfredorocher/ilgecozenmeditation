@@ -12,8 +12,10 @@ const hash = s => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>>
 const spineColor = i => SPINES[hash(i.series || i.title) % SPINES.length];
 
 const W = 66, GAP = 9;                                   // larghezza copertina e spazio, in px
+/** Quante copertine stanno in una fila larga `width` px (almeno 3). */
 export const perRow = width => Math.max(3, Math.floor((width + GAP) / (W + GAP)));
 
+/** Disegna lo scaffale in `el`: copertine (o dorso colorato col titolo) su file che seguono la larghezza. */
 export function renderShelf(el, books) {
   if (!books.length) { el.innerHTML = `<div class="empty">Lo scaffale è vuoto.<br/>Aggiungi i tuoi libri per vederli qui in fila.</div>`; return; }
   const n = perRow((el.clientWidth || 335) - 36);

@@ -8,6 +8,7 @@ import { doc, getDoc as _getDoc, getDocs as _getDocs, getDocFromCache, getDocsFr
 import { unpackEs } from '../allenamento/state.js';
 import { mergeManual } from '../../core/salute-merge.js';
 
+/** Date → 'AAAA-MM-GG' (dk), 'AAAA-MM-GG' → Date locale (pk), chiave spostata di `n` giorni (addDays). */
 export const dk = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 export const pk = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
 export const addDays = (k, n) => { const d = pk(k); d.setDate(d.getDate() + n); return dk(d); };
@@ -49,7 +50,7 @@ export async function loadAll({ cache = false } = {}) {
   };
 }
 
-/** Serie di giorni consecutivi: restituisce { best, bestEnd, current, hits } dato un insieme di date che soddisfano la condizione. */
+/** Serie di giorni consecutivi in un insieme di date: { best, bestEnd, current (in corso fino a oggi o ieri), earned (primo giorno in cui una serie ha raggiunto `target`, o null) }. */
 export function streaks(dateSet, target) {
   const ds = [...dateSet].sort();
   let best = 0, bestEnd = null, run = 0, prev = null, earned = null;

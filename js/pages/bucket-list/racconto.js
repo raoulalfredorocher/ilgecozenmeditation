@@ -19,6 +19,9 @@ const PHASES = [
 const phaseOf = id => PHASES.find(p => p.id === id) || PHASES[0];
 const today = () => new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 
+/**
+ * Racconto dei sogni. ctx = { byId(id), askConfirm() }. Restituisce { mount(host, sogno) }.
+ */
 export function initRacconto(ctx) {
   let dream = null, after = null;
   let editing = null, phase = 'attesa', audio = null, rec = null, recOn = false;
@@ -43,6 +46,7 @@ export function initRacconto(ctx) {
   };
   $('#rc-phase').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setPhase(b.dataset.v); });
 
+  /** Area audio del modulo: registrazione in corso, audio pronto/salvato, oppure pulsante per registrare. */
   function drawAudio(err = '') {
     const box = $('#rc-audio');
     if (recOn) {
@@ -80,6 +84,7 @@ export function initRacconto(ctx) {
     }
   });
 
+  /** Apre il modulo per un nuovo pensiero (note = null) o per modificarne uno; `then` ridisegna dopo il salvataggio. */
   function openEdit(note, then) {
     editing = note; after = then; recOn = false;
     audio = note?.audio ? { saved: true, meta: note.audio } : null;

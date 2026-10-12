@@ -24,6 +24,7 @@ const pad2 = n => String(n).padStart(2, '0');
 const newest = entries => [...entries].sort((a, b) => (b.ts || 0) - (a.ts || 0));
 const countLabel = n => (n === 1 ? '1 voce' : `${n} voci`);
 
+/** Legge una volta salute_mentale/storia; converte il vecchio formato (un solo testo per sezione) in voci. Senza dati restano i titoli predefiniti. */
 export async function loadStoria() {
   const ref = store.storiaRef();
   if (!ref) return;
@@ -164,6 +165,7 @@ function editTitle() {
   });
 }
 
+/** Foglio per creare un nuovo titolo; dopo il salvataggio apre la sua pagina. */
 export function newSection() {
   showSheet('Nuovo titolo', body => {
     body.innerHTML = '<input class="input" id="ns-title" maxlength="60" placeholder="Es. Le mie riflessioni" autocomplete="off" aria-label="Titolo"/>';
@@ -181,6 +183,7 @@ export function newSection() {
   });
 }
 
+/** Prepara la scheda (griglia ed eventi) e la disegna con i dati attuali. */
 export function initStoria() {
   $('view-storia').innerHTML = '<div class="s-grid" id="s-list"></div>';
   $('view-storia').addEventListener('click', e => {

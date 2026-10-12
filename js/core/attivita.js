@@ -17,7 +17,9 @@ export const AREAS = [
   { id: 'journaling', label: 'Journaling', color: 'var(--warning)', href: 'salute-mentale.html' },
 ];
 
+/** Data → 'AAAA-MM-GG' nell'ora locale (default: oggi). */
 export const dateKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+/** 'AAAA-MM-GG' → Date a mezzanotte locale. */
 export const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
 const num = v => +v || 0;
 
@@ -34,6 +36,7 @@ export async function loadRange(from, to) {
   const col = name => collection(db, 'users', uid, name);
   const t0 = parseKey(from).getTime(), t1 = parseKey(to).getTime() + 86400000;
 
+  // Le letture partono insieme; ognuna scrive solo il proprio campo di day(k), quindi non si sovrascrivono.
   await Promise.all([
     // Allenamento
     (async () => {

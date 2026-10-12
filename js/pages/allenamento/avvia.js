@@ -77,6 +77,7 @@ export function addAction() {
   startSession(sel.plan, sel.sc);
 }
 
+/** Ridisegna la scheda Avvia. */
 export const refresh = render;
 onChange(what => { if (what === 'plans' || what === 'log') render(); });
 render();

@@ -24,25 +24,31 @@ const cacheRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'acco
 const keyRef = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'groq');
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
 
+/** true se c'è una chiave Groq (inserita dall'utente nell'app, mai nel repo). */
 export const hasGroq = () => !!groqKey;
+/** Salva la chiave Groq sul dispositivo e nell'account (direction/groq); vuota = la cancella. */
 export async function setGroqKey(k) {
   groqKey = String(k || '').trim();
   try { groqKey ? localStorage.setItem('zen_groq', groqKey) : localStorage.removeItem('zen_groq'); } catch { /* ok */ }
   try { await setDoc(keyRef(), { key: groqKey }); } catch { /* ok */ }
 }
+/** Recupera la chiave Groq dall'account se sul dispositivo manca. */
 export async function loadGroqKey() {
   if (groqKey) return;
   try { const s = await getDoc(keyRef()); if (s.exists() && s.data().key) { groqKey = s.data().key; localStorage.setItem('zen_groq', groqKey); } } catch { /* offline */ }
 }
+/** true se l'errore indica richieste gratuite esaurite (429, quota, rate limit…). */
 export const isQuotaError = e => /429|quota|RESOURCE_EXHAUSTED|rate.?limit|limit|exhausted/i.test(String(e?.message || e));
 
 const prompt = (title, author) => `Sei un insegnante di chitarra. Per la canzone «${title}»${author ? ` di ${author}` : ''} dammi la progressione di accordi per chitarra acustica, pensata per un principiante autodidatta: forme aperte il più semplici possibile (usa il capotasto se serve). NON riportare il testo né versi della canzone. Se non riconosci la canzone con sicurezza, restituisci "sezioni" vuoto.
 Rispondi SOLO con JSON: {"key":"tonalità reale, es. Am o C","capo":numero da 0 a 7,"sezioni":[{"nome":"Intro|Strofa|Pre-ritornello|Ritornello|Bridge|Finale","accordi":["Am","F","C","G"]}]}. Ogni sezione contiene la progressione di UN giro (non ripeterla). Accordi in notazione americana (Am, F, C, G7, Dsus4, Em7…).`;
 
+/** Risposta JSON dell'IA → { key, capo, sections } tenendo solo accordi validi. */
 function clean(j) {
   const sections = (j.sezioni || []).map(s => ({ name: String(s.nome || '').slice(0, 30), chords: (s.accordi || []).map(String).filter(isChord) })).filter(s => s.chords.length);
   return { key: /^[A-G][#b]?m?$/.test(j.key || '') ? j.key : '', capo: Math.max(0, Math.min(9, +j.capo || 0)), sections };
 }
+/** IA di Firebase: prova i modelli in ordine, passa al successivo solo se il modello non esiste più. */
 async function viaGemini(title, author) {
   ai ||= getAI(app, { backend: new GoogleAIBackend() });
   let lastErr;
@@ -54,6 +60,7 @@ async function viaGemini(title, author) {
   }
   throw lastErr;
 }
+/** Groq (API compatibile OpenAI) con la chiave dell'utente. */
 async function viaGroq(title, author) {
   const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + groqKey },
@@ -64,6 +71,7 @@ async function viaGroq(title, author) {
   return clean(JSON.parse((await r.json()).choices?.[0]?.message?.content || '{}'));
 }
 
+/** Accordi proposti per un brano: prima la cache dell'account, poi Gemini, poi Groq se Gemini ha finito la quota. */
 export async function findChords(title, author) {
   if (!cache) { try { const s = await getDoc(cacheRef()); cache = s.exists() ? (s.data().c || {}) : {}; } catch { cache = {}; } }
   await loadGroqKey();

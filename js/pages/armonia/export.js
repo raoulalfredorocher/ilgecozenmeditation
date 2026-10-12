@@ -15,6 +15,7 @@
 const today = () => new Date().toISOString().slice(0, 10);
 
 // ─── JSON ───────────────────────────────────────────────────────────────────
+/** Backup JSON di tutti i contatti (campi originali + id), con intestazione app/versione. */
 export function buildJSON(views) {
   const contatti = views.map(v => { const { _docId, ...rest } = v.raw; return { id: v.id, ...rest }; });
   return JSON.stringify({
@@ -28,6 +29,7 @@ export function buildJSON(views) {
 }
 
 // ─── vCard 3.0 ──────────────────────────────────────────────────────────────
+/** Escape dei valori vCard: barra rovesciata, a capo e virgola (il ';' resta com'è: in JS '\;' vale ';'). */
 const esc = s => String(s ?? '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/;/g, '\;').replace(/,/g, '\\,');
 
 /** Righe lunghe max 75 caratteri: le continuazioni iniziano con uno spazio (RFC 6350). */
@@ -38,12 +40,14 @@ function fold(line) {
   return out.join('\r\n');
 }
 
+/** Compleanno per la vCard; un anno prima del 1900 indica "senza anno". */
 function bday(b) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(b || '');
   if (!m) return '';
   return +m[1] < 1900 ? `1604-${m[2]}-${m[3]}` : b; // senza anno: convenzione di Apple
 }
 
+/** Riga PHOTO: foto incorporata (data URL base64) o link; '' se non c'è. */
 function photoLine(url) {
   const d = /^data:image\/(\w+);base64,(.+)$/.exec(url || '');
   if (d) return `PHOTO;ENCODING=b;TYPE=${d[1].toUpperCase().replace('JPG', 'JPEG')}:${d[2]}`;
@@ -51,6 +55,7 @@ function photoLine(url) {
   return '';
 }
 
+/** Rubrica vCard 3.0 di tutti i contatti; memorie, gruppo e interessi finiscono in NOTE e CATEGORIES. */
 export function buildVCF(views) {
   return views.map(v => {
     const r = v.raw;

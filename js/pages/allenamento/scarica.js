@@ -75,4 +75,5 @@ sheet.$('#dl-pdf').addEventListener('click', async () => {
   try { toast('Preparo il PDF…'); await deliver(await pdf(l)); sheet.close(); } catch (e) { console.error(e); toast(e.message || 'Non sono riuscito a creare il PDF'); }
 });
 
+/** Apre la scelta degli allenamenti da scaricare (la prima volta sono tutti selezionati). */
 export function openScarica() { if (!sel.size) state.plans.forEach(p => sel.add(p._docId)); draw(); sheet.open(); }

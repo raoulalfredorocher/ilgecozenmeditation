@@ -32,13 +32,13 @@ export function profileOn(profile, key) {
  * e così via per gli altri livelli. Contare tutti i passi sopra il fattore li metterebbe due volte.
  */
 export const STEPS_BASE = { 1.2: 4000, 1.375: 6000, 1.55: 8000, 1.725: 10000 };
+/** Passi già inclusi nel fattore di attività `lavoro` (stessi valori di STEPS_BASE, con le soglie intermedie). */
 export const stepsBase = lavoro => { const l = parseFloat(lavoro) || 1.2; return l <= 1.2 ? 4000 : l <= 1.375 ? 6000 : l <= 1.55 ? 8000 : 10000; };
 /** kcal bruciate dai passi oltre quelli già inclusi nel fattore di attività: ~0,0005 kcal per passo per kg di peso. */
 export const stepsKcal = (passi, peso, lavoro) => Math.max(0, Math.round(((parseFloat(passi) || 0) - stepsBase(lavoro)) * 0.0005 * (parseFloat(peso) || 0)));
 /** Allenamento con i pesi? (nel registro: sport dell'orologio "Pesi", oppure sessione fatta nell'app senza sport dell'orologio). */
 export const isForza = r => { const o = String(r?.orologio || '').toLowerCase(); return !o || /pesi|forza|strength|weight/.test(o); };
 
-/** Bilancio di un giorno. Senza profilo completo restituisce null. */
 /** kcal dell'allenamento al netto del metabolismo di base di quei minuti (già contato nel fabbisogno di base). */
 export const netWorkoutKcal = (kcal, minuti, base, peso, forza) => {
   const net = Math.max(0, Math.round((kcal || 0) - ((base || 0) / 1440) * (minuti || 0)));
@@ -46,6 +46,11 @@ export const netWorkoutKcal = (kcal, minuti, base, peso, forza) => {
   return forza && peso ? Math.min(net, Math.round(3 * peso * (minuti || 0) / 60)) : net;
 };
 
+/**
+ * Bilancio del giorno `key` ('AAAA-MM-GG'). Senza profilo completo restituisce null.
+ * Restituisce { peso, base, passi, allenamento, tdee, ingerite, delta, passiDaOrologio } in kcal (delta < 0 = deficit);
+ * senza passi dell'orologio usa i passi abituali del profilo.
+ */
 export function dayBalance(profile, key, { passi, kcalAllenamento, minutiAllenamento, forza, ingerite }) {
   const f = profileOn(profile, key), base = calcTdee(f);
   if (!base) return null;

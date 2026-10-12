@@ -12,6 +12,7 @@ import { doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/fire
 import { num } from './state.js';
 import { mergeManual } from '../../core/salute-merge.js';
 
+/** Dati per giorno: `watch` dall'orologio, `manual` inseriti a mano, `days` = la loro unione (mergeManual). */
 export const health = { days: {}, watch: {}, manual: {} };
 const recompute = () => { health.days = mergeManual(health.watch, health.manual); };
 
@@ -34,6 +35,7 @@ export function watchHealth(onChange) {
   go();
 }
 
+/** Riga breve dei dati dell'orologio di una sessione: battito medio/massimo e kcal; '' se non ci sono. */
 export const watchLine = r => [
   r.bpmMedio ? `❤ ${r.bpmMedio} medio${r.bpmMax ? ` · ${r.bpmMax} max` : ''}` : '',
   num(r.kcal) ? `${Math.round(num(r.kcal))} kcal` : '',

@@ -46,6 +46,7 @@ function areaBlock(ar, color) {
     ${isOpen ? `<div class="ob-abody">${why('Direction · il perché', ar.direction)}${why('Goal semplice', ar.goal)}${why('Sistema · il come', ar.sistema)}
       <div class="ob-macros">${ar.macros.map(n => macroBlock(n, color)).join('')}</div></div>` : ''}</div>`;
 }
+/** Ridisegna la scheda: hero con l'avanzamento medio, poi pilastri e aree aperti/chiusi (lo stato aperto resta in localStorage). */
 export function render() {
   if (!root) return;
   if (!S.pillars.length) { root.innerHTML = `<div class="card ob-intro"><h3>Obiettivi</h3><p>Qui metti a terra la tua direzione: ogni pilastro ha dei macro goal, ogni macro goal ha dei micro goal da fare davvero.</p><p class="ob-empty">Non ci sono ancora obiettivi. Importa il file preparato dal tuo Notion.</p><label class="btn btn-primary" style="align-self:flex-start;cursor:pointer">Importa da file<input type="file" accept=".json,application/json" id="ob-file" hidden></label></div>`; return; }
@@ -170,6 +171,7 @@ async function importFile(f) {
   } catch (e) { toast('File non valido'); console.warn(e); }
 }
 
+/** Collega la scheda al suo contenitore (eventi: import da file, apri/chiudi, spunta rapida, modifica) e la disegna. */
 export function init(el) {
   root = el;
   root.addEventListener('change', e => { if (e.target.id === 'ob-file' && e.target.files[0]) importFile(e.target.files[0]); });

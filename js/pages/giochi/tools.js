@@ -11,6 +11,7 @@ const LS = 'zen_tavolo_tools';
 const load = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch { return {}; } };
 const save = s => { try { localStorage.setItem(LS, JSON.stringify(s)); } catch { /* ok */ } };
 const rnd = n => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };       // casuale vero, senza distorsioni evidenti
+/** Suono di fine timer (880 Hz) più vibrazione, dove disponibili. */
 const beep = () => {
   try {
     const A = new (window.AudioContext || window.webkitAudioContext)(), o = A.createOscillator(), g = A.createGain();
@@ -20,6 +21,10 @@ const beep = () => {
   try { navigator.vibrate?.([200, 100, 200, 100, 400]); } catch { /* ok */ }
 };
 
+/**
+ * Crea il foglio "Il tavolo da gioco". `games()` restituisce i giochi da tavolo,
+ * `addPartita(id, partita)` salva la partita nel gioco scelto. Restituisce { open(id?) }.
+ */
 export function initTools({ games, addPartita }) {
   const st = Object.assign({ tab: 'dadi', die: 6, n: 2, players: [{ n: 'Giocatore 1', s: 0 }, { n: 'Giocatore 2', s: 0 }], mins: 1 }, load());
   const sheet = createSheet({ title: 'Il tavolo da gioco', className: 'tools', body: '' });
@@ -28,6 +33,7 @@ export function initTools({ games, addPartita }) {
   const unlock = () => { try { wake?.release(); } catch { /* ok */ } wake = null; };
 
   const TABS = [['dadi', 'Dadi'], ['primo', 'Primo'], ['timer', 'Timer'], ['punti', 'Punti']];
+  /** Ridisegna la scheda attiva (dadi, primo, timer, punti) e salva lo stato in locale. */
   function draw() {
     save(st);
     const body = {
@@ -55,6 +61,7 @@ export function initTools({ games, addPartita }) {
   }
   const fmt = s => { s = Math.ceil(Math.max(0, s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 
+  /** Aggiorna solo l'orologio; allo zero ferma, suona e ridisegna. */
   function tick() {
     if (!tm.run) return;
     tm.left = Math.max(0, (tm.end - Date.now()) / 1000);

@@ -16,6 +16,7 @@ import {
   collection, doc, getDocs, writeBatch, Timestamp, GeoPoint,
 } from './firestore.js';
 
+/** Versione del formato del file: un backup di versione più alta viene rifiutato. */
 export const FORMAT = 1;
 const LS_LAST = 'zen_last_backup';
 
@@ -75,6 +76,7 @@ const uid = () => {
 const colRef = (...path) => collection(db, 'users', uid(), ...path);
 
 // ─── Valori Firestore ⇄ JSON ─────────────────────────────────────────────
+/** Valore Firestore → JSON: Timestamp, GeoPoint e riferimenti diventano { __t: 'ts' | 'geo' | 'ref', … }. */
 export function encode(v) {
   if (v === null || v === undefined) return v ?? null;
   if (Array.isArray(v)) return v.map(encode);
@@ -86,6 +88,7 @@ export function encode(v) {
   }
   return v;
 }
+/** Inverso di encode(): ricostruisce Timestamp, GeoPoint e riferimenti. */
 export function decode(v) {
   if (Array.isArray(v)) return v.map(decode);
   if (v && typeof v === 'object') {
@@ -98,17 +101,24 @@ export function decode(v) {
 }
 
 // ─── Lettura di tutto ────────────────────────────────────────────────────
+/** fn su items a gruppi di `size` in parallelo (per non lanciare centinaia di letture insieme); risultati nell'ordine. */
 async function pool(items, size, fn) {
   const out = [];
   for (let i = 0; i < items.length; i += size) out.push(...await Promise.all(items.slice(i, i + size).map(fn)));
   return out;
 }
+/** Documenti di una raccolta come [{ id, data }], con i valori già codificati. */
 const readCol = async ref => (await getDocs(ref)).docs.map(d => ({ id: d.id, data: encode(d.data()) }));
 
+/** Id delle emozioni: i genitori "fantasma" di emozioni_entries ([] se il modulo non si carica). */
 async function emotionKeys() {
   try { return Object.keys((await import('../pages/mentale/data.js')).EMOTIONS).map(emoSafe); } catch { return []; }
 }
 
+/**
+ * Legge tutto l'account, sezione per sezione; onProgress(frazione 0–1, etichetta).
+ * Restituisce { app, format, exportedAt, account: { email }, count, data: { sezione: [{ id, data, sub?, phantom? }] } }.
+ */
 export async function collectAll(onProgress = () => {}) {
   const data = {};
   let count = 0;
@@ -157,15 +167,19 @@ export async function collectAll(onProgress = () => {}) {
   };
 }
 
+/** Il backup come Blob JSON. */
 export function backupBlob(obj) {
   return new Blob([JSON.stringify(obj)], { type: 'application/json' });
 }
+/** Nome del file: geco-zen-backup-AAAA-MM-GG.json. */
 export const backupName = () => `geco-zen-backup-${new Date().toISOString().slice(0, 10)}.json`;
 
+/** Data ISO dell'ultimo backup salvato da questo dispositivo (localStorage), e funzione che la segna adesso. */
 export const lastBackup = () => { try { return localStorage.getItem(LS_LAST); } catch { return null; } };
 export const markBackup = () => { try { localStorage.setItem(LS_LAST, new Date().toISOString()); } catch { /* ok */ } };
 
 // ─── Ripristino ──────────────────────────────────────────────────────────
+/** Controlla che sia un backup valido (altrimenti lancia un errore) e lo riassume: { rows: [{ id, label, n }], total, date, email }. */
 export function summarize(obj) {
   if (!obj || obj.app !== 'il-geco-zen' || !obj.data) throw new Error('Questo file non è un backup del Geco Zen');
   if (obj.format > FORMAT) throw new Error('Il backup è di una versione più recente dell’app');
@@ -176,6 +190,7 @@ export function summarize(obj) {
   return { rows, total: rows.reduce((n, r) => n + r.n, 0), date: obj.exportedAt, email: obj.account?.email };
 }
 
+/** Riscrive nell'account ogni documento del backup (set, a gruppi); onProgress(0–1). Restituisce quanti documenti ha scritto. */
 export async function restoreBackup(obj, onProgress = () => {}) {
   summarize(obj);
   const base = ['users', uid()];
@@ -207,6 +222,7 @@ export async function restoreBackup(obj, onProgress = () => {}) {
 }
 
 // ─── CSV di una sezione ──────────────────────────────────────────────────
+/** Una cella CSV (separatore ';'): date in ISO, oggetti in JSON, foto e audio sostituiti da un segnaposto. */
 const cell = v => {
   if (v === null || v === undefined) return '';
   if (typeof v === 'object') {
@@ -218,6 +234,7 @@ const cell = v => {
   if (v.length > 3000 || v.startsWith('data:')) return '[contenuto non testuale]';
   return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
 };
+/** Una sezione in CSV (una riga per documento, colonne dalla più frequente); Blob con BOM per Excel, null se è vuota. */
 export async function collectionCsv(id) {
   const docs = await readCol(colRef(id));
   if (!docs.length) return null;

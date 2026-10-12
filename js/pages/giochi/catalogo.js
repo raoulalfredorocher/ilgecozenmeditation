@@ -2,8 +2,10 @@
  * catalogo.js — idee di giochi da tavolo e di ruolo da aggiungere con un tocco.
  * p = giocatori [min, max] · t = minuti [min, max] · k = tipo · d = descrizione breve.
  */
+/** Tipi di gioco da tavolo usati come filtro. */
 export const KINDS = ['Strategia', 'Famiglia', 'Cooperativo', 'Party', 'Carte', 'Deduzione', 'GDR', 'Altro'];
 
+/** Idee pronte: { n: nome, p: giocatori, t: minuti, k: tipo, d: descrizione }. */
 export const CATALOGO = [
   { n: 'Catan', p: [3, 4], t: [60, 90], k: 'Strategia', d: 'Raccogli risorse, commercia e costruisci strade e città sull’isola. Un classico per iniziare.' },
   { n: 'Carcassonne', p: [2, 5], t: [30, 45], k: 'Famiglia', d: 'Pesca una tessera, piazzala e costruisci castelli, strade e campi. Si impara in cinque minuti.' },

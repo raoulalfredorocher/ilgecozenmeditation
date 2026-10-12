@@ -15,6 +15,10 @@ import * as aud from '../mentale/audio.js';
 
 const today = () => new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 
+/**
+ * Appunti dei libri. ctx = { items(), byId(id), update(docId, campi), askConfirm(), exportBook(libro), exportAll() }.
+ * Restituisce { openList, openAdd, renderAll, loadMany, audioBlob, card, wire, invalidate }.
+ */
 export function initQuotes(ctx) {
   const cache = new Map();                    // docId del libro → appunti
   let allCache = null;                        // appunti di tutti i libri
@@ -26,6 +30,7 @@ export function initQuotes(ctx) {
   const loadMany = books => Promise.all(books.filter(b => (b.quotesCount || 0) > 0).map(load)).then(l => l.flat());
   const audioBlob = async (bookDocId, q) => aud.chunksToBlob(await loadQuoteAudio(bookDocId, q._docId), q.audio.mime);
 
+  /** HTML di un appunto (testo, foto, audio, didascalia); `actions` mostra condividi/modifica/elimina. */
   function card(q, book, { actions = true, showBook = false } = {}) {
     const ph = q.photo ? safeUrl(q.photo) : '';
     return `<figure class="qt" data-q="${esc(q._docId)}" data-book="${esc(q._bookDocId || book?._docId || '')}">
@@ -51,6 +56,7 @@ export function initQuotes(ctx) {
     listSheet.open();
     await drawList();
   }
+  /** Ricarica gli appunti del libro aperto e ridisegna il foglio. */
   async function drawList() {
     const item = ctx.byId(listBook.id) || listBook;
     const qs = await load(item);
@@ -133,6 +139,7 @@ export function initQuotes(ctx) {
     });
   }
 
+  /** Area audio del modulo: registrazione in corso, audio pronto/salvato, oppure pulsante "Nota vocale". */
   function drawAudio(err = '') {
     const box = editSheet.$('#qe-audio');
     if (recOn) {
@@ -179,6 +186,7 @@ export function initQuotes(ctx) {
     }
   });
 
+  /** Apre il modulo per un nuovo appunto (quote = null) o per modificarne uno; `then` si chiama dopo il salvataggio. */
   function openEdit(book, quote, then) {
     editBook = book; editQuote = quote; after = then || (() => listBook && listSheet.isOpen() && drawList());
     photo = quote?.photo || null;
@@ -225,6 +233,7 @@ export function initQuotes(ctx) {
 
   // ─── Vista "Appunti" di tutti i libri ────────────────────────────────
   let randomPick = 0, filter = '';
+  /** Vista con gli appunti di tutti i libri: frase a caso, ricerca ed esportazione. */
   async function renderAll(el) {
     const books = ctx.items().filter(b => (b.quotesCount || 0) > 0);
     if (!books.length) { el.innerHTML = `<div class="empty">I tuoi appunti compariranno qui.<br/>Apri un libro e tocca «Appunti» per scrivere, fotografare o registrare.</div>`; return; }

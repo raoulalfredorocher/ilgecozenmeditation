@@ -1,7 +1,7 @@
 /**
  * notifiche.js — centro notifiche nel Profilo (calcolate all'apertura dell'app, non sono push).
- *   caricaNotifiche()  → [{ id, testo, sub, href }]  già senza quelle chiuse oggi
- *   chiudi(id)         → la nasconde fino a domani
+ *   caricaNotifiche(force?) → { attive: [{ id, testo, sub, href }], archiviate: [...] }
+ *   archivia(n) · ripristina(id) · elimina(id) → stato salvato sul dispositivo (localStorage)
  */
 import { db, auth } from '../core/db.js';
 import { doc, getDoc } from '../core/firestore.js';
@@ -12,14 +12,18 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 
 /** Stato di ogni notifica: archiviata ('a', con copia del contenuto) o eliminata ('d'). */
 const ST = 'zen_notif_st', ARCH = 'zen_notif_arch';
+/** Archivia una notifica, tenendone una copia per l'elenco "Archiviate". */
 export function archivia(n) { const st = lsGet(ST, {}), ar = lsGet(ARCH, {}); st[n.id] = 'a'; ar[n.id] = { ...n, ts: Date.now() }; lsSet(ST, st); lsSet(ARCH, ar); }
+/** La rimette tra le attive (toglie stato e copia archiviata). */
 export function ripristina(id) { const st = lsGet(ST, {}); delete st[id]; lsSet(ST, st); const ar = lsGet(ARCH, {}); delete ar[id]; lsSet(ARCH, ar); }
+/** La nasconde per sempre; lo stato tiene al massimo circa 400 id (si scarta il più vecchio). */
 export function elimina(id) {
   const st = lsGet(ST, {}), ar = lsGet(ARCH, {}); st[id] = 'd'; delete ar[id];
   const keys = Object.keys(st); if (keys.length > 400) delete st[keys[0]];
   lsSet(ST, st); lsSet(ARCH, ar);
 }
 
+/** Calcola le notifiche di adesso: compleanni, allenamento / meditazione / diario alimentare, sfide del ciliegio. */
 async function calcola() {
   const out = [], now = new Date(), oggi = dk(now), dow = now.getDay();
   const giorniFa = n => dk(new Date(now.getFullYear(), now.getMonth(), now.getDate() - n));

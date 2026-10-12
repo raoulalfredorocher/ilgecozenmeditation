@@ -16,12 +16,14 @@
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const NW = 108, GAPY = 12, PADY = 34;
 
+/** Monta il diagramma dei flussi in `el`; `fmt` formatta gli importi. Restituisce { show(model), select(id), selected }. */
 export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {}) {
   el.classList.add('fl');
   el.innerHTML = '<div class="fl-scroll"><div class="fl-stage"></div></div>';
   const stage = el.querySelector('.fl-stage');
   let model = null, selected = null;
 
+  /** Calcola altezze e posizioni dei nodi (proporzionali agli importi) e ridisegna SVG e pulsanti. */
   function draw() {
     if (!model) return;
     const { incomes, accounts, expenses, links } = model;

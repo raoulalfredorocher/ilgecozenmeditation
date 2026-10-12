@@ -48,11 +48,13 @@ function view(c) {
 }
 const initials = v => ((v.nome[0] || '') + (v.cognome[0] || '')).toUpperCase() || '?';
 const sortKey = v => `${v.nome} ${v.cognome}`.trim().toLowerCase();   // ordine per nome, poi cognome
+/** Foto del contatto oppure le iniziali, nel quadrato di `size` px. */
 const avatar = (v, size = 40) => v.photo
   ? `<img class="avatar" src="${esc(v.photo)}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px" loading="lazy" referrerpolicy="no-referrer"/>`
   : `<span class="initials" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .36)}px">${esc(initials(v))}</span>`;
 
 // ─── Elenco ──────────────────────────────────────────────────────────────
+/** Ridisegna l'elenco (tutti o Besties) diviso per lettera, con ricerca su nome, interessi e città. */
 function render() {
   const all = contacts.map(view);
   const besties = all.filter(v => v.bestie);
@@ -91,6 +93,7 @@ function render() {
 }
 
 const shownTags = v => v.tags;
+/** Hash stabile di una stringa: sceglie il colore della scheda del contatto. */
 const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 
 /** Prossimo compleanno + fila dei Besties, in cima all'elenco. */
@@ -132,18 +135,21 @@ document.querySelector('.page-tabs').addEventListener('click', e => {
 const detail = createSheet({ body: '' });
 let detailId = null;
 
+/** Numero per wa.me: senza + o 00; ai numeri italiani brevi aggiunge il prefisso 39. */
 function waNumber(phone) {
   let n = String(phone || '').replace(/[^\d+]/g, '');
   if (n.startsWith('+')) return n.slice(1);
   if (n.startsWith('00')) return n.slice(2);
   return n.length <= 10 ? '39' + n : n;
 }
+/** "1990-05-12" → "12 maggio 1990" (senza anno se è prima del 1900, cioè sconosciuto). */
 function formatBirthday(b) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(b || '');
   if (!m) return b;
   return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: m[1] > '1900' ? 'numeric' : undefined });
 }
 
+/** Scheda del contatto: azioni rapide (chiama, WhatsApp, email…), informazioni, interessi e memorie. */
 function openDetail(id) {
   const c = contacts.find(x => x._docId === id);
   if (!c) return;
@@ -229,6 +235,7 @@ const memSheet = createSheet({ body: `
     <button class="btn primary block" type="submit">Salva</button>
   </form>` });
 let memContact = null, memEntry = null;
+/** Modulo per una nuova memoria (entry = null) o per modificarne una. */
 function openMemory(c, entry) {
   memContact = c;
   memEntry = entry;
@@ -272,6 +279,7 @@ function showAvatar() {
     ? `<img class="avatar" src="${esc(safeUrl(photo))}" alt="" style="width:84px;height:84px"/>`
     : `<span class="initials" style="width:84px;height:84px">${icon('user', 'lg')}</span>`;
 }
+/** Modulo contatto, nuovo (c = null) o esistente; precompila dalla vista normalizzata. */
 function openEditor(c = null) {
   editing = c;
   const v = c ? view(c) : null;
@@ -311,6 +319,7 @@ editor.$('#ce-form').addEventListener('submit', async e => {
 $('ar-add').addEventListener('click', () => openEditor(null));
 
 // ─── Import vCard (esportazione contatti iPhone) ─────────────────────────
+/** File .vcf → contatti nel formato attuale (nome, numero, email, compleanno, città, foto, link). */
 function parseVCard(text) {
   const out = [];
   for (const card of text.split(/BEGIN:VCARD/i)) {

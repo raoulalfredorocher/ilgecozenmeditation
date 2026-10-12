@@ -47,6 +47,10 @@ export function groupSeries(items) {
   return groups.sort((a, b) => a.name.localeCompare(b.name, 'it'));
 }
 
+/**
+ * Vista "Serie". ctx = { items(), add(libro), update(docId, campi), openDetail(id) }.
+ * Restituisce { renderList(el), open(key), refresh(), addVolume() }.
+ */
 export function initSeries(ctx) {
   const sheet = createSheet({ body: '' });
   let current = null;                     // chiave della serie aperta
@@ -86,6 +90,7 @@ export function initSeries(ctx) {
     });
   }
 
+  /** Scheda della serie: griglia dei volumi (tocca un numero mancante per aggiungerlo) e prossimo da leggere. */
   function open(key) {
     const g = groupSeries(ctx.items()).find(x => x.key === key);
     if (!g) return;

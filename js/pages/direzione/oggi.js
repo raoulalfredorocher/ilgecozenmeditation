@@ -43,6 +43,7 @@ function week() {
       <span class="od-dots">${DAYS.map((l, i) => { const k = addDays(w0, i), on = (S.log[m.id] || []).includes(k); return `<i class="${on ? 'on' : ''}${k === today() ? ' now' : ''}" title="${k}"></i>`; }).join('')}</span></div>`).join('')}</div></section>`;
 }
 
+/** Ridisegna la scheda Oggi: avanzamento del giorno, cose da fare, fatte oggi e la settimana. */
 export function render() {
   if (!root) return;
   const d = new Date(), dt = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -62,6 +63,7 @@ export function render() {
     ${!S.micros.length ? '<p class="ob-empty" style="text-align:center">Quando avrai dei micro goal, qui compare ciò che conta oggi.</p>' : ''}`;
 }
 
+/** Collega la scheda al suo contenitore (aggiunta to-do, spunte, eliminazione) e la disegna. */
 export function init(el) {
   root = el;
   root.addEventListener('submit', async e => {

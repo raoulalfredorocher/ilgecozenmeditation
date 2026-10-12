@@ -76,6 +76,7 @@ function build() {
   });
 }
 
+/** Impronta dello stato dell'editor: diversa da `snapshot` = modifiche non salvate (chiedere prima di chiudere). */
 const current = () => JSON.stringify([ed.meals, ed.supp, ed.date, ed.dayType]);
 
 // ─── Disegno ─────────────────────────────────────────────────────────────
@@ -382,6 +383,7 @@ async function save() {
  *  date               'AAAA-MM-GG' se il giorno è scelto dall'utente (diario), altrimenti null
  *  compareTo          kcal del piano da mostrare accanto al totale, oppure null
  *  warnOverwrite      avvisa se nel giorno scelto c'è già un diario
+ *  dayType            'Workout' | 'Riposo' (solo diete) oppure null per nasconderlo
  *  onSave({meals, supplements, date})
  */
 export function openDayEditor(opts) {

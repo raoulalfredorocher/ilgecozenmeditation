@@ -18,6 +18,7 @@ const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).
 /** Autori di un libro (più autori separati da virgola, punto e virgola, & o «e»). */
 export const authorsOf = b => String(b.author || '').split(/\s*(?:;|,|&|\be\b)\s*/i).map(s => s.trim()).filter(s => s.length > 2);
 
+/** Raggruppa i libri per autore: [{ key, name, books, read, avg, quotes }]. */
 export function groupMasters(items) {
   const map = new Map();
   items.forEach(b => authorsOf(b).forEach(name => {
@@ -36,6 +37,7 @@ export function groupMasters(items) {
 }
 
 // ─── Wikipedia ───────────────────────────────────────────────────────────
+/** Sommario Wikipedia (it) di un autore { title, extract, thumb, url } o null; cache locale 30 giorni (anche "non trovato"). */
 async function wiki(name) {
   const key = LS_WIKI + norm(name);
   try {
@@ -55,6 +57,10 @@ async function wiki(name) {
 }
 const cachedThumb = name => { try { return JSON.parse(localStorage.getItem(LS_WIKI + norm(name)) || 'null')?.v?.thumb || ''; } catch { return ''; } };
 
+/**
+ * Vista "Maestri". ctx = { items(), stars(), openDetail(id), quotes }.
+ * Restituisce { renderList(el), open(key), load(), refresh() }.
+ */
 export function initMaestri(ctx) {
   let prefs = { masters: {} };
   try { prefs = { masters: {}, ...JSON.parse(localStorage.getItem(LS) || '{}') }; } catch { /* ok */ }
@@ -92,12 +98,14 @@ export function initMaestri(ctx) {
     list.slice(0, 12).filter(m => !cachedThumb(m.name)).forEach(m => wiki(m.name).then(v => { if (v?.thumb && el.isConnected) renderListSoft(el); }));
   }
   let soft = 0;
+  /** Ridisegna l'elenco al massimo ogni 600 ms, e non mentre si sta scrivendo nella ricerca. */
   function renderListSoft(el) { clearTimeout(soft); soft = setTimeout(() => { if (!el.querySelector('#ms-q:focus')) renderList(el); }, 600); }
 
   // ─── Scheda del maestro ──────────────────────────────────────────
   const sheet = createSheet({ body: '' });
   let current = null;
 
+  /** Scheda di un autore: preferito, "perché è un maestro", libri, bio da Wikipedia e appunti. */
   async function open(key) {
     const m = groupMasters(ctx.items()).find(x => x.key === key);
     if (!m) return;

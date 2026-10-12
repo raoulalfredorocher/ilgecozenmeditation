@@ -71,6 +71,7 @@ export function genera(level, D, escludi = []) {
 
 /** Titolo del livello, dal seme all'albero secolare. */
 export const NOMI = [[1, 'Seme'], [3, 'Germoglio'], [6, 'Piantina'], [10, 'Arbusto'], [16, 'Giovane ciliegio'], [25, 'Ciliegio in fiore'], [40, 'Albero secolare']];
+/** Titolo del livello `lv` (≥ 1): l'ultima soglia di NOMI raggiunta. */
 export const nomeLivello = lv => [...NOMI].reverse().find(([from]) => lv >= from)[1];
 
 async function misura(chs, D, start) {

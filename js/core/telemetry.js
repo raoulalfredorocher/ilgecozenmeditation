@@ -18,6 +18,7 @@ const entries = [];
 let sent = 0;
 let flushTimer = null;
 
+/** Accoda una voce diagnostica (tipo, messaggio, extra facoltativo) e la invia dopo 2,5 s senza altre voci; al massimo MAX per pagina. */
 export function track(kind, message, extra) {
   if (entries.length + sent >= MAX) return;
   entries.push({ kind, message: String(message).slice(0, 600), extra: extra ? JSON.stringify(extra).slice(0, 900) : '', t: Math.round(performance.now() - t0) });
@@ -25,6 +26,7 @@ export function track(kind, message, extra) {
   flushTimer = setTimeout(flush, 2500);
 }
 
+/** Invia le voci accodate in un documento di debug_logs (POST REST, keepalive: può partire anche mentre la pagina si chiude). */
 async function flush() {
   const user = auth.currentUser;
   if (!user || !entries.length) return;

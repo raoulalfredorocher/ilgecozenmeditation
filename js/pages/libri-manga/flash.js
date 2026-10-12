@@ -24,6 +24,10 @@ const dayKey = () => new Date().toISOString().slice(0, 10);
 
 const TYPE_LABEL = { content: 'Dal libro', mine: 'La tua domanda', cloze: 'Completa la frase', recall: 'I tuoi ricordi' };
 
+/**
+ * Flashcard sui libri letti. ctx = { items(), askConfirm() }. Restituisce { render(el) }.
+ * Ogni domanda tiene in data.cards[chiave] = [giuste, tentativi, ultima data ISO].
+ */
 export function initFlash(ctx) {
   let data = { sessions: [], cards: {} };
   try { data = { ...data, ...JSON.parse(localStorage.getItem(LS) || '{}') }; } catch { /* ok */ }
@@ -33,6 +37,7 @@ export function initFlash(ctx) {
     try { localStorage.setItem(LS, JSON.stringify(data)); } catch { /* ok */ }
     try { await setDoc(ref(), data); } catch (e) { console.warn('flashcard', e); }
   };
+  /** Unisce i risultati salvati nell'account con quelli locali (per domanda vince il più recente). */
   const sync = async () => {
     try {
       const s = await getDoc(ref());
@@ -55,6 +60,7 @@ export function initFlash(ctx) {
   const norm = t => String(t || '').trim().toLowerCase();
   const readBook = t => ctx.items().find(b => b.done && norm(b.title) === norm(t));
 
+  /** Domande giocabili: solo quelle dei libri segnati come letti (preparate con 3 alternative, oppure tue). */
   async function buildCards() {
     await loadDeck();
     const all = ctx.items();
@@ -92,6 +98,7 @@ export function initFlash(ctx) {
   }
 
   // ─── Schermate ─────────────────────────────────────────────────────
+  /** Schermata iniziale: pulsanti e risultati delle sessioni passate. */
   function landing(el) {
     const read = ctx.items().filter(b => b.done);
     const ss = data.sessions, last = ss[ss.length - 1];
@@ -134,6 +141,7 @@ export function initFlash(ctx) {
     try { await loadDeck(); deck.mine = [...(deck.mine || []), { bt, q, r }]; await setDoc(deckRef(), deck); toast('Domanda salvata'); } catch (err) { toast('Non riesco a salvare: ' + (err.message || err)); }
   });
 
+  /** Prepara una partita di N domande; se sono meno di 3 lo dice. */
   async function start(el) {
     el.innerHTML = `<div class="fa-hint" style="text-align:center;padding:var(--space-8)">Preparo le domande…</div>`;
     await sync();
@@ -147,6 +155,7 @@ export function initFlash(ctx) {
     run(el, deck);
   }
 
+  /** Gioca la partita una domanda alla volta, poi mostra il punteggio e quelle da rivedere. */
   function run(el, deck) {
     let i = 0;
     const results = [];

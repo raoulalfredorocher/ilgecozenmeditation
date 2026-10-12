@@ -515,6 +515,8 @@
   </div>
 
   <script type="module">
+    /* Finanza: tre schede. Andamento = prezzi pubblici da data/mercati.json (scripts/fetch_quotes.py);
+       Planning = conti, categorie e voci (finanza_* in Firestore, in tempo reale); Patrimonio = diagramma dei flussi. */
     import { escapeHtml as esc, safeUrl } from './js/core/dom.js';
     import { waitForAuth } from './js/core/db.js';
     import { createSheet } from './js/ui/dialog.js';

@@ -14,7 +14,7 @@ const isData = u => /^data:image\//.test(u || '');
 
 /**
  * Costruisce i file di un libro. `quotes` = appunti già letti; `getAudio(q)` → Blob audio.
- * Restituisce { md, files } con i percorsi dei media relativi alla cartella del file .md.
+ * Restituisce { md, file, files } (file = nome del .md) con i percorsi dei media relativi alla cartella del file .md.
  */
 async function bookFiles(book, quotes, getAudio, prefix) {
   const slug = safeName(book.title);
@@ -59,6 +59,7 @@ async function bookFiles(book, quotes, getAudio, prefix) {
   return { md: lines.join('\n'), file: `${prefix}${slug}.md`, files };
 }
 
+/** Esporta un solo libro (file .md + media) in uno .zip e lo fa salvare o condividere. */
 export async function exportBookMarkdown(book, quotes, getAudio) {
   const b = await bookFiles(book, quotes, getAudio, '');
   const blob = makeZip([{ name: b.file, data: b.md }, ...b.files]);

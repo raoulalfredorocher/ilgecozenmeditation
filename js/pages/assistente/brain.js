@@ -35,16 +35,19 @@ const uid = () => auth.currentUser?.uid;
 const userDocRef = (...path) => doc(db, 'users', uid(), ...path);
 const userColRef = (...path) => collection(db, 'users', uid(), ...path);
 
+/** Data "AAAA-MM-GG" nel fuso di Roma, spostata di `offsetDays` giorni. */
 function dateKey(offsetDays = 0) {
   const d = new Date(Date.now() + offsetDays * 86400000);
   return new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 }
+/** Indice del giorno della settimana con lunedì = 0 (come i giorni del piano alimentare). */
 function weekdayIdx(key) {
   const [y, m, d] = key.split('-').map(Number);
   return (new Date(y, m - 1, d).getDay() + 6) % 7;
 }
 
 // ─── Strumenti ───────────────────────────────────────────────────────────
+/** Strumenti che Gemini può chiamare: girano nel browser e restituiscono oggetti con chiavi in italiano. */
 const TOOLS = {
   async get_weather({ city = 'Pandino' }) {
     const geo = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=it&format=json`)).json();
@@ -133,6 +136,7 @@ const TOOLS = {
 
 const S = Schema;
 const dateParam = S.string({ description: 'Data nel formato YYYY-MM-DD' });
+/** Descrizioni degli strumenti per Gemini (nome, scopo, parametri). */
 const functionDeclarations = [
   { name: 'get_weather', description: 'Meteo attuale e previsioni dei prossimi 2 giorni per una località. Se l\'utente non indica un luogo usa "Pandino".',
     parameters: S.object({ properties: { city: S.string({ description: 'Località, es. Pandino, Milano' }) } }) },
@@ -153,6 +157,7 @@ for (const f of functionDeclarations) {
   if (f.parameters) f.parameters = S.object({ properties: f.parameters.properties, optionalProperties: Object.keys(f.parameters.properties) });
 }
 
+/** Istruzioni di sistema: tono, brevità per la voce, data e ora correnti, nome dell'utente. */
 function systemInstruction() {
   const now = new Date();
   const fmt = o => new Intl.DateTimeFormat('it-IT', { timeZone: TZ, ...o }).format(now);
@@ -194,6 +199,7 @@ export async function askAssistant(messages) {
   throw lastErr;
 }
 
+/** Una conversazione con un modello: esegue gli strumenti richiesti (al massimo 5 giri) e restituisce il testo finale. */
 async function runChat(modelName, history, question) {
   const model = getGenerativeModel(ai, {
     model: modelName,

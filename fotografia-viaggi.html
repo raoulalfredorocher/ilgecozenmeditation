@@ -302,6 +302,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module">
+    /* Fotografia e viaggi: mappa (Leaflet) dei paesi visitati e desiderati, siti UNESCO, viaggi e cartelle foto.
+       Un documento per paese in users/{uid}/countries/{ISO2} con i viaggi in sotto-raccolta. */
     import { waitForAuth, addBucketItem, updateBucketItem, deleteBucketItem } from './js/core/db.js';
     import { createSheet } from './js/ui/dialog.js';
     import { subscribeCountry, saveCountryData, subscribeTrips, addTripDoc, updateTripDoc, deleteTripDoc } from './js/core/db.js';

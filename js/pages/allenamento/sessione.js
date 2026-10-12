@@ -43,6 +43,7 @@ const detail = createSheet({ title: 'Sessione', className: 'al-detail', body: '<
 let curId = null, delArmed = false;
 const recordOf = id => state.log.find(r => r._docId === id);
 
+/** Apre il dettaglio di una sessione del registro; per le sessioni vecchie carica i dettagli dalla sotto-collezione. */
 export async function openDetail(id) {
   curId = id; delArmed = false;
   const r = recordOf(id);
@@ -181,6 +182,7 @@ const fillSchede = () => {
   manual.$('#mn-sc').innerHTML = (p?.schede || []).map((s, i) => `<option value="${i}">${esc(s.nome)}</option>`).join('');
 };
 manual.$('#mn-pl').addEventListener('change', fillSchede);
+/** Registra a mano una sessione (nel giorno `date`, se dato): parte dai valori della scheda, poi si corregge. */
 export function addAction(date) {
   if (date) selected = date;
   if (!state.plans.length) return toast('Crea prima un allenamento nella scheda Schede');

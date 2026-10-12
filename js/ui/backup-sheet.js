@@ -22,6 +22,7 @@ let busy = false;
 
 const mb = n => (n / 1048576).toLocaleString('it-IT', { maximumFractionDigits: 1 });
 
+/** Frase "Ultimo backup: …" dalla data salvata su questo dispositivo. */
 export function lastBackupText() {
   const iso = lastBackup();
   if (!iso) return 'Non hai ancora fatto un backup';
@@ -146,6 +147,7 @@ function build() {
   });
 }
 
+/** Apre il pannello Backup e dati (costruito al primo uso). */
 export function openBackupSheet() {
   if (!sheet) build();
   sheet.$('#bk-last').textContent = lastBackupText();

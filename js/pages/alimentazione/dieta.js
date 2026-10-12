@@ -236,6 +236,7 @@ editSheet.$('#ed-del').addEventListener('click', async e => {
 // ─── Download ────────────────────────────────────────────────────────────
 const fileBase = () => `dieta-${state.diet.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'dieta'}`;
 
+/** Scarica la dieta attiva in PDF (vedi pdf.js). */
 export async function downloadPDF() {
   try {
     toast('Preparo il PDF…');
@@ -244,6 +245,7 @@ export async function downloadPDF() {
   } catch (e) { console.error(e); toast(e.message || 'Non sono riuscito a creare il PDF'); }
 }
 
+/** Scarica la dieta attiva in CSV: una riga per alimento di ogni pasto. */
 export async function downloadCSV() {
   const rows = [['Dieta', 'Giorno', 'Tipo', 'Pasto', 'Alimento', 'Quantità (g)', 'kcal', 'Proteine (g)', 'Carboidrati (g)', 'Grassi (g)']];
   state.diet.days.forEach(d => (d.meals || []).map(fromDietMeal).sort((a, b) => slotOrder(a.slot) - slotOrder(b.slot)).forEach(m =>
@@ -252,6 +254,7 @@ export async function downloadCSV() {
   await deliver(csvFile(rows, `${fileBase()}.csv`));
 }
 
+/** Azioni per main.js: il + registra oggi nel diario; "Nuova dieta" dal menu ⋯. */
 export const addAction = () => registerToday();
 export const newDietAction = newDiet;
 

@@ -11,6 +11,7 @@ import { escapeHtml as esc } from '../../core/dom.js';
 
 const LS = 'zen_read_timer';
 const pad = n => String(n).padStart(2, '0');
+/** Millisecondi → "mm:ss" (oppure "hh:mm:ss" oltre l'ora). */
 export const fmtClock = ms => {
   const s = Math.floor(ms / 1000);
   return (s >= 3600 ? pad(Math.floor(s / 3600)) + ':' : '') + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60);
@@ -18,6 +19,7 @@ export const fmtClock = ms => {
 const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 // ─── Ritmo e stima di fine ───────────────────────────────────────────────
+/** Ritmo di un libro dalle sessioni: { min, sessions, pph (pagine/ora), finish (Date stimata) } oppure null. */
 export function paceInfo(item) {
   const ss = item.sessions || [];
   if (!ss.length) return null;
@@ -39,6 +41,10 @@ export function paceInfo(item) {
   return out;
 }
 
+/**
+ * Cronometro "Leggo adesso". ctx = { byId(id), askConfirm(), isManga(libro), setProgress(libro, campi) }.
+ * Restituisce { open(libro), active(), paint(), start(libro) }.
+ */
 export function initTimer(ctx) {
   let st = null;                       // { id, acc, since|null }
   try { st = JSON.parse(localStorage.getItem(LS) || 'null'); } catch { st = null; }
@@ -64,6 +70,7 @@ export function initTimer(ctx) {
   }
   function releaseWake() { try { wake?.release(); } catch { /* ok */ } wake = null; }
 
+  /** Aggiorna l'orologio del foglio e i badge [data-clock] nella pagina. */
   function paint() {
     const running = !!st?.since;
     $('#tm-clock').textContent = fmtClock(elapsed());

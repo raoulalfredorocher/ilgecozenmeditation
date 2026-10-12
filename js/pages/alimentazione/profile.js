@@ -71,6 +71,7 @@ sheet.$('#pf-ok').addEventListener('click', async () => {
   toast('Profilo salvato');
 });
 
+/** Apre il foglio del profilo con i dati salvati; la data della misura parte da oggi. */
 export function openProfile() {
   const p = state.profile || {};
   sex = p.sesso === 'F' ? 'F' : 'M';

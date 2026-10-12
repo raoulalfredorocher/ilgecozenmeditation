@@ -184,6 +184,7 @@ root.addEventListener('click', e => {
 });
 root.addEventListener('keydown', e => { const dot = e.target.closest?.('[data-k]'); if (dot && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(dot.dataset.k); } });
 
+/** Azione del + quando la scheda è attiva: registra oggi nel diario. */
 export const addAction = () => registerToday();
 
 onChange(what => { if (['diary', 'diet', 'diets', 'profile', 'workouts', 'health'].includes(what)) render(); });

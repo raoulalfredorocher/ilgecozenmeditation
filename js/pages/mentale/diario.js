@@ -191,6 +191,7 @@ function syncMeta() {
     : '<button type="button" class="text-btn" id="ed-photo">Aggiungi una foto</button>';
 }
 
+/** Apre la scrittura a tutto schermo: voce esistente oppure nuova (riparte dalla bozza; `presetDay` 'AAAA-MM-GG' = giorno scelto nella vista calendario). */
 export function openEditor(entry = null, presetDay = null) {
   editing = entry;
   const draft = entry ? null : readDraft();
@@ -261,6 +262,7 @@ function readPhoto(file) {
   });
 }
 
+/** Salva la voce (nuova o modificata); l'audio nuovo va a pezzi nella sotto-raccolta e la voce lo indica solo a scrittura finita. */
 async function save() {
   if (st.rec) await endRecord();                           // registrazione ancora in corso: prima si chiude
   const titolo = st.titolo.trim(), testo = st.testo.trim();
@@ -464,6 +466,7 @@ export function initDiario() {
   $('ed-save').addEventListener('click', save);
 }
 
+/** Ascolta in tempo reale tutte le voci del diario (le più recenti prima) e ridisegna. Da chiamare dopo il login. */
 export function startDiary() {
   const col = store.diaryCol();
   if (!col) return;

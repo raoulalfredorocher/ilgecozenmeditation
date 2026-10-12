@@ -1,5 +1,7 @@
-// 365 frasi motivazionali — una per ogni giorno dell'anno
-// Usate in index.html: getDailyQuote() restituisce la frase del giorno corrente
+/**
+ * quotes.js — 365 frasi motivazionali, una per ogni giorno dell'anno.
+ * Usate in index.html: getDailyQuote() restituisce la frase del giorno corrente.
+ */
 export const QUOTES = [
   "Il primo passo non ti porta dove vuoi andare, ma ti toglie da dove sei.",
   "Respira: l'aria che entra è vita presente, l'aria che esce è passato che lasci andare.",

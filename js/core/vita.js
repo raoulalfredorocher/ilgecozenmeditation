@@ -25,6 +25,7 @@ export function lifeExpectancy(code, sex) {
   const c = COUNTRIES.find(x => x[0] === code) || COUNTRIES[0];
   return sex === 'M' ? c[2] : sex === 'F' ? c[3] : (c[2] + c[3]) / 2;
 }
+/** Nome del Paese dal codice; con un codice sconosciuto: Italia. */
 export const countryName = code => (COUNTRIES.find(x => x[0] === code) || COUNTRIES[0])[1];
 
 /** Età in anni (con i decimali) da una data 'AAAA-MM-GG'. 0 se la data manca o non è valida. */

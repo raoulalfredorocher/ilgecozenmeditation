@@ -18,6 +18,7 @@ const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localSt
 const ref = () => doc(db, 'users', auth.currentUser.uid, 'direction', 'pin_download');
 
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+/** Impronta PBKDF2-SHA256 (esadecimale) del PIN con il sale dato. */
 async function hashPin(pin, saltHex, it = ITER) {
   const salt = Uint8Array.from(saltHex.match(/../g).map(h => parseInt(h, 16)));
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
@@ -26,6 +27,7 @@ async function hashPin(pin, saltHex, it = ITER) {
 const newSalt = () => hex(crypto.getRandomValues(new Uint8Array(16)));
 
 let cache = lsGet(LS, null), loaded = false;
+/** Legge il PIN dal database una sola volta per pagina; offline vale la copia sul dispositivo. */
 async function load() {
   if (loaded) return cache;
   try {
@@ -36,11 +38,15 @@ async function load() {
   } catch { /* offline: vale la copia sul dispositivo */ }
   return cache;
 }
+/** Stato secondo la copia già in memoria (sincrono, nessuna lettura): { set }. */
 export const pinState = () => ({ set: !!cache });
+/** Come pinState().set, ma prima legge il database (una volta per pagina). */
 export async function pinIsSet() { await load(); return !!cache; }
 
 // ─── Troppi errori ───────────────────────────────────────────────────────
+/** Secondi di attesa rimasti dopo troppi errori (0 = si può riprovare). */
 const waitLeft = () => { const f = lsGet(LS_FAIL, { n: 0, until: 0 }); return Math.max(0, Math.ceil((f.until - Date.now()) / 1000)); };
+/** Conta un errore: dal 3° si aspettano 30 s, dal 5° 5 minuti, dal 7° 30 minuti. */
 function failed() {
   const f = lsGet(LS_FAIL, { n: 0, until: 0 }); f.n++;
   if (f.n >= 3) f.until = Date.now() + (f.n >= 7 ? 1800 : f.n >= 5 ? 300 : 30) * 1000;
@@ -124,6 +130,7 @@ export async function requirePin() {
 }
 
 // ─── Gestione dal Profilo ────────────────────────────────────────────────
+/** Foglio del Profilo: imposta, cambia o toglie il PIN; poi avvisa la pagina con l'evento 'zen-pin-changed'. */
 export async function openPinManager() {
   await load();
   const sh = createSheet({ title: 'PIN di download', body: '<div class="stack" id="pm"></div>' });

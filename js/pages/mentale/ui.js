@@ -2,6 +2,7 @@
 import { openSheet, closeSheet } from '../../ui/shell.js';
 export { escapeHtml as esc } from '../../core/dom.js';
 
+/** document.getElementById abbreviato. */
 export const $ = id => document.getElementById(id);
 
 /** Apre un foglio (sheet-a, oppure sheet-b che sta sopra). `build` riempie il corpo. */
@@ -14,6 +15,7 @@ export function showSheet(title, build, id = 'sheet-a') {
   if (sheet) sheet.scrollTop = 0;
   openSheet(id);
 }
+/** Chiude il foglio `id` (sheet-a predefinito). */
 export const hideSheet = (id = 'sheet-a') => closeSheet($(id));
 
 /** Pulsante che chiede conferma con un secondo tocco (niente confirm() del browser). */
@@ -29,9 +31,11 @@ export function armedButton(label, onConfirm, cls = 'btn block danger') {
   return b;
 }
 
+/** Id casuale breve (8 caratteri) per sezioni e voci. */
 export const uid4 = () => Math.random().toString(36).slice(2, 10);
 
 const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+/** Mesi abbreviati ("gen"), giorni abbreviati (0 = domenica, come Date.getDay) e nome del mese dall'indice 0-11. */
 export const MESI_BREVI = MESI.map(m => m.slice(0, 3));
 export const GIORNI_BREVI = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
 export const mese = m => MESI[m];
@@ -39,6 +43,7 @@ export const mese = m => MESI[m];
 const pad = n => String(n).padStart(2, '0');
 /** 'YYYY-MM-DD' (formato dei campi data) di un timestamp. */
 export const dayStr = ts => { const d = new Date(ts); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+/** 'HH:MM' di un timestamp. */
 export const timeStr = ts => { const d = new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 /** '12 ott 2026' */
 export const fmtDay = ts => { const d = new Date(ts); return `${d.getDate()} ${MESI_BREVI[d.getMonth()]} ${d.getFullYear()}`; };

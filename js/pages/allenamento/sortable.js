@@ -7,8 +7,10 @@
  * `isDragging()` è true: chi disegna deve rimandare il ridisegno.
  */
 let drag = null;
+/** true mentre si trascina una riga (in qualsiasi lista). */
 export const isDragging = () => !!drag;
 
+/** Attiva il trascinamento sulle liste dentro `root` (una volta sola: i listener restano su `root`). */
 export function makeSortable(root, onReorder) {
   const clear = () => root.querySelectorAll('.drop-before, .drop-after').forEach(r => r.classList.remove('drop-before', 'drop-after'));
   function update() {

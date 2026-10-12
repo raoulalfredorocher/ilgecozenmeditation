@@ -11,12 +11,14 @@
  */
 
 // ─── Catalogo (usato anche dall'interfaccia) ────────────────────────────────
+/** Campane disponibili: [{ id, label }]. */
 export const BELLS = [
   { id: 'bowl', label: 'Campana tibetana' },
   { id: 'rin',  label: 'Rin giapponese' },
   { id: 'gong', label: 'Gong' },
 ];
 
+/** Sottofondi raggruppati per il selettore: [{ title, items: [{ id, label }] }]; 'silence' = nessun sottofondo. */
 export const SOUND_GROUPS = [
   { title: 'Silenzio', items: [{ id: 'silence', label: 'Silenzio' }] },
   { title: 'Spirito',  items: [
@@ -60,6 +62,7 @@ function makeImpulse(secs, decay) {
   return buf;
 }
 
+/** Buffer stereo di rumore bianco, rosa o marrone (8 s; le sorgenti lo suonano in loop da un punto a caso). */
 function makeNoise(type, secs = 8) {
   const n = Math.floor(ctx.sampleRate * secs);
   const buf = ctx.createBuffer(2, n, ctx.sampleRate);
@@ -123,10 +126,12 @@ export function initAudio() {
   return ctx;
 }
 
+/** Risveglia il contesto audio se il browser l'ha sospeso (iOS dopo il blocco schermo, cuffie collegate o scollegate). */
 export function resumeAudio() {
   if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
 }
 
+/** Volume del sottofondo (0–1) con una breve dissolvenza; viene ricordato anche se l'audio non è ancora partito. */
 export function setAmbientVolume(v) {
   ambVolume = v;
   if (ctx) ambBus.gain.setTargetAtTime(v, ctx.currentTime, 0.05);
@@ -173,6 +178,7 @@ const BELL_DEFS = {
   gong: { f: 98,  ratios: [1, 1.52, 2.24, 2.90, 4.10, 5.45], gains: [0.45, 0.30, 0.30, 0.18, 0.12, 0.07], decays: [15, 12, 10, 8, 5, 3], attack: 0.35, beat: 0.6, mallet: [900, 0.10] },
 };
 
+/** Un colpo di campana al tempo t0 (secondi del contesto audio); vel = forza 0–1. */
 function strike(def, t0, vel = 1) {
   def.ratios.forEach((r, i) => {
     const f = def.f * r;
@@ -238,6 +244,7 @@ function makeTrack() {
   return t;
 }
 
+/** Ricette dei sottofondi: ognuna riceve un track e ci collega sorgenti, filtri e timer. */
 const AMBIENT = {
   // Pioggia: velo di rumore rosa + corpo grave + gocce che cadono a caso
   rain(t) {
@@ -400,6 +407,7 @@ const AMBIENT = {
   },
 };
 
+/** Avvia il sottofondo `id` al posto di quello in corso (con dissolvenza); 'silence' o un id sconosciuto lo spengono e basta. */
 export function startAmbient(id) {
   stopAmbient(1);
   clearTimeout(previewTimer);
@@ -411,6 +419,7 @@ export function startAmbient(id) {
   ambient = { id, t };
 }
 
+/** Spegne il sottofondo con una dissolvenza di `sec` secondi e annulla un'eventuale anteprima. */
 export function stopAmbient(sec = 1.6) {
   clearTimeout(previewTimer);
   if (ambient) { ambient.t.stop(sec); ambient = null; }

@@ -47,6 +47,7 @@ export function setTheme(pref) {
   applyTheme();
 }
 
+/** Applica il tema salvato, il colore della barra di stato e lo stato dei pulsanti del Profilo. */
 function applyTheme() {
   const pref = themePref();
   const dark = pref === 'dark' || (pref === 'auto' && darkQuery.matches);
@@ -118,6 +119,7 @@ function buildTabbar() {
 }
 
 // ─── Pannelli ───────────────────────────────────────────────────────────
+/** Crea un pannello della cornice (overlay con id, chiuso); si apre con openSheet(id). */
 function sheet(id, title, content) {
   const overlay = document.createElement('div');
   overlay.className = 'zen-sheet-overlay';
@@ -427,6 +429,7 @@ let archOpen = false;
 const notifRow = (n, arch) => `<div class="notif-wrap"><div class="notif-bg"><span>${arch ? 'Ripristina' : 'Archivia'}</span><span>Elimina</span></div>
   <div class="list-row notif-row" data-nid="${escapeHtml(n.id)}"><a class="grow" href="${escapeHtml(n.href)}" style="color:inherit"><span style="display:block">${escapeHtml(n.testo)}</span><span class="zen-muted" style="display:block;font-size:var(--fs-xs)">${escapeHtml(n.sub)}</span></a></div></div>`;
 
+/** Ridisegna le notifiche del Profilo e il puntino sull'icona; force = ricalcola senza la copia di 30 minuti. */
 async function refreshNotifiche(force = false) {
   const tab = document.getElementById('zen-tab-profile'), list = document.getElementById('zen-notif-list');
   if (!tab || !list) return;

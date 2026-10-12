@@ -138,6 +138,7 @@ function drawFormCats() {
   $$e('#rf-cats').innerHTML = RECIPE_CATS.map(([v, l]) => `<button type="button" class="pill" data-fcat="${v}" aria-pressed="${formCat === v}">${l}</button>`).join('');
 }
 
+/** Apre il form a tutto schermo: ricetta esistente (`id`) oppure nuova (`null`). */
 export function openEditor(id) {
   editingId = id;
   const r = id ? state.recipes.find(x => x.id === id) : null;
@@ -204,6 +205,7 @@ export async function exportRecipes() {
   await deliver(csvFile(rows, 'ricette.csv'));
 }
 
+/** Azione del + quando la scheda è attiva: nuova ricetta. */
 export const addAction = () => openEditor(null);
 onChange(what => { if (what === 'recipes') render(); });
 render();

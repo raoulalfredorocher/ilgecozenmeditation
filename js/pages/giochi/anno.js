@@ -5,6 +5,7 @@
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 
 const MESI = { gen: 0, feb: 1, mar: 2, apr: 3, mag: 4, giu: 5, lug: 6, ago: 7, set: 8, sett: 8, ott: 9, nov: 10, dic: 11 };
+/** Nomi dei mesi per esteso (indice 0 = gennaio). */
 export const MESI_LUNGHI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 
 /** Data di un feedback → Date oppure null. */
@@ -46,6 +47,7 @@ export function yearData(games, year, platformsOf) {
     best: podium[0] || null,
   };
 }
+/** Anni in cui c'è almeno un feedback datato, dal più recente. */
 export function yearsOf(games) {
   const ys = new Set();
   games.forEach(g => (g.feedbacks || []).forEach(f => { const d = fbDate(f); if (d) ys.add(d.getFullYear()); }));
@@ -55,6 +57,7 @@ export function yearsOf(games) {
 const cover = g => (g.img && safeUrl(g.img) ? `<img src="${esc(safeUrl(g.img))}" alt="" loading="lazy"/>` : `<b>${esc((g.name || '?')[0].toUpperCase())}</b>`);
 const stars = n => '★'.repeat(n || 0) + '☆'.repeat(5 - (n || 0));
 
+/** HTML della pagina "il tuo anno" a partire da yearData(). */
 export function annoHtml(d) {
   if (!d.count) return `<div class="emptyx">Nessun gioco finito nel ${d.year}.<br/>Quando ne finisci uno, lo ritrovi qui.</div>`;
   const max = Math.max(...d.months, 1);

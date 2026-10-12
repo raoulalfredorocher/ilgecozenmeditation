@@ -56,6 +56,7 @@ let flashShown = false;   // moduli collegati in fondo (initTimer, initSeries, i
 const byId = id => items.find(i => String(i.id) === String(id));
 const kindOf = i => i.kind || 'Libro';
 const isManga = i => kindOf(i) === 'Manga';
+/** true se il titolo è nella wish list (non letto e "Da Acquistare", maiuscole a parte). */
 const toBuy = i => !i.done && String(i.purchase || '').toLowerCase() === BUY.toLowerCase();
 const isReading = i => !!i.reading && !i.done;
 const isQueue = i => !i.done && !i.reading;
@@ -64,20 +65,24 @@ const STATUSES = [['all', 'Tutti'], ['unread', 'Non letti'], ['reading', 'Sto le
 const statusOf = i => (i.done ? 'done' : i.reading ? 'reading' : 'unread');
 /** Codice ASIN di un ebook Kindle (inizia per B0) dentro un link Amazon. */
 const kindleAsin = i => { const m = String(i.amazon || '').match(/\/(?:dp|gp\/product|d)\/(B0[A-Z0-9]{8})/i); return m ? m[1].toUpperCase() : ''; };
+/** Link Amazon salvato oppure una ricerca su amazon.it per ISBN o titolo + autore. */
 const amazonUrl = i => safeUrl(i.amazon) || `https://www.amazon.it/s?k=${encodeURIComponent(i.isbn || `${i.title} ${i.author || ''}`.trim())}`;
 
 const STAR = on => `<svg class="fa-star${on ? ' on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.5 6.1 20.7l1.2-6.6L2.5 9.5l6.6-.9z"/></svg>`;
 const stars = n => `<span class="fa-stars" role="img" aria-label="${n || 0} stelle su 5">${[1, 2, 3, 4, 5].map(k => STAR(k <= (n || 0))).join('')}</span>`;
 const PRIO = `<span class="fa-prio" title="Priorità alta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.5 6.1 20.7l1.2-6.6L2.5 9.5l6.6-.9z"/></svg></span>`;
 
+/** Copertina del titolo o l'icona del suo tipo. */
 const cover = (i, cls = '') => {
   const safe = i.img ? safeUrl(i.img) : '';
   return safe ? `<img src="${esc(safe)}" alt="" loading="lazy"/>` : icon(KIND_ICON[kindOf(i)] || 'book', cls);
 };
 const toneOf = i => `tone-${KIND_TONE[kindOf(i)] || 'sand'}`;
+/** "320 pag." per i libri, "24 vol." o "180 cap." per i manga. */
 const sizeLabel = i => isManga(i) ? (i.volumes ? `${i.volumes} vol.` : i.chapters ? `${i.chapters} cap.` : '') : (i.pages ? `${i.pages} pag.` : '');
 
 // ─── Avanzamento ─────────────────────────────────────────────────────────
+/** Avanzamento: pagina (libri) o volume (manga) → { text, pct, done }. */
 function progressOf(i) {
   if (isManga(i)) {
     const v = parseInt(i.vol) || 0, tot = parseInt(i.volumes) || 0;
@@ -87,6 +92,7 @@ function progressOf(i) {
   return { text: p ? `Pagina ${p}${tot ? ` di ${tot}` : ''}` : 'Da iniziare', pct: tot ? Math.min(100, Math.round(p / tot * 100)) : null, done: tot && p >= tot };
 }
 
+/** Salva l'avanzamento; se si è arrivati alla fine chiede se segnarlo come letto. */
 async function setProgress(i, fields) {
   const next = { ...i, ...fields };
   await updateLibroDoc(i._docId, fields);
@@ -95,6 +101,7 @@ async function setProgress(i, fields) {
 const nextVolume = i => setProgress(i, { vol: (parseInt(i.vol) || 0) + 1 });
 
 // ─── Elenchi filtrati ────────────────────────────────────────────────────
+/** true se il titolo passa ricerca e filtri (stato, tipo, etichetta). */
 function matches(i) {
   const q = search.trim().toLowerCase();
   return (statusFilter === 'all' || statusOf(i) === statusFilter) &&
@@ -103,8 +110,10 @@ function matches(i) {
     (!q || [i.title, i.author, i.genre].some(v => String(v || '').toLowerCase().includes(q)));
 }
 const RANK = { reading: 0, unread: 1, done: 2 };
+/** Libreria (senza i da comprare): prima in lettura, poi da leggere, poi letti; la priorità in cima. */
 const libBase = () => items.filter(i => !toBuy(i)).sort((a, b) => (RANK[statusOf(a)] - RANK[statusOf(b)]) || ((b.prio ? 1 : 0) - (a.prio ? 1 : 0)));
 
+/** Filtri per tipo (con i conteggi) ed etichette; azzera un filtro che non ha più titoli. */
 function renderChips(base) {
   const kinds = KINDS.filter(t => base.some(i => kindOf(i) === t));
   if (kindFilter !== 'all' && !kinds.includes(kindFilter)) kindFilter = 'all';
@@ -123,6 +132,7 @@ function renderStatusChips(base) {
   $('fa-status').innerHTML = STATUSES.map(([v, l]) => `<button type="button" data-status="${v}" aria-pressed="${v === statusFilter}">${l} <span class="count">${v === 'all' ? base.length : base.filter(i => statusOf(i) === v).length}</span></button>`).join('');
 }
 
+/** Ridisegna la scheda attiva: libreria (normale o scaffale), anno, maestri, flashcard o da comprare. */
 function render() {
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
   for (const k of ['lib', 'year', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
@@ -151,6 +161,7 @@ function render() {
   timer?.paint();
 }
 
+/** Avvisi "nuovo volume" dei manga (impostati da checkNewVolumes). */
 function renderNews() {
   const news = items.filter(i => i.newVol && !i.done);
   $('lb-news').innerHTML = news.length ? `<div class="fa-now-wrap"><span class="zen-eyebrow">Novità</span>${news.map(i => `
@@ -163,6 +174,7 @@ function renderNews() {
       </div></div>`).join('')}</div>` : '';
 }
 
+/** Libreria: striscia "Stai leggendo" con i pulsanti rapidi e griglia delle copertine. */
 function renderLib(base, list) {
   renderNews();
   const showNow = statusFilter === 'all' || statusFilter === 'reading';
@@ -206,6 +218,7 @@ function renderLib(base, list) {
 
 /** Pulsante "Leggi su Kindle": apre l'app Kindle sul libro; se non si apre, la versione web. */
 const kindleBtn = (i, small = false) => kindleAsin(i) ? `<button type="button" class="btn ${small ? 'sm' : 'block'}" data-kindle="${i.id}">${icon('book', 'sm')} Leggi su Kindle</button>` : '';
+/** Prova ad aprire l'app Kindle; se dopo 1,6 s la pagina è ancora visibile apre Kindle web. */
 function openKindle(i) {
   const asin = kindleAsin(i); if (!asin) return;
   const web = `https://read.amazon.it/?asin=${asin}`;
@@ -214,6 +227,7 @@ function openKindle(i) {
   setTimeout(() => { if (!document.hidden && Date.now() - t0 < 2500) window.open(web, '_blank', 'noopener'); }, 1600);
 }
 
+/** Statistiche "il tuo anno" con la scelta dell'anno. */
 function renderStatsView() {
   const years = statsYears(items);
   if (!years.length) {
@@ -226,6 +240,7 @@ function renderStatsView() {
   $('fa-statsbody').innerHTML = statsHtml(items, statsYear, 0);
 }
 
+/** Wish list: link ad Amazon, "nella lista Amazon" e "Comprato". */
 function renderBuy() {
   const list = items.filter(toBuy);
   $('fa-buy-count').textContent = list.length ? `${list.length} da comprare` : '';
@@ -262,6 +277,7 @@ const confirmSheet = createSheet({
 });
 confirmSheet.$('#cf-ok').addEventListener('click', () => { confirmValue = true; confirmSheet.close(); });
 confirmSheet.$('#cf-no').addEventListener('click', () => confirmSheet.close());
+/** Conferma a foglio: si risolve con true se si tocca il pulsante, false se si chiude. */
 function askConfirm(title, text, label, danger = false) {
   confirmValue = false;
   confirmSheet.setTitle(title);
@@ -291,6 +307,7 @@ fbSheet.$('#fb-stars').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (b) { fbStars = Number(b.dataset.v); paintStars(); }
 });
+/** Foglio voto + nota: per un titolo non letto lo segna come letto, per uno già letto modifica voto e nota. */
 function openFeedback(item) {
   fbItem = item; fbStars = item.done ? (item.stars || 0) : 0; paintStars();
   fbSheet.setTitle(item.done ? 'Il tuo voto' : item.title);
@@ -327,6 +344,7 @@ const pageSheet = createSheet({
     <div class="zen-sheet-actions"><button class="btn primary block" type="button" id="pg-save">Salva</button></div>
   </div>`,
 });
+/** Imposta la pagina nel foglio (limitata alle pagine del libro) tenendo allineati numero, cursore e campo. */
 const pgSet = v => {
   const max = parseInt(pageItem.pages) || 5000;
   v = Math.max(0, Math.min(max, Math.round(v) || 0));
@@ -334,6 +352,7 @@ const pgSet = v => {
   pageSheet.$('#pg-range').value = v;
   pageSheet.$('#pg-input').value = v || '';
 };
+/** Foglio "A che pagina sei?" per un libro in lettura. */
 function openPageSheet(item) {
   pageItem = item;
   const tot = parseInt(item.pages) || 0;
@@ -356,6 +375,7 @@ pageSheet.$('#pg-save').addEventListener('click', async () => {
 const detail = createSheet({ body: '' });
 let detailId = null;
 
+/** Riempie il dettaglio: dati, serie, ritmo di lettura, nota, avanzamento e azioni secondo lo stato. */
 function fillDetail(item) {
   detailId = item.id;
   detail.setTitle('');
@@ -448,6 +468,7 @@ const tonight = createSheet({
     <div id="tn-result"></div>
   </div>`,
 });
+/** Titoli da leggere adatti ai filtri di lunghezza ed etichetta. */
 function tonightPool() {
   return items.filter(isQueue).filter(i => {
     const p = parseInt(i.pages) || 0;
@@ -458,6 +479,7 @@ function tonightPool() {
     return true;
   }).filter(i => tnTag === 'all' || (i.tags || []).includes(tnTag));
 }
+/** Propone un titolo a caso (la priorità alta conta tre volte); reroll = true ne sceglie un altro. */
 function drawTonight(reroll = false) {
   tonight.$$('#tn-len button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === tnLen)));
   const tags = [...new Set(items.filter(isQueue).flatMap(i => i.tags || []))];
@@ -489,6 +511,7 @@ tonight.$('#tn-len').addEventListener('click', e => { const b = e.target.closest
 tonight.$('#tn-tags').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tnTag = b.dataset.v; drawTonight(true); } });
 
 // ─── Nuovo / modifica ────────────────────────────────────────────────────
+/** Campi che arrivano dalla ricerca online e si conservano nel titolo. */
 const ONLINE_KEYS = ['year', 'plot', 'isbn', 'olKey', 'anilistId', 'volumes', 'chapters', 'status'];
 let edAudible = false;
 let editing = null, img = null, meta = {}, edKind = 'Libro', edFormat = 'Cartaceo', edLang = 'Italiano', edBuy = OWNED, edTags = new Set(), edPrio = false;
@@ -531,6 +554,7 @@ const editor = createSheet({
   </form>`,
 });
 const pick = (id, value) => editor.$$(`#${id} button`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === value)));
+/** Cambia tipo nel modulo: i manga hanno i volumi, gli altri le pagine. */
 const setKind = k => {
   edKind = k; pick('ed-kind', k);
   editor.$('#ed-pages-f').hidden = k === 'Manga';
@@ -649,6 +673,7 @@ editor.$('#ed-scan').addEventListener('click', async () => {
   }
 });
 
+/** Modulo titolo, nuovo (item = null) o esistente; asWish = true lo propone già come "da comprare". */
 function openEditor(item = null, asWish = false) {
   editing = item;
   img = item?.img || null;
@@ -716,6 +741,7 @@ const goalSheet = createSheet({
     <div class="zen-sheet-actions"><button class="btn primary block" type="submit">Salva</button></div>
   </form>`,
 });
+/** Foglio dell'obiettivo di titoli per l'anno mostrato (salvato in locale e in direction/libri_goal). */
 function openGoal() {
   goalSheet.$('#gl-text').textContent = `Quanti libri e manga vuoi leggere nel ${statsYear}?`;
   goalSheet.$('#gl-n').value = goals[statsYear] || '';
@@ -734,6 +760,7 @@ try { goals = JSON.parse(localStorage.getItem('zen_book_goals') || '{}'); } catc
 
 // ─── Esporta CSV ─────────────────────────────────────────────────────────
 const csvQ = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+/** Scarica in CSV (separatore ;) i titoli dello stato filtrato. */
 function exportCsv() {
   const read = statusFilter === 'done';
   const rows = items.filter(i => (statusFilter === 'all' ? true : read ? i.done : statusOf(i) === statusFilter));
@@ -798,6 +825,10 @@ document.addEventListener('click', e => {
 $('fa-q').addEventListener('input', e => { search = e.target.value; render(); });
 
 // ─── Novità sui volumi dei manga (AniList, al massimo ogni 12 ore) ───────
+/**
+ * Controlla su AniList (al massimo ogni 12 ore) volumi, capitoli e stato dei manga non conclusi
+ * e segnala un nuovo volume sul libro della serie con il numero più alto.
+ */
 async function checkNewVolumes() {
   let last = 0; try { last = Number(localStorage.getItem('zen_vol_check') || 0); } catch { /* ok */ }
   if (Date.now() - last < 12 * 36e5 || navigator.onLine === false) return;
@@ -826,6 +857,7 @@ async function checkNewVolumes() {
 }
 
 // ─── Avvio ───────────────────────────────────────────────────────────────
+/** Funzioni della pagina condivise con i moduli (timer, serie, appunti, flashcard, maestri, copertine). */
 const ctx = {
   items: () => items, byId, update: updateLibroDoc, add: addLibroDoc, askConfirm, isManga, stars,
   setProgress, openDetail: id => openDetail(byId(id)),

@@ -11,6 +11,7 @@ import { escapeHtml } from '../core/dom.js';
 
 let openCount = 0;
 
+/** Crea un pannello e lo aggiunge alla pagina (resta nel DOM anche da chiuso). Restituisce { el, sheet, $, $$, setTitle, setBody, open, close, isOpen }. */
 export function createSheet({ title = '', body = '', className = '', onClose } = {}) {
   const overlay = document.createElement('div');
   overlay.className = 'zen-sheet-overlay';
