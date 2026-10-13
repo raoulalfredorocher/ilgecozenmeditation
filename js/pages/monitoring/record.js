@@ -1,6 +1,6 @@
 /**
  * record.js — Livello e sfide (il ciliegio che cresce), i tuoi migliori giorni (orologio, allenamenti, meditazione)
- * e i record storici che ricordi tu (es. un giorno a Kyoto).
+ * e i record storici che ricordi tu (es. un giorno a Kyoto). È la scheda "Record e sfide" di calendario.html.
  */
 import { waitForUser } from '../../core/auth-guard.js';
 import { db, auth } from '../../core/db.js';
@@ -147,4 +147,11 @@ root.addEventListener('click', async e => {
 });
 
 render();
-waitForUser().then(async () => { D = await loadAll({ cache: true }); render(); D = await loadAll(); render(); L = await carica(D); try { localStorage.setItem('zen_sfide_prog', JSON.stringify({ level: L.level, done: L.ch.filter(c => c.done).length })); } catch { /* ok */ } render(); });
+// Nella pagina Calendario è una scheda: i dati si caricano la prima volta che la si apre.
+let avviato = false;
+function avvia() {
+  if (avviato) return; avviato = true;
+  waitForUser().then(async () => { D = await loadAll({ cache: true }); render(); D = await loadAll(); render(); L = await carica(D); try { localStorage.setItem('zen_sfide_prog', JSON.stringify({ level: L.level, done: L.ch.filter(c => c.done).length })); } catch { /* ok */ } render(); });
+}
+if (window.calTab === 'record') avvia();
+window.addEventListener('cal:tab', e => { if (e.detail === 'record') avvia(); });

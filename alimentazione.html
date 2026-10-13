@@ -303,6 +303,19 @@
     .sp-check[aria-pressed="true"] ~ * { opacity: .55; }
     #tab-spesa .list { background: none; border: 0; box-shadow: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
     #tab-spesa .sp-row { border: .5px solid var(--border); border-radius: var(--radius-md); background: var(--card); border-top: .5px solid var(--border); }
+    /* Risultati: bilancio del giorno e medie 7/30/90 nella scheda Calorie */
+    .rs-bal { margin: var(--space-2) 0 var(--space-4); }
+    .rs-bal-h { display: flex; flex-direction: column; gap: 2px; }
+    .rs-bal-h > span:first-child { font-size: var(--fs-xs); color: var(--muted); }
+    .rs-bal-h > span:first-child::first-letter { text-transform: uppercase; }
+    .rs-bal-h b { font-size: 2.5rem; font-weight: 200; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .rs-bal-h b small { font-size: var(--fs-sm); font-weight: 400; letter-spacing: 0; color: var(--muted); }
+    .rs-bal .dn { color: var(--geco-blue); } .rs-bal .up { color: var(--warning, #D9A441); }
+    .rs-bal-avg { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-3); }
+    .rs-bal-avg > div { display: flex; flex-direction: column; gap: 1px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: color-mix(in srgb, var(--card) 70%, transparent); border: .5px solid var(--border); }
+    .rs-bal-avg b { font-size: 1.375rem; font-weight: 300; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .rs-bal-avg span { font-size: .6875rem; color: var(--muted); line-height: 1.3; }
+    .rs-sub { margin: var(--space-5) 0 var(--space-2); }
   </style>
 </head>
 <!--

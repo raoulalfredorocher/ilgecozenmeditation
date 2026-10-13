@@ -10,11 +10,12 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" href="assets/icons/favicon-48.png"/>
-  <title>Il Geco Zen — Il mio mese</title>
+  <title>Il Geco Zen — Calendario</title>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
   <link rel="stylesheet" href="styles/sessione.css"/>
+  <link rel="stylesheet" href="styles/salute-dettaglio.css"/>
   <style>
     .cm-card { background: var(--card); border: .5px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-4) var(--space-4); box-shadow: var(--shadow-sm); }
     .cm-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
@@ -69,10 +70,42 @@
     .cm-add { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-4); }
     .cm-add button { height: 34px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--surface); color: var(--text); font-size: var(--fs-sm); font-weight: 500; cursor: pointer; }
     .cm-export { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-2) 0 var(--space-6); }
-    .cm-open { display: block; text-align: center; margin-top: var(--space-5); font-size: var(--fs-sm); font-weight: 600; color: var(--geco-blue); text-decoration: none; }
+    .cm-sum { margin-top: var(--space-4); }
+    .cm-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); text-align: left; }
+    .cm-tiles > div { display: flex; flex-direction: column; gap: 1px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--surface); }
+    .cm-tiles b { font-size: 1.5rem; font-weight: 300; letter-spacing: -.02em; line-height: 1.15; color: var(--text); font-variant-numeric: tabular-nums; }
+    .cm-tiles span { font-size: .6875rem; color: var(--muted); line-height: 1.35; }
+    .cm-sum-x { margin-top: var(--space-2); }
+    .cm-view { display: flex; justify-content: center; margin-bottom: var(--space-3); }
+    .cm-view .segmented > button { min-height: 32px; padding: 0 18px; font-size: var(--fs-sm); }
+    .cm-grid.week .cm-day { height: 74px; }
+    .cm-wk-steps { font-size: .625rem; color: var(--muted); font-weight: 500; }
+    .cm-day.sel .cm-wk-steps { color: var(--geco-blue); }
+    .tab-panel[hidden] { display: none; }
+    .tab-panel { display: flex; flex-direction: column; gap: var(--space-3); }
+    #tab-calendario { gap: var(--space-4); }
+    /* Grafici e Record */
+
+    .gz-sec { display: flex; flex-direction: column; gap: var(--space-3); }
+    .gz-sec > .cap { font-size: .6875rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin: var(--space-4) 0 0; }
+    .gz-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) 0; border-top: .5px solid var(--border); font-size: var(--fs-sm); }
+    .gz-row:first-of-type { border-top: 0; }
+    .gz-row .del { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: var(--fs-lg); padding: 4px 8px; }
+    .gz-add { display: flex; gap: 8px; flex-wrap: wrap; }
+    .gz-add button { height: 36px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--surface); color: var(--text); font-size: var(--fs-sm); font-weight: 500; cursor: pointer; }
+    .gz-add button.pri { background: var(--text); color: var(--bg); }
+    .gz-goal { padding: var(--space-3) 0; border-top: .5px solid var(--border); }
+    .gz-goal:first-of-type { border-top: 0; }
+    .gz-goal-h { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--fs-sm); }
+    .gz-bar { height: 6px; border-radius: 99px; background: var(--surface); margin: 8px 0 4px; overflow: hidden; }
+    .gz-bar i { display: block; height: 100%; border-radius: 99px; background: var(--success); }
+    .gz-cmp { margin-top: 6px; }
+    .zen-sheet .field { gap: 0; } .zen-sheet .stack { gap: var(--space-4); }
+    .zen-sheet .input, .zen-sheet select { width: 100%; min-height: 48px; }
+      .cm-open { display: block; text-align: center; margin-top: var(--space-5); font-size: var(--fs-sm); font-weight: 600; color: var(--geco-blue); text-decoration: none; }
   </style>
 </head>
-<body class="zen zen-native" data-title="Il mio mese" data-back="monitoring.html">
+<body class="zen zen-native" data-title="Calendario" data-back="monitoring.html">
   <script type="module" src="js/core/auth-guard.js"></script>
   <script type="module" src="js/ui/shell.js"></script>
 
@@ -81,21 +114,36 @@
   </template>
 
   <main class="zen-main">
-    <section class="cm-card" aria-label="Calendario">
-      <div class="cm-head">
-        <button type="button" class="icon-btn" id="cm-prev" aria-label="Mese precedente"></button>
-        <div style="text-align:center"><div class="cm-month" id="cm-month"></div><button type="button" class="cm-today" id="cm-today">Oggi</button></div>
-        <button type="button" class="icon-btn next" id="cm-next" aria-label="Mese successivo"></button>
+    <div class="page-tabs">
+      <div class="segmented" role="group" aria-label="Sezioni del calendario">
+        <button type="button" data-tab-btn="calendario" aria-pressed="true">Calendario</button>
+        <button type="button" data-tab-btn="grafici" aria-pressed="false">Grafici</button>
+        <button type="button" data-tab-btn="record" aria-pressed="false">Record e sfide</button>
       </div>
-      <div class="cm-filters" id="cm-filters" role="group" aria-label="Aree da mostrare"></div>
-      <div class="cm-grid" id="cm-grid"></div>
-      <div class="cm-sum" id="cm-sum"></div>
+    </div>
+
+    <section class="tab-panel" id="tab-calendario" aria-label="Calendario">
+      <section class="cm-card" aria-label="Calendario">
+        <div class="cm-view"><div class="segmented" role="group" aria-label="Vista"><button type="button" data-view="mese" aria-pressed="true">Mese</button><button type="button" data-view="settimana" aria-pressed="false">Settimana</button></div></div>
+        <div class="cm-head">
+          <button type="button" class="icon-btn" id="cm-prev" aria-label="Mese precedente"></button>
+          <div style="text-align:center"><div class="cm-month" id="cm-month"></div><button type="button" class="cm-today" id="cm-today">Oggi</button></div>
+          <button type="button" class="icon-btn next" id="cm-next" aria-label="Mese successivo"></button>
+        </div>
+        <div class="cm-filters" id="cm-filters" role="group" aria-label="Aree da mostrare"></div>
+        <div class="cm-grid" id="cm-grid"></div>
+        <div class="cm-sum" id="cm-sum"></div>
+      </section>
+
+      <section class="cm-card" id="cm-day" aria-live="polite"></section>
     </section>
 
-    <section class="cm-card" id="cm-day" aria-live="polite"></section>
-
+    <section class="tab-panel gz-sec" id="tab-grafici" aria-label="Grafici" hidden><div class="gz-sec" id="gz-root"></div></section>
+    <section class="tab-panel gz-sec" id="tab-record" aria-label="Record e sfide" hidden><div class="gz-sec" id="rc-root"></div></section>
   </main>
 
   <script type="module" src="js/pages/calendario/main.js"></script>
+  <script type="module" src="js/pages/monitoring/grafici.js"></script>
+  <script type="module" src="js/pages/monitoring/record.js"></script>
 </body>
 </html>

@@ -221,6 +221,7 @@
     .al-watch { color: var(--tn2); font-variant-numeric: tabular-nums; }
     .al-day { grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); }
     .al-day .bn b { font-size: 1.75rem; }
+    .al-cal { display: block; text-align: center; font-size: var(--fs-sm); font-weight: 600; color: var(--geco-blue); text-decoration: none; padding: var(--space-5) 0 var(--space-6); }
   </style>
 </head>
 <!--
@@ -242,13 +243,15 @@
   <main class="zen-main">
     <div class="page-tabs">
       <div class="segmented" role="group" aria-label="Sezioni di Allenamento">
-        <button type="button" data-tab-btn="schede" aria-pressed="false">Schede</button>
-        <button type="button" data-tab-btn="avvia" aria-pressed="true">Avvia</button>
+        <button type="button" data-tab-btn="schede" aria-pressed="true">Schede</button>
+        <button type="button" data-tab-btn="avvia" aria-pressed="false">Avvia</button>
       </div>
     </div>
 
-    <section class="tab-panel" id="tab-schede" aria-label="Schede" hidden></section>
-    <section class="tab-panel" id="tab-avvia" aria-label="Avvia"></section>
+    <section class="tab-panel" id="tab-schede" aria-label="Schede"></section>
+    <section class="tab-panel" id="tab-avvia" aria-label="Avvia" hidden></section>
+
+    <a class="al-cal" href="calendario.html">Gli allenamenti che hai fatto sono nel Calendario ›</a>
 
     <button type="button" id="al-add" hidden aria-hidden="true" tabindex="-1"></button>
   </main>

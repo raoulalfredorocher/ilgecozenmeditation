@@ -11,12 +11,12 @@ import { flushPending } from './guida.js';
 import { openScarica } from './scarica.js';
 
 const TABS = { schede, avvia };
-let current = 'avvia';
+let current = 'schede';
 
 const MENU = { schede: [['Scarica gli allenamenti…', openScarica]], avvia: [['Scarica gli allenamenti…', openScarica]] };
 
 function showTab(name) {
-  if (!TABS[name]) name = 'avvia';
+  if (!TABS[name]) name = 'schede';
   current = name;
   document.querySelectorAll('[data-tab-btn]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tabBtn === name)));
   document.querySelectorAll('.tab-panel').forEach(p => { p.hidden = p.id !== 'tab-' + name; });
@@ -49,7 +49,7 @@ document.getElementById('al-more')?.addEventListener('click', () => {
 // Dopo una sessione guidata: si va al registro, sul giorno appena salvato
 window.addEventListener('al:saved', e => { location.href = `calendario.html?d=${e.detail.data}`; });
 
-showTab(location.hash.slice(1) || 'avvia');
+showTab(location.hash.slice(1) || 'schede');
 waitForUser().then(() => {
   startSync();
   // i salvataggi rimasti in sospeso si ritentano appena il registro è caricato (così non si duplicano)

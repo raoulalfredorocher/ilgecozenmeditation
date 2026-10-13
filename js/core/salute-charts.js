@@ -16,13 +16,13 @@ export const hm = m => `${Math.floor(m / 60)}h${String(Math.round(m % 60)).padSt
 export const dkey = dateKey;
 /** Gli ultimi n giorni, dal più vecchio a oggi. */
 export const lastDays = n => Array.from({ length: n }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (n - 1 - i)); return dkey(d); });
-const short = k => { const [, m, d] = k.split('-'); return `${+d}/${+m}`; };
+export const short = k => { const [, m, d] = k.split('-'); return `${+d}/${+m}`; };
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
-const dowOf = k => { const [y, m, d] = k.split('-').map(Number); return DOW[(new Date(y, m - 1, d).getDay() + 6) % 7]; };
-const longDay = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }); };
+export const dowOf = k => { const [y, m, d] = k.split('-').map(Number); return DOW[(new Date(y, m - 1, d).getDay() + 6) % 7]; };
+export const longDay = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }); };
 
 /** Asse con valori tondi: restituisce { min, max, ticks }. */
-function niceScale(lo, hi, count = 4) {
+export function niceScale(lo, hi, count = 4) {
   if (hi <= lo) hi = lo + 1;
   const raw = (hi - lo) / count, mag = 10 ** Math.floor(Math.log10(raw));
   const step = [1, 2, 2.5, 5, 10].map(f => f * mag).find(x => x >= raw);
@@ -147,7 +147,8 @@ export function chart(m, days, hd) {
   const maxI = vals.indexOf(stats.max);
   if (n > 1 && maxI !== lastI && stats.max > last * 1.04) g += `<text x="${cx(maxI).toFixed(1)}" y="${(y(stats.max) - 7).toFixed(1)}" font-size="10" fill="var(--muted)" text-anchor="middle">${m.fmt(stats.max)}</text>`;
   // asse x: al massimo 6 etichette, senza sovrapporre l'ultima
-  const every = Math.max(1, Math.ceil(n / 6)), idx = new Set([n - 1]);
+  // a 7-8 giorni un'etichetta per ogni barra (giorno della settimana e data), altrimenti al massimo 6
+  const every = n <= 8 ? 1 : Math.max(1, Math.ceil(n / 6)), idx = new Set([n - 1]);
   for (let i = 0; i < n; i += every) if (n - 1 - i >= every * 0.6) idx.add(i);
   g += [...idx].map(i => n <= 8
     ? `<text x="${cx(i).toFixed(1)}" y="${H - 22}" font-size="10" font-weight="600" fill="var(--muted)" text-anchor="middle">${dowOf(days[i])}</text><text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`
