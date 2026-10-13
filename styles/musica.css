@@ -63,6 +63,8 @@ body.has-player .zen-main { padding-bottom: calc(var(--space-6) + 96px); }
 .beats { display: flex; justify-content: center; gap: 10px; margin: var(--space-2) 0; }
 .beats i { width: 16px; height: 16px; border-radius: 50%; background: var(--border); transition: background .05s, transform .05s; }
 .beats i.on { background: var(--tn2); transform: scale(1.35); } .beats i.on.first { background: var(--tn1); }
+.beats i.first { box-shadow: 0 0 0 2px color-mix(in srgb, var(--tn1) 45%, transparent); }
+.beats.b6 i:nth-child(4) { margin-left: 14px; }
 .strings { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .strings button { width: 64px; height: 64px; border-radius: 50%; border: 0; cursor: pointer; background: linear-gradient(135deg, color-mix(in srgb, var(--tn1) 22%, var(--card)), color-mix(in srgb, var(--tn1) 6%, var(--card))); color: var(--text); font: 600 1.1rem var(--font); display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .strings button small { font: 400 .625rem var(--font); color: var(--muted); }
