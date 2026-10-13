@@ -9,8 +9,8 @@
  *   ▭▭▭▭  rettangolo a tutta larghezza
  *   ▭ ▯   due rettangoli piccoli a sinistra e un quadrato alto a destra
  *   ▭▭▭▭  …
- * Con 9 voci la composizione si chiude perfettamente. Se ce ne sono di più o di meno,
- * le ultime vanno a tutta larghezza. Stile in zen.css → .hc.
+ * Con 9 voci la composizione si chiude perfettamente. Le voci in più vanno a coppie
+ * di quadrati alti affiancati (▯ ▯); se ne resta una sola va a tutta larghezza. Stile in zen.css → .hc.
  */
 import { escapeHtml } from '../core/dom.js';
 import { icon } from './icons.js';
@@ -34,7 +34,11 @@ function place(entries) {
     else out.push({ e: a, kind: 'h', css: `grid-column:1;grid-row:${row}` }, { e: c, kind: 'h', css: `grid-column:1;grid-row:${row + 1}` }, { e: d, kind: 't', css: `grid-column:2;grid-row:${row}/span 2` });
     row += 2;
   }
-  while (i < entries.length) { out.push({ e: take(), kind: 'w', css: `grid-column:1/-1;grid-row:${row}` }); row += 1; }
+  while (entries.length - i >= 2) {
+    out.push({ e: take(), kind: 't', css: `grid-column:1;grid-row:${row}/span 2` }, { e: take(), kind: 't', css: `grid-column:2;grid-row:${row}/span 2` });
+    row += 2;
+  }
+  if (i < entries.length) out.push({ e: take(), kind: 'w', css: `grid-column:1/-1;grid-row:${row}` });
   return out;
 }
 
