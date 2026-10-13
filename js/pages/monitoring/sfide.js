@@ -128,7 +128,7 @@ export async function cambia(D, index, id) {
   return carica(D);
 }
 
-/** Annaffia il ciliegio: dopo un livello nuovo, l'albero cresce fino al livello raggiunto. */
+/** Annaffia il ciliegio (da solo, dopo la festa del livello completato): l'albero cresce fino al livello raggiunto. */
 export async function innaffia() {
   const ref = userDoc('direction', 'sfide'), s = (await getDoc(ref)).data();
   if (!s) return null;

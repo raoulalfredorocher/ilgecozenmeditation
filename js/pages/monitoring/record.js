@@ -57,13 +57,12 @@ function livello() {
   const fmtV = c => (c.id === 'meditazMin' ? `${it(c.value)} / ${it(c.n)} min` : `${it(c.value)} / ${it(c.n)}`);
   const gocce = `<div class="lv-drops" aria-label="${fatte} sfide su 3">${[0, 1, 2].map(i => `<svg viewBox="0 0 12 16" width="14" height="19"><path d="M6 1q-5 6.5 -5 9.5a5 5 0 0 0 10 0q0 -3 -5 -9.5z" fill="${i < fatte ? 'var(--sakura)' : 'none'}" stroke="var(--sakura)" stroke-width="1.1" opacity="${i < fatte ? 1 : .5}"/></svg>`).join('')}</div>`;
   return `<div class="lv-zen">
-    ${L.nuovoLivello ? `<div class="lv-up">Sei salito al livello ${L.level}.</div>` : ''}
-    <div class="lv-top"><div><div class="lv-eyebrow">桜 · il tuo ciliegio</div><div class="lv-num">${vis}</div><div class="lv-name">${esc(L.nome)}</div></div>${gocce}</div>
+    ${L.nuovoLivello && !daInnaffiare ? `<div class="lv-up">Livello ${L.level - 1} completato: ora sei al livello ${L.level}.</div>` : ''}
+    <div class="lv-top"><div><div class="lv-eyebrow">桜 · il tuo ciliegio</div><div class="lv-num${cresciuto ? ' pop' : ''}">${vis}</div><div class="lv-name">${esc(L.nome)}</div></div>${gocce}</div>
     <div class="lv-tree${cresciuto ? ' grow' : ''}">${alberoSVG(vis, { pioggia: acqua })}</div>
     ${daInnaffiare
-      ? `<button type="button" class="lv-water" data-innaffia${acqua ? ' disabled' : ''}><svg viewBox="0 0 12 16" width="13" height="17" aria-hidden="true"><path d="M6 1q-5 6.5 -5 9.5a5 5 0 0 0 10 0q0 -3 -5 -9.5z" fill="currentColor"/></svg>${acqua ? 'Sto innaffiando…' : `Innaffia il ciliegio · livello ${L.level}`}</button>
-         <p class="lv-hint">Hai completato le tre sfide: innaffia la pianta e vedrai crescere il ciliegio.</p>`
-      : `<p class="lv-hint">Completa 3 sfide per salire al livello ${L.level + 1}${L.next ? ` · dal livello ${L.next[0]} sarai un ${esc(L.next[1]).toLowerCase()}` : ''}.</p>`}
+      ? `<p class="lv-hint">${acqua ? 'Il ciliegio beve…' : 'Tre sfide completate: il ciliegio sta per crescere.'}</p>`
+      : `<p class="lv-hint">Completa 3 sfide per salire al livello ${L.level + 1}${L.next ? ` · al livello ${L.next[0]} diventa «${esc(L.next[1])}»` : ''}.</p>`}
     <div class="lv-ch">${L.ch.map((c, i) => `<div class="lv-row${c.done ? ' done' : ''}"><div class="lv-row-h"><span><span class="lv-cat">${cat[c.cat]}</span><br>${c.done ? '✓ ' : ''}<b>${esc(c.text)}</b></span>
         ${!c.done ? `<button type="button" class="text-btn" data-cambia="${i}" style="color:var(--muted);font-weight:400;flex-shrink:0">Cambia</button>` : ''}</div>
         <div class="lv-bar"><i style="width:${Math.round(c.value / c.n * 100)}%"></i></div><div class="s">${c.done ? 'Fatta' : fmtV(c)}</div></div>`).join('')}</div>
@@ -125,15 +124,44 @@ function render() {
     <div class="gz-sec"><div class="cap">Record storici</div>${storiciCard()}</div>`;
 }
 
+// ─── Livello completato: festa, poi il ciliegio beve e cresce da solo ─────
+const attesa = ms => new Promise(r => setTimeout(r, ms));
+const PETALI = Array.from({ length: 26 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${((i * 0.23) % 2.4).toFixed(2)}s;animation-duration:${(3.2 + (i % 5) * 0.45).toFixed(2)}s;--dx:${((i % 7) - 3) * 14}px"></i>`).join('');
+/** Schermata "Hai completato il livello N" (si chiude da sola o con un tocco). */
+function festa(fatto, nuovo, nome) {
+  return new Promise(resolve => {
+    const el = document.createElement('div');
+    el.className = 'lv-festa';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-live', 'assertive');
+    el.innerHTML = `<div class="lv-festa-petali" aria-hidden="true">${PETALI}</div>
+      <div class="lv-festa-box"><div class="lv-eyebrow">桜 · tre sfide su tre</div>
+        <div class="lv-festa-t">Hai completato<br>il livello ${fatto}</div>
+        <div class="lv-festa-n">${nuovo}</div><div class="lv-name">${esc(nome)}</div>
+        <p class="lv-hint">Il ciliegio beve e cresce. Tre nuove sfide ti aspettano.</p>
+        <button type="button" class="btn btn-primary">Guarda il ciliegio</button></div>`;
+    document.body.appendChild(el);
+    try { navigator.vibrate?.([40, 60, 40, 60, 120]); } catch { /* ok */ }
+    requestAnimationFrame(() => el.classList.add('on'));
+    let chiuso = false;
+    const chiudi = () => { if (chiuso) return; chiuso = true; el.classList.remove('on'); setTimeout(() => { el.remove(); resolve(); }, 350); };
+    el.addEventListener('click', chiudi);
+    setTimeout(chiudi, 4200);
+  });
+}
+let inFesta = false;
+async function celebra() {
+  if (inFesta || !L || L.level <= L.grown) return;
+  inFesta = true;
+  await festa(L.level - 1, L.level, L.nome);
+  root.querySelector('.lv-tree')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  acqua = true; render();
+  await attesa(2000);
+  await innaffia(); L.grown = L.level; L.nuovoLivello = true; acqua = false; cresciuto = true; render();
+  await attesa(2500); cresciuto = false; inFesta = false;
+}
+
 let armed = null;
 root.addEventListener('click', async e => {
-  if (e.target.closest('[data-innaffia]') && !acqua) {
-    acqua = true; render();
-    await new Promise(r => setTimeout(r, 1900));
-    await innaffia(); L.grown = L.level; acqua = false; cresciuto = true; render();
-    setTimeout(() => { cresciuto = false; }, 2500);
-    return;
-  }
   const cb = e.target.closest('[data-cambia]');
   if (cb) return apriCambio(+cb.dataset.cambia);
   if (e.target.closest('[data-sadd]')) { sheet.$('#rs-v').value = ''; sheet.$('#rs-nota').value = ''; sheet.$('#rs-d').value = ''; return sheet.open(); }
@@ -151,7 +179,7 @@ render();
 let avviato = false;
 function avvia() {
   if (avviato) return; avviato = true;
-  waitForUser().then(async () => { D = await loadAll({ cache: true }); render(); D = await loadAll(); render(); L = await carica(D); try { localStorage.setItem('zen_sfide_prog', JSON.stringify({ level: L.level, done: L.ch.filter(c => c.done).length })); } catch { /* ok */ } render(); });
+  waitForUser().then(async () => { D = await loadAll({ cache: true }); render(); D = await loadAll(); render(); L = await carica(D); try { localStorage.setItem('zen_sfide_prog', JSON.stringify({ level: L.level, done: L.ch.filter(c => c.done).length })); } catch { /* ok */ } render(); celebra(); });
 }
 if (window.calTab === 'record') avvia();
 window.addEventListener('cal:tab', e => { if (e.detail === 'record') avvia(); });

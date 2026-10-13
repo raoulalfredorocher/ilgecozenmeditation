@@ -66,7 +66,7 @@ export function sleepCard(days, hd) {
   if (!real.length) return '';
   const sc = niceScale(0, Math.max(...real, 540) / 60, 4), y = v => P.t + ih * (1 - v / 60 / sc.max);
   const slot = iw / n, cx = i => P.l + slot * (i + 0.5), bw = Math.min(22, slot * 0.64);
-  let g = `<rect x="${P.l}" y="${y(540).toFixed(1)}" width="${iw}" height="${(y(420) - y(540)).toFixed(1)}" fill="var(--success)" opacity=".09"/><text x="${P.l + 4}" y="${(y(540) + 11).toFixed(1)}" font-size="9.5" fill="var(--muted)">obiettivo 7–9 h</text>`;
+  let g = `<rect x="${P.l}" y="${y(540).toFixed(1)}" width="${iw}" height="${(y(420) - y(540)).toFixed(1)}" fill="var(--success)" opacity=".09"/>`;   // l'etichetta della fascia sta nella legenda: dentro il grafico la coprirebbero le barre
   g += yGrid(sc, v => y(v * 60), P.l, P.r, v => `${v} h`);
   g += vals.map((v, i) => (v == null ? '' : bar(cx(i) - bw / 2, y(v), bw, y(0), SLEEP_COL(q[i])))).join('');
   if (n <= 14) g += vals.map((v, i) => (v == null || q[i] == null ? '' : `<text x="${cx(i).toFixed(1)}" y="${(y(v) - 4).toFixed(1)}" font-size="9" fill="var(--muted)" text-anchor="middle">${q[i]}</text>`)).join('');
@@ -79,7 +79,7 @@ export function sleepCard(days, hd) {
   return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">Sonno: durata e qualità</div><div class="gz-big">${hm(vals[vals.length - 1] ?? real[real.length - 1])}${q[q.length - 1] != null ? ` <small>· ${q[q.length - 1]}/100</small>` : ''}</div></div></div>
     <p class="gz-story">${story}</p>${svg(H, g, `Durata del sonno colorata dalla qualità. ${story}`, ' data-m="sonno"')}
     <div class="gz-readout" data-default="">Tocca una notte per aprire i dettagli: orari, risvegli, fasi.</div>
-    <div class="gz-legend"><span><i style="background:var(--success)"></i>qualità 80+</span><span><i style="background:var(--warning, #E8A33D)"></i>70–79</span><span><i style="background:var(--danger, #D8665A)"></i>69 o meno</span></div>
+    <div class="gz-legend"><span><i style="background:var(--success)"></i>qualità 80+</span><span><i style="background:var(--warning, #E8A33D)"></i>70–79</span><span><i style="background:var(--danger, #D8665A)"></i>69 o meno</span><span><i style="background:var(--success);opacity:.25;border-radius:2px"></i>obiettivo 7–9 h</span></div>
     <p class="gz-rif">Il numero sopra la barra è il punteggio di Zepp (0–100). Fascia verde: 7–9 ore.</p></div>`;
 }
 
@@ -252,13 +252,18 @@ export function bindHrDay(root) {
 }
 
 // ─── 6. Bilancio calorico a mappa di calore ──────────────────────────────
-/** Una casella per giorno (colonne = settimane, righe = lunedì…domenica): blu = deficit, ambra = surplus, più intenso = più lontano dal fabbisogno. */
+/** Fascia "in pari": entro ± questi kcal dal fabbisogno il giorno è giallo. */
+export const PARI = 150;
+/** Colore di un giorno: verde = deficit (oltre −PARI), giallo = in pari (±PARI), rosso = surplus (oltre +PARI). */
+export const balCol = d => (d <= -PARI ? 'var(--success)' : d >= PARI ? 'var(--danger)' : 'var(--warning)');
+export const balZona = d => (d <= -PARI ? 'deficit' : d >= PARI ? 'surplus' : 'in pari');
+/** Una casella per giorno (colonne = settimane, righe = lunedì…domenica), colorata con balCol: più intensa = più lontana dal fabbisogno. */
 export function balanceHeatmap(from, to, bal) {
   const start = (() => { const [y, m, d] = from.split('-').map(Number), dt = new Date(y, m - 1, d); dt.setDate(dt.getDate() - (dt.getDay() + 6) % 7); return dt; })();
   const keys = []; for (let d = new Date(start); ; d.setDate(d.getDate() + 1)) { const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; if (k > to) break; keys.push(k); }
   const weeks = Math.ceil(keys.length / 7), gap = 3, cell = Math.min(36, (W - 26) / weeks - gap), L = Math.max(22, (W - weeks * (cell + gap)) / 2), T = 16, H = T + 7 * (cell + gap) + 4;
   const vals = keys.map(k => bal[k]?.delta).filter(v => v != null), maxAbs = Math.max(300, ...vals.map(Math.abs));
-  let g = ['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((d, i) => (i % 2 ? '' : `<text x="${L - 6}" y="${(T + i * (cell + gap) + cell / 2 + 3.5).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">${d}</text>`)).join('');
+  let g = ['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((d, i) => (`<text x="${L - 6}" y="${(T + i * (cell + gap) + cell / 2 + 3.5).toFixed(1)}" font-size="9.5" fill="var(--muted)" text-anchor="end">${d}</text>`)).join('');
   let lastM = '';
   keys.forEach((k, i) => {
     const w = Math.floor(i / 7), r = i % 7, x0 = L + w * (cell + gap), y0 = T + r * (cell + gap), b = bal[k];
@@ -266,10 +271,10 @@ export function balanceHeatmap(from, to, bal) {
     const out = k < from;
     if (b?.delta == null) { g += `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}" rx="4" fill="none" stroke="var(--border)" stroke-width="1"${out ? ' opacity=".4"' : ''}/>`; }
     else {
-      const f = Math.min(1, Math.abs(b.delta) / maxAbs), c = b.delta <= 0 ? 'var(--primary)' : 'var(--mc-fat, #C88A12)';
-      g += `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}" rx="4" fill="${c}" opacity="${(0.18 + 0.82 * f).toFixed(2)}"/>`;
+      const f = Math.min(1, Math.abs(b.delta) / maxAbs), op = Math.abs(b.delta) < PARI ? 0.8 : 0.35 + 0.65 * f;
+      g += `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}" rx="4" fill="${balCol(b.delta)}" opacity="${op.toFixed(2)}"/>`;
     }
-    g += `<rect class="gz-hit" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}" fill="transparent" data-t="${longDay(k)}: ${b?.delta == null ? 'nessun diario' : `mangiate ${it(b.ingerite)} − consumate ${it(b.tdee)} = ${b.delta > 0 ? '+' : '−'}${it(Math.abs(b.delta))} kcal (${b.delta <= 0 ? 'deficit' : 'surplus'})`}"/>`;
+    g += `<rect class="gz-hit" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}" fill="transparent" data-t="${longDay(k)}: ${b?.delta == null ? 'nessun diario' : `mangiate ${it(b.ingerite)} − consumate ${it(b.tdee)} = ${b.delta > 0 ? '+' : '−'}${it(Math.abs(b.delta))} kcal (${balZona(b.delta)})`}"/>`;
   });
   return svg(H, g, 'Mappa di calore del bilancio calorico');
 }
