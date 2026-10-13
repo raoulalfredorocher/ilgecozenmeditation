@@ -3,7 +3,8 @@
  *
  * Dati (compatibili con le versioni precedenti):
  *   users/{uid}/giochi        { id, name, desc, console, img, steps[{text,date}], done, replay, feedbacks[{stars,note,hours,date}],
- *                               // nuovi, facoltativi: platforms[], genre, year, format, playing, wish }
+ *                               // nuovi, facoltativi: platforms[], genre, year, format, playing, wish, doneIso }
+ *   Finito = done && !replay (spunta nella Collezione; doneIso = giorno della spunta, per "Il tuo anno").
  *   users/{uid}/giochi_tavolo { id, name, rules, img, // nuovi: pmin, pmax, tmin, tmax, kind }
  *     └ partite               { players, duration, winner, note, img, date }
  */
@@ -32,7 +33,7 @@ const stars = n => '★'.repeat(n || 0) + '☆'.repeat(5 - (n || 0));
 const tint = i => ['', 'c2', 'c3', 'c4'][i % 4];
 const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 
-let games = [], tavolo = [], tab = 'todo', q = '', plat = '', kind = '', doneView = 'list', annoYear = 0, collFmt = '';
+let games = [], tavolo = [], tab = 'coll', q = '', plat = '', kind = '', annoYear = 0, collSt = '';
 
 /** Piattaforme di un gioco, anche dai dati vecchi (campo libero "console"). */
 function platformsOf(g) {
@@ -57,15 +58,18 @@ const lastFb = g => (g.feedbacks || []).slice(-1)[0];
 /** Ore totali di gioco sommando tutti i feedback (anche i re-play). */
 const hoursOf = g => (g.feedbacks || []).reduce((s, f) => s + (parseFloat(f.hours) || 0), 0);
 const byDoc = (list, id) => list.find(x => x._docId === id);
+/** Finito: spuntato e non in Re-play. */
+const isDone = g => !!g.done && !g.replay;
+const today = () => new Date().toISOString().slice(0, 10);
 
 const matchQ = (...t) => !q || t.join(' ').toLowerCase().includes(q);
 
 // ═══ Schede ═════════════════════════════════════════════════════════════
-/** Mostra una scheda (todo, done, wish, coll, tavolo, idee), azzera i filtri e la ridisegna. */
+/** Mostra una scheda (coll, wish, tavolo, idee), azzera i filtri e la ridisegna. */
 function showTab(t) {
-  tab = t; plat = ''; kind = ''; collFmt = '';
+  tab = t; plat = ''; kind = ''; collSt = '';
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
-  for (const k of ['todo', 'done', 'wish', 'coll', 'tavolo', 'idee']) $('p-' + k).hidden = k !== t;
+  for (const k of ['coll', 'wish', 'tavolo', 'idee']) $('p-' + k).hidden = k !== t;
   render(); scrollTo({ top: 0 });
 }
 document.querySelector('.page-tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
@@ -73,6 +77,7 @@ document.querySelector('.page-tabs').addEventListener('click', e => { const b = 
 const redrawSearch = debounce(render);
 $('gx-q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); redrawSearch(); });
 $('gx-chips').addEventListener('click', e => {
+  const st = e.target.closest('[data-st]'); if (st) { collSt = st.dataset.st; return render(); }
   const b = e.target.closest('[data-f]'); if (!b) return;
   if (tab === 'tavolo' || tab === 'idee') kind = b.dataset.f; else plat = b.dataset.f;
   render();
@@ -91,75 +96,41 @@ function chipsFor(list, isKind) {
     keys.map(k => `<button type="button" class="gchip" data-f="${esc(k)}" aria-pressed="${cur === k}">${esc(k)} <small>${counts[k]}</small></button>`).join('');
 }
 
-/** Scheda di un videogioco nella griglia "Da giocare". */
-function gameCard(g, i) {
-  const ps = platformsOf(g), fb = lastFb(g), tc = platTint(g);
-  return `<article class="gcard ${tc}">
-    <button type="button" class="cv" data-open="${esc(g._docId)}" aria-label="Apri ${esc(g.name)}">${cover(g)}</button>
-    <div class="pl">${ps.slice(0, 2).map(p => `<span class="${platCls(p)}">${esc(p)}</span>`).join('')}</div>
-    <button type="button" class="gok" data-done="${esc(g._docId)}" aria-label="Segna ${esc(g.name)} come finito">${icon('check')}</button>
-    ${g.replay ? '<span class="rp">RE-PLAY</span>' : ''}
-    <button type="button" class="tx" data-open="${esc(g._docId)}"><span class="nm">${esc(g.name)}</span>
-      <span class="gmt">${esc([g.genre, g.year].filter(Boolean).join(' · ') || (ps.length ? ps.join(' · ') : ''))}</span>
-      ${fb ? `<span class="stars">${stars(fb.stars)}</span>` : ''}</button></article>`;
-}
-
 /** Ridisegna la scheda attiva. */
 function render() {
-  $('gx-tools').hidden = tab === 'coll' || (tab === 'done' && doneView === 'anno');
   $('gx-q').placeholder = tab === 'tavolo' || tab === 'idee' ? 'Cerca un gioco da tavolo' : 'Cerca un gioco';
-  if (tab === 'todo') renderTodo();
-  else if (tab === 'done') renderDone();
+  if (tab === 'coll') renderColl();
   else if (tab === 'wish') renderWish();
-  else if (tab === 'coll') renderColl();
   else if (tab === 'tavolo') renderTavolo();
   else renderIdee();
 }
 
-/** Da giocare: prima quelli in corso, poi gli altri (inclusi i re-play). */
-function renderTodo() {
-  const base = games.filter(g => !g.wish && (!g.done || g.replay));
-  $('gx-chips').innerHTML = chipsFor(base, false);
-  const list = base.filter(g => (!plat || platformsOf(g).includes(plat)) && matchQ(g.name, g.genre, g.console));
-  const now = list.filter(g => g.playing), rest = list.filter(g => !g.playing);
-  $('p-todo').innerHTML = `
-    <section class="gz head"><div><span class="big">${base.filter(g => !g.playing).length}</span><span class="lbl">da giocare</span></div>
-      <button type="button" class="pbtn soft sm" id="gx-pick">${icon('sparkles', 'sm')} Cosa gioco?</button></section>
+/** Riga di un gioco della collezione, con la spunta "finito" a destra. */
+function collRow(g) {
+  const fb = lastFb(g), done = isDone(g);
+  return `<div class="gz rw ${platTint(g)}"><button type="button" class="th rb" data-open="${esc(g._docId)}" aria-label="Apri ${esc(g.name)}">${cover(g)}</button>
+    <button type="button" class="grow rb" data-open="${esc(g._docId)}"><span class="nm">${esc(g.name)}</span>
+      <span class="gmt">${esc([platformsOf(g).join(' + '), g.format, g.replay ? 'Re-play' : ''].filter(Boolean).join(' · '))}</span>
+      ${done && fb ? `<span class="stars">${stars(fb.stars)}</span>` : ''}</button>
+    <button type="button" class="gflag" data-flag="${esc(g._docId)}" aria-pressed="${done}" aria-label="${done ? 'Finito: tocca per togliere' : 'Segna come finito'}">${icon('check')}</button></div>`;
+}
+/** Collezione: tutti i giochi che hai, in alto quelli a cui stai giocando; la spunta segna i finiti. */
+function renderColl() {
+  const mine = games.filter(g => !g.wish);
+  const nDone = mine.filter(isDone).length, hrs = Math.round(mine.reduce((s, g) => s + hoursOf(g), 0));
+  $('gx-chips').innerHTML = mine.length ? [['', 'Tutti', mine.length], ['todo', 'Da finire', mine.length - nDone], ['done', 'Finiti', nDone]]
+    .map(([k, l, n]) => `<button type="button" class="gchip" data-st="${k}" aria-pressed="${collSt === k}">${l} <small>${n}</small></button>`).join('') : '';
+  const list = mine.filter(g => (!collSt || (collSt === 'done') === isDone(g)) && matchQ(g.name, g.genre, g.console, platformsOf(g).join(' '), g.format))
+    .sort((a, b) => a.name.localeCompare(b.name, 'it'));
+  const now = list.filter(g => g.playing && !isDone(g)), rest = list.filter(g => !(g.playing && !isDone(g)));
+  $('p-coll').innerHTML = mine.length ? `
     ${now.length ? `<div class="d-sec" style="margin:0">Stai giocando</div><div class="strip">${now.map(g => `
       <button type="button" class="gz now ${platTint(g)}" data-open="${esc(g._docId)}"><span class="cv">${cover(g)}</span>
         <span><span class="nm">${esc(g.name)}</span><span class="gmt">${esc(platformsOf(g).join(' · '))}</span></span></button>`).join('')}</div>` : ''}
-    ${rest.length ? `<div class="grid">${rest.map(gameCard).join('')}</div>`
-      : (!now.length ? `<div class="emptyx">${base.length ? 'Nessun gioco con questi filtri.' : 'Nessun gioco ancora.<br/>Tocca + per aggiungere il primo.'}</div>` : '')}`;
-}
-
-const doneSwitch = () => `<div class="segmented" role="group" aria-label="Vista"><button type="button" data-dv="list" aria-pressed="${doneView === 'list'}">Elenco</button><button type="button" data-dv="anno" aria-pressed="${doneView === 'anno'}">Il tuo anno</button></div>`;
-/** Finiti: elenco con ore e voto medio, oppure la vista "Il tuo anno". */
-function renderDone() {
-  const base = games.filter(g => g.done && !g.replay);
-  if (doneView === 'anno') {
-    $('gx-tools').hidden = true;
-    const years = yearsOf(games), thisY = new Date().getFullYear();
-    if (!annoYear || (years.length && !years.includes(annoYear))) annoYear = years.includes(thisY) ? thisY : (years[0] || thisY);
-    const d = yearData(games, annoYear, platformsOf);
-    $('p-done').innerHTML = doneSwitch() + (years.length > 1 ? `<div class="gchips wrap">${years.map(y => `<button type="button" class="gchip" data-yr="${y}" aria-pressed="${y === annoYear}">${y}</button>`).join('')}</div>` : '') + annoHtml(d);
-    return;
-  }
-  $('gx-tools').hidden = false;
-  $('gx-chips').innerHTML = chipsFor(base, false);
-  const list = base.filter(g => (!plat || platformsOf(g).includes(plat)) && matchQ(g.name, g.genre)).reverse();
-  const rated = base.map(lastFb).filter(f => f && f.stars);
-  const avg = rated.length ? rated.reduce((s, f) => s + f.stars, 0) / rated.length : 0;
-  const hrs = Math.round(base.reduce((s, g) => s + hoursOf(g), 0));
-  $('p-done').innerHTML = doneSwitch() + `
-    <div class="bento"><div class="bn"><b>${base.length}</b><span>finiti</span></div>
-      <div class="bn"><b>${hrs || '—'}</b><span>ore giocate</span></div>
-      <div class="bn"><b>${avg ? avg.toLocaleString('it-IT', { maximumFractionDigits: 1 }) : '—'}</b><span>voto medio</span></div></div>
-    ${list.length ? `<div class="rows">${list.map((g, i) => { const fb = lastFb(g); return `
-      <button type="button" class="gz rw ${platTint(g)}" data-open="${esc(g._docId)}"><span class="th">${cover(g)}</span>
-        <span class="grow"><span class="nm">${esc(g.name)}</span><span class="gmt">${esc(platformsOf(g).join(' · '))}${fb?.date ? ' · ' + esc(fb.date) : ''}</span>
-          ${fb ? `<span class="stars">${stars(fb.stars)}</span>` : ''}</span>
-        ${hoursOf(g) ? `<span class="big-n">${Math.round(hoursOf(g))}<small style="font-size:.7rem;margin-left:2px">h</small></span>` : ''}</button>`; }).join('')}</div>`
-      : `<div class="emptyx">${base.length ? 'Nessun risultato.' : 'Ancora nessun gioco finito.<br/>Spunta un gioco dalla lista “Da giocare”.'}</div>`}`;
+    <div class="bento"><div class="bn"><b>${mine.length}</b><span>giochi</span></div><div class="bn"><b>${nDone}</b><span>finiti</span></div>
+      <div class="bn"><b>${hrs || '—'}</b><span>ore giocate</span></div></div>
+    ${rest.length ? `<div class="rows">${rest.map(collRow).join('')}</div>` : (!now.length ? '<div class="emptyx">Nessun gioco con questi filtri.</div>' : '')}`
+    : '<div class="emptyx">La collezione è vuota.<br/>Tocca + per aggiungere il primo gioco.</div>';
 }
 
 /** Wishlist con il pulsante "Preso". */
@@ -170,36 +141,12 @@ function renderWish() {
   $('p-wish').innerHTML = `
     <section class="gz head c2"><div><span class="big">${base.length}</span><span class="lbl">nella wishlist</span></div></section>
     ${list.length ? `<div class="rows">${list.map(g => `
-      <div class="gz rw ${platTint(g)}"><button type="button" class="th" style="border:0;padding:0;cursor:pointer" data-open="${esc(g._docId)}">${cover(g)}</button>
-        <button type="button" class="grow" style="background:none;border:0;text-align:left;cursor:pointer;color:inherit;font:inherit;padding:0" data-open="${esc(g._docId)}"><span class="nm">${esc(g.name)}</span><span class="gmt">${esc(platformsOf(g).join(' · '))}</span></button>
+      <div class="gz rw ${platTint(g)}"><button type="button" class="th rb" data-open="${esc(g._docId)}">${cover(g)}</button>
+        <button type="button" class="grow rb" data-open="${esc(g._docId)}"><span class="nm">${esc(g.name)}</span><span class="gmt">${esc(platformsOf(g).join(' · '))}</span></button>
         <button type="button" class="pbtn soft sm" data-got="${esc(g._docId)}">${icon('check', 'sm')} Preso</button></div>`).join('')}</div>`
       : `<div class="emptyx">${base.length ? 'Nessun risultato.' : 'La wishlist è vuota.<br/>Quando aggiungi un gioco scegli “Wishlist”.'}</div>`}`;
 }
 
-
-// ═══ Collezione Switch e Switch 2 ═══════════════════════════════════════
-const isNin = g => platformsOf(g).some(p => p === 'Switch' || p === 'Switch 2');
-/** Collezione Switch/Switch 2: conteggi, formati e giochi Switch di cui controllare l'edizione Switch 2. */
-function renderColl() {
-  const mine = games.filter(g => !g.wish && isNin(g));
-  const sw = mine.filter(g => platformsOf(g).includes('Switch')), sw2 = mine.filter(g => platformsOf(g).includes('Switch 2'));
-  const up = mine.filter(g => platformsOf(g).includes('Switch') && !platformsOf(g).includes('Switch 2') && g.s2 !== 'ho');
-  const fmtN = f => mine.filter(g => g.format === f).length;
-  const list = mine.filter(g => !collFmt || g.format === collFmt).sort((a, b) => a.name.localeCompare(b.name, 'it'));
-  up.sort((a, b) => (a.s2 === 'manca' ? 0 : 1) - (b.s2 === 'manca' ? 0 : 1) || a.name.localeCompare(b.name, 'it'));
-  $('p-coll').innerHTML = mine.length ? `
-    <div class="bento"><div class="bn"><b>${sw.length}</b><span>su Switch</span></div><div class="bn"><b>${sw2.length}</b><span>su Switch 2</span></div><div class="bn"><b>${up.length}</b><span>upgrade da vedere</span></div></div>
-    <div class="gpills">${FORMATS.map(f => `<span class="gpill c4">${f} · ${fmtN(f)}</span>`).join('')}${mine.filter(g => !g.format).length ? `<span class="gpill">Formato da indicare · ${mine.filter(g => !g.format).length}</span>` : ''}</div>
-    ${up.length ? `<div class="d-sec" style="margin:0">Edizione Switch 2 dei tuoi giochi Switch</div><div class="rows">${up.map(g => `
-      <div class="gz rw ${g.s2 === 'manca' ? 'c2' : ''}"><button type="button" class="th" style="border:0;padding:0;cursor:pointer" data-open="${esc(g._docId)}">${cover(g)}</button>
-        <span class="grow"><span class="nm">${esc(g.name)}</span><span class="gmt">${g.s2 === 'manca' ? 'Ti manca l’edizione Switch 2' : 'Controlla se esiste l’edizione Switch 2'}</span>
-          <span class="s2btns"><button type="button" class="gchip" data-s2="${esc(g._docId)}:ho">Ce l’ho</button><button type="button" class="gchip" data-s2="${esc(g._docId)}:manca" aria-pressed="${g.s2 === 'manca'}">Mi manca</button></span></span></div>`).join('')}</div>` : ''}
-    <div class="d-sec" style="margin:0">Tutta la collezione</div>
-    <div class="gchips wrap"><button type="button" class="gchip" data-cf="" aria-pressed="${!collFmt}">Tutti</button>${FORMATS.map(f => `<button type="button" class="gchip" data-cf="${f}" aria-pressed="${collFmt === f}">${f}</button>`).join('')}</div>
-    <div class="rows">${list.map(g => `<button type="button" class="gz rw ${platTint(g)}" data-open="${esc(g._docId)}"><span class="th">${cover(g)}</span><span class="grow"><span class="nm">${esc(g.name)}</span>
-      <span class="gmt">${esc([platformsOf(g).join(' + '), g.format, g.s2 === 'ho' ? 'Edizione Switch 2' : ''].filter(Boolean).join(' · '))}</span></span></button>`).join('')}</div>`
-    : '<div class="emptyx">Qui compaiono i tuoi giochi per Switch e Switch 2.<br/>Quando aggiungi un gioco scegli la console e il formato (fisico, digitale o game-key card).</div>';
-}
 
 // ═══ Da tavolo ══════════════════════════════════════════════════════════
 /** "2–4" giocatori di un gioco da tavolo ('' se non indicato). */
@@ -243,7 +190,8 @@ document.querySelector('.zen-main').addEventListener('click', async e => {
   const t = e.target;
   const o = t.closest('[data-open]'); if (o) return openGame(o.dataset.open);
   const d = t.closest('[data-done]'); if (d) return openFinish(d.dataset.done);
-  const gt = t.closest('[data-got]'); if (gt) { await updateGiocoDoc(gt.dataset.got, { wish: false }); return toast('Aggiunto ai tuoi giochi'); }
+  const fl = t.closest('[data-flag]'); if (fl) return toggleDone(fl.dataset.flag);
+  const gt = t.closest('[data-got]'); if (gt) { await updateGiocoDoc(gt.dataset.got, { wish: false }); return toast('Aggiunto alla collezione'); }
   const tv = t.closest('[data-tav]'); if (tv) return openTav(tv.dataset.tav);
   const id = t.closest('[data-idea]');
   if (id) {
@@ -251,18 +199,17 @@ document.querySelector('.zen-main').addEventListener('click', async e => {
     await addGiocoTavoloDoc({ id: Date.now(), name: c.n, rules: c.d, img: null, pmin: c.p[0], pmax: c.p[1], tmin: c.t[0], tmax: c.t[1], kind: c.k });
     return toast(`${c.n} aggiunto ai tuoi giochi da tavolo`);
   }
-  const dv = t.closest('[data-dv]'); if (dv) { doneView = dv.dataset.dv; return render(); }
-  const yr = t.closest('[data-yr]'); if (yr) { annoYear = +yr.dataset.yr; return render(); }
-  if (t.closest('#anno-share')) {
-    const r = await shareCard(yearData(games, annoYear, platformsOf));
-    return toast(r === 'saved' ? 'Immagine salvata' : r === 'shared' ? 'Condivisa' : '');
-  }
-  const s2 = t.closest('[data-s2]'); if (s2) { const [id, v] = s2.dataset.s2.split(':'); const g = byDoc(games, id); return updateGiocoDoc(id, { s2: g?.s2 === v ? '' : v }); }
-  const cf = t.closest('[data-cf]'); if (cf) { collFmt = cf.dataset.cf; return render(); }
   if (t.closest('#gx-tools-open')) return tools.open(null);
-  if (t.closest('#gx-pick')) return openPick();
   if (t.closest('#gx-tpick')) return openTavPick();
 });
+
+/** Spunta "finito": la mette (con la data di oggi) o la toglie. Voto e ore restano facoltativi, dal dettaglio. */
+async function toggleDone(id) {
+  const g = byDoc(games, id); if (!g) return;
+  if (isDone(g)) { await updateGiocoDoc(id, { done: false, replay: false }); return toast('Tolto dai finiti'); }
+  await updateGiocoDoc(id, { done: true, replay: false, playing: false, doneIso: today() });
+  toast('Segnato come finito');
+}
 
 // ═══ Dettaglio videogioco ═══════════════════════════════════════════════
 const detail = createSheet({ body: '' });
@@ -289,9 +236,10 @@ function openGame(id) {
     <div class="stack" style="margin-top:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)" id="g-acts"></div>`);
   const acts = detail.$('#g-acts');
   const btn = (label, cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pbtn ' + cls + ' block'; b.textContent = label; b.addEventListener('click', fn); acts.append(b); };
-  if (g.wish) btn('L’ho preso', '', async () => { await updateGiocoDoc(id, { wish: false }); detail.close(); toast('Aggiunto ai tuoi giochi'); });
-  else if (g.done && !g.replay) {
-    btn('Rigioca (Re-play)', '', async () => { await updateGiocoDoc(id, { done: false, replay: true }); detail.close(); toast('Di nuovo in “Da giocare”'); });
+  if (g.wish) btn('L’ho preso', '', async () => { await updateGiocoDoc(id, { wish: false }); detail.close(); toast('Aggiunto alla collezione'); });
+  else if (isDone(g)) {
+    if (!fbs.length) btn('Dai un voto', 'soft', () => { detail.close(); openFinish(id); });
+    btn('Rigioca (Re-play)', '', async () => { await updateGiocoDoc(id, { done: false, replay: true, playing: true }); detail.close(); toast('Di nuovo tra quelli in corso'); });
     btn('Non l’ho finito', 'soft', async () => { await updateGiocoDoc(id, { done: false, replay: false }); detail.close(); });
   } else {
     btn(g.playing ? 'Metti in pausa' : 'Inizia a giocare', g.playing ? 'soft' : '', async () => { await updateGiocoDoc(id, { playing: !g.playing }); });
@@ -431,7 +379,7 @@ finish.el.addEventListener('click', async e => {
   const g = byDoc(games, finId); if (!g) return;
   const fb = { stars: finStars, note: finish.$('#f-note').value.trim(), hours: finish.$('#f-hours').value || '', date: nowDate(), iso: new Date().toISOString().slice(0, 10) };
   finish.close();
-  await updateGiocoDoc(finId, { done: true, replay: false, playing: false, feedbacks: [...(g.feedbacks || []), fb] });
+  await updateGiocoDoc(finId, { done: true, replay: false, playing: false, doneIso: g.doneIso || fb.iso, feedbacks: [...(g.feedbacks || []), fb] });
   toast('Complimenti, un altro finito!');
 });
 
@@ -440,15 +388,15 @@ const pick = createSheet({ title: 'Cosa gioco stasera?', body: '' });
 let pickPlat = '', pickCur = null;
 /** "Cosa gioco stasera?": un gioco a caso tra quelli da giocare (non in corso). */
 function openPick() {
-  const pool = games.filter(g => !g.wish && !g.playing && (!g.done || g.replay));
-  if (!pool.length) return toast('Non hai giochi da giocare');
+  const pool = games.filter(g => !g.wish && !g.playing && !isDone(g));
+  if (!pool.length) return toast('Non hai giochi da finire');
   pickPlat = plat; drawPick(true); pick.open();
 }
 /** Ridisegna la proposta; fresh = true ne estrae una nuova. */
 function drawPick(fresh) {
-  const pool = games.filter(g => !g.wish && !g.playing && (!g.done || g.replay) && (!pickPlat || platformsOf(g).includes(pickPlat)));
+  const pool = games.filter(g => !g.wish && !g.playing && !isDone(g) && (!pickPlat || platformsOf(g).includes(pickPlat)));
   if (fresh || !pickCur || !pool.includes(pickCur)) pickCur = pool[Math.floor(Math.random() * pool.length)] || null;
-  const all = [...new Set(games.filter(g => !g.wish && (!g.done || g.replay)).flatMap(platformsOf))];
+  const all = [...new Set(games.filter(g => !g.wish && !isDone(g)).flatMap(platformsOf))];
   pick.setBody(`<div class="gchips wrap" style="margin-bottom:var(--space-3)"><button type="button" class="gchip" data-pp="" aria-pressed="${!pickPlat}">Qualsiasi</button>${all.map(p => `<button type="button" class="gchip" data-pp="${esc(p)}" aria-pressed="${pickPlat === p}">${esc(p)}</button>`).join('')}</div>
     ${pickCur ? `<div class="d-photo">${cover(pickCur)}</div><h3 class="d-title">${esc(pickCur.name)}</h3><p class="serif-i" style="margin:4px 0">${esc(platformsOf(pickCur).join(' · '))}</p>
       <div class="stack" style="display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-3)"><button type="button" class="pbtn block" id="pk-go">Si gioca questo</button><button type="button" class="pbtn soft block" id="pk-again">Un altro</button></div>`
@@ -601,14 +549,37 @@ const tools = initTools({ games: () => tavolo, addPartita: (id, data) => addPart
 // ═══ Azioni ═════════════════════════════════════════════════════════════
 $('gx-add').addEventListener('click', () => { (tab === 'tavolo' || tab === 'idee') ? openTavEdit(null) : openEdit(null); });
 
-const more = createSheet({ title: 'Giochi', body: `<div class="list">
+const ESHOP = 'https://www.nintendo.com/it-it/Giochi/Nintendo-eShop/Nintendo-eShop-1806894.html';
+const more = createSheet({ title: 'Altre azioni', body: `<div class="list">
+  <a class="list-row" href="${ESHOP}" target="_blank" rel="noopener" id="x-eshop">${icon('cart', 'sm')}<span class="grow">Nintendo eShop<span class="xsmall zen-muted" style="display:block">giochi per Switch e Switch 2</span></span></a>
+  <button type="button" class="list-row" id="x-pick">${icon('sparkles', 'sm')}<span class="grow">Cosa gioco stasera?</span></button>
+  <button type="button" class="list-row" id="x-anno">${icon('calendar', 'sm')}<span class="grow">Il tuo anno<span class="xsmall zen-muted" style="display:block">giochi finiti, ore e podio</span></span></button>
   <button type="button" class="list-row" id="x-csv">${icon('download', 'sm')}<span class="grow">Esporta in CSV<span class="xsmall zen-muted" style="display:block">videogiochi e giochi da tavolo</span></span></button>
   <button type="button" class="list-row" id="x-key">${icon('settings', 'sm')}<span class="grow">Copertine e dati automatici<span class="xsmall zen-muted" style="display:block" id="x-keystate"></span></span></button></div>` });
 $('gx-more')?.addEventListener('click', () => { more.$('#x-keystate').textContent = getKey() ? 'Chiave RAWG attiva' : 'Senza chiave: cerco su Wikidata e Wikipedia'; more.open(); });
+more.$('#x-eshop').addEventListener('click', () => more.close());
+more.$('#x-pick').addEventListener('click', () => { more.close(); openPick(); });
+more.$('#x-anno').addEventListener('click', () => { more.close(); drawAnno(); anno.open(); });
+
+// ═══ Il tuo anno (dal menu) ═════════════════════════════════════════════
+const anno = createSheet({ title: 'Il tuo anno', body: '' });
+/** Giochi finiti nell'anno scelto: numeri, podio, mesi e scheda da condividere. */
+function drawAnno() {
+  const years = yearsOf(games), thisY = new Date().getFullYear();
+  if (!annoYear || (years.length && !years.includes(annoYear))) annoYear = years.includes(thisY) ? thisY : (years[0] || thisY);
+  anno.setBody(`<div class="stack" style="display:flex;flex-direction:column;gap:var(--space-4)">${years.length > 1 ? `<div class="gchips wrap">${years.map(y => `<button type="button" class="gchip" data-yr="${y}" aria-pressed="${y === annoYear}">${y}</button>`).join('')}</div>` : ''}${annoHtml(yearData(games, annoYear, platformsOf))}</div>`);
+}
+anno.el.addEventListener('click', async e => {
+  const yr = e.target.closest('[data-yr]'); if (yr) { annoYear = +yr.dataset.yr; return drawAnno(); }
+  if (e.target.closest('#anno-share')) {
+    const r = await shareCard(yearData(games, annoYear, platformsOf));
+    toast(r === 'saved' ? 'Immagine salvata' : r === 'shared' ? 'Condivisa' : '');
+  }
+});
 more.$('#x-csv').addEventListener('click', () => {
   const d = new Date().toISOString().slice(0, 10);
   downloadCSV([['Nome', 'Piattaforme', 'Genere', 'Anno', 'Formato', 'Stato', 'Voto', 'Ore'], ...games.map(g => [g.name, platformsOf(g).join(' + '), g.genre, g.year, g.format,
-    g.wish ? 'Wishlist' : g.done && !g.replay ? 'Finito' : g.playing ? 'In corso' : 'Da giocare', lastFb(g)?.stars || '', Math.round(hoursOf(g)) || ''])], `giochi_${d}.csv`);
+    g.wish ? 'Wishlist' : isDone(g) ? 'Finito' : g.playing ? 'In corso' : 'Da finire', lastFb(g)?.stars || '', Math.round(hoursOf(g)) || ''])], `giochi_${d}.csv`);
   downloadCSV([['Nome', 'Tipo', 'Giocatori', 'Minuti', 'Regole'], ...tavolo.map(t => [t.name, t.kind, range(t), timeR(t), t.rules])], `giochi_da_tavolo_${d}.csv`);
   more.close();
 });
