@@ -132,9 +132,15 @@ html[data-theme="dark"] .plat.sw { color: #FF6C7B; } html[data-theme="dark"] .pl
 .mcol .mn { font-size: .625rem; color: var(--muted); min-height: 12px; font-variant-numeric: tabular-nums; }
 .mcol .ml { font-size: .625rem; color: var(--muted); letter-spacing: .04em; }
 
-/* Collezione */
-.s2btns { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-.s2btns .gchip { height: 32px; font-size: .75rem; }
+/* Collezione: righe con la spunta "finito" */
+.rw .rb { border: 0; padding: 0; background: none; text-align: left; cursor: pointer; color: inherit; font: inherit; }
+.rw .th.rb { background: color-mix(in srgb, var(--t) 22%, var(--card)); }
+.gflag { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; color: var(--muted);
+  border: 1.5px solid color-mix(in srgb, var(--t) 40%, var(--border)); background: color-mix(in srgb, var(--card) 70%, transparent); }
+.gflag .icon { width: 20px; height: 20px; opacity: .45; }
+.gflag[aria-pressed="true"] { background: var(--tn3); border-color: var(--tn3); color: #fff; }
+.gflag[aria-pressed="true"] .icon { opacity: 1; }
+.gflag:active { transform: scale(.92); }
 .tools-cta { --t: var(--tn4); display: flex; flex-direction: column; gap: 2px; width: 100%; padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); text-align: left; cursor: pointer; color: var(--text); font: inherit; }
 .tools-cta .nm { font: 500 var(--fs-xl) var(--font-serif); }
 .tools-cta .gmt { font: italic 400 var(--fs-sm) var(--font-serif); color: var(--muted); }

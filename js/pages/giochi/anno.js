@@ -1,6 +1,7 @@
 /**
  * anno.js — "Il tuo anno videoludico": giochi finiti, ore, console, podio e una scheda da condividere.
- * La data di fine è quella del feedback (campo iso AAAA-MM-GG, o la data scritta "04 ott 2026" dei dati vecchi).
+ * La data di fine è quella del feedback (campo iso AAAA-MM-GG, o la data scritta "04 ott 2026" dei dati vecchi),
+ * oppure il giorno della spunta "finito" (doneIso) se non c'è un voto.
  */
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 
@@ -16,13 +17,15 @@ export function fbDate(f) {
   if (m && MESI[m[2]] !== undefined) return new Date(+m[3], MESI[m[2]], +m[1], 12);
   return null;
 }
+/** Feedback del gioco; se è finito con la sola spunta (senza voto), conta il giorno della spunta (doneIso). */
+const datedFbs = g => ((g.feedbacks || []).length ? g.feedbacks : (g.done && !g.replay && g.doneIso ? [{ iso: g.doneIso }] : []));
 const platformsText = g => (Array.isArray(g.platforms) && g.platforms.length ? g.platforms : [String(g.console || '').trim()].filter(Boolean));
 
 /** Raccoglie ciò che serve per un anno. `platformsOf` arriva dalla pagina (riconosce anche i dati vecchi). */
 export function yearData(games, year, platformsOf) {
   const rows = [];
   for (const g of games) {
-    (g.feedbacks || []).forEach(f => {
+    datedFbs(g).forEach(f => {
       const d = fbDate(f);
       if (d && d.getFullYear() === year) rows.push({ g, f, d });
     });
@@ -50,7 +53,7 @@ export function yearData(games, year, platformsOf) {
 /** Anni in cui c'è almeno un feedback datato, dal più recente. */
 export function yearsOf(games) {
   const ys = new Set();
-  games.forEach(g => (g.feedbacks || []).forEach(f => { const d = fbDate(f); if (d) ys.add(d.getFullYear()); }));
+  games.forEach(g => datedFbs(g).forEach(f => { const d = fbDate(f); if (d) ys.add(d.getFullYear()); }));
   return [...ys].sort((a, b) => b - a);
 }
 
