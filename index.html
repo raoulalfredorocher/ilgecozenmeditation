@@ -19,42 +19,36 @@
     .greeting { padding-top: var(--space-2); }
     .greeting .zen-h1 { margin-top: var(--space-1); }
 
-    .weather { display: flex; align-items: center; gap: var(--space-4); }
-    .weather .dot-icon { width: 52px; height: 52px; border-radius: 16px; }
-    .weather .dot-icon .icon { width: 28px; height: 28px; }
-    .weather-temp { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-    .weather-temp small { font-size: var(--fs-md); color: var(--muted); font-weight: 500; }
-    .weather-desc { font-size: var(--fs-sm); color: var(--muted); }
-    .weather-meta { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    /* Meteo e pensiero del giorno: due quadrati affiancati, alti come due righe del mosaico */
+    .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); height: calc(200px + var(--space-3)); }
+    .duo > .card { min-width: 0; padding: var(--space-4); display: flex; flex-direction: column; }
+    .weather { height: 100%; display: flex; flex-direction: column; gap: 6px; }
+    .weather .dot-icon { width: 40px; height: 40px; border-radius: 13px; flex-shrink: 0; }
+    .weather .dot-icon .icon { width: 22px; height: 22px; }
+    .wx-now { display: flex; align-items: center; gap: var(--space-2); }
+    .weather-temp { font-size: var(--fs-xl); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .weather-temp small { font-size: var(--fs-sm); color: var(--muted); font-weight: 500; }
+    .weather-desc { font-size: var(--fs-sm); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .weather-meta { margin-top: auto; display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
     .weather-meta strong { color: var(--text); font-weight: 600; }
     .uv-low { color: var(--success) !important; } .uv-medium { color: var(--warning) !important; } .uv-high { color: var(--danger) !important; }
-    .weather-card { padding-bottom: var(--space-3); overflow: hidden; }
-    .wx-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+    .weather-card { padding-bottom: var(--space-3) !important; overflow: hidden; }
+    .wx-track { flex: 1; min-height: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
     .wx-track::-webkit-scrollbar { display: none; }
     .wx-slide { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; min-width: 0; }
     .wx-city { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-    .wx-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: var(--space-3); }
+    .wx-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: var(--space-2); }
     .wx-dots { display: flex; justify-content: center; gap: 6px; }
     .wx-edit { justify-self: end; background: none; border: 0; padding: 4px 2px; font-size: var(--fs-xs); font-weight: 600; color: var(--geco-blue); cursor: pointer; }
-    .wx-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; padding: var(--space-3) 0; color: var(--muted); font-size: var(--fs-sm); }
+    .wx-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2); text-align: center; color: var(--muted); font-size: var(--fs-sm); }
     .wc-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); }
     .wc-row + .wc-row { border-top: .5px solid var(--border); }
     .wc-row .grow { flex: 1; min-width: 0; text-align: left; background: none; border: 0; color: inherit; font: inherit; padding: 0; }
     .wx-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background-color .2s, transform .2s; }
     .wx-dots i.on { background: var(--geco-blue); transform: scale(1.25); }
 
-    .week-card { display: block; color: inherit; text-decoration: none; }
-    .week-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-3); }
-    .week-link { font-size: var(--fs-xs); font-weight: 600; color: var(--geco-blue); }
-    .week-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
-    .week-d { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0 8px; border-radius: 14px; }
-    .week-d .l { font-size: .625rem; letter-spacing: .1em; color: var(--muted); }
-    .week-d .n { font-size: var(--fs-md); font-variant-numeric: tabular-nums; }
-    .week-d.today { background: var(--geco-mist); color: var(--geco-blue); font-weight: 600; }
-    .week-dots { display: flex; gap: 3px; height: 6px; }
-    .week-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
-    .quote-card { border-left: 2px solid var(--sakura); border-radius: 4px var(--radius-lg) var(--radius-lg) 4px; }
-    .quote-card .zen-quote { margin-top: var(--space-3); }
+    .quote-card { border-left: 2px solid var(--sakura); border-radius: 4px var(--radius-lg) var(--radius-lg) 4px; overflow: hidden; }
+    .quote-card .zen-quote { margin-top: var(--space-2); font-size: .9375rem; line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; line-clamp: 6; -webkit-box-orient: vertical; }
 
     .bday-initials {
       width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -101,25 +95,18 @@
       <h2 class="zen-h1" id="hello">Ciao</h2>
     </section>
 
-    <!-- Meteo: si scorre di lato tra le città -->
-    <section class="card weather-card" aria-label="Meteo">
-      <div class="wx-track" id="wx-track"></div>
-      <div class="wx-foot"><span></span><div class="wx-dots" id="wx-dots" aria-hidden="true"></div><button type="button" class="wx-edit" id="wx-edit">Città</button></div>
-    </section>
+    <!-- Meteo (si scorre di lato tra le città) e pensiero del giorno, affiancati -->
+    <div class="duo">
+      <section class="card weather-card" aria-label="Meteo">
+        <div class="wx-track" id="wx-track"></div>
+        <div class="wx-foot"><span></span><div class="wx-dots" id="wx-dots" aria-hidden="true"></div><button type="button" class="wx-edit" id="wx-edit">Città</button></div>
+      </section>
+      <section class="card quote-card" aria-label="Pensiero del giorno">
+        <div class="zen-eyebrow">Pensiero del giorno</div>
+        <p class="zen-quote" id="daily-quote-text">…</p>
+      </section>
+    </div>
 
-    <!-- La settimana: puntini per area, tocco = calendario del mese -->
-    <a class="card week-card" href="calendario.html" aria-label="La tua settimana, apri il calendario del mese">
-      <div class="week-top"><span class="zen-eyebrow">La tua settimana</span><span class="week-link">Apri il mese ›</span></div>
-      <div class="week-days" id="week-days"></div>
-    </a>
-
-    <!-- Pensiero del giorno -->
-    <section class="card quote-card" aria-label="Pensiero del giorno">
-      <div class="zen-eyebrow">Pensiero del giorno</div>
-      <p class="zen-quote" id="daily-quote-text">…</p>
-    </section>
-
-    <!-- Compleanni (visibile solo se ce ne sono oggi o nei prossimi 2 giorni) -->
     <section class="zen-section" id="birthday-widget" hidden aria-label="Compleanni in arrivo">
       <div class="zen-eyebrow">Compleanni in arrivo</div>
       <div class="list" id="birthday-list"></div>
@@ -139,7 +126,7 @@
 
   <script type="module">
     /* Home: saluto e data, pensiero del giorno, schede delle sezioni, meteo delle città scelte
-       (Open-Meteo, senza chiave; città in direction/meteo), settimana a colpo d'occhio e compleanni. */
+       (Open-Meteo, senza chiave; città in direction/meteo), e compleanni. */
     import { icon } from './js/ui/icons.js';
     import { SECTION_GROUPS } from './js/ui/sections.js';
     import { renderCards } from './js/ui/cards.js';
@@ -147,7 +134,6 @@
     import { getBirthdayContacts, db, auth } from './js/core/db.js';
     import { doc, getDoc, setDoc } from './js/core/firestore.js';
     import { createSheet } from './js/ui/dialog.js';
-    import { AREAS, loadRange, areasOf, dateKey } from './js/core/attivita.js';
     import { waitForUser } from './js/core/auth-guard.js';
     import { escapeHtml } from './js/core/dom.js';
 
@@ -203,15 +189,15 @@
       track.innerHTML = cities.map((c, i) => `
         <div class="wx-slide" data-i="${i}" role="group" aria-label="${escapeHtml(c.name)}">
           <div class="weather">
-            <span class="dot-icon" data-f="icon" role="img" aria-label="Meteo"></span>
-            <div>
-              <div class="wx-city">${escapeHtml(c.name)}</div>
+            <div class="wx-city">${escapeHtml(c.name)}</div>
+            <div class="wx-now">
+              <span class="dot-icon" data-f="icon" role="img" aria-label="Meteo"></span>
               <div class="weather-temp"><span data-f="max">--</span>° <small>/ <span data-f="min">--</span>°</small></div>
-              <div class="weather-desc" data-f="desc"></div>
             </div>
+            <div class="weather-desc" data-f="desc"></div>
             <div class="weather-meta">
               <span>UV <strong data-f="uv">--</strong></span>
-              <span>Umidità <strong data-f="hum">--</strong>%</span>
+              <span>Umid. <strong data-f="hum">--</strong>%</span>
             </div>
           </div>
         </div>`).join('');
@@ -320,22 +306,6 @@
         }
       } catch (e) { console.error('meteo', e); }
     });
-
-    /* ── La settimana: allenamento, alimentazione, meditazione e journaling a colpo d'occhio ── */
-    (function week() {
-      const t = new Date(), mon = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7));
-      const days = Array.from({ length: 7 }, (_, i) => new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i));
-      const box = document.getElementById('week-days');
-      const draw = data => {
-        box.innerHTML = days.map((d, i) => {
-          const k = dateKey(d), dots = areasOf(data?.[k]);
-          return `<div class="week-d${k === dateKey() ? ' today' : ''}"><span class="l">${'LMMGVSD'[i]}</span><span class="n">${d.getDate()}</span>
-            <span class="week-dots">${dots.map(a => `<i style="--c:${AREAS.find(x => x.id === a).color}"></i>`).join('')}</span></div>`;
-        }).join('');
-      };
-      draw(null);
-      waitForUser().then(() => loadRange(dateKey(days[0]), dateKey(days[6]))).then(draw).catch(e => console.warn('settimana', e));
-    })();
 
     /* ── Utente: saluto con il nome e compleanni ── */
     waitForUser().then(async user => {
