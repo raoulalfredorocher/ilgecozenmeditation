@@ -492,27 +492,52 @@ $('pl-close').addEventListener('click', () => { audio.pause(); plr.hidden = true
 if ('mediaSession' in navigator) { navigator.mediaSession.setActionHandler('play', () => audio.play()); navigator.mediaSession.setActionHandler('pause', () => audio.pause()); }
 
 // ═══ STRUMENTI ══════════════════════════════════════════════════════════
-const M = { bpm: lsGet('zen_mu_bpm', 100), beats: lsGet('zen_mu_beats', 4), run: false, n: 0, next: 0, id: 0, taps: [] };
+const M = { bpm: lsGet('zen_mu_bpm', 100), beats: lsGet('zen_mu_beats', 4), run: false, n: 0, next: 0, id: 0, raf: 0, q: [] };
 let ac = null;
 /** AudioContext unico della pagina, creato al primo uso. */
-const ctx = () => (ac ||= new (window.AudioContext || window.webkitAudioContext)());
-function click(accent, t) {
+const ctx = () => (ac ||= new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' }));
+/** Peso del battito: 2 = primo della battuta, 1 = accento secondario (il 4° nel 6/4, che si conta 3+3), 0 = debole. */
+const accentOf = b => b === 0 ? 2 : (M.beats === 6 && b === 3 ? 1 : 0);
+function click(acc, t) {
   const o = ctx().createOscillator(), g = ctx().createGain();
-  o.frequency.value = accent ? 1500 : 1000; o.connect(g); g.connect(ctx().destination);
-  g.gain.setValueAtTime(accent ? .5 : .32, t); g.gain.exponentialRampToValueAtTime(.001, t + .06); o.start(t); o.stop(t + .07);
+  o.frequency.value = [1000, 1250, 1600][acc]; o.connect(g); g.connect(ctx().destination);
+  g.gain.setValueAtTime([.3, .42, .55][acc], t); g.gain.exponentialRampToValueAtTime(.001, t + .05); o.start(t); o.stop(t + .06);
 }
-/** Programma in anticipo (120 ms) i clic del metronomo sull'orologio audio e accende il puntino del battito. */
+/**
+ * Programma i clic in anticipo sull'orologio audio: intervallo esatto 60 / bpm secondi, indipendente dal timer JS.
+ * Con la pagina in secondo piano il timer rallenta (1 volta al secondo), quindi l'anticipo sale a 1,5 s.
+ * Se il timer è rimasto indietro, riparte dal presente invece di sparare di colpo i clic persi.
+ */
 function schedule() {
-  while (M.next < ctx().currentTime + 0.12) {
-    const b = M.n % M.beats; click(b === 0, M.next);
-    const when = (M.next - ctx().currentTime) * 1000, idx = b;
-    setTimeout(() => { const dots = document.querySelectorAll('.beats i'); dots.forEach((d, i) => d.classList.toggle('on', i === idx && M.run)); }, Math.max(0, when));
+  const now = ctx().currentTime, ahead = document.hidden ? 1.5 : 0.12;
+  if (M.next < now) M.next = now + 0.02;
+  while (M.next < now + ahead) {
+    const b = M.n % M.beats; click(accentOf(b), M.next); M.q.push([M.next, b]);
     M.next += 60 / M.bpm; M.n++;
   }
 }
+/** Accende il puntino del battito quando il clic suona davvero (stesso orologio audio, non setTimeout). */
+function paint() {
+  const now = ctx().currentTime; let b = -1;
+  while (M.q.length && M.q[0][0] <= now) b = M.q.shift()[1];
+  if (b >= 0) document.querySelectorAll('.beats i').forEach((d, i) => d.classList.toggle('on', i === b));
+  M.raf = requestAnimationFrame(paint);
+}
+function metroStart() {
+  M.run = true; M.n = 0; M.q = [];
+  ctx().resume().then(() => {
+    if (!M.run) return;
+    M.next = ctx().currentTime + 0.06; schedule();
+    clearInterval(M.id); M.id = setInterval(schedule, 25);
+    cancelAnimationFrame(M.raf); M.raf = requestAnimationFrame(paint);
+  });
+}
+function metroStop() {
+  M.run = false; clearInterval(M.id); cancelAnimationFrame(M.raf); M.q = [];
+  document.querySelectorAll('.beats i').forEach(d => d.classList.remove('on'));
+}
 function metroToggle() {
-  if (M.run) { M.run = false; clearInterval(M.id); document.querySelectorAll('.beats i').forEach(d => d.classList.remove('on')); }
-  else { ctx().resume(); M.run = true; M.n = 0; M.next = ctx().currentTime + 0.05; M.id = setInterval(schedule, 25); schedule(); }
+  if (M.run) metroStop(); else metroStart();
   const b = $('mt-go'); if (b) b.textContent = M.run ? 'Stop' : 'Avvia';
 }
 const TUNINGS = { chitarra: [['E', 82.41, '6ª'], ['A', 110, '5ª'], ['D', 146.83, '4ª'], ['G', 196, '3ª'], ['B', 246.94, '2ª'], ['E', 329.63, '1ª']], ukulele: [['G', 392, '4ª'], ['C', 261.63, '3ª'], ['E', 329.63, '2ª'], ['A', 440, '1ª']] };
@@ -523,28 +548,24 @@ function tone(f, btn) {
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.45, t + .03); g.gain.exponentialRampToValueAtTime(.0001, t + 3.2); o.start(t); o.stop(t + 3.3);
   btn.classList.add('on'); setTimeout(() => btn.classList.remove('on'), 1500);
 }
-/** Metronomo (bpm, tempo, tap) e note di riferimento per accordare. */
+/** Metronomo (cursore dei bpm, tempo 2/4–6/4, avvio) e note di riferimento per accordare. */
 function renderStrumenti() {
   const tu = TUNINGS[instr === 'ukulele' ? 'ukulele' : 'chitarra'];
   $('p-strumenti').innerHTML = `
     <section class="gz head"><div><span class="lbl">Metronomo</span></div></section>
     <div class="bpm" id="mt-bpm">${M.bpm}</div><p class="serif-i" style="text-align:center;margin:-6px 0 0">battiti al minuto</p>
-    <div class="beats">${Array.from({ length: M.beats }, (_, i) => `<i class="${i === 0 ? 'first' : ''}"></i>`).join('')}</div>
-    <input type="range" id="mt-range" min="30" max="240" value="${M.bpm}" style="width:100%" aria-label="Battiti al minuto"/>
-    <div class="ctrl" style="justify-content:center"><button type="button" class="mini" data-mb="-5">−5</button><button type="button" class="mini" data-mb="-1">−1</button><button type="button" class="mini" data-mb="1">+1</button><button type="button" class="mini" data-mb="5">+5</button>
-      ${[2, 3, 4, 6].map(n => `<button type="button" class="mini" data-mn="${n}" aria-pressed="${M.beats === n}">${n}/4</button>`).join('')}</div>
-    <div style="display:flex;gap:var(--space-2)"><button type="button" class="pbtn block" id="mt-go">${M.run ? 'Stop' : 'Avvia'}</button><button type="button" class="pbtn soft" id="mt-tap">Tap</button></div>
+    <div class="beats${M.beats === 6 ? ' b6' : ''}">${Array.from({ length: M.beats }, (_, i) => `<i class="${accentOf(i) ? 'first' : ''}"></i>`).join('')}</div>
+    <input type="range" id="mt-range" min="30" max="240" step="1" value="${M.bpm}" style="width:100%" aria-label="Battiti al minuto"/>
+    <div class="ctrl" style="justify-content:center;margin:var(--space-2) 0">${[2, 3, 4, 6].map(n => `<button type="button" class="mini" data-mn="${n}" aria-pressed="${M.beats === n}">${n}/4</button>`).join('')}</div>
+    <button type="button" class="pbtn block" id="mt-go">${M.run ? 'Stop' : 'Avvia'}</button>
     <section class="gz head c2" style="margin-top:var(--space-3)"><div><span class="lbl">Note di riferimento · ${instr === 'ukulele' ? 'ukulele' : 'chitarra'}</span></div></section>
     <div class="strings">${tu.map(([n, f, s]) => `<button type="button" data-f="${f}">${n}<small>${s}</small></button>`).join('')}</div>
     <p class="s" style="line-height:1.5">Tocca una corda per sentire la nota e accorda a orecchio. Cambia strumento dalla scheda Accordi.</p>`;
 }
 $('p-strumenti').addEventListener('click', e => {
   const t = e.target;
-  const setBpm = v => { M.bpm = Math.max(30, Math.min(240, v)); lsSet('zen_mu_bpm', M.bpm); $('mt-bpm').textContent = M.bpm; $('mt-range').value = M.bpm; };
-  const mb = t.closest('[data-mb]'); if (mb) return setBpm(M.bpm + +mb.dataset.mb);
-  const mn = t.closest('[data-mn]'); if (mn) { M.beats = +mn.dataset.mn; lsSet('zen_mu_beats', M.beats); const was = M.run; if (was) metroToggle(); renderStrumenti(); return; }
+  const mn = t.closest('[data-mn]'); if (mn) { M.beats = +mn.dataset.mn; lsSet('zen_mu_beats', M.beats); renderStrumenti(); if (M.run) { metroStop(); metroStart(); } return; }
   if (t.closest('#mt-go')) return metroToggle();
-  if (t.closest('#mt-tap')) { const now = performance.now(); M.taps = M.taps.filter(x => now - x < 2500); M.taps.push(now); if (M.taps.length >= 2) { const d = (M.taps[M.taps.length - 1] - M.taps[0]) / (M.taps.length - 1); setBpm(Math.round(60000 / d)); } return; }
   const f = t.closest('[data-f]'); if (f) { ctx().resume(); tone(+f.dataset.f, f); }
 });
 $('p-strumenti').addEventListener('input', e => { if (e.target.id === 'mt-range') { M.bpm = +e.target.value; lsSet('zen_mu_bpm', M.bpm); $('mt-bpm').textContent = M.bpm; } });
