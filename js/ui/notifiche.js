@@ -54,11 +54,11 @@ async function calcola() {
   try {
     const s = (await getDoc(doc(db, 'users', uid, 'direction', 'sfide'))).data();
     if (s?.level) {
-      if ((s.grown ?? s.level) < s.level) out.push({ id: `water-${s.level}`, testo: 'Il ciliegio ha sete: annaffialo per farlo crescere', sub: 'Hai completato un livello', href: 'record.html' });
+      if ((s.grown ?? s.level) < s.level) out.push({ id: `water-${s.level}`, testo: 'Il ciliegio ha sete: annaffialo per farlo crescere', sub: 'Hai completato un livello', href: 'calendario.html#record' });
       else {
         const p = lsGet('zen_sfide_prog', null);
         const fatte = p && p.level === s.level ? p.done : 0, giorni = Math.floor((Date.now() - (s.start || Date.now())) / 864e5);
-        if (giorni >= 3) out.push({ id: `ch-${s.level}-${oggi}`, testo: `Sfide del livello ${s.level}: ${fatte}/3 completate`, sub: 'Completale per far crescere il ciliegio', href: 'record.html' });
+        if (giorni >= 3) out.push({ id: `ch-${s.level}-${oggi}`, testo: `Sfide del livello ${s.level}: ${fatte}/3 completate`, sub: 'Completale per far crescere il ciliegio', href: 'calendario.html#record' });
       }
     }
   } catch (e) { console.warn('notifiche: sfide', e); }

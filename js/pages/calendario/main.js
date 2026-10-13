@@ -1,5 +1,7 @@
 /**
- * calendario — "Il mio mese": allenamento, alimentazione, meditazione e journaling in un solo calendario.
+ * calendario — scheda "Calendario" di calendario.html: allenamento, alimentazione, meditazione e journaling in un solo calendario,
+ * a mese o a settimana, con i numeri del periodo (allenamenti, meditazioni, passi). Le schede Grafici e Record sono in
+ * monitoring/grafici.js e monitoring/record.js; il cambio di scheda è qui sotto (showTab).
  * Sul calendario solo puntini colorati (uno per area); i numeri stanno nel riepilogo del giorno.
  * Un tocco su una riga del giorno porta alla pagina di dettaglio di quell'area.
  */
@@ -7,7 +9,7 @@ import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
-import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey } from '../../core/attivita.js';
+import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey, addDays } from '../../core/attivita.js';
 import { dayBalance, isForza } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
 import { db, auth } from '../../core/db.js';
@@ -33,6 +35,11 @@ let selected = /^\d{4}-\d{2}-\d{2}$/.test(startParam || '') ? startParam : dateK
 let profile = null;                              // per il bilancio calorico
 let data = {};                                   // giorni del mese mostrato
 let on = new Set(AREAS.map(a => a.id));          // aree visibili
+let view = 'mese';                               // 'mese' | 'settimana'
+try { if (localStorage.getItem('zen_cal_vista') === 'settimana') view = 'settimana'; } catch { /* ok */ }
+/** Lunedì della settimana che contiene `key`. */
+const monday = key => { const d = parseKey(key); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return dateKey(d); };
+let week = monday(selected);
 try { const s = JSON.parse(localStorage.getItem('zen_cal_filtri')); if (Array.isArray(s) && s.length) on = new Set(s); } catch { /* ok */ }
 
 $('cm-prev').innerHTML = icon('back');
@@ -40,45 +47,69 @@ $('cm-next').innerHTML = icon('back');
 
 // ─── Caricamento e disegno del mese ───
 /** Carica i giorni del mese mostrato e il profilo; scarta la risposta se nel frattempo si è cambiato mese. */
-async function load() {
+/** Primo e ultimo giorno mostrati: il mese o la settimana (lunedì–domenica). */
+function span() {
+  if (view === 'settimana') return [week, addDays(week, 6)];
   const y = month.getFullYear(), m = month.getMonth();
-  const from = dateKey(new Date(y, m, 1)), to = dateKey(new Date(y, m + 1, 0));
-  const token = from;
-  render();                                       // subito lo scheletro del mese, poi arrivano i dati
+  return [dateKey(new Date(y, m, 1)), dateKey(new Date(y, m + 1, 0))];
+}
+async function load() {
+  const [from, to] = span();
+  const token = `${view}:${from}`;
+  render();                                       // subito lo scheletro del periodo, poi arrivano i dati
   const [d, pr] = await Promise.all([loadRange(from, to), loadProfile()]);
   profile = pr;
-  if (dateKey(new Date(month.getFullYear(), month.getMonth(), 1)) !== token) return;   // nel frattempo si è cambiato mese
+  if (`${view}:${span()[0]}` !== token) return;   // nel frattempo si è cambiato periodo
   data = d;
   render();
 }
 
-/** Ridisegna filtri, griglia del mese con i puntini, riepilogo del mese e il giorno selezionato. */
+/** Ridisegna filtri, griglia (mese o settimana) con i puntini, numeri del periodo e il giorno selezionato. */
 function render() {
-  const y = month.getFullYear(), m = month.getMonth();
-  const offset = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate();
-  const today = dateKey();
-  $('cm-month').textContent = `${MONTHS[m]} ${y}`;
-  $('cm-filters').innerHTML = AREAS.map(a => `<button type="button" class="cm-chip" data-area="${a.id}" aria-pressed="${on.has(a.id)}"><span class="dotc" style="--c:${a.color}"></span>${a.label}</button>`).join('');
-
-  let cells = DOW.map(d => `<div class="cm-dow">${d}</div>`).join('') + '<div class="cm-day out"></div>'.repeat(offset);
-  for (let d = 1; d <= n; d++) {
-    const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const today = dateKey(), [from, to] = span();
+  const cell = (key, extra = '') => {
+    const d = +key.slice(8), m = +key.slice(5, 7) - 1;
     const dots = areasOf(data[key]).filter(a => on.has(a));
-    cells += `<button type="button" class="cm-day${key === today ? ' today' : ''}${key === selected ? ' sel' : ''}" data-date="${key}" aria-label="${d} ${MONTHS[m]}${dots.length ? ', ' + dots.length + ' attività' : ''}">
-      <span>${d}</span><span class="cm-dots">${dots.map(a => `<i style="--c:${AREAS.find(x => x.id === a).color}"></i>`).join('')}</span></button>`;
+    return `<button type="button" class="cm-day${key === today ? ' today' : ''}${key === selected ? ' sel' : ''}" data-date="${key}" aria-label="${d} ${MONTHS[m]}${dots.length ? ', ' + dots.length + ' attività' : ''}">
+      <span>${d}</span><span class="cm-dots">${dots.map(a => `<i style="--c:${AREAS.find(x => x.id === a).color}"></i>`).join('')}</span>${extra}</button>`;
+  };
+  $('cm-filters').innerHTML = AREAS.map(a => `<button type="button" class="cm-chip" data-area="${a.id}" aria-pressed="${on.has(a.id)}"><span class="dotc" style="--c:${a.color}"></span>${a.label}</button>`).join('');
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
+  $('cm-prev').setAttribute('aria-label', view === 'mese' ? 'Mese precedente' : 'Settimana precedente');
+  $('cm-next').setAttribute('aria-label', view === 'mese' ? 'Mese successivo' : 'Settimana successiva');
+
+  let cells = DOW.map(d => `<div class="cm-dow">${d}</div>`).join('');
+  if (view === 'mese') {
+    const y = month.getFullYear(), m = month.getMonth();
+    $('cm-month').textContent = `${MONTHS[m]} ${y}`;
+    cells += '<div class="cm-day out"></div>'.repeat((new Date(y, m, 1).getDay() + 6) % 7);
+    for (let k = from; k <= to; k = addDays(k, 1)) cells += cell(k);
+  } else {
+    const a = parseKey(from), b = parseKey(to);
+    $('cm-month').textContent = a.getMonth() === b.getMonth()
+      ? `${a.getDate()}–${b.getDate()} ${MONTHS[b.getMonth()]}`
+      : `${a.getDate()} ${MONTHS[a.getMonth()].slice(0, 3)} – ${b.getDate()} ${MONTHS[b.getMonth()].slice(0, 3)}`;
+    for (let k = from; k <= to; k = addDays(k, 1)) {
+      const p = data[k]?.salute?.passi;
+      cells += cell(k, `<span class="cm-wk-steps">${p ? (p >= 1000 ? `${g1(p / 1000)}k` : kc(p)) : '·'}</span>`);
+    }
   }
+  $('cm-grid').className = `cm-grid${view === 'settimana' ? ' week' : ''}`;
   $('cm-grid').innerHTML = cells;
 
-  // Riepilogo del mese
-  const all = Object.values(data);
-  const parts = [];
-  if (on.has('allenamento')) parts.push(`${all.reduce((a, d) => a + d.allenamento.length, 0)} allenamenti`);
-  if (on.has('cibo')) parts.push(`${all.filter(d => d.cibo).length} giorni di diario`);
-  if (on.has('meditazione')) parts.push(`${all.filter(d => d.meditazione).length} giorni di meditazione`);
-  if (on.has('journaling')) parts.push(`${all.reduce((a, d) => a + d.journaling.length, 0)} voci di journaling`);
-  const hs = all.map(d => d.salute).filter(h => h?.passi);
-  if (hs.length) parts.push(`${kc(hs.reduce((a, h) => a + h.passi, 0) / hs.length)} passi al giorno in media`);
-  $('cm-sum').textContent = parts.join(' · ');
+  // Numeri del periodo (mese o settimana): allenamenti, meditazioni, passi
+  const all = Object.entries(data).filter(([k]) => k >= from && k <= to).map(([, d]) => d);
+  const nW = all.reduce((a, d) => a + d.allenamento.length, 0);
+  const nM = all.reduce((a, d) => a + (d.meditazione?.n || 0), 0), minM = all.reduce((a, d) => a + (d.meditazione?.mins || 0), 0);
+  const hs = all.map(d => d.salute).filter(h => h?.passi), steps = hs.reduce((a, h) => a + h.passi, 0);
+  const tile = (b, l, s2) => `<div><b>${b}</b><span>${l}</span>${s2 ? `<span class="s">${s2}</span>` : ''}</div>`;
+  const extra = [];
+  if (on.has('cibo')) extra.push(`${all.filter(d => d.cibo).length} giorni di diario`);
+  if (on.has('journaling')) extra.push(`${all.reduce((a, d) => a + d.journaling.length, 0)} voci di journaling`);
+  $('cm-sum').innerHTML = `<div class="cm-tiles">${tile(nW, nW === 1 ? 'allenamento' : 'allenamenti', `${kc(all.reduce((a, d) => a + d.allenamento.reduce((x, t) => x + (t.durata || 0), 0), 0))} min`)}
+    ${tile(nM, nM === 1 ? 'meditazione' : 'meditazioni', `${kc(minM)} min`)}
+    ${tile(steps >= 100000 ? `${g1(steps / 1000)}k` : kc(steps), 'passi', hs.length ? `${kc(steps / hs.length)} al giorno` : 'nessun dato')}</div>
+    ${extra.length ? `<div class="cm-sum-x">${extra.join(' · ')}</div>` : ''}`;
 
   renderDay();
 }
@@ -178,7 +209,7 @@ function openDetail(kind, i) {
 // ─── Aggiungere, modificare, eliminare, esportare ───────────────────────────
 /** Ricarica il mese; con `day` seleziona prima quel giorno (e il suo mese). */
 const refresh = day => {
-  if (day) { selected = day; const [y, m] = day.split('-').map(Number); month = new Date(y, m - 1, 1); }
+  if (day) { selected = day; week = monday(day); const [y, m] = day.split('-').map(Number); month = new Date(y, m - 1, 1); }
   return load();
 };
 sessione.onSessionChange(refresh);
@@ -281,6 +312,7 @@ pdfSheet.$('#pd-ok').addEventListener('click', async () => {
 // Eliminare una meditazione richiede due tocchi sullo stesso pulsante.
 let delArmed = null;
 document.addEventListener('click', async e => {
+  if (e.target.closest('#tab-grafici, #tab-record')) return;          // le altre schede hanno i loro ascoltatori
   if (e.target.closest('[data-pdf]')) { moreSheet.close(); return setTimeout(openPdf, 220); }
   if (e.target.closest('[data-manual]')) return openManual();
   const mood = e.target.closest('[data-mood]');
@@ -307,7 +339,7 @@ document.addEventListener('click', async e => {
   const op = e.target.closest('[data-open]');
   if (op) { const [k, i] = op.dataset.open.split(':'); return openDetail(k, +i); }
   const d = e.target.closest('[data-date]');
-  if (d) { selected = d.dataset.date; return render(); }
+  if (d) { selected = d.dataset.date; week = monday(selected); return render(); }
   const f = e.target.closest('[data-area]');
   if (f) {
     const id = f.dataset.area;
@@ -315,10 +347,38 @@ document.addEventListener('click', async e => {
     try { localStorage.setItem('zen_cal_filtri', JSON.stringify([...on])); } catch { /* ok */ }
     return render();
   }
-  if (e.target.closest('#cm-prev')) { month = new Date(month.getFullYear(), month.getMonth() - 1, 1); return load(); }
-  if (e.target.closest('#cm-next')) { month = new Date(month.getFullYear(), month.getMonth() + 1, 1); return load(); }
-  if (e.target.closest('#cm-today')) { const t = new Date(); month = new Date(t.getFullYear(), t.getMonth(), 1); selected = dateKey(); return load(); }
+  const nav = e.target.closest('#cm-prev, #cm-next');
+  if (nav) {
+    const dir = nav.id === 'cm-next' ? 1 : -1;
+    if (view === 'mese') month = new Date(month.getFullYear(), month.getMonth() + dir, 1);
+    else { week = addDays(week, 7 * dir); selected = week; const [y, m] = week.split('-').map(Number); month = new Date(y, m - 1, 1); }
+    return load();
+  }
+  if (e.target.closest('#cm-today')) { const t = new Date(); month = new Date(t.getFullYear(), t.getMonth(), 1); selected = dateKey(); week = monday(selected); return load(); }
+  const vw = e.target.closest('[data-view]');
+  if (vw) {
+    view = vw.dataset.view;
+    try { localStorage.setItem('zen_cal_vista', view); } catch { /* ok */ }
+    week = monday(selected); { const [y, m] = selected.split('-').map(Number); month = new Date(y, m - 1, 1); }
+    return load();
+  }
 });
 
+// ─── Schede della pagina: Calendario · Grafici · Record e sfide ───
+// Grafici e Record caricano i loro dati solo la prima volta che si aprono (ascoltano l'evento 'cal:tab').
+const TABS = ['calendario', 'grafici', 'record'];
+function showTab(name) {
+  if (!TABS.includes(name)) name = 'calendario';
+  document.querySelectorAll('[data-tab-btn]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tabBtn === name)));
+  TABS.forEach(t => { $('tab-' + t).hidden = t !== name; });
+  const more = $('cm-more'); if (more) more.hidden = name !== 'calendario';
+  history.replaceState(null, '', location.search + (name === 'calendario' ? '' : '#' + name));
+  window.calTab = name;
+  window.dispatchEvent(new CustomEvent('cal:tab', { detail: name }));
+  scrollTo({ top: 0 });
+}
+document.querySelector('.page-tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab-btn]'); if (b) showTab(b.dataset.tabBtn); });
+
 render();
+showTab(location.hash.slice(1));
 waitForUser().then(() => { startWorkouts(); startFood(); load(); });

@@ -13,7 +13,7 @@ import {
   state, onChange, MC, DAY_SHORT, totals, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdeeFor, tdeeParts,
   fromDietMeal, fromDiaryMeal, itemsTotals, slotLabel, slotOrder,
 } from './state.js';
-import { rings, kcalBars, macroSplit, balanceBars, adherenceDots, tdeeStack } from './charts.js';
+import { kcalBars, macroSplit, balanceBars, tdeeStack, macroAdherence } from './charts.js';
 import { registerToday } from './dieta.js';
 import { openProfile } from './profile.js';
 
@@ -105,22 +105,29 @@ function render() {
   const controls = `<div class="segmented" role="group" aria-label="Periodo">${[7, 30, 90].map(n => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${n} giorni</button>`).join('')}</div>
     <button type="button" class="diet-pill" id="rs-diet" aria-label="Scegli la dieta di confronto">Confronto con: ${esc(dietName())}<span aria-hidden="true"> ▾</span></button>`;
 
-  // 2a. Calorie
+  // 2a. Calorie e bilancio (ingerite dal diario − consumate: metabolismo + passi + allenamento)
   const aK = avg(logged, 'kcal'), aPlan = avg(logged, 'plan');
   const kcalStory = logged.length ? `Mangi in media ${kc(aK)} kcal: ${Math.abs(aK - aPlan) < aPlan * 0.05 ? 'in linea con la dieta' : aK > aPlan ? `${kc(aK - aPlan)} sopra la dieta` : `${kc(aPlan - aK)} sotto la dieta`}${anyT ? `, e ${aK < avg(logged, 'tdee') ? 'sotto' : 'sopra'} il tuo fabbisogno giornaliero (TDEE) di ${kc(avg(logged, 'tdee'))} kcal` : ''}.` : 'Registra qualche giorno per vedere il grafico.';
-  const kcalCard = card('Calorie', logged.length ? `${kc(aK)} <span class="s">kcal al giorno</span>` : '–', kcalStory, kcalBars(days),
-    legend([['var(--primary)', 'Diario'], ['var(--text)', 'Dieta'], ['var(--muted)', 'Fabbisogno (TDEE)', true]].filter(l => !l[1].startsWith('Fabbisogno') || anyT)));
-
-  // 2b. Bilancio
-  let balanceCard;
-  if (!hp) {
-    balanceCard = card('Bilancio', '', '', '<p class="s">Compila il profilo per vedere quanto sei sopra o sotto il tuo fabbisogno.</p><button type="button" class="text-btn" data-profile>Compila il profilo</button>');
-  } else {
-    const sum = logged.reduce((a, d) => a + (d.kcal - d.tdee), 0), kg = sum / 7700;
-    balanceCard = card('Bilancio', logged.length ? `${sign(sum)} <span class="s">kcal nel periodo</span>` : '–',
-      logged.length ? `${sum < 0 ? 'Deficit' : 'Surplus'} medio di ${kc(Math.abs(sum / logged.length))} kcal al giorno: circa ${kg > 0 ? '+' : kg < 0 ? '−' : ''}${Math.abs(kg).toLocaleString('it-IT', { maximumFractionDigits: 1 })} kg di grasso in ${logged.length} ${logged.length === 1 ? 'giorno' : 'giorni'}.` : 'Registra qualche giorno',
-      balanceBars(days), legend([['var(--primary)', 'Sotto il fabbisogno (TDEE)'], ['var(--mc-fat)', 'Sopra il fabbisogno (TDEE)']]) + TDEE_NOTE);
+  let balTop = '';
+  if (hp) {
+    const all = buildDays(90).filter(d => d.t && d.tdee);
+    const last = all[all.length - 1];
+    if (last) {
+      const delta = last.kcal - last.tdee, isToday = last.key === dateKey();
+      const when = isToday ? 'oggi (finora)' : parseKey(last.key).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+      const media = n => { const from = addDays(dateKey(), -(n - 1)), L = all.filter(d => d.key >= from); return L.length ? { v: L.reduce((a, d) => a + d.kcal - d.tdee, 0) / L.length, n: L.length } : null; };
+      const tile = n => { const m = media(n); return `<div><b class="${m ? (m.v <= 0 ? 'dn' : 'up') : ''}">${m ? sign(m.v) : '–'}</b><span>media ${n} giorni</span><span>${m ? `${m.n} ${m.n === 1 ? 'giorno registrato' : 'registrati'}` : 'nessun giorno'}</span></div>`; };
+      balTop = `<div class="rs-bal"><div class="rs-bal-h"><span>${when}</span><b class="${delta <= 0 ? 'dn' : 'up'}">${sign(delta)} <small>kcal · ${delta <= 0 ? 'deficit' : 'surplus'}</small></b>
+        <span class="s">Ingerite ${kc(last.kcal)} − consumate ${kc(last.tdee)} (metabolismo ${kc(last.parts.base)} + passi ${kc(last.parts.passi)} + allenamento ${kc(last.parts.workout)})</span></div>
+        <div class="rs-bal-avg">${[7, 30, 90].map(tile).join('')}</div></div>`;
+    }
   }
+  const kcalCard = card('Calorie e bilancio', balTop ? '' : (logged.length ? `${kc(aK)} <span class="s">kcal al giorno</span>` : '–'), balTop ? '' : kcalStory,
+    balTop + kcalBars(days),
+    legend([['var(--primary)', 'Diario'], ['var(--text)', 'Dieta'], ['var(--muted)', 'Fabbisogno (TDEE)', true]].filter(l => !l[1].startsWith('Fabbisogno') || anyT))
+    + (balTop ? `<p class="s rs-story">${kcalStory}</p>` : '')
+    + (hp ? `<div class="cap rs-sub">Bilancio giorno per giorno</div>${balanceBars(days)}${legend([['var(--primary)', 'Deficit (sotto il TDEE)'], ['var(--mc-fat)', 'Surplus (sopra il TDEE)']])}${TDEE_NOTE}`
+      : '<p class="s">Compila il profilo per vedere il bilancio (deficit o surplus) di ogni giorno.</p><button type="button" class="text-btn" data-profile>Compila il profilo</button>'));
 
   // 2c. Fabbisogno e attività
   const withParts = days.filter(d => d.parts);
@@ -130,33 +137,26 @@ function render() {
     `Metabolismo e vita quotidiana ${kc(A('base'))}, più ${kc(A('passi'))} dai passi e ${kc(A('workout'))} dall'allenamento${realSteps ? ` (passi veri dell'orologio in ${realSteps} giorni su ${withParts.length})` : ' (passi del profilo: l\'orologio non ha ancora mandato dati)'}.`,
     tdeeStack(days), legend([['var(--primary)', 'Metabolismo e vita quotidiana', false, 0.3], ['var(--primary)', 'Passi', false, 0.6], ['var(--primary)', 'Allenamento', false, 1], ['var(--text)', 'Calorie mangiate']])): '';
 
-  // 3. Macro
+  // 3. Macro e aderenza (un grafico solo: kcal di ogni giorno divise per macro, con la dieta e il pallino dell'aderenza)
   const diaryAvg = logged.length ? { prot: avg(logged.map(d => d.t), 'prot'), carb: avg(logged.map(d => d.t), 'carb'), fat: avg(logged.map(d => d.t), 'fat') } : null;
   const planAvg = logged.length ? { prot: avg(logged.map(d => d.planT), 'prot'), carb: avg(logged.map(d => d.planT), 'carb'), fat: avg(logged.map(d => d.planT), 'fat') } : null;
-  const macroCard = card('Ripartizione dei macro', '', diaryAvg ? 'Quota di calorie da ciascun macro, dieta contro diario.' : 'Serve almeno un giorno registrato.', macroSplit(planAvg, diaryAvg),
-    legend([[MC.prot, 'Proteine'], [MC.carb, 'Carboidrati'], [MC.fat, 'Grassi']]) +
-    (diaryAvg ? `<div class="rs-grams">${[['prot', 'Proteine'], ['carb', 'Carbo'], ['fat', 'Grassi']].map(([k, l]) => `<div><b>${g1(diaryAvg[k])} g</b><span class="s">${l}</span><span class="s">dieta ${g1(planAvg[k])} g</span></div>`).join('')}</div>` : ''));
-
-  // 4. Aderenza
-  const st = days.map(d => {
-    if (!d.t || !d.plan) return { state: 'none', key: d.key };
-    const r = d.kcal / d.plan;
-    return { state: r > 1.1 ? 'over' : r < 0.9 ? 'under' : 'ok', key: d.key };
-  });
-  const ok = st.filter(s => s.state === 'ok').length, counted = st.filter(s => s.state !== 'none').length;
+  const st = days.map(d => (!d.t || !d.plan ? 'none' : d.kcal / d.plan > 1.1 ? 'over' : d.kcal / d.plan < 0.9 ? 'under' : 'ok'));
+  const ok = st.filter(s => s === 'ok').length, counted = st.filter(s => s !== 'none').length;
   let streak = 0;
-  for (let i = st.length - 1; i >= 0 && st[i].state === 'ok'; i--) streak++;
-  const adhCard = card('Aderenza alla dieta', counted ? `${Math.round((ok / counted) * 100)}<span class="s">%</span>` : '–',
-    counted ? `${ok} giorni su ${counted} entro il ±10% delle kcal del piano${streak > 1 ? ` · serie di ${streak}` : ''}. <b>Tocca un giorno</b> per vedere di quanto e dove sei uscito dal piano, e cosa comporta.` : 'Si calcola sui giorni registrati.',
-    adherenceDots(st), legend([['var(--success)', 'In linea (±10%)'], ['var(--warning)', 'Sopra il piano'], ['var(--primary)', 'Sotto il piano']]));
+  for (let i = st.length - 1; i >= 0 && st[i] === 'ok'; i--) streak++;
+  const macroCard = card('Macro e aderenza alla dieta', counted ? `${Math.round((ok / counted) * 100)}<span class="s">% dei giorni in linea</span>` : '–',
+    counted ? `${ok} giorni su ${counted} entro il ±10% delle kcal del piano${streak > 1 ? ` · serie di ${streak}` : ''}. Ogni barra sono le kcal del giorno divise per macro; il trattino è la dieta, la fascia verde la tolleranza. <b>Tocca un giorno</b> per vedere dove sei uscito dal piano.` : 'Serve almeno un giorno registrato.',
+    macroAdherence(days),
+    legend([[MC.prot, 'Proteine'], [MC.carb, 'Carboidrati'], [MC.fat, 'Grassi'], ['var(--text)', 'Dieta']])
+    + legend([['var(--success)', 'In linea (±10%)'], ['var(--warning)', 'Sopra il piano'], ['var(--primary)', 'Sotto il piano']])
+    + (diaryAvg ? `<div class="cap rs-sub">Media del periodo: quota di kcal da ciascun macro</div>${macroSplit(planAvg, diaryAvg)}<div class="rs-grams">${[['prot', 'Proteine'], ['carb', 'Carbo'], ['fat', 'Grassi']].map(([k, l]) => `<div><b>${g1(diaryAvg[k])} g</b><span class="s">${l}</span><span class="s">dieta ${g1(planAvg[k])} g</span></div>`).join('')}</div>` : ''));
 
   root.innerHTML = `
     ${hp ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il bilancio.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
     ${controls}
-    <div class="cap rs-sec">Energia</div>${kcalCard}${balanceCard}${stackCard}
-    <div class="cap rs-sec">Macro</div>${macroCard}
-    <div class="cap rs-sec">Aderenza</div>${adhCard}
-    <a class="rs-link" href="grafici.html">Passi, battiti, sonno e gli altri dati dell'orologio sono in Monitoring → Grafici ›</a>`;
+    <div class="cap rs-sec">Energia</div>${kcalCard}${stackCard}
+    <div class="cap rs-sec">Macro e aderenza</div>${macroCard}
+    <a class="rs-link" href="calendario.html#grafici">Passi, battiti, sonno e gli altri dati dell'orologio sono in Calendario → Grafici ›</a>`;
 }
 
 // ─── Scelta della dieta di confronto ─────────────────────────────────────

@@ -31,6 +31,7 @@ from zepp_mcp import client as api, decode, workouts
 
 TZ = ZoneInfo("Europe/Rome")
 DAYS_BACK = int(os.environ.get("ZEPP_DAYS_BACK", "10"))
+CURVE_DAYS = 14   # giorni con le curve minuto per minuto (battito, respirazione): ~2 KB al giorno, si tengono solo gli ultimi
 
 
 def log(msg):
@@ -177,6 +178,31 @@ def parse_stress(items):
     return out
 
 
+def curva(minuti):
+    """1440 valori al minuto (None/0 = nessuna misura) → 720 medie ogni 2 minuti, un byte ciascuna, in base64 (0 = nessuna misura)."""
+    out = bytearray(720)
+    for i in range(720):
+        v = [x for x in minuti[2 * i:2 * i + 2] if x]
+        out[i] = max(0, min(255, round(sum(v) / len(v)))) if v else 0
+    return base64.b64encode(bytes(out)).decode()
+
+
+def respiro_minuti(items):
+    """RespiratoryRate/real_data → { giorno locale: [1440 valori] }: il byte i è il minuto i dopo l'orario dell'elemento."""
+    out = {}
+    for it in items:
+        try:
+            raw = base64.b64decode((it.get("value") or {}).get("measurements") or "")
+            t0 = it["timestamp"] / 1000
+            for i, b in enumerate(raw):
+                if 5 <= b <= 60:
+                    t = datetime.fromtimestamp(t0 + i * 60, TZ)
+                    out.setdefault(t.date().isoformat(), [0] * 1440)[t.hour * 60 + t.minute] = b
+        except Exception:  # noqa: BLE001
+            continue
+    return out
+
+
 def fasi_notte(row):
     """Fasi del sonno in una stringa compatta: 'tipo+inizio+durata' (minuti dall'inizio della notte), es. 'l0+47 d47+30'."""
     try:
@@ -206,6 +232,7 @@ def main():
 
     # ── dati dei giorni ────────────────────────────────────────────────
     days = {}
+    curve = {}    # giorno → { "hr": base64, "rr": base64 } (vedi curva)
     out = api.band_data(zc, start, end)
     if out.status == "ok":
         righe = out.data.get("data") or []
@@ -220,8 +247,10 @@ def main():
             o = {}
             if s.get("steps"): o["passi"] = int(s["steps"])
             if s.get("calories_kcal"): o["kcalGiorno"] = int(s["calories_kcal"])
-            hr = [v for v in decode.decode_hr_minutes(row.get("data_hr") or "") if v]
+            hr_min = decode.decode_hr_minutes(row.get("data_hr") or "")
+            hr = [v for v in hr_min if v]
             if hr:
+                curve.setdefault(str(d), {})["hr"] = curva(hr_min[:1440])
                 o["bpmMedio"] = round(sum(hr) / len(hr))
                 o["bpmMin"] = min(hr)
                 o["bpmMax"] = max(hr)
@@ -249,7 +278,10 @@ def main():
         t0 = int(datetime.fromisoformat(start).replace(tzinfo=timezone.utc).timestamp() * 1000)
         t1 = int(datetime.fromisoformat(end).replace(tzinfo=timezone.utc).timestamp() * 1000) + 86400000
         r = zc.get("/v2/users/me/events", {"from": t0, "to": t1, "eventType": "RespiratoryRate", "subType": "real_data", "limit": 30})
-        resp = parse_respiro((r.data or {}).get("items") or []) if r.status == "ok" else {}
+        resp_items = (r.data or {}).get("items") or [] if r.status == "ok" else []
+        resp = parse_respiro(resp_items)
+        for d, m in respiro_minuti(resp_items).items():
+            curve.setdefault(d, {})["rr"] = curva(m)
         r = zc.get(f"/users/{zc.credential().user_id}/events", {"from": t0, "to": t1, "eventType": "blood_oxygen", "subType": "click", "limit": 100, "reverse": "false"})
         spo2 = parse_spo2((r.data or {}).get("items") or []) if r.status == "ok" else {}
         for d, v in resp.items():
@@ -271,6 +303,19 @@ def main():
     for d, o in days.items():
         # solo i campi di quel giorno (gli altri giorni e i campi non toccati restano com'erano)
         patch(token, f"users/{uid}/direction/salute_giorni", {"days": {d: o}}, [f"days.`{d}`.{k}" for k in o])
+
+    # curve minuto per minuto (battito e respirazione) solo degli ultimi CURVE_DAYS giorni; le più vecchie si tolgono
+    # (un campo nella updateMask ma assente dal corpo viene cancellato), così il documento resta piccolo
+    try:
+        oggi = datetime.now(TZ).date()
+        da = (oggi - timedelta(days=CURVE_DAYS - 1)).isoformat()
+        tenute = {d: c for d, c in curve.items() if d >= da}
+        vecchie = [(oggi - timedelta(days=k)).isoformat() for k in range(CURVE_DAYS, CURVE_DAYS + 60)]
+        patch(token, f"users/{uid}/direction/salute_giorni", {"curve": tenute},
+              [f"curve.`{d}`.{k}" for d, c in tenute.items() for k in c] + [f"curve.`{d}`" for d in vecchie])
+        log(f"Curve: {len(tenute)} giorni")
+    except Exception as e:  # noqa: BLE001 - dettaglio facoltativo: non deve fermare il resto
+        log(f"curve non salvate ({type(e).__name__})")
 
     # ── allenamenti ────────────────────────────────────────────────────
     out = api.workout_history(zc, start, end)

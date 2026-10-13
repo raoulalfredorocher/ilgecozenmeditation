@@ -40,13 +40,13 @@ export async function loadAll({ cache = false } = {}) {
   const sd = salute?.exists() ? salute.data() : {};
   const log = [];
   workouts?.forEach(d => { const r = d.data(); if (r.data) log.push({ _docId: d.id, ...r, es: r.es ? unpackEs(r.es) : null }); });
-  const diaryDays = {};
-  diary?.forEach(d => { const m = d.data().meals || []; if (m.length) diaryDays[d.id] = m.reduce((a, x) => a + (+x.kcal || 0), 0); });
+  const diaryDays = {}, diaryMeals = {};
+  diary?.forEach(d => { const m = d.data().meals || []; if (m.length) { diaryDays[d.id] = m.reduce((a, x) => a + (+x.kcal || 0), 0); diaryMeals[d.id] = m.map(x => ({ type: x.type || '', kcal: +x.kcal || 0, prot: +x.prot || 0, carb: +x.carb || 0, fat: +x.fat || 0 })); } });
   return {
     days: mergeManual(sd.days || {}, manuale?.exists() ? manuale.data().days : {}), daysWatch: sd.days || {}, sync: sd.sync || null,
     log: log.sort((a, b) => a.data.localeCompare(b.data)),
     meditation: sessions.map(s => ({ d: dk(new Date(s.ts)), mins: +s.totalMins || 0 })),
-    diary: diaryDays,
+    diary: diaryDays, diaryMeals,
     umore: umore?.exists() ? (umore.data().days || {}) : {},
     storici: storici?.exists() ? (storici.data().voci || {}) : {},
     misure: misure?.exists() ? misure.data() : {},
