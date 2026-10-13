@@ -15,9 +15,9 @@
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
   <style>
-    .fa-panel { display: flex; flex-direction: column; gap: var(--space-4); }
+    .fa-panel { display: flex; flex-direction: column; gap: var(--space-5); }
     .fa-panel[hidden] { display: none; }
-    .fa-tools { display: flex; flex-direction: column; gap: var(--space-3); }
+    .fa-tools { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-2); }
     .fa-tools[hidden] { display: none; }
     .fa-search { position: relative; }
     .fa-search .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
@@ -30,7 +30,8 @@
     .fa-card { position: relative; }
     .fa-card .ph { aspect-ratio: 2 / 3; border: 0; padding: 0; width: 100%; cursor: pointer; position: relative; }
     .fa-card .ph .icon { width: 34px; height: 34px; }
-    .fa-card .info { border: 0; background: none; color: inherit; text-align: left; cursor: pointer; width: 100%; font: inherit; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
+    #fa-grid { gap: var(--space-5) var(--space-4); }
+    .fa-card .info { border: 0; background: none; color: inherit; text-align: left; cursor: pointer; width: 100%; font: inherit; padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 4px; }
     .fa-card .meta { font-size: var(--fs-xs); color: var(--muted); display: block; }
     .fa-card.rewatch { border-color: color-mix(in srgb, var(--warning) 55%, transparent); }
     .tone-sky, .fa-card .ph.tone-sky    { background: var(--geco-mist); color: var(--geco-blue); }
@@ -301,7 +302,7 @@
       background: linear-gradient(160deg, color-mix(in srgb, var(--t) 14%, var(--card)), var(--card)); }
     .fa-card:has(.tone-sakura) { --t: var(--tn2); } .fa-card:has(.tone-sky) { --t: var(--tn1); }
     .fa-card::before { top: auto; bottom: 14px; height: 40px; }
-    .fa-card .info { padding-left: calc(12px + 4px); }
+    .fa-card .info { padding-left: calc(14px + 4px); }
     .fa-card .name { font: 500 var(--fs-md)/1.25 var(--font-serif); letter-spacing: -.01em; }
     .fa-card .meta:first-of-type { font-family: var(--font-serif); font-style: italic; }
     .fa-card .ph { border-radius: 0; }
@@ -331,7 +332,7 @@
     .lb-news-card, .cv-banner { --t: var(--tn2); position: relative; overflow: hidden; padding-left: calc(var(--space-4) + 4px); border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border));
       background: linear-gradient(135deg, color-mix(in srgb, var(--t) 22%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card))); }
     .cv-banner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); border-radius: var(--radius-lg); --t: var(--tn1); }
-    .cv-banner[hidden], #lb-covers[hidden] { display: none; }
+    .cv-banner[hidden] { display: none; }
     .cv-banner .t { font: 500 var(--fs-lg) var(--font-serif); } .cv-banner .m { font: italic 400 var(--fs-sm) var(--font-serif); color: var(--muted); }
     .cv-banner .btn { flex-shrink: 0; }
     .cv-sum { font: italic 400 var(--fs-lg) var(--font-serif); } .cv-sum b { font: 200 2.25rem var(--font); margin-right: 4px; font-style: normal; }
@@ -360,8 +361,8 @@
 <body class="zen zen-native" data-title="Libri e manga" data-back="passioni.html" data-add="#lb-add">
   <script type="module" src="js/core/auth-guard.js"></script>
   <template id="zen-header-actions">
-    <button class="icon-btn" type="button" id="lb-csv" aria-label="Esporta in CSV">
-      <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>
+    <button class="icon-btn" type="button" id="lb-more" aria-label="Altre azioni">
+      <svg class="icon" aria-hidden="true"><use href="#i-more"/></svg>
     </button>
   </template>
   <script type="module" src="js/ui/shell.js"></script>
@@ -383,15 +384,11 @@
         <input class="input" type="search" id="fa-q" placeholder="Cerca per titolo o autore" autocomplete="off" aria-label="Cerca"/>
       </div>
       <div class="chips" id="fa-status" role="group" aria-label="Stato di lettura"></div>
-      <div class="chips" id="fa-types" role="group" aria-label="Tipo"></div>
-      <div class="chips" id="fa-tags" role="group" aria-label="Etichette" hidden></div>
       <div class="segmented" id="fa-lview" role="group" aria-label="Vista">
         <button type="button" data-lview="normal" aria-pressed="true">Normale</button>
         <button type="button" data-lview="shelf" aria-pressed="false">Scaffale</button>
       </div>
     </div>
-
-    <div id="lb-covers"></div>
 
     <section class="fa-panel" id="p-lib" aria-live="polite">
       <div id="lb-news"></div>
