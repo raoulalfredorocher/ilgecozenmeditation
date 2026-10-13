@@ -3,7 +3,7 @@
  *   Attività fisica (allenamenti e passi) · Alimentazione (bilancio a mappa di calore, pasti, giorni della settimana) ·
  *   Riposo (sonno colorato dalla qualità, la notte con battito e respiri, battito a riposo e respiri) ·
  *   Stress (meditazione, stress per zona, battito della giornata con riposo e attività).
- * Il periodo in alto (7/14/30/90 giorni) vale per tutte le aree. Dati dell'orologio in tempo reale; il resto da dati.js.
+ * Il periodo in alto (7/14/30/90 giorni, si parte da 7) vale per tutte le aree. Dati dell'orologio in tempo reale; il resto da dati.js.
  * I dati si caricano la prima volta che la scheda si apre (evento 'cal:tab' di calendario/main.js).
  */
 import { waitForUser } from '../../core/auth-guard.js';
@@ -16,13 +16,13 @@ import { MEAL_SLOTS } from '../alimentazione/state.js';
 import { loadAll, pk } from './dati.js';
 import { quadroHtml } from './quadro.js';
 import { sonnoSheet } from './sonno.js';
-import { sleepCard, nightCard, nightKeys, bindNight, heartBreathCard, stressCard, hrDayCard, hasHr, bindHrDay, balanceHeatmap, mealDonut, weekdayPolar } from './grafici-charts.js';
+import { sleepCard, nightCard, nightKeys, bindNight, heartBreathCard, stressCard, hrDayCard, hasHr, bindHrDay, balanceHeatmap, PARI, mealDonut, weekdayPolar } from './grafici-charts.js';
 
 const root = document.getElementById('gz-root');
 const AREE = [['att', 'Attività'], ['cibo', 'Alimentazione'], ['riposo', 'Riposo'], ['stress', 'Stress']];
 let area = 'att';
 try { const a = localStorage.getItem('zen_gz_area'); if (AREE.some(x => x[0] === a)) area = a; } catch { /* ok */ }
-let range = 14;
+let range = 7;                        // periodo di partenza: l'ultima settimana
 let ctx = null;                       // dati completi caricati una volta
 let profile = null;                   // per il bilancio (fabbisogno del giorno)
 let notte = null, giorno = null;      // notte e giorno scelti nei grafici "la notte" e "il battito della giornata"
@@ -74,9 +74,9 @@ function alimentazione(days) {
   const hFrom = range < 35 ? addDays(to, -34) : from, bal = balances(hFrom, to);
   const bv = Object.entries(bal).filter(([k]) => k >= from).map(([, b]) => b.delta);
   const heat = profile
-    ? card('Bilancio calorico, giorno per giorno', bv.length ? `${bv.filter(v => v <= 0).length} giorni in deficit e ${bv.filter(v => v > 0).length} in surplus nel periodo · media ${bv.reduce((a, b) => a + b, 0) / bv.length > 0 ? '+' : '−'}${it(Math.abs(bv.reduce((a, b) => a + b, 0) / bv.length))} kcal al giorno.` : '',
-      balanceHeatmap(hFrom, to, bal), `<div class="gz-readout">Tocca un giorno per leggere il bilancio.</div><div class="gz-legend"><span><i style="background:var(--primary)"></i>deficit</span><span><i style="background:var(--mc-fat, #C88A12)"></i>surplus</span><span>più scuro = più lontano dal fabbisogno</span></div>
-      <p class="gz-rif">Bilancio = calorie del diario − fabbisogno del giorno (metabolismo e vita quotidiana + passi oltre la soglia + allenamento). Le caselle vuote sono giorni senza diario.</p>`)
+    ? card('Bilancio calorico, giorno per giorno', bv.length ? `${bv.filter(v => v <= -PARI).length} in deficit, ${bv.filter(v => Math.abs(v) < PARI).length} in pari e ${bv.filter(v => v >= PARI).length} in surplus su ${bv.length} giorni · media ${bv.reduce((a, b) => a + b, 0) / bv.length > 0 ? '+' : '−'}${it(Math.abs(bv.reduce((a, b) => a + b, 0) / bv.length))} kcal al giorno.` : '',
+      balanceHeatmap(hFrom, to, bal), `<div class="gz-readout">Tocca un giorno per leggere il bilancio.</div><div class="gz-legend"><span><i style="background:var(--success)"></i>deficit (oltre −${PARI})</span><span><i style="background:var(--warning)"></i>in pari (±${PARI})</span><span><i style="background:var(--danger)"></i>surplus (oltre +${PARI})</span></div>
+      <p class="gz-rif">Bilancio = calorie del diario − fabbisogno del giorno (metabolismo e vita quotidiana + passi oltre la soglia + allenamento). Più intenso il colore, più lontano dal fabbisogno. Le caselle vuote sono giorni senza diario.</p>`)
     : empty('Compila il profilo in Alimentazione per vedere il bilancio di ogni giorno.');
   // 2. ciambella dei pasti: kcal medie al giorno per momento della giornata
   const per = {};
