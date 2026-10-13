@@ -11,7 +11,8 @@ export const SECTION_GROUPS = [
   { title: 'Corpo', items: [
     { href: 'alimentazione.html', desc: 'Dieta, ricette e diario.', title: 'Alimentazione', sub: 'dieta · ricette', icon: 'salad', tone: 'leaf' },
     { href: 'allenamento.html', desc: 'Schede e sessioni di ogni giorno.', title: 'Allenamento', sub: 'schede · sessioni', icon: 'dumbbell', tone: 'sky' },
-    { href: 'monitoring.html', desc: 'Calendario, grafici e salute.', title: 'Monitoring', sub: 'calendario · grafici · salute', icon: 'chart', tone: 'sand' },
+    { href: 'calendario.html', desc: 'Tutto, giorno per giorno, e i grafici nel tempo.', title: 'Calendario', sub: 'grafici · record', icon: 'calendar', tone: 'leaf' },
+    { href: 'salute.html', desc: 'Pressione, glicemia ed esami nel tempo.', title: 'Salute', sub: 'misure · esami', icon: 'heart', tone: 'sakura' },
   ]},
   { title: 'Mente e spirito', items: [
     { href: 'meditazione.html', desc: 'Pratica e presenza.', title: 'Spiritualità', sub: 'pratica · presenza', icon: 'flower', tone: 'sakura' },
