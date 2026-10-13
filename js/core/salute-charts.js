@@ -1,5 +1,5 @@
 /**
- * salute-charts.js — grafici SVG dei dati dell'orologio (Zepp/Amazfit), condivisi da Monitoring → Grafici e altre pagine.
+ * salute-charts.js — grafici SVG dei dati dell'orologio (Zepp/Amazfit), condivisi da Calendario → Grafici e altre pagine.
  * `hd` = i giorni di salute_giorni: { 'AAAA-MM-GG': { passi, bpmRiposo, bpmMedio, bpmMin, bpmMax, sonnoMin, spo2, respiro, stressMedio } }.
  *
  * Regole di lettura (dataviz): asse y con valori tondi, linee guida sottili e solide, un solo colore per grafico,
