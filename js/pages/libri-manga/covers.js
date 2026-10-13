@@ -6,7 +6,6 @@
  * te la fa scegliere tra le proposte. Non tocca mai le copertine già presenti.
  */
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
-import { icon } from '../../ui/icons.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import { searchOnline, posterData, cleanIsbn } from './online.js';
 
@@ -45,18 +44,10 @@ async function findFor(item) {
 }
 async function store(url) { return (await posterData(url)) || url; }   // se il sito non permette il download si tiene il link
 
-/** Ricerca automatica delle copertine mancanti. ctx = { items(), update(docId, campi) }. Restituisce { banner(host), open }. */
+/** Ricerca automatica delle copertine mancanti. ctx = { items(), update(docId, campi) }. Restituisce { open } (dal menu a tre puntini). */
 export function initCovers(ctx) {
   const sheet = createSheet({ title: 'Copertine mancanti', body: '' });
   let running = false;
-
-  /** Avviso "N copertine mancanti" col pulsante per cercarle (vuoto se non ne mancano). */
-  function banner(host) {
-    const n = missing(ctx.items()).length;
-    host.innerHTML = n ? `<div class="cv-banner"><div><div class="t">${n} ${n === 1 ? 'copertina mancante' : 'copertine mancanti'}</div>
-      <div class="m">Le cerco io, in automatico.</div></div>
-      <button type="button" class="btn sm accent" data-covers>${icon('sparkles', 'sm')} Trova copertine</button></div>` : '';
-  }
 
   /** Scorre i titoli senza copertina uno alla volta (pausa 350 ms per non sovraccaricare i servizi). */
   async function run() {
@@ -107,5 +98,5 @@ export function initCovers(ctx) {
     }));
   }
 
-  return { banner, open: run };
+  return { open: run };
 }
