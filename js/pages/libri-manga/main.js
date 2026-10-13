@@ -45,8 +45,6 @@ let items = [];
 let tab = 'lib';             // lib | year | notes | masters | flash | buy
 let lview = 'normal';        // normal | scaffale
 let statusFilter = 'all';    // all | unread | reading | done
-let kindFilter = 'all';
-let tagFilter = 'all';
 let search = '';
 let statsYear = null;
 let timer, series, quotes, flash, masters, covers;
@@ -100,31 +98,15 @@ async function setProgress(i, fields) {
 const nextVolume = i => setProgress(i, { vol: (parseInt(i.vol) || 0) + 1 });
 
 // ─── Elenchi filtrati ────────────────────────────────────────────────────
-/** true se il titolo passa ricerca e filtri (stato, tipo, etichetta). */
+/** true se il titolo passa ricerca e filtro di stato. */
 function matches(i) {
   const q = search.trim().toLowerCase();
   return (statusFilter === 'all' || statusOf(i) === statusFilter) &&
-    (kindFilter === 'all' || kindOf(i) === kindFilter) &&
-    (tagFilter === 'all' || (i.tags || []).includes(tagFilter)) &&
     (!q || [i.title, i.author, i.genre].some(v => String(v || '').toLowerCase().includes(q)));
 }
 const RANK = { reading: 0, unread: 1, done: 2 };
 /** Libreria (senza i da comprare): prima in lettura, poi da leggere, poi letti; la priorità in cima. */
 const libBase = () => items.filter(i => !toBuy(i)).sort((a, b) => (RANK[statusOf(a)] - RANK[statusOf(b)]) || ((b.prio ? 1 : 0) - (a.prio ? 1 : 0)));
-
-/** Filtri per tipo (con i conteggi) ed etichette; azzera un filtro che non ha più titoli. */
-function renderChips(base) {
-  const kinds = KINDS.filter(t => base.some(i => kindOf(i) === t));
-  if (kindFilter !== 'all' && !kinds.includes(kindFilter)) kindFilter = 'all';
-  $('fa-types').innerHTML = [['all', 'Tutti', base.length], ...kinds.map(t => [t, t, base.filter(i => kindOf(i) === t).length])]
-    .map(([v, l, n]) => `<button type="button" data-type="${esc(v)}" aria-pressed="${v === kindFilter}">${esc(l)} <span class="count">${n}</span></button>`).join('');
-  const tags = [...new Set(base.flatMap(i => i.tags || []))];
-  if (tagFilter !== 'all' && !tags.includes(tagFilter)) tagFilter = 'all';
-  $('fa-tags').hidden = !tags.length;
-  $('fa-tags').innerHTML = tags.length
-    ? [['all', 'Tutte le etichette'], ...tags.map(t => [t, t])].map(([v, l]) => `<button type="button" data-tag="${esc(v)}" aria-pressed="${v === tagFilter}">${esc(l)}</button>`).join('')
-    : '';
-}
 
 // ─── Render ──────────────────────────────────────────────────────────────
 function renderStatusChips(base) {
@@ -136,16 +118,13 @@ function render() {
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
   for (const k of ['lib', 'year', 'masters', 'flash', 'buy']) $('p-' + k).hidden = tab !== k;
   $('fa-tools').hidden = tab !== 'lib';
-  covers?.banner($('lb-covers')); $('lb-covers').hidden = tab !== 'lib';
   if (tab === 'buy') return renderBuy();
   if (tab === 'masters') return masters?.renderList($('lb-masters'));
   if (tab === 'flash') { if (!flashShown) { flashShown = true; flash?.render($('lb-flash')); } return; }
   if (tab === 'year') return renderStatsView();
 
   const base = libBase();
-  const inStatus = base.filter(i => statusFilter === 'all' || statusOf(i) === statusFilter);
   renderStatusChips(base);
-  renderChips(inStatus);
   document.querySelectorAll('[data-lview]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lview === lview)));
   const list = base.filter(matches);
   const shelf = lview === 'shelf';
@@ -210,7 +189,7 @@ function renderLib(base, list) {
       <button type="button" class="info" data-open="${i.id}">
         <span class="name">${i.prio ? PRIO : ''}${esc(i.title)}</span>
         <span class="meta">${esc(i.author || '')}</span>
-        ${i.done && i.stars ? stars(i.stars) : `<span class="meta">${esc([kindOf(i), i.genre, sizeLabel(i), i.audible ? 'Audible' : ''].filter(Boolean).join(' · '))}</span>`}
+        ${i.done && i.stars ? stars(i.stars) : `<span class="meta">${esc([kindOf(i) === 'Libro' ? '' : kindOf(i), i.genre, sizeLabel(i), i.audible ? 'Audible' : ''].filter(Boolean).join(' · '))}</span>`}
       </button>
     </article>`).join('');
 }
@@ -727,10 +706,27 @@ function exportCsv() {
   toast('CSV scaricato');
 }
 
+// ─── Menu a tre puntini (in alto) ────────────────────────────────────────
+const moreMenu = createSheet({ title: 'Altre azioni', body: '<div class="list" id="mo-list"></div>' });
+/** Scarica la libreria in CSV o cerca le copertine che mancano. */
+function openMoreMenu() {
+  const miss = items.filter(i => !i.img).length;
+  moreMenu.$('#mo-list').innerHTML = `
+    <button type="button" class="list-row" data-mo="csv">${icon('download')}<span class="grow">Scarica in CSV</span></button>
+    <button type="button" class="list-row" data-mo="covers">${icon('sparkles')}<span class="grow">Aggiorna copertine${miss ? ` <span style="color:var(--muted)">· ${miss} mancanti</span>` : ''}</span></button>`;
+  moreMenu.open();
+}
+moreMenu.$('#mo-list').addEventListener('click', e => {
+  const b = e.target.closest('[data-mo]');
+  if (!b) return;
+  moreMenu.close();
+  if (b.dataset.mo === 'csv') exportCsv(); else covers.open();
+});
+
 // ─── Eventi ──────────────────────────────────────────────────────────────
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-tab]');
-  if (t) { tab = t.dataset.tab; kindFilter = 'all'; tagFilter = 'all'; flashShown = false; render(); t.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: 'smooth' }); return; }
+  if (t) { tab = t.dataset.tab; flashShown = false; render(); t.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: 'smooth' }); return; }
   const lv = e.target.closest('[data-lview]');
   if (lv) { lview = lv.dataset.lview; render(); return; }
   const st = e.target.closest('[data-status]');
@@ -742,10 +738,6 @@ document.addEventListener('click', e => {
   if (e.target.closest('#fa-amz-list')) { amzSheet.$('#am-url').value = amzUrl(); amzSheet.open(); return; }
   const y = e.target.closest('[data-year]');
   if (y) { statsYear = Number(y.dataset.year); render(); return; }
-  const c = e.target.closest('[data-type]');
-  if (c) { kindFilter = c.dataset.type; render(); return; }
-  const g = e.target.closest('[data-tag]');
-  if (g) { tagFilter = g.dataset.tag; render(); return; }
   const s = e.target.closest('[data-seen]');
   if (s) { const it = byId(s.dataset.seen); if (it) openFeedback(it); return; }
   const vol = e.target.closest('[data-vol]');
@@ -770,8 +762,7 @@ document.addEventListener('click', e => {
   const bt = e.target.closest('[data-bought]');
   if (bt) { const it = byId(bt.dataset.bought); if (it) { updateLibroDoc(it._docId, { purchase: OWNED }); toast('Spostato tra i tuoi libri'); } return; }
   if (e.target.closest('#fa-tonight')) { tnCurrent = null; drawTonight(true); tonight.open(); return; }
-  if (e.target.closest('[data-covers]')) return covers.open();
-  if (e.target.closest('#lb-csv')) return exportCsv();
+  if (e.target.closest('#lb-more')) return openMoreMenu();
   const o = e.target.closest('[data-open]');
   if (o) openDetail(byId(o.dataset.open));
 });
