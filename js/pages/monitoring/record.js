@@ -10,7 +10,7 @@ import { escapeHtml as esc } from '../../core/dom.js';
 import { seriesChart, hm, it } from '../../core/salute-charts.js';
 import { sessionVolume } from '../allenamento/state.js';
 import { loadAll, pk } from './dati.js';
-import { carica, cambia, innaffia } from './sfide.js';
+import { carica, cambia, innaffia, alternative } from './sfide.js';
 import { alberoSVG } from './albero.js';
 
 const root = document.getElementById('rc-root');
@@ -65,9 +65,9 @@ function livello() {
          <p class="lv-hint">Hai completato le tre sfide: innaffia la pianta e vedrai crescere il ciliegio.</p>`
       : `<p class="lv-hint">Completa 3 sfide per salire al livello ${L.level + 1}${L.next ? ` · dal livello ${L.next[0]} sarai un ${esc(L.next[1]).toLowerCase()}` : ''}.</p>`}
     <div class="lv-ch">${L.ch.map((c, i) => `<div class="lv-row${c.done ? ' done' : ''}"><div class="lv-row-h"><span><span class="lv-cat">${cat[c.cat]}</span><br>${c.done ? '✓ ' : ''}<b>${esc(c.text)}</b></span>
-        ${!c.done && L.skips < 1 ? `<button type="button" class="text-btn" data-cambia="${i}" style="color:var(--muted);font-weight:400;flex-shrink:0">Cambia</button>` : ''}</div>
+        ${!c.done ? `<button type="button" class="text-btn" data-cambia="${i}" style="color:var(--muted);font-weight:400;flex-shrink:0">Cambia</button>` : ''}</div>
         <div class="lv-bar"><i style="width:${Math.round(c.value / c.n * 100)}%"></i></div><div class="s">${c.done ? 'Fatta' : fmtV(c)}</div></div>`).join('')}</div>
-    <p class="lv-foot">Sfide completate in tutto: ${L.tot}. Il progresso si calcola dai dati veri dell'app, da quando è iniziato il livello. "Cambia" sostituisce una sfida (una volta per livello).</p></div>`;
+    <p class="lv-foot">Sfide completate in tutto: ${L.tot}. Il progresso si calcola dai dati veri dell'app, da quando è iniziato il livello. "Cambia" ti fa scegliere un'altra sfida dello stesso livello.</p></div>`;
 }
 
 // ─── Record storici ─────────────────────────────────────────────────────
@@ -94,6 +94,30 @@ sheet.$('#rs-ok').addEventListener('click', async () => {
   D.storici[id] = voce; render(); toast('Salvato');
 });
 
+// ─── Cambia sfida: scegli tu con quale sostituirla ──────────────────────
+const CAT = { mente: 'Mente', corpo: 'Corpo', cibo: 'Alimentazione' };
+const cambio = createSheet({ title: 'Cambia sfida' });
+let cambioIdx = -1;
+function apriCambio(i) {
+  cambioIdx = i;
+  const alt = alternative(D, L.level, L.ch.map(c => c.id));
+  const gruppi = Object.keys(CAT).map(k => [k, alt.filter(a => a.cat === k)]).filter(([, l]) => l.length);
+  cambio.setBody(`<p class="gz-rif" style="margin:0 0 var(--space-3)">Al posto di: <b>${esc(L.ch[i].text)}</b><br>Scegli un'altra sfida del livello ${L.level}. Il progresso conta da quando è iniziato il livello.</p>
+    ${gruppi.map(([k, l]) => `<div class="lv-cat" style="margin:var(--space-3) 0 var(--space-1)">${CAT[k]}</div>
+      ${l.map(a => `<button type="button" class="btn block" data-alt="${esc(a.id)}" style="justify-content:flex-start;text-align:left;margin-bottom:var(--space-2);white-space:normal">${esc(a.text)}</button>`).join('')}`).join('')
+    || '<div class="gz-empty">Nessuna altra sfida disponibile.</div>'}`);
+  cambio.open();
+}
+cambio.el.addEventListener('click', async e => {
+  const b = e.target.closest('[data-alt]');
+  if (!b) return;
+  cambio.$$('[data-alt]').forEach(x => { x.disabled = true; });
+  const nuovo = await cambia(D, cambioIdx, b.dataset.alt);
+  cambio.close();
+  if (!nuovo) return toast('Non sono riuscito a cambiarla');
+  L = nuovo; render(); toast('Sfida cambiata');
+});
+
 function render() {
   if (!D) { root.innerHTML = '<div class="card flat gz-empty">Carico i tuoi dati…</div>'; return; }
   root.innerHTML = `<div class="gz-sec"><div class="cap">Livello e sfide</div>${livello()}</div>
@@ -111,7 +135,7 @@ root.addEventListener('click', async e => {
     return;
   }
   const cb = e.target.closest('[data-cambia]');
-  if (cb) { cb.disabled = true; L = (await cambia(D, +cb.dataset.cambia)) || L; return render(); }
+  if (cb) return apriCambio(+cb.dataset.cambia);
   if (e.target.closest('[data-sadd]')) { sheet.$('#rs-v').value = ''; sheet.$('#rs-nota').value = ''; sheet.$('#rs-d').value = ''; return sheet.open(); }
   const del = e.target.closest('[data-sdel]');
   if (del) {

@@ -2,6 +2,7 @@
  * sfide.js — livelli e sfide. Per salire di livello si completano 3 sfide; ogni livello ne genera tre nuove,
  * sempre più impegnative (a livello 40, per esempio, 10 voci di diario invece di 1).
  *
+ * Ogni sfida si può sostituire con un'altra scelta da te, alla difficoltà del livello attuale.
  * Le sfide si scelgono da un catalogo che copre tutta l'app (diario, Direzione, storia, emozioni, allenamenti,
  * meditazione, passi, sonno, diario alimentare, umore, pressione). Sono generate in modo deterministico dal livello,
  * quindi sono uguali su ogni dispositivo. Stato: users/{uid}/direction/sfide
@@ -109,15 +110,20 @@ const modello = (s, prog, nuovoLivello) => ({
   ch: s.ch.map((c, i) => ({ ...c, text: CATALOGO[c.id].text(c.n), cat: CATALOGO[c.id].cat, value: Math.min(prog[i], c.n), done: prog[i] >= c.n })),
 });
 
-/** Cambia una sfida con un'altra (una volta per livello): utile se non puoi farla (es. niente sonno senza orologio). */
-export async function cambia(D, index) {
+/** Sfide che possono prendere il posto di quelle in corso: stesso livello, non già presenti, con i dati che hai (orologio, pressione). */
+export function alternative(D, level, attuali = []) {
+  const hasWatch = Object.keys(D.days || {}).length > 0, hasCuff = Object.keys(D.misure?.pressione || {}).length > 0;
+  return Object.keys(CATALOGO)
+    .filter(id => { const c = CATALOGO[id]; return !attuali.includes(id) && !(c.watch && !hasWatch) && !(c.cuff && !hasCuff); })
+    .map(id => { const n = CATALOGO[id].n(level); return { id, n, cat: CATALOGO[id].cat, text: CATALOGO[id].text(n) }; });
+}
+
+/** Sostituisce la sfida `index` con la sfida `id` scelta da te, alla difficoltà del livello attuale. */
+export async function cambia(D, index, id) {
   const ref = userDoc('direction', 'sfide'), s = (await getDoc(ref)).data();
-  if (!s || (s.skips || 0) >= 1) return null;
-  const attuali = s.ch.map(c => c.id);
-  const nuova = genera(s.level + 100, D, attuali)[0];       // un'altra estrazione, diversa da quelle in corso
-  if (!nuova) return null;
-  s.ch = s.ch.map((c, i) => (i === index ? c : c));
-  s.ch[index] = (await stato([{ ...nuova }], D))[0]; s.skips = (s.skips || 0) + 1;
+  if (!s?.ch?.[index] || !CATALOGO[id] || s.ch.some((c, i) => i !== index && c.id === id)) return null;
+  s.ch[index] = (await stato([{ id, n: CATALOGO[id].n(s.level) }], D))[0];
+  s.skips = (s.skips || 0) + 1;
   await setDoc(ref, s);
   return carica(D);
 }
