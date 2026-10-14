@@ -255,6 +255,9 @@
       border-radius:18px; padding:16px; margin-bottom:14px; }
     .cat-block-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
     .cat-block-name { flex:1; font-size:.88rem; font-weight:700; color:var(--primary); }
+    .cat-block-name small { display:block; font-size:.58rem; font-weight:400; color:var(--muted); margin-top:1px; }
+    .cat-toggle { flex:1; min-width:0; display:flex; align-items:center; gap:10px; border:0; background:none; font:inherit; text-align:left; padding:0; cursor:pointer; }
+    .cat-toggle .account-chevron { margin-left:0; }
     .cat-block-actions { display:flex; gap:4px; }
     .expense-row { background:var(--surface); border-radius:12px; padding:11px 12px;
       margin-bottom:6px; display:flex; align-items:center; gap:8px; }
@@ -785,6 +788,12 @@
     };
 
     /* ── render categories + expenses ── */
+    // categorie chiuse all'inizio: si aprono con la freccina (restano aperte finché non ricarichi la pagina)
+    const openCats = new Set();
+    window.toggleCat = function(docId) {
+      openCats.has(docId) ? openCats.delete(docId) : openCats.add(docId);
+      renderCategories();
+    };
     function renderCategories() {
       const el = document.getElementById('categories-list');
       if (!categories.length) {
@@ -835,7 +844,10 @@
         html += `
           <div class="cat-block">
             <div class="cat-block-header">
-              <div class="cat-block-name">📁 ${esc(cat.name)}</div>
+              <button type="button" class="cat-toggle" onclick="toggleCat('${cat._docId}')" aria-expanded="${openCats.has(cat._docId)}">
+                <span class="account-chevron${openCats.has(cat._docId) ? ' open' : ''}">▼</span>
+                <span class="cat-block-name">📁 ${esc(cat.name)}<small>${exps.length} ${exps.length === 1 ? 'voce' : 'voci'}</small></span>
+              </button>
               <div class="cat-block-actions">
                 <button class="icon-btn" title="Aggiungi voce" onclick="openNewExp('${cat._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -848,7 +860,7 @@
                 </button>
               </div>
             </div>
-            ${expsHtml}
+            ${openCats.has(cat._docId) ? expsHtml : ''}
             <div class="cat-totals">
               <span class="cat-total-label">Netto ${esc(cat.name)}</span>
               <div style="text-align:right;">
@@ -970,6 +982,7 @@
     window.openNewExp = function(catId) {
       editExpDocId = null;
       newExpCatId  = catId;
+      if (catId) openCats.add(catId);   // la nuova voce si vede subito
       document.getElementById('modal-expense-title').textContent = 'Nuova voce';
       document.getElementById('exp-title').value  = '';
       document.getElementById('exp-amount').value = '';
