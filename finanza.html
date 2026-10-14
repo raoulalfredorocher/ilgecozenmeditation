@@ -120,6 +120,7 @@
     .mp-hero .v.neg { color:var(--red); } .mp-hero .s { font-size:.66rem; color:var(--muted); }
     .mp-seg { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
     .mp-seg button { border:1.5px solid var(--border); background:none; color:var(--muted); font:inherit; font-size:.62rem; letter-spacing:.08em; padding:5px 12px; border-radius:999px; cursor:pointer; }
+    .mp-seg-l { font-size:.56rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); align-self:center; margin-right:2px; }
     .mp-seg button.on { background:var(--primary); border-color:var(--primary); color:#fff; }
     .mp-bc { display:flex; align-items:center; flex-wrap:wrap; gap:4px; min-height:26px; margin-bottom:8px; font-size:.7rem; color:var(--muted); }
     .mp-bc button { border:0; background:none; font:inherit; color:var(--primary); cursor:pointer; padding:2px 4px; }
@@ -1047,7 +1048,8 @@
     }
 
     /* ── PATRIMONIO: diagramma dei flussi ── */
-    // group: 'voce' = un rettangolo per ogni entrata e uscita; 'cat' = raggruppate per categoria (scelta ricordata su questo telefono)
+    // group (solo entrate): 'voce' = un rettangolo per ogni entrata; 'cat' = raggruppate per categoria (scelta ricordata su questo telefono).
+    // Le uscite sono sempre per categoria: toccandone una si apre la colonna "Dettaglio" con le sue spese (sel = 'o:<categoria>').
     const patState = { per: 'year', sel: null, group: (() => { try { return localStorage.getItem('fin_pat_group') || 'voce'; } catch { return 'voce'; } })() };
     let patFlow = null, patModel = null;
     function buildFlow() {
@@ -1057,13 +1059,13 @@
       if (orphan) accs.push({ id: 'a:none', label: 'Senza conto', color: '#8E9AA8', _acc: '' });
       const accId = id => (id ? 'a:' + id : 'a:none');
       const ins = expenses.filter(e => e.tipo === 'entrata'), outs = expenses.filter(isOut), moves = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
-      // entrate e uscite: un rettangolo per voce, oppure uno per categoria
+      // entrate: un rettangolo per voce oppure per categoria; uscite: per categoria, con il dettaglio della categoria aperta
       const byCat = patState.group === 'cat';
-      const inId = e => byCat ? 'i:' + e.catId : 'i:' + e._docId, outId = e => byCat ? 'o:' + e.catId : 'o:' + e._docId;
+      const inId = e => byCat ? 'i:' + e.catId : 'i:' + e._docId, outId = e => 'o:' + e.catId;
       const incMap = {};
       ins.forEach(e => { const id = inId(e); (incMap[id] ||= { id, label: byCat ? (catName(e.catId) || 'Entrate') : e.title, value: 0, color: '#4FA36C', exps: [] }); incMap[id].value += v(e); incMap[id].exps.push(e); });
       const outMap = {};
-      outs.forEach(e => { const id = outId(e); (outMap[id] ||= { id, label: byCat ? (catName(e.catId) || 'Altro') : e.title, value: 0, color: '#D9786A', exps: [] }); outMap[id].value += v(e); outMap[id].exps.push(e); });
+      outs.forEach(e => { const id = outId(e); (outMap[id] ||= { id, label: catName(e.catId) || 'Altro', value: 0, color: '#D9786A', exps: [] }); outMap[id].value += v(e); outMap[id].exps.push(e); });
       const links = [];
       ins.forEach(e => links.push({ from: inId(e), to: accId(e.accountId), value: v(e), kind: 'in', exps: [e] }));
       outs.forEach(e => links.push({ from: accId(e.accountId), to: outId(e), value: v(e), kind: 'out', exps: [e] }));
@@ -1073,14 +1075,18 @@
       const expenses2 = Object.values(outMap).sort((a, b) => b.value - a.value).map((n, i) => ({ ...n, color: WARM[i % WARM.length] }));
       const GREEN = ['#4FA36C', '#6BB886', '#3E8F5C', '#86C79C', '#5DAE78'];
       const incomes2 = Object.values(incMap).sort((a, b) => b.value - a.value).map((n, i) => ({ ...n, color: GREEN[i % GREEN.length] }));
-      return { incomes: incomes2, accounts: accs, expenses: expenses2, links };
+      // secondo livello delle uscite: le voci della categoria selezionata
+      const open = expenses2.find(n => n.id === patState.sel);
+      const details = open ? open.exps.map(e => ({ id: 'd:' + e._docId, label: e.title, value: v(e), color: open.color, exps: [e] })).sort((a, b) => b.value - a.value) : [];
+      details.forEach(d => links.push({ from: open.id, to: d.id, value: d.value, kind: 'det', exps: d.exps }));
+      return { incomes: incomes2, accounts: accs, expenses: expenses2, details, links };
     }
     function flowDetail(model, sel) {
       const box = document.getElementById('pat-detail');
-      if (!sel) { box.innerHTML = '<p class="mp-note">Tocca un rettangolo per isolare i suoi flussi: vedi da dove arrivano i soldi e dove vanno. Tocca di nuovo o sullo sfondo per tornare alla vista completa. Il diagramma si fa scorrere con il dito.</p>'; return; }
+      if (!sel) { box.innerHTML = '<p class="mp-note">Tocca un rettangolo per isolare i suoi flussi: vedi da dove arrivano i soldi e dove vanno. Tocca una categoria di uscita per vedere le sue spese nella colonna Dettaglio. Tocca di nuovo o sullo sfondo per tornare alla vista completa. Il diagramma si fa scorrere con il dito.</p>'; return; }
       const node = [...model.incomes, ...model.accounts, ...model.expenses].find(n => n.id === sel); if (!node) { box.innerHTML = ''; return; }
       const rows = [];
-      model.links.filter(l => l.from === sel || l.to === sel).forEach(l => {
+      model.links.filter(l => l.kind !== 'det' && (l.from === sel || l.to === sel)).forEach(l => {
         const other = [...model.incomes, ...model.accounts, ...model.expenses].find(n => n.id === (l.from === sel ? l.to : l.from));
         const incoming = l.to === sel;
         l.exps.forEach(e => rows.push({ e, k: l.kind, incoming, other: other?.label || '', val: l.exps.length === 1 ? l.value : monthly(e) * (patState.per === 'year' ? 12 : 1) }));
@@ -1101,9 +1107,16 @@
       if (!root.querySelector('#pat-fl')) {
         root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div>
           <div class="mp-seg" id="pat-seg"><button data-p="month">Al mese</button><button data-p="year">All'anno</button><button data-move class="move">⇄ Registra un giroconto</button></div>
-          <div class="mp-seg" id="pat-grp"><button data-g="voce">Per voce</button><button data-g="cat">Per categoria</button></div>
+          <div class="mp-seg" id="pat-grp"><span class="mp-seg-l">Entrate</span><button data-g="voce">Per voce</button><button data-g="cat">Per categoria</button></div>
           <div id="pat-fl"></div><div class="fl-hint">scorri il diagramma con il dito →</div><div id="pat-detail"></div></div>`;
-        patFlow = mountFlow(root.querySelector('#pat-fl'), { fmt: v => eur0(v), onSelect: id => { patState.sel = id; flowDetail(patModel, id); } });
+        patFlow = mountFlow(root.querySelector('#pat-fl'), { fmt: v => eur0(v), onSelect: id => {
+          if (id?.startsWith('d:')) {   // una spesa del dettaglio: apre la sua scheda e resta sulla categoria
+            const ex = expenses.find(q => 'd:' + q._docId === id); patFlow.select(patState.sel); if (ex) openLeaf(ex); return;
+          }
+          const wasOpen = patState.sel?.startsWith('o:'); patState.sel = id;
+          if (wasOpen || id?.startsWith('o:')) return renderPatrimonio();   // apre o chiude la colonna "Dettaglio"
+          flowDetail(patModel, id);
+        } });
         root.querySelector('#pat-seg').addEventListener('click', e => {
           const p = e.target.closest('[data-p]'); if (p) { patState.per = p.dataset.p; renderPatrimonio(); return; }
           if (e.target.closest('[data-move]')) {
@@ -1125,8 +1138,9 @@
       root.querySelectorAll('#pat-seg [data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === patState.per));
       root.querySelectorAll('#pat-grp [data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === patState.group));
       patModel = buildFlow();
-      if (patState.sel && ![...patModel.incomes, ...patModel.accounts, ...patModel.expenses].some(n => n.id === patState.sel)) patState.sel = null;
+      if (patState.sel && ![...patModel.incomes, ...patModel.accounts, ...patModel.expenses].some(n => n.id === patState.sel)) { patState.sel = null; patModel = buildFlow(); }
       patFlow.show({ ...patModel, selected: patState.sel });
+      if (patModel.details.length) { const sc = root.querySelector('.fl-scroll'); sc.scrollTo({ left: sc.scrollWidth, behavior: 'smooth' }); }   // porta in vista la colonna Dettaglio
       flowDetail(patModel, patState.sel);
     }
 
