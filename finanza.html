@@ -1092,6 +1092,12 @@
       const open = expenses2.find(n => n.id === patState.sel);
       const details = open ? open.exps.map(e => ({ id: 'd:' + e._docId, label: e.title, value: v(e), color: open.color, exps: [e] })).sort((a, b) => b.value - a.value) : [];
       details.forEach(d => links.push({ from: open.id, to: d.id, value: d.value, kind: 'det', exps: d.exps }));
+      // sotto il nome del conto: il saldo del periodo (entrate − uscite + giroconti ricevuti − giroconti fatti).
+      // Senza `show` il diagramma scriverebbe la dimensione del rettangolo, cioè il flusso più grande tra entrato e uscito: un numero che non dice niente.
+      accs.forEach(a => {
+        const bal = links.reduce((s, l) => s + (l.to === a.id && l.kind !== 'det' ? l.value : 0) - (l.from === a.id ? l.value : 0), 0);
+        a.bal = bal; a.show = `saldo ${bal < 0 ? '−' : '+'}${eur0(Math.abs(bal))}`;   // al mese o all'anno secondo il pulsante sopra
+      });
       return { incomes: incomes2, accounts: accs, expenses: expenses2, details, links };
     }
     function flowDetail(model, sel) {
@@ -1109,7 +1115,7 @@
       const sumIn = rows.filter(r => r.k === 'in').reduce((s, r) => s + r.val, 0), sumOut = rows.filter(r => r.k === 'out').reduce((s, r) => s + r.val, 0);
       const mvIn = rows.filter(r => r.k === 'move' && r.incoming).reduce((s, r) => s + r.val, 0), mvOut = rows.filter(r => r.k === 'move' && !r.incoming).reduce((s, r) => s + r.val, 0);
       const pill = (t, v, c) => v ? `<span class="fl-pill" style="--c:${c}">${t} ${eur0(v)}</span>` : '';
-      box.innerHTML = `<div class="fl-det"><div class="fl-det-h"><b>${esc(node.label)}</b><div>${pill('Entra', sumIn, '#4FA36C')}${pill('Esce', sumOut, '#D9786A')}${pill('Giroconti in', mvIn, '#7C5CD8')}${pill('Giroconti out', mvOut, '#7C5CD8')}</div></div>
+      box.innerHTML = `<div class="fl-det"><div class="fl-det-h"><b>${esc(node.label)}</b><div>${pill('Entra', sumIn, '#4FA36C')}${pill('Esce', sumOut, '#D9786A')}${pill('Giroconti in', mvIn, '#7C5CD8')}${pill('Giroconti out', mvOut, '#7C5CD8')}${node.bal !== undefined ? pill('Saldo ' + (node.bal < 0 ? '−' : '+'), Math.abs(node.bal) || 0.001, node.bal < 0 ? '#D9786A' : '#4FA36C') : ''}</div></div>
         <div class="mp-list">${rows.sort((a, b) => b.val - a.val).map((r, i) => `<button type="button" class="mp-row" data-r="${i}"><span class="mp-dot" style="background:${r.k === 'in' ? '#4FA36C' : r.k === 'move' ? '#7C5CD8' : '#D9786A'}"></span>
           <span class="n">${esc(r.e.title)}<small>${r.k === 'in' ? 'entrata · ' : r.k === 'out' ? 'uscita · ' : 'giroconto · '}${esc((r.incoming ? 'da ' : 'verso ') + r.other)}</small></span><span class="a ${r.k === 'in' ? 'pos' : r.k === 'move' ? '' : 'neg'}">${r.k === 'in' ? '+' : r.k === 'move' ? '' : '−'}${eur0(r.val)}</span></button>`).join('')}</div></div>`;
       box._rows = rows.sort((a, b) => b.val - a.val);
