@@ -340,6 +340,43 @@
     .pat-exp-amount { font-size:.78rem; font-weight:600; flex-shrink:0; }
     .pat-exp-amount.pos { color:#22a85e; }
     .pat-exp-amount.neg { color:var(--red); }
+
+    /* ── PLANNING compatto: stesse informazioni, meno scorrimento ── */
+    #screen-planning .section-title { margin:14px 0 8px; }
+    #screen-planning .btn-add { padding:9px; font-size:.72rem; margin-bottom:8px; }
+    #screen-planning .icon-btn { width:32px; height:32px; padding:0; }
+    .grand-summary { padding:12px 14px; margin-bottom:12px; }
+    .grand-summary-title { margin-bottom:8px; }
+    .gs-inv { padding:10px 12px; }
+    .gs-inv-v span { font-size:1.4rem; }
+    #grand-summary > div:last-child { margin-top:8px !important; padding-top:8px !important; }
+    .pl-card { padding:12px 14px; margin-bottom:6px; }
+    .pl-segs { display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
+    .pl-segs .mp-seg { margin-bottom:0; flex-wrap:nowrap; }
+    .pl-card .mp-hero { margin-bottom:6px; } .pl-card .mp-hero .v { font-size:1.7rem; }
+    .pl-card .pl-bar { margin:4px 0 8px; height:10px; }
+    .pl-card .pl-cat { padding:0 0 4px; }
+    .pl-card .pl-head { padding:6px 2px 3px; gap:8px; }
+    .pl-card .pl-head .n { font-size:.76rem; } .pl-card .pl-head .n small { display:inline; margin-left:6px; }
+    .pl-card .pl-head .a { font-size:.76rem; }
+    .pl-card .pl-fill { height:3px; }
+    .account-card { margin-bottom:6px; border-radius:14px; }
+    .account-card-header { padding:9px 12px; gap:8px; }
+    .account-name { font-size:.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .account-meta { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .account-balance-val { font-size:.82rem; }
+    .account-detail { padding:8px 12px; }
+    .cat-block { padding:6px 8px 6px 12px; margin-bottom:6px; border-radius:14px; }
+    .cat-block-header { margin-bottom:0; gap:2px; }
+    .cat-block-name { font-size:.8rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cat-net { margin-left:auto; text-align:right; font-size:.78rem; font-weight:700; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .cat-net small { font-size:.52rem; font-weight:400; color:var(--muted); }
+    .cat-block-actions { gap:0; }
+    .cat-exps { margin-top:6px; }
+    .expense-row { padding:7px 4px 7px 10px; margin-bottom:4px; gap:6px; }
+    .expense-title-text { font-size:.76rem; }
+    .expense-amount { font-size:.78rem; }
+    .exp-actions { display:flex; flex-shrink:0; }
   </style>
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
@@ -383,8 +420,6 @@
   <!-- ═══ SCREEN: PLANNING SPESA ═══ -->
   <div class="screen" id="screen-planning">
 
-    <!-- MAPPA DELLE SPESE -->
-    <div id="pl-map" style="width:100%;margin-top:6px"></div>
 
     <!-- RIEPILOGO GLOBALE -->
     <div class="grand-summary" id="grand-summary" style="margin-top:6px;">
@@ -406,6 +441,8 @@
       </div>
     </div>
 
+    <!-- MAPPA DELLE SPESE -->
+    <div id="pl-map" style="width:100%"></div>
     <!-- CONTI -->
     <div class="section-title">Conti correnti</div>
     <div id="accounts-list" style="width:100%;"></div>
@@ -748,7 +785,6 @@
         return `
           <div class="account-card" id="acc-card-${docId}">
             <div class="account-card-header" onclick="toggleAccDetail('${docId}')">
-              <div class="account-icon">🏦</div>
               <div class="account-info">
                 <div class="account-name">${esc(a.name)}${isInvAcc(a) ? '<span class="acc-inv-badge">investimento</span>' : ''}</div>
                 <div class="account-meta">${a.holder || ''}${a.iban ? ' · ' + a.iban : ''}</div>
@@ -850,7 +886,7 @@
                 <div class="expense-amount" style="color:${col};">${sign}${fmtEur(m)}<span style="font-size:.52rem;font-weight:400;color:var(--muted)">/mese</span></div>
                 ${exp.freq === 'annual' ? `<div class="expense-sub">${sign}${fmtEur(exp.amount)}/anno</div>` : ''}
               </div>
-              <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+              <div class="exp-actions">
                 <button class="icon-btn" onclick="openEditExp('${exp._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
                 </button>
@@ -866,28 +902,22 @@
             <div class="cat-block-header">
               <button type="button" class="cat-toggle" onclick="toggleCat('${cat._docId}')" aria-expanded="${openCats.has(cat._docId)}">
                 <span class="account-chevron${openCats.has(cat._docId) ? ' open' : ''}">▼</span>
-                <span class="cat-block-name">📁 ${esc(cat.name)}<small>${exps.length} ${exps.length === 1 ? 'voce' : 'voci'}</small></span>
+                <span class="cat-block-name">${esc(cat.name)}<small>${exps.length} ${exps.length === 1 ? 'voce' : 'voci'} · ${catNetA >= 0 ? '+' : '−'}${fmtEur(Math.abs(catNetA))}/anno</small></span>
+                <span class="cat-net" style="color:${catCls};">${catNetM >= 0 ? '+' : '−'}${fmtEur(Math.abs(catNetM))}<small>/mese</small></span>
               </button>
               <div class="cat-block-actions">
                 <button class="icon-btn" title="Aggiungi voce" onclick="openNewExp('${cat._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </button>
-                <button class="icon-btn" title="Modifica categoria" onclick="openEditCat('${cat._docId}')">
+                ${openCats.has(cat._docId) ? `<button class="icon-btn" title="Modifica categoria" onclick="openEditCat('${cat._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
                 </button>
                 <button class="icon-btn del" title="Elimina categoria" onclick="doDelCat('${cat._docId}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
-                </button>
+                </button>` : ''}
               </div>
             </div>
-            ${openCats.has(cat._docId) ? expsHtml : ''}
-            <div class="cat-totals">
-              <span class="cat-total-label">Netto ${esc(cat.name)}</span>
-              <div style="text-align:right;">
-                <div class="cat-total-value" style="color:${catCls};">${catNetM >= 0 ? '+' : ''}${fmtEur(catNetM)}<span style="font-size:.58rem;font-weight:400;color:var(--muted)">/mese</span></div>
-                <div style="font-size:.6rem;color:var(--muted);">${catNetA >= 0 ? '+' : ''}${fmtEur(catNetA)}/anno</div>
-              </div>
-            </div>
+            ${openCats.has(cat._docId) ? `<div class="cat-exps">${expsHtml}</div>` : ''}
           </div>`;
       });
       el.innerHTML = html;
@@ -1209,8 +1239,8 @@
       const host = document.getElementById('pl-map');
       if (!host) return;
       if (!host.querySelector('#pl-body')) {
-        host.innerHTML = `<div class="mp-card"><div class="mp-seg" id="pl-seg1"><button data-t="uscita">Uscite</button><button data-t="entrata">Entrate</button></div>
-          <div class="mp-seg" id="pl-seg2"><button data-p="month">Al mese</button><button data-p="year">All'anno</button></div><div id="pl-body"></div></div>`;
+        host.innerHTML = `<div class="mp-card pl-card"><div class="pl-segs"><div class="mp-seg" id="pl-seg1"><button data-t="uscita">Uscite</button><button data-t="entrata">Entrate</button></div>
+          <div class="mp-seg" id="pl-seg2"><button data-p="month">Mese</button><button data-p="year">Anno</button></div></div><div id="pl-body"></div></div>`;
         host.addEventListener('click', e => {
           const t = e.target.closest('[data-t]'); if (t) { plState.tipo = t.dataset.t; plState.open = null; return renderPlanMap(); }
           const p = e.target.closest('[data-p]'); if (p) { plState.per = p.dataset.p; return renderPlanMap(); }
