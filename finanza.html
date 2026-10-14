@@ -212,6 +212,14 @@
     .grand-summary-item { text-align:center; }
     .grand-summary-label { font-size:.5rem; letter-spacing:.14em; text-transform:uppercase; opacity:.75; }
     .grand-summary-value { font-size:1.18rem; font-weight:700; margin-top:4px; }
+    /* investimenti = entrate − uscite: il riquadro in evidenza del riepilogo */
+    .gs-inv { background:linear-gradient(135deg, #E9C46A, #D4A23C); color:#2B2210; border-radius:16px; padding:12px 14px; text-align:center; }
+    .gs-inv.neg { background:linear-gradient(135deg, #E8A0A0, #C9616B); color:#2B1010; }
+    .gs-inv-v { display:flex; flex-direction:column; align-items:center; margin-top:4px; }
+    .gs-inv-v span { font-size:1.6rem; font-weight:700; letter-spacing:-.02em; }
+    .gs-inv-v small { font-size:.62rem; opacity:.8; margin-top:2px; }
+    .gs-inv-s { font-size:.6rem; line-height:1.5; margin-top:6px; opacity:.85; }
+    .acc-inv-badge { display:inline-block; font-size:.46rem; letter-spacing:.1em; text-transform:uppercase; padding:2px 6px; border-radius:6px; margin-left:6px; vertical-align:middle; background:rgba(212,162,60,.2); color:#A87A1E; }
 
     .account-card { width:100%; background:var(--card); border:1.5px solid var(--border);
       border-radius:16px; padding:0; margin-bottom:10px; overflow:hidden; }
@@ -381,15 +389,10 @@
     <!-- RIEPILOGO GLOBALE -->
     <div class="grand-summary" id="grand-summary" style="margin-top:6px;">
       <div class="grand-summary-title">Riepilogo totale</div>
-      <div class="grand-summary-grid">
-        <div class="grand-summary-item">
-          <div class="grand-summary-label">Saldo mensile netto</div>
-          <div class="grand-summary-value" id="grand-monthly">€ 0</div>
-        </div>
-        <div class="grand-summary-item">
-          <div class="grand-summary-label">Saldo annuale netto</div>
-          <div class="grand-summary-value" id="grand-annual">€ 0</div>
-        </div>
+      <div class="gs-inv" id="gs-inv">
+        <div class="grand-summary-label" id="gs-inv-label">Investimenti al mese</div>
+        <div class="gs-inv-v"><span id="grand-monthly">€ 0</span><small id="grand-annual">€ 0 all'anno</small></div>
+        <div class="gs-inv-s" id="gs-inv-split"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);">
         <div style="text-align:center;">
@@ -447,6 +450,7 @@
         <div class="form-group" style="margin-bottom:0;"><label>Saldo sul conto (€)</label><input id="acc-saldo" type="number" step="0.01" placeholder="es. 10000"/></div>
         <div class="form-group" style="margin-bottom:0;"><label>Aggiornato al</label><input id="acc-saldo-data" type="date"/></div>
       </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.74rem;margin:12px 0 4px;cursor:pointer"><input type="checkbox" id="acc-invest" style="width:auto"/> Conto di investimento (fondo, PAC, pensione, broker)</label>
       <div style="font-size:.6rem;color:var(--muted);margin:6px 0 4px;line-height:1.5">Quanto c'è già sul conto: non è un'entrata, non entra nei conti di entrate e uscite. Aggiornalo quando vuoi.</div>
       <div class="modal-actions">
         <button class="btn-outline" id="btn-acc-cancel">Annulla</button>
@@ -693,6 +697,9 @@
       return exp.tipo === 'entrata' ? m : isMove(exp) ? 0 : -m;
     }
 
+    // conto di investimento (fondo, PAC, pensione, broker): campo `invest` del conto; se non è mai stato scelto lo si deduce dal nome
+    const INV_RE = /fond|pension|invest|trade republic|\bpac\b|broker|etf/i;
+    const isInvAcc = a => !!a && (typeof a.invest === 'boolean' ? a.invest : INV_RE.test(a.name || ''));
     // saldo già presente sul conto (campi saldo + saldoData del conto): è la base, non un flusso
     const hasSaldo = a => typeof a.saldo === 'number' && !isNaN(a.saldo);
     const fmtData = d => d ? d.split('-').reverse().join('/') : '';
@@ -743,7 +750,7 @@
             <div class="account-card-header" onclick="toggleAccDetail('${docId}')">
               <div class="account-icon">🏦</div>
               <div class="account-info">
-                <div class="account-name">${esc(a.name)}</div>
+                <div class="account-name">${esc(a.name)}${isInvAcc(a) ? '<span class="acc-inv-badge">investimento</span>' : ''}</div>
                 <div class="account-meta">${a.holder || ''}${a.iban ? ' · ' + a.iban : ''}</div>
               </div>
               <div class="account-balance">
@@ -889,15 +896,20 @@
 
     function updateGrandSummary() {
       try { renderPlanMap(); } catch (e) { console.warn('mappa spese', e); }
+      // Investimenti = entrate − uscite: quello che non spendi lo investi. I giroconti verso un conto di investimento
+      // (PAC, pensione…) sono la parte già automatica; il resto è quello che resta da investire a mano.
       const netMonthly  = expenses.reduce((s, e) => s + monthlyNet(e), 0);
       const totEntrate  = expenses.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
       const totUscite   = expenses.filter(e => e.tipo !== 'entrata' && !isMove(e)).reduce((s, e) => s + monthly(e), 0);
-      const cls = netMonthly >= 0 ? '#22a85e' : 'var(--red)';
-      document.getElementById('grand-monthly').textContent = (netMonthly >= 0 ? '+' : '') + fmtEur(netMonthly);
-      document.getElementById('grand-annual').textContent  = (netMonthly >= 0 ? '+' : '') + fmtEur(netMonthly * 12);
-      // aggiorna colore saldo netto
-      document.getElementById('grand-monthly').style.color = cls;
-      document.getElementById('grand-annual').style.color  = cls;
+      const auto = expenses.filter(e => isMove(e) && isInvAcc(accounts.find(a => a._docId === e.toAccountId))).reduce((s, e) => s + monthly(e), 0);
+      const pos = netMonthly >= 0;
+      document.getElementById('gs-inv').classList.toggle('neg', !pos);
+      document.getElementById('gs-inv-label').textContent = pos ? 'Investimenti al mese' : 'Mancano al mese';
+      document.getElementById('grand-monthly').textContent = fmtEur(Math.abs(netMonthly));
+      document.getElementById('grand-annual').textContent  = fmtEur(Math.abs(netMonthly) * 12) + " all'anno";
+      document.getElementById('gs-inv-split').textContent = pos
+        ? `entrate − uscite${auto ? ` · ${fmtEur(auto)} già in giroconto verso gli investimenti · restano da investire ${fmtEur(Math.max(0, netMonthly - auto))}` : ''}`
+        : 'le uscite superano le entrate';
       // dettaglio entrate/uscite nel summary
       document.getElementById('grand-entrate').textContent = '+' + fmtEur(totEntrate);
       document.getElementById('grand-uscite').textContent  = '-' + fmtEur(totUscite);
@@ -933,6 +945,7 @@
       document.getElementById('acc-iban').value   = a.iban   || '';
       document.getElementById('acc-saldo').value  = a.saldo ?? '';
       document.getElementById('acc-saldo-data').value = a.saldoData || '';
+      document.getElementById('acc-invest').checked = isInvAcc(a);
       document.getElementById('modal-account').classList.add('open');
     };
     window.doDelAcc = async function(docId) {
@@ -944,6 +957,7 @@
       editAccDocId = null;
       document.getElementById('modal-account-title').textContent = 'Nuovo conto corrente';
       ['acc-name','acc-holder','acc-iban','acc-saldo','acc-saldo-data'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('acc-invest').checked = false;
       document.getElementById('modal-account').classList.add('open');
     });
     document.getElementById('btn-acc-cancel').addEventListener('click', () => closeModal('modal-account'));
@@ -957,7 +971,7 @@
       if (!name) { document.getElementById('acc-name').focus(); return; }
       if (saldo !== null && isNaN(saldo)) { document.getElementById('acc-saldo').focus(); return; }
       if (saldo !== null && !saldoData) saldoData = new Date().toISOString().slice(0, 10);   // senza data: oggi
-      const fields = { name, holder, iban, saldo, saldoData: saldo === null ? '' : saldoData };
+      const fields = { name, holder, iban, saldo, saldoData: saldo === null ? '' : saldoData, invest: document.getElementById('acc-invest').checked };
       if (editAccDocId) {
         await updateFinanzaAccount(editAccDocId, fields);
       } else {
@@ -1088,7 +1102,7 @@
     let patFlow = null, patModel = null;
     function buildFlow() {
       const k = patState.per === 'year' ? 12 : 1, v = e => monthly(e) * k;
-      const accs = accounts.map((a, i) => ({ id: 'a:' + a._docId, label: a.name, color: PALETTE[i % PALETTE.length], _acc: a._docId }));
+      const accs = accounts.map((a, i) => ({ id: 'a:' + a._docId, label: a.name, color: isInvAcc(a) ? '#D4A23C' : PALETTE[i % PALETTE.length], _acc: a._docId }));
       const orphan = expenses.some(e => !e.accountId && e.tipo !== 'giroconto');
       if (orphan) accs.push({ id: 'a:none', label: 'Senza conto', color: '#8E9AA8', _acc: '' });
       const accId = id => (id ? 'a:' + id : 'a:none');
