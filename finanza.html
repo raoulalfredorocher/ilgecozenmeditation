@@ -443,6 +443,11 @@
       <div class="form-group"><label>Nome conto</label><input id="acc-name" placeholder="es. Conto principale"/></div>
       <div class="form-group"><label>Titolare</label><input id="acc-holder" placeholder="es. Mario Rossi"/></div>
       <div class="form-group"><label>IBAN</label><input id="acc-iban" placeholder="IT00 X000 0000 0000 0000 0000 000"/></div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0;"><label>Saldo sul conto (€)</label><input id="acc-saldo" type="number" step="0.01" placeholder="es. 10000"/></div>
+        <div class="form-group" style="margin-bottom:0;"><label>Aggiornato al</label><input id="acc-saldo-data" type="date"/></div>
+      </div>
+      <div style="font-size:.6rem;color:var(--muted);margin:6px 0 4px;line-height:1.5">Quanto c'è già sul conto: non è un'entrata, non entra nei conti di entrate e uscite. Aggiornalo quando vuoi.</div>
       <div class="modal-actions">
         <button class="btn-outline" id="btn-acc-cancel">Annulla</button>
         <button class="btn-primary" id="btn-acc-save">Salva</button>
@@ -688,6 +693,10 @@
       return exp.tipo === 'entrata' ? m : isMove(exp) ? 0 : -m;
     }
 
+    // saldo già presente sul conto (campi saldo + saldoData del conto): è la base, non un flusso
+    const hasSaldo = a => typeof a.saldo === 'number' && !isNaN(a.saldo);
+    const fmtData = d => d ? d.split('-').reverse().join('/') : '';
+
     /* ── render accounts (espandibili con dettaglio per conto) ── */
     function renderAccounts() {
       const el = document.getElementById('accounts-list');
@@ -744,6 +753,10 @@
               <div class="account-chevron" id="chev-${docId}">▼</div>
             </div>
             <div class="account-detail" id="detail-${docId}">
+              ${hasSaldo(a) ? `<div class="account-detail-row">
+                <span class="account-detail-label">Sul conto al ${fmtData(a.saldoData)}</span>
+                <span class="account-detail-value">${fmtEur(a.saldo)}</span>
+              </div>` : ''}
               <div class="account-detail-row">
                 <span class="account-detail-label">Entrate mensili</span>
                 <span class="account-detail-value pos">+${fmtEur(totEntM)}</span>
@@ -918,6 +931,8 @@
       document.getElementById('acc-name').value   = a.name   || '';
       document.getElementById('acc-holder').value = a.holder || '';
       document.getElementById('acc-iban').value   = a.iban   || '';
+      document.getElementById('acc-saldo').value  = a.saldo ?? '';
+      document.getElementById('acc-saldo-data').value = a.saldoData || '';
       document.getElementById('modal-account').classList.add('open');
     };
     window.doDelAcc = async function(docId) {
@@ -928,7 +943,7 @@
     document.getElementById('btn-add-account').addEventListener('click', () => {
       editAccDocId = null;
       document.getElementById('modal-account-title').textContent = 'Nuovo conto corrente';
-      ['acc-name','acc-holder','acc-iban'].forEach(id => document.getElementById(id).value = '');
+      ['acc-name','acc-holder','acc-iban','acc-saldo','acc-saldo-data'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('modal-account').classList.add('open');
     });
     document.getElementById('btn-acc-cancel').addEventListener('click', () => closeModal('modal-account'));
@@ -936,11 +951,17 @@
       const name   = document.getElementById('acc-name').value.trim();
       const holder = document.getElementById('acc-holder').value.trim();
       const iban   = document.getElementById('acc-iban').value.trim();
+      const saldoTxt = document.getElementById('acc-saldo').value.trim();
+      const saldo = saldoTxt === '' ? null : parseFloat(saldoTxt);
+      let saldoData = document.getElementById('acc-saldo-data').value;
       if (!name) { document.getElementById('acc-name').focus(); return; }
+      if (saldo !== null && isNaN(saldo)) { document.getElementById('acc-saldo').focus(); return; }
+      if (saldo !== null && !saldoData) saldoData = new Date().toISOString().slice(0, 10);   // senza data: oggi
+      const fields = { name, holder, iban, saldo, saldoData: saldo === null ? '' : saldoData };
       if (editAccDocId) {
-        await updateFinanzaAccount(editAccDocId, { name, holder, iban });
+        await updateFinanzaAccount(editAccDocId, fields);
       } else {
-        await addFinanzaAccount({ name, holder, iban });
+        await addFinanzaAccount(fields);
       }
       closeModal('modal-account');
     });
@@ -1153,7 +1174,12 @@
       }
       const k = patState.per === 'year' ? 12 : 1;
       const net = expenses.filter(e => e.tipo !== 'giroconto').reduce((s, e) => s + monthlyNet(e) * 12, 0);
-      document.getElementById('pat-hero').innerHTML = `<div class="mp-hero"><span class="l">Patrimonio stimato</span><span class="v ${net < 0 ? 'neg' : ''}">${net < 0 ? '−' : ''}${eur0(Math.abs(net))}</span><span class="s">Saldo annuo (entrate − uscite × 12) · ${accounts.length} ${accounts.length === 1 ? 'conto' : 'conti'}</span></div>`;
+      // patrimonio = soldi già sui conti (saldo inserito nel conto) + quello che metti da parte in un anno (entrate − uscite)
+      const withSaldo = accounts.filter(hasSaldo), base = withSaldo.reduce((s, a) => s + a.saldo, 0);
+      const sgn = n => (n < 0 ? '−' : '+') + eur0(Math.abs(n));
+      document.getElementById('pat-hero').innerHTML = withSaldo.length
+        ? `<div class="mp-hero"><span class="l">Patrimonio oggi</span><span class="v ${base < 0 ? 'neg' : ''}">${base < 0 ? '−' : ''}${eur0(Math.abs(base))}</span><span class="s">Saldi dei conti (${withSaldo.length} su ${accounts.length}) · fra 12 mesi circa ${eur0(base + net)} (saldo annuo ${sgn(net)})</span></div>`
+        : `<div class="mp-hero"><span class="l">Saldo annuo</span><span class="v ${net < 0 ? 'neg' : ''}">${net < 0 ? '−' : ''}${eur0(Math.abs(net))}</span><span class="s">Entrate − uscite × 12 · per il patrimonio inserisci quanto c'è sui conti (Planning → conto → Modifica)</span></div>`;
       root.querySelectorAll('#pat-seg [data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === patState.per));
       root.querySelectorAll('#pat-grp [data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === patState.group));
       patModel = buildFlow();
