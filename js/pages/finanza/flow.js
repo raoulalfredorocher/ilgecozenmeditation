@@ -8,9 +8,10 @@
  * Su schermi stretti il diagramma è più largo dello schermo: si fa scorrere con il dito.
  *
  *   const f = mountFlow(elemento, { onSelect(sel|null) })
- *   f.show({ incomes, accounts, expenses, links, selected })
- *     incomes/expenses: [{ id, label, value, color }]    accounts: [{ id, label, color }]
- *     links: [{ from, to, value, kind: 'in'|'out'|'move' }]       (id dei nodi)
+ *   f.show({ incomes, accounts, expenses, details, links, selected })
+ *     incomes/expenses/details: [{ id, label, value, color }]    accounts: [{ id, label, color }]
+ *     details (facoltativo): quarta colonna "Dettaglio", le voci di una categoria di uscita aperta
+ *     links: [{ from, to, value, kind: 'in'|'out'|'move'|'det' }]       (id dei nodi; 'det' = uscita → sua voce)
  *   f.select(id|null)
  *   f.destroy()          scollega l'osservatore delle dimensioni (lo fa da sé se si rimonta o se `el` esce dalla pagina)
  *
@@ -31,12 +32,13 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
   /** Calcola altezze e posizioni dei nodi (proporzionali agli importi) e ridisegna SVG e pulsanti. */
   function draw() {
     if (!model) return;
-    const { incomes, accounts, expenses, links } = model;
-    const width = Math.max(el.clientWidth || 340, 540);
+    const { incomes, accounts, expenses, links } = model, details = model.details || [];
+    const width = Math.max(el.clientWidth || 340, details.length ? 700 : 540);
     const val = { };
     // totali per nodo
     const L = { in: {}, out: {}, mvOut: {}, mvIn: {} };
     links.forEach(l => {
+      if (l.kind === 'det') return;
       const t = l.kind === 'move' ? ['mvOut', 'mvIn'] : l.kind === 'in' ? ['out', 'in'] : ['out', 'in'];
       L[t[0]][l.from] = (L[t[0]][l.from] || 0) + l.value; L[t[1]][l.to] = (L[t[1]][l.to] || 0) + l.value;
     });
@@ -44,18 +46,24 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
     const sumCol = col => col.reduce((s, n) => s + (n.value ?? n.v), 0);
     const maxSum = Math.max(sumCol(incomes), sumCol(accounts), sumCol(expenses), 1);
     const colH = col => col.length * GAPY + 2 * PADY;
-    const avail = Math.max(300, Math.max(colH(incomes), colH(accounts), colH(expenses)) + 220);
-    const scale = Math.max(0.0001, (avail - Math.max(colH(incomes), colH(accounts), colH(expenses))) / maxSum);
+    const tallest = Math.max(colH(incomes), colH(accounts), colH(expenses));
+    const avail = Math.max(300, tallest + 220);
+    const scale = Math.max(0.0001, (avail - tallest) / maxSum);
     const MIN = 42;
-    const place = (col, x) => { let y = PADY; col.forEach(n => { n.h = Math.max(MIN, (n.value ?? n.v) * scale); n.x = x; n.y = y; y += n.h + GAPY; }); return y; };
-    const xs = [0, (width - NW) / 2, width - NW];
-    const H = Math.max(place(incomes, xs[0]), place(accounts, xs[1]), place(expenses, xs[2])) + PADY;
-    const byId = {}; [...incomes, ...accounts, ...expenses].forEach(n => { byId[n.id] = n; });
+    const place = (col, x, y0 = PADY) => { let y = y0; col.forEach(n => { n.h = Math.max(MIN, (n.value ?? n.v) * scale); n.x = x; n.y = y; y += n.h + GAPY; }); return y; };
+    const xs = details.length ? [0, (width - NW) / 3, (width - NW) * 2 / 3, width - NW] : [0, (width - NW) / 2, width - NW];
+    let H = Math.max(place(incomes, xs[0]), place(accounts, xs[1]), place(expenses, xs[2]));
+    if (details.length) {   // il dettaglio parte all'altezza della sua categoria
+      const parent = expenses.find(n => links.some(l => l.kind === 'det' && l.from === n.id));
+      H = Math.max(H, place(details, xs[3], parent ? parent.y : PADY));
+    }
+    H += PADY;
+    const byId = {}; [...incomes, ...accounts, ...expenses, ...details].forEach(n => { byId[n.id] = n; });
     // posizioni di attacco dei collegamenti sui bordi (impilati)
     const cur = {}; // `${id}|side` → offset
     const take = (id, side, v) => { const k = id + '|' + side, o = cur[k] || 0, w = Math.max(2, v * scale); cur[k] = o + w; return [o, w]; };
     const paths = [];
-    const order = { in: 0, out: 1, move: 2 };
+    const order = { in: 0, out: 1, move: 2, det: 3 };
     [...links].sort((a, b) => order[a.kind] - order[b.kind] || b.value - a.value).forEach((l, i) => {
       const A = byId[l.from], B = byId[l.to]; if (!A || !B) return;
       if (l.kind === 'move') {
@@ -65,7 +73,7 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
       } else {
         const [o1, w] = take(l.from, 'R', l.value), [o2] = take(l.to, 'L', l.value);
         const x1 = A.x + NW, x2 = B.x, y1 = A.y + o1 + w / 2, y2 = B.y + o2 + w / 2, mx = (x1 + x2) / 2;
-        paths.push({ l, d: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`, w, color: l.kind === 'in' ? (A.color || '#4FA36C') : (B.color || '#D9786A') });
+        paths.push({ l, d: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`, w, color: l.kind === 'in' ? (A.color || '#4FA36C') : l.kind === 'det' ? (A.color || '#D9786A') : (B.color || '#D9786A') });
       }
     });
     const on = id => !selected || selected === id;
@@ -76,8 +84,9 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
       + (p.arrow ? `<path d="M${p.arrow.x + 1} ${p.arrow.y} l9 -6 l0 12 z" fill="${p.color}" fill-opacity="${isLit(p.l) ? .9 : .1}"/>` : '')).join('')}</svg>`;
     const node = (n, kind) => `<button type="button" class="fl-node ${kind}${n.h < 56 ? ' c' : ''}${selected === n.id ? ' sel' : ''}${selected && !linked.has(n.id) ? ' dim' : ''}" data-id="${esc(n.id)}"
       style="left:${n.x}px;top:${n.y}px;width:${NW}px;height:${n.h}px;--c:${n.color || '#8E9AA8'}"><span class="fl-t">${esc(n.label)}</span><span class="fl-a">${esc(n.show ?? fmt(n.value ?? n.v))}</span></button>`;
-    stage.innerHTML = svg + incomes.map(n => node(n, 'in')).join('') + accounts.map(n => node(n, 'acc')).join('') + expenses.map(n => node(n, 'out')).join('')
-      + `<span class="fl-h" style="left:${xs[0]}px">Entrate</span><span class="fl-h" style="left:${xs[1]}px">Conti</span><span class="fl-h" style="left:${xs[2]}px">Uscite</span>`;
+    stage.innerHTML = svg + incomes.map(n => node(n, 'in')).join('') + accounts.map(n => node(n, 'acc')).join('') + expenses.map(n => node(n, 'out')).join('') + details.map(n => node(n, 'out det')).join('')
+      + `<span class="fl-h" style="left:${xs[0]}px">Entrate</span><span class="fl-h" style="left:${xs[1]}px">Conti</span><span class="fl-h" style="left:${xs[2]}px">Uscite</span>`
+      + (details.length ? `<span class="fl-h" style="left:${xs[3]}px">Dettaglio</span>` : '');
     model._byId = byId;
   }
   const choose = id => { selected = id === selected ? null : id; draw(); onSelect?.(selected); };
@@ -86,7 +95,7 @@ export function mountFlow(el, { onSelect, fmt = v => String(Math.round(v)) } = {
   ro.observe(el);
   observers.set(el, ro);
   /** Copia dei nodi: draw() vi scrive posizioni e altezze senza toccare il modello di chi chiama. */
-  const copy = m => ({ ...m, incomes: m.incomes.map(n => ({ ...n })), accounts: m.accounts.map(n => ({ ...n })), expenses: m.expenses.map(n => ({ ...n })) });
+  const copy = m => ({ ...m, incomes: m.incomes.map(n => ({ ...n })), accounts: m.accounts.map(n => ({ ...n })), expenses: m.expenses.map(n => ({ ...n })), details: (m.details || []).map(n => ({ ...n })) });
   return {
     show(m) { model = copy(m); if (m.selected !== undefined) selected = m.selected; draw(); },
     select(id) { selected = id; draw(); },
