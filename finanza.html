@@ -242,6 +242,8 @@
       padding:2px 6px; border-radius:6px; flex-shrink:0; margin-right:6px; }
     .account-exp-badge.entrata { background:rgba(34,168,94,.15); color:#22a85e; }
     .account-exp-badge.uscita { background:rgba(192,64,96,.12); color:var(--red); }
+    .account-exp-badge.giroconto { background:rgba(124,92,216,.14); color:#7C5CD8; }
+    .account-exp-amount.mv { color:#7C5CD8; }
     .account-exp-amount { font-weight:600; flex-shrink:0; }
     .account-exp-amount.pos { color:#22a85e; }
     .account-exp-amount.neg { color:var(--red); }
@@ -271,6 +273,7 @@
       padding:2px 6px; border-radius:6px; margin-left:4px; vertical-align:middle; }
     .tipo-badge.entrata { background:rgba(34,168,94,.15); color:#22a85e; }
     .tipo-badge.uscita { background:rgba(192,64,96,.12); color:var(--red); }
+    .tipo-badge.giroconto { background:rgba(124,92,216,.14); color:#7C5CD8; }
 
     /* PATRIMONIO */
     .patrimonio-empty { width:100%; text-align:center; padding:60px 20px; }
@@ -673,10 +676,12 @@
     function monthly(exp) {
       return exp.freq === 'annual' ? (exp.amount || 0) / 12 : (exp.amount || 0);
     }
-    // Valore con segno: entrate positive, uscite negative
+    // Valore con segno: entrate positive, uscite negative, giroconti zero (spostano soldi tra due conti tuoi:
+    // escono da uno ed entrano nell'altro, il totale non cambia). Una voce senza tipo vale come uscita.
+    const isMove = e => e.tipo === 'giroconto';
     function monthlyNet(exp) {
       const m = monthly(exp);
-      return exp.tipo === 'entrata' ? m : -m;
+      return exp.tipo === 'entrata' ? m : isMove(exp) ? 0 : -m;
     }
 
     /* ── render accounts (espandibili con dettaglio per conto) ── */
@@ -687,18 +692,31 @@
         return;
       }
       el.innerHTML = accounts.map(a => {
-        const accExps = expenses.filter(e => e.accountId === a._docId);
+        // giroconti: escono dal conto di partenza (accountId) ed entrano in quello di arrivo (toAccountId)
+        const accExps = expenses.filter(e => e.accountId === a._docId || (isMove(e) && e.toAccountId === a._docId));
         const entrate = accExps.filter(e => e.tipo === 'entrata');
-        const uscite  = accExps.filter(e => e.tipo !== 'entrata'); // default uscita
+        const uscite  = accExps.filter(e => e.tipo !== 'entrata' && !isMove(e)); // default uscita
+        const mvIn    = accExps.filter(e => isMove(e) && e.toAccountId === a._docId && e.accountId !== a._docId);
+        const mvOut   = accExps.filter(e => isMove(e) && e.accountId === a._docId && e.toAccountId !== a._docId);
         const totEntM = entrate.reduce((s, e) => s + monthly(e), 0);
         const totUscM = uscite.reduce((s, e) => s + monthly(e), 0);
-        const saldoM  = totEntM - totUscM;
+        const totMvM  = mvIn.reduce((s, e) => s + monthly(e), 0) - mvOut.reduce((s, e) => s + monthly(e), 0);
+        const saldoM  = totEntM - totUscM + totMvM;
         const saldoA  = saldoM * 12;
         const balCls  = saldoM >= 0 ? 'pos' : 'neg';
 
         const expItemsHtml = accExps.length ? accExps.map(exp => {
-          const isEnt = exp.tipo === 'entrata';
           const m = monthly(exp);
+          if (isMove(exp)) {
+            const into = exp.toAccountId === a._docId && exp.accountId !== a._docId;
+            const other = accName(into ? exp.accountId : exp.toAccountId);
+            return `<div class="account-exp-item">
+              <span class="account-exp-title">${esc(exp.title)}${other ? ` <small style="color:var(--muted)">${into ? 'da' : 'verso'} ${esc(other)}</small>` : ' <small style="color:var(--red)">manca il conto di arrivo</small>'}</span>
+              <span class="account-exp-badge giroconto">giroconto</span>
+              <span class="account-exp-amount mv">${into ? '+' : '-'}${fmtEur(m)}</span>
+            </div>`;
+          }
+          const isEnt = exp.tipo === 'entrata';
           return `<div class="account-exp-item">
             <span class="account-exp-title">${esc(exp.title)}</span>
             <span class="account-exp-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
@@ -730,6 +748,10 @@
                 <span class="account-detail-label">Uscite mensili</span>
                 <span class="account-detail-value neg">-${fmtEur(totUscM)}</span>
               </div>
+              ${mvIn.length || mvOut.length ? `<div class="account-detail-row">
+                <span class="account-detail-label">Giroconti (netto)</span>
+                <span class="account-detail-value" style="color:#7C5CD8">${totMvM >= 0 ? '+' : '-'}${fmtEur(Math.abs(totMvM))}</span>
+              </div>` : ''}
               <div class="account-detail-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;">
                 <span class="account-detail-label">Saldo mensile</span>
                 <span class="account-detail-value ${balCls}">${saldoM >= 0 ? '+' : ''}${fmtEur(saldoM)}</span>
@@ -780,19 +802,23 @@
         const expsHtml = exps.length ? exps.map(exp => {
           const accName = (accounts.find(a => a._docId === exp.accountId) || {}).name || '';
           const m = monthly(exp);
-          const isEnt = exp.tipo === 'entrata';
+          const isEnt = exp.tipo === 'entrata', mv = isMove(exp);
+          const tipo = isEnt ? 'entrata' : mv ? 'giroconto' : 'uscita';
+          const sign = isEnt ? '+' : mv ? '' : '-', col = isEnt ? '#22a85e' : mv ? '#7C5CD8' : 'var(--red)';
+          const toName = mv ? (accounts.find(a => a._docId === exp.toAccountId) || {}).name || '' : '';
+          const where = mv ? `${accName || '?'} → ${toName || '?'} · ` : accName ? accName + ' · ' : '';
           return `
             <div class="expense-row">
               <div class="expense-info">
                 <div class="expense-title-text">
                   ${esc(exp.title)}
-                  <span class="tipo-badge ${isEnt ? 'entrata' : 'uscita'}">${isEnt ? 'entrata' : 'uscita'}</span>
+                  <span class="tipo-badge ${tipo}">${tipo}</span>
                 </div>
-                <div class="expense-meta">${accName ? accName + ' · ' : ''}${exp.year || ''}${exp.freq === 'annual' ? ' · annuale' : ''}</div>
+                <div class="expense-meta">${esc(where)}${exp.year || ''}${exp.freq === 'annual' ? ' · annuale' : ''}</div>
               </div>
               <div class="expense-right">
-                <div class="expense-amount" style="color:${isEnt ? '#22a85e' : 'var(--red)'};">${isEnt ? '+' : '-'}${fmtEur(m)}<span style="font-size:.52rem;font-weight:400;color:var(--muted)">/mese</span></div>
-                ${exp.freq === 'annual' ? `<div class="expense-sub">${isEnt ? '+' : '-'}${fmtEur(exp.amount)}/anno</div>` : ''}
+                <div class="expense-amount" style="color:${col};">${sign}${fmtEur(m)}<span style="font-size:.52rem;font-weight:400;color:var(--muted)">/mese</span></div>
+                ${exp.freq === 'annual' ? `<div class="expense-sub">${sign}${fmtEur(exp.amount)}/anno</div>` : ''}
               </div>
               <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
                 <button class="icon-btn" onclick="openEditExp('${exp._docId}')">
@@ -839,7 +865,7 @@
       try { renderPlanMap(); } catch (e) { console.warn('mappa spese', e); }
       const netMonthly  = expenses.reduce((s, e) => s + monthlyNet(e), 0);
       const totEntrate  = expenses.filter(e => e.tipo === 'entrata').reduce((s, e) => s + monthly(e), 0);
-      const totUscite   = expenses.filter(e => e.tipo !== 'entrata').reduce((s, e) => s + monthly(e), 0);
+      const totUscite   = expenses.filter(e => e.tipo !== 'entrata' && !isMove(e)).reduce((s, e) => s + monthly(e), 0);
       const cls = netMonthly >= 0 ? '#22a85e' : 'var(--red)';
       document.getElementById('grand-monthly').textContent = (netMonthly >= 0 ? '+' : '') + fmtEur(netMonthly);
       document.getElementById('grand-annual').textContent  = (netMonthly >= 0 ? '+' : '') + fmtEur(netMonthly * 12);
@@ -985,6 +1011,8 @@
       const toAccountId = document.getElementById('exp-to-account').value;
       const year        = document.getElementById('exp-year').value;
       if (!title || isNaN(amount) || amount <= 0 || !catId) return;
+      if (tipo === 'giroconto' && (!accountId || !toAccountId || accountId === toAccountId))
+        return alert('Per un giroconto scegli il conto da cui partono i soldi ("Conto") e un conto di arrivo diverso.');
       const data = { title, amount, freq, tipo, catId, accountId, year,
                      toAccountId: tipo === 'giroconto' ? toAccountId : '' };
       if (editExpDocId) {
@@ -1009,7 +1037,7 @@
       const isMove = e.tipo === 'giroconto', isEnt = e.tipo === 'entrata';
       const sign = isEnt ? '+' : isMove ? '' : '−', col = isEnt ? '#22a85e' : isMove ? '#7C5CD8' : 'var(--red)';
       const sh = createSheet({ title: e.title, body: `<div class="mp-det">
-        <div><span>${isEnt ? 'Entrata' : isMove ? 'Spostamento' : 'Uscita'} al mese</span><b style="color:${col}">${sign}${fmtEur(monthly(e))}</b></div>
+        <div><span>${isEnt ? 'Entrata' : isMove ? 'Giroconto' : 'Uscita'} al mese</span><b style="color:${col}">${sign}${fmtEur(monthly(e))}</b></div>
         <div><span>All'anno</span><b>${sign}${fmtEur(annual(e))}</b></div>
         <div><span>${isMove ? 'Da' : 'Conto'}</span><b style="font-size:.85rem">${esc(accName(e.accountId) || '—')}</b></div>
         <div><span>${isMove ? 'Verso' : 'Categoria'}</span><b style="font-size:.85rem">${esc(isMove ? accName(e.toAccountId) || '—' : catName(e.catId) || '—')}</b></div></div>
@@ -1019,7 +1047,8 @@
     }
 
     /* ── PATRIMONIO: diagramma dei flussi ── */
-    const patState = { per: 'year', sel: null };
+    // group: 'voce' = un rettangolo per ogni entrata e uscita; 'cat' = raggruppate per categoria (scelta ricordata su questo telefono)
+    const patState = { per: 'year', sel: null, group: (() => { try { return localStorage.getItem('fin_pat_group') || 'voce'; } catch { return 'voce'; } })() };
     let patFlow = null, patModel = null;
     function buildFlow() {
       const k = patState.per === 'year' ? 12 : 1, v = e => monthly(e) * k;
@@ -1028,15 +1057,16 @@
       if (orphan) accs.push({ id: 'a:none', label: 'Senza conto', color: '#8E9AA8', _acc: '' });
       const accId = id => (id ? 'a:' + id : 'a:none');
       const ins = expenses.filter(e => e.tipo === 'entrata'), outs = expenses.filter(isOut), moves = expenses.filter(e => e.tipo === 'giroconto' && e.accountId && e.toAccountId);
-      // entrate: una per voce (se sono tante, per categoria)
-      const byCatIn = ins.length > 8;
+      // entrate e uscite: un rettangolo per voce, oppure uno per categoria
+      const byCat = patState.group === 'cat';
+      const inId = e => byCat ? 'i:' + e.catId : 'i:' + e._docId, outId = e => byCat ? 'o:' + e.catId : 'o:' + e._docId;
       const incMap = {};
-      ins.forEach(e => { const id = byCatIn ? 'i:' + e.catId : 'i:' + e._docId; (incMap[id] ||= { id, label: byCatIn ? (catName(e.catId) || 'Entrate') : e.title, value: 0, color: '#4FA36C', exps: [] }); incMap[id].value += v(e); incMap[id].exps.push(e); });
+      ins.forEach(e => { const id = inId(e); (incMap[id] ||= { id, label: byCat ? (catName(e.catId) || 'Entrate') : e.title, value: 0, color: '#4FA36C', exps: [] }); incMap[id].value += v(e); incMap[id].exps.push(e); });
       const outMap = {};
-      outs.forEach(e => { const id = 'o:' + e.catId; (outMap[id] ||= { id, label: catName(e.catId) || 'Altro', value: 0, color: '#D9786A', exps: [] }); outMap[id].value += v(e); outMap[id].exps.push(e); });
+      outs.forEach(e => { const id = outId(e); (outMap[id] ||= { id, label: byCat ? (catName(e.catId) || 'Altro') : e.title, value: 0, color: '#D9786A', exps: [] }); outMap[id].value += v(e); outMap[id].exps.push(e); });
       const links = [];
-      ins.forEach(e => links.push({ from: byCatIn ? 'i:' + e.catId : 'i:' + e._docId, to: accId(e.accountId), value: v(e), kind: 'in', exps: [e] }));
-      outs.forEach(e => links.push({ from: accId(e.accountId), to: 'o:' + e.catId, value: v(e), kind: 'out', exps: [e] }));
+      ins.forEach(e => links.push({ from: inId(e), to: accId(e.accountId), value: v(e), kind: 'in', exps: [e] }));
+      outs.forEach(e => links.push({ from: accId(e.accountId), to: outId(e), value: v(e), kind: 'out', exps: [e] }));
       moves.forEach(e => links.push({ from: accId(e.accountId), to: accId(e.toAccountId), value: v(e), kind: 'move', exps: [e] }));
       // colori delle uscite: sfumature di corallo/arancio
       const WARM = ['#D9786A', '#E3935E', '#C9615A', '#E8A87C', '#D4806F', '#B9584F'];
@@ -1055,12 +1085,14 @@
         const incoming = l.to === sel;
         l.exps.forEach(e => rows.push({ e, k: l.kind, incoming, other: other?.label || '', val: l.exps.length === 1 ? l.value : monthly(e) * (patState.per === 'year' ? 12 : 1) }));
       });
-      const sumIn = rows.filter(r => r.incoming && r.k !== 'move').reduce((s, r) => s + r.val, 0), sumOut = rows.filter(r => !r.incoming && r.k !== 'move').reduce((s, r) => s + r.val, 0);
+      // "Entra" = voci di entrata, "Esce" = voci di uscita, qualunque rettangolo sia selezionato
+      // (prima contava il verso della freccia: toccando un'entrata, il suo flusso verso il conto finiva in "Esce")
+      const sumIn = rows.filter(r => r.k === 'in').reduce((s, r) => s + r.val, 0), sumOut = rows.filter(r => r.k === 'out').reduce((s, r) => s + r.val, 0);
       const mvIn = rows.filter(r => r.k === 'move' && r.incoming).reduce((s, r) => s + r.val, 0), mvOut = rows.filter(r => r.k === 'move' && !r.incoming).reduce((s, r) => s + r.val, 0);
       const pill = (t, v, c) => v ? `<span class="fl-pill" style="--c:${c}">${t} ${eur0(v)}</span>` : '';
-      box.innerHTML = `<div class="fl-det"><div class="fl-det-h"><b>${esc(node.label)}</b><div>${pill('Entra', sumIn, '#4FA36C')}${pill('Esce', sumOut, '#D9786A')}${pill('Spostamenti in', mvIn, '#7C5CD8')}${pill('Spostamenti out', mvOut, '#7C5CD8')}</div></div>
+      box.innerHTML = `<div class="fl-det"><div class="fl-det-h"><b>${esc(node.label)}</b><div>${pill('Entra', sumIn, '#4FA36C')}${pill('Esce', sumOut, '#D9786A')}${pill('Giroconti in', mvIn, '#7C5CD8')}${pill('Giroconti out', mvOut, '#7C5CD8')}</div></div>
         <div class="mp-list">${rows.sort((a, b) => b.val - a.val).map((r, i) => `<button type="button" class="mp-row" data-r="${i}"><span class="mp-dot" style="background:${r.k === 'in' ? '#4FA36C' : r.k === 'move' ? '#7C5CD8' : '#D9786A'}"></span>
-          <span class="n">${esc(r.e.title)}<small>${r.k === 'move' ? (r.incoming ? 'da ' : 'verso ') + esc(r.other) : esc(r.incoming ? 'da ' + r.other : 'verso ' + r.other)}</small></span><span class="a ${r.k === 'in' ? 'pos' : r.k === 'move' ? '' : 'neg'}">${r.k === 'in' ? '+' : r.k === 'move' ? '' : '−'}${eur0(r.val)}</span></button>`).join('')}</div></div>`;
+          <span class="n">${esc(r.e.title)}<small>${r.k === 'in' ? 'entrata · ' : r.k === 'out' ? 'uscita · ' : 'giroconto · '}${esc((r.incoming ? 'da ' : 'verso ') + r.other)}</small></span><span class="a ${r.k === 'in' ? 'pos' : r.k === 'move' ? '' : 'neg'}">${r.k === 'in' ? '+' : r.k === 'move' ? '' : '−'}${eur0(r.val)}</span></button>`).join('')}</div></div>`;
       box._rows = rows.sort((a, b) => b.val - a.val);
     }
     function renderPatrimonio() {
@@ -1068,16 +1100,22 @@
       if (!accounts.length) { root.innerHTML = '<div class="mp-card"><div class="tm-empty">Aggiungi dei conti nel tab <b>Planning</b> per vedere qui la mappa del tuo patrimonio.</div></div>'; patFlow?.destroy(); patFlow = null; return; }
       if (!root.querySelector('#pat-fl')) {
         root.innerHTML = `<div class="mp-card"><div id="pat-hero"></div>
-          <div class="mp-seg" id="pat-seg"><button data-p="month">Al mese</button><button data-p="year">All'anno</button><button data-move class="move">⇄ Registra uno spostamento</button></div>
+          <div class="mp-seg" id="pat-seg"><button data-p="month">Al mese</button><button data-p="year">All'anno</button><button data-move class="move">⇄ Registra un giroconto</button></div>
+          <div class="mp-seg" id="pat-grp"><button data-g="voce">Per voce</button><button data-g="cat">Per categoria</button></div>
           <div id="pat-fl"></div><div class="fl-hint">scorri il diagramma con il dito →</div><div id="pat-detail"></div></div>`;
         patFlow = mountFlow(root.querySelector('#pat-fl'), { fmt: v => eur0(v), onSelect: id => { patState.sel = id; flowDetail(patModel, id); } });
         root.querySelector('#pat-seg').addEventListener('click', e => {
           const p = e.target.closest('[data-p]'); if (p) { patState.per = p.dataset.p; renderPatrimonio(); return; }
           if (e.target.closest('[data-move]')) {
-            if (!categories.length) return alert('Crea prima una categoria (per esempio "Mutuo" o "Spostamenti") nel tab Planning: ti serve per registrare lo spostamento.');
+            if (!categories.length) return alert('Crea prima una categoria (per esempio "Giroconti") nel tab Planning: ti serve per registrare il giroconto.');
             window.openNewExp(categories[0]._docId);
             document.getElementById('tipo-giroconto').checked = true; document.getElementById('giroconto-row').classList.add('visible');
           }
+        });
+        root.querySelector('#pat-grp').addEventListener('click', e => {
+          const g = e.target.closest('[data-g]'); if (!g) return;
+          patState.group = g.dataset.g; patState.sel = null; try { localStorage.setItem('fin_pat_group', patState.group); } catch {}
+          renderPatrimonio();
         });
         root.querySelector('#pat-detail').addEventListener('click', e => { const r = e.target.closest('[data-r]'); const box = document.getElementById('pat-detail'); if (r && box._rows) openLeaf(box._rows[+r.dataset.r].e); });
       }
@@ -1085,6 +1123,7 @@
       const net = expenses.filter(e => e.tipo !== 'giroconto').reduce((s, e) => s + monthlyNet(e) * 12, 0);
       document.getElementById('pat-hero').innerHTML = `<div class="mp-hero"><span class="l">Patrimonio stimato</span><span class="v ${net < 0 ? 'neg' : ''}">${net < 0 ? '−' : ''}${eur0(Math.abs(net))}</span><span class="s">Saldo annuo (entrate − uscite × 12) · ${accounts.length} ${accounts.length === 1 ? 'conto' : 'conti'}</span></div>`;
       root.querySelectorAll('#pat-seg [data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === patState.per));
+      root.querySelectorAll('#pat-grp [data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === patState.group));
       patModel = buildFlow();
       if (patState.sel && ![...patModel.incomes, ...patModel.accounts, ...patModel.expenses].some(n => n.id === patState.sel)) patState.sel = null;
       patFlow.show({ ...patModel, selected: patState.sel });
@@ -1143,6 +1182,7 @@
       });
       subscribeFinanzaExpenses(list => {
         expenses = list;
+        renderAccounts();   // i saldi dei conti dipendono dalle voci
         renderCategories();
         renderPatrimonio();
       });
