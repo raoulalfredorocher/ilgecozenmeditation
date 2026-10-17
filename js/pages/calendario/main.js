@@ -10,7 +10,7 @@ import { icon } from '../../ui/icons.js';
 import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey, addDays, watchSyncTs } from '../../core/attivita.js';
-import { dayBalance, isForza } from '../../core/bilancio.js';
+import { dayBalance, isForza, MIN_ALLENAMENTO } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -123,13 +123,18 @@ function renderDay() {
   const A = id => AREAS.find(x => x.id === id);
   if (d && on.has('allenamento')) d.allenamento.forEach((t, i) => rows.push(row(A('allenamento'), 'allenamento', i, esc(t.scheda || 'Allenamento'),
     [esc(t.piano), t.durata ? `${t.durata} min` : '', t.serie ? `${t.serie} serie` : ''].filter(Boolean).join(' · '))));
+  if (d?.brevi?.length && on.has('allenamento')) {
+    const min = d.brevi.reduce((a, t) => a + (+t.durata || 0), 0);
+    rows.push(`<div class="cm-row"><span class="dotc" style="--c:var(--muted)"></span><span class="grow"><b>${d.brevi.length === 1 ? '1 attività breve' : `${d.brevi.length} attività brevi`} · ${min} min</b><span class="s">Sotto i ${MIN_ALLENAMENTO} minuti (es. camminate): contano nel fabbisogno, non come allenamento.</span></span></div>`);
+  }
   if (d?.cibo && on.has('cibo')) rows.push(row(A('cibo'), 'cibo', 0, `${kc(d.cibo.kcal)} kcal`, `P ${g1(d.cibo.prot)} · C ${g1(d.cibo.carb)} · G ${g1(d.cibo.fat)} · ${d.cibo.pasti} ${d.cibo.pasti === 1 ? 'pasto' : 'pasti'}`));
   if (d?.meditazione && on.has('meditazione')) rows.push(row(A('meditazione'), 'meditazione', 0, `${Math.round(d.meditazione.mins)} min di meditazione`, d.meditazione.n > 1 ? `${d.meditazione.n} sessioni` : '1 sessione'));
   if (d && on.has('journaling')) d.journaling.forEach((j, i) => rows.push(row(A('journaling'), 'journaling', i, esc(j.titolo), j.ora ? esc(j.ora) : 'Journaling')));
   const bil = (() => {
     if (!profile || !d) return null;
-    const kw = d.allenamento.reduce((a, t) => a + (+t.kcal || 0), 0);
-    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: d.allenamento.reduce((a, t) => a + (+t.durata || 0), 0), forza: d.allenamento.every(isForza), ingerite: d.cibo?.kcal });
+    // nel fabbisogno contano anche le attività brevi (sotto i 40 minuti), che non sono allenamenti
+    const tutte = [...d.allenamento, ...d.brevi], kw = tutte.reduce((a, t) => a + (+t.kcal || 0), 0);
+    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: tutte.reduce((a, t) => a + (+t.durata || 0), 0), forza: tutte.every(isForza), ingerite: d.cibo?.kcal });
   })();
   if (bil && d.cibo) {
     const r = (l, v, strong) => `<div class="cm-bil${strong ? ' strong' : ''}"><span>${l}</span><b>${v}</b></div>`;

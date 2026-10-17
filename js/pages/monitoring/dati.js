@@ -7,6 +7,7 @@ import { db, auth, loadSessions } from '../../core/db.js';
 import { doc, getDoc as _getDoc, getDocs as _getDocs, getDocFromCache, getDocsFromCache, collection } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { unpackEs } from '../allenamento/state.js';
 import { mergeManual } from '../../core/salute-merge.js';
+import { contaAllenamento } from '../../core/bilancio.js';
 import { dateKey, parseKey } from '../../core/attivita.js';
 import { addDays } from '../../core/attivita.js';
 
@@ -38,13 +39,13 @@ export async function loadAll({ cache = false } = {}) {
     safe(() => getDoc(userDoc('direction', 'salute_manuale')), null),
   ]);
   const sd = salute?.exists() ? salute.data() : {};
-  const log = [];
-  workouts?.forEach(d => { const r = d.data(); if (r.data) log.push({ _docId: d.id, ...r, es: r.es ? unpackEs(r.es) : null }); });
+  const log = [], brevi = [];   // brevi: sessioni sotto i 40 minuti, contano solo nel fabbisogno
+  workouts?.forEach(d => { const r = d.data(); if (r.data) (contaAllenamento(r) ? log : brevi).push({ _docId: d.id, ...r, es: r.es ? unpackEs(r.es) : null }); });
   const diaryDays = {}, diaryMeals = {};
   diary?.forEach(d => { const m = d.data().meals || []; if (m.length) { diaryDays[d.id] = m.reduce((a, x) => a + (+x.kcal || 0), 0); diaryMeals[d.id] = m.map(x => ({ type: x.type || '', kcal: +x.kcal || 0, prot: +x.prot || 0, carb: +x.carb || 0, fat: +x.fat || 0 })); } });
   return {
     days: mergeManual(sd.days || {}, manuale?.exists() ? manuale.data().days : {}), daysWatch: sd.days || {}, sync: sd.sync || null,
-    log: log.sort((a, b) => a.data.localeCompare(b.data)),
+    log: log.sort((a, b) => a.data.localeCompare(b.data)), brevi,
     meditation: sessions.map(s => ({ d: dk(new Date(s.ts)), mins: +s.totalMins || 0 })),
     diary: diaryDays, diaryMeals,
     umore: umore?.exists() ? (umore.data().days || {}) : {},
