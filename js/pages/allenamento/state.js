@@ -96,7 +96,8 @@ export const unpackEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x 
  * dell'orologio da almeno 40 minuti di quel giorno. null se non c'è (o se ce n'è più d'una e non si sa quale).
  */
 export function watchTwin(doc) {
-  const W = state.log.filter(r => r.data === doc.data && r.hk && !r.allenamentoId);
+  // le camminate che l'orologio rileva da solo non sono l'allenamento della scheda: restano a parte
+  const W = state.log.filter(r => r.data === doc.data && r.hk && !r.allenamentoId && !/camm|walk|unknown/i.test(r.orologio || ''));
   const M = 40 * 60000, timed = doc.ini && doc.fine && doc.ini !== doc.fine;
   const hit = timed ? W.filter(r => r.ini && r.fine && r.ini - M <= doc.fine && r.fine + M >= doc.ini) : W.filter(r => num(r.durata) >= 40);
   return hit.length === 1 ? hit[0] : null;
