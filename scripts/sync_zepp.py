@@ -55,7 +55,11 @@ def http(method, url, body=None, token=None):
         with urllib.request.urlopen(req, timeout=30) as r:
             return json.loads(r.read() or b"null")
     except urllib.error.HTTPError as e:
-        raise RuntimeError(f"HTTP {e.code} su {method} {urllib.parse.urlsplit(url).path[-60:]}") from None
+        try:  # stato di Firestore (es. INVALID_ARGUMENT): parola chiave, nessun dato
+            stato = json.loads(e.read() or b"{}").get("error", {}).get("status", "")
+        except Exception:  # noqa: BLE001
+            stato = ""
+        raise RuntimeError(f"HTTP {e.code} {stato} su {method} {urllib.parse.urlsplit(url).path[-60:]}") from None
 
 
 def enc(v):
@@ -197,8 +201,8 @@ def scheda_orologio(w):
         for k, v in (w.get(blocco) or {}).items():
             if isinstance(v, (int, float)) and not isinstance(v, bool):
                 s.setdefault(k, v)
-    out = {k: v for k, v in s.items() if isinstance(v, (int, float)) and not isinstance(v, bool)
-           and not k.endswith("_unverified")}
+    out = {k: v for k, v in s.items() if isinstance(v, (int, float)) and not isinstance(v, bool) and v == v and abs(v) != float("inf")
+           and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", k) and not k.endswith("_unverified")}
     z = ((w.get("heart_rate_zones") or {}).get("zones")) or []
     if z:
         out["zoneSec"] = [int(x.get("seconds") or 0) for x in z]
@@ -441,7 +445,7 @@ def main():
               + [f"allenamenti.`{d}`" for d in vecchi])
         log(f"Dettagli allenamenti: {sum(len(x) for x in dettagli.values())} (curve del battito: {curve_lette})")
     except Exception as e:  # noqa: BLE001
-        log(f"dettagli allenamenti non salvati ({type(e).__name__})")
+        log(f"dettagli allenamenti non salvati ({e})")   # solo codice HTTP e coda del percorso, mai i dati
     # VO2 max: stima dell'orologio, presente nel riepilogo degli allenamenti che la misurano (-1 = non misurata)
     vo2 = {}
     for w in sorted(items, key=lambda x: str(x.get("start_local"))):
