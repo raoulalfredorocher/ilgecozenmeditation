@@ -40,8 +40,9 @@ export async function datiOrologio(r) {
 const bytes = b64 => [...atob(b64)].map(c => c.charCodeAt(0));
 
 const it = (n, d = 0) => Number(n).toLocaleString('it-IT', { maximumFractionDigits: d, minimumFractionDigits: d });
-const ZCOL = ['#9fb7c9', '#7cc4a4', '#e3c35a', '#e89a4f', '#d9624f', '#a64ca6'];
-const ZNOME = ['Riscaldamento', 'Brucia grassi', 'Aerobica', 'Anaerobica', 'Massimale', 'Oltre'];
+// la prima fascia di Zepp è sotto la zona 1 (battito a riposo); poi le 5 zone dell'app Zepp
+const ZNOME = ['Sotto le zone', 'Riscaldamento', 'Brucia grassi', 'Aerobica', 'Anaerobica', 'Massimale'];
+const ZCOL = ['#c9d3da', '#9fb7c9', '#7cc4a4', '#e3c35a', '#e89a4f', '#d9624f'];
 const mm = s => s >= 3600 ? `${Math.floor(s / 3600)} h ${Math.round(s % 3600 / 60)} min` : `${Math.round(s / 60)} min`;
 
 /** Voci note: chiave di Zepp → [etichetta, formato]. Le altre si mostrano col nome originale. */
@@ -59,8 +60,8 @@ const VOCI = {
   max_cadence_per_minute: ['Cadenza massima', v => `${it(v)} /min`],
   avg_power_watts: ['Potenza media', v => `${it(v)} W`],
   max_power_watts: ['Potenza massima', v => `${it(v)} W`],
-  elevation_gain_metres: ['Salita', v => `${it(v)} m`],
-  elevation_loss_metres: ['Discesa', v => `${it(v)} m`],
+  altitude_ascend: ['Salita', v => `${it(v)} m`],
+  altitude_descend: ['Discesa', v => `${it(v)} m`],
   avg_altitude: ['Altitudine media', v => `${it(v)} m`],
   max_altitude: ['Altitudine massima', v => `${it(v)} m`],
   min_altitude: ['Altitudine minima', v => `${it(v)} m`],
@@ -75,7 +76,7 @@ const VOCI = {
 };
 // già mostrate altrove (riquadri in alto, battito, zone) o non utili
 const NASCOSTE = new Set(['calorie', 'avg_heart_rate', 'max_heart_rate', 'min_heart_rate', 'zoneSec', 'zoneMax', 'curva', 'sport', 'ini', 'fine',
-  'max_pace', 'min_pace', 'altitude_ascend', 'altitude_descend', 'distance_ascend', 'climb_dis_descend', 'climb_dis_ascend_time', 'climb_dis_descend_time']);
+  'max_pace', 'min_pace', 'elevation_gain_metres', 'elevation_loss_metres', 'totalScore', 'distance_ascend', 'climb_dis_descend', 'climb_dis_ascend_time', 'climb_dis_descend_time']);
 
 function curvaSvg(c) {
   const p = c.filter(x => x.v), W = 320, H = 110, L = 28, B = 16;
@@ -106,7 +107,7 @@ export function orologioHtml(d) {
       ${zs.map((s, i) => `<div class="list-row" style="min-height:28px"><span style="width:10px;height:10px;border-radius:50%;background:${ZCOL[i] || ZCOL[5]};margin-right:8px"></span>
         <span class="grow">${ZNOME[i] || `Zona ${i + 1}`} <span class="s">${i ? `${o.zoneMax[i - 1]}–` : 'fino a '}${o.zoneMax[i]} bpm</span></span><span class="s">${mm(s)} · ${it(s / tot * 100)}%</span></div>`).join('')}`;
   }
-  const altre = Object.entries(o).filter(([k, v]) => !NASCOSTE.has(k) && typeof v === 'number' && !(k === 'dis' && !v));
+  const altre = Object.entries(o).filter(([k, v]) => !NASCOSTE.has(k) && typeof v === 'number' && (v || /training_effect/.test(k)));
   if (altre.length) h += `<div style="margin-top:var(--space-3)">${altre.map(([k, v]) => {
     const [l, f] = VOCI[k] || [k.replace(/_/g, ' '), x => it(x, 2)];
     return `<div class="list-row" style="min-height:28px"><span class="grow">${esc(l)}</span><b>${f(v)}</b></div>`;
