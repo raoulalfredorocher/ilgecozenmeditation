@@ -101,14 +101,16 @@ function render() {
   const all = Object.entries(data).filter(([k]) => k >= from && k <= to).map(([, d]) => d);
   const nW = all.reduce((a, d) => a + d.allenamento.length, 0);
   const nM = all.reduce((a, d) => a + (d.meditazione?.n || 0), 0), minM = all.reduce((a, d) => a + (d.meditazione?.mins || 0), 0);
+  // i passi di oggi non sono finiti: contano nel totale ma non nella media al giorno
   const hs = all.map(d => d.salute).filter(h => h?.passi), steps = hs.reduce((a, h) => a + h.passi, 0);
+  const hsf = Object.entries(data).filter(([k, d]) => k >= from && k <= to && k < today && d.salute?.passi).map(([, d]) => d.salute.passi);
   const tile = (b, l, s2) => `<div><b>${b}</b><span>${l}</span>${s2 ? `<span class="s">${s2}</span>` : ''}</div>`;
   const extra = [];
   if (on.has('cibo')) extra.push(`${all.filter(d => d.cibo).length} giorni di diario`);
   if (on.has('journaling')) extra.push(`${all.reduce((a, d) => a + d.journaling.length, 0)} voci di journaling`);
   $('cm-sum').innerHTML = `<div class="cm-tiles">${tile(nW, nW === 1 ? 'allenamento' : 'allenamenti', `${kc(all.reduce((a, d) => a + d.allenamento.reduce((x, t) => x + (t.durata || 0), 0), 0))} min`)}
     ${tile(nM, nM === 1 ? 'meditazione' : 'meditazioni', `${kc(minM)} min`)}
-    ${tile(steps >= 100000 ? `${g1(steps / 1000)}k` : kc(steps), 'passi', hs.length ? `${kc(steps / hs.length)} al giorno` : 'nessun dato')}</div>
+    ${tile(steps >= 100000 ? `${g1(steps / 1000)}k` : kc(steps), 'passi', hsf.length ? `${kc(hsf.reduce((a, b) => a + b, 0) / hsf.length)} al giorno` : hs.length ? 'oggi, finora' : 'nessun dato')}</div>
     ${extra.length ? `<div class="cm-sum-x">${extra.join(' · ')}</div>` : ''}`;
 
   renderDay();

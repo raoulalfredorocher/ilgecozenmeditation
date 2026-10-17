@@ -11,7 +11,7 @@ import { watchHealth, health } from '../allenamento/salute.js';
 import { METRICS, lastDays, metricCard, baselineLine, bindChartReadouts, fmtAvg, it } from '../../core/salute-charts.js';
 import { escapeHtml as esc } from '../../core/dom.js';
 import { loadProfile, addDays, dateKey } from '../../core/attivita.js';
-import { dayBalance, isForza } from '../../core/bilancio.js';
+import { dayBalance, isForza, calcTdee, profileOn, netWorkoutKcal } from '../../core/bilancio.js';
 import { MEAL_SLOTS } from '../alimentazione/state.js';
 import { loadAll, pk } from './dati.js';
 import { quadroHtml } from './quadro.js';
@@ -43,9 +43,18 @@ function attivita(days) {
   const L = (ctx?.log || []).filter(r => set.has(r.data)).sort((a, b) => b.data.localeCompare(a.data) || num(b.ini) - num(a.ini));
   const tot = L.reduce((a, r) => a + num(r.durata), 0);
   const steps = days.reduce((a, k) => a + (health.days[k]?.passi || 0), 0);
-  const rows = (open.wk ? L : L.slice(0, 8)).map(r => `<div class="list-row" style="min-height:44px"><span class="grow"><b>${esc(r.orologio || r.schedaNome || 'Allenamento')}</b>
-    <span class="s">${fdate(r.data)}${num(r.durata) ? ` · ${it(num(r.durata))} min` : ''}</span></span>
-    <span class="s">${[num(r.kcal) ? `${it(num(r.kcal))} kcal` : '', r.bpmMedio ? `❤ ${r.bpmMedio}${r.bpmMax ? `/${r.bpmMax}` : ''}` : ''].filter(Boolean).join(' · ')}</span></div>`).join('');
+  // kcal: quelle misurate dall'orologio e quelle che entrano nel bilancio (al netto del riposo; per i pesi al massimo 3 kcal/kg/ora)
+  const kcalTxt = r => {
+    const k = num(r.kcal); if (!k) return '';
+    const f = profile ? profileOn(profile, r.data) : null, base = f ? calcTdee(f) : 0;
+    const net = base ? netWorkoutKcal(k, num(r.durata), base, parseFloat(f.peso), isForza(r)) : null;
+    return net != null && Math.abs(net - k) >= 5 ? `${it(k)} kcal orologio · ${it(net)} nel bilancio` : `${it(k)} kcal`;
+  };
+  // nome: quello della scheda eseguita nell'app; per le sessioni solo dall'orologio, lo sport
+  const nome = r => (r.allenamentoId ? [r.allenamentoNome, r.schedaNome].filter(Boolean).join(' · ') : r.orologio || r.schedaNome) || 'Allenamento';
+  const rows = (open.wk ? L : L.slice(0, 8)).map(r => `<div class="list-row" style="min-height:44px"><span class="grow"><b>${esc(nome(r))}</b>
+    <span class="s">${fdate(r.data)}${num(r.durata) ? ` · ${it(num(r.durata))} min` : ''}${r.allenamentoId ? '' : ' · solo orologio'}</span>
+    <span class="s" style="display:block">${[kcalTxt(r), r.bpmMedio ? `❤ ${r.bpmMedio}${r.bpmMax ? `/${r.bpmMax}` : ''}` : ''].filter(Boolean).join(' · ')}</span></span></div>`).join('');
   return tiles([[L.length, L.length === 1 ? 'allenamento' : 'allenamenti'], [it(tot), 'minuti di allenamento'], [it(steps), 'passi in tutto'], [it(steps / days.length), 'passi al giorno']], ' g2')
     + metricCard(METRICS.allenamento, days, byDay(L.map(r => [r.data, num(r.durata)]), 'm'))
     + (L.length ? `<div class="list">${rows}</div>${more('wk', L.length, 8)}` : empty('Nessun allenamento in questo periodo.'))

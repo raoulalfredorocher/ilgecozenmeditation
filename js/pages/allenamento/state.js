@@ -90,8 +90,30 @@ export async function reorderPlans(ids) {
 export const packEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x => (Array.isArray(x) ? { r: x[0], k: x[1], e: x[2], c: x[3], f: x[4] } : x)) }));
 /** Il contrario: dal documento alle liste usate dall'app. */
 export const unpackEs = es => (es || []).map(e => ({ ...e, s: (e.s || []).map(x => (Array.isArray(x) ? x : [x.r || 0, x.k || 0, x.e || 0, x.c || 0, x.f || 0])) }));
-/** Aggiunge / aggiorna una sessione del registro, convertendo le serie per Firestore (packEs). */
-export const addSession = doc => addRegistroDoc(doc.es ? { ...doc, es: packEs(doc.es) } : doc);
+/**
+ * La sessione che l'orologio ha già portato nel registro ("Dall'orologio", con `hk`) per lo stesso allenamento di `doc`:
+ * stesso giorno e orari che si sovrappongono (±40 minuti); per una sessione inserita a mano (senza orari) l'unica
+ * dell'orologio da almeno 40 minuti di quel giorno. null se non c'è (o se ce n'è più d'una e non si sa quale).
+ */
+export function watchTwin(doc) {
+  // le camminate che l'orologio rileva da solo non sono l'allenamento della scheda: restano a parte
+  const W = state.log.filter(r => r.data === doc.data && r.hk && !r.allenamentoId && !/camm|walk|unknown/i.test(r.orologio || ''));
+  const M = 40 * 60000, timed = doc.ini && doc.fine && doc.ini !== doc.fine;
+  const hit = timed ? W.filter(r => r.ini && r.fine && r.ini - M <= doc.fine && r.fine + M >= doc.ini) : W.filter(r => num(r.durata) >= 40);
+  return hit.length === 1 ? hit[0] : null;
+}
+/**
+ * Aggiunge una sessione al registro, convertendo le serie per Firestore (packEs). Se l'orologio ha già portato lo stesso
+ * allenamento, la sessione dell'app va in quel documento (esercizi, kg, durata e nomi dalla scheda; kcal e battiti restano
+ * dell'orologio): così non ci sono due sessioni per un allenamento solo. Restituisce l'id del documento.
+ */
+export async function addSession(doc) {
+  const d = doc.es ? { ...doc, es: packEs(doc.es) } : doc;
+  const twin = state.ready.log ? watchTwin(doc) : null;
+  if (!twin) return addRegistroDoc(d);
+  await updateRegistroDoc(twin._docId, d);
+  return twin._docId;
+}
 export const updateSession = (id, fields) => updateRegistroDoc(id, fields.es ? { ...fields, es: packEs(fields.es) } : fields);
 
 /** Ultima volta che hai fatto un esercizio: le sue serie, per avere il carico di riferimento. */
