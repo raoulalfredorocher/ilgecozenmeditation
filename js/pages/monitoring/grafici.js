@@ -55,7 +55,9 @@ function attivita(days) {
   const rows = (open.wk ? L : L.slice(0, 8)).map(r => `<div class="list-row" style="min-height:44px"><span class="grow"><b>${esc(nome(r))}</b>
     <span class="s">${fdate(r.data)}${num(r.durata) ? ` · ${it(num(r.durata))} min` : ''}${r.allenamentoId ? '' : ' · solo orologio'}</span>
     <span class="s" style="display:block">${[kcalTxt(r), r.bpmMedio ? `❤ ${r.bpmMedio}${r.bpmMax ? `/${r.bpmMax}` : ''}` : ''].filter(Boolean).join(' · ')}</span></span></div>`).join('');
-  return tiles([[L.length, L.length === 1 ? 'allenamento' : 'allenamenti'], [it(tot), 'minuti di allenamento'], [it(steps), 'passi in tutto'], [it(steps / days.length), 'passi al giorno']], ' g2')
+  // media sui giorni conclusi: oggi è parziale
+  const full = days.filter(k => k < dateKey());
+  return tiles([[L.length, L.length === 1 ? 'allenamento' : 'allenamenti'], [it(tot), 'minuti di allenamento'], [it(steps), 'passi in tutto'], [it(full.length ? full.reduce((a, k) => a + (health.days[k]?.passi || 0), 0) / full.length : steps), full.length ? 'passi al giorno' : 'passi oggi, finora']], ' g2')
     + metricCard(METRICS.allenamento, days, byDay(L.map(r => [r.data, num(r.durata)]), 'm'))
     + (L.length ? `<div class="list">${rows}</div>${more('wk', L.length, 8)}` : empty('Nessun allenamento in questo periodo.'))
     + metricCard(METRICS.passi, days, health.days, baselineLine(METRICS.passi, health.days))
