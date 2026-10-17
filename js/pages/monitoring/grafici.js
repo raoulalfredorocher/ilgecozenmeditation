@@ -60,7 +60,7 @@ function balances(from, to) {
   if (!profile) return out;
   Object.keys(ctx?.diary || {}).filter(k => k >= from && k <= to).forEach(k => {
     const W = [...(ctx.log || []), ...(ctx.brevi || [])].filter(r => r.data === k);   // nel fabbisogno anche le attività brevi
-    const b = dayBalance(profile, k, { passi: health.days[k]?.passi, kcalAllenamento: W.reduce((a, r) => a + num(r.kcal), 0), minutiAllenamento: W.reduce((a, r) => a + num(r.durata), 0), forza: W.every(isForza), ingerite: ctx.diary[k] });
+    const b = dayBalance(profile, k, { passi: health.days[k]?.passi, sessioni: W.map(r => ({ kcal: num(r.kcal), durata: num(r.durata), forza: isForza(r) })), ingerite: ctx.diary[k] });
     if (b) out[k] = b;
   });
   return out;

@@ -53,11 +53,15 @@ export const netWorkoutKcal = (kcal, minuti, base, peso, forza) => {
  * Bilancio del giorno `key` ('AAAA-MM-GG'). Senza profilo completo restituisce null.
  * Restituisce { peso, base, passi, allenamento, tdee, ingerite, delta, passiDaOrologio } in kcal (delta < 0 = deficit);
  * senza passi dell'orologio usa i passi abituali del profilo.
+ * Con `sessioni` ([{ kcal, durata, forza }]) l'allenamento si calcola sessione per sessione: il tetto dei pesi vale solo per le
+ * sessioni coi pesi, anche se nello stesso giorno ci sono camminate o altro; senza, si usano i totali (kcalAllenamento, minutiAllenamento, forza).
  */
-export function dayBalance(profile, key, { passi, kcalAllenamento, minutiAllenamento, forza, ingerite }) {
+export function dayBalance(profile, key, { passi, kcalAllenamento, minutiAllenamento, forza, ingerite, sessioni }) {
   const f = profileOn(profile, key), base = calcTdee(f);
   if (!base) return null;
-  const kp = stepsKcal(passi ?? f.passi, f.peso, f.lavoro), kw = netWorkoutKcal(kcalAllenamento, minutiAllenamento, base, parseFloat(f.peso), forza);
+  const kp = stepsKcal(passi ?? f.passi, f.peso, f.lavoro), kw = sessioni
+    ? sessioni.reduce((a, s) => a + netWorkoutKcal(+s.kcal || 0, +s.durata || 0, base, parseFloat(f.peso), s.forza), 0)
+    : netWorkoutKcal(kcalAllenamento, minutiAllenamento, base, parseFloat(f.peso), forza);
   const tdee = base + kp + kw;
   return { peso: parseFloat(f.peso) || 0, base, passi: kp, allenamento: kw, tdee, ingerite: Math.round(ingerite || 0), delta: Math.round((ingerite || 0) - tdee), passiDaOrologio: passi != null };
 }
