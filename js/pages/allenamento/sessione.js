@@ -76,11 +76,11 @@ function drawDetail() {
     <div class="al-pl">${esc(r.allenamentoNome || '')}</div>
     <div class="al-stats">
       <div><b>${num(r.durata) || '–'}</b><span class="s">min</span></div>
-      ${r.es ? `<div><b>${sets}</b><span class="s">serie</span></div><div><b>${kg0(vol)}</b><span class="s">kg totali</span></div>` : ''}
+      ${r.es && sets ? `<div><b>${sets}</b><span class="s">serie</span></div><div><b>${kg0(vol)}</b><span class="s">kg totali</span></div>` : ''}
       ${v && (v.rw || v.st) ? `<div><b>${Math.round((v.rw + v.st) / 60)}</b><span class="s">min riscald. + stretching</span></div>` : ''}
       ${v?.acqua ? `<div><b>${v.acqua}</b><span class="s">volte acqua</span></div>` : ''}
       ${num(r.kcal) ? `<div><b>${Math.round(num(r.kcal))}</b><span class="s">kcal (orologio)</span></div>` : ''}
-      ${r.bpmMedio ? `<div><b>${r.bpmMedio}</b><span class="s">bpm medio${r.bpmMax ? ` · max ${r.bpmMax}` : ''}</span></div>` : ''}
+      ${r.bpmMedio && !oro[curId]?.info?.avg_heart_rate ? `<div><b>${r.bpmMedio}</b><span class="s">bpm medio${r.bpmMax ? ` · max ${r.bpmMax}` : ''}</span></div>` : ''}
     </div>
     ${orologioHtml(oro[r._docId || curId])}
     ${v ? v.es.map(e => `<section class="al-ex"><div class="al-ex-h"><b>${esc(e.n)}</b><span class="s">${esc(e.g || '')}${e.p ? ` · programma ${e.p[0]} × ${e.t === 't' ? fmtDur(e.p[3]) : `${e.p[1]}${e.p[2] ? ` · ${fmtKg(e.p[2])} kg` : ''}`}` : ''}</span></div>
