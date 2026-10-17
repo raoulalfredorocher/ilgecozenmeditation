@@ -440,9 +440,11 @@ def main():
     # dati completi: campo per campo (la curva già salvata resta se stavolta non è stata riletta); i giorni vecchi si tolgono
     try:
         vecchi = [(oggi - timedelta(days=k)).isoformat() for k in range(ALLENAMENTI_DAYS, ALLENAMENTI_DAYS + 60)]
-        patch(token, f"users/{uid}/direction/salute_giorni", {"allenamenti": dettagli},
-              [f"allenamenti.`{d}`.`{t}`.{k}" for d, x in dettagli.items() for t, o in x.items() for k in o]
-              + [f"allenamenti.`{d}`" for d in vecchi])
+        # una richiesta per giorno: con tutti i campi in una sola l'indirizzo diventa troppo lungo (HTTP 400)
+        for d, x in dettagli.items():
+            patch(token, f"users/{uid}/direction/salute_giorni", {"allenamenti": {d: x}},
+                  [f"allenamenti.`{d}`.`{t}`.{k}" for t, o in x.items() for k in o])
+        patch(token, f"users/{uid}/direction/salute_giorni", {}, [f"allenamenti.`{d}`" for d in vecchi])
         log(f"Dettagli allenamenti: {sum(len(x) for x in dettagli.values())} (curve del battito: {curve_lette})")
     except Exception as e:  # noqa: BLE001
         log(f"dettagli allenamenti non salvati ({e})")   # solo codice HTTP e coda del percorso, mai i dati
