@@ -35,6 +35,10 @@ export function profileOn(profile, key) {
 export const stepsBase = lavoro => { const l = parseFloat(lavoro) || 1.2; return l <= 1.2 ? 4000 : l <= 1.375 ? 6000 : l <= 1.55 ? 8000 : 10000; };
 /** kcal bruciate dai passi oltre quelli già inclusi nel fattore di attività: ~0,0005 kcal per passo per kg di peso. */
 export const stepsKcal = (passi, peso, lavoro) => Math.max(0, Math.round(((parseFloat(passi) || 0) - stepsBase(lavoro)) * 0.0005 * (parseFloat(peso) || 0)));
+/** Durata minima (minuti) perché una sessione conti come allenamento: sotto (es. le camminate che l'orologio rileva da solo) entra solo nel fabbisogno. */
+export const MIN_ALLENAMENTO = 40;
+/** La sessione del registro conta come allenamento (conteggi, puntini, record, obiettivi)? */
+export const contaAllenamento = r => (parseFloat(r?.durata) || 0) >= MIN_ALLENAMENTO;
 /** Allenamento con i pesi? (nel registro: sport dell'orologio "Pesi", oppure sessione fatta nell'app senza sport dell'orologio). */
 export const isForza = r => { const o = String(r?.orologio || '').toLowerCase(); return !o || /pesi|forza|strength|weight/.test(o); };
 

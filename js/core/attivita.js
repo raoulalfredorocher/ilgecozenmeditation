@@ -5,6 +5,7 @@
  */
 import { db, auth } from './db.js';
 import { mergeManual } from './salute-merge.js';
+import { contaAllenamento } from './bilancio.js';
 import {
   collection, query, where, getDocs, getDoc, doc, documentId,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -24,10 +25,12 @@ export const parseKey = k => { const [y, m, d] = k.split('-').map(Number); retur
 /** Chiave 'AAAA-MM-GG' spostata di n giorni (n negativo = indietro), sul calendario locale. */
 export const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); };
 const num = v => +v || 0;
+/** Ora (ms) dell'ultima lettura di Zepp, dall'ultimo loadRange che ha letto i dati dell'orologio (null se mai). */
+export let watchSyncTs = null;
 
 /**
  * Attività dal giorno `from` al giorno `to` (compresi, 'AAAA-MM-GG').
- * Restituisce { 'AAAA-MM-GG': { allenamento: [...], cibo: {...}|null, meditazione: {...}|null, journaling: [...], salute: {...}|null (dati dell'orologio) } }
+ * Restituisce { 'AAAA-MM-GG': { allenamento: [...] (solo sessioni da almeno 40 minuti), brevi: [...] (le altre: contano solo nel fabbisogno), cibo: {...}|null, meditazione: {...}|null, journaling: [...], salute: {...}|null (dati dell'orologio) } }
  * solo per i giorni in cui c'è qualcosa. Un'area che non si riesce a leggere viene saltata.
  * `fonti` (facoltativo): elenco delle sole fonti da leggere, tra 'allenamento', 'cibo', 'meditazione',
  * 'salute', 'umore', 'journaling'; se manca le legge tutte. I campi delle fonti non lette restano vuoti.
@@ -36,7 +39,7 @@ export async function loadRange(from, to, fonti = null) {
   const uid = auth?.currentUser?.uid;
   const days = {};
   if (!db || !uid) return days;
-  const day = k => (days[k] ||= { allenamento: [], cibo: null, meditazione: null, journaling: [], salute: null, umore: null });
+  const day = k => (days[k] ||= { allenamento: [], brevi: [], cibo: null, meditazione: null, journaling: [], salute: null, umore: null });
   const col = name => collection(db, 'users', uid, name);
   const t0 = parseKey(from).getTime(), t1 = parseKey(to).getTime() + 86400000;
 
@@ -49,7 +52,7 @@ export async function loadRange(from, to, fonti = null) {
         const r = d.data();
         if (!r.data) return;
         const sets = (r.es || []).reduce((a, e) => a + (e.s || []).filter(s => !s.f).length, 0);
-        day(r.data).allenamento.push({
+        day(r.data)[contaAllenamento(r) ? 'allenamento' : 'brevi'].push({
           id: d.id, orologio: r.orologio || '', kcal: r.kcal ?? null, scheda: r.schedaNome || '', piano: r.allenamentoNome || '', durata: num(r.durata), serie: sets,
           es: r.es || null, rw: num(r.rw), st: num(r.st), acqua: num(r.acqua), feedback: r.feedback || null, note: r.note || '',
         });
@@ -79,6 +82,7 @@ export async function loadRange(from, to, fonti = null) {
     // Dati dell'orologio (Zepp): un solo documento con tutti i giorni
     salute: async () => {
       const [snap, man] = await Promise.all([getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni')), getDoc(doc(db, 'users', uid, 'direction', 'salute_manuale'))]);
+      watchSyncTs = snap.exists() ? (snap.data().sync?.ts ?? null) : null;
       const all = mergeManual(snap.exists() ? (snap.data().days || {}) : {}, man.exists() ? (man.data().days || {}) : {});
       Object.keys(all).filter(k => k >= from && k <= to).forEach(k => { day(k).salute = all[k]; });
     },

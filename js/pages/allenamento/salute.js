@@ -1,7 +1,7 @@
 /**
  * salute.js — dati dell'orologio (Amazfit/Zepp) già sincronizzati nell'app.
  *
- * Non si importa niente a mano: ogni 6 ore un servizio (GitHub Actions, scripts/sync_zepp.py) legge Zepp e scrive
+ * Non si importa niente a mano: ogni ora un servizio (GitHub Actions, scripts/sync_zepp.py) legge Zepp e scrive
  *   • gli allenamenti in allenamenti_registro (campi kcal, bpmMedio, bpmMax, orologio, hk)
  *   • i dati del giorno in direction/salute_giorni → { days: { 'AAAA-MM-GG': { passi, bpmRiposo, bpmMedio, bpmMin, bpmMax,
  *       kcalGiorno, sonnoMin, sonnoPunteggio, spo2, respiro } },

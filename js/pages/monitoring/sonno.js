@@ -70,7 +70,7 @@ export function sonnoSheet(day, days) {
       parts.push(`<p class="sn-p">Regolarità: ti sei addormentato ${Math.abs(diff) < 15 ? 'più o meno alla tua ora solita' : `${Math.abs(diff)} minuti ${diff > 0 ? 'più tardi' : 'prima'} del solito`} (media ultime ${recent.length} notti: ${String(Math.floor((avg / 60) % 24)).padStart(2, '0')}:${String(Math.round(avg % 60)).padStart(2, '0')}).</p>`);
     }
   } else {
-    parts.push(`<div class="sn-note">Per questa notte non ho ancora gli orari e le fasi (a che ora ti sei addormentato, quando ti sei svegliato, i risvegli). La sincronizzazione dell’orologio li porta ogni 6 ore e li recupera per le ultime notti; per le più vecchie non sono disponibili.</div>`);
+    parts.push(`<div class="sn-note">Per questa notte non ho ancora gli orari e le fasi (a che ora ti sei addormentato, quando ti sei svegliato, i risvegli). La sincronizzazione dell’orologio li porta ogni ora e li recupera per le ultime notti; per le più vecchie non sono disponibili.</div>`);
   }
   if (d.sonnoPunteggio) {
     parts.push(`<div class="sn-sec">Cosa significa ${d.sonnoPunteggio}/100</div><p class="sn-p">È il punteggio che l’orologio (Zepp) assegna alla notte, da 0 a 100: ${sleepZone(d.sonnoPunteggio)}. Fasce indicative: 90+ ottimo, 80–89 buono, 60–79 discreto, sotto 60 scarso. Zepp non pubblica la formula esatta: lo calcola da durata, quota di sonno profondo e REM, risvegli e regolarità degli orari. Qui sopra trovi gli stessi fattori, uno per uno, con i valori tipici per un adulto: servono a capire <i>cosa</i> ha alzato o abbassato il punteggio.</p>`);

@@ -120,7 +120,7 @@ export function nightCard(key, hd, curve, { prev, next } = {}) {
   const head = `<div class="gz-nhead" data-night-head="${key}"><div><span>Notte</span><b>${hhmm(s0.min)}–${hhmm(s0.min + total)}</b></div>
     <div><span><i style="background:${HR_C}"></i>Battito</span><b>${aH ? `${it(aH)} <small>bpm medio</small>` : '—'}</b></div>
     <div><span><i style="background:${RR_C}"></i>Respiri</span><b>${aR ? `${f1(aR)} <small>al min</small>` : '—'}</b></div></div>`;
-  const miss = !hv.length ? '<p class="gz-rif">Il battito e i respiri minuto per minuto arrivano con la prossima sincronizzazione dell\'orologio (ogni 6 ore): per ora vedi solo le fasi.</p>' : '';
+  const miss = !hv.length ? '<p class="gz-rif">Il battito e i respiri minuto per minuto arrivano con la prossima sincronizzazione dell\'orologio (ogni ora): per ora vedi solo le fasi.</p>' : '';
   return `<div class="card gz-card"><div class="section-title" style="margin:0 0 var(--space-2)">La notte: fasi, battito e respiri</div>${nav}${head}
     ${svg(H, g, `Fasi del sonno con battito e respiri, notte di ${longDay(key)}`, ` data-night-svg="${key}"`)}
     <div class="gz-readout">Scorri sul grafico per leggere fase, battito e respiri in ogni momento.</div>${miss}
@@ -204,7 +204,7 @@ export function hrDayCard(key, hd, curve, log, { prev, next } = {}) {
   const nav = `<div class="gz-nav"><button type="button" class="icon-btn" data-hrday="${prev || ''}" ${prev ? '' : 'disabled'} aria-label="Giorno precedente">‹</button><span>${key ? longDay(key) : '—'}</span><button type="button" class="icon-btn" data-hrday="${next || ''}" ${next ? '' : 'disabled'} aria-label="Giorno successivo">›</button></div>`;
   const title = '<div class="section-title" style="margin:0 0 var(--space-2)">Il battito della giornata</div>';
   const a = key ? bytes(curve?.[key]?.hr) : null;
-  if (!a || !a.some(v => v > 0)) return `<div class="card gz-card">${title}<p class="gz-story">Il battito minuto per minuto arriva con la prossima sincronizzazione dell'orologio (ogni 6 ore) e si tiene per gli ultimi 14 giorni.</p></div>`;
+  if (!a || !a.some(v => v > 0)) return `<div class="card gz-card">${title}<p class="gz-story">Il battito minuto per minuto arriva con la prossima sincronizzazione dell'orologio (ogni ora) e si tiene per gli ultimi 14 giorni.</p></div>`;
   const H = 196, P = { l: 34, r: 10, t: 22, b: 22 }, iw = W - P.l - P.r, ih = H - P.t - P.b;
   const vals = [...a].map(v => (v > 0 ? v : null)), real = vals.filter(Boolean);
   const sc = niceScale(Math.min(...real) - 5, Math.max(...real) + 5, 4), y = v => P.t + ih * (1 - (v - sc.min) / (sc.max - sc.min)), x = m => P.l + iw * m / 1440;

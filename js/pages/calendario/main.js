@@ -9,8 +9,8 @@ import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
-import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey, addDays } from '../../core/attivita.js';
-import { dayBalance, isForza } from '../../core/bilancio.js';
+import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey, addDays, watchSyncTs } from '../../core/attivita.js';
+import { dayBalance, isForza, MIN_ALLENAMENTO } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
 import { db, auth } from '../../core/db.js';
 import { doc, getDoc, setDoc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -123,13 +123,18 @@ function renderDay() {
   const A = id => AREAS.find(x => x.id === id);
   if (d && on.has('allenamento')) d.allenamento.forEach((t, i) => rows.push(row(A('allenamento'), 'allenamento', i, esc(t.scheda || 'Allenamento'),
     [esc(t.piano), t.durata ? `${t.durata} min` : '', t.serie ? `${t.serie} serie` : ''].filter(Boolean).join(' · '))));
+  if (d?.brevi?.length && on.has('allenamento')) {
+    const min = d.brevi.reduce((a, t) => a + (+t.durata || 0), 0);
+    rows.push(`<div class="cm-row"><span class="dotc" style="--c:var(--muted)"></span><span class="grow"><b>${d.brevi.length === 1 ? '1 attività breve' : `${d.brevi.length} attività brevi`} · ${min} min</b><span class="s">Sotto i ${MIN_ALLENAMENTO} minuti (es. camminate): contano nel fabbisogno, non come allenamento.</span></span></div>`);
+  }
   if (d?.cibo && on.has('cibo')) rows.push(row(A('cibo'), 'cibo', 0, `${kc(d.cibo.kcal)} kcal`, `P ${g1(d.cibo.prot)} · C ${g1(d.cibo.carb)} · G ${g1(d.cibo.fat)} · ${d.cibo.pasti} ${d.cibo.pasti === 1 ? 'pasto' : 'pasti'}`));
   if (d?.meditazione && on.has('meditazione')) rows.push(row(A('meditazione'), 'meditazione', 0, `${Math.round(d.meditazione.mins)} min di meditazione`, d.meditazione.n > 1 ? `${d.meditazione.n} sessioni` : '1 sessione'));
   if (d && on.has('journaling')) d.journaling.forEach((j, i) => rows.push(row(A('journaling'), 'journaling', i, esc(j.titolo), j.ora ? esc(j.ora) : 'Journaling')));
   const bil = (() => {
     if (!profile || !d) return null;
-    const kw = d.allenamento.reduce((a, t) => a + (+t.kcal || 0), 0);
-    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: d.allenamento.reduce((a, t) => a + (+t.durata || 0), 0), forza: d.allenamento.every(isForza), ingerite: d.cibo?.kcal });
+    // nel fabbisogno contano anche le attività brevi (sotto i 40 minuti), che non sono allenamenti
+    const tutte = [...d.allenamento, ...d.brevi], kw = tutte.reduce((a, t) => a + (+t.kcal || 0), 0);
+    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: tutte.reduce((a, t) => a + (+t.durata || 0), 0), forza: tutte.every(isForza), ingerite: d.cibo?.kcal });
   })();
   if (bil && d.cibo) {
     const r = (l, v, strong) => `<div class="cm-bil${strong ? ' strong' : ''}"><span>${l}</span><b>${v}</b></div>`;
@@ -154,8 +159,17 @@ function renderDay() {
   {
     const h = d?.salute || {}, man = h._man ? Object.keys(h._man) : [];
     const mancano = h.sonnoMin == null || h.passi == null || h.bpmRiposo == null;
+    // oggi e ieri i dati possono essere ancora parziali: si dice quando sono stati letti da Zepp l'ultima volta
+    const recente = selected >= addDays(dateKey(), -1) && selected <= dateKey();
+    const letto = watchSyncTs ? (() => { const t = new Date(watchSyncTs), k = dateKey(t), ora = t.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      return k === dateKey() ? `oggi alle ${ora}` : k === addDays(dateKey(), -1) ? `ieri alle ${ora}` : `il ${t.getDate()} ${MONTHS[t.getMonth()]} alle ${ora}`; })() : '';
     if (selected <= dateKey() && (mancano || man.length)) {
-      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">${man.length ? `Alcuni valori sono inseriti a mano (${man.map(f => MAN_LABEL[f]).join(', ')}).` : 'L’orologio non ha mandato tutti i dati di questo giorno (scarico o non indossato?).'}</span></span><button type="button" class="text-btn" data-manual style="flex-shrink:0">${man.length ? 'Modifica' : 'Inserisci a mano'} ›</button></div>`);
+      const msg = man.length ? `Alcuni valori sono inseriti a mano (${man.map(f => MAN_LABEL[f]).join(', ')}).`
+        : recente ? `Dati dell’orologio non ancora arrivati${letto ? ` (ultima lettura da Zepp ${letto})` : ''}. Apri l’app Zepp per caricarli: Il Geco Zen li legge da Zepp ogni ora.`
+        : 'L’orologio non ha mandato tutti i dati di questo giorno (scarico o non indossato?).';
+      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">${msg}</span></span><button type="button" class="text-btn" data-manual style="flex-shrink:0">${man.length ? 'Modifica' : 'Inserisci a mano'} ›</button></div>`);
+    } else if (recente && letto) {
+      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">Dati dell’orologio letti da Zepp ${letto}: si aggiornano ogni ora, dopo che l’app Zepp li ha caricati.</span></span></div>`);
     }
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
