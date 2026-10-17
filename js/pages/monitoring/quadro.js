@@ -35,7 +35,8 @@ const PILASTRI = [
     calc: (hd, days) => { const r = nap(hd, days, 'stressMedio'); if (r.length < 3) return null; const m = mean(r); return { score: clamp(100 - (m - 25) * (100 / 55)), detail: { stress: m } }; } },
   { id: 'movimento', nome: 'Movimento', w: 20, regola: '8.000 passi al giorno e 3 allenamenti a settimana, a metà.',
     calc: (hd, days, ctx) => {
-      const p = nap(hd, days, 'passi'), W = days.length / 7, set = new Set(days);
+      // oggi i passi non sono finiti: non entrano nella media
+      const p = nap(hd, days.filter(k => k < dk(new Date())), 'passi'), W = days.length / 7, set = new Set(days);
       const wk = new Set((ctx?.log || []).filter(r => set.has(r.data)).map(r => r.data)).size / W;
       if (p.length < 3 && !wk) return null;
       const A = p.length >= 3 ? clamp(mean(p) / 8000 * 100) : null, B = clamp(wk / 3 * 100);

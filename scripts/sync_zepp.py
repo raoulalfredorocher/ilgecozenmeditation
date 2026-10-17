@@ -102,7 +102,8 @@ def sport_label(raw):
     if re.search(r"indoor cycl|cyclette|stationary|spinning|exercise bike", l): return "Cyclette"
     if re.search(r"cycl|bike|cicl", l): return "Bici"
     if re.search(r"treadmill|tapis|indoor run|running|corsa|^run", l): return "Tapis roulant / corsa"
-    if re.search(r"walk|camm", l): return "Camminata"
+    # le attività che la libreria non riconosce (unknown_sport_6, _12…) sono le camminate rilevate dall'orologio
+    if re.search(r"walk|camm|unknown", l): return "Camminata"
     if re.search(r"hiit|interval", l): return "HIIT"
     if re.search(r"ellip", l): return "Ellittica"
     if re.search(r"row|vogat", l): return "Vogatore"

@@ -101,7 +101,7 @@ export async function loadCtx(force = false) {
         c.journalWeek += d.journaling?.length || 0; c.foodWeek += d.cibo ? 1 : 0;
       }
       if (k === t) c.meditToday = d.meditazione ? 1 : 0;
-      if (k >= d30 && d.salute?.passi) steps.push(d.salute.passi);
+      if (k >= d30 && k < t && d.salute?.passi) steps.push(d.salute.passi);   // oggi i passi non sono finiti: non entrano nella media
       if (k >= d14 && d.salute?.sonnoMin) sleep.push(d.salute.sonnoMin / 60);
     }
     if (steps.length) c.stepsAvg = Math.round(steps.reduce((a, b) => a + b, 0) / steps.length);

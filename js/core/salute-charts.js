@@ -18,6 +18,8 @@ export const dkey = dateKey;
 export const lastDays = n => Array.from({ length: n }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (n - 1 - i)); return dkey(d); });
 export const short = k => { const [, m, d] = k.split('-'); return `${+d}/${+m}`; };
 const DOW = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+/** Oggi come 'AAAA-MM-GG' nell'ora locale. */
+const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 export const dowOf = k => { const [y, m, d] = k.split('-').map(Number); return DOW[(new Date(y, m - 1, d).getDay() + 6) % 7]; };
 export const longDay = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }); };
 
@@ -60,11 +62,12 @@ export const sleepZone = v => (v >= 90 ? 'ottimo' : v >= 80 ? 'buono' : v >= 60 
 /**
  * Metriche dei grafici, per chiave. Ogni voce: { title, unit, type: 'bar' | 'line', get(giorno) → valore, fmt, story(stats, m) → frase,
  *   field? (campo per riconoscere i valori a mano), avgAll? (media su tutti i giorni, quelli vuoti contano 0),
+ *   parziale? (somma che cresce durante il giorno, es. i passi: oggi non entra in medie e confronti),
  *   band? / target? (riferimento), min? / max? (scala fissa), tap? (la notte si apre), note? (zona del valore) }.
  * Qui sotto si aggiungono `rif` (testo di riferimento) e `key`.
  */
 export const METRICS = {
-  passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, field: 'passi', avgAll: true, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
+  passi: { title: 'Passi', unit: '', type: 'bar', get: d => d.passi, field: 'passi', avgAll: true, parziale: true, fmt: it, target: { v: 8000, label: 'obiettivo 8.000' },
     story: (s, m) => `Media di ${it(s.avg)} passi al giorno su ${s.total} giorni (i giorni senza dati contano 0). ${plural(s.vals.filter(v => v >= 8000).length, 'giorno', 'giorni')} oltre 8.000 passi${trendText(s.vals)}.` },
   bpm: { title: 'Frequenza cardiaca a riposo', unit: 'bpm', type: 'line', get: d => d.bpmRiposo, field: 'bpmRiposo', fmt: it, band: { min: 50, max: 60, label: 'ottimo 50–60' },
     story: (s, m) => `A riposo in media ${it(s.avg)} bpm (da ${it(s.min)} a ${it(s.max)})${trendText(s.vals)}. Più basso, a parità di condizioni, è meglio.` },
@@ -104,15 +107,18 @@ Object.entries(METRICS).forEach(([k, m]) => { m.key = k; });
 export function chart(m, days, hd) {
   const n = days.length, W = 340, H = 176, P = { l: 44, r: 16, t: 18, b: n <= 8 ? 40 : 28 }, iw = W - P.l - P.r, ih = H - P.t - P.b;
   const vals = days.map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; });
-  const real = vals.filter(v => v != null);
-  if (!real.length) return { svg: '', stats: null };
+  if (!vals.some(v => v != null)) return { svg: '', stats: null };
+  // oggi, per una somma che cresce durante il giorno (passi), è parziale: si disegna ma non entra in medie e conteggi
+  const oggi = m.parziale ? days.indexOf(todayKey()) : -1;
+  const sv = oggi < 0 ? vals : vals.map((v, i) => (i === oggi ? null : v)), ns = oggi < 0 ? n : n - 1;
+  const real = sv.filter(v => v != null).length ? sv.filter(v => v != null) : vals.filter(v => v != null);
   // fascia personale (funzione): si calcola su tutti i giorni, quindi i valori si raccolgono solo in quel caso
   const band = typeof m.band === 'function'
     ? m.band(Object.keys(hd).map(k => { const v = Number(m.get(hd[k] || {})); return v > 0 ? v : null; }), m)
     : m.band;
-  const avg = m.avgAll ? real.reduce((a, b) => a + b, 0) / n : mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
+  const avg = m.avgAll ? real.reduce((a, b) => a + b, 0) / Math.max(1, ns) : mean(real), last = [...vals].reverse().find(v => v != null), lastI = vals.lastIndexOf(last);
   const isMan = days.map((k, i) => vals[i] != null && !!m.field && !!hd[k]?._man?.[m.field]);
-  const stats = { n: real.length, total: n, avg, last, min: Math.min(...real), max: Math.max(...real), vals, days, nMan: isMan.filter(Boolean).length, band };
+  const stats = { n: real.length, total: ns, avg, last, min: Math.min(...real), max: Math.max(...real), vals: oggi < 0 ? vals : sv, days, oggi: oggi >= 0 && vals[oggi] != null, nMan: isMan.filter(Boolean).length, band };
   const div = m.div || 1;
   let lo = m.min ?? (m.type === 'bar' ? 0 : Math.min(...real, band?.min ?? Infinity)), hi = m.max ?? Math.max(...real, band?.max ?? -Infinity, m.target?.v ?? -Infinity);
   if (m.type !== 'bar' && m.min == null) { const p = (hi - lo || 1) * 0.1; lo -= p; hi += p; }
@@ -154,7 +160,7 @@ export function chart(m, days, hd) {
     ? `<text x="${cx(i).toFixed(1)}" y="${H - 22}" font-size="10" font-weight="600" fill="var(--muted)" text-anchor="middle">${dowOf(days[i])}</text><text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`
     : `<text x="${cx(i).toFixed(1)}" y="${H - 8}" font-size="10" fill="var(--muted)" text-anchor="middle">${short(days[i])}</text>`).join('');
   // zone di tocco (una per giorno, più larghe del marchio)
-  g += days.map((k, i) => `<rect class="gz-hit" x="${(P.l + slot * i).toFixed(1)}" y="${P.t}" width="${slot.toFixed(1)}" height="${ih}" fill="transparent" data-day="${k}" data-t="${longDay(k)}: ${vals[i] == null ? 'nessun dato' : m.fmt(vals[i]) + (m.unit ? ' ' + m.unit : '') + (m.note ? ' · ' + m.note(vals[i]) : '') + (isMan[i] ? ' (inserito a mano)' : '') + (m.tap ? '' : '')}"/>`).join('');
+  g += days.map((k, i) => `<rect class="gz-hit" x="${(P.l + slot * i).toFixed(1)}" y="${P.t}" width="${slot.toFixed(1)}" height="${ih}" fill="transparent" data-day="${k}" data-t="${longDay(k)}: ${vals[i] == null ? 'nessun dato' : m.fmt(vals[i]) + (m.unit ? ' ' + m.unit : '') + (i === oggi ? ' finora (la giornata non è finita)' : '') + (m.note ? ' · ' + m.note(vals[i]) : '') + (isMan[i] ? ' (inserito a mano)' : '') + (m.tap ? '' : '')}"/>`).join('');
   return { svg: `<svg viewBox="0 0 ${W} ${H}" class="gz-svg"${m.key ? ` data-m="${m.key}"` : ''} role="img" aria-label="${m.title}, ultimi ${n} giorni. ${m.story(stats, m).replace(/"/g, '')}">${g}</svg>`, stats };
 }
 
@@ -164,7 +170,7 @@ export function metricCard(m, days, hd, extra = '') {
   if (!c.svg) return '';
   const u = m.unit ? ` <small>${m.unit}</small>` : '';
   const story = m.story(c.stats, m);
-  return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${m.title}</div><div class="gz-big">${m.fmt(c.stats.last)}${u}</div></div></div>
+  return `<div class="card gz-card"><div class="gz-top"><div><div class="section-title" style="margin:0">${m.title}</div><div class="gz-big">${m.fmt(c.stats.last)}${u}${c.stats.oggi ? ' <small>oggi, finora</small>' : ''}</div></div></div>
     <p class="gz-story">${story}</p>${c.svg}<div class="gz-readout" data-default="${story.replace(/"/g, '&quot;')}">${m.tap ? 'Tocca una notte per aprire i dettagli: orari, risvegli, fasi.' : 'Tocca un giorno per leggere il valore.'}</div>${c.stats.nMan ? '<p class="gz-rif">Le parti tratteggiate sono valori inseriti a mano (se arrivano i dati dell\'orologio li sostituiscono).</p>' : ''}${extra}${m.rif ? `<p class="gz-rif">${m.rif}</p>` : ''}</div>`;
 }
 
@@ -223,11 +229,13 @@ export function seriesChart(series, { band, label = '', fmt = it } = {}) {
 
 /** Confronto con la tua media personale: l'ultimo valore contro gli ultimi 30 giorni precedenti. */
 export function baselineLine(m, hd) {
-  const vals = Object.keys(hd || {}).sort().map(k => Number(m.get(hd[k] || {}))).filter(v => v > 0);
+  // per i passi oggi non è finito: il confronto si fa sull'ultimo giorno completo (ieri)
+  const ks = Object.keys(hd || {}).sort().filter(k => !(m.parziale && k >= todayKey()));
+  const vals = ks.map(k => Number(m.get(hd[k] || {}))).filter(v => v > 0);
   if (vals.length < 8) return `<p class="gz-rif">Il confronto con la tua media personale compare dopo 7 giorni di dati (ne hai ${Math.max(0, vals.length - 1)}).</p>`;
   const last = vals[vals.length - 1], prev = vals.slice(-31, -1);
   const avg = prev.reduce((a, b) => a + b, 0) / prev.length;
   const sd = Math.sqrt(prev.reduce((a, b) => a + (b - avg) ** 2, 0) / prev.length);
   const pct = (last - avg) / avg * 100, odd = sd > 0 && Math.abs(last - avg) > 1.5 * sd;
-  return `<p class="gz-rif"><b>Rispetto alla tua media</b> degli ultimi ${prev.length} giorni (${m.fmt(avg)}): oggi ${m.fmt(last)}, ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(0)}%${odd ? ' — fuori dal tuo solito' : ''}.</p>`;
+  return `<p class="gz-rif"><b>Rispetto alla tua media</b> degli ultimi ${prev.length} giorni (${m.fmt(avg)}): ${m.parziale ? 'ieri' : 'oggi'} ${m.fmt(last)}, ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(0)}%${odd ? ' — fuori dal tuo solito' : ''}.</p>`;
 }
