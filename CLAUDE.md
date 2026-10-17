@@ -21,7 +21,7 @@ Il repository è **pubblico**: qui non vanno mai dati personali (salute, esami, 
 - **Commit**: il Mac ha un controllo Vault Radar che blocca le chiavi Google. La config Firebase arriva da `/__/firebase/init.json`, non va nel codice. Non aggirare mai il controllo.
 - **iOS/Safari**: niente `await` a livello di modulo nei moduli condivisi; niente import dinamici inutili; testa sempre da mobile (viewport 375).
 - **Condizioni di gara**: non fare `t += await …` dentro `Promise.all` (somma persa). Raccogli i risultati e somma dopo.
-- **Dati dell'orologio**: `scripts/sync_zepp.py` (workflow `sync-zepp.yml`, ogni 6 ore) scrive `direction/salute_giorni`. Stampa solo conteggi, mai dati di salute (repo pubblico).
+- **Dati dell'orologio**: `scripts/sync_zepp.py` (workflow `sync-zepp.yml`, ogni ora) scrive `direction/salute_giorni`. Stampa solo conteggi, mai dati di salute (repo pubblico).
 - **Cron `mercati.yml`** aggiorna le quotazioni e fa deploy: il gruppo di concorrenza è "pubblicazione".
 - I file di Raoul in `~/Downloads` non sono leggibili da Claude (permessi macOS): chiedi di metterli in `~/Documents`.
 

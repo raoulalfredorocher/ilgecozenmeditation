@@ -2,7 +2,7 @@
 """
 sync_zepp.py — porta in Il Geco Zen i dati dell'Amazfit, leggendoli da Zepp.
 
-Gira da solo ogni 6 ore con GitHub Actions (.github/workflows/sync-zepp.yml), gratis.
+Gira da solo ogni ora con GitHub Actions (.github/workflows/sync-zepp.yml), gratis.
   • allenamenti (pesi, tapis roulant, cyclette…) con kcal e battiti → users/{uid}/allenamenti_registro
     (si agganciano alla sessione fatta nell'app alla stessa ora; altrimenti diventano sessioni "Dall'orologio")
   • dati del giorno (passi, battiti, sonno, ossigeno, respirazione) → users/{uid}/direction/salute_giorni
@@ -271,7 +271,8 @@ def main():
                 days[str(d)] = o
     else:
         log(f"Dati giornalieri: {out.status}")
-    log(f"Giorni letti: {len(days)}")
+    # l'ultimo giorno arrivato da Zepp (solo la data): se manca ieri, il telefono non l'ha ancora caricato su Zepp
+    log(f"Giorni letti: {len(days)}" + (f" (ultimo: {max(days)})" if days else ""))
 
     # ── ossigeno e respirazione ────────────────────────────────────────
     try:

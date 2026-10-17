@@ -1,4 +1,4 @@
-# Sincronizza Zepp (Amazfit) → Il Geco Zen: allenamenti, battiti, passi, sonno. Ogni 6 ore, gratis.
+# Sincronizza Zepp (Amazfit) → Il Geco Zen: allenamenti, battiti, passi, sonno. Ogni ora, gratis (repository pubblico: minuti di Actions illimitati).
 # Secret richiesti (Settings → Secrets → Actions): ZEPP_EMAIL, ZEPP_PASSWORD, ZEPP_SYNC_PASSWORD, FIREBASE_UID
 # Nessuna chiave di amministratore: l'accesso a Firebase è di un utente dedicato, limitato dalle regole di Firestore.
 # Il repository è pubblico: lo script stampa solo conteggi. Si può lanciare a mano da Actions → "Sincronizza Zepp" → Run workflow.
@@ -6,7 +6,7 @@ name: Sincronizza Zepp
 
 on:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
     inputs:
       days_back:

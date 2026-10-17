@@ -24,6 +24,8 @@ export const parseKey = k => { const [y, m, d] = k.split('-').map(Number); retur
 /** Chiave 'AAAA-MM-GG' spostata di n giorni (n negativo = indietro), sul calendario locale. */
 export const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); };
 const num = v => +v || 0;
+/** Ora (ms) dell'ultima lettura di Zepp, dall'ultimo loadRange che ha letto i dati dell'orologio (null se mai). */
+export let watchSyncTs = null;
 
 /**
  * Attività dal giorno `from` al giorno `to` (compresi, 'AAAA-MM-GG').
@@ -79,6 +81,7 @@ export async function loadRange(from, to, fonti = null) {
     // Dati dell'orologio (Zepp): un solo documento con tutti i giorni
     salute: async () => {
       const [snap, man] = await Promise.all([getDoc(doc(db, 'users', uid, 'direction', 'salute_giorni')), getDoc(doc(db, 'users', uid, 'direction', 'salute_manuale'))]);
+      watchSyncTs = snap.exists() ? (snap.data().sync?.ts ?? null) : null;
       const all = mergeManual(snap.exists() ? (snap.data().days || {}) : {}, man.exists() ? (man.data().days || {}) : {});
       Object.keys(all).filter(k => k >= from && k <= to).forEach(k => { day(k).salute = all[k]; });
     },

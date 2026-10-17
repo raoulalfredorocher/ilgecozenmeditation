@@ -283,7 +283,7 @@ function buildProfileSheet() {
 }
 
 let watchSync = null;   // { uid, ts, at } — ultima sincronizzazione dell'orologio e quando l'abbiamo letta
-const WATCH_SYNC_TTL = 30 * 60e3;   // la sincronizzazione gira ogni 6 ore: rileggere ogni 30 minuti basta
+const WATCH_SYNC_TTL = 30 * 60e3;   // la sincronizzazione gira ogni ora: rileggere ogni 30 minuti basta
 /** Ora (ms) dell'ultima sincronizzazione dell'orologio, o null: legge direction/salute_giorni (documento grande) al massimo ogni 30 minuti. */
 async function watchSyncTs(uid) {
   const KEY = 'zen_watch_sync';

@@ -9,7 +9,7 @@ import { waitForUser } from '../../core/auth-guard.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet } from '../../ui/dialog.js';
 import { escapeHtml as esc } from '../../core/dom.js';
-import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey, addDays } from '../../core/attivita.js';
+import { AREAS, loadRange, loadProfile, areasOf, dateKey, parseKey, addDays, watchSyncTs } from '../../core/attivita.js';
 import { dayBalance, isForza } from '../../core/bilancio.js';
 import { toast } from '../../ui/dialog.js';
 import { db, auth } from '../../core/db.js';
@@ -154,8 +154,17 @@ function renderDay() {
   {
     const h = d?.salute || {}, man = h._man ? Object.keys(h._man) : [];
     const mancano = h.sonnoMin == null || h.passi == null || h.bpmRiposo == null;
+    // oggi e ieri i dati possono essere ancora parziali: si dice quando sono stati letti da Zepp l'ultima volta
+    const recente = selected >= addDays(dateKey(), -1) && selected <= dateKey();
+    const letto = watchSyncTs ? (() => { const t = new Date(watchSyncTs), k = dateKey(t), ora = t.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      return k === dateKey() ? `oggi alle ${ora}` : k === addDays(dateKey(), -1) ? `ieri alle ${ora}` : `il ${t.getDate()} ${MONTHS[t.getMonth()]} alle ${ora}`; })() : '';
     if (selected <= dateKey() && (mancano || man.length)) {
-      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">${man.length ? `Alcuni valori sono inseriti a mano (${man.map(f => MAN_LABEL[f]).join(', ')}).` : 'L’orologio non ha mandato tutti i dati di questo giorno (scarico o non indossato?).'}</span></span><button type="button" class="text-btn" data-manual style="flex-shrink:0">${man.length ? 'Modifica' : 'Inserisci a mano'} ›</button></div>`);
+      const msg = man.length ? `Alcuni valori sono inseriti a mano (${man.map(f => MAN_LABEL[f]).join(', ')}).`
+        : recente ? `Dati dell’orologio non ancora arrivati${letto ? ` (ultima lettura da Zepp ${letto})` : ''}. Apri l’app Zepp per caricarli: Il Geco Zen li legge da Zepp ogni ora.`
+        : 'L’orologio non ha mandato tutti i dati di questo giorno (scarico o non indossato?).';
+      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">${msg}</span></span><button type="button" class="text-btn" data-manual style="flex-shrink:0">${man.length ? 'Modifica' : 'Inserisci a mano'} ›</button></div>`);
+    } else if (recente && letto) {
+      rows.push(`<div class="cm-row cm-manual"><span class="grow"><span class="s">Dati dell’orologio letti da Zepp ${letto}: si aggiornano ogni ora, dopo che l’app Zepp li ha caricati.</span></span></div>`);
     }
   }
   $('cm-day').innerHTML = `<div class="cm-dayname">${dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
