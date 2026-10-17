@@ -11,8 +11,10 @@ import {
   sessionVolume, sessionSets,
 } from './state.js';
 import { deliver, csvFile } from '../../ui/files.js';
+import { datiOrologio, orologioHtml } from './orologio.js';
 
 const legacy = {};     // dettagli delle sessioni vecchie, caricati al bisogno
+const oro = {};        // dati dell'orologio della sessione (battito, zone, curva…), caricati al bisogno
 let selected = dateKey();
 let afterChange = () => {};
 /** Funzione da chiamare dopo ogni modifica (il calendario ricarica il mese). */
@@ -51,6 +53,7 @@ export async function openDetail(id) {
   detail.setTitle(r.schedaNome || 'Sessione');
   drawDetail();
   detail.open();
+  if (r.hk && !(id in oro)) datiOrologio(r).then(d => { oro[id] = d; if (curId === id) drawDetail(); }).catch(err => console.warn('dati orologio', err));
   if (!r.es && r.hasDettagli && !legacy[id]) {            // sessione vecchia: i dettagli sono nella sotto-collezione
     legacy[id] = await loadRegistroDettagli(id);
     if (curId === id) drawDetail();
@@ -79,6 +82,7 @@ function drawDetail() {
       ${num(r.kcal) ? `<div><b>${Math.round(num(r.kcal))}</b><span class="s">kcal (orologio)</span></div>` : ''}
       ${r.bpmMedio ? `<div><b>${r.bpmMedio}</b><span class="s">bpm medio${r.bpmMax ? ` · max ${r.bpmMax}` : ''}</span></div>` : ''}
     </div>
+    ${orologioHtml(oro[r._docId || curId])}
     ${v ? v.es.map(e => `<section class="al-ex"><div class="al-ex-h"><b>${esc(e.n)}</b><span class="s">${esc(e.g || '')}${e.p ? ` · programma ${e.p[0]} × ${e.t === 't' ? fmtDur(e.p[3]) : `${e.p[1]}${e.p[2] ? ` · ${fmtKg(e.p[2])} kg` : ''}`}` : ''}</span></div>
         ${e.s.map((s, i) => setRow(s, e.p, i, e.t)).join('')}</section>`).join('')
       : (r.hasDettagli ? '<p class="empty-line">Carico i dettagli…</p>' : '<p class="empty-line">Nessun dettaglio salvato per questa sessione.</p>')}

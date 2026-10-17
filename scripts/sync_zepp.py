@@ -32,6 +32,8 @@ from zepp_mcp import client as api, decode, workouts
 TZ = ZoneInfo("Europe/Rome")
 DAYS_BACK = int(os.environ.get("ZEPP_DAYS_BACK", "10"))
 CURVE_DAYS = 14   # giorni con le curve minuto per minuto (battito, respirazione): ~2 KB al giorno, si tengono solo gli ultimi
+ALLENAMENTI_DAYS = 120   # giorni con i dati completi degli allenamenti (salute_giorni.allenamenti): ~0,5 KB l'uno
+DETAIL_DAYS = 3          # la curva del battito (una richiesta in più ad allenamento) si scarica solo per gli ultimi giorni
 
 
 def log(msg):
@@ -188,6 +190,43 @@ def curva(minuti):
     return base64.b64encode(bytes(out)).decode()
 
 
+def scheda_orologio(w):
+    """Allenamento di Zepp (workouts.normalise) → tutti i dati utili, chiavi brevi. Solo numeri: niente sentinelle (-1)."""
+    s = dict(w.get("summary") or {})
+    for blocco in ("ride", "foot", "hike", "swim", "strength", "field_sport", "rope_skipping"):
+        for k, v in (w.get(blocco) or {}).items():
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                s.setdefault(k, v)
+    out = {k: v for k, v in s.items() if isinstance(v, (int, float)) and not isinstance(v, bool)
+           and not k.endswith("_unverified")}
+    z = ((w.get("heart_rate_zones") or {}).get("zones")) or []
+    if z:
+        out["zoneSec"] = [int(x.get("seconds") or 0) for x in z]
+        out["zoneMax"] = [int(x.get("upper_bpm") or 0) for x in z]
+    return out
+
+
+def curva_allenamento(zc, w):
+    """Battito durante l'allenamento: media ogni 30 secondi dall'inizio, un byte ciascuna, in base64 (0 = nessuna misura)."""
+    out = api.workout_detail(zc, str(w.get("track_id")), str(w.get("source") or "run.mifit.huami.com"))
+    if out.status != "ok" or not isinstance(out.data, dict):
+        return None
+    data = out.data.get("data") if isinstance(out.data.get("data"), dict) else out.data
+    packed = data.get("heart_rate") if isinstance(data, dict) else None
+    if not isinstance(packed, str) or not packed.strip():
+        return None
+    st = decode.decode_stream("heart_rate", packed)
+    t, v = st.get("offsets_seconds") or [], st.get("values") or []
+    if not t:
+        return None
+    n = min(720, t[-1] // 30 + 1)
+    acc = [[] for _ in range(n)]
+    for a, b in zip(t, v):
+        if b and 25 <= b <= 240 and a // 30 < n:
+            acc[a // 30].append(b)
+    return base64.b64encode(bytes(max(0, min(255, round(sum(x) / len(x)))) if x else 0 for x in acc)).decode()
+
+
 def respiro_minuti(items):
     """RespiratoryRate/real_data → { giorno locale: [1440 valori] }: il byte i è il minuto i dopo l'orario dell'elemento."""
     out = {}
@@ -333,7 +372,10 @@ def main():
     existing = [{"id": r["document"]["name"].rsplit("/", 1)[1], **{k: dec(v) for k, v in r["document"].get("fields", {}).items()}}
                 for r in http("POST", f"{DOCS}/users/{uid}:runQuery", q, token) if "document" in r]
     seen = {e.get("hk") for e in existing if e.get("hk")}
-    agganciati = nuovi = doppi = 0
+    agganciati = nuovi = doppi = curve_lette = 0
+    dettagli = {}   # giorno → { track_id: dati completi }
+    oggi = datetime.now(TZ).date()
+    dettaglio_da = (oggi - timedelta(days=DETAIL_DAYS - 1)).isoformat()
     for w in items:
         a, b = to_dt(w.get("start_local")), to_dt(w.get("end_local"))
         if not a:
@@ -348,15 +390,32 @@ def main():
             "orologio": sport_label(w.get("sport")),
             "hk": hk,
         }
+        # tutti i dati dell'allenamento → salute_giorni.allenamenti.{giorno}.{track_id} (per il dettaglio della sessione)
+        try:
+            giorno = a.astimezone(TZ).date().isoformat()
+            tid = str(w.get("track_id"))
+            info = {**scheda_orologio(w), "sport": fields["orologio"], "ini": int(a.timestamp() * 1000), "fine": int(b.timestamp() * 1000)}
+            if fields["orologio"] != "Camminata" and giorno >= dettaglio_da:
+                c = curva_allenamento(zc, w)
+                if c:
+                    info["curva"] = c
+                    curve_lette += 1
+            dettagli.setdefault(giorno, {})[tid] = info
+        except Exception as e:  # noqa: BLE001 - dettaglio facoltativo: non deve fermare il resto
+            log(f"dettaglio allenamento non letto ({type(e).__name__})")
         if hk in seen:
             doppi += 1
             continue
         seen.add(hk)
         ini, fine = int(a.timestamp() * 1000), int(b.timestamp() * 1000)
         data = a.astimezone(TZ).date().isoformat()
-        match = next((e for e in existing if e.get("data") == data and not e.get("hk") and e.get("ini") and e.get("fine")
-                      and e["ini"] != e["fine"] and e["ini"] - 40 * 60000 <= fine and e["fine"] + 40 * 60000 >= ini), None)
-        if match is None:
+        # una camminata non si aggancia mai a una sessione della scheda (resta a parte, solo nel TDEE)
+        camminata = fields["orologio"] == "Camminata"
+        # sessione della scheda avviata nell'app: quella dello stesso giorno che si sovrappone di più (±40 min)
+        vicine = [e for e in existing if not camminata and e.get("data") == data and not e.get("hk") and e.get("ini") and e.get("fine")
+                  and e["ini"] != e["fine"] and e["ini"] - 40 * 60000 <= fine and e["fine"] + 40 * 60000 >= ini]
+        match = max(vicine, key=lambda e: min(e["fine"], fine) - max(e["ini"], ini), default=None)
+        if match is None and not camminata:
             # l'unica sessione coi pesi del giorno, senza dati dell'orologio, registrata a mano (orario non affidabile)
             same = [e for e in existing if e.get("data") == data and not e.get("hk")]
             if len(same) == 1 and fields["orologio"] == "Pesi":
@@ -374,6 +433,15 @@ def main():
             r = http("POST", f"{DOCS}/users/{uid}/allenamenti_registro", {"fields": {k: enc(v) for k, v in doc.items()}}, token)
             existing.append({"id": r["name"].rsplit("/", 1)[1], **doc})
             nuovi += 1
+    # dati completi: campo per campo (la curva già salvata resta se stavolta non è stata riletta); i giorni vecchi si tolgono
+    try:
+        vecchi = [(oggi - timedelta(days=k)).isoformat() for k in range(ALLENAMENTI_DAYS, ALLENAMENTI_DAYS + 60)]
+        patch(token, f"users/{uid}/direction/salute_giorni", {"allenamenti": dettagli},
+              [f"allenamenti.`{d}`.`{t}`.{k}" for d, x in dettagli.items() for t, o in x.items() for k in o]
+              + [f"allenamenti.`{d}`" for d in vecchi])
+        log(f"Dettagli allenamenti: {sum(len(x) for x in dettagli.values())} (curve del battito: {curve_lette})")
+    except Exception as e:  # noqa: BLE001
+        log(f"dettagli allenamenti non salvati ({type(e).__name__})")
     # VO2 max: stima dell'orologio, presente nel riepilogo degli allenamenti che la misurano (-1 = non misurata)
     vo2 = {}
     for w in sorted(items, key=lambda x: str(x.get("start_local"))):
