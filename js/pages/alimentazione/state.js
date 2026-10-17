@@ -99,7 +99,7 @@ export function workoutOn(key, planType = 'Riposo') {
   const real = state.workouts[key], today = dateKey();
   if (key <= today) {
     if (!real) return { kcal: 0, source: null, n: 0 };
-    return { kcal: real.kcal || 0, min: real.min || 0, forza: real.forza, source: 'registro', n: real.n };
+    return { kcal: real.kcal || 0, min: real.min || 0, forza: real.forza, sessioni: real.sessioni, source: 'registro', n: real.n };
   }
   return planType === 'Workout' ? { kcal: 0, source: 'piano', n: 1 } : { kcal: 0, source: null, n: 0 };
 }
@@ -113,7 +113,7 @@ export function tdeeParts(key = dateKey(), planType = 'Riposo') {
   const w = workoutOn(key, planType), reg = w.source === 'registro';
   const b = dayBalance(state.profile, key, {
     passi: state.health?.[key]?.passi,                           // i passi veri dell'orologio, se ci sono (altrimenti quelli del profilo)
-    kcalAllenamento: reg ? w.kcal : 0, minutiAllenamento: reg ? w.min : 0, forza: w.forza,
+    kcalAllenamento: reg ? w.kcal : 0, minutiAllenamento: reg ? w.min : 0, forza: w.forza, sessioni: reg ? w.sessioni : undefined,
   });
   if (!b) return null;
   return { base: b.base, passi: b.passi, workout: b.allenamento, realSteps: b.passiDaOrologio, source: w.source };
@@ -322,10 +322,11 @@ export function startSync() {
       snap.forEach(d => {
         const r = d.data();
         if (!r.data) return;
-        const o = w[r.data] ||= { n: 0, kcal: null, min: 0, forza: true };
+        const o = w[r.data] ||= { n: 0, kcal: null, min: 0, forza: true, sessioni: [] };
         o.n++;
         o.forza = o.forza && isForza(r);
         o.min += Number(r.durata) || 0;
+        o.sessioni.push({ kcal: +r.kcal || 0, durata: Number(r.durata) || 0, forza: isForza(r) });   // tetto dei pesi sessione per sessione
         if (Number.isFinite(+r.kcal) && r.kcal !== null && r.kcal !== '') o.kcal = (o.kcal || 0) + (+r.kcal);   // quando arriveranno dall'orologio
       });
       state.workouts = w;

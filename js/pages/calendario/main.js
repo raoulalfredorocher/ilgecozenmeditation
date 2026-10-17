@@ -133,8 +133,8 @@ function renderDay() {
   const bil = (() => {
     if (!profile || !d) return null;
     // nel fabbisogno contano anche le attività brevi (sotto i 40 minuti), che non sono allenamenti
-    const tutte = [...d.allenamento, ...d.brevi], kw = tutte.reduce((a, t) => a + (+t.kcal || 0), 0);
-    return dayBalance(profile, selected, { passi: d.salute?.passi, kcalAllenamento: kw, minutiAllenamento: tutte.reduce((a, t) => a + (+t.durata || 0), 0), forza: tutte.every(isForza), ingerite: d.cibo?.kcal });
+    const sessioni = [...d.allenamento, ...d.brevi].map(t => ({ kcal: t.kcal, durata: t.durata, forza: isForza(t) }));
+    return dayBalance(profile, selected, { passi: d.salute?.passi, sessioni, ingerite: d.cibo?.kcal });
   })();
   if (bil && d.cibo) {
     const r = (l, v, strong) => `<div class="cm-bil${strong ? ' strong' : ''}"><span>${l}</span><b>${v}</b></div>`;
