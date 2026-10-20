@@ -3,7 +3,7 @@
  *
  * Ordine di lettura: energia (calorie, bilancio, fabbisogno e attività) · macro · aderenza alla dieta (tocca un giorno
  * per capire cosa è successo).
- * Il periodo (7/30/90 giorni) vale per tutta la pagina. La dieta di confronto si può cambiare solo per guardare
+ * Il periodo (7/14/30/90 giorni o tutto lo storico, dal primo giorno registrato) vale per tutta la pagina. La dieta di confronto si può cambiare solo per guardare
  * (non cambia la dieta attiva).
  *   dieta = il piano del giorno · diario = ciò che hai registrato davvero · TDEE = il fabbisogno calcolato dal profilo
  */
@@ -18,7 +18,7 @@ import { registerToday } from './dieta.js';
 import { openProfile } from './profile.js';
 
 const root = document.getElementById('tab-risultati');
-let period = 7;
+let period = 7;              // giorni, oppure 'all' = dal primo giorno registrato a oggi
 let dietId = null;           // null = la dieta attiva
 
 const kc = n => Math.round(n).toLocaleString('it-IT');
@@ -32,6 +32,14 @@ const dietName = () => (dietId ? (state.diets.find(d => d._docId === dietId)?.na
 function planSel(date) {
   const day = dietDays()[weekdayIdx(date)] || { meals: [], type: 'Riposo' };
   return { day, ...totals(day.meals || []) };
+}
+
+const PERIODS = [[7, '7 g'], [14, '14 g'], [30, '30 g'], [90, '90 g'], ['all', 'Tutto']];
+/** Quanti giorni copre il periodo: per lo storico, dal primo giorno con il diario compilato a oggi. */
+function periodDays() {
+  if (period !== 'all') return period;
+  const first = Object.keys(state.diary).filter(k => state.diary[k]?.length).sort()[0];
+  return first ? Math.max(1, Math.round((parseKey(dateKey()) - parseKey(first)) / 864e5) + 1) : 7;
 }
 
 /** I giorni del periodo (dal più vecchio a oggi) con diario, piano e fabbisogno. */
@@ -96,13 +104,13 @@ function openDetail(key) {
 
 // ─── Disegno ─────────────────────────────────────────────────────────────
 function render() {
-  const days = buildDays(period);
+  const nDays = periodDays(), days = buildDays(nDays);
   const logged = days.filter(d => d.t);
   const hp = hasProfile(), anyT = days.some(d => d.tdee);
-  const nTxt = `${logged.length} ${logged.length === 1 ? 'giorno registrato' : 'giorni registrati'} su ${period}`;
+  const nTxt = `${logged.length} ${logged.length === 1 ? 'giorno registrato' : 'giorni registrati'} su ${nDays}`;
 
   // 0. Controlli: periodo e dieta di confronto
-  const controls = `<div class="segmented" role="group" aria-label="Periodo">${[7, 30, 90].map(n => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${n} giorni</button>`).join('')}</div>
+  const controls = `<div class="segmented" role="group" aria-label="Periodo">${PERIODS.map(([n, l]) => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${l}</button>`).join('')}</div>
     <button type="button" class="diet-pill" id="rs-diet" aria-label="Scegli la dieta di confronto">Confronto con: ${esc(dietName())}<span aria-hidden="true"> ▾</span></button>`;
 
   // 2a. Calorie e bilancio (ingerite dal diario − consumate: metabolismo + passi + allenamento)
@@ -176,7 +184,7 @@ dietSheet.$('#rs-diets').addEventListener('click', e => {
 
 root.addEventListener('click', e => {
   const p = e.target.closest('[data-period]');
-  if (p) { period = +p.dataset.period; return render(); }
+  if (p) { period = p.dataset.period === 'all' ? 'all' : +p.dataset.period; return render(); }
   if (e.target.closest('[data-profile]')) return openProfile();
   if (e.target.closest('#rs-diet')) return openDiets();
   const dot = e.target.closest('[data-k]');
