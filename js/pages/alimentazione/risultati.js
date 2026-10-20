@@ -1,10 +1,10 @@
 /**
  * risultati.js — scheda "Risultati": come stai andando rispetto alla dieta e al tuo fabbisogno (TDEE).
  *
- * Ordine di lettura: energia (calorie, bilancio, fabbisogno e attività) · macro · aderenza alla dieta (tocca un giorno
- * per capire cosa è successo).
- * Il periodo (7/14/30/90 giorni o tutto lo storico, dal primo giorno registrato) vale per tutta la pagina. La dieta di confronto si può cambiare solo per guardare
- * (non cambia la dieta attiva).
+ * Ordine di lettura: in cima le medie del periodo (kcal, proteine, carbo, grassi, deficit), poi due grafici giorno per
+ * giorno con lo stesso asse e gli stessi colori: calorie contro TDEE e macro in grammi. Tocca un giorno per il dettaglio.
+ * Il periodo (7/14/30 giorni o lo storico, dal primo giorno registrato) vale per tutta la pagina; le medie contano solo
+ * i giorni con il diario compilato.
  *   dieta = il piano del giorno · diario = ciò che hai registrato davvero · TDEE = il fabbisogno calcolato dal profilo
  */
 import { escapeHtml as esc } from '../../core/dom.js';
@@ -13,28 +13,26 @@ import {
   state, onChange, MC, DAY_SHORT, totals, dateKey, parseKey, addDays, weekdayIdx, hasProfile, tdeeFor, tdeeParts,
   fromDietMeal, fromDiaryMeal, itemsTotals, slotLabel, slotOrder,
 } from './state.js';
-import { kcalBars, macroSplit, balanceBars, tdeeStack, macroAdherence } from './charts.js';
+import { kcalTdee, macroGrams } from './charts.js';
 import { registerToday } from './dieta.js';
 import { openProfile } from './profile.js';
 
 const root = document.getElementById('tab-risultati');
 let period = 7;              // giorni, oppure 'all' = dal primo giorno registrato a oggi
-let dietId = null;           // null = la dieta attiva
 
 const kc = n => Math.round(n).toLocaleString('it-IT');
 const g1 = n => (Math.round(n * 10) / 10).toLocaleString('it-IT');
 const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + kc(Math.abs(n));
 const pct = n => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(Math.round(n))}%`;
 
-// ─── Dieta di confronto ──────────────────────────────────────────────────
-const dietDays = () => (dietId ? (state.diets.find(d => d._docId === dietId)?.diet || state.diet.days) : state.diet.days);
-const dietName = () => (dietId ? (state.diets.find(d => d._docId === dietId)?.name || state.diet.name) : state.diet.name);
+// ─── Dieta attiva (serve al dettaglio del giorno e al tipo di giornata per il TDEE) ───
+const dietName = () => state.diet.name;
 function planSel(date) {
-  const day = dietDays()[weekdayIdx(date)] || { meals: [], type: 'Riposo' };
+  const day = state.diet.days[weekdayIdx(date)] || { meals: [], type: 'Riposo' };
   return { day, ...totals(day.meals || []) };
 }
 
-const PERIODS = [[7, '7 g'], [14, '14 g'], [30, '30 g'], [90, '90 g'], ['all', 'Tutto']];
+const PERIODS = [[7, '7 g'], [14, '14 g'], [30, '30 g'], ['all', 'Storico']];
 /** Quanti giorni copre il periodo: per lo storico, dal primo giorno con il diario compilato a oggi. */
 function periodDays() {
   if (period !== 'all') return period;
@@ -56,16 +54,8 @@ function buildDays(n) {
       tdee: parts ? Math.round(parts.base + parts.passi + parts.workout) : 0, parts };
   });
 }
-/** Cos'è il "fabbisogno": il TDEE di quel giorno, non solo il metabolismo. */
-const TDEE_NOTE = `<p class="s rs-note"><b>Il fabbisogno è il TDEE</b>: le kcal che bruci in tutto in quel giorno. Cambia ogni giorno perché somma il <b>metabolismo</b> e la vita quotidiana (calcolati da età, altezza, peso e % di grasso), le kcal dei <b>passi in più</b> rispetto a quelli già compresi nel livello di attività (circa 4.000 al giorno se sei sedentario) e quelle dell'<b>allenamento</b>: per i pesi l'orologio sovrastima, quindi si contano al massimo 3 kcal per kg all'ora oltre il riposo. Il solo metabolismo è la parte più chiara del grafico "Fabbisogno (TDEE) e attività".</p>`;
-const avg = (list, k) => (list.length ? list.reduce((a, x) => a + (x[k] || 0), 0) / list.length : 0);
-
-function card(title, headline, sub, body, foot = '') {
-  return `<section class="rs-card"><div class="cap">${title}</div>
-    ${headline ? `<div class="rs-head">${headline}</div>` : ''}${sub ? `<div class="s rs-story">${sub}</div>` : ''}
-    <div class="rs-body">${body}</div>${foot}</section>`;
-}
-const legend = items => `<div class="rs-legend">${items.map(([c, l, dash, op]) => `<span><i style="background:${dash ? 'none' : c};${dash ? `border-top:2px dashed ${c};height:0;` : ''}${op ? `opacity:${op};` : ''}"></i>${l}</span>`).join('')}</div>`;
+const avg = (list, f) => (list.length ? list.reduce((a, x) => a + f(x), 0) / list.length : 0);
+const legend = items => `<div class="rs-legend">${items.map(([c, l, dash]) => `<span><i style="background:${dash ? 'none' : c};${dash ? `border-top:2px dashed ${c};height:0;` : ''}"></i>${l}</span>`).join('')}</div>`;
 
 // ─── Aderenza: perché sono fuori dal piano ───────────────────────────────
 const sheet = createSheet({ title: 'Cosa è successo', body: '<div id="rs-detail"></div>' });
@@ -103,90 +93,48 @@ function openDetail(key) {
 }
 
 // ─── Disegno ─────────────────────────────────────────────────────────────
+const KCAL = 'var(--mc-kcal)', NEED = 'var(--muted)';
 function render() {
   const nDays = periodDays(), days = buildDays(nDays);
-  const logged = days.filter(d => d.t);
-  const hp = hasProfile(), anyT = days.some(d => d.tdee);
-  const nTxt = `${logged.length} ${logged.length === 1 ? 'giorno registrato' : 'giorni registrati'} su ${nDays}`;
+  const logged = days.filter(d => d.t), withT = logged.filter(d => d.tdee);
+  const hp = hasProfile();
 
-  // 0. Controlli: periodo e dieta di confronto
-  const controls = `<div class="segmented" role="group" aria-label="Periodo">${PERIODS.map(([n, l]) => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${l}</button>`).join('')}</div>
-    <button type="button" class="diet-pill" id="rs-diet" aria-label="Scegli la dieta di confronto">Confronto con: ${esc(dietName())}<span aria-hidden="true"> ▾</span></button>`;
+  const controls = `<div class="segmented" role="group" aria-label="Periodo">${PERIODS.map(([n, l]) => `<button type="button" data-period="${n}" aria-pressed="${period === n}">${l}</button>`).join('')}</div>`;
 
-  // 2a. Calorie e bilancio (ingerite dal diario − consumate: metabolismo + passi + allenamento)
-  const aK = avg(logged, 'kcal'), aPlan = avg(logged, 'plan');
-  const kcalStory = logged.length ? `Mangi in media ${kc(aK)} kcal: ${Math.abs(aK - aPlan) < aPlan * 0.05 ? 'in linea con la dieta' : aK > aPlan ? `${kc(aK - aPlan)} sopra la dieta` : `${kc(aPlan - aK)} sotto la dieta`}${anyT ? `, e ${aK < avg(logged, 'tdee') ? 'sotto' : 'sopra'} il tuo fabbisogno giornaliero (TDEE) di ${kc(avg(logged, 'tdee'))} kcal` : ''}.` : 'Registra qualche giorno per vedere il grafico.';
-  let balTop = '';
-  if (hp) {
-    const all = buildDays(90).filter(d => d.t && d.tdee);
-    const last = all[all.length - 1];
-    if (last) {
-      const delta = last.kcal - last.tdee, isToday = last.key === dateKey();
-      const when = isToday ? 'oggi (finora)' : parseKey(last.key).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
-      const media = n => { const from = addDays(dateKey(), -(n - 1)), L = all.filter(d => d.key >= from); return L.length ? { v: L.reduce((a, d) => a + d.kcal - d.tdee, 0) / L.length, n: L.length } : null; };
-      const tile = n => { const m = media(n); return `<div><b class="${m ? (m.v <= 0 ? 'dn' : 'up') : ''}">${m ? sign(m.v) : '–'}</b><span>media ${n} giorni</span><span>${m ? `${m.n} ${m.n === 1 ? 'giorno registrato' : 'registrati'}` : 'nessun giorno'}</span></div>`; };
-      balTop = `<div class="rs-bal"><div class="rs-bal-h"><span>${when}</span><b class="${delta <= 0 ? 'dn' : 'up'}">${sign(delta)} <small>kcal · ${delta <= 0 ? 'deficit' : 'surplus'}</small></b>
-        <span class="s">Ingerite ${kc(last.kcal)} − consumate ${kc(last.tdee)} (metabolismo ${kc(last.parts.base)} + passi ${kc(last.parts.passi)} + allenamento ${kc(last.parts.workout)})</span></div>
-        <div class="rs-bal-avg">${[7, 30, 90].map(tile).join('')}</div></div>`;
-    }
-  }
-  const kcalCard = card('Calorie e bilancio', balTop ? '' : (logged.length ? `${kc(aK)} <span class="s">kcal al giorno</span>` : '–'), balTop ? '' : kcalStory,
-    balTop + kcalBars(days),
-    legend([['var(--primary)', 'Diario'], ['var(--text)', 'Dieta'], ['var(--muted)', 'Fabbisogno (TDEE)', true]].filter(l => !l[1].startsWith('Fabbisogno') || anyT))
-    + (balTop ? `<p class="s rs-story">${kcalStory}</p>` : '')
-    + (hp ? `<div class="cap rs-sub">Bilancio giorno per giorno</div>${balanceBars(days)}${legend([['var(--primary)', 'Deficit (sotto il TDEE)'], ['var(--mc-fat)', 'Surplus (sopra il TDEE)']])}${TDEE_NOTE}`
-      : '<p class="s">Compila il profilo per vedere il bilancio (deficit o surplus) di ogni giorno.</p><button type="button" class="text-btn" data-profile>Compila il profilo</button>'));
+  // 1. Le medie del periodo, solo sui giorni registrati. Deficit = TDEE del giorno − kcal mangiate (positivo = deficit).
+  const n = logged.length;
+  const mK = avg(logged, d => d.t.kcal), mP = avg(logged, d => d.t.prot), mC = avg(logged, d => d.t.carb), mF = avg(logged, d => d.t.fat);
+  const mD = avg(withT, d => d.tdee - d.t.kcal), mT = avg(withT, d => d.tdee);
+  const def = !hp ? `<div class="rs-kpi"><b>–</b><span>deficit medio</span><button type="button" class="text-btn" data-profile>Compila il profilo</button></div>`
+    : withT.length ? `<div class="rs-kpi"><b>${kc(Math.abs(mD))}</b><span><i style="border-top:2px dashed ${NEED};height:0;background:none"></i>${mD >= 0 ? 'deficit' : 'surplus'} medio · kcal</span></div>`
+    : '<div class="rs-kpi"><b>–</b><span>deficit medio</span></div>';
+  const summary = `<section class="rs-card rs-sum">
+    <div class="cap">Media al giorno</div>
+    <div class="s">${n} ${n === 1 ? 'giorno registrato' : 'giorni registrati'} su ${nDays}${period === 'all' && n ? ` · dal ${parseKey(logged[0].key).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}</div>
+    ${n ? `<div class="rs-kpis">
+      <div class="rs-kpi"><b>${kc(mK)}</b><span><i style="background:${KCAL}"></i>kcal mangiate</span></div>${def}
+    </div>
+    <div class="rs-grams">${[['Proteine', mP, MC.prot], ['Carbo', mC, MC.carb], ['Grassi', mF, MC.fat]].map(([l, v, c]) => `<div><b>${g1(v)} g</b><span class="s"><i style="background:${c}"></i>${l}</span></div>`).join('')}</div>
+    ${withT.length ? `<p class="s rs-note">Deficit = fabbisogno del giorno (TDEE: metabolismo + passi + allenamento) − kcal mangiate, in media sui giorni registrati: ${kc(mT)} − ${kc(mT - mD)} = ${kc(Math.abs(mD))} kcal di ${mD >= 0 ? 'deficit' : 'surplus'}.</p>` : ''}`
+    : '<p class="s rs-note">Nessun giorno registrato in questo periodo.</p>'}
+  </section>`;
 
-  // 2c. Fabbisogno e attività
-  const withParts = days.filter(d => d.parts);
-  const A = k => (withParts.length ? withParts.reduce((a, d) => a + d.parts[k], 0) / withParts.length : 0);
-  const realSteps = withParts.filter(d => d.parts.realSteps).length;
-  const stackCard = withParts.length ? card('Fabbisogno (TDEE) e attività', `${kc(A('base') + A('passi') + A('workout'))} <span class="s">kcal al giorno (TDEE medio)</span>`,
-    `Metabolismo e vita quotidiana ${kc(A('base'))}, più ${kc(A('passi'))} dai passi e ${kc(A('workout'))} dall'allenamento${realSteps ? ` (passi veri dell'orologio in ${realSteps} giorni su ${withParts.length})` : ' (passi del profilo: l\'orologio non ha ancora mandato dati)'}.`,
-    tdeeStack(days), legend([['var(--primary)', 'Metabolismo e vita quotidiana', false, 0.3], ['var(--primary)', 'Passi', false, 0.6], ['var(--primary)', 'Allenamento', false, 1], ['var(--text)', 'Calorie mangiate']])): '';
-
-  // 3. Macro e aderenza (un grafico solo: kcal di ogni giorno divise per macro, con la dieta e il pallino dell'aderenza)
-  const diaryAvg = logged.length ? { prot: avg(logged.map(d => d.t), 'prot'), carb: avg(logged.map(d => d.t), 'carb'), fat: avg(logged.map(d => d.t), 'fat') } : null;
-  const planAvg = logged.length ? { prot: avg(logged.map(d => d.planT), 'prot'), carb: avg(logged.map(d => d.planT), 'carb'), fat: avg(logged.map(d => d.planT), 'fat') } : null;
-  const st = days.map(d => (!d.t || !d.plan ? 'none' : d.kcal / d.plan > 1.1 ? 'over' : d.kcal / d.plan < 0.9 ? 'under' : 'ok'));
-  const ok = st.filter(s => s === 'ok').length, counted = st.filter(s => s !== 'none').length;
-  let streak = 0;
-  for (let i = st.length - 1; i >= 0 && st[i] === 'ok'; i--) streak++;
-  const macroCard = card('Macro e aderenza alla dieta', counted ? `${Math.round((ok / counted) * 100)}<span class="s">% dei giorni in linea</span>` : '–',
-    counted ? `${ok} giorni su ${counted} entro il ±10% delle kcal del piano${streak > 1 ? ` · serie di ${streak}` : ''}. Ogni barra sono le kcal del giorno divise per macro; il trattino è la dieta, la fascia verde la tolleranza. <b>Tocca un giorno</b> per vedere dove sei uscito dal piano.` : 'Serve almeno un giorno registrato.',
-    macroAdherence(days),
-    legend([[MC.prot, 'Proteine'], [MC.carb, 'Carboidrati'], [MC.fat, 'Grassi'], ['var(--text)', 'Dieta']])
-    + legend([['var(--success)', 'In linea (±10%)'], ['var(--warning)', 'Sopra il piano'], ['var(--primary)', 'Sotto il piano']])
-    + (diaryAvg ? `<div class="cap rs-sub">Media del periodo: quota di kcal da ciascun macro</div>${macroSplit(planAvg, diaryAvg)}<div class="rs-grams">${[['prot', 'Proteine'], ['carb', 'Carbo'], ['fat', 'Grassi']].map(([k, l]) => `<div><b>${g1(diaryAvg[k])} g</b><span class="s">${l}</span><span class="s">dieta ${g1(planAvg[k])} g</span></div>`).join('')}</div>` : ''));
+  // 2. Giorno per giorno: stesso asse e stessi colori della scheda sopra.
+  const charts = n ? `<section class="rs-card"><div class="cap">Calorie giorno per giorno</div>
+      <div class="rs-body">${kcalTdee(days)}</div>${legend([[KCAL, 'Kcal mangiate'], ...(withT.length ? [[NEED, 'Fabbisogno (TDEE)', true]] : [])])}
+      <p class="s rs-note">Lo spazio tra la barra e la linea tratteggiata è il deficit del giorno. Tocca un giorno per il dettaglio.</p></section>
+    <section class="rs-card"><div class="cap">Macro giorno per giorno (g)</div>
+      <div class="rs-body">${macroGrams(days)}</div>${legend([[MC.prot, 'Proteine'], [MC.carb, 'Carbo'], [MC.fat, 'Grassi']])}</section>` : '';
 
   root.innerHTML = `
-    ${hp ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il bilancio.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
-    ${controls}
-    <div class="cap rs-sec">Energia</div>${kcalCard}${stackCard}
-    <div class="cap rs-sec">Macro e aderenza</div>${macroCard}
-    <a class="rs-link" href="calendario.html#grafici">Passi, battiti, sonno e gli altri dati dell'orologio sono in Calendario → Grafici ›</a>`;
+    ${hp ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il deficit.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
+    ${controls}${summary}${charts}`;
 }
-
-// ─── Scelta della dieta di confronto ─────────────────────────────────────
-const dietSheet = createSheet({ title: 'Dieta di confronto', body: '<div class="list" id="rs-diets"></div><p class="s" style="margin-top:var(--space-3)">Cambia solo il confronto in questa pagina: la dieta attiva resta quella che hai scelto in Dieta.</p>' });
-function openDiets() {
-  const rows = [{ id: null, name: `${state.diet.name} (attiva)` }, ...state.diets.filter(d => d._docId !== state.diet.dietId).map(d => ({ id: d._docId, name: d.name }))];
-  dietSheet.$('#rs-diets').innerHTML = rows.map(r => `<button type="button" class="list-row" data-diet="${r.id ?? ''}"><span class="radio${(r.id ?? null) === dietId ? ' on' : ''}" aria-hidden="true"></span><span class="grow">${esc(r.name)}</span></button>`).join('');
-  dietSheet.open();
-}
-dietSheet.$('#rs-diets').addEventListener('click', e => {
-  const b = e.target.closest('[data-diet]');
-  if (!b) return;
-  dietId = b.dataset.diet || null;
-  dietSheet.close();
-  render();
-});
 
 root.addEventListener('click', e => {
   const p = e.target.closest('[data-period]');
   if (p) { period = p.dataset.period === 'all' ? 'all' : +p.dataset.period; return render(); }
   if (e.target.closest('[data-profile]')) return openProfile();
-  if (e.target.closest('#rs-diet')) return openDiets();
   const dot = e.target.closest('[data-k]');
   if (dot) return openDetail(dot.dataset.k);
 });

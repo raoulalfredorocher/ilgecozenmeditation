@@ -8,7 +8,7 @@ import { MC } from './state.js';
 // Un colore per entità, uguale in tutti i grafici: Diario = blu, Dieta = inchiostro, Fabbisogno = grigio tratteggiato.
 // I macro (proteine, carboidrati, grassi) hanno i loro tre colori validati (--mc-*).
 const DIARY = 'var(--primary)', PLAN = 'var(--text)', NEED = 'var(--muted)';
-const SKY = 'var(--primary)', BLUE = MC.prot, ROSE = MC.carb, GOLD = MC.fat, BARK = 'var(--muted)';
+const KCAL = 'var(--mc-kcal)', SKY = 'var(--primary)', BLUE = MC.prot, ROSE = MC.carb, GOLD = MC.fat, BARK = 'var(--muted)';
 const kc = n => Math.round(n).toLocaleString('it-IT');
 
 const svg = (w, h, inner, label) =>
@@ -32,68 +32,46 @@ export function rings(list, centerTop, centerBottom) {
   return svg(S, S, parts + mid, 'Anelli di calorie e macro di oggi');
 }
 
-// ─── 2. Calorie: diario, dieta, TDEE ─────────────────────────────────────
-/** data: [{ label, kcal|null, plan, tdee }] — barre del diario, linea della dieta, linea tratteggiata del fabbisogno. */
-export function kcalBars(data) {
-  const W = 320, H = 168, L = 34, R = 8, T = 10, B = 24;
-  const n = data.length;
-  const top = Math.max(...data.map(d => d.tdee || 0), ...data.map(d => Math.max(d.kcal || 0, d.plan || 0)), 800) * 1.1;
-  const step = top > 3200 ? 1000 : 500;
-  const y = v => T + (H - T - B) * (1 - v / top);
-  const bw = (W - L - R) / n, bar = Math.max(3, Math.min(20, bw * 0.62));
-  const cx = i => L + bw * i + bw / 2;
-  let grid = '';
-  for (let v = 0; v <= top; v += step) grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="ch-grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ch-t">${v >= 1000 ? (v / 1000).toLocaleString('it-IT') + 'k' : v}</text>`;
-  const bars = data.map((d, i) => d.kcal ? `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y(d.kcal).toFixed(1)}" width="${bar.toFixed(1)}" height="${(y(0) - y(d.kcal)).toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${DIARY}"/>` : '').join('');
-  const planPts = data.map((d, i) => (d.plan ? `${cx(i).toFixed(1)},${y(d.plan).toFixed(1)}` : null)).filter(Boolean);
-  const plan = planPts.length > 1 ? `<polyline points="${planPts.join(' ')}" fill="none" stroke="${PLAN}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
-  const dots = n <= 14 ? data.map((d, i) => (d.plan ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.plan).toFixed(1)}" r="3" fill="${PLAN}" stroke="var(--card)" stroke-width="1.5"/>` : '')).join('') : '';
+// ─── 2. Risultati: calorie e macro giorno per giorno (stesso asse, stessi colori, ogni giorno si tocca) ───
+const W2 = 320, L2 = 34, R2 = 8, T2 = 10, B2 = 24;
+const tick = v => (v >= 1000 ? (v / 1000).toLocaleString('it-IT') + 'k' : v);
+/** Asse dei giorni comune ai due grafici: posizione, etichette e zone da toccare (data-k) sui giorni registrati. */
+function dayAxis(data, H) {
+  const n = data.length, bw = (W2 - L2 - R2) / n, cx = i => L2 + bw * i + bw / 2;
+  const every = n <= 7 ? 1 : Math.ceil(n / 6);
+  const labels = data.map((d, i) => ((i % every === 0 && n - 1 - i >= every / 2) || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
+  const hits = data.map((d, i) => (d.t ? `<rect class="adh-dot" data-k="${d.key}" role="button" tabindex="0" aria-label="${d.key}" x="${(L2 + bw * i).toFixed(1)}" y="${T2}" width="${bw.toFixed(1)}" height="${H - T2 - B2}" fill="transparent"/>` : '')).join('');
+  return { n, bw, cx, labels, hits };
+}
+function grid(top, y, unit = '') {
+  const step = top > 3200 ? 1000 : top > 1200 ? 500 : top > 300 ? 100 : 50;
+  let g = '';
+  for (let v = 0; v <= top; v += step) g += `<line x1="${L2}" x2="${W2 - R2}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" class="ch-grid"/><text x="${L2 - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" class="ch-t">${tick(v)}${v ? unit : ''}</text>`;
+  return g;
+}
+/** data: [{ key, label, t, kcal|null, tdee }] — barre delle kcal mangiate e linea tratteggiata del TDEE: lo spazio tra le due è il deficit. */
+export function kcalTdee(data) {
+  const H = 170, { bw, cx, labels, hits } = dayAxis(data, H);
+  const top = Math.max(...data.map(d => Math.max(d.kcal || 0, d.tdee || 0)), 800) * 1.1;
+  const y = v => T2 + (H - T2 - B2) * (1 - v / top);
+  const bar = Math.max(1.5, Math.min(20, bw * 0.62));
+  const bars = data.map((d, i) => (d.kcal ? `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y(d.kcal).toFixed(1)}" width="${bar.toFixed(1)}" height="${(y(0) - y(d.kcal)).toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${KCAL}"/>` : '')).join('');
   const tp = data.map((d, i) => (d.tdee ? `${cx(i).toFixed(1)},${y(d.tdee).toFixed(1)}` : null)).filter(Boolean);
   const tl = tp.length > 1 ? `<polyline points="${tp.join(' ')}" fill="none" stroke="${NEED}" stroke-width="1.5" stroke-dasharray="5 4" stroke-linejoin="round"/>` : '';
-  const every = n <= 7 ? 1 : Math.ceil(n / 6);
-  const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
-  return svg(W, H, grid + tl + bars + plan + dots + xl, 'Calorie giornaliere: diario, dieta e fabbisogno');
+  return svg(W2, H, grid(top, y) + bars + tl + labels + hits, 'Calorie mangiate e fabbisogno (TDEE), giorno per giorno');
 }
-
-// ─── 3. Ripartizione dei macro (dieta contro diario) ─────────────────────
-const split = t => { const p = t.prot * 4, c = t.carb * 4, f = t.fat * 9, s = p + c + f || 1; return [['prot', p / s, BLUE], ['carb', c / s, ROSE], ['fat', f / s, GOLD]]; };
-/** Due barre (Dieta, Diario) con la quota di kcal da proteine, carboidrati e grassi (4/4/9 kcal per g); plan/diary: { prot, carb, fat } oppure null. */
-export function macroSplit(plan, diary) {
-  const W = 320, rowH = 30, L = 58;
-  const row = (label, t, y0) => {
-    if (!t || !(t.prot + t.carb + t.fat)) return `<text x="0" y="${y0 + 19}" class="ch-t">${label}</text><text x="${L}" y="${y0 + 19}" class="ch-t">nessun dato</text>`;
-    let x = L;
-    const segs = split(t).map(([k, f, col]) => {
-      const w = (W - L) * f;
-      const s = `<rect x="${x.toFixed(1)}" y="${y0}" width="${Math.max(w - 2, 0).toFixed(1)}" height="${rowH - 6}" rx="6" fill="${col}"/>${f > 0.1 ? `<text x="${(x + w / 2 - 1).toFixed(1)}" y="${y0 + 17}" text-anchor="middle" class="ch-on">${Math.round(f * 100)}%</text>` : ''}`;
-      x += w;
-      return s;
-    }).join('');
-    return `<text x="0" y="${y0 + 17}" class="ch-t">${label}</text>${segs}`;
-  };
-  return svg(W, rowH * 2 + 14, row('Dieta', plan, 0) + row('Diario', diary, rowH + 6), 'Ripartizione di proteine, carboidrati e grassi');
-}
-
-// ─── 4. Bilancio calorico (diario meno TDEE) ─────────────────────────────
-/** data: [{ label, kcal|null, tdee }] — barre di diario meno TDEE, sopra (surplus) o sotto (deficit) lo zero. */
-export function balanceBars(data) {
-  const W = 320, H = 150, L = 34, R = 8, T = 12, B = 24;
-  const n = data.length;
-  const diffs = data.map(d => (d.kcal && d.tdee ? d.kcal - d.tdee : null));
-  const maxAbs = Math.ceil(Math.max(400, ...diffs.filter(v => v != null).map(Math.abs)) / 500) * 500;
-  const mid = T + (H - T - B) / 2;
-  const half = (H - T - B) / 2;
-  const bw = (W - L - R) / n, bar = Math.max(3, Math.min(20, bw * 0.62));
-  const cx = i => L + bw * i + bw / 2;
-  const bars = diffs.map((v, i) => {
-    if (v == null) return '';
-    const h = Math.max(1.5, (Math.abs(v) / maxAbs) * half);
-    return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${(v >= 0 ? mid - h : mid).toFixed(1)}" width="${bar.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4, bar / 2)}" fill="${v >= 0 ? GOLD : DIARY}"/>`;
+/** data: [{ key, label, t: { prot, carb, fat }|null }] — tre linee in grammi, con i colori dei macro. I giorni senza diario restano vuoti. */
+export function macroGrams(data) {
+  const H = 170, { n, cx, labels, hits } = dayAxis(data, H);
+  const top = Math.max(...data.map(d => (d.t ? Math.max(d.t.prot, d.t.carb, d.t.fat) : 0)), 100) * 1.12;
+  const y = v => T2 + (H - T2 - B2) * (1 - v / top);
+  const lines = [['prot', BLUE], ['carb', ROSE], ['fat', GOLD]].map(([k, col]) => {
+    let path = '', open = false;   // la linea si interrompe sui giorni non registrati
+    data.forEach((d, i) => { if (d.t) { path += `${open ? 'L' : 'M'}${cx(i).toFixed(1)} ${y(d.t[k]).toFixed(1)} `; open = true; } else open = false; });
+    const dots = n <= 31 ? data.map((d, i) => (d.t ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.t[k]).toFixed(1)}" r="${n <= 14 ? 3 : 2}" fill="${col}"/>` : '')).join('') : '';
+    return `<path d="${path}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}`;
   }).join('');
-  const labels = `<text x="${L - 6}" y="${T + 8}" text-anchor="end" class="ch-t">+${kc(maxAbs)}</text><text x="${L - 6}" y="${H - B}" text-anchor="end" class="ch-t">−${kc(maxAbs)}</text>`;
-  const every = n <= 7 ? 1 : Math.ceil(n / 6);
-  const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
-  return svg(W, H, `<line x1="${L}" x2="${W - R}" y1="${mid}" y2="${mid}" class="ch-axis"/>${bars}${labels}${xl}`, 'Bilancio calorico giornaliero rispetto al fabbisogno');
+  return svg(W2, H, grid(top, y) + lines + labels + hits, 'Proteine, carboidrati e grassi in grammi, giorno per giorno');
 }
 
 // ─── 5. Aderenza alla dieta (un pallino per giorno) ──────────────────────
@@ -132,74 +110,3 @@ export function workoutBars(data) {
   return svg(W, H, base + bars + vals + lbl, 'Kcal bruciate con l\'allenamento, giorno per giorno');
 }
 
-// ─── 7. Da cosa è fatto il fabbisogno (TDEE): metabolismo + passi + allenamento, con il diario sopra ───
-/** data: [{ label, parts: { base, passi, workout }|null, kcal|null }] */
-export function tdeeStack(data) {
-  const W = 320, H = 168, L = 34, R = 8, T = 10, B = 24;
-  const n = data.length;
-  const tot = d => (d.parts ? d.parts.base + d.parts.passi + d.parts.workout : 0);
-  const top = Math.max(...data.map(tot), ...data.map(d => d.kcal || 0), 1000) * 1.1;
-  const y = v => T + (H - T - B) * (1 - v / top);
-  const bw = (W - L - R) / n, bar = Math.max(3, Math.min(22, bw * 0.62));
-  const cx = i => L + bw * i + bw / 2;
-  let grid = '';
-  for (let v = 0; v <= top; v += top > 3200 ? 1000 : 500) grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="ch-grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ch-t">${v >= 1000 ? (v / 1000).toLocaleString('it-IT') + 'k' : v}</text>`;
-  const bars = data.map((d, i) => {
-    if (!d.parts) return '';
-    let acc = 0;
-    return [['base', 'var(--primary)', .3], ['passi', 'var(--primary)', .6], ['workout', 'var(--primary)', 1]].map(([k, col, op]) => {
-      const v = d.parts[k]; if (!v) return '';
-      const y0 = y(acc + v), h = y(acc) - y0; acc += v;
-      return `<rect x="${(cx(i) - bar / 2).toFixed(1)}" y="${y0.toFixed(1)}" width="${bar.toFixed(1)}" height="${Math.max(h - 1.5, 0.5).toFixed(1)}" fill="${col}" opacity="${op}"/>`;
-    }).join('');
-  }).join('');
-  const pts = data.map((d, i) => (d.kcal ? `${cx(i).toFixed(1)},${y(d.kcal).toFixed(1)}` : null)).filter(Boolean);
-  const line = pts.length > 1 ? `<polyline points="${pts.join(' ')}" fill="none" stroke="${PLAN}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
-  const dots = data.map((d, i) => (d.kcal ? `<circle cx="${cx(i).toFixed(1)}" cy="${y(d.kcal).toFixed(1)}" r="${n > 14 ? 2.5 : 3.5}" fill="${PLAN}" stroke="var(--card)" stroke-width="1.5"/>` : '')).join('');
-  const every = n <= 7 ? 1 : Math.ceil(n / 6);
-  const xl = data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
-  return svg(W, H, grid + bars + line + dots + xl, 'Fabbisogno giornaliero: metabolismo, passi e allenamento, con le calorie mangiate');
-}
-
-// ─── 8. Macro e aderenza in un grafico solo ──────────────────────────────
-/**
- * data: [{ key, label, t: { kcal, prot, carb, fat }|null, plan }] — una barra per giorno registrato, divisa nelle kcal di
- * proteine, carboidrati e grassi (4/4/9 kcal per g, riportate al totale del diario); sopra, un trattino con le kcal della dieta
- * e la fascia ±10% (la tolleranza dell'aderenza). Sotto la barra un pallino: verde in linea, ambra sopra il piano, blu sotto.
- * Ogni giorno registrato si tocca (data-k) per aprire il dettaglio.
- */
-export function macroAdherence(data) {
-  const W = 320, H = 190, L = 34, R = 8, T = 10, B = 36;
-  const n = data.length;
-  const top = Math.max(...data.map(d => Math.max(d.t?.kcal || 0, (d.plan || 0) * 1.1)), 800) * 1.08;
-  const step = top > 3200 ? 1000 : 500;
-  const y = v => T + (H - T - B) * (1 - v / top);
-  const bw = (W - L - R) / n, bar = Math.max(2.5, Math.min(20, bw * 0.66));
-  const cx = i => L + bw * i + bw / 2;
-  let g = '';
-  for (let v = 0; v <= top; v += step) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="ch-grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ch-t">${v >= 1000 ? (v / 1000).toLocaleString('it-IT') + 'k' : v}</text>`;
-  const col = { ok: 'var(--success)', over: 'var(--warning)', under: 'var(--primary)' };
-  data.forEach((d, i) => {
-    const x0 = cx(i) - bar / 2;
-    if (d.plan) {   // fascia ±10% e trattino del piano
-      g += `<rect x="${(x0 - 1.5).toFixed(1)}" y="${y(d.plan * 1.1).toFixed(1)}" width="${(bar + 3).toFixed(1)}" height="${(y(d.plan * 0.9) - y(d.plan * 1.1)).toFixed(1)}" rx="2" fill="var(--success)" opacity=".13"/>`;
-    }
-    if (d.t?.kcal) {
-      const p = d.t.prot * 4, c = d.t.carb * 4, f = d.t.fat * 9, s = p + c + f || 1, k = d.t.kcal / s;
-      let acc = 0;
-      [[p, BLUE], [c, ROSE], [f, GOLD]].forEach(([v, color], j) => {
-        if (!v) return;
-        const y1 = y(acc), y0 = y(acc + v * k); acc += v * k;
-        g += `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${bar.toFixed(1)}" height="${Math.max(0.5, y1 - y0 - (j < 2 ? 0.8 : 0)).toFixed(1)}" fill="${color}"/>`;
-      });
-    }
-    if (d.plan) g += `<line x1="${(x0 - 2).toFixed(1)}" x2="${(x0 + bar + 2).toFixed(1)}" y1="${y(d.plan).toFixed(1)}" y2="${y(d.plan).toFixed(1)}" stroke="${PLAN}" stroke-width="2" stroke-linecap="round"/>`;
-    const st = !d.t || !d.plan ? null : d.t.kcal / d.plan > 1.1 ? 'over' : d.t.kcal / d.plan < 0.9 ? 'under' : 'ok';
-    const ry = H - B + 9, r = Math.max(2, Math.min(5, bw * 0.3));
-    g += st ? `<circle cx="${cx(i).toFixed(1)}" cy="${ry}" r="${r.toFixed(1)}" fill="${col[st]}"/>` : `<circle cx="${cx(i).toFixed(1)}" cy="${ry}" r="${Math.max(1.5, r - 1).toFixed(1)}" fill="none" class="ch-empty" stroke-width="1"/>`;
-    if (d.t) g += `<rect class="adh-dot" data-k="${d.key}" role="button" tabindex="0" aria-label="${d.key}" x="${(L + bw * i).toFixed(1)}" y="${T}" width="${bw.toFixed(1)}" height="${H - T - 18}" fill="transparent"/>`;
-  });
-  const every = n <= 7 ? 1 : Math.ceil(n / 6);
-  g += data.map((d, i) => (i % every === 0 || i === n - 1 ? `<text x="${cx(i).toFixed(1)}" y="${H - 4}" text-anchor="middle" class="ch-t">${d.label}</text>` : '')).join('');
-  return svg(W, H, g, 'Calorie di ogni giorno divise per macro, con la dieta e l\'aderenza');
-}
