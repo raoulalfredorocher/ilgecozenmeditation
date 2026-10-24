@@ -29,6 +29,8 @@ import { waitForPendingWrites } from '../core/firestore.js';
 import { db } from '../core/firebase.js';
 // Tiene la barra in basso attaccata al fondo dello schermo (vedi footer-guard.js)
 import { report as screenReport } from './footer-guard.js';
+// Temi delle feste: palette, suono e decori all'attivazione
+import { FESTE, playFesta, rainFesta } from './feste.js';
 
 const body = document.body;
 const page = location.pathname.split('/').pop() || 'index.html';
@@ -41,7 +43,7 @@ function themePref() {
   try { return localStorage.getItem('zen_theme') || 'auto'; } catch { return 'auto'; }
 }
 
-/** Applica il tema: 'light' | 'dark' | 'auto' (segue il telefono). */
+/** Applica il tema: 'light' | 'dark' | 'auto' (segue il telefono) | una festa di FESTE (fissa finché non si cambia). */
 export function setTheme(pref) {
   try { localStorage.setItem('zen_theme', pref); } catch { /* storage non disponibile */ }
   applyTheme();
@@ -50,8 +52,11 @@ export function setTheme(pref) {
 /** Applica il tema salvato, il colore della barra di stato e lo stato dei pulsanti del Profilo. */
 function applyTheme() {
   const pref = themePref();
-  const dark = pref === 'dark' || (pref === 'auto' && darkQuery.matches);
+  const festa = FESTE[pref];
+  const dark = festa ? festa.base === 'dark' : pref === 'dark' || (pref === 'auto' && darkQuery.matches);
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  if (festa) document.documentElement.setAttribute('data-festa', pref);
+  else document.documentElement.removeAttribute('data-festa');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || (dark ? '#0E1A22' : '#FAF7F2');
   document.querySelectorAll('[data-theme-choice]').forEach(b =>
@@ -222,6 +227,9 @@ function buildProfileSheet() {
         <button type="button" data-theme-choice="dark">Scuro</button>
         <button type="button" data-theme-choice="auto">Automatico</button>
       </div>
+      <div class="festa-grid" role="group" aria-label="Temi delle feste">
+        ${Object.entries(FESTE).map(([id, f]) => `<button type="button" class="festa-tile" data-theme-choice="${id}"><span class="festa-sw"></span>${f.label}</button>`).join('')}
+      </div>
     </div>
     <div class="zen-section" style="margin-bottom:var(--space-6)">
       <div class="zen-eyebrow">Sicurezza</div>
@@ -244,7 +252,12 @@ function buildProfileSheet() {
     </div>
     <button type="button" class="btn block danger" id="zen-logout">${icon('logout', 'sm')} Esci</button>`);
   document.querySelectorAll('[data-theme-choice]').forEach(b =>
-    b.addEventListener('click', () => setTheme(b.dataset.themeChoice)));
+    b.addEventListener('click', () => {
+      const pref = b.dataset.themeChoice;
+      setTheme(pref);
+      // Dentro il tocco: su iPhone l'audio parte solo così
+      if (FESTE[pref]) { playFesta(pref); rainFesta(pref); }
+    }));
   document.getElementById('zen-logout').addEventListener('click', confirmAndSignOut);
   document.getElementById('zen-refresh').addEventListener('click', refreshApp);
   document.getElementById('zen-pin-open').addEventListener('click', async () => {
