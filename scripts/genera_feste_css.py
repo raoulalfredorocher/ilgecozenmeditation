@@ -54,6 +54,15 @@ NATALE = [
     "<path d='M38 4 Q46 4 46 10 L46 30' stroke='%23fff' stroke-width='5' fill='none' stroke-linecap='round'/><path d='M38 4 Q46 4 46 10 L46 30' stroke='%23D64545' stroke-width='5' stroke-dasharray='3 4' fill='none'/>"
     "<path d='M20 16 H44 V40 Q44 44 40 46 L24 56 Q14 60 11 52 Q9 46 16 42 L20 40Z' fill='%23D64545'/>"
     "<rect x='17' y='10' width='30' height='10' rx='4' fill='%23FFFFFF'/><path d='M22 34 l4 4 M30 30 l4 4 M26 44 l4 4' stroke='%23fff' stroke-width='2' stroke-linecap='round'/>",
+    # ghirlanda
+    "<circle cx='32' cy='30' r='19' fill='none' stroke='%231F6E4A' stroke-width='10'/>"
+    "<g fill='%232E8B57'><ellipse cx='32' cy='11' rx='6' ry='3'/><ellipse cx='48' cy='20' rx='6' ry='3' transform='rotate(60 48 20)'/><ellipse cx='50' cy='38' rx='6' ry='3' transform='rotate(-60 50 38)'/><ellipse cx='14' cy='38' rx='6' ry='3' transform='rotate(60 14 38)'/><ellipse cx='16' cy='20' rx='6' ry='3' transform='rotate(-60 16 20)'/></g>"
+    "<g fill='%23D64545'><circle cx='40' cy='13' r='2.4'/><circle cx='51' cy='29' r='2.4'/><circle cx='13' cy='29' r='2.4'/><circle cx='24' cy='13' r='2.4'/><circle cx='44' cy='45' r='2.4'/></g>"
+    "<path d='M32 48 L22 60 L26 50 Z M32 48 L42 60 L38 50Z' fill='%23C0392B'/><path d='M32 48 Q20 40 20 50 Q24 54 32 48 Q44 40 44 50 Q40 54 32 48Z' fill='%23D64545'/><circle cx='32' cy='48' r='3' fill='%23B83232'/>",
+    # campana con agrifoglio
+    "<path d='M32 10 Q18 10 18 30 Q18 42 10 48 H54 Q46 42 46 30 Q46 10 32 10Z' fill='%23E3B341'/><path d='M22 30 Q22 18 30 15' stroke='%23F7E2A6' stroke-width='3' fill='none' stroke-linecap='round'/>"
+    "<rect x='9' y='46' width='46' height='5' rx='2.5' fill='%23C9952A'/><circle cx='32' cy='55' r='5' fill='%23C9952A'/>"
+    "<path d='M32 10 Q22 2 18 8 Q26 8 32 10Z M32 10 Q42 2 46 8 Q38 8 32 10Z' fill='%232E8B57'/><circle cx='29' cy='8' r='2.4' fill='%23D64545'/><circle cx='35' cy='8' r='2.4' fill='%23D64545'/>",
 ]
 
 HALLOWEEN = [
@@ -81,6 +90,15 @@ HALLOWEEN = [
     # caramella
     "<path d='M14 32 L2 22 L4 32 L2 42Z M50 32 L62 22 L60 32 L62 42Z' fill='%23B98CF0'/>"
     "<circle cx='32' cy='32' r='18' fill='%23FF8A2A'/><path d='M18 22 Q32 32 18 44 M28 14 Q42 32 28 50 M40 15 Q52 32 42 49' stroke='%23FFFFFF' stroke-width='3' fill='none' opacity='.8'/>",
+    # mummia
+    "<rect x='14' y='8' width='36' height='52' rx='16' fill='%23EDE3CF'/>"
+    "<path d='M14 18 L50 22 M14 26 L50 23 M14 38 L50 42 M14 46 L50 44 M16 54 L48 52 M18 14 L46 12' stroke='%23C9B896' stroke-width='2'/>"
+    "<rect x='14' y='28' width='36' height='9' fill='%23241B31'/><circle cx='24' cy='32.5' r='3.4' fill='%23FFFFFF'/><circle cx='40' cy='32.5' r='3.4' fill='%23FFFFFF'/><circle cx='25' cy='33' r='1.6' fill='%23241B31'/><circle cx='39' cy='33' r='1.6' fill='%23241B31'/>"
+    "<path d='M46 50 Q54 56 52 62' stroke='%23EDE3CF' stroke-width='3' fill='none' stroke-linecap='round'/>",
+    # fantasma
+    "<path d='M12 30 C12 6 52 6 52 30 V56 l-7 -5 -6.5 5 -6.5 -5 -6.5 5 -6.5 -5 -7 5Z' fill='%23F4F0FA'/>"
+    "<ellipse cx='24' cy='28' rx='4' ry='5.5' fill='%23241B31'/><ellipse cx='40' cy='28' rx='4' ry='5.5' fill='%23241B31'/><ellipse cx='32' cy='41' rx='4.5' ry='5' fill='%23241B31'/>"
+    "<circle cx='19' cy='36' r='3' fill='%23F4B6C2' opacity='.5'/><circle cx='45' cy='36' r='3' fill='%23F4B6C2' opacity='.5'/>",
 ]
 
 PASQUA = [
@@ -183,6 +201,11 @@ def web(c):
                f"<path d='M48 0 Q50 6 50 6 Q54 8 60 10'/><path d='M34 0 Q38 10 40 12 Q46 20 48 22 Q54 22 60 24'/><path d='M20 0 Q26 14 28 18 Q34 28 38 32 Q48 36 60 38'/></g>", 60, 52)
 
 
+def holly():
+    return uri("<path d='M30 10 Q22 2 14 6 Q16 8 14 12 Q18 12 18 16 Q22 12 30 10Z' fill='%232E8B57'/><path d='M30 10 Q38 2 46 6 Q44 8 46 12 Q42 12 42 16 Q38 12 30 10Z' fill='%231F6E4A'/>"
+               "<circle cx='27' cy='12' r='3' fill='%23D64545'/><circle cx='33' cy='12' r='3' fill='%23D64545'/><circle cx='30' cy='8' r='3' fill='%23E05252'/>", 60, 22)
+
+
 def pattern(glyphs, size=120):
     return uri(glyphs, size, size)
 
@@ -197,19 +220,22 @@ BAT = lambda x, y, s, c: f"<path transform='translate({x} {y}) scale({s})' fill=
 
 FESTE = {
     'natale': dict(
-        chars=NATALE, t=['#D64545', '#1F6E4A', '#C9952A', '#B83232', '#2E8B57', '#D64545'],
+        chars=NATALE, t=['#D64545', '#1F6E4A', '#C9952A', '#B83232', '#2E8B57', '#D64545', '#1F6E4A', '#C9952A'],
+        tn=['#C0392B', '#1F6E4A', '#C9952A', '#2E8B57'],
         head='linear-gradient(180deg, #C0392B, #A93226)', head_text='#FFFFFF', head_muted='rgba(255,255,255,.75)',
         bar='linear-gradient(180deg, #1F6E4A, #17583A)', bar_text='#FFFFFF', bar_muted='rgba(255,255,255,.7)',
         btn='linear-gradient(180deg, #E05252, #B83232)', btn_text='#FFFFFF',
         btn_layer=f"{snow_cap()} top / 100% 6px no-repeat",
-        card_layer=f"{snow_cap()} top / 100% 12px no-repeat",
+        card_layer=f"{snow_cap()} top / 100% 12px no-repeat, {holly()} top 4px right 8px / 60px 22px no-repeat",
+        hc_layer=f"{snow_cap()} top / 100% 12px no-repeat",
         card_border='#E6C9C0',
         meter='repeating-linear-gradient(-45deg, #D64545 0 6px, #FFFFFF 6px 12px)',
         bg=pattern(FLAKE(20, 24, 1, '%239DBBD0') + FLAKE(80, 60, .8, '%239DBBD0') + FLAKE(44, 98, 1.1, '%23C7D9E6') + "<circle cx='100' cy='18' r='1.6' fill='%23C7D9E6'/><circle cx='10' cy='70' r='1.4' fill='%23C7D9E6'/>"),
         bg_opacity=.55,
     ),
     'halloween': dict(
-        chars=HALLOWEEN, t=['#FF8A2A', '#B98CF0', '#73D13A', '#FF8A2A', '#B98CF0', '#F2617A'],
+        chars=HALLOWEEN, t=['#FF8A2A', '#B98CF0', '#73D13A', '#FF8A2A', '#B98CF0', '#F2617A', '#E8DDF5', '#B98CF0'],
+        tn=['#FF8A2A', '#B98CF0', '#73D13A', '#F2617A'],
         head='linear-gradient(180deg, #2C1A40, #1D1229)', head_text='#FFE7CC', head_muted='rgba(255,231,204,.7)',
         bar='linear-gradient(180deg, #1D1229, #120A1A)', bar_text='#FF8A2A', bar_muted='rgba(255,231,204,.6)',
         btn='linear-gradient(180deg, #FF9A3D, #E8701A)', btn_text='#1A0F05',
@@ -222,6 +248,7 @@ FESTE = {
     ),
     'pasqua': dict(
         chars=PASQUA, t=['#F4A3B5', '#7A58BE', '#5FAE6E', '#E0B53A', '#8FD6B8', '#B8A3E8'],
+        tn=['#7A58BE', '#E88AA0', '#5FAE6E', '#E0B53A'],
         head='linear-gradient(180deg, #A48BDB, #8B6CC9)', head_text='#FFFFFF', head_muted='rgba(255,255,255,.75)',
         bar='linear-gradient(180deg, #B6E8D2, #9EDBC0)', bar_text='#3A2F4F', bar_muted='rgba(58,47,79,.6)',
         btn='radial-gradient(circle at 25% 30%, rgba(255,255,255,.35) 0 2.5px, transparent 3px) 0 0 / 14px 14px, linear-gradient(180deg, #9A7AD6, #7A58BE)', btn_text='#FFFFFF',
@@ -234,6 +261,7 @@ FESTE = {
     ),
     'capodanno': dict(
         chars=CAPODANNO, t=['#E9C46A', '#F2B5D4', '#8FD6EA', '#E9C46A', '#D9DEEA', '#F2B5D4'],
+        tn=['#E9C46A', '#F2B5D4', '#8FD6EA', '#D9DEEA'],
         head='linear-gradient(180deg, #141C3A, #0B1022)', head_text='#F2D78F', head_muted='rgba(242,215,143,.7)',
         bar='linear-gradient(180deg, #0B1022, #070B17)', bar_text='#F2D78F', bar_muted='rgba(217,222,234,.6)',
         btn='linear-gradient(180deg, #F7E2A6, #E0B550 55%, #C9A13B)', btn_text='#0B1022',
@@ -246,6 +274,7 @@ FESTE = {
     ),
     'ringraziamento': dict(
         chars=RINGRAZIAMENTO, t=['#B4541E', '#C9A23A', '#5F8A2F', '#E08A3C', '#7A4B2A', '#C83E35'],
+        tn=['#B4541E', '#C9A23A', '#5F8A2F', '#C83E35'],
         head='linear-gradient(180deg, #B4541E, #943F12)', head_text='#FFFFFF', head_muted='rgba(255,255,255,.75)',
         bar='linear-gradient(180deg, #7A4B2A, #5E3820)', bar_text='#F2C14E', bar_muted='rgba(255,255,255,.65)',
         btn='linear-gradient(180deg, #E08A3C, #B4541E)', btn_text='#FFFFFF',
@@ -259,13 +288,31 @@ FESTE = {
 }
 
 
+# Schede delle pagine decorate a fondo: (selettore, posizione e misura del personaggio, nasconde il numero d'ordine?)
+CHAR_CARDS = [
+    ('.tpl', 'right 8px bottom 8px / 30px 30px', None),                                         # Spiritualità
+    ('#tab-schede .list-row.al-row, #tab-avvia .list-row[data-sc]', 'right 14px center / 44px 44px', '::after'),  # Allenamento
+    ('.dt-meal', 'right 12px bottom 10px / 34px 34px', None),                                      # Alimentazione
+]
+# Riquadri grandi delle pagine principali: neve/ragnatela/… come le schede comuni
+DECO_CARDS = ['.wk', '.dt-day', '.cm-card', '.dur-card', '.dt-day.wn']
+# Pulsanti propri delle pagine
+PAGE_BTNS = ['.dt-reg', '.page-tabs > button[aria-selected="true"]', '.page-tabs > .active']
+
+
 def css():
     out = [START, '/* Barre, pulsanti, schede e sfondo prendono i colori e i personaggi della festa. */']
     for k, f in FESTE.items():
         R = f':root[data-festa="{k}"]'
         btn_bg = (f"{f['btn_layer']}, " if f['btn_layer'] else '') + f['btn']
+        card_layer = f['card_layer']
+        hc_layer = f.get('hc_layer', card_layer)
+        n = len(f['chars'])
+        tn = f['tn']
         out += [
             f'/* ── {k} ── */',
+            # Colori delle schede delle pagine (--tn1…4 usati da Alimentazione, Allenamento, Spiritualità, Passioni…)
+            f':root[data-theme][data-festa="{k}"] {{ --tn1: {tn[0]}; --tn2: {tn[1]}; --tn3: {tn[2]}; --tn4: {tn[3]}; }}',
             # Sfondo con motivo leggero
             f'{R} body.zen {{ isolation: isolate; }}',
             f'{R} body.zen::before {{ content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: {f["bg"]} 0 0 / 120px 120px repeat; opacity: {f["bg_opacity"]}; }}',
@@ -273,24 +320,37 @@ def css():
             f'{R} .zen-header {{ background: {f["head"]}; --text: {f["head_text"]}; --muted: {f["head_muted"]}; color: {f["head_text"]}; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 2px 10px rgba(0,0,0,.18); }}',
             f'{R} .zen-tabbar {{ background: {f["bar"]}; --text: {f["bar_text"]}; --muted: {f["bar_muted"]}; border-top-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }}',
             # Pulsanti principali
-            f'{R} .btn.accent, {R} .btn.primary, {R} .segmented > button[aria-pressed="true"], {R} .segmented > button.active, {R} .chip.active, {R} .chip[aria-pressed="true"] {{ background: {btn_bg}; color: {f["btn_text"]}; border-color: transparent; }}',
+            f'{R} .btn.accent, {R} .btn.primary, {R} .segmented > button[aria-pressed="true"], {R} .segmented > button.active, {R} .chip.active, {R} .chip[aria-pressed="true"], '
+            + ', '.join(f'{R} {b}' for b in PAGE_BTNS) + f' {{ background: {btn_bg}; color: {f["btn_text"]}; border-color: transparent; }}',
             f'{R} .btn:not(.accent):not(.primary):not(.ghost) {{ border-color: {f["card_border"]}; }}',
+            f'{R} .de-addfood {{ border-color: var(--primary); color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--card)); }}',
             # Schede, liste e riquadri
-            f'{R} .card:not(.flat), {R} .list, {R} .tile {{ background: {f["card_layer"]}, var(--card); border-color: {f["card_border"]}; }}',
+            f'{R} .card:not(.flat), {R} .list, {R} .tile {{ background: {card_layer}, var(--card); border-color: {f["card_border"]}; }}',
+            ', '.join(f'{R} {c}' for c in DECO_CARDS) + f' {{ background: {card_layer}, linear-gradient(135deg, color-mix(in srgb, var(--tn1) 12%, var(--card)), var(--card) 70%); border-color: {f["card_border"]}; }}',
             f'{R} .meter-fill {{ background: {f["meter"]}; }}',
             f'{R} .zen-eyebrow {{ color: var(--primary); }}',
+            f'{R} .cm-tiles > div {{ background: color-mix(in srgb, var(--primary) 12%, var(--surface)); }}',
+            f'{R} .cm-day.today {{ box-shadow: inset 0 0 0 2px var(--primary); background: color-mix(in srgb, var(--primary) 14%, transparent); }}',
         ]
         # Schede delle sezioni: colore della festa e un personaggio diverso per scheda
         for i, (char, t) in enumerate(zip(f['chars'], f['t'])):
-            out.append(f'{R} .hc:nth-child(6n+{i + 1}) {{ --t: {t}; --festa-char: {uri(char)}; }}')
-        out.append(f'{R} .hc:not(.soon) {{ background: {f["card_layer"]}, var(--festa-char) right 12px bottom 10px / 46px 46px no-repeat, linear-gradient(120deg, color-mix(in srgb, var(--t) 22%, var(--card)), var(--card) 72%); border-color: {f["card_border"]}; }}')
+            nth = f':nth-child({n}n+{i + 1})'
+            out.append(f'{R} .hc{nth} {{ --t: {t}; }}')
+            sels = ['.hc'] + [x.strip() for sel, _, _ in CHAR_CARDS for x in sel.split(',')]
+            out.append(', '.join(f'{R} {x}{nth}' for x in sels) + f' {{ --festa-char: {uri(char)}; }}')
+        out.append(f'{R} .hc:not(.soon) {{ background: {hc_layer}, var(--festa-char) right 12px bottom 10px / 46px 46px no-repeat, linear-gradient(120deg, color-mix(in srgb, var(--t) 22%, var(--card)), var(--card) 72%); border-color: {f["card_border"]}; }}')
+        out.append(f'{R} .hc.w:not(.soon) {{ background: {hc_layer}, var(--festa-char) right 18px center / 56px 56px no-repeat, linear-gradient(120deg, color-mix(in srgb, var(--t) 22%, var(--card)), var(--card) 72%); }}')
+        for sel, pos, hide in CHAR_CARDS:
+            sels = [x.strip() for x in sel.split(',')]
+            deco = '' if sel.startswith('.cm-tiles') else f'{hc_layer}, '
+            out.append(', '.join(f'{R} {x}' for x in sels) + f' {{ background: {deco}var(--festa-char) {pos} no-repeat, linear-gradient(120deg, color-mix(in srgb, var(--t, var(--tn1)) 16%, var(--card)), var(--card) 75%); border-color: {f["card_border"]}; }}')
+            if hide:
+                out.append(', '.join(f'{R} {x}{hide}' for x in sels) + ' { content: none; }')
     out += [
         ':root[data-festa] .hc-num { display: none; }',
         ':root[data-festa] .hc.w .hc-title, :root[data-festa] .hc.w .hc-meta { padding-right: 64px; }',
-        ':root[data-festa] .hc.w { background-position: top, right 18px center, 0 0; }',
-        ':root[data-festa] .hc.w { background-size: 100% 12px, 56px 56px, auto; }',
-        ':root[data-festa="halloween"] .hc.w, :root[data-festa="pasqua"] .hc.w, :root[data-festa="capodanno"] .hc.w, :root[data-festa="ringraziamento"] .hc.w { background-position: top right, right 18px center, 0 0; background-size: 60px 52px, 56px 56px, auto; }',
         ':root[data-festa] .hc.t .hc-ic { margin-right: 52px; }',
+        ':root[data-festa] #tab-schede .list-row.al-row, :root[data-festa] #tab-avvia .list-row[data-sc] { padding-right: 68px; }',
         ':root[data-festa] .zen-header-title img { filter: drop-shadow(0 1px 2px rgba(0,0,0,.25)); }',
         END,
     ]
