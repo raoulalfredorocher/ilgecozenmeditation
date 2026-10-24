@@ -113,3 +113,53 @@
 
   --mc-prot: #4E9BC8; --mc-carb: #DE6585; --mc-fat: #C28612; --mc-kcal: var(--text);
 }
+
+/* ── Temi delle feste ─────────────────────────────────────────────────────
+   Scelti nel Profilo e fissi finché non si cambiano. Ogni festa si appoggia
+   a Chiaro o Scuro (data-theme) e qui sostituisce solo la palette:
+   :root[data-theme][data-festa] vince su :root[data-theme="…"]. */
+:root[data-theme][data-festa="halloween"] {
+  --geco-blue: #FF8A2A; --geco-sky: #FFB066; --geco-mist: #2C1F3B;
+  --sakura: #B98CF0; --sakura-soft: #2E2240; --bark: #C9A8E8;
+  --bg: #140F1C; --surface: #1D1628; --card: #241B31; --border: #3A2D4A;
+  --text: #F1E9F5; --muted: #A898B4; --primary: #FF8A2A; --on-primary: #1A0F05;
+  --danger: #F2617A; --success: #8FD16A; --warning: #FFB547;
+  --festa-glow: radial-gradient(120% 60% at 0% 0%, rgba(255, 138, 42, .14), transparent 60%),
+                radial-gradient(90% 50% at 100% 100%, rgba(185, 140, 240, .14), transparent 60%);
+}
+:root[data-theme][data-festa="capodanno"] {
+  --geco-blue: #E9C46A; --geco-sky: #F2D78F; --geco-mist: #1C2547;
+  --sakura: #F2B5D4; --sakura-soft: #2E2240; --bark: #D9DEEA;
+  --bg: #0B1022; --surface: #121A33; --card: #172140; --border: #27345A;
+  --text: #EEF1FA; --muted: #9AA6C4; --primary: #E9C46A; --on-primary: #0B1022;
+  --danger: #F07890; --success: #6CCB98; --warning: #F2C14E;
+  --festa-glow: radial-gradient(120% 60% at 50% 0%, rgba(233, 196, 106, .16), transparent 60%),
+                radial-gradient(80% 40% at 100% 100%, rgba(242, 181, 212, .10), transparent 60%);
+}
+:root[data-theme][data-festa="natale"] {
+  --geco-blue: #1F6E4A; --geco-sky: #7FB89A; --geco-mist: #E4F1E8;
+  --sakura: #D64545; --sakura-soft: #FBE3E0; --bark: #8B3A3A;
+  --bg: #FBF7EF; --surface: #F3ECDF; --card: #FFFFFF; --border: #E6DCCB;
+  --text: #1F3A2C; --muted: #6D7F72; --primary: #1F6E4A; --on-primary: #FFFFFF;
+  --danger: #B83232; --success: #2F8A5B; --warning: #C9952A;
+  --festa-glow: radial-gradient(120% 50% at 0% 0%, rgba(214, 69, 69, .10), transparent 60%),
+                radial-gradient(100% 50% at 100% 100%, rgba(31, 110, 74, .10), transparent 60%);
+}
+:root[data-theme][data-festa="pasqua"] {
+  --geco-blue: #7A58BE; --geco-sky: #8FD6B8; --geco-mist: #E6F6EE;
+  --sakura: #F4A3B5; --sakura-soft: #FDE8EE; --bark: #8B6C9E;
+  --bg: #FBF8FD; --surface: #F2ECF8; --card: #FFFFFF; --border: #E5DCEF;
+  --text: #3A2F4F; --muted: #7E7491; --primary: #7A58BE; --on-primary: #FFFFFF;
+  --danger: #C2475F; --success: #2F8A5B; --warning: #C99A1C;
+  --festa-glow: radial-gradient(120% 50% at 0% 0%, rgba(244, 163, 181, .16), transparent 60%),
+                radial-gradient(100% 50% at 100% 100%, rgba(143, 214, 184, .18), transparent 60%);
+}
+:root[data-theme][data-festa="ringraziamento"] {
+  --geco-blue: #A84B18; --geco-sky: #C9A23A; --geco-mist: #F5EBD3;
+  --sakura: #E08A3C; --sakura-soft: #FBE6D2; --bark: #7A4B2A;
+  --bg: #FBF5EC; --surface: #F4EADB; --card: #FFFDF9; --border: #E8D9C2;
+  --text: #3B2A1E; --muted: #85705E; --primary: #A84B18; --on-primary: #FFFFFF;
+  --danger: #B83A2E; --success: #5F8A2F; --warning: #C98A1C;
+  --festa-glow: radial-gradient(120% 50% at 100% 0%, rgba(224, 138, 60, .14), transparent 60%),
+                radial-gradient(100% 50% at 0% 100%, rgba(168, 75, 24, .10), transparent 60%);
+}
