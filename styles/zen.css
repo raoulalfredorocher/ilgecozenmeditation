@@ -895,3 +895,53 @@ body.zen :is(.modal-overlay, .mo, .co, .vo, .po, .edit-overlay, .edit-item-overl
 :root[data-festa="ringraziamento"] .festa-p.p1 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' width='14' height='14'%3E%3Cg transform='translate(7 7) rotate(0)'%3E%3Cpath d='M0 -6 C4 -3 4 3 0 6 C-4 3 -4 -3 0 -6 Z' fill='%23B4541E'/%3E%3Cpath d='M0 -5 L0 6' stroke='%237A4B2A' stroke-width='.6'/%3E%3C/g%3E%3C/svg%3E"); }
 :root[data-festa="ringraziamento"] .festa-p.p2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' width='14' height='14'%3E%3Cg transform='translate(7 7) rotate(0)'%3E%3Cpath d='M0 -6 C4 -3 4 3 0 6 C-4 3 -4 -3 0 -6 Z' fill='%23C9A23A'/%3E%3Cpath d='M0 -5 L0 6' stroke='%237A4B2A' stroke-width='.6'/%3E%3C/g%3E%3C/svg%3E"); }
 .festa-tile[data-theme-choice="ringraziamento"] .festa-sw::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 18' width='96' height='18'%3E%3Cpath d='M0 3 Q24 10 48 3 T96 3' fill='none' stroke='%238A6A4E' stroke-width='1'/%3E%3Cg transform='translate(24 10) rotate(25)'%3E%3Cpath d='M0 -6 C4 -3 4 3 0 6 C-4 3 -4 -3 0 -6 Z' fill='%23E08A3C'/%3E%3Cpath d='M0 -5 L0 6' stroke='%237A4B2A' stroke-width='.6'/%3E%3C/g%3E%3Cg transform='translate(72 10) rotate(-30)'%3E%3Cpath d='M0 -6 C4 -3 4 3 0 6 C-4 3 -4 -3 0 -6 Z' fill='%23B4541E'/%3E%3Cpath d='M0 -5 L0 6' stroke='%237A4B2A' stroke-width='.6'/%3E%3C/g%3E%3Ccircle cx='48' cy='8' r='2' fill='%23C9A23A'/%3E%3C/svg%3E"); }
+
+/* Illustrazioni delle feste (disegni in js/ui/feste-art.js) */
+.festa-scene { margin: var(--space-4) 0 var(--space-2); border-radius: var(--radius-lg); overflow: hidden; line-height: 0; box-shadow: var(--shadow-md); }
+.festa-scene svg { width: 100%; height: auto; display: block; }
+.festa-mascot {
+  position: fixed; right: 12px; z-index: 199; width: 58px; height: 58px; pointer-events: none;
+  bottom: calc(var(--safe-bottom) + 56px - 20px); bottom: calc(var(--safe-bottom) + 56px - 20px - var(--deficit, 0px));
+  animation: festa-peek .6s var(--ease) both;
+}
+.festa-mascot svg { width: 100%; height: 100%; display: block; }
+@keyframes festa-peek { from { transform: translateY(40px); } to { transform: none; } }
+.festa-flap, .festa-bob, .festa-glide, .festa-hop, .festa-pop { transform-box: fill-box; transform-origin: center; }
+.festa-flap { animation: festa-flap .35s ease-in-out infinite alternate; }
+.festa-bob { animation: festa-bob 2.6s ease-in-out infinite alternate; }
+.festa-glide { animation: festa-glide 3.2s ease-in-out infinite alternate; }
+.festa-hop { animation: festa-hop-s 1.6s ease-in-out infinite; }
+.festa-pop { animation: festa-pop 2.4s ease-out infinite; }
+@keyframes festa-flap { to { transform: scaleY(.6); } }
+@keyframes festa-bob { to { transform: translateY(-5px); } }
+@keyframes festa-glide { from { transform: translate(-6px, 3px); } to { transform: translate(6px, -4px); } }
+@keyframes festa-hop-s { 0%, 60%, 100% { transform: none; } 75% { transform: translateY(-8px); } }
+@keyframes festa-pop { 0% { transform: scale(.2); opacity: 0; } 15% { opacity: 1; } 70% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.1); opacity: 0; } }
+
+/* Chi attraversa lo schermo all'attivazione (6 s) */
+.festa-show { position: fixed; inset: 0; z-index: 401; pointer-events: none; overflow: hidden; }
+.festa-actor { position: absolute; left: 0; }
+.festa-actor svg { width: 100%; height: auto; display: block; }
+.festa-actor.top { top: calc(var(--safe-top) + 90px); }
+.festa-actor.bottom { bottom: calc(var(--safe-bottom) + 64px); }
+.festa-actor.fly-lr { width: 240px; animation: festa-fly-lr 5.6s ease-in-out both; }
+.festa-actor.fly-rl { width: 170px; animation: festa-fly-rl 5s ease-in-out .3s both; }
+.festa-actor.rise { width: 80px; left: calc(50% - 40px); animation: festa-rise 5.6s ease-in-out both; }
+.festa-actor.hop-lr { width: 80px; animation: festa-cross 5.6s linear both; }
+.festa-actor.hop-lr > svg { animation: festa-jump .5s ease-in-out infinite alternate; }
+.festa-actor.walk-lr { width: 90px; animation: festa-cross 5.8s linear both; }
+.festa-actor.walk-lr > svg { animation: festa-waddle .3s ease-in-out infinite alternate; }
+.festa-actor.pop { width: 150px; animation: festa-pop 1.8s ease-out 2 both; }
+.festa-actor.pop.a { left: 6%; top: 18%; }
+.festa-actor.pop.b { left: 48%; top: 30%; animation-delay: .6s; }
+.festa-actor.pop.c { left: 18%; top: 48%; animation-delay: 1.2s; }
+@keyframes festa-fly-lr { from { transform: translate(-260px, 60px) rotate(-6deg); } 50% { transform: translate(calc(50vw - 120px), 0) rotate(-3deg); } to { transform: translate(100vw, -50px) rotate(-8deg); } }
+@keyframes festa-fly-rl { from { transform: translate(100vw, 0); } to { transform: translate(-200px, 40px); } }
+@keyframes festa-rise { 0% { transform: translate(0, 100vh); opacity: 0; } 15% { opacity: .95; } 50% { transform: translate(-30px, 45vh); } 85% { opacity: .95; } 100% { transform: translate(20px, 5vh); opacity: 0; } }
+@keyframes festa-cross { from { transform: translateX(-100px); } to { transform: translateX(100vw); } }
+@keyframes festa-jump { from { transform: translateY(0); } to { transform: translateY(-34px) rotate(-6deg); } }
+@keyframes festa-waddle { from { transform: rotate(-5deg); } to { transform: rotate(5deg) translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) {
+  .festa-show { display: none; }
+  .festa-flap, .festa-bob, .festa-glide, .festa-hop, .festa-pop, .festa-mascot { animation: none; }
+}
