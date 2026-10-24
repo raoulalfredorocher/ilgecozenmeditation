@@ -16,7 +16,40 @@ export const FESTE = {
   ringraziamento: { label: 'Ringraziamento', base: 'light' },
 };
 
+import { SCENE, MASCOT, ACTORS } from './feste-art.js';
+
 let current = null;
+
+/** Mette (o toglie) le illustrazioni del tema: scena in cima alla Home e personaggio sopra la barra in basso. */
+export function decorFesta(id) {
+  document.querySelectorAll('.festa-scene, .festa-mascot').forEach(e => { if (e.dataset.festa !== id) e.remove(); });
+  if (!FESTE[id]) return;
+  const greeting = document.querySelector('.greeting');
+  if (greeting && !document.querySelector('.festa-scene')) {
+    const sc = document.createElement('section');
+    sc.className = 'festa-scene'; sc.dataset.festa = id; sc.setAttribute('aria-hidden', 'true');
+    sc.innerHTML = SCENE[id]();
+    greeting.after(sc);
+  }
+  if (document.querySelector('.zen-tabbar') && !document.querySelector('.festa-mascot')) {
+    const m = document.createElement('div');
+    m.className = 'festa-mascot'; m.dataset.festa = id; m.setAttribute('aria-hidden', 'true');
+    m.innerHTML = MASCOT[id]();
+    document.body.appendChild(m);
+  }
+}
+
+/** All'attivazione: i personaggi attraversano lo schermo (Babbo Natale in slitta, il coniglio che salta…). */
+export function showFesta(id) {
+  if (!FESTE[id] || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelector('.festa-show')?.remove();
+  const box = document.createElement('div');
+  box.className = 'festa-show';
+  box.setAttribute('aria-hidden', 'true');
+  box.innerHTML = ACTORS[id]().map(([cls, art]) => `<div class="festa-actor ${cls}">${art}</div>`).join('');
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 6500);
+}
 
 /** Suona la sigla della festa (5–6 s). Ferma quella precedente se sta ancora suonando. */
 export function playFesta(id) {

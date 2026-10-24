@@ -30,7 +30,7 @@ import { db } from '../core/firebase.js';
 // Tiene la barra in basso attaccata al fondo dello schermo (vedi footer-guard.js)
 import { report as screenReport } from './footer-guard.js';
 // Temi delle feste: palette, suono e decori all'attivazione
-import { FESTE, playFesta, rainFesta } from './feste.js';
+import { FESTE, playFesta, rainFesta, showFesta, decorFesta } from './feste.js';
 
 const body = document.body;
 const page = location.pathname.split('/').pop() || 'index.html';
@@ -57,6 +57,7 @@ function applyTheme() {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   if (festa) document.documentElement.setAttribute('data-festa', pref);
   else document.documentElement.removeAttribute('data-festa');
+  decorFesta(festa ? pref : null);
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || (dark ? '#0E1A22' : '#FAF7F2');
   document.querySelectorAll('[data-theme-choice]').forEach(b =>
@@ -256,7 +257,7 @@ function buildProfileSheet() {
       const pref = b.dataset.themeChoice;
       setTheme(pref);
       // Dentro il tocco: su iPhone l'audio parte solo così
-      if (FESTE[pref]) { playFesta(pref); rainFesta(pref); }
+      if (FESTE[pref]) { playFesta(pref); rainFesta(pref); showFesta(pref); }
     }));
   document.getElementById('zen-logout').addEventListener('click', confirmAndSignOut);
   document.getElementById('zen-refresh').addEventListener('click', refreshApp);
