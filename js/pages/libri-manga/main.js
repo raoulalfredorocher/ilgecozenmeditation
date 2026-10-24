@@ -703,7 +703,6 @@ function exportCsv() {
   a.download = `libri_${statusFilter === 'all' ? 'tutti' : read ? 'letti' : statusFilter}.csv`;
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast('CSV scaricato');
 }
 
 // ─── Menu a tre puntini (in alto) ────────────────────────────────────────

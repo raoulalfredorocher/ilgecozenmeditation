@@ -738,7 +738,6 @@ function exportCsv() {
   a.download = `film_${seen ? 'visti' : 'da_vedere'}.csv`;
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast('CSV scaricato');
 }
 
 // ─── Eventi ──────────────────────────────────────────────────────────────

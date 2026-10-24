@@ -21,6 +21,8 @@ html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6
 .pbtn.soft { background: color-mix(in srgb, var(--tn1) 14%, var(--card)); color: color-mix(in srgb, var(--tn1) 80%, var(--text)); }
 .pbtn.sm { min-height: 38px; font-size: var(--fs-sm); padding: 0 var(--space-4); }
 .pbtn.block { width: 100%; }
+/* Etichette che non sono <label> (Formato, Stato, Foto…): come le altre del modulo */
+.field > span.field-lbl { font-size: var(--fs-sm); color: var(--muted); }
 .danger-btn { background: none; border: 0; color: var(--danger); font: inherit; font-size: var(--fs-md); padding: var(--space-3); cursor: pointer; width: 100%; }
 .serif-i { font-family: var(--font-serif); font-style: italic; color: var(--muted); }
 .s { font-size: var(--fs-xs); color: var(--muted); }
