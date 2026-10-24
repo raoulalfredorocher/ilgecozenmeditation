@@ -390,20 +390,23 @@ async function finish() {
 }
 /**
  * Chiude la fine sessione salvando feedback e note, senza perderli se il salvataggio è lento:
- *   • si scrivono subito anche nella copia in PENDING (se il documento è ancora lì, flushPending lo salverà con loro);
- *   • quando il salvataggio arriva (senza limite di tempo), si aggiorna il documento con il suo id.
+ *   • si scrivono subito in una copia in PENDING (flushPending, alla prossima apertura, salva la sessione
+ *     se manca o aggiunge feedback e note se mancano);
+ *   • si aspetta l'aggiornamento del documento (al massimo 3 s) prima di passare al Calendario:
+ *     cambiare pagina subito poteva interrompere la scrittura.
  */
 async function closeDone() {
   const note = el.querySelector('#wk-note')?.value.trim() || '', fb = S.feedback, doc = S.saveDoc, data = doc.data, p = savePromise;
   close();
+  if (fb || note) {
+    const pend = store.get(PENDING) || [];
+    store.set(PENDING, pend.some(d => d.fine === doc.fine) ? pend.map(d => (d.fine === doc.fine ? { ...d, feedback: fb, note } : d)) : [...pend, { ...doc, feedback: fb, note }]);
+    const saved = p.then(id => updateSession(id, { feedback: fb, note }))
+      .then(() => store.set(PENDING, (store.get(PENDING) || []).filter(d => d.fine !== doc.fine)))
+      .catch(err => console.warn('feedback e note', err));     // restano nella copia in PENDING
+    await Promise.race([saved, new Promise(r => setTimeout(r, 3000))]);
+  }
   window.dispatchEvent(new CustomEvent('al:saved', { detail: { data } }));
-  if (!fb && !note) return;
-  const pend = store.get(PENDING) || [];
-  if (pend.some(d => d.fine === doc.fine)) store.set(PENDING, pend.map(d => (d.fine === doc.fine ? { ...d, feedback: fb, note } : d)));
-  try {
-    const id = await p;
-    await updateSession(id, { feedback: fb, note });
-  } catch (err) { console.warn('feedback e note', err); /* restano nella copia in PENDING: flushPending li salva alla prossima apertura */ }
 }
 
 /** Salvataggi rimasti in sospeso (rete assente): si ritentano all'apertura della pagina. */
