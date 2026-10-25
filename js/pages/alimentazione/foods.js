@@ -66,9 +66,12 @@ export const allFoods = () => {
 
 const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
+/** Parola senza la vocale finale, così singolare e plurale si trovano a vicenda (pera → pere, fragola → fragole). */
+const stem = w => (w.length > 3 ? w.replace(/[aeiou]$/, '') : w);
+
 /** Ricerca per nome (senza accenti, ogni parola deve comparire). Prima chi inizia con il testo cercato. */
 export function searchFoods(q, limit = 40) {
-  const words = fold(q.trim()).split(/\s+/).filter(Boolean);
+  const words = fold(q.trim()).split(/\s+/).filter(Boolean).map(stem);
   const list = allFoods();
   if (!words.length) return list.slice(0, limit);
   return list
