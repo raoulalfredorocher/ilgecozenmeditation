@@ -13,7 +13,7 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import { state, MEAL_SLOTS, slotLabel, slotOrder, itemsTotals, addCustomFood, MC } from './state.js';
-import { searchFoods, macrosFor, findFood, loadFoods } from './foods.js';
+import { searchFoods, macrosFor, findFood, loadFoods, galIcon } from './foods.js';
 
 let el = null, ed = null, snapshot = '';
 
@@ -116,7 +116,7 @@ function render() {
     return `<section class="de-meal" data-meal="${i}">
       <div class="de-meal-head"><span class="de-slot">${esc(slotLabel(m.slot))}</span><span class="s">${kc(t.kcal)} kcal</span><button type="button" class="text-btn" data-rm-meal style="margin-left:auto;color:var(--muted);font-weight:400">Togli</button></div>
       ${m.items.map((it, j) => `<button type="button" class="de-item" data-item="${j}">
-        <span class="de-name">${esc(it.name)}</span><span class="s">${it.g ? it.g + ' g' : ''}</span><span class="de-ikc">${kc(it.kcal)}</span></button>`).join('')}
+        <span class="de-name">${it.manual ? '' : galIcon(findFood(it.name))}${esc(it.name)}</span><span class="s">${it.g ? it.g + ' g' : ''}</span><span class="de-ikc">${kc(it.kcal)}</span></button>`).join('')}
       ${m.items.length ? macroDots(t) : ''}
       <button type="button" class="de-addfood" data-add-item><span aria-hidden="true">＋</span> Aggiungi alimento</button>
     </section>`;
@@ -188,7 +188,7 @@ function drawPicker() {
     <div class="segmented" role="group" style="margin-top:var(--space-3)"><button type="button" data-tab="foods" aria-pressed="${pk.tab === 'foods'}">Alimenti</button><button type="button" data-tab="recipes" aria-pressed="${pk.tab === 'recipes'}">Ricette</button></div>
     <input class="input" id="pk-q" type="search" placeholder="Cerca" autocomplete="off" value="${esc(pk.q)}" style="margin-top:var(--space-3)"/>
     <div class="list" id="pk-list" style="margin-top:var(--space-3);max-height:46dvh;overflow-y:auto">
-      ${foods.map((f, i) => `<button type="button" class="list-row" data-food="${i}"><span class="grow">${esc(f.n)}</span><span class="s">${f.k} kcal</span></button>`).join('')}
+      ${foods.map((f, i) => `<button type="button" class="list-row" data-food="${i}"><span class="grow">${galIcon(f)}${esc(f.n)}</span><span class="s">${f.k} kcal</span></button>`).join('')}
       ${recs.map(r => `<button type="button" class="list-row" data-recipe="${esc(r.id)}"><span class="grow">${esc(r.name)}</span><span class="s">${+r.kcal || 0} kcal</span></button>`).join('')}
       ${!foods.length && !recs.length ? `<div class="empty">${pk.tab === 'foods' ? 'Nessun alimento trovato.' : 'Nessuna ricetta.'}</div>` : ''}
     </div>
@@ -218,7 +218,7 @@ function drawQuantity(host) {
   const f = pk.food;
   const units = f.u ? Object.entries(f.u) : [];
   host.innerHTML = `${backLink()}
-    <div class="zen-h2" style="margin:var(--space-2) 0">${esc(f.n)}</div>
+    <div class="zen-h2" style="margin:var(--space-2) 0">${galIcon(f)}${esc(f.n)}</div>
     <div class="field"><label class="field-lbl" for="pk-g">Quantità (g)</label><input class="input" id="pk-g" type="number" inputmode="decimal" min="0" value="${pk.grams}"/></div>
     ${units.length ? `<div class="chips-wrap" style="margin-top:var(--space-2)">${units.map(([n, g]) => `<button type="button" class="pill" data-unit="${g}">1 ${esc(n)} · ${g} g</button>`).join('')}</div>` : ''}
     <div class="de-sum" id="pk-sum" style="margin-top:var(--space-4)"></div>

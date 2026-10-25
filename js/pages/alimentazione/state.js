@@ -281,6 +281,8 @@ export async function saveDiary(key, meals) {
 // ─── Alimenti aggiunti a mano ────────────────────────────────────────────
 /** Aggiunge (o sostituisce, stesso nome) un alimento in macros/foods: ha la precedenza sul database. */
 export async function addCustomFood(food) {
+  const old = state.customFoods.find(f => f.n.toLowerCase() === food.n.toLowerCase());
+  if (old?.gal !== undefined && food.gal === undefined) food = { ...food, gal: old.gal };
   state.customFoods = [...state.customFoods.filter(f => f.n.toLowerCase() !== food.n.toLowerCase()), food];
   await saveCustomFoods(state.customFoods);
   emit('foods');
