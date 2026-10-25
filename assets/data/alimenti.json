@@ -248,7 +248,7 @@
   {"n": "Vino da dessert (passito)", "k": 160, "p": 0.2, "c": 13.7, "g": 0.0, "u": {"bicchierino (75 ml)": 75}, "f": "USDA 14057"},
   {"n": "Birra", "k": 43, "p": 0.5, "c": 3.6, "g": 0.0, "u": {"lattina (330 ml)": 330, "media (400 ml)": 400, "piccola (200 ml)": 200}, "f": "USDA 14003"},
   {"n": "Birra light", "k": 29, "p": 0.2, "c": 1.6, "g": 0.0, "u": {"lattina (330 ml)": 330}, "f": "USDA 14006"},
-  {"n": "Tè verde giapponese (sencha, senza zucchero)", "k": 1, "p": 0.2, "c": 0.0, "g": 0.0, "u": {"tazza (200 ml)": 200}, "f": "USDA 14278"},
+  {"n": "Tè verde giapponese (Japanese tea, sencha, senza zucchero)", "k": 1, "p": 0.2, "c": 0.0, "g": 0.0, "u": {"tazza (200 ml)": 200}, "f": "USDA 14278"},
   {"n": "Tè nero (senza zucchero)", "k": 1, "p": 0.0, "c": 0.3, "g": 0.0, "u": {"tazza (200 ml)": 200}, "f": "USDA 14355"},
   {"n": "Succo d'arancia (spremuta)", "k": 45, "p": 0.7, "c": 10.4, "g": 0.2, "u": {"bicchiere (200 ml)": 200}, "f": "USDA 09206"},
   {"n": "Succo d'arancia (confezionato)", "k": 49, "p": 0.7, "c": 11.5, "g": 0.1, "u": {"bicchiere (200 ml)": 200}, "f": "USDA 09209"},
