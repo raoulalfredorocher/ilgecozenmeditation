@@ -120,6 +120,7 @@
   {"n": "Olive verdi", "k": 145, "p": 1.0, "c": 3.8, "g": 15.3, "u": {"oliva": 4}, "f": "USDA 09195", "gal": 0},
   {"n": "Cetriolini sottaceto", "k": 12, "p": 0.5, "c": 2.4, "g": 0.3, "u": {"cetriolino": 35}, "f": "USDA 11937", "gal": 0},
   {"n": "Alga wakame", "k": 45, "p": 3.0, "c": 9.1, "g": 0.6, "u": {"porzione": 30}, "f": "USDA 11669", "gal": 1},
+  {"n": "Insalata di alghe wakame (condita)", "k": 97, "p": 1.7, "c": 13.9, "g": 3.8, "u": {"porzione": 80}, "f": "etichetta Esselunga (Sushi Daily: 109 kcal, simile)", "gal": 0},
   {"n": "Alga agar agar", "k": 26, "p": 0.5, "c": 6.8, "g": 0.0, "u": {"cucchiaio": 10}, "f": "USDA 11442", "gal": 1},
   {"n": "Spirulina (polvere)", "k": 290, "p": 57.5, "c": 23.9, "g": 7.7, "u": {"cucchiaino": 3}, "f": "USDA 11667", "gal": 1},
   {"n": "Lenticchie (cotte)", "k": 116, "p": 9.0, "c": 20.1, "g": 0.4, "u": {"porzione": 150}, "f": "USDA 16070", "gal": 1},
