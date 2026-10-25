@@ -11,6 +11,7 @@
  *     carbo:  c | carb | carboidrati | carbs
  *     grassi: g | fat | grassi | lipidi
  *     u (facoltativo): pesi di porzioni comuni in grammi, es. { "uovo": 60 }
+ *     gal (facoltativo): avanzi alle galline, 0 non mangiabile · 1 mangiabile · 2 superfood
  * Gli alimenti aggiunti a mano dall'app (state.customFoods) si sommano a questi.
  */
 import { state } from './state.js';
@@ -32,6 +33,7 @@ export function normalizeFood(o) {
     c: toNum(pick(o, ['c', 'carb', 'carboidrati', 'carbs', 'Carboidrati'])),
     g: toNum(pick(o, ['g', 'fat', 'grassi', 'lipidi', 'Grassi'])),
     u: o.u && typeof o.u === 'object' ? o.u : undefined,
+    gal: [0, 1, 2].includes(o.gal) ? o.gal : undefined,
   };
 }
 
@@ -52,16 +54,30 @@ export const ALIAS = {
   'verdura (broccolo)': 'Broccolo', 'broccoli': 'Broccolo', 'patate americane': 'Patate dolci', 'patate': 'Patate bianche',
   'riso bianco (crudo)': 'Riso a crudo', 'pasta integrale (cruda)': 'Pasta integrale', 'uova (intere)': 'Uova',
   'parmigiano reggiano': 'Parmigiano', "olio extravergine d'oliva": 'Olio EVO', 'burro di arachidi': "Burro d'arachidi",
-  'pomodori': 'Pomodorini', 'ceci in scatola (sgocciolati)': 'Ceci', 'proteine in polvere (whey)': 'Whey vegetale',
+  'pomodori': 'Pomodorini', 'melenzane': 'Melanzane', 'ceci in scatola (sgocciolati)': 'Ceci', 'proteine in polvere (whey)': 'Whey vegetale',
 };
 /** Nome dell'alimento con i vecchi doppioni ricondotti alla voce giusta (vedi ALIAS). */
 export const canonicalName = name => ALIAS[String(name).toLowerCase()] || name;
 
-/** Tutti gli alimenti: prima quelli aggiunti a mano (vincono sul database a parità di nome), senza i nomi in ALIAS. */
+/** Tutti gli alimenti: prima quelli aggiunti a mano (vincono sul database a parità di nome), senza i nomi in ALIAS.
+ *  Un alimento aggiunto a mano senza icona delle galline prende quella dell'alimento del database con lo stesso nome. */
 export const allFoods = () => {
-  const mine = state.customFoods.map(normalizeFood).filter(f => f && !ALIAS[f.n.toLowerCase()]);
+  const baseGal = new Map(base.map(f => [f.n.toLowerCase(), f.gal]));
+  const mine = state.customFoods.map(normalizeFood).filter(f => f && !ALIAS[f.n.toLowerCase()])
+    .map(f => (f.gal === undefined ? { ...f, gal: baseGal.get(f.n.toLowerCase()) } : f));
   const names = new Set(mine.map(f => f.n.toLowerCase()));
   return [...mine, ...base.filter(f => !names.has(f.n.toLowerCase()) && !ALIAS[f.n.toLowerCase()])];
+};
+
+/** Avanzi alle galline: icona e significato (vuoto se l'alimento non è classificato). */
+export const GALLINE = [
+  { icon: '⛔', label: 'Non darlo alle galline' },
+  { icon: '🐔', label: 'Va bene per le galline' },
+  { icon: '🌟', label: 'Superfood per le galline' },
+];
+export const galIcon = f => {
+  const g = GALLINE[f?.gal];
+  return g ? `<span class="gal-ic" title="${g.label}" aria-label="${g.label}" style="margin-right:.35em">${g.icon}</span>` : '';
 };
 
 const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
