@@ -97,6 +97,7 @@ export function renderIndice(el, ultima) {
       ${ultima ? `<span class="ap-last">Eri a: <b>${escapeHtml(ultima.titolo)}</b></span>
                   <button class="btn primary block" type="button" data-pagina="${ultima.id}">Riprendi la lettura</button>`
                : `<button class="btn primary block" type="button" data-pagina="${PAGINE[0].id}">Inizia a leggere</button>`}
+      <div id="au-cover"></div>
     </div>
 
     <input type="search" id="ap-q" class="input ap-q" placeholder="Cerca negli appunti" autocomplete="off" aria-label="Cerca negli appunti"/>
@@ -138,6 +139,7 @@ export function renderPagina(el, p) {
       <div class="st-eyebrow">Capitolo ${p.nCap} · ${escapeHtml(p.cap.titolo)}</div>
       <h2 class="st-title">${escapeHtml(p.titolo)}</h2>
       <div class="st-term">Pagina ${i + 1} di ${PAGINE.length} · ${minuti(p)} min di lettura</div>
+      <div id="au-slot"></div>
       <div class="st-body ap-body">${testoHtml(p.testo)}</div>
       <div class="st-end">
         <div class="st-nav">

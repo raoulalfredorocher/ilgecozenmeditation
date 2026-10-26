@@ -385,6 +385,43 @@
     .ap-body li::marker { color: var(--t); }
     .ap-body blockquote { margin: 0; padding: var(--space-1) 0 var(--space-1) var(--space-4); border-left: 2px solid var(--sakura); font: italic var(--fs-lg)/1.5 var(--font-serif); }
     .ap-body a { color: var(--geco-blue); text-decoration: none; }
+    /* ═══ Audiolibro ═══ */
+    .au-player {
+      --t: var(--sakura); display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 35%, var(--border));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 4%, var(--card)));
+    }
+    .au-play {
+      flex: 0 0 48px; height: 48px; border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer;
+      background: var(--text); color: var(--bg);
+    }
+    .au-play svg { width: 22px; height: 22px; }
+    .au-play.sm { flex-basis: 40px; height: 40px; } .au-play.sm svg { width: 18px; height: 18px; }
+    .au-play:active { transform: scale(.94); }
+    .au-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .au-mid b { font: 500 var(--fs-md) var(--font-serif); }
+    .au-mid span { font-size: var(--fs-xs); color: var(--muted); }
+    .au-bar { width: 100%; margin: 0; accent-color: var(--text); }
+    .au-times { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+    .au-side { display: flex; flex-direction: column; gap: 4px; }
+    .au-mini {
+      min-width: 46px; height: 26px; padding: 0 6px; border-radius: 999px; cursor: pointer; font-size: var(--fs-xs); font-variant-numeric: tabular-nums;
+      border: .5px solid color-mix(in srgb, var(--t) 40%, var(--border)); background: var(--card); color: var(--text);
+    }
+    .au-cover { display: flex; align-items: center; justify-content: center; gap: var(--space-2); }
+    .au-cover svg { flex: 0 0 18px; width: 18px; height: 18px; }
+    .au-cover span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .au-minibar {
+      position: fixed; z-index: 300; left: var(--space-3); right: var(--space-3); bottom: calc(56px + var(--safe-bottom) + var(--space-2));
+      display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); overflow: hidden;
+      border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--sakura) 40%, var(--border));
+      background: color-mix(in srgb, var(--sakura) 10%, var(--card)); box-shadow: var(--shadow-md, 0 6px 20px rgba(0,0,0,.12));
+    }
+    .au-minibar[hidden] { display: none; }
+    body.au-on { padding-bottom: calc(var(--safe-bottom) + 64px + var(--space-6) + 64px); }
+    .au-mini-txt { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; color: var(--text); cursor: pointer; display: flex; flex-direction: column; }
+    .au-mini-txt b { font: 500 var(--fs-md) var(--font-serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .au-mini-bar { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--sakura); }
     .st-toast {
       position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + 96px); transform: translate(-50%, 20px); z-index: 400;
       max-width: calc(100vw - 40px); padding: 10px 16px; border-radius: 999px; background: var(--text); color: var(--bg);
@@ -440,6 +477,7 @@
     <section class="view" id="view-lesson" hidden></section>
     <!-- ═══ Appunti come libro (js/meditazione/appunti.js) ═══ -->
     <section class="view" id="view-appunti" hidden></section>
+    <div class="au-minibar" id="au-minibar" hidden></div>
 
   </main>
 
