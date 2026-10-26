@@ -257,7 +257,6 @@
     .p-done h2 { font-family: var(--font-serif); font-weight: 500; }
     /* ═══ Studio del Buddismo zen ═══ */
     .sp-tabs > button { white-space: nowrap; padding: 0 6px; }
-    .sp-tabs > button[data-sp-tab="studio"] { flex: 1.45; }
     .st-eyebrow { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
     .st-hero, .st-quote, .st-tappa, .st-card, .st-idea {
       --t: var(--tn1); position: relative; overflow: hidden; border-radius: var(--radius-lg);
@@ -357,6 +356,35 @@
     .st-gl dt { font: 500 var(--fs-md) var(--font-serif); }
     .st-gl dd { margin: 2px 0 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; }
     #st-gl-q { width: 100%; }
+    .st-libro {
+      --t: var(--sakura); display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px var(--space-3); text-align: left; cursor: pointer;
+      padding: var(--space-4); border-radius: var(--radius-md); color: var(--text);
+      border: .5px solid color-mix(in srgb, var(--t) 35%, var(--border)); background: color-mix(in srgb, var(--t) 8%, var(--card));
+    }
+    .st-libro .st-eyebrow { grid-column: 1; }
+    .st-libro b { grid-column: 1; font: 500 var(--fs-lg)/1.3 var(--font-serif); }
+    .st-libro-go { grid-column: 2; grid-row: 1 / 3; font-size: var(--fs-sm); color: var(--geco-blue); white-space: nowrap; }
+    .st-libro:active { transform: scale(.98); }
+
+    /* ═══ Appunti come libro ═══ */
+    .ap-cover {
+      --t: var(--sakura); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: var(--space-3); text-align: center;
+      border-radius: var(--radius-lg); padding: var(--space-6) var(--space-5) var(--space-5);
+      border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border)); box-shadow: var(--shadow-sm);
+      background: linear-gradient(160deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--tn1) 6%, var(--card)));
+    }
+    .ap-book { font: 500 var(--fs-2xl)/1.2 var(--font-serif); letter-spacing: -.015em; margin: 0; }
+    .ap-epi { font: italic var(--fs-md)/1.55 var(--font-serif); color: var(--muted); margin: 0; }
+    .ap-meta { font-size: var(--fs-xs); color: var(--muted); letter-spacing: .04em; }
+    .ap-last { font: italic var(--fs-sm) var(--font-serif); color: var(--muted); } .ap-last b { font-weight: 500; color: var(--text); }
+    .ap-q { width: 100%; }
+    .ap-cap[hidden], .ap-cap .st-row[hidden] { display: none; }
+    .ap-n { flex-basis: 36px; height: 36px; font-size: var(--fs-xs); }
+    .ap-body ol { padding-left: 1.3em; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+    .ap-body li > ul, .ap-body li > ol { margin-top: var(--space-2); }
+    .ap-body li::marker { color: var(--t); }
+    .ap-body blockquote { margin: 0; padding: var(--space-1) 0 var(--space-1) var(--space-4); border-left: 2px solid var(--sakura); font: italic var(--fs-lg)/1.5 var(--font-serif); }
+    .ap-body a { color: var(--geco-blue); text-decoration: none; }
     .st-toast {
       position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + 96px); transform: translate(-50%, 20px); z-index: 400;
       max-width: calc(100vw - 40px); padding: 10px 16px; border-radius: 999px; background: var(--text); color: var(--bg);
@@ -382,7 +410,8 @@
     <div class="page-tabs">
       <div class="segmented sp-tabs" role="group" aria-label="Sezioni di Spiritualità">
         <button type="button" data-sp-tab="med" aria-pressed="true">Meditazione</button>
-        <button type="button" data-sp-tab="studio" aria-pressed="false">Studio del Buddismo zen</button>
+        <button type="button" data-sp-tab="studio" aria-pressed="false">Studio zen</button>
+        <button type="button" data-sp-tab="appunti" aria-pressed="false">Appunti</button>
       </div>
     </div>
 
@@ -409,6 +438,8 @@
     <!-- ═══ Studio del Buddismo zen (js/meditazione/studio.js) ═══ -->
     <section class="view" id="view-studio" hidden></section>
     <section class="view" id="view-lesson" hidden></section>
+    <!-- ═══ Appunti come libro (js/meditazione/appunti.js) ═══ -->
+    <section class="view" id="view-appunti" hidden></section>
 
   </main>
 
