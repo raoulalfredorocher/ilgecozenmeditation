@@ -19,6 +19,7 @@ import { escapeHtml } from '../core/dom.js';
 import { openSheet, closeSheet } from '../ui/shell.js';
 import { TAPPE, LEZIONI, GLOSSARIO, FRASI } from './studio-lezioni.js';
 import { trovaPagina, PAGINA_DI_LEZIONE, renderIndice, renderPagina } from './appunti.js';
+import { pronto, quandoCambia, paginaInAscolto, montaPlayer, montaCopertina, montaMini } from './audiolibro.js';
 
 const $ = id => document.getElementById(id);
 
@@ -81,6 +82,7 @@ function setTab(name, { remember = true } = {}) {
   if (remember) { try { localStorage.setItem(TAB_KEY, name); } catch { /* niente */ } }
   if (name === 'studio') renderStudio();
   if (name === 'appunti') renderAppunti();
+  else aggiornaAudio();
 }
 document.querySelectorAll('[data-sp-tab]').forEach(b => b.addEventListener('click', () => {
   if (b.dataset.spTab === 'studio' && aperta && tab === 'studio') { history.back(); return; }
@@ -286,7 +288,17 @@ try { ultima = trovaPagina(localStorage.getItem(ULTIMA_KEY)); } catch { /* nient
 function renderAppunti() {
   if (pagina) renderPagina($('view-appunti'), pagina);
   else renderIndice($('view-appunti'), ultima);
+  aggiornaAudio();
 }
+
+/** Audiolibro: riquadro "Ascolta" nella pagina, pulsante in copertina, barra in basso con ciò che suona. */
+function aggiornaAudio() {
+  if (tab === 'appunti') { if (pagina) montaPlayer($('au-slot'), pagina); else montaCopertina($('au-cover')); }
+  const p = paginaInAscolto();
+  montaMini($('au-minibar'), { visibile: !!p && !(tab === 'appunti' && pagina === p), apri: x => apriPagina(x) });
+}
+quandoCambia(aggiornaAudio);
+pronto.then(aggiornaAudio);
 
 function apriPagina(p, { push = true } = {}) {
   pagina = ultima = p;

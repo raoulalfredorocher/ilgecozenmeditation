@@ -46,6 +46,8 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin) return;
   // I prezzi di borsa cambiano di continuo: sempre dalla rete
   if (url.pathname.startsWith('/data/')) return;
+  // L'audiolibro passa sempre dalla rete: il lettore chiede pezzi del file (Range) e iOS non accetta una copia intera
+  if (url.pathname.startsWith('/audio/')) return;
   // Indirizzi riservati di Firebase: solo la configurazione si tiene in copia
   if (url.pathname.startsWith('/__/') && !url.pathname.startsWith('/__/firebase/init')) return;
 
