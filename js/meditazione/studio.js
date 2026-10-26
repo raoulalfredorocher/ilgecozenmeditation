@@ -8,6 +8,9 @@
  * Dati: users/{uid}/direction/studio_zen → { fatte: { id: 'AAAA-MM-GG' },
  * note: { id: { t: testo, d: 'AAAA-MM-GG' } } }, con una copia in localStorage
  * per mostrare subito il percorso.
+ *
+ * Gestisce anche le schede in alto (Meditazione · Studio zen · Appunti) e la
+ * cronologia: #idLezione apre una lezione, #a-… una pagina degli appunti.
  */
 import { auth, db, waitForAuth } from '../core/db.js';
 import { doc, getDoc, setDoc } from '../core/firestore.js';
@@ -15,6 +18,7 @@ import { dateKey } from '../core/attivita.js';
 import { escapeHtml } from '../core/dom.js';
 import { openSheet, closeSheet } from '../ui/shell.js';
 import { TAPPE, LEZIONI, GLOSSARIO, FRASI } from './studio-lezioni.js';
+import { trovaPagina, PAGINA_DI_LEZIONE, renderIndice, renderPagina } from './appunti.js';
 
 const $ = id => document.getElementById(id);
 
@@ -26,6 +30,7 @@ const numero = l => ORDINE.indexOf(l) + 1;
 // ─── Stato ──────────────────────────────────────────────────────────────────
 const LS_KEY = 'zen_studio';
 const TAB_KEY = 'zen_sp_tab';
+const ULTIMA_KEY = 'zen_appunti_ultima';
 let S = { fatte: {}, note: {} };
 try { S = { ...S, ...JSON.parse(localStorage.getItem(LS_KEY)) }; } catch { /* nessuna copia locale */ }
 const keepLocal = () => { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch { /* storage pieno o bloccato */ } };
@@ -72,11 +77,14 @@ function setTab(name, { remember = true } = {}) {
   $('view-setup').hidden = name !== 'med';
   $('view-studio').hidden = name !== 'studio' || !!aperta;
   $('view-lesson').hidden = name !== 'studio' || !aperta;
+  $('view-appunti').hidden = name !== 'appunti';
   if (remember) { try { localStorage.setItem(TAB_KEY, name); } catch { /* niente */ } }
   if (name === 'studio') renderStudio();
+  if (name === 'appunti') renderAppunti();
 }
 document.querySelectorAll('[data-sp-tab]').forEach(b => b.addEventListener('click', () => {
   if (b.dataset.spTab === 'studio' && aperta && tab === 'studio') { history.back(); return; }
+  if (b.dataset.spTab === 'appunti' && pagina && tab === 'appunti') { chiudiPagina(); return; }
   setTab(b.dataset.spTab);
   window.scrollTo(0, 0);
 }));
@@ -202,6 +210,8 @@ function renderLesson() {
       <div class="st-idea"><div class="st-eyebrow">L'idea</div><p>${md(l.idea)}</p></div>
       <div class="st-body">${l.testo.map(blocco).join('')}</div>
       ${l.appunti ? `<blockquote class="st-notes"><div class="st-eyebrow">Dai tuoi appunti</div><p>${md(l.appunti)}</p></blockquote>` : ''}
+      ${trovaPagina(PAGINA_DI_LEZIONE[l.id]) ? `<button class="st-libro" type="button" data-pagina="${PAGINA_DI_LEZIONE[l.id]}">
+        <span class="st-eyebrow">Nei tuoi appunti</span><b>${escapeHtml(trovaPagina(PAGINA_DI_LEZIONE[l.id]).titolo)}</b><span class="st-libro-go">Leggi ›</span></button>` : ''}
       <div class="st-card st-practice"><div class="st-eyebrow">Nello zazen</div><p>${md(l.pratica)}</p></div>
       <div class="st-card st-diary">
         <div class="st-eyebrow">Il tuo diario zen</div>
@@ -226,6 +236,7 @@ function renderLesson() {
   $('st-back').addEventListener('click', () => history.back());
   $('st-nota-salva').addEventListener('click', salvaNota);
   $('st-fatta')?.addEventListener('click', segnaFatta);
+  $('view-lesson').querySelector('[data-pagina]')?.addEventListener('click', e => apriPagina(trovaPagina(e.currentTarget.dataset.pagina)));
   $('view-lesson').querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
     openLesson(LEZIONI.find(x => x.id === b.dataset.go), { push: false });
     history.replaceState({ lezione: b.dataset.go }, '', `#${b.dataset.go}`);
@@ -254,10 +265,61 @@ async function segnaFatta() {
 }
 
 window.addEventListener('popstate', () => {
-  const id = (history.state && history.state.lezione) || location.hash.slice(1);
+  const st = history.state || {};
+  const id = st.pagina || st.lezione || location.hash.slice(1);
+  const p = trovaPagina(id);
+  if (p) { pagina = p; setTab('appunti'); window.scrollTo(0, 0); return; }
+  pagina = null;
   const l = LEZIONI.find(x => x.id === id);
   if (l && sbloccata(l)) { aperta = l; renderLesson(); setTab('studio'); }
   else if (aperta) closeLesson();
+  else if (tab === 'appunti') renderAppunti();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APPUNTI (il libro: sempre consultabile)
+// ═══════════════════════════════════════════════════════════════════════════
+let pagina = null;
+let ultima = null;
+try { ultima = trovaPagina(localStorage.getItem(ULTIMA_KEY)); } catch { /* niente */ }
+
+function renderAppunti() {
+  if (pagina) renderPagina($('view-appunti'), pagina);
+  else renderIndice($('view-appunti'), ultima);
+}
+
+function apriPagina(p, { push = true } = {}) {
+  pagina = ultima = p;
+  try { localStorage.setItem(ULTIMA_KEY, p.id); } catch { /* niente */ }
+  if (push) history.pushState({ pagina: p.id }, '', `#${p.id}`);
+  setTab('appunti');
+  window.scrollTo(0, 0);
+}
+
+/** Torna all'indice: indietro se la pagina è stata aperta dall'indice, altrimenti sostituisce la voce. */
+function chiudiPagina() {
+  if (history.state?.daIndice) { history.back(); return; }
+  pagina = null;
+  history.replaceState(null, '', location.pathname + location.search);
+  setTab('appunti');
+  window.scrollTo(0, 0);
+}
+
+$('view-appunti').addEventListener('click', e => {
+  const b = e.target.closest('[data-pagina], [data-sfoglia], [data-indice]');
+  if (!b) return;
+  if (b.hasAttribute('data-indice')) { chiudiPagina(); return; }
+  if (b.dataset.sfoglia) {
+    // sfogliare non allunga la cronologia: "indietro" torna all'indice o alla lezione
+    const p = trovaPagina(b.dataset.sfoglia);
+    history.replaceState({ ...history.state, pagina: p.id }, '', `#${p.id}`);
+    apriPagina(p, { push: false });
+    return;
+  }
+  const p = trovaPagina(b.dataset.pagina);
+  if (!p) return;
+  apriPagina(p, { push: false });
+  history.pushState({ pagina: p.id, daIndice: true }, '', `#${p.id}`);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -289,7 +351,7 @@ function openDiario() {
 function openGlossario() {
   const voci = [...GLOSSARIO].sort((a, b) => a[0].localeCompare(b[0], 'it'));
   sheet('Glossario', `
-    <input type="search" id="st-gl-q" placeholder="Cerca un termine" autocomplete="off"/>
+    <input type="search" id="st-gl-q" class="input" placeholder="Cerca un termine" autocomplete="off" aria-label="Cerca un termine"/>
     <dl class="st-gl" id="st-gl">${voci.map(([k, v]) => `<div data-k="${escapeHtml((k + ' ' + v).toLowerCase())}"><dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd></div>`).join('')}</dl>`);
   $('st-gl-q').addEventListener('input', e => {
     const q = e.target.value.trim().toLowerCase();
@@ -317,13 +379,18 @@ function refresh() {
   const l = LEZIONI.find(x => x.id === id);
   let start = 'med';
   try { start = localStorage.getItem(TAB_KEY) || 'med'; } catch { /* niente */ }
-  if (id === 'studio') start = 'studio';
-  if (l && sbloccata(l)) {
+  if (id === 'studio' || id === 'appunti') start = id;
+  const p = trovaPagina(id);
+  if (p) {
+    history.replaceState(null, '', location.pathname + location.search);
+    history.pushState({ pagina: p.id, daIndice: true }, '', `#${p.id}`);
+    pagina = ultima = p; start = 'appunti';
+  } else if (l && sbloccata(l)) {
     // una voce "percorso" sotto la lezione, così "‹ Percorso" e il tasto indietro restano nella pagina
     history.replaceState(null, '', location.pathname + location.search);
     history.pushState({ lezione: l.id }, '', `#${l.id}`);
     aperta = l; renderLesson(); start = 'studio';
   }
-  setTab(start === 'studio' ? 'studio' : 'med', { remember: false });
+  setTab(['studio', 'appunti'].includes(start) ? start : 'med', { remember: false });
   load();
 })();
