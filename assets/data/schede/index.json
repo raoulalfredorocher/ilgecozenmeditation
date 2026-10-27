@@ -260,6 +260,43 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/960px-Ocimum_basilicum_8zz.jpg"
   },
   {
+   "id": "bibite",
+   "nome": "Bibite",
+   "cat": "Bevande",
+   "alimenti": [
+    "Coca-Cola",
+    "Coca-Cola Zero",
+    "Estathé pesca",
+    "Schweppes Tonica (acqua tonica)",
+    "Schweppes Lemon (limone)",
+    "Ginger ale",
+    "Red Bull",
+    "Acqua frizzante / soda"
+   ],
+   "parole": [
+    "bibita",
+    "bibite",
+    "cola",
+    "coca cola",
+    "coca-cola",
+    "tè freddo",
+    "acqua tonica",
+    "tonica",
+    "lemon",
+    "ginger ale",
+    "soda",
+    "acqua frizzante",
+    "aranciata",
+    "gassosa",
+    "energy drink",
+    "bevanda energetica",
+    "red bull",
+    "estathé",
+    "schweppes"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Glass_cola.jpg/960px-Glass_cola.jpg"
+  },
+  {
    "id": "bietola",
    "nome": "Bietola",
    "cat": "Verdura",
@@ -292,6 +329,26 @@
     "chou"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg/960px-2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg"
+  },
+  {
+   "id": "birra",
+   "nome": "Birra",
+   "cat": "Bevande",
+   "alimenti": [
+    "Birra",
+    "Birra light"
+   ],
+   "parole": [
+    "birra",
+    "birre",
+    "beer",
+    "birra light",
+    "birra analcolica",
+    "ipa",
+    "lager",
+    "weiss"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Beer___Bourbon_-_Hazard%2C_KY_%282009-11-27_by_Navin75%29.jpg"
   },
   {
    "id": "biscotti",
@@ -381,6 +438,25 @@
     "cachi secchi"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Fuyu_persimmon_fruits%2C_one_cut_open.jpg/960px-Fuyu_persimmon_fruits%2C_one_cut_open.jpg"
+  },
+  {
+   "id": "caffe",
+   "nome": "Caffè",
+   "cat": "Bevande",
+   "alimenti": [],
+   "parole": [
+    "caffè",
+    "caffe",
+    "espresso",
+    "caffè americano",
+    "moka",
+    "cappuccino",
+    "caffè macchiato",
+    "decaffeinato",
+    "coffee",
+    "orzo solubile"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Espresso_Coffee_01.jpg/960px-Espresso_Coffee_01.jpg"
   },
   {
    "id": "caprino",
@@ -714,6 +790,40 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Coconut_%28halved%29_%283330701660%29.jpg/960px-Coconut_%28halved%29_%283330701660%29.jpg"
   },
   {
+   "id": "cocktail",
+   "nome": "Aperitivi e cocktail",
+   "cat": "Bevande",
+   "alimenti": [
+    "Spritz (Aperol Spritz)",
+    "Negroni",
+    "Gin tonic",
+    "Vodka lemon",
+    "Mojito",
+    "Whisky sour",
+    "Aperol",
+    "Campari bitter",
+    "Vermouth rosso (tipo Martini Rosso)"
+   ],
+   "parole": [
+    "aperitivo",
+    "aperitivi",
+    "cocktail",
+    "spritz",
+    "aperol",
+    "campari",
+    "vermouth",
+    "martini",
+    "negroni",
+    "gin tonic",
+    "vodka lemon",
+    "mojito",
+    "whisky sour",
+    "americano",
+    "bitter"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Negroni_served_in_Vancouver_BC.jpg/960px-Negroni_served_in_Vancouver_BC.jpg"
+  },
+  {
    "id": "cornetto",
    "nome": "Cornetto e sfoglia",
    "cat": "Dolci e snack",
@@ -803,6 +913,36 @@
     "date"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Date_Fruits-Duo.jpg/960px-Date_Fruits-Duo.jpg"
+  },
+  {
+   "id": "distillati",
+   "nome": "Distillati",
+   "cat": "Bevande",
+   "alimenti": [
+    "Gin",
+    "Vodka",
+    "Rum",
+    "Whisky",
+    "Liquore al caffè"
+   ],
+   "parole": [
+    "distillati",
+    "superalcolici",
+    "gin",
+    "vodka",
+    "rum",
+    "whisky",
+    "whiskey",
+    "grappa",
+    "tequila",
+    "cognac",
+    "brandy",
+    "liquore",
+    "liquore al caffè",
+    "limoncello",
+    "amaro"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Glencairn_whisky_glass_and_lights.jpg/960px-Glencairn_whisky_glass_and_lights.jpg"
   },
   {
    "id": "emmental",
@@ -2646,6 +2786,29 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg"
   },
   {
+   "id": "succhi",
+   "nome": "Succhi di frutta",
+   "cat": "Bevande",
+   "alimenti": [
+    "Succo d'arancia (confezionato)",
+    "Succo di mela",
+    "Succo d'ananas"
+   ],
+   "parole": [
+    "succo",
+    "succhi",
+    "succo di frutta",
+    "succo di mela",
+    "succo d'ananas",
+    "succo d'arancia",
+    "nettare",
+    "smoothie",
+    "centrifugato",
+    "estratto"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Orange_juice_1_edit1.jpg/960px-Orange_juice_1_edit1.jpg"
+  },
+  {
    "id": "tacchino",
    "nome": "Tacchino",
    "cat": "Carne, pesce e uova",
@@ -2675,6 +2838,29 @@
     "piscialetto"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Dandelion_greens.jpg/960px-Dandelion_greens.jpg"
+  },
+  {
+   "id": "te",
+   "nome": "Tè",
+   "cat": "Bevande",
+   "alimenti": [
+    "Tè verde giapponese (Japanese tea, sencha, senza zucchero)",
+    "Tè nero (senza zucchero)"
+   ],
+   "parole": [
+    "tè",
+    "te",
+    "tè verde",
+    "tè nero",
+    "matcha",
+    "sencha",
+    "tea",
+    "tè bianco",
+    "oolong",
+    "tisana",
+    "infuso"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Teapot_and_cup_at_caf%C3%A9_Fly_Fusion.jpg/960px-Teapot_and_cup_at_caf%C3%A9_Fly_Fusion.jpg"
   },
   {
    "id": "tempeh",
@@ -2822,6 +3008,33 @@
     "regina"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg"
+  },
+  {
+   "id": "vino",
+   "nome": "Vino",
+   "cat": "Bevande",
+   "alimenti": [
+    "Vino rosso",
+    "Vino bianco",
+    "Vino rosé",
+    "Spumante / Prosecco",
+    "Vino da dessert (passito)"
+   ],
+   "parole": [
+    "vino",
+    "vino rosso",
+    "vino bianco",
+    "rosé",
+    "vino rosato",
+    "spumante",
+    "prosecco",
+    "champagne",
+    "franciacorta",
+    "passito",
+    "vino da dessert",
+    "wine"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/020260524_140002_Red_wine_in_glass.jpg/960px-020260524_140002_Red_wine_in_glass.jpg"
   },
   {
    "id": "wasabi",

@@ -1,0 +1,123 @@
+{
+ "id": "te",
+ "nome": "Tè",
+ "famiglia": "Theaceae",
+ "latino": "Camellia sinensis",
+ "parole": [
+  "tè",
+  "te",
+  "tè verde",
+  "tè nero",
+  "matcha",
+  "sencha",
+  "tea",
+  "tè bianco",
+  "oolong",
+  "tisana",
+  "infuso"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Teapot_and_cup_at_caf%C3%A9_Fly_Fusion.jpg/960px-Teapot_and_cup_at_caf%C3%A9_Fly_Fusion.jpg",
+  "autore": "JIP",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Teapot_and_cup_at_caf%C3%A9_Fly_Fusion.jpg"
+ },
+ "descrizione": [
+  "Foglie della stessa pianta: il verde non è fermentato, il nero sì (ossidato), l'oolong a metà. Il matcha è tè verde in polvere, si beve la foglia intera.",
+  "Tisane e infusi (camomilla, rooibos, frutti) non sono tè: niente caffeina."
+ ],
+ "proprieta": [
+  {
+   "t": "Catechine",
+   "d": "Il verde è ricco di EGCG, antiossidante."
+  },
+  {
+   "t": "Caffeina",
+   "d": "Una tazza circa 30–50 mg, meno di un caffè; la L-teanina la rende più \"calma\"."
+  },
+  {
+   "t": "Ferro",
+   "d": "I tannini riducono l'assorbimento del ferro vegetale: meglio lontano dai pasti."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 3,
+  "Umami": 2
+ },
+ "tipi": [
+  {
+   "nome": "Tè verde",
+   "valori": [
+    {
+     "stato": "senza zucchero",
+     "alimento": "Tè verde giapponese (Japanese tea, sencha, senza zucchero)"
+    }
+   ]
+  },
+  {
+   "nome": "Tè nero",
+   "valori": [
+    {
+     "stato": "senza zucchero",
+     "alimento": "Tè nero (senza zucchero)"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come prepararlo",
+ "cotture": [
+  {
+   "metodo": "Verde",
+   "tempo": "2–3 min · 70–80 °C",
+   "come": "Non bollente, o diventa amaro."
+  },
+  {
+   "metodo": "Nero",
+   "tempo": "3–5 min · 95 °C",
+   "come": "Acqua appena tolta dal bollore."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo",
+   "d": "chiuso, al buio, lontano da odori."
+  }
+ ],
+ "simili": [
+  "Caffè",
+  "Bibite"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Zenzero",
+  "Menta",
+  "Miele",
+  "Mochi"
+ ],
+ "cat": "Bevande",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

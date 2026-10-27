@@ -1,0 +1,170 @@
+{
+ "id": "bibite",
+ "nome": "Bibite",
+ "famiglia": "Bevande analcoliche",
+ "parole": [
+  "bibita",
+  "bibite",
+  "cola",
+  "coca cola",
+  "coca-cola",
+  "tè freddo",
+  "acqua tonica",
+  "tonica",
+  "lemon",
+  "ginger ale",
+  "soda",
+  "acqua frizzante",
+  "aranciata",
+  "gassosa",
+  "energy drink",
+  "bevanda energetica",
+  "red bull",
+  "estathé",
+  "schweppes"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Glass_cola.jpg/960px-Glass_cola.jpg",
+  "autore": "pic_p_ter",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Glass_cola.jpg"
+ },
+ "descrizione": [
+  "Bevande gassate o zuccherate: cola, tè freddo, acqua tonica, lemon, ginger ale, energy drink. Le \"zero\" usano dolcificanti al posto dello zucchero."
+ ],
+ "proprieta": [
+  {
+   "t": "Zucchero liquido",
+   "d": "Una lattina di cola (330 ml) ha circa 35 g di zucchero: 7 cucchiaini, oltre il limite OMS consigliato per un giorno intero (25 g)."
+  },
+  {
+   "t": "Caffeina",
+   "d": "Cola circa 30 mg a lattina; energy drink 80 mg in 250 ml (come un espresso), con taurina e zucchero."
+  },
+  {
+   "t": "Versioni zero",
+   "d": "Praticamente senza calorie."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Cola",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Coca-Cola"
+    }
+   ]
+  },
+  {
+   "nome": "Cola zero",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Coca-Cola Zero"
+    }
+   ]
+  },
+  {
+   "nome": "Tè freddo alla pesca",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Estathé pesca"
+    }
+   ]
+  },
+  {
+   "nome": "Acqua tonica",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Schweppes Tonica (acqua tonica)"
+    }
+   ],
+   "testo": "Il chinino le dà l'amaro."
+  },
+  {
+   "nome": "Lemon",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Schweppes Lemon (limone)"
+    }
+   ]
+  },
+  {
+   "nome": "Ginger ale",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Ginger ale"
+    }
+   ]
+  },
+  {
+   "nome": "Energy drink",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Red Bull"
+    }
+   ]
+  },
+  {
+   "nome": "Soda / acqua frizzante",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Acqua frizzante / soda"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Al fresco",
+   "d": "aperte perdono il gas in un giorno."
+  }
+ ],
+ "simili": [
+  "Succhi di frutta",
+  "Tè",
+  "Aperitivi e cocktail"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Pizza"
+ ],
+ "cat": "Bevande",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

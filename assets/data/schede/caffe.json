@@ -1,0 +1,117 @@
+{
+ "id": "caffe",
+ "nome": "Caffè",
+ "famiglia": "Rubiaceae",
+ "latino": "Coffea arabica, C. canephora",
+ "parole": [
+  "caffè",
+  "caffe",
+  "espresso",
+  "caffè americano",
+  "moka",
+  "cappuccino",
+  "caffè macchiato",
+  "decaffeinato",
+  "coffee",
+  "orzo solubile"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Espresso_Coffee_01.jpg/960px-Espresso_Coffee_01.jpg",
+  "autore": "Jubair1985",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Espresso_Coffee_01.jpg"
+ },
+ "descrizione": [
+  "Semi tostati e macinati della pianta del caffè. Arabica: più aromatico e meno caffeina; robusta: più corposo e amaro."
+ ],
+ "proprieta": [
+  {
+   "t": "Quasi zero calorie",
+   "d": "Un espresso (30 ml) circa 3 kcal: contano zucchero e latte."
+  },
+  {
+   "t": "Caffeina",
+   "d": "Espresso circa 60–80 mg, moka 80–100. L'EFSA considera sicuri fino a 400 mg al giorno per un adulto."
+  },
+  {
+   "t": "Polifenoli",
+   "d": "Acido clorogenico: il caffè è tra le prime fonti di antiossidanti nella dieta."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 5,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Espresso",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "usda": "14210"
+    }
+   ]
+  },
+  {
+   "nome": "Americano / filtro",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "usda": "14209"
+    }
+   ]
+  }
+ ],
+ "anche": [
+  {
+   "t": "Cappuccino",
+   "d": "Con 100 ml di latte parzialmente scremato: circa 50 kcal senza zucchero."
+  },
+  {
+   "t": "Sonno",
+   "d": "La caffeina dimezza in circa 5 ore: un caffè alle 16 pesa ancora a mezzanotte."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo",
+   "d": "chiuso, al buio; macinato perde aroma in 1–2 settimane."
+  }
+ ],
+ "simili": [
+  "Tè",
+  "Cioccolato"
+ ],
+ "abbinamenti": [
+  "Latte",
+  "Cacao",
+  "Cornetto e sfoglia",
+  "Tiramisù"
+ ],
+ "cat": "Bevande",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
