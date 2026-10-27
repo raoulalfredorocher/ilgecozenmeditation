@@ -1,0 +1,125 @@
+{
+ "id": "cetriolo",
+ "nome": "Cetriolo",
+ "cat": "Verdura",
+ "latino": "Cucumis sativus",
+ "famiglia": "Cucurbitacee",
+ "parole": [
+  "cetriolo",
+  "cetrioli",
+  "cucumber",
+  "cetriolini",
+  "cetriolini sottaceto"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/ARS_cucumber.jpg/960px-ARS_cucumber.jpg",
+  "autore": "Stephen Ausmus, USDA ARS",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:ARS_cucumber.jpg"
+ },
+ "descrizione": [
+  "Cugino di zucchina e melone, è per il 96% acqua. Si mangia quasi sempre crudo.",
+  "I cetriolini piccoli si conservano sottaceto."
+ ],
+ "proprieta": [
+  {
+   "t": "Idratante",
+   "d": "Circa 15 kcal per 100 g e tantissima acqua."
+  },
+  {
+   "t": "Vitamina K",
+   "d": "Soprattutto nella buccia."
+  },
+  {
+   "t": "Sottaceti",
+   "d": "Tanto sodio: circa 800 mg per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   6,
+   7,
+   8
+  ],
+  "testo": "da maggio a settembre."
+ },
+ "tipi": [
+  {
+   "nome": "Cetriolo",
+   "valori": [
+    {
+     "stato": "con buccia",
+     "alimento": "Cetrioli"
+    },
+    {
+     "stato": "pelato",
+     "usda": "11206"
+    }
+   ]
+  },
+  {
+   "nome": "Cetriolini sottaceto",
+   "testo": "Un cetriolino ≈ 35 g, 4 kcal.",
+   "valori": [
+    {
+     "stato": "sottaceto",
+     "alimento": "Cetriolini sottaceto"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "A fette con pomodoro, cipolla rossa, feta e origano."
+  },
+  {
+   "metodo": "Tzatziki",
+   "tempo": "",
+   "come": "Grattugiato e strizzato, con yogurt greco, aglio e menta."
+  },
+  {
+   "metodo": "In acqua",
+   "tempo": "",
+   "come": "A fette in acqua fredda con limone e menta."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nel cassetto, 1 settimana. Teme il troppo freddo."
+  }
+ ],
+ "simili": [
+  "Zucchina",
+  "Melone"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Feta",
+  "Pomodoro",
+  "Menta fresca",
+  "Salmone",
+  "Cipolla"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

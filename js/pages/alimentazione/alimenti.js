@@ -28,8 +28,22 @@ const loadScheda = id => {
 
 const fold = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const same = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
-/** Scheda di un alimento del database, o con quel nome. */
-const schedaOf = name => schede.find(s => (s.alimenti || []).some(a => same(a, name))) || schede.find(s => same(s.nome, name) || same(s.id, name));
+/**
+ * Scheda di un alimento: prima per nome esatto (database, nome o id della scheda), poi per parola chiave
+ * all'inizio del nome, la più lunga ("Latte di soia" → soia, "Patate bianche" → patata): così trovano
+ * la scheda anche le voci della tabella personale.
+ */
+function schedaOf(name) {
+  const exact = schede.find(s => (s.alimenti || []).some(a => same(a, name))) || schede.find(s => same(s.nome, name) || same(s.id, name));
+  if (exact) return exact;
+  const n = fold(name).replace(/\s*\(.*\)$/, '');
+  let best = null, len = 0;
+  for (const s of schede) for (const p of [s.nome, ...(s.parole || [])]) {
+    const w = fold(p);
+    if (w.length > len && (n === w || n.startsWith(w + ' '))) { best = s; len = w.length; }
+  }
+  return best;
+}
 const schedeFor = q => {
   const w = fold(q.trim());
   if (!w) return [];
@@ -214,8 +228,11 @@ function tipoCard(t, i) {
 async function openScheda(id, fromFood) {
   const s = await loadScheda(id);
   if (!s) return;
-  cur = s;
-  cur.tipi = cur.tipi || [];
+  cur = { ...s, tipi: [...(s.tipi || [])] };
+  // Voce della tabella personale che non è tra i tipi della scheda: la mostro come primo tipo
+  if (fromFood && findFood(fromFood) && !cur.tipi.some(t => (t.valori || []).some(r => r.alimento && same(r.alimento, fromFood)))) {
+    cur.tipi.unshift({ nome: findFood(fromFood).n, testo: 'La tua voce: valori dalla tua tabella.', valori: [{ stato: 'dalla tua tabella', alimento: fromFood }] });
+  }
   const ok = conValori();
   sel = { t: ok[0]?.[1] ?? 0, s: 0 };
   if (fromFood) {

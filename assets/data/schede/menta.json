@@ -1,0 +1,107 @@
+{
+ "id": "menta",
+ "nome": "Menta",
+ "cat": "Erbe e alghe",
+ "latino": "Mentha spicata · M. × piperita",
+ "famiglia": "Lamiacee",
+ "parole": [
+  "menta",
+  "mentuccia",
+  "mint",
+  "menta piperita"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Minze.jpg/960px-Minze.jpg",
+  "autore": "Simon Eugster",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Minze.jpg"
+ },
+ "descrizione": [
+  "Erba aromatica fresca: la menta romana (spicata) in cucina, la piperita per tisane e liquori. La mentuccia è un'altra pianta (nepitella)."
+ ],
+ "proprieta": [
+  {
+   "t": "Digestione",
+   "d": "Il mentolo rilassa la muscolatura dell'intestino; l'olio di menta piperita è studiato per il colon irritabile."
+  },
+  {
+   "t": "Reflusso",
+   "d": "Può rilassare anche lo sfintere dello stomaco e peggiorare il bruciore."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "picco": [
+   6,
+   7
+  ],
+  "testo": "da aprile a ottobre."
+ },
+ "tipi": [
+  {
+   "nome": "Menta fresca",
+   "testo": "10 foglie ≈ 1,5 g.",
+   "valori": [
+    {
+     "stato": "fresca",
+     "alimento": "Menta fresca"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarla",
+ "cotture": [
+  {
+   "metodo": "Con le verdure",
+   "tempo": "",
+   "come": "Su zucchine, melanzane grigliate, piselli, carciofi alla romana."
+  },
+  {
+   "metodo": "In bevande",
+   "tempo": "",
+   "come": "Acqua, tè, mojito."
+  },
+  {
+   "metodo": "Con lo yogurt",
+   "tempo": "",
+   "come": "Tzatziki, raita, salse per l'agnello."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "avvolta in carta umida, 4–5 giorni."
+  }
+ ],
+ "simili": [
+  "Basilico",
+  "Prezzemolo"
+ ],
+ "abbinamenti": [
+  "Zucchine",
+  "Piselli",
+  "Yogurt greco 0%",
+  "Cetrioli",
+  "Fragole",
+  "Lime"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

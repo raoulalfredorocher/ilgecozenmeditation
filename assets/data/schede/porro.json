@@ -1,0 +1,107 @@
+{
+ "id": "porro",
+ "nome": "Porro",
+ "cat": "Verdura",
+ "latino": "Allium ampeloprasum",
+ "famiglia": "Amarillidacee",
+ "parole": [
+  "porro",
+  "porri",
+  "leek"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Leeks%2C_Wirral_flower_and_vegetable_show_-_DSC08226.JPG/960px-Leeks%2C_Wirral_flower_and_vegetable_show_-_DSC08226.JPG",
+  "autore": "Rept0n1x",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Leeks%2C_Wirral_flower_and_vegetable_show_-_DSC08226.JPG"
+ },
+ "descrizione": [
+  "Della famiglia di cipolla e aglio, ma più dolce e delicato. Si usa la parte bianca e verde chiaro.",
+  "Ottima base per vellutate e torte salate."
+ ],
+ "proprieta": [
+  {
+   "t": "Intestino",
+   "d": "Inulina e fruttani, fibre che nutrono la flora."
+  },
+  {
+   "t": "Vitamina K",
+   "d": "100 g coprono più di metà del fabbisogno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   11,
+   12,
+   1
+  ],
+  "testo": "da settembre a marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Porro",
+   "testo": "Un porro medio ≈ 90 g.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Porri"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Stufato",
+   "tempo": "15 min",
+   "come": "A rondelle in padella coperto, con poco olio: dolcissimo."
+  },
+  {
+   "metodo": "Vellutata",
+   "tempo": "25 min",
+   "come": "Con patate (la vichyssoise) o zucca."
+  },
+  {
+   "metodo": "Alla griglia",
+   "tempo": "10 min",
+   "come": "Piccoli, interi, poi vinaigrette."
+  }
+ ],
+ "nota_cottura": "Taglialo per il lungo e lavalo tra le foglie: trattiene la terra.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "1–2 settimane."
+  }
+ ],
+ "simili": [
+  "Cipolla",
+  "Asparago"
+ ],
+ "abbinamenti": [
+  "Patata",
+  "Zucca",
+  "Uovo",
+  "Formaggio",
+  "Salmone"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

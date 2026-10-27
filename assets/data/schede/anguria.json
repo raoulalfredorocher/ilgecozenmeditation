@@ -1,0 +1,105 @@
+{
+ "id": "anguria",
+ "nome": "Anguria",
+ "cat": "Frutta",
+ "latino": "Citrullus lanatus",
+ "famiglia": "Cucurbitacee",
+ "parole": [
+  "anguria",
+  "angurie",
+  "cocomero",
+  "watermelon"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/960px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
+  "autore": "Fred Hsu",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg"
+ },
+ "descrizione": [
+  "Il frutto dell'estate, cugino di melone e zucca. È per il 91% acqua.",
+  "Rossa per il licopene, come il pomodoro."
+ ],
+ "proprieta": [
+  {
+   "t": "Idratante",
+   "d": "Circa 30 kcal per 100 g: una fetta grande (300 g) ne ha 90."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Licopene, anche più del pomodoro crudo."
+  },
+  {
+   "t": "Citrullina",
+   "d": "Aminoacido studiato per circolazione e recupero muscolare."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   6,
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   7,
+   8
+  ],
+  "testo": "da giugno a settembre."
+ },
+ "tipi": [
+  {
+   "nome": "Anguria",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "09326"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Fresca",
+   "tempo": "",
+   "come": "Fredda, a fette o cubetti."
+  },
+  {
+   "metodo": "Con feta e menta",
+   "tempo": "",
+   "come": "Insalata estiva con olive e cipolla rossa."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglila",
+   "d": "pesante, con una macchia gialla sul lato appoggiato a terra; bussando suona \"vuota\"."
+  },
+  {
+   "t": "Tagliata",
+   "d": "coperta in frigo, 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Melone",
+  "Cetriolo"
+ ],
+ "abbinamenti": [
+  "Feta",
+  "Menta fresca",
+  "Lime",
+  "Olive nere"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

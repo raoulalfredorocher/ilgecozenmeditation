@@ -1,0 +1,130 @@
+{
+ "id": "olive",
+ "nome": "Olive",
+ "cat": "Verdura",
+ "latino": "Olea europaea",
+ "famiglia": "Oleacee",
+ "parole": [
+  "olive",
+  "oliva",
+  "olive nere",
+  "olive verdi",
+  "taggiasche",
+  "kalamata",
+  "olive"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Olives_in_bowl.jpg/960px-Olives_in_bowl.jpg",
+  "autore": "Gphoto",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Olives_in_bowl.jpg"
+ },
+ "descrizione": [
+  "Frutto dell'olivo, immangiabile appena colto per l'amaro: si addolcisce in salamoia, sotto sale o in acqua.",
+  "Verdi se raccolte acerbe, nere se mature. In Italia: taggiasche, Bella di Cerignola, di Gaeta, nocellara."
+ ],
+ "proprieta": [
+  {
+   "t": "Grassi buoni",
+   "d": "Acido oleico, come l'olio extravergine."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Polifenoli come idrossitirosolo e oleuropeina."
+  },
+  {
+   "t": "Sale",
+   "d": "Molto sodio: 5 olive valgono circa 0,5 g di sale."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 4,
+  "Acido": 1,
+  "Amaro": 3,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   10,
+   11
+  ],
+  "testo": "raccolte in autunno, conservate tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Olive verdi",
+   "testo": "Un'oliva ≈ 4 g, 6 kcal.",
+   "valori": [
+    {
+     "stato": "in salamoia",
+     "alimento": "Olive verdi"
+    }
+   ]
+  },
+  {
+   "nome": "Olive nere",
+   "testo": "Un'oliva ≈ 4 g, 5 kcal.",
+   "valori": [
+    {
+     "stato": "in salamoia",
+     "alimento": "Olive nere"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarle",
+ "cotture": [
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "Con arance e finocchi, o nella greca con feta."
+  },
+  {
+   "metodo": "Nel sugo",
+   "tempo": "",
+   "come": "Alla puttanesca con capperi, o con il pesce al forno."
+  },
+  {
+   "metodo": "Tapenade",
+   "tempo": "",
+   "come": "Frullate con capperi e olio, sul pane."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Nel loro liquido",
+   "d": "in frigo dopo l'apertura, 2–3 settimane."
+  }
+ ],
+ "simili": [
+  "Avocado",
+  "Cetriolini sottaceto"
+ ],
+ "abbinamenti": [
+  "Feta",
+  "Arancia",
+  "Pomodoro",
+  "Merluzzo",
+  "Finocchi",
+  "Pasta di semola (cruda)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

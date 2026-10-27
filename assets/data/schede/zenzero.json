@@ -1,0 +1,105 @@
+{
+ "id": "zenzero",
+ "nome": "Zenzero",
+ "cat": "Erbe e alghe",
+ "latino": "Zingiber officinale",
+ "famiglia": "Zingiberacee",
+ "parole": [
+  "zenzero",
+  "ginger",
+  "zenzero fresco"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ginger_rhizome.jpg/960px-Ginger_rhizome.jpg",
+  "autore": "Mk2010",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Ginger_rhizome.jpg"
+ },
+ "descrizione": [
+  "Rizoma tropicale piccante e profumato, fratello di curcuma e cardamomo.",
+  "Si usa fresco, grattugiato, in polvere o candito."
+ ],
+ "proprieta": [
+  {
+   "t": "Nausea",
+   "d": "Il gingerolo riduce nausea e mal di mare: tra i rimedi naturali più studiati."
+  },
+  {
+   "t": "Antinfiammatorio",
+   "d": "Gingeroli e shogaoli; alcuni studi su dolori muscolari dopo l'esercizio."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importato, tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Zenzero fresco",
+   "testo": "Un cucchiaino ≈ 2 g.",
+   "valori": [
+    {
+     "stato": "fresco",
+     "alimento": "Zenzero fresco"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "Grattugiato",
+   "tempo": "",
+   "come": "Con il cucchiaino si toglie la buccia; nei saltati, nelle zuppe, sulle carote."
+  },
+  {
+   "metodo": "Tisana",
+   "tempo": "10 min",
+   "come": "A fettine in acqua bollente, con limone e miele."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane; in freezer si grattugia da congelato."
+  }
+ ],
+ "simili": [
+  "Aglio",
+  "Limone"
+ ],
+ "abbinamenti": [
+  "Carota",
+  "Zucca",
+  "Limone",
+  "Miele",
+  "Salmone",
+  "Pak choi (cavolo cinese)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Zenzero e nausea: Cochrane/meta-analisi Nutr J 2014",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

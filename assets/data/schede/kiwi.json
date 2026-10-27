@@ -1,0 +1,110 @@
+{
+ "id": "kiwi",
+ "nome": "Kiwi",
+ "cat": "Frutta",
+ "latino": "Actinidia deliciosa",
+ "famiglia": "Actinidiacee",
+ "parole": [
+  "kiwi",
+  "kiwi giallo",
+  "kiwifruit",
+  "actinidia"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Kiwifruit_halved.jpg/960px-Kiwifruit_halved.jpg",
+  "autore": "Tiia Monto",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Kiwifruit_halved.jpg"
+ },
+ "descrizione": [
+  "Frutto cinese reso famoso dalla Nuova Zelanda. L'Italia è tra i primi produttori al mondo (Lazio, Piemonte, Veneto).",
+  "Verde (Hayward) o giallo, più dolce."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Un kiwi (75 g) copre quasi il fabbisogno di un giorno."
+  },
+  {
+   "t": "Intestino",
+   "d": "Due kiwi al giorno migliorano la regolarità (fibra e actinidina)."
+  },
+  {
+   "t": "Actinidina",
+   "d": "Enzima che scompone le proteine: con latte e yogurt li fa diventare amari."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 4,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "picco": [
+   12,
+   1,
+   2
+  ],
+  "testo": "da novembre a maggio."
+ },
+ "tipi": [
+  {
+   "nome": "Kiwi verde",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "09148"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Al cucchiaio",
+   "tempo": "",
+   "come": "Tagliato a metà. La buccia (lavata) si può mangiare e ha molta fibra."
+  },
+  {
+   "metodo": "In macedonia",
+   "tempo": "",
+   "come": "Aggiungilo all'ultimo: ammorbidisce gli altri frutti."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Per farlo maturare",
+   "d": "vicino a mele o banane."
+  },
+  {
+   "t": "Maturo",
+   "d": "in frigo 1–2 settimane."
+  }
+ ],
+ "simili": [
+  "Uva spina",
+  "Maracuja"
+ ],
+ "abbinamenti": [
+  "Fragola",
+  "Banana",
+  "Menta fresca",
+  "Fiocchi d'avena"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Kiwi e stipsi: Am J Gastroenterol 2021",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

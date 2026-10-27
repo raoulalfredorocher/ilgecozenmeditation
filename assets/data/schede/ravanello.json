@@ -1,0 +1,129 @@
+{
+ "id": "ravanello",
+ "nome": "Ravanello",
+ "cat": "Verdura",
+ "latino": "Raphanus sativus",
+ "famiglia": "Brassicacee",
+ "parole": [
+  "ravanello",
+  "ravanelli",
+  "rapanello",
+  "rapanelli",
+  "daikon",
+  "ravanello bianco",
+  "radish"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Different_kinds_of_White_Radish.png/960px-Different_kinds_of_White_Radish.png",
+  "autore": "KimYunmi",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Different_kinds_of_White_Radish.png"
+ },
+ "descrizione": [
+  "Radici della famiglia dei cavoli, croccanti e piccanti. Il ravanello rosso è piccolo; il daikon giapponese è lungo e bianco, più delicato."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggerissimo",
+   "d": "Meno di 20 kcal per 100 g; vitamina C."
+  },
+  {
+   "t": "Antitumorale",
+   "d": "Glucosinolati, che danno il piccante."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   3,
+   4,
+   5,
+   6,
+   9,
+   10,
+   11
+  ],
+  "picco": [
+   4,
+   5
+  ],
+  "testo": "primavera e autunno."
+ },
+ "tipi": [
+  {
+   "nome": "Daikon",
+   "testo": "Bianco, lungo, delicato: crudo grattugiato o cotto nei brodi.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Daikon (ravanello bianco)"
+    },
+    {
+     "stato": "cotto",
+     "usda": "11431"
+    }
+   ]
+  },
+  {
+   "nome": "Ravanello rosso",
+   "testo": "Piccolo e piccante, crudo in insalata.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "11429"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "A fettine in insalata, o intero con burro e sale."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "20 min · 200 °C",
+   "come": "Perde il piccante e diventa dolce."
+  },
+  {
+   "metodo": "Daikon in brodo",
+   "tempo": "20 min",
+   "come": "A rondelle in zuppe e miso."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "senza foglie, 1–2 settimane."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Foglie",
+   "d": "si mangiano in padella o nel pesto."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Cavolo rapa",
+  "Barbabietola"
+ ],
+ "abbinamenti": [
+  "Burro",
+  "Miso",
+  "Salmone",
+  "Yogurt greco 0%"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

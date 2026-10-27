@@ -1,0 +1,123 @@
+{
+ "id": "spinaci",
+ "nome": "Spinaci",
+ "cat": "Verdura",
+ "latino": "Spinacia oleracea",
+ "famiglia": "Amarantacee",
+ "parole": [
+  "spinaci",
+  "spinacio",
+  "spinach",
+  "spinacino",
+  "baby spinach"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg",
+  "autore": "HaJunkiyada",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg"
+ },
+ "descrizione": [
+  "Verdura a foglia arrivata dalla Persia. Crudi (spinacini) in insalata, cotti calano tantissimo: 1 kg diventa circa 200 g.",
+  "Il ferro non è \"tanto\" come si dice: ce n'è, ma si assorbe poco."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina K e folati",
+   "d": "100 g coprono più del fabbisogno di vitamina K e metà dei folati."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Luteina, beta-carotene e nitrati utili alla circolazione."
+  },
+  {
+   "t": "Ossalati",
+   "d": "Legano calcio e ferro e ne riducono l'assorbimento; la cottura in acqua li riduce."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   11,
+   3
+  ],
+  "testo": "da ottobre ad aprile."
+ },
+ "tipi": [
+  {
+   "nome": "Spinaci",
+   "valori": [
+    {
+     "stato": "crudi",
+     "alimento": "Spinaci"
+    },
+    {
+     "stato": "cotti",
+     "usda": "11458"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "In padella",
+   "tempo": "3–4 min",
+   "come": "Con l'acqua del lavaggio, aglio e olio. Coperti finché appassiscono."
+  },
+  {
+   "metodo": "Al vapore",
+   "tempo": "3–5 min",
+   "come": "Poi strizzati e conditi con limone."
+  },
+  {
+   "metodo": "Crudi",
+   "tempo": "",
+   "come": "Spinacini in insalata con arancia, noci e parmigiano."
+  }
+ ],
+ "nota_cottura": "Con un po' di limone o arancia il ferro si assorbe meglio.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "non lavati, in un sacchetto con carta assorbente: 3–4 giorni."
+  },
+  {
+   "t": "Cotti",
+   "d": "in frigo 1–2 giorni; non lasciarli a temperatura ambiente."
+  }
+ ],
+ "simili": [
+  "Cime di rapa",
+  "Bietola",
+  "Crescione",
+  "Tarassaco"
+ ],
+ "abbinamenti": [
+  "Uovo",
+  "Ricotta vaccina",
+  "Uvetta",
+  "Pinoli",
+  "Limone",
+  "Ceci (secchi)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Ferro e ossalati: EFSA; resa in cottura: tabelle INRAN",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,126 @@
+{
+ "id": "asparago",
+ "nome": "Asparago",
+ "cat": "Verdura",
+ "latino": "Asparagus officinalis",
+ "famiglia": "Asparagacee",
+ "parole": [
+  "asparago",
+  "asparagi",
+  "asparagus",
+  "asparago bianco",
+  "asparago selvatico"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Asparagus_%285661403316%29.jpg/960px-Asparagus_%285661403316%29.jpg",
+  "autore": "bongo vongo",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Asparagus_%285661403316%29.jpg"
+ },
+ "descrizione": [
+  "Germoglio primaverile di una pianta che vive 10–15 anni. Verde se cresce alla luce, bianco se coperto di terra (Bassano DOP, Cimadolmo IGP).",
+  "Quello selvatico, sottile e amarognolo, si raccoglie nei boschi."
+ ],
+ "proprieta": [
+  {
+   "t": "Folati",
+   "d": "100 g ne coprono quasi un terzo del fabbisogno."
+  },
+  {
+   "t": "Intestino",
+   "d": "Contiene inulina, fibra che nutre la flora intestinale."
+  },
+  {
+   "t": "Diuretico",
+   "d": "Potassio e asparagina; l'odore nelle urine è innocuo."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   3,
+   4,
+   5,
+   6
+  ],
+  "picco": [
+   4,
+   5
+  ],
+  "testo": "da marzo a giugno."
+ },
+ "tipi": [
+  {
+   "nome": "Verde",
+   "testo": "Il più comune; si sbuccia solo la parte bassa.",
+   "valori": [
+    {
+     "stato": "crudi",
+     "alimento": "Asparagi"
+    },
+    {
+     "stato": "lessati",
+     "usda": "11012"
+    }
+   ]
+  },
+  {
+   "nome": "Bianco",
+   "testo": "Più tenero e delicato: va pelato tutto."
+  },
+  {
+   "nome": "Selvatico",
+   "testo": "Sottile, amarognolo: frittate e risotti."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al vapore",
+   "tempo": "6–8 min",
+   "come": "In piedi, punte fuori dall'acqua. Con uovo e parmigiano (alla Bismarck)."
+  },
+  {
+   "metodo": "Alla griglia",
+   "tempo": "4–5 min",
+   "come": "Con olio e sale grosso."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "12–15 min · 200 °C",
+   "come": "Con olio e scorza di limone."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglili",
+   "d": "punte chiuse, gambi lucidi che si spezzano."
+  },
+  {
+   "t": "In frigo",
+   "d": "in piedi in un bicchiere d'acqua, 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Fagiolino",
+  "Carciofo",
+  "Porro"
+ ],
+ "abbinamenti": [
+  "Uovo",
+  "Parmigiano",
+  "Limone",
+  "Salmone",
+  "Riso bianco (cotto)",
+  "Burro"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

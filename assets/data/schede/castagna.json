@@ -1,0 +1,133 @@
+{
+ "id": "castagna",
+ "nome": "Castagna",
+ "cat": "Frutta",
+ "latino": "Castanea sativa",
+ "famiglia": "Fagacee",
+ "parole": [
+  "castagna",
+  "castagne",
+  "marroni",
+  "caldarroste",
+  "farina di castagne",
+  "chestnut"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Chestnuts_roasted.jpg/960px-Chestnuts_roasted.jpg",
+  "autore": "Achromatic",
+  "licenza": "CC BY 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Chestnuts_roasted.jpg"
+ },
+ "descrizione": [
+  "Frutto autunnale dei boschi appenninici e alpini, per secoli \"pane dei poveri\". I marroni sono castagne più grandi e dolci.",
+  "A differenza della frutta secca ha poco grasso e tanto amido."
+ ],
+ "proprieta": [
+  {
+   "t": "Amido",
+   "d": "Nutrizionalmente sono più vicine ai cereali che alle noci."
+  },
+  {
+   "t": "Senza glutine",
+   "d": "La farina di castagne va bene per chi è celiaco."
+  },
+  {
+   "t": "Fibra e potassio",
+   "d": "Circa 5 g di fibra e 500 mg di potassio per 100 g (arrosto)."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   10,
+   11
+  ],
+  "testo": "da fine settembre a dicembre."
+ },
+ "tipi": [
+  {
+   "nome": "Castagna",
+   "testo": "Una castagna ≈ 8–10 g sbucciata.",
+   "valori": [
+    {
+     "stato": "arrosto",
+     "usda": "12167"
+    },
+    {
+     "stato": "lessa",
+     "usda": "12101"
+    },
+    {
+     "stato": "cruda",
+     "usda": "12098"
+    }
+   ]
+  },
+  {
+   "nome": "Secca",
+   "testo": "Da reidratare in acqua: zuppe e dolci.",
+   "valori": [
+    {
+     "stato": "secca",
+     "usda": "12100"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come cucinarla",
+ "cotture": [
+  {
+   "metodo": "Caldarroste",
+   "tempo": "20–25 min",
+   "come": "Incise sulla pancia, in padella forata o al forno a 200 °C; poi 5 min in un panno."
+  },
+  {
+   "metodo": "Lesse",
+   "tempo": "40 min",
+   "come": "In acqua con alloro e finocchietto."
+  },
+  {
+   "metodo": "Nelle zuppe",
+   "tempo": "",
+   "come": "Con legumi, funghi o zucca."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fresche",
+   "d": "in frigo in un sacchetto di carta, 1–2 settimane."
+  },
+  {
+   "t": "In freezer",
+   "d": "già incise, crude: mesi."
+  }
+ ],
+ "simili": [
+  "Patata dolce",
+  "Nocciole"
+ ],
+ "abbinamenti": [
+  "Zucca",
+  "Funghi",
+  "Ceci (secchi)",
+  "Ricotta vaccina",
+  "Miele",
+  "Vino rosso"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

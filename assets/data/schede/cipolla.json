@@ -1,0 +1,168 @@
+{
+ "id": "cipolla",
+ "nome": "Cipolla",
+ "cat": "Verdura",
+ "latino": "Allium cepa",
+ "famiglia": "Amarillidacee",
+ "parole": [
+  "cipolla",
+  "cipolle",
+  "onion",
+  "cipollotto",
+  "cipollotti",
+  "scalogno",
+  "scalogni",
+  "cipolla rossa",
+  "tropea"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Mixed_onions.jpg/960px-Mixed_onions.jpg",
+  "autore": "Colin",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Mixed_onions.jpg"
+ },
+ "descrizione": [
+  "Bulbo usato in quasi tutte le cucine del mondo. Bianca, dorata o rossa (Tropea IGP, la più dolce).",
+  "Il cipollotto è la cipolla raccolta giovane; lo scalogno ha spicchi come l'aglio e un sapore più fine."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Ricchissima di quercetina, soprattutto la rossa e negli strati esterni."
+  },
+  {
+   "t": "Intestino",
+   "d": "Fruttani e inulina: nutrono la flora, ma in alcune persone danno gonfiore."
+  },
+  {
+   "t": "Composti solforati",
+   "d": "Quelli che fanno lacrimare; studiati per cuore e prevenzione tumorale."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   6,
+   7,
+   8
+  ],
+  "testo": "secca tutto l'anno; fresca e cipollotti in primavera-estate."
+ },
+ "titolo_tipi": "Tipi di cipolla",
+ "tipi": [
+  {
+   "nome": "Cipolla",
+   "testo": "Bianca, dorata o rossa.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "11282"
+    },
+    {
+     "stato": "cotta",
+     "usda": "11283"
+    }
+   ]
+  },
+  {
+   "nome": "Cipollotto",
+   "testo": "Uno ≈ 15 g. Crudo in insalata o nei saltati.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/CSA-Red-Spring-Onions.jpg/500px-CSA-Red-Spring-Onions.jpg",
+    "autore": "Evan-Amos",
+    "licenza": "Pubblico dominio",
+    "pagina": "https://commons.wikimedia.org/wiki/File:CSA-Red-Spring-Onions.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Cipollotti"
+    }
+   ]
+  },
+  {
+   "nome": "Scalogno",
+   "testo": "Uno ≈ 25 g. Più fine e dolce, per salse e risotti.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/2/22/Shallots_-_sliced_and_whole.jpg",
+    "autore": "Wikimedia Commons",
+    "licenza": "Pubblico dominio",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Shallots_-_sliced_and_whole.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Scalogno"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Soffritto",
+   "tempo": "5–8 min",
+   "come": "Tritata a fuoco basso con poco olio finché trasparente."
+  },
+  {
+   "metodo": "Caramellata",
+   "tempo": "30–40 min",
+   "come": "A fette sottili, fuoco bassissimo: diventa dolce senza zucchero."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "40 min · 200 °C",
+   "come": "Rosse a spicchi con aceto balsamico."
+  },
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Rossa a fettine, in acqua fredda 10 min se la vuoi più delicata."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Secca",
+   "d": "al buio e all'asciutto, fuori dal frigo, lontano dalle patate: settimane."
+  },
+  {
+   "t": "Cipollotti",
+   "d": "in frigo 1 settimana."
+  }
+ ],
+ "simili": [
+  "Porro",
+  "Aglio"
+ ],
+ "abbinamenti": [
+  "Pomodoro",
+  "Patata",
+  "Lenticchie (secche)",
+  "Uovo",
+  "Aceto balsamico",
+  "Fegato"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

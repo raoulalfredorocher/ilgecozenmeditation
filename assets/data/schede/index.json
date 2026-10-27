@@ -1,6 +1,33 @@
 {
  "schede": [
   {
+   "id": "aglio",
+   "nome": "Aglio",
+   "cat": "Verdura",
+   "alimenti": [],
+   "parole": [
+    "aglio",
+    "garlic",
+    "aglio rosso",
+    "aglio nero"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Garlic_bulbs_and_cloves.jpg/960px-Garlic_bulbs_and_cloves.jpg"
+  },
+  {
+   "id": "agretti",
+   "nome": "Agretti",
+   "cat": "Verdura",
+   "alimenti": [],
+   "parole": [
+    "agretti",
+    "barba di frate",
+    "barba dei frati",
+    "roscano",
+    "lischi"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Salsola_soda_6330.jpg/960px-Salsola_soda_6330.jpg"
+  },
+  {
    "id": "albicocca",
    "nome": "Albicocca",
    "cat": "Frutta",
@@ -17,6 +44,31 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Apricot_and_cross_section.jpg/960px-Apricot_and_cross_section.jpg"
   },
   {
+   "id": "alghe",
+   "nome": "Alghe",
+   "cat": "Erbe e alghe",
+   "alimenti": [
+    "Alga wakame",
+    "Insalata di alghe wakame (condita)",
+    "Alga nori (fogli secchi)",
+    "Alga agar agar",
+    "Spirulina (polvere)"
+   ],
+   "parole": [
+    "alghe",
+    "alga",
+    "wakame",
+    "nori",
+    "kombu",
+    "agar",
+    "agar agar",
+    "spirulina",
+    "insalata di alghe",
+    "seaweed"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Mekabu_001.jpg/960px-Mekabu_001.jpg"
+  },
+  {
    "id": "ananas",
    "nome": "Ananas",
    "cat": "Frutta",
@@ -28,6 +80,19 @@
     "pineapple"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg/960px-%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg"
+  },
+  {
+   "id": "anguria",
+   "nome": "Anguria",
+   "cat": "Frutta",
+   "alimenti": [],
+   "parole": [
+    "anguria",
+    "angurie",
+    "cocomero",
+    "watermelon"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/960px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg"
   },
   {
    "id": "arancia",
@@ -48,6 +113,22 @@
     "spremuta"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Oranges_-_whole-halved-segment.jpg/960px-Oranges_-_whole-halved-segment.jpg"
+  },
+  {
+   "id": "asparago",
+   "nome": "Asparago",
+   "cat": "Verdura",
+   "alimenti": [
+    "Asparagi"
+   ],
+   "parole": [
+    "asparago",
+    "asparagi",
+    "asparagus",
+    "asparago bianco",
+    "asparago selvatico"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Asparagus_%285661403316%29.jpg/960px-Asparagus_%285661403316%29.jpg"
   },
   {
    "id": "avocado",
@@ -77,6 +158,51 @@
     "platano"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Diverse_Banana_Display%2C_Toledo_Market.jpg/960px-Diverse_Banana_Display%2C_Toledo_Market.jpg"
+  },
+  {
+   "id": "barbabietola",
+   "nome": "Barbabietola",
+   "cat": "Verdura",
+   "alimenti": [
+    "Barbabietola rossa"
+   ],
+   "parole": [
+    "barbabietola",
+    "barbabietole",
+    "rapa rossa",
+    "beetroot",
+    "bietola rossa"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Detroitdarkredbeets.png/960px-Detroitdarkredbeets.png"
+  },
+  {
+   "id": "basilico",
+   "nome": "Basilico",
+   "cat": "Erbe e alghe",
+   "alimenti": [
+    "Basilico fresco"
+   ],
+   "parole": [
+    "basilico",
+    "basil"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/960px-Ocimum_basilicum_8zz.jpg"
+  },
+  {
+   "id": "bietola",
+   "nome": "Bietola",
+   "cat": "Verdura",
+   "alimenti": [],
+   "parole": [
+    "bietola",
+    "bietole",
+    "biete",
+    "bieta",
+    "coste",
+    "erbette",
+    "chard"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/960px-Chard_%28Beta_vulgaris_var_cicla%29.jpg"
   },
   {
    "id": "cachi",
@@ -111,6 +237,131 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Averrhoa_carambola_ARS_k5735-7.jpg/960px-Averrhoa_carambola_ARS_k5735-7.jpg"
   },
   {
+   "id": "carciofo",
+   "nome": "Carciofo",
+   "cat": "Verdura",
+   "alimenti": [
+    "Carciofi"
+   ],
+   "parole": [
+    "carciofo",
+    "carciofi",
+    "artichoke",
+    "mammola",
+    "romanesco",
+    "spinoso"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Artichoke_J1.jpg/960px-Artichoke_J1.jpg"
+  },
+  {
+   "id": "carota",
+   "nome": "Carota",
+   "cat": "Verdura",
+   "alimenti": [
+    "Carote"
+   ],
+   "parole": [
+    "carota",
+    "carote",
+    "carrot"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vegetable-Carrot-Bundle-wStalks.jpg/960px-Vegetable-Carrot-Bundle-wStalks.jpg"
+  },
+  {
+   "id": "castagna",
+   "nome": "Castagna",
+   "cat": "Frutta",
+   "alimenti": [],
+   "parole": [
+    "castagna",
+    "castagne",
+    "marroni",
+    "caldarroste",
+    "farina di castagne",
+    "chestnut"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Chestnuts_roasted.jpg/960px-Chestnuts_roasted.jpg"
+  },
+  {
+   "id": "cavolo-rapa",
+   "nome": "Cavolo rapa",
+   "cat": "Verdura",
+   "alimenti": [
+    "Cavolo rapa"
+   ],
+   "parole": [
+    "cavolo rapa",
+    "cavolorapa",
+    "kohlrabi"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Brassica_oleracea_var._gongylodes_%28kohlrabi%29.jpg/960px-Brassica_oleracea_var._gongylodes_%28kohlrabi%29.jpg"
+  },
+  {
+   "id": "cavolo",
+   "nome": "Cavolo",
+   "cat": "Verdura",
+   "alimenti": [
+    "Cavolo cappuccio",
+    "Verza",
+    "Cavolo rosso"
+   ],
+   "parole": [
+    "cavolo",
+    "cavoli",
+    "cavolo cappuccio",
+    "verza",
+    "cavolo rosso",
+    "cavolo nero",
+    "broccolo",
+    "broccoli",
+    "cavolfiore",
+    "cabbage",
+    "kale",
+    "cavoletti",
+    "cavoletti di bruxelles",
+    "cavolfiore romano",
+    "broccolo romanesco"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/960px-Cabbage_and_cross_section_on_white.jpg"
+  },
+  {
+   "id": "cetriolo",
+   "nome": "Cetriolo",
+   "cat": "Verdura",
+   "alimenti": [
+    "Cetrioli",
+    "Cetriolini sottaceto"
+   ],
+   "parole": [
+    "cetriolo",
+    "cetrioli",
+    "cucumber",
+    "cetriolini",
+    "cetriolini sottaceto"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/ARS_cucumber.jpg/960px-ARS_cucumber.jpg"
+  },
+  {
+   "id": "cicoria",
+   "nome": "Cicoria",
+   "cat": "Verdura",
+   "alimenti": [
+    "Cicoria"
+   ],
+   "parole": [
+    "cicoria",
+    "cicorie",
+    "catalogna",
+    "puntarelle",
+    "scarola",
+    "indivia riccia",
+    "riccia",
+    "chicory",
+    "endive"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cicoria_puntarelle_Torino_coup%C3%A9e.JPG/960px-Cicoria_puntarelle_Torino_coup%C3%A9e.JPG"
+  },
+  {
    "id": "ciliegia",
    "nome": "Ciliegia",
    "cat": "Frutta",
@@ -126,6 +377,43 @@
     "visciola"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cherry_season_%2848216568227%29.jpg/960px-Cherry_season_%2848216568227%29.jpg"
+  },
+  {
+   "id": "cime-di-rapa",
+   "nome": "Cime di rapa",
+   "cat": "Verdura",
+   "alimenti": [
+    "Cime di rapa"
+   ],
+   "parole": [
+    "cime di rapa",
+    "rape",
+    "friarielli",
+    "broccoletti",
+    "rapini"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/7/76/Rapini.jpg"
+  },
+  {
+   "id": "cipolla",
+   "nome": "Cipolla",
+   "cat": "Verdura",
+   "alimenti": [
+    "Cipollotti",
+    "Scalogno"
+   ],
+   "parole": [
+    "cipolla",
+    "cipolle",
+    "onion",
+    "cipollotto",
+    "cipollotti",
+    "scalogno",
+    "scalogni",
+    "cipolla rossa",
+    "tropea"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Mixed_onions.jpg/960px-Mixed_onions.jpg"
   },
   {
    "id": "clementina",
@@ -163,6 +451,19 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Coconut_%28halved%29_%283330701660%29.jpg/960px-Coconut_%28halved%29_%283330701660%29.jpg"
   },
   {
+   "id": "crescione",
+   "nome": "Crescione",
+   "cat": "Verdura",
+   "alimenti": [
+    "Crescione"
+   ],
+   "parole": [
+    "crescione",
+    "watercress"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Watercress_%282%29.JPG/960px-Watercress_%282%29.JPG"
+  },
+  {
    "id": "dattero",
    "nome": "Dattero",
    "cat": "Frutta",
@@ -178,6 +479,22 @@
     "date"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Date_Fruits-Duo.jpg/960px-Date_Fruits-Duo.jpg"
+  },
+  {
+   "id": "fagiolino",
+   "nome": "Fagiolino",
+   "cat": "Verdura",
+   "alimenti": [
+    "Fagiolini"
+   ],
+   "parole": [
+    "fagiolino",
+    "fagiolini",
+    "cornetti",
+    "tegolini",
+    "green beans"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Heaps_of_beans.jpg/960px-Heaps_of_beans.jpg"
   },
   {
    "id": "fico-d-india",
@@ -212,6 +529,20 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Fig_%28Ficus_carica%29_fruit_halved.jpg/960px-Fig_%28Ficus_carica%29_fruit_halved.jpg"
   },
   {
+   "id": "finocchio",
+   "nome": "Finocchio",
+   "cat": "Verdura",
+   "alimenti": [
+    "Finocchi"
+   ],
+   "parole": [
+    "finocchio",
+    "finocchi",
+    "fennel"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg/960px-Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg"
+  },
+  {
    "id": "fragola",
    "nome": "Fragola",
    "cat": "Frutta",
@@ -227,6 +558,29 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg/960px-Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg"
   },
   {
+   "id": "funghi",
+   "nome": "Funghi",
+   "cat": "Verdura",
+   "alimenti": [
+    "Funghi champignon",
+    "Funghi portobello",
+    "Funghi shiitake",
+    "Funghi pleurotus"
+   ],
+   "parole": [
+    "funghi",
+    "fungo",
+    "champignon",
+    "portobello",
+    "shiitake",
+    "pleurotus",
+    "orecchioni",
+    "porcini",
+    "mushroom"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/0/01/ChampignonMushroom.jpg"
+  },
+  {
    "id": "guava",
    "nome": "Guava",
    "cat": "Frutta",
@@ -238,6 +592,55 @@
     "guaiava"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Guava_pink_fruit.jpg/960px-Guava_pink_fruit.jpg"
+  },
+  {
+   "id": "indivia-belga",
+   "nome": "Indivia belga",
+   "cat": "Verdura",
+   "alimenti": [
+    "Indivia belga"
+   ],
+   "parole": [
+    "indivia belga",
+    "belga",
+    "witloof",
+    "cicoria belga"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Endive_p1160063.jpg/960px-Endive_p1160063.jpg"
+  },
+  {
+   "id": "insalata",
+   "nome": "Insalata",
+   "cat": "Verdura",
+   "alimenti": [
+    "Insalata"
+   ],
+   "parole": [
+    "insalata",
+    "lattuga",
+    "iceberg",
+    "romana",
+    "trocadero",
+    "gentilina",
+    "songino",
+    "valeriana",
+    "rucola",
+    "lettuce"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Stack_of_romaine_lettuce_heads.jpg/960px-Stack_of_romaine_lettuce_heads.jpg"
+  },
+  {
+   "id": "kiwi",
+   "nome": "Kiwi",
+   "cat": "Frutta",
+   "alimenti": [],
+   "parole": [
+    "kiwi",
+    "kiwi giallo",
+    "kiwifruit",
+    "actinidia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Kiwifruit_halved.jpg/960px-Kiwifruit_halved.jpg"
   },
   {
    "id": "kumquat",
@@ -252,6 +655,18 @@
     "fortunella"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Kumquat_from_Spain.jpg/960px-Kumquat_from_Spain.jpg"
+  },
+  {
+   "id": "lampone",
+   "nome": "Lampone",
+   "cat": "Frutta",
+   "alimenti": [],
+   "parole": [
+    "lampone",
+    "lamponi",
+    "raspberry"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Raspberries_%28Rubus_idaeus%29.jpg/960px-Raspberries_%28Rubus_idaeus%29.jpg"
   },
   {
    "id": "lime",
@@ -362,6 +777,34 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/960px-Red_Apple.jpg"
   },
   {
+   "id": "melanzana",
+   "nome": "Melanzana",
+   "cat": "Verdura",
+   "alimenti": [],
+   "parole": [
+    "melanzana",
+    "melanzane",
+    "melenzana",
+    "melenzane",
+    "eggplant",
+    "aubergine"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Solanum_melongena_24_08_2012_%281%29.JPG/960px-Solanum_melongena_24_08_2012_%281%29.JPG"
+  },
+  {
+   "id": "melograno",
+   "nome": "Melograno",
+   "cat": "Frutta",
+   "alimenti": [],
+   "parole": [
+    "melograno",
+    "melagrana",
+    "melagrane",
+    "pomegranate"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Pomegranate_Juice_%282019%29.jpg/960px-Pomegranate_Juice_%282019%29.jpg"
+  },
+  {
    "id": "melone",
    "nome": "Melone",
    "cat": "Frutta",
@@ -378,6 +821,21 @@
     "melon"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Canteloupe_and_cross_section.jpg/960px-Canteloupe_and_cross_section.jpg"
+  },
+  {
+   "id": "menta",
+   "nome": "Menta",
+   "cat": "Erbe e alghe",
+   "alimenti": [
+    "Menta fresca"
+   ],
+   "parole": [
+    "menta",
+    "mentuccia",
+    "mint",
+    "menta piperita"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Minze.jpg/960px-Minze.jpg"
   },
   {
    "id": "mirtillo",
@@ -427,6 +885,54 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg/960px-Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg"
   },
   {
+   "id": "okra",
+   "nome": "Okra",
+   "cat": "Verdura",
+   "alimenti": [
+    "Okra"
+   ],
+   "parole": [
+    "okra",
+    "gombo",
+    "bamia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/3/32/Bucket_of_raw_okra_pods.jpg"
+  },
+  {
+   "id": "olive",
+   "nome": "Olive",
+   "cat": "Verdura",
+   "alimenti": [
+    "Olive verdi",
+    "Olive nere"
+   ],
+   "parole": [
+    "olive",
+    "oliva",
+    "olive nere",
+    "olive verdi",
+    "taggiasche",
+    "kalamata",
+    "olive"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Olives_in_bowl.jpg/960px-Olives_in_bowl.jpg"
+  },
+  {
+   "id": "pak-choi",
+   "nome": "Pak choi",
+   "cat": "Verdura",
+   "alimenti": [
+    "Pak choi (cavolo cinese)"
+   ],
+   "parole": [
+    "pak choi",
+    "bok choy",
+    "cavolo cinese",
+    "pak-choi"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Bok_Choy_%2849553125456%29.jpg/960px-Bok_Choy_%2849553125456%29.jpg"
+  },
+  {
    "id": "papaya",
    "nome": "Papaya",
    "cat": "Frutta",
@@ -438,6 +944,77 @@
     "papaia"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/03_Preparing_papaya_fruit_-_papaya_peeled_and_cut_in_half.jpg/960px-03_Preparing_papaya_fruit_-_papaya_peeled_and_cut_in_half.jpg"
+  },
+  {
+   "id": "pastinaca",
+   "nome": "Pastinaca",
+   "cat": "Verdura",
+   "alimenti": [
+    "Pastinaca"
+   ],
+   "parole": [
+    "pastinaca",
+    "pastinache",
+    "parsnip"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Parsnip%2C_Farmers_Market_20090828.10D.52127.P1_SML_%283868236634%29.jpg/960px-Parsnip%2C_Farmers_Market_20090828.10D.52127.P1_SML_%283868236634%29.jpg"
+  },
+  {
+   "id": "patata-dolce",
+   "nome": "Patata dolce",
+   "cat": "Verdura",
+   "alimenti": [
+    "Patate dolci"
+   ],
+   "parole": [
+    "patata dolce",
+    "patate dolci",
+    "patata americana",
+    "batata",
+    "sweet potato"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ipomoea_batatas_006.JPG/960px-Ipomoea_batatas_006.JPG"
+  },
+  {
+   "id": "patata",
+   "nome": "Patata",
+   "cat": "Verdura",
+   "alimenti": [
+    "Patatine fritte",
+    "Patatine fritte al forno (surgelate)",
+    "Patatine in busta (chips)"
+   ],
+   "parole": [
+    "patata",
+    "patate",
+    "patate bianche",
+    "patate viola",
+    "patate novelle",
+    "patatine",
+    "patatine fritte",
+    "chips",
+    "potato",
+    "fries"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/960px-Patates.jpg"
+  },
+  {
+   "id": "peperone",
+   "nome": "Peperone",
+   "cat": "Verdura",
+   "alimenti": [
+    "Peperoni"
+   ],
+   "parole": [
+    "peperone",
+    "peperoni",
+    "pepper",
+    "friggitelli",
+    "peperone rosso",
+    "peperone giallo",
+    "peperone verde"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Green-Yellow-Red-Pepper-2009.jpg/960px-Green-Yellow-Red-Pepper-2009.jpg"
   },
   {
    "id": "pera",
@@ -478,6 +1055,30 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_nectarine_and_cross_section02_edit.jpg/960px-White_nectarine_and_cross_section02_edit.jpg"
   },
   {
+   "id": "pomodoro",
+   "nome": "Pomodoro",
+   "cat": "Verdura",
+   "alimenti": [
+    "Sugo di pomodoro pronto (marinara)"
+   ],
+   "parole": [
+    "pomodoro",
+    "pomodori",
+    "pomodorini",
+    "pomodorino",
+    "ciliegino",
+    "datterino",
+    "passata",
+    "passata di pomodoro",
+    "pelati",
+    "sugo",
+    "sugo di pomodoro",
+    "salsa di pomodoro",
+    "tomato"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/960px-Tomato_je.jpg"
+  },
+  {
    "id": "pompelmo",
    "nome": "Pompelmo",
    "cat": "Frutta",
@@ -490,6 +1091,33 @@
     "grapefruit"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Grapefruits_-_whole-halved-segments.jpg/960px-Grapefruits_-_whole-halved-segments.jpg"
+  },
+  {
+   "id": "porro",
+   "nome": "Porro",
+   "cat": "Verdura",
+   "alimenti": [
+    "Porri"
+   ],
+   "parole": [
+    "porro",
+    "porri",
+    "leek"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Leeks%2C_Wirral_flower_and_vegetable_show_-_DSC08226.JPG/960px-Leeks%2C_Wirral_flower_and_vegetable_show_-_DSC08226.JPG"
+  },
+  {
+   "id": "prezzemolo",
+   "nome": "Prezzemolo",
+   "cat": "Erbe e alghe",
+   "alimenti": [
+    "Prezzemolo fresco"
+   ],
+   "parole": [
+    "prezzemolo",
+    "parsley"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Parsley_Leaves.jpg/960px-Parsley_Leaves.jpg"
   },
   {
    "id": "prugna",
@@ -510,6 +1138,41 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Rosales_-_Dried_Prunus_domestica_d.jpg/960px-Rosales_-_Dried_Prunus_domestica_d.jpg"
   },
   {
+   "id": "radicchio",
+   "nome": "Radicchio",
+   "cat": "Verdura",
+   "alimenti": [
+    "Radicchio"
+   ],
+   "parole": [
+    "radicchio",
+    "radicchi",
+    "trevisano",
+    "chioggia",
+    "castelfranco",
+    "tardivo"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/e/e8/RadicchioNL.jpg"
+  },
+  {
+   "id": "ravanello",
+   "nome": "Ravanello",
+   "cat": "Verdura",
+   "alimenti": [
+    "Daikon (ravanello bianco)"
+   ],
+   "parole": [
+    "ravanello",
+    "ravanelli",
+    "rapanello",
+    "rapanelli",
+    "daikon",
+    "ravanello bianco",
+    "radish"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Different_kinds_of_White_Radish.png/960px-Different_kinds_of_White_Radish.png"
+  },
+  {
    "id": "ribes",
    "nome": "Ribes",
    "cat": "Frutta",
@@ -525,6 +1188,69 @@
     "cassis"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Redcurrant_%28Ribes_rubrum%29_fruits.jpg/960px-Redcurrant_%28Ribes_rubrum%29_fruits.jpg"
+  },
+  {
+   "id": "sedano",
+   "nome": "Sedano",
+   "cat": "Verdura",
+   "alimenti": [
+    "Sedano",
+    "Sedano rapa"
+   ],
+   "parole": [
+    "sedano",
+    "sedani",
+    "celery",
+    "sedano rapa",
+    "celeriac"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Celery_1.jpg/960px-Celery_1.jpg"
+  },
+  {
+   "id": "spinaci",
+   "nome": "Spinaci",
+   "cat": "Verdura",
+   "alimenti": [
+    "Spinaci"
+   ],
+   "parole": [
+    "spinaci",
+    "spinacio",
+    "spinach",
+    "spinacino",
+    "baby spinach"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg"
+  },
+  {
+   "id": "tarassaco",
+   "nome": "Tarassaco",
+   "cat": "Verdura",
+   "alimenti": [
+    "Tarassaco"
+   ],
+   "parole": [
+    "tarassaco",
+    "dente di leone",
+    "soffione",
+    "dandelion",
+    "piscialetto"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Dandelion_greens.jpg/960px-Dandelion_greens.jpg"
+  },
+  {
+   "id": "topinambur",
+   "nome": "Topinambur",
+   "cat": "Verdura",
+   "alimenti": [
+    "Topinambur"
+   ],
+   "parole": [
+    "topinambur",
+    "rapa tedesca",
+    "carciofo di gerusalemme"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Jerusalem_Artichokes_tubers.jpg/960px-Jerusalem_Artichokes_tubers.jpg"
   },
   {
    "id": "uva-spina",
@@ -561,6 +1287,20 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg"
   },
   {
+   "id": "zenzero",
+   "nome": "Zenzero",
+   "cat": "Erbe e alghe",
+   "alimenti": [
+    "Zenzero fresco"
+   ],
+   "parole": [
+    "zenzero",
+    "ginger",
+    "zenzero fresco"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ginger_rhizome.jpg/960px-Ginger_rhizome.jpg"
+  },
+  {
    "id": "zucca",
    "nome": "Zucca",
    "cat": "Verdura",
@@ -581,6 +1321,23 @@
     "kabocha"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Cucurbita_2011_G1.jpg/960px-Cucurbita_2011_G1.jpg"
+  },
+  {
+   "id": "zucchina",
+   "nome": "Zucchina",
+   "cat": "Verdura",
+   "alimenti": [
+    "Zucchine"
+   ],
+   "parole": [
+    "zucchina",
+    "zucchine",
+    "zucchino",
+    "zucchini",
+    "fiori di zucca",
+    "zucchina trombetta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/CSA-Striped-Zucchini.jpg/960px-CSA-Striped-Zucchini.jpg"
   }
  ]
 }

@@ -1,0 +1,131 @@
+{
+ "id": "carciofo",
+ "nome": "Carciofo",
+ "cat": "Verdura",
+ "latino": "Cynara cardunculus var. scolymus",
+ "famiglia": "Asteracee",
+ "parole": [
+  "carciofo",
+  "carciofi",
+  "artichoke",
+  "mammola",
+  "romanesco",
+  "spinoso"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Artichoke_J1.jpg/960px-Artichoke_J1.jpg",
+  "autore": "Jamain",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Artichoke_J1.jpg"
+ },
+ "descrizione": [
+  "È il fiore non ancora sbocciato di una specie di cardo. L'Italia è il primo produttore al mondo: romanesco, spinoso sardo, violetto, di Paestum.",
+  "Si mangiano il cuore e la base delle brattee."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra e inulina",
+   "d": "Circa 5 g di fibra per 100 g, con inulina che nutre la flora intestinale."
+  },
+  {
+   "t": "Fegato",
+   "d": "Cinarina e acidi clorogenici, studiati per la produzione di bile."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Tra le verdure più ricche di polifenoli."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 3,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "picco": [
+   2,
+   3,
+   4
+  ],
+  "testo": "da novembre a maggio."
+ },
+ "tipi": [
+  {
+   "nome": "Carciofo",
+   "testo": "Romanesco (tondo, senza spine), spinoso, violetto.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Carciofi"
+    },
+    {
+     "stato": "lessato",
+     "usda": "11008"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Alla romana",
+   "tempo": "25–30 min",
+   "come": "Interi, ripieni di mentuccia e aglio, cotti coperti a testa in giù."
+  },
+  {
+   "metodo": "In padella",
+   "tempo": "15 min",
+   "come": "A spicchi con aglio, prezzemolo e un goccio d'acqua."
+  },
+  {
+   "metodo": "Crudi",
+   "tempo": "",
+   "come": "A fettine sottilissime con limone, olio e parmigiano."
+  }
+ ],
+ "nota_cottura": "Mentre li pulisci mettili in acqua e limone: diventano scuri subito.",
+ "conservare": [
+  {
+   "t": "Sceglilo",
+   "d": "pesante, brattee chiuse e compatte."
+  },
+  {
+   "t": "In frigo",
+   "d": "col gambo nell'acqua, 4–5 giorni."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Il gambo",
+   "d": "pelato, è tenero come il cuore."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Topinambur",
+  "Asparago",
+  "Cicoria"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Menta fresca",
+  "Parmigiano",
+  "Patata",
+  "Uovo",
+  "Prezzemolo fresco"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

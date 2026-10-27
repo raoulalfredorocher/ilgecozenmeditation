@@ -1,0 +1,134 @@
+{
+ "id": "carota",
+ "nome": "Carota",
+ "cat": "Verdura",
+ "latino": "Daucus carota",
+ "famiglia": "Apiacee",
+ "parole": [
+  "carota",
+  "carote",
+  "carrot"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vegetable-Carrot-Bundle-wStalks.jpg/960px-Vegetable-Carrot-Bundle-wStalks.jpg",
+  "autore": "Evan-Amos",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Vegetable-Carrot-Bundle-wStalks.jpg"
+ },
+ "descrizione": [
+  "Radice coltivata in Italia tutto l'anno, soprattutto in Abruzzo (Fucino), Sicilia e Veneto. Arancione dal Seicento: prima era viola o gialla.",
+  "Una delle fonti più ricche di beta-carotene."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina A",
+   "d": "100 g coprono più del fabbisogno, grazie al beta-carotene."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Carotenoidi; il beta-carotene si assorbe meglio da cotta e con un filo d'olio."
+  },
+  {
+   "t": "Fibra",
+   "d": "Circa 3 g per 100 g; croccante e saziante."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   5,
+   6,
+   10,
+   11
+  ],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Carota",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Carote"
+    },
+    {
+     "stato": "cotta",
+     "usda": "11125"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "A bastoncini o grattugiata con limone."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "30–35 min · 200 °C",
+   "come": "A bastoni con olio, cumino o miele: diventano dolcissime."
+  },
+  {
+   "metodo": "Al vapore",
+   "tempo": "10–12 min",
+   "come": "A rondelle, poi olio e prezzemolo."
+  },
+  {
+   "metodo": "Nel soffritto",
+   "tempo": "",
+   "come": "Con sedano e cipolla, base di sughi e minestre."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "senza ciuffo (toglie umidità), 2–3 settimane."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Ciuffo",
+   "d": "si mangia: nel pesto o nelle frittate."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Pastinaca",
+  "Patata dolce",
+  "Barbabietola",
+  "Zucca"
+ ],
+ "abbinamenti": [
+  "Zenzero fresco",
+  "Limone",
+  "Cumino",
+  "Ceci (secchi)",
+  "Lenticchie (secche)",
+  "Miele"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,112 @@
+{
+ "id": "radicchio",
+ "nome": "Radicchio",
+ "cat": "Verdura",
+ "latino": "Cichorium intybus",
+ "famiglia": "Asteracee",
+ "parole": [
+  "radicchio",
+  "radicchi",
+  "trevisano",
+  "chioggia",
+  "castelfranco",
+  "tardivo"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/e/e8/RadicchioNL.jpg",
+  "autore": "Wikimedia Commons",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:RadicchioNL.jpg"
+ },
+ "descrizione": [
+  "Cicoria rossa veneta: tondo di Chioggia, lungo di Treviso (precoce e tardivo IGP), variegato di Castelfranco.",
+  "L'amaro e il rosso vengono dai polifenoli."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Antociani (il rosso) e acido cicorico."
+  },
+  {
+   "t": "Leggero",
+   "d": "Circa 23 kcal per 100 g; vitamina K."
+  },
+  {
+   "t": "Digestione",
+   "d": "L'amaro stimola bile e succhi gastrici."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 5,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   12,
+   1
+  ],
+  "testo": "da ottobre a marzo; il tardivo da novembre."
+ },
+ "tipi": [
+  {
+   "nome": "Radicchio",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Radicchio"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "In insalata con arancia, noci o mela per bilanciare l'amaro."
+  },
+  {
+   "metodo": "Alla griglia",
+   "tempo": "3–4 min",
+   "come": "Treviso a quarti con olio e sale."
+  },
+  {
+   "metodo": "Nel risotto",
+   "tempo": "",
+   "come": "Con un po' di vino rosso o taleggio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "1 settimana."
+  }
+ ],
+ "simili": [
+  "Cicoria",
+  "Indivia belga",
+  "Insalata"
+ ],
+ "abbinamenti": [
+  "Gorgonzola",
+  "Noci",
+  "Arancia",
+  "Mela",
+  "Riso bianco (cotto)",
+  "Aceto balsamico"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

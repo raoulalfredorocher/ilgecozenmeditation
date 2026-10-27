@@ -1,0 +1,185 @@
+{
+ "id": "patata",
+ "nome": "Patata",
+ "cat": "Verdura",
+ "latino": "Solanum tuberosum",
+ "famiglia": "Solanacee",
+ "parole": [
+  "patata",
+  "patate",
+  "patate bianche",
+  "patate viola",
+  "patate novelle",
+  "patatine",
+  "patatine fritte",
+  "chips",
+  "potato",
+  "fries"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/960px-Patates.jpg",
+  "autore": "Scott Bauer, USDA ARS",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Patates.jpg"
+ },
+ "descrizione": [
+  "Tubero arrivato dalle Ande. In cucina conta come amido (al posto di pane o pasta), non come verdura.",
+  "A pasta gialla (soda, per forno e insalate), bianca (farinosa, per purè e gnocchi), rossa o viola."
+ ],
+ "proprieta": [
+  {
+   "t": "Potassio",
+   "d": "Una delle fonti più ricche: circa 420 mg per 100 g."
+  },
+  {
+   "t": "Amido resistente",
+   "d": "Lessata e raffreddata ne forma di più: alza meno la glicemia."
+  },
+  {
+   "t": "Fritte",
+   "d": "Fritta triplica le calorie; nelle cotture molto scure si forma acrilammide."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   5,
+   6,
+   9,
+   10
+  ],
+  "testo": "novelle in primavera, tutto l'anno da conservazione."
+ },
+ "tipi": [
+  {
+   "nome": "Patata",
+   "testo": "Con la buccia.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "11352"
+    },
+    {
+     "stato": "lessata",
+     "usda": "11367"
+    },
+    {
+     "stato": "al forno",
+     "usda": "11674"
+    }
+   ]
+  },
+  {
+   "nome": "Patatine fritte",
+   "testo": "Del fast food.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Truffle_oil_french_fries_%2833024792848%29.jpg/500px-Truffle_oil_french_fries_%2833024792848%29.jpg",
+    "autore": "Tony Webster",
+    "licenza": "CC BY-SA 2.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Truffle_oil_french_fries_%2833024792848%29.jpg"
+   },
+   "valori": [
+    {
+     "stato": "fritte",
+     "alimento": "Patatine fritte"
+    }
+   ]
+  },
+  {
+   "nome": "Patatine al forno (surgelate)",
+   "testo": "Prefritte surgelate, cotte in forno.",
+   "valori": [
+    {
+     "stato": "al forno",
+     "alimento": "Patatine fritte al forno (surgelate)"
+    }
+   ]
+  },
+  {
+   "nome": "Chips in busta",
+   "testo": "Un sacchetto da 25 g ≈ 135 kcal.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Potato-Chips.jpg/500px-Potato-Chips.jpg",
+    "autore": "Evan-Amos",
+    "licenza": "Pubblico dominio",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Potato-Chips.jpg"
+   },
+   "valori": [
+    {
+     "stato": "in busta",
+     "alimento": "Patatine in busta (chips)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "35–45 min · 200 °C",
+   "come": "A spicchi con buccia, olio e rosmarino."
+  },
+  {
+   "metodo": "Lessate",
+   "tempo": "20–30 min",
+   "come": "Intere con la buccia, partendo da acqua fredda."
+  },
+  {
+   "metodo": "Al vapore",
+   "tempo": "20 min",
+   "come": "A cubi: perfette per insalate di patate."
+  },
+  {
+   "metodo": "In friggitrice ad aria",
+   "tempo": "18–20 min · 200 °C",
+   "come": "Con un cucchiaino d'olio: croccanti con poco grasso."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Al buio",
+   "d": "fresco e asciutto, fuori dal frigo: settimane."
+  },
+  {
+   "t": "Verdi o germogliate",
+   "d": "togli le parti verdi e i germogli: contengono solanina."
+  }
+ ],
+ "simili": [
+  "Patata dolce",
+  "Topinambur",
+  "Pastinaca"
+ ],
+ "abbinamenti": [
+  "Rosmarino",
+  "Uovo",
+  "Fagiolini",
+  "Cipolla",
+  "Pesto alla genovese",
+  "Merluzzo"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Acrilammide: EFSA 2015; amido resistente e raffreddamento: Eur J Clin Nutr",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

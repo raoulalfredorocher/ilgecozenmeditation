@@ -1,0 +1,99 @@
+{
+ "id": "lampone",
+ "nome": "Lampone",
+ "cat": "Frutta",
+ "latino": "Rubus idaeus",
+ "famiglia": "Rosacee",
+ "parole": [
+  "lampone",
+  "lamponi",
+  "raspberry"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Raspberries_%28Rubus_idaeus%29.jpg/960px-Raspberries_%28Rubus_idaeus%29.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Raspberries_%28Rubus_idaeus%29.jpg"
+ },
+ "descrizione": [
+  "Frutto di bosco parente della mora, cresce in montagna. Delicato e profumato, vuoto all'interno."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Circa 6,5 g per 100 g: tra la frutta più ricca."
+  },
+  {
+   "t": "Leggero",
+   "d": "52 kcal per 100 g, pochi zuccheri."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Ellagitannini, antociani e vitamina C."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   6,
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   7
+  ],
+  "testo": "da giugno a settembre."
+ },
+ "tipi": [
+  {
+   "nome": "Lampone",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "09302"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Fresco",
+   "tempo": "",
+   "come": "Su yogurt, porridge o con cioccolato fondente."
+  },
+  {
+   "metodo": "Surgelato",
+   "tempo": "",
+   "come": "Nei frullati e nelle composte, tutto l'anno."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "1–2 giorni, non lavati, in un solo strato."
+  }
+ ],
+ "simili": [
+  "Mora",
+  "Fragola",
+  "Ribes"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente 70%",
+  "Yogurt greco 0%",
+  "Ricotta vaccina",
+  "Fiocchi d'avena"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
