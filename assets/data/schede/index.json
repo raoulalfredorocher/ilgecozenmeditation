@@ -1,0 +1,26 @@
+{
+ "schede": [
+  {
+   "id": "zucca",
+   "nome": "Zucca",
+   "cat": "Verdura",
+   "alimenti": [
+    "Zucca Delica",
+    "Zucca butternut"
+   ],
+   "parole": [
+    "zucca",
+    "zucche",
+    "butternut",
+    "delica",
+    "hokkaido",
+    "mantovana",
+    "chioggia",
+    "spaghetti squash",
+    "pumpkin",
+    "kabocha"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Cucurbita_2011_G1.jpg/960px-Cucurbita_2011_G1.jpg"
+  }
+ ]
+}

@@ -296,13 +296,13 @@
     .rc-porz input { width: 72px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); padding: var(--space-2) var(--space-3); font: 500 var(--fs-lg) var(--font); color: var(--text); text-align: right; }
     .rc-food { background: none; border: 0; padding: 0; font: inherit; color: var(--geco-blue); text-align: left; cursor: pointer; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--geco-blue) 35%, transparent); text-underline-offset: 3px; }
     /* Alimenti: ricerca e scheda di dettaglio */
-    .al-card { --t: var(--tn4); display: flex; align-items: stretch; gap: var(--space-3); width: 100%; text-align: left; padding: 0; margin-bottom: var(--space-3); cursor: pointer; color: inherit; overflow: hidden;
-      border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
-    .al-card:active { opacity: .75; }
-    .al-card-img { flex: 0 0 104px; aspect-ratio: 1; }
-    .al-card-img img, .al-vimg img, .al-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .al-card-txt { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: var(--space-3) var(--space-3) var(--space-3) 0; }
-    .al-card-name { font: 500 1.375rem/1.2 var(--font-serif); }
+    .al-lt { margin-top: var(--space-3); }
+    .al-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3); }
+    .al-tile { display: flex; flex-direction: column; padding: 0; text-align: left; cursor: pointer; color: inherit; overflow: hidden; border-radius: var(--radius-lg); border: .5px solid var(--border); background: var(--card); box-shadow: var(--shadow-sm); }
+    .al-tile:active { opacity: .75; }
+    .al-tile-img { display: block; aspect-ratio: 4 / 3; background: linear-gradient(135deg, color-mix(in srgb, var(--tn3) 22%, var(--card)), var(--surface)); }
+    .al-tile-img img, .al-vimg img, .al-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .al-tile-name { font: 500 var(--fs-lg)/1.25 var(--font-serif); padding: var(--space-2) var(--space-3) var(--space-3); }
     .al-row { gap: var(--space-3); text-align: left; width: 100%; }
     .al-row-name { font-size: var(--fs-md); }
     .al-kcal { font-size: var(--fs-xs); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -354,8 +354,14 @@
     .al-kv b { font-weight: 600; }
     .al-link { height: 32px; padding: 0 12px; font-size: var(--fs-sm); }
     .al-warn { color: var(--danger); }
-    .al-vcard[data-var] { cursor: pointer; }
-    .al-vcard[data-var]:active { opacity: .75; }
+    .al-vcard[data-tipo] { cursor: pointer; }
+    .al-vcard[data-tipo]:active { opacity: .75; }
+    .al-vcard.on { border-color: var(--tn1); box-shadow: 0 0 0 1.5px var(--tn1), var(--shadow-sm); }
+    .al-which { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .al-which b { font: 500 var(--fs-lg) var(--font-serif); }
+    .al-change { font-size: var(--fs-sm); white-space: nowrap; }
+    .al-ll { margin-top: var(--space-5); }
+    .al-mlbl { margin-top: var(--space-4); }
     .al-flavor { text-align: center; }
     .al-radar { width: 100%; max-width: 260px; display: block; margin: 0 auto; }
     .al-radar .g { fill: none; stroke: var(--border); stroke-width: 1; }
