@@ -1,0 +1,109 @@
+{
+ "id": "budini",
+ "nome": "Budini e mousse",
+ "famiglia": "Dolci al cucchiaio",
+ "parole": [
+  "budino",
+  "budini",
+  "mousse",
+  "mousse al cioccolato",
+  "panna cotta",
+  "crema pasticcera",
+  "creme caramel"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Chocolate_pudding_in_glasses.jpg/960px-Chocolate_pudding_in_glasses.jpg",
+  "autore": "Ginny",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Chocolate_pudding_in_glasses.jpg"
+ },
+ "descrizione": [
+  "Dolci al cucchiaio a base di latte addensato con amido (budino) o di cioccolato con panna o uova montate (mousse)."
+ ],
+ "proprieta": [
+  {
+   "t": "Budino",
+   "d": "Circa 130–140 kcal per 100 g; un vasetto è 100–125 g."
+  },
+  {
+   "t": "Mousse",
+   "d": "Più grassa: 225 kcal per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Budino al cioccolato",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Budino al cioccolato"
+    }
+   ]
+  },
+  {
+   "nome": "Budino alla vaniglia",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Budino alla vaniglia"
+    }
+   ]
+  },
+  {
+   "nome": "Mousse al cioccolato",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Mousse al cioccolato"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 giorni se fatti in casa."
+  }
+ ],
+ "simili": [
+  "Tiramisù",
+  "Gelato",
+  "Yogurt"
+ ],
+ "abbinamenti": [
+  "Lampone",
+  "Biscotti",
+  "Panna"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,114 @@
+{
+ "id": "ciambelle",
+ "nome": "Ciambelle, muffin e brownie",
+ "famiglia": "Dolci da forno",
+ "parole": [
+  "ciambella",
+  "ciambelle",
+  "donut",
+  "donuts",
+  "graffa",
+  "krapfen",
+  "bombolone",
+  "muffin",
+  "brownie",
+  "brownies",
+  "cupcake"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Double_berry_donut_-_Glazed_Coffee_2024-01-10.jpg/960px-Double_berry_donut_-_Glazed_Coffee_2024-01-10.jpg",
+  "autore": "Andy Li",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Double_berry_donut_-_Glazed_Coffee_2024-01-10.jpg"
+ },
+ "descrizione": [
+  "Dolci singoli all'americana: la ciambella (donut) è fritta e glassata, il muffin è un impasto veloce cotto in pirottino, il brownie è un dolce denso al cioccolato."
+ ],
+ "proprieta": [
+  {
+   "t": "Porzioni grandi",
+   "d": "Un muffin da bar pesa 110–130 g: 420–490 kcal. Un donut glassato 60–70 g: circa 260 kcal."
+  },
+  {
+   "t": "Fritti",
+   "d": "Donut e bomboloni assorbono olio in frittura."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Donut glassato",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Ciambella glassata (donut)"
+    }
+   ]
+  },
+  {
+   "nome": "Muffin ai mirtilli",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Muffin ai mirtilli"
+    }
+   ]
+  },
+  {
+   "nome": "Brownie",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Brownie"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In dispensa",
+   "d": "chiusi, 2–3 giorni."
+  }
+ ],
+ "simili": [
+  "Torte e crostate",
+  "Cornetto e sfoglia",
+  "Biscotti"
+ ],
+ "abbinamenti": [
+  "Caffè",
+  "Latte",
+  "Mirtillo",
+  "Gelato"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,96 @@
+{
+ "id": "pizza",
+ "nome": "Pizza",
+ "famiglia": "Lievitato da forno",
+ "parole": [
+  "pizza",
+  "pizza margherita",
+  "margherita",
+  "pizza marinara",
+  "pinsa",
+  "focaccia"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Margherita_Originale.JPG/960px-Margherita_Originale.JPG",
+  "autore": "Mario56",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Margherita_Originale.JPG"
+ },
+ "descrizione": [
+  "Pasta lievitata di farina, acqua, sale e lievito con pomodoro e mozzarella. La napoletana ha il cornicione alto e morbido, la romana è bassa e croccante."
+ ],
+ "proprieta": [
+  {
+   "t": "Calorie",
+   "d": "Una margherita intera (300–350 g) è circa 750–900 kcal; la marinara (senza mozzarella) circa 600."
+  },
+  {
+   "t": "Lievitazione lunga",
+   "d": "Impasti di 24–48 h sono più digeribili: gli enzimi scompongono parte di amidi e glutine."
+  },
+  {
+   "t": "Sale",
+   "d": "Circa 3–4 g di sale in una pizza intera."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 3,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 4
+ },
+ "tipi": [
+  {
+   "nome": "Margherita",
+   "testo": "Valori USDA di una pizza al formaggio: quella di pizzeria può variare molto.",
+   "valori": [
+    {
+     "stato": "cotta",
+     "usda": "21224"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2 giorni; si riscalda in padella con coperchio, torna croccante sotto."
+  }
+ ],
+ "simili": [
+  "Pane",
+  "Mozzarella",
+  "Pomodoro"
+ ],
+ "abbinamenti": [
+  "Basilico",
+  "Olio",
+  "Rucola",
+  "Birra"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

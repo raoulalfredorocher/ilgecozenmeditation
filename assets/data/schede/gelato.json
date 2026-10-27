@@ -1,0 +1,127 @@
+{
+ "id": "gelato",
+ "nome": "Gelato",
+ "famiglia": "Dolce freddo",
+ "parole": [
+  "gelato",
+  "gelato artigianale",
+  "sorbetto",
+  "frozen yogurt",
+  "ice cream",
+  "ghiacciolo",
+  "cono gelato",
+  "coppetta"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Gelato_artigianale_italiano%2C_Bertinelli.jpg/960px-Gelato_artigianale_italiano%2C_Bertinelli.jpg",
+  "autore": "Basilicofresco",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Gelato_artigianale_italiano%2C_Bertinelli.jpg"
+ },
+ "descrizione": [
+  "Latte, panna, zucchero e aria, mantecati a freddo. Il sorbetto è frutta e zucchero, senza latte.",
+  "Una coppetta piccola artigianale è circa 100 g."
+ ],
+ "proprieta": [
+  {
+   "t": "Meno calorico di quanto sembri",
+   "d": "Fiordilatte circa 200 kcal per 100 g, perché ha molta acqua e aria."
+  },
+  {
+   "t": "Zuccheri",
+   "d": "20–25 g per 100 g."
+  },
+  {
+   "t": "Calcio",
+   "d": "Circa 130 mg per 100 g, da latte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Fiordilatte / vaniglia",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Gelato alla vaniglia (fiordilatte)"
+    }
+   ]
+  },
+  {
+   "nome": "Cioccolato",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Gelato al cioccolato"
+    }
+   ]
+  },
+  {
+   "nome": "Fragola",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Gelato alla fragola"
+    }
+   ]
+  },
+  {
+   "nome": "Frozen yogurt",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Frozen yogurt"
+    }
+   ],
+   "testo": "Più leggero e acidulo."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In freezer",
+   "d": "a −18 °C; se si scioglie e ricongela fa i cristalli."
+  }
+ ],
+ "simili": [
+  "Mochi",
+  "Budini e mousse",
+  "Yogurt"
+ ],
+ "abbinamenti": [
+  "Fragola",
+  "Cioccolato",
+  "Caffè",
+  "Pesca",
+  "Torte e crostate"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

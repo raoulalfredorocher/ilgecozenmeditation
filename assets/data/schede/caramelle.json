@@ -1,0 +1,100 @@
+{
+ "id": "caramelle",
+ "nome": "Caramelle",
+ "famiglia": "Dolciumi",
+ "parole": [
+  "caramelle",
+  "caramella",
+  "caramelle gommose",
+  "orsetti gommosi",
+  "gummy",
+  "lecca lecca",
+  "caramelle dure",
+  "liquirizia"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Shameless_Snacks_gummy_bears.jpg/960px-Shameless_Snacks_gummy_bears.jpg",
+  "autore": "Mx. Granger",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Shameless_Snacks_gummy_bears.jpg"
+ },
+ "descrizione": [
+  "Zucchero cotto: dure se cotto oltre 150 °C, gommose con gelatina (animale) o pectina (vegetale)."
+ ],
+ "proprieta": [
+  {
+   "t": "Zucchero quasi puro",
+   "d": "Circa 400 kcal per 100 g; un orsetto pesa 2 g (8 kcal)."
+  },
+  {
+   "t": "Gelatina",
+   "d": "Molte gommose usano gelatina di maiale o bovina: guarda l'etichetta se sei vegetariano."
+  },
+  {
+   "t": "Denti",
+   "d": "Le gommose restano attaccate ai denti più a lungo."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Gommose",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Caramelle gommose"
+    }
+   ]
+  },
+  {
+   "nome": "Dure",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Caramelle dure"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In dispensa",
+   "d": "chiuse, mesi."
+  }
+ ],
+ "simili": [
+  "Cioccolato",
+  "Zucchero e sciroppi"
+ ],
+ "abbinamenti": [],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

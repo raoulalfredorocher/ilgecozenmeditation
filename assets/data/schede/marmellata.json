@@ -1,0 +1,90 @@
+{
+ "id": "marmellata",
+ "nome": "Marmellata",
+ "famiglia": "Conserva di frutta",
+ "parole": [
+  "marmellata",
+  "confettura",
+  "jam",
+  "composta di frutta"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Strawberry_jam_%28home_preservation%29.jpg/960px-Strawberry_jam_%28home_preservation%29.jpg",
+  "autore": "Nutrition, Food Safety & Health",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Strawberry_jam_%28home_preservation%29.jpg"
+ },
+ "descrizione": [
+  "Frutta cotta con zucchero finché si addensa. Per legge \"marmellata\" è solo di agrumi; le altre sono \"confetture\".",
+  "Le \"composte\" o \"100% frutta\" usano succo di frutta concentrato al posto dello zucchero."
+ ],
+ "proprieta": [
+  {
+   "t": "Zucchero",
+   "d": "Circa 50–60% di zuccheri: un cucchiaino (10 g) circa 28 kcal."
+  },
+  {
+   "t": "Extra",
+   "d": "\"Extra\" = almeno 45 g di frutta su 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Confettura",
+   "valori": [
+    {
+     "stato": "classica",
+     "alimento": "Marmellata"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperta 1 mese; quelle a poco zucchero meno."
+  }
+ ],
+ "simili": [
+  "Miele",
+  "Zucchero e sciroppi"
+ ],
+ "abbinamenti": [
+  "Pane",
+  "Ricotta",
+  "Yogurt",
+  "Fette biscottate",
+  "Formaggi stagionati"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

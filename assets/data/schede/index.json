@@ -276,6 +276,45 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/960px-Chard_%28Beta_vulgaris_var_cicla%29.jpg"
   },
   {
+   "id": "bigne",
+   "nome": "Bignè ed éclair",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Bignè / éclair alla crema"
+   ],
+   "parole": [
+    "bignè",
+    "bigne",
+    "éclair",
+    "eclair",
+    "profiteroles",
+    "zeppole",
+    "chou"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg/960px-2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg"
+  },
+  {
+   "id": "biscotti",
+   "nome": "Biscotti",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Biscotti frollini al burro",
+    "Biscotti con gocce di cioccolato",
+    "Biscotti al cacao con crema (tipo Oreo)"
+   ],
+   "parole": [
+    "biscotti",
+    "biscotto",
+    "frollini",
+    "cookies",
+    "digestive",
+    "oreo",
+    "savoiardi",
+    "cantucci"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Chocolate_chip_cookies_on_cutting_board.jpg/960px-Chocolate_chip_cookies_on_cutting_board.jpg"
+  },
+  {
    "id": "brie",
    "nome": "Brie e camembert",
    "cat": "Latte e formaggi",
@@ -289,6 +328,26 @@
     "crosta fiorita"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Brie_01.jpg/960px-Brie_01.jpg"
+  },
+  {
+   "id": "budini",
+   "nome": "Budini e mousse",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Budino al cioccolato",
+    "Budino alla vaniglia",
+    "Mousse al cioccolato"
+   ],
+   "parole": [
+    "budino",
+    "budini",
+    "mousse",
+    "mousse al cioccolato",
+    "panna cotta",
+    "crema pasticcera",
+    "creme caramel"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Chocolate_pudding_in_glasses.jpg/960px-Chocolate_pudding_in_glasses.jpg"
   },
   {
    "id": "burro",
@@ -352,6 +411,26 @@
     "frutto stella"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Averrhoa_carambola_ARS_k5735-7.jpg/960px-Averrhoa_carambola_ARS_k5735-7.jpg"
+  },
+  {
+   "id": "caramelle",
+   "nome": "Caramelle",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Caramelle gommose",
+    "Caramelle dure"
+   ],
+   "parole": [
+    "caramelle",
+    "caramella",
+    "caramelle gommose",
+    "orsetti gommosi",
+    "gummy",
+    "lecca lecca",
+    "caramelle dure",
+    "liquirizia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Shameless_Snacks_gummy_bears.jpg/960px-Shameless_Snacks_gummy_bears.jpg"
   },
   {
    "id": "carciofo",
@@ -479,6 +558,30 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/ARS_cucumber.jpg/960px-ARS_cucumber.jpg"
   },
   {
+   "id": "ciambelle",
+   "nome": "Ciambelle, muffin e brownie",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Ciambella glassata (donut)",
+    "Muffin ai mirtilli",
+    "Brownie"
+   ],
+   "parole": [
+    "ciambella",
+    "ciambelle",
+    "donut",
+    "donuts",
+    "graffa",
+    "krapfen",
+    "bombolone",
+    "muffin",
+    "brownie",
+    "brownies",
+    "cupcake"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Double_berry_donut_-_Glazed_Coffee_2024-01-10.jpg/960px-Double_berry_donut_-_Glazed_Coffee_2024-01-10.jpg"
+  },
+  {
    "id": "cicoria",
    "nome": "Cicoria",
    "cat": "Verdura",
@@ -530,6 +633,29 @@
     "rapini"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/7/76/Rapini.jpg"
+  },
+  {
+   "id": "cioccolato",
+   "nome": "Cioccolato",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Cioccolato fondente 70%",
+    "Cioccolato al latte",
+    "Cioccolato bianco",
+    "Cacao amaro in polvere"
+   ],
+   "parole": [
+    "cioccolato",
+    "cioccolata",
+    "cioccolato fondente",
+    "cioccolato al latte",
+    "cioccolato bianco",
+    "cacao",
+    "cacao amaro",
+    "chocolate",
+    "gocce di cioccolato"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Righteously_Raw_chocolate.jpg/960px-Righteously_Raw_chocolate.jpg"
   },
   {
    "id": "cipolla",
@@ -586,6 +712,26 @@
     "acqua di cocco"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Coconut_%28halved%29_%283330701660%29.jpg/960px-Coconut_%28halved%29_%283330701660%29.jpg"
+  },
+  {
+   "id": "cornetto",
+   "nome": "Cornetto e sfoglia",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Cornetto al burro (croissant)",
+    "Pasta sfoglia (cotta)"
+   ],
+   "parole": [
+    "cornetto",
+    "brioche",
+    "croissant",
+    "pasta sfoglia",
+    "sfoglia",
+    "sfogliatella",
+    "pain au chocolat",
+    "saccottino"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Croissants_au_beurre_%2818953292873%29.jpg/960px-Croissants_au_beurre_%2818953292873%29.jpg"
   },
   {
    "id": "cous-cous",
@@ -851,6 +997,25 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg/960px-Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg"
   },
   {
+   "id": "fritti-in-pastella",
+   "nome": "Fritti in pastella",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Verdure in tempura",
+    "Anelli di cipolla fritti"
+   ],
+   "parole": [
+    "tempura",
+    "fritto in pastella",
+    "fritti",
+    "anelli di cipolla",
+    "onion rings",
+    "fritto misto",
+    "frittelle"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Tempura_01.jpg/960px-Tempura_01.jpg"
+  },
+  {
    "id": "frutta-secca-mista",
    "nome": "Frutta secca mista",
    "cat": "Frutta secca e semi",
@@ -888,6 +1053,28 @@
     "mushroom"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/0/01/ChampignonMushroom.jpg"
+  },
+  {
+   "id": "gelato",
+   "nome": "Gelato",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Gelato alla vaniglia (fiordilatte)",
+    "Gelato al cioccolato",
+    "Gelato alla fragola",
+    "Frozen yogurt"
+   ],
+   "parole": [
+    "gelato",
+    "gelato artigianale",
+    "sorbetto",
+    "frozen yogurt",
+    "ice cream",
+    "ghiacciolo",
+    "cono gelato",
+    "coppetta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Gelato_artigianale_italiano%2C_Bertinelli.jpg/960px-Gelato_artigianale_italiano%2C_Bertinelli.jpg"
   },
   {
    "id": "gorgonzola",
@@ -1258,6 +1445,21 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Cut_and_uncut_passion_fruits.jpg/960px-Cut_and_uncut_passion_fruits.jpg"
   },
   {
+   "id": "marmellata",
+   "nome": "Marmellata",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Marmellata"
+   ],
+   "parole": [
+    "marmellata",
+    "confettura",
+    "jam",
+    "composta di frutta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Strawberry_jam_%28home_preservation%29.jpg/960px-Strawberry_jam_%28home_preservation%29.jpg"
+  },
+  {
    "id": "mela-cotogna",
    "nome": "Mela cotogna",
    "cat": "Frutta",
@@ -1371,6 +1573,23 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Cod_fillet.jpg/960px-Cod_fillet.jpg"
   },
   {
+   "id": "miele",
+   "nome": "Miele",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Miele"
+   ],
+   "parole": [
+    "miele",
+    "honey",
+    "miele di acacia",
+    "millefiori",
+    "miele di castagno",
+    "miele di manuka"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Runny_hunny.jpg/960px-Runny_hunny.jpg"
+  },
+  {
    "id": "miglio",
    "nome": "Miglio",
    "cat": "Cereali, pane e pasta",
@@ -1412,6 +1631,22 @@
     "zuppa di miso"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Miso_001.jpg/960px-Miso_001.jpg"
+  },
+  {
+   "id": "mochi",
+   "nome": "Mochi",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Mochi (daifuku all'anko)",
+    "Mochi gelato"
+   ],
+   "parole": [
+    "mochi",
+    "daifuku",
+    "mochi gelato",
+    "mochi ice cream"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Daifuku_001.jpg/960px-Daifuku_001.jpg"
   },
   {
    "id": "mora",
@@ -1626,6 +1861,25 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Bok_Choy_%2849553125456%29.jpg/960px-Bok_Choy_%2849553125456%29.jpg"
   },
   {
+   "id": "pancake",
+   "nome": "Pancake e waffle",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Pancake",
+    "Waffle"
+   ],
+   "parole": [
+    "pancake",
+    "pancakes",
+    "waffle",
+    "waffles",
+    "crêpe",
+    "crepe",
+    "crespelle"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg/960px-Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg"
+  },
+  {
    "id": "pane",
    "nome": "Pane",
    "cat": "Cereali, pane e pasta",
@@ -1648,7 +1902,6 @@
     "wrap",
     "pangrattato",
     "panino",
-    "brioche",
     "pane in cassetta"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Korb_mit_Br%C3%B6tchen.JPG/960px-Korb_mit_Br%C3%B6tchen.JPG"
@@ -1904,6 +2157,21 @@
     "crema di pistacchio"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Pistachio.jpg/960px-Pistachio.jpg"
+  },
+  {
+   "id": "pizza",
+   "nome": "Pizza",
+   "cat": "Dolci e snack",
+   "alimenti": [],
+   "parole": [
+    "pizza",
+    "pizza margherita",
+    "margherita",
+    "pizza marinara",
+    "pinsa",
+    "focaccia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Margherita_Originale.JPG/960px-Margherita_Originale.JPG"
   },
   {
    "id": "pollo",
@@ -2420,6 +2688,19 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tempeh_%288681605421%29.jpg/960px-Tempeh_%288681605421%29.jpg"
   },
   {
+   "id": "tiramisu",
+   "nome": "Tiramisù",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Tiramisù"
+   ],
+   "parole": [
+    "tiramisù",
+    "tiramisu"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Classic_Italian_Tiramisu-3_%2829989504485%29.jpg/960px-Classic_Italian_Tiramisu-3_%2829989504485%29.jpg"
+  },
+  {
    "id": "tofu",
    "nome": "Tofu",
    "cat": "Legumi e soia",
@@ -2460,6 +2741,31 @@
     "carciofo di gerusalemme"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Jerusalem_Artichokes_tubers.jpg/960px-Jerusalem_Artichokes_tubers.jpg"
+  },
+  {
+   "id": "torte",
+   "nome": "Torte e crostate",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Torta di mele",
+    "Crostata di ciliegie",
+    "Strudel di mele",
+    "Cheesecake",
+    "Torta al cioccolato (con glassa)"
+   ],
+   "parole": [
+    "torta",
+    "torte",
+    "crostata",
+    "strudel",
+    "cheesecake",
+    "torta di mele",
+    "torta al cioccolato",
+    "plumcake",
+    "ciambellone",
+    "apple pie"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Apple_cake_with_vanilla_ice_cream_2.jpg/960px-Apple_cake_with_vanilla_ice_cream_2.jpg"
   },
   {
    "id": "uovo",
@@ -2585,6 +2891,28 @@
     "kabocha"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Cucurbita_2011_G1.jpg/960px-Cucurbita_2011_G1.jpg"
+  },
+  {
+   "id": "zucchero",
+   "nome": "Zucchero e sciroppi",
+   "cat": "Dolci e snack",
+   "alimenti": [
+    "Zucchero",
+    "Zucchero di canna",
+    "Sciroppo d'acero",
+    "Sciroppo d'agave"
+   ],
+   "parole": [
+    "zucchero",
+    "zucchero di canna",
+    "zucchero a velo",
+    "sciroppo",
+    "sciroppo d'acero",
+    "sciroppo d'agave",
+    "agave",
+    "dolcificante"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Sugar_cubes_V1.jpg/960px-Sugar_cubes_V1.jpg"
   },
   {
    "id": "zucchina",

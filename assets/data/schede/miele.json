@@ -1,0 +1,97 @@
+{
+ "id": "miele",
+ "nome": "Miele",
+ "famiglia": "Prodotto delle api",
+ "parole": [
+  "miele",
+  "honey",
+  "miele di acacia",
+  "millefiori",
+  "miele di castagno",
+  "miele di manuka"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Runny_hunny.jpg/960px-Runny_hunny.jpg",
+  "autore": "Scott Bauer, USDA ARS",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Runny_hunny.jpg"
+ },
+ "descrizione": [
+  "Nettare dei fiori trasformato dalle api: circa 80% zuccheri (fruttosio e glucosio) e 17% acqua.",
+  "Acacia: chiaro, liquido e delicato. Castagno: scuro, amarognolo, più ricco di antiossidanti."
+ ],
+ "proprieta": [
+  {
+   "t": "Zucchero",
+   "d": "Un cucchiaino (7 g) circa 21 kcal: per il corpo conta come zucchero."
+  },
+  {
+   "t": "Antibatterico",
+   "d": "Usato sulla pelle e per la tosse nei bambini sopra l'anno (raccomandazione OMS)."
+  },
+  {
+   "t": "Mai sotto l'anno",
+   "d": "Può contenere spore di botulino."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Miele",
+   "valori": [
+    {
+     "stato": "millefiori",
+     "alimento": "Miele"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In dispensa",
+   "d": "non scade; se cristallizza scaldalo a bagnomaria sotto i 40 °C."
+  }
+ ],
+ "simili": [
+  "Zucchero e sciroppi",
+  "Marmellata"
+ ],
+ "abbinamenti": [
+  "Yogurt",
+  "Formaggi",
+  "Noci",
+  "Limone",
+  "Zenzero",
+  "Pere"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

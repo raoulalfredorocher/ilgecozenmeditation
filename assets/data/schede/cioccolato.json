@@ -1,0 +1,128 @@
+{
+ "id": "cioccolato",
+ "nome": "Cioccolato",
+ "famiglia": "Derivato del cacao",
+ "latino": "Theobroma cacao",
+ "parole": [
+  "cioccolato",
+  "cioccolata",
+  "cioccolato fondente",
+  "cioccolato al latte",
+  "cioccolato bianco",
+  "cacao",
+  "cacao amaro",
+  "chocolate",
+  "gocce di cioccolato"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Righteously_Raw_chocolate.jpg/960px-Righteously_Raw_chocolate.jpg",
+  "autore": "Mx. Granger",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Righteously_Raw_chocolate.jpg"
+ },
+ "descrizione": [
+  "Pasta di cacao, burro di cacao e zucchero. Più cacao c'è (70%, 85%…) meno zucchero.",
+  "Il bianco non ha pasta di cacao: solo burro di cacao, latte e zucchero."
+ ],
+ "proprieta": [
+  {
+   "t": "Flavanoli",
+   "d": "Il cacao e il fondente ne sono ricchi: l'EFSA riconosce che 200 mg al giorno (circa 10 g di fondente ad alto contenuto) aiutano l'elasticità dei vasi."
+  },
+  {
+   "t": "Ferro e magnesio",
+   "d": "Il fondente 70% ha circa 11 mg di ferro e 230 mg di magnesio per 100 g."
+  },
+  {
+   "t": "Teobromina e caffeina",
+   "d": "Stimolanti leggeri: un quadratone di fondente ha la caffeina di un sorso di caffè."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 4,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Fondente 70%",
+   "valori": [
+    {
+     "stato": "tavoletta",
+     "alimento": "Cioccolato fondente 70%"
+    }
+   ]
+  },
+  {
+   "nome": "Al latte",
+   "valori": [
+    {
+     "stato": "tavoletta",
+     "alimento": "Cioccolato al latte"
+    }
+   ]
+  },
+  {
+   "nome": "Bianco",
+   "valori": [
+    {
+     "stato": "tavoletta",
+     "alimento": "Cioccolato bianco"
+    }
+   ]
+  },
+  {
+   "nome": "Cacao amaro",
+   "valori": [
+    {
+     "stato": "in polvere",
+     "alimento": "Cacao amaro in polvere"
+    }
+   ],
+   "testo": "Solo cacao sgrassato: il più ricco di fibra e flavanoli."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Al fresco",
+   "d": "15–18 °C, al buio. In frigo fa la patina bianca (innocua)."
+  }
+ ],
+ "simili": [
+  "Nocciole",
+  "Caramelle"
+ ],
+ "abbinamenti": [
+  "Lampone",
+  "Arancia",
+  "Nocciole",
+  "Peperoncino",
+  "Caffè",
+  "Fragola"
+ ],
+ "cat": "Dolci e snack",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

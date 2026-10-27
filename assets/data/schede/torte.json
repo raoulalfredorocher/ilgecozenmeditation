@@ -1,0 +1,131 @@
+{
+ "id": "torte",
+ "nome": "Torte e crostate",
+ "famiglia": "Dolci da forno",
+ "parole": [
+  "torta",
+  "torte",
+  "crostata",
+  "strudel",
+  "cheesecake",
+  "torta di mele",
+  "torta al cioccolato",
+  "plumcake",
+  "ciambellone",
+  "apple pie"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Apple_cake_with_vanilla_ice_cream_2.jpg/960px-Apple_cake_with_vanilla_ice_cream_2.jpg",
+  "autore": "W.carter",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Apple_cake_with_vanilla_ice_cream_2.jpg"
+ },
+ "descrizione": [
+  "Dolci da forno con farina, zucchero, uova e grassi. Le crostate hanno la base di frolla (burro); lo strudel la pasta tirata sottile."
+ ],
+ "proprieta": [
+  {
+   "t": "Calorie",
+   "d": "Da 260 kcal per 100 g (torta di mele, crostata) a quasi 400 (torta al cioccolato glassata). Una fetta è 80–120 g."
+  },
+  {
+   "t": "Frutta",
+   "d": "Quelle alla frutta hanno meno grassi, a parità di fetta."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 1,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Torta di mele",
+   "valori": [
+    {
+     "stato": "fetta",
+     "alimento": "Torta di mele"
+    }
+   ]
+  },
+  {
+   "nome": "Crostata",
+   "valori": [
+    {
+     "stato": "fetta",
+     "alimento": "Crostata di ciliegie"
+    }
+   ]
+  },
+  {
+   "nome": "Strudel",
+   "valori": [
+    {
+     "stato": "fetta",
+     "alimento": "Strudel di mele"
+    }
+   ]
+  },
+  {
+   "nome": "Cheesecake",
+   "valori": [
+    {
+     "stato": "fetta",
+     "alimento": "Cheesecake"
+    }
+   ]
+  },
+  {
+   "nome": "Torta al cioccolato",
+   "valori": [
+    {
+     "stato": "fetta",
+     "alimento": "Torta al cioccolato (con glassa)"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sotto una campana",
+   "d": "3–4 giorni; con crema o formaggio in frigo."
+  }
+ ],
+ "simili": [
+  "Biscotti",
+  "Ciambelle, muffin e brownie",
+  "Tiramisù"
+ ],
+ "abbinamenti": [
+  "Gelato",
+  "Panna",
+  "Tè",
+  "Caffè"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
