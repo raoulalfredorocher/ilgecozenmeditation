@@ -1,0 +1,97 @@
+{
+ "id": "maionese",
+ "nome": "Maionese",
+ "famiglia": "Salsa emulsionata",
+ "parole": [
+  "maionese",
+  "mayo",
+  "mayonnaise",
+  "salsa tartara",
+  "aioli"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Mayonnaise_%281%29.jpg/960px-Mayonnaise_%281%29.jpg",
+  "autore": "jules",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Mayonnaise_%281%29.jpg"
+ },
+ "descrizione": [
+  "Emulsione di olio e tuorlo d'uovo con limone o aceto: per circa l'80% è olio."
+ ],
+ "proprieta": [
+  {
+   "t": "Molto calorica",
+   "d": "Un cucchiaio (15 g) circa 100 kcal."
+  },
+  {
+   "t": "Light",
+   "d": "Le versioni light hanno 250–300 kcal per 100 g: più acqua e amidi."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "tipi": [
+  {
+   "nome": "Maionese",
+   "valori": [
+    {
+     "stato": "classica",
+     "alimento": "Maionese"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Farla in casa",
+ "cotture": [
+  {
+   "metodo": "Col frullatore a immersione",
+   "tempo": "1 min",
+   "come": "1 uovo intero, 200 ml di olio di semi, succo di limone e sale: frulla dal fondo e risali piano."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "industriale aperta 1–2 mesi; fatta in casa 2–3 giorni (uovo crudo)."
+  }
+ ],
+ "simili": [
+  "Salse americane",
+  "Senape"
+ ],
+ "abbinamenti": [
+  "Patata",
+  "Uovo",
+  "Tonno",
+  "Senape"
+ ],
+ "cat": "Condimenti e salse",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

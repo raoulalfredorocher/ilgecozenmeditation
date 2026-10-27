@@ -1,0 +1,138 @@
+{
+ "id": "salse-asiatiche",
+ "nome": "Salse asiatiche",
+ "famiglia": "Salse",
+ "parole": [
+  "salsa teriyaki",
+  "teriyaki",
+  "salsa hoisin",
+  "hoisin",
+  "salsa sriracha",
+  "sriracha",
+  "salsa di pesce",
+  "fish sauce",
+  "salsa d'ostrica",
+  "oyster sauce",
+  "salse asiatiche"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sommerrolle_mit_Hoisin-Sauce_170305_AW.jpg/960px-Sommerrolle_mit_Hoisin-Sauce_170305_AW.jpg",
+  "autore": "Alice Wiegand",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Sommerrolle_mit_Hoisin-Sauce_170305_AW.jpg"
+ },
+ "descrizione": [
+  "Le salse della cucina asiatica: dolci e dense (teriyaki, hoisin), piccanti (sriracha) o salatissime e liquide (di pesce, d'ostrica)."
+ ],
+ "proprieta": [
+  {
+   "t": "Sale e zucchero",
+   "d": "Quasi tutte sono ricche di entrambi: si usano a cucchiaini."
+  },
+  {
+   "t": "Hoisin",
+   "d": "La più calorica: 220 kcal per 100 g, per metà zuccheri."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 4,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 5
+ },
+ "tipi": [
+  {
+   "nome": "Teriyaki",
+   "testo": "Soia, mirin e zucchero.",
+   "valori": [
+    {
+     "stato": "pronta",
+     "alimento": "Salsa teriyaki"
+    }
+   ]
+  },
+  {
+   "nome": "Hoisin",
+   "testo": "Soia fermentata dolce, per l'anatra laccata.",
+   "valori": [
+    {
+     "stato": "pronta",
+     "alimento": "Salsa hoisin"
+    }
+   ]
+  },
+  {
+   "nome": "Sriracha",
+   "testo": "Peperoncino, aglio, aceto.",
+   "valori": [
+    {
+     "stato": "pronta",
+     "alimento": "Salsa sriracha"
+    }
+   ]
+  },
+  {
+   "nome": "Di pesce",
+   "testo": "Acciughe fermentate: non vegetariana.",
+   "valori": [
+    {
+     "stato": "pronta",
+     "alimento": "Salsa di pesce (fish sauce)"
+    }
+   ]
+  },
+  {
+   "nome": "D'ostrica",
+   "testo": "Non vegetariana; esiste la versione ai funghi.",
+   "valori": [
+    {
+     "stato": "pronta",
+     "alimento": "Salsa d'ostrica"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperte, mesi."
+  }
+ ],
+ "simili": [
+  "Salsa di soia",
+  "Salse americane"
+ ],
+ "abbinamenti": [
+  "Riso bianco (cotto)",
+  "Noodles",
+  "Tofu",
+  "Pak choi",
+  "Zenzero",
+  "Lime"
+ ],
+ "cat": "Condimenti e salse",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

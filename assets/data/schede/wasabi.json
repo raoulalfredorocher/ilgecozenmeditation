@@ -1,0 +1,89 @@
+{
+ "id": "wasabi",
+ "nome": "Wasabi",
+ "famiglia": "Brassicaceae",
+ "latino": "Eutrema japonicum",
+ "parole": [
+  "wasabi",
+  "rafano",
+  "cren",
+  "barbaforte"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/7/71/Fresh_wasabi_rhizomes.jpg",
+  "autore": "Sabigirl",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Fresh_wasabi_rhizomes.jpg"
+ },
+ "descrizione": [
+  "Rizoma giapponese grattugiato fresco. Quasi tutto il wasabi in tubetto è rafano con senape e colorante verde."
+ ],
+ "proprieta": [
+  {
+   "t": "Isotiocianati",
+   "d": "Il piccante \"sale al naso\" e svanisce in pochi minuti."
+  },
+  {
+   "t": "Si usa a grammi",
+   "d": "Le calorie della pasta (292 per 100 g) contano poco."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "In pasta",
+   "valori": [
+    {
+     "stato": "tubetto",
+     "alimento": "Wasabi (pasta)"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "il tubetto, aperto, 1–2 mesi."
+  }
+ ],
+ "simili": [
+  "Senape",
+  "Zenzero"
+ ],
+ "abbinamenti": [
+  "Salsa di soia",
+  "Salmone",
+  "Riso bianco (cotto)",
+  "Alghe",
+  "Avocado"
+ ],
+ "cat": "Condimenti e salse",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

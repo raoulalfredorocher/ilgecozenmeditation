@@ -1,0 +1,101 @@
+{
+ "id": "aceto",
+ "nome": "Aceto",
+ "famiglia": "Condimento fermentato",
+ "parole": [
+  "aceto",
+  "aceto balsamico",
+  "aceto di mele",
+  "aceto di vino",
+  "aceto di riso",
+  "glassa di aceto balsamico"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Balsamic_vinegar_%28drops%29.jpg/960px-Balsamic_vinegar_%28drops%29.jpg",
+  "autore": "Andrea Levers",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Balsamic_vinegar_%28drops%29.jpg"
+ },
+ "descrizione": [
+  "Vino, sidro o mosto in cui i batteri acetici trasformano l'alcol in acido acetico (5–6%).",
+  "Il balsamico tradizionale di Modena DOP è mosto cotto invecchiato almeno 12 anni; quello comune (IGP) è aceto di vino con mosto."
+ ],
+ "proprieta": [
+  {
+   "t": "Quasi senza calorie",
+   "d": "Di vino o di mele circa 20 kcal per 100 g. Il balsamico 88, per gli zuccheri del mosto; la glassa oltre 200."
+  },
+  {
+   "t": "Glicemia",
+   "d": "L'acido acetico rallenta lo svuotamento dello stomaco: con un pasto di carboidrati abbassa un po' il picco di glicemia."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 5,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Balsamico",
+   "valori": [
+    {
+     "stato": "di Modena IGP",
+     "alimento": "Aceto balsamico"
+    }
+   ]
+  },
+  {
+   "nome": "Di mele",
+   "valori": [
+    {
+     "stato": "sidro",
+     "alimento": "Aceto di mele"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In dispensa",
+   "d": "si conserva per anni; il deposito (\"madre\") è innocuo."
+  }
+ ],
+ "simili": [
+  "Limone",
+  "Olio"
+ ],
+ "abbinamenti": [
+  "Olio",
+  "Fragola",
+  "Parmigiano",
+  "Insalata",
+  "Cipolla"
+ ],
+ "cat": "Condimenti e salse",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

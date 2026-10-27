@@ -1,0 +1,91 @@
+{
+ "id": "senape",
+ "nome": "Senape",
+ "famiglia": "Brassicaceae",
+ "parole": [
+  "senape",
+  "mostarda",
+  "mustard",
+  "senape di digione"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Senf-Variationen.jpg/960px-Senf-Variationen.jpg",
+  "autore": "Rainer Zenz",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Senf-Variationen.jpg"
+ },
+ "descrizione": [
+  "Semi di senape macinati con aceto, acqua e sale. Dolce (gialla) o più piccante (Digione, all'antica con i semi interi).",
+  "La \"mostarda\" di Cremona è un'altra cosa: frutta candita allo sciroppo di senape."
+ ],
+ "proprieta": [
+  {
+   "t": "Pochissime calorie",
+   "d": "60 kcal per 100 g: un cucchiaino ne ha 3."
+  },
+  {
+   "t": "Isotiocianati",
+   "d": "Gli stessi composti piccanti di cavoli e rucola."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 3,
+  "Acido": 3,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Senape",
+   "valori": [
+    {
+     "stato": "gialla",
+     "alimento": "Senape"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperta, mesi; perde piccantezza col tempo."
+  }
+ ],
+ "simili": [
+  "Wasabi",
+  "Maionese",
+  "Ketchup"
+ ],
+ "abbinamenti": [
+  "Miele",
+  "Pollo",
+  "Patata",
+  "Cavolo",
+  "Salmone"
+ ],
+ "cat": "Condimenti e salse",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
