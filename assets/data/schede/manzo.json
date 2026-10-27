@@ -1,0 +1,131 @@
+{
+ "id": "manzo",
+ "nome": "Manzo",
+ "cat": "Carne, pesce e uova",
+ "latino": "Bos taurus",
+ "famiglia": "Carne rossa",
+ "parole": [
+  "manzo",
+  "carne di manzo",
+  "fesa",
+  "bistecca",
+  "macinato",
+  "beef",
+  "vitello",
+  "bresaola"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/6/60/Standing-rib-roast.jpg",
+  "autore": "Michael C. Berch",
+  "licenza": "CC BY-SA 2.5",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Standing-rib-roast.jpg"
+ },
+ "descrizione": [
+  "Carne rossa: i tagli magri (fesa, girello, noce) hanno pochi grassi; costata e macinato normale molti di più.",
+  "Dai tagli si ricavano anche bresaola e carpaccio."
+ ],
+ "proprieta": [
+  {
+   "t": "Ferro eme",
+   "d": "Il ferro della carne si assorbe molto meglio di quello vegetale."
+  },
+  {
+   "t": "B12 e zinco",
+   "d": "100 g coprono il fabbisogno di vitamina B12."
+  },
+  {
+   "t": "Carne rossa",
+   "d": "L'OMS (IARC) la classifica come \"probabilmente cancerogena\" (gruppo 2A); le lavorate (salumi) come cancerogene (gruppo 1). Il WCRF consiglia meno di 350–500 g cotti a settimana."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 5
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Taglio magro (fesa, girello)",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Manzo magro (fesa)"
+    },
+    {
+     "stato": "arrosto",
+     "usda": "23598"
+    }
+   ]
+  },
+  {
+   "nome": "Macinato magro (5% grassi)",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "23557"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Alla piastra",
+   "tempo": "2–4 min per lato",
+   "come": "Tagliata: carne a temperatura ambiente, piastra rovente, riposo 5 min prima di tagliare."
+  },
+  {
+   "metodo": "Brasato",
+   "tempo": "2–3 h",
+   "come": "Tagli da cottura lunga con vino e verdure."
+  },
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "Carpaccio o tartare solo da carne freschissima."
+  }
+ ],
+ "nota_cottura": "Le cotture molto annerite (griglia sulla fiamma) formano composti da evitare: meglio non bruciarla.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "tagli interi 3–4 giorni, macinato 1 giorno."
+  }
+ ],
+ "simili": [
+  "Tacchino",
+  "Pollo"
+ ],
+ "abbinamenti": [
+  "Rucola",
+  "Parmigiano",
+  "Rosmarino",
+  "Patata",
+  "Funghi",
+  "Vino rosso"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "IARC Monographs vol. 114 (2015); WCRF/AICR 2018",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

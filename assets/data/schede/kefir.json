@@ -1,0 +1,89 @@
+{
+ "id": "kefir",
+ "nome": "Kefir",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Latte fermentato",
+ "parole": [
+  "kefir"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/8/83/Kefir_in_a_glass.JPG",
+  "autore": "Quijote",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Kefir_in_a_glass.JPG"
+ },
+ "descrizione": [
+  "Latte fermentato da \"granuli\" di batteri e lieviti, nato nel Caucaso. Più liquido e più acidulo dello yogurt, leggermente frizzante."
+ ],
+ "proprieta": [
+  {
+   "t": "Molti fermenti",
+   "d": "Contiene più ceppi diversi dello yogurt, lieviti compresi."
+  },
+  {
+   "t": "Poco lattosio",
+   "d": "La fermentazione ne consuma buona parte."
+  },
+  {
+   "t": "Leggero",
+   "d": "41 kcal per 100 g nella versione magra."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 4,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Kefir di latte",
+   "valori": [
+    {
+     "stato": "bianco",
+     "alimento": "Kefir"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperto 4–5 giorni; continua lentamente a fermentare."
+  }
+ ],
+ "simili": [
+  "Yogurt",
+  "Latte"
+ ],
+ "abbinamenti": [
+  "Fragole",
+  "Banana",
+  "Fiocchi d'avena",
+  "Semi di chia"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

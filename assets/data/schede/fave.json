@@ -1,0 +1,106 @@
+{
+ "id": "fave",
+ "nome": "Fave",
+ "cat": "Legumi e soia",
+ "latino": "Vicia faba",
+ "famiglia": "Fabacee",
+ "parole": [
+  "fave",
+  "fava",
+  "fava bean",
+  "fave secche",
+  "macco"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/FavaBeanInPod_%288305001217%29.jpg/960px-FavaBeanInPod_%288305001217%29.jpg",
+  "autore": "H. Alexander Talbot",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:FavaBeanInPod_%288305001217%29.jpg"
+ },
+ "descrizione": [
+  "Legume primaverile tra i più antichi. Fresche si mangiano anche crude (con il pecorino, a Roma); secche per purè e macco."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine e fibra",
+   "d": "Fresche: 5 g di proteine per 100 g, secche 26 g."
+  },
+  {
+   "t": "Favismo",
+   "d": "Chi ha il deficit dell'enzima G6PD non deve mangiarle: possono causare anemia grave."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   4,
+   5,
+   6
+  ],
+  "picco": [
+   5
+  ],
+  "testo": "fresche da aprile a giugno."
+ },
+ "tipi": [
+  {
+   "nome": "Fave fresche",
+   "valori": [
+    {
+     "stato": "crude",
+     "alimento": "Fave fresche"
+    },
+    {
+     "stato": "cotte",
+     "usda": "11089"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crude",
+   "tempo": "",
+   "come": "Sgranate, con pecorino romano."
+  },
+  {
+   "metodo": "Purè con cicoria",
+   "tempo": "1,5 h",
+   "come": "Secche, cotte a lungo e schiacciate con olio: classico pugliese."
+  },
+  {
+   "metodo": "Vignarola",
+   "tempo": "20 min",
+   "come": "Con piselli, carciofi e lattuga."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fresche",
+   "d": "nel baccello in frigo, 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Piselli",
+  "Edamame",
+  "Ceci"
+ ],
+ "abbinamenti": [
+  "Pecorino",
+  "Cicoria",
+  "Piselli",
+  "Carciofi",
+  "Menta fresca"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Favismo: Istituto Superiore di Sanità",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

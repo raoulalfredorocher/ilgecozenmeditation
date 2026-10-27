@@ -1,0 +1,96 @@
+{
+ "id": "gouda",
+ "nome": "Gouda e edam",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio olandese",
+ "parole": [
+  "gouda",
+  "edam",
+  "maasdam",
+  "formaggio olandese"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Chesses_gouda_affinage.JPG/960px-Chesses_gouda_affinage.JPG",
+  "autore": "Wikimedia Commons",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Chesses_gouda_affinage.JPG"
+ },
+ "descrizione": [
+  "Formaggi olandesi di latte vaccino. Il gouda giovane è dolce e morbido, invecchiato diventa duro e caramellato; l'edam (crosta rossa) è più magro."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine",
+   "d": "Circa 25 g per 100 g."
+  },
+  {
+   "t": "Vitamina K2",
+   "d": "I formaggi stagionati olandesi ne sono una buona fonte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 3,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Gouda",
+   "valori": [
+    {
+     "stato": "stagionato",
+     "alimento": "Gouda"
+    }
+   ]
+  },
+  {
+   "nome": "Edam",
+   "valori": [
+    {
+     "stato": "stagionato",
+     "alimento": "Edam"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane."
+  }
+ ],
+ "simili": [
+  "Emmental",
+  "Fontina"
+ ],
+ "abbinamenti": [
+  "Mela",
+  "Pane",
+  "Senape"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

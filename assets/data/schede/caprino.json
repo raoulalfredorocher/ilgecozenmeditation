@@ -1,0 +1,91 @@
+{
+ "id": "caprino",
+ "nome": "Caprino",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio di capra",
+ "parole": [
+  "caprino",
+  "formaggio di capra",
+  "formaggio caprino",
+  "chèvre",
+  "latte di capra"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Crottin_02.jpg/960px-Crottin_02.jpg",
+  "autore": "Coyau",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Crottin_02.jpg"
+ },
+ "descrizione": [
+  "Formaggio di latte di capra: fresco è morbido e acidulo, stagionato (come il crottin francese) è più compatto e saporito."
+ ],
+ "proprieta": [
+  {
+   "t": "Più digeribile per alcuni",
+   "d": "I grassi del latte di capra sono a catena più corta."
+  },
+  {
+   "t": "Proteine",
+   "d": "Circa 19 g per 100 g il fresco."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 2,
+  "Acido": 3,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Caprino fresco",
+   "valori": [
+    {
+     "stato": "fresco",
+     "alimento": "Formaggio caprino fresco"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "fresco 1 settimana."
+  }
+ ],
+ "simili": [
+  "Feta",
+  "Ricotta",
+  "Brie e camembert"
+ ],
+ "abbinamenti": [
+  "Barbabietola",
+  "Miele",
+  "Noci",
+  "Fichi",
+  "Insalata"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

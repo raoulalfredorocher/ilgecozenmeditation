@@ -1,0 +1,103 @@
+{
+ "id": "tempeh",
+ "nome": "Tempeh",
+ "cat": "Legumi e soia",
+ "latino": "",
+ "famiglia": "Derivato della soia",
+ "parole": [
+  "tempeh",
+  "tempe"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tempeh_%288681605421%29.jpg/960px-Tempeh_%288681605421%29.jpg",
+  "autore": "Veganbaking.net",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Tempeh_%288681605421%29.jpg"
+ },
+ "descrizione": [
+  "Panetto di soia intera fermentata con un fungo (Rhizopus), dall'Indonesia. Più sodo e saporito del tofu, sa di nocciola e fungo."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine",
+   "d": "Circa 20 g per 100 g."
+  },
+  {
+   "t": "Fermentato",
+   "d": "La fermentazione rende la soia più digeribile."
+  },
+  {
+   "t": "Fibra",
+   "d": "Usa i fagioli interi: più fibra del tofu."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Tempeh",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "16114"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Sbollentato",
+   "tempo": "10 min",
+   "come": "Prima di marinarlo: toglie l'amaro e assorbe meglio."
+  },
+  {
+   "metodo": "In padella",
+   "tempo": "8–10 min",
+   "come": "A fette, dorato, con salsa di soia e sciroppo d'acero."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "chiuso, fino alla data; aperto 4–5 giorni. Si congela."
+  }
+ ],
+ "simili": [
+  "Tofu",
+  "Seitan",
+  "Soia"
+ ],
+ "abbinamenti": [
+  "Salsa teriyaki",
+  "Riso integrale (cotto)",
+  "Broccoli",
+  "Zenzero fresco"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

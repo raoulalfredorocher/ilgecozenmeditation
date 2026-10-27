@@ -40,7 +40,8 @@ function schedaOf(name) {
   let best = null, len = 0;
   for (const s of schede) for (const p of [s.nome, ...(s.parole || [])]) {
     const w = fold(p);
-    if (w.length > len && (n === w || n.startsWith(w + ' '))) { best = s; len = w.length; }
+    // "burro d'arachidi", "latte di mandorla": è un altro alimento, non una varietà
+    if (w.length > len && (n === w || (n.startsWith(w + ' ') && !/^(di |d['’])/.test(n.slice(w.length + 1))))) { best = s; len = w.length; }
   }
   return best;
 }

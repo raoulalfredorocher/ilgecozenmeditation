@@ -1,0 +1,91 @@
+{
+ "id": "provolone",
+ "nome": "Provolone",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio a pasta filata",
+ "parole": [
+  "provolone",
+  "scamorza",
+  "caciocavallo",
+  "provola"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Provolone_watermelon_shape.jpg/960px-Provolone_watermelon_shape.jpg",
+  "autore": "like the grand canyon",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Provolone_watermelon_shape.jpg"
+ },
+ "descrizione": [
+  "Pasta filata come la mozzarella, ma stagionata: dolce se giovane, piccante se più vecchio. Scamorza e caciocavallo sono parenti stretti."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine e calcio",
+   "d": "Circa 26 g di proteine e 750 mg di calcio per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 3,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Provolone",
+   "valori": [
+    {
+     "stato": "stagionato",
+     "alimento": "Provolone"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Alla piastra",
+   "tempo": "2 min per lato",
+   "come": "Fette spesse (meglio la scamorza affumicata) finché fa la crosticina."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane in carta."
+  }
+ ],
+ "simili": [
+  "Mozzarella",
+  "Fontina"
+ ],
+ "abbinamenti": [
+  "Pane",
+  "Peperoni",
+  "Melanzana",
+  "Funghi"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

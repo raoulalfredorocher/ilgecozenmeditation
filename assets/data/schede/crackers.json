@@ -1,0 +1,137 @@
+{
+ "id": "crackers",
+ "nome": "Crackers e fette biscottate",
+ "cat": "Cereali, pane e pasta",
+ "latino": "",
+ "famiglia": "Prodotti da forno",
+ "parole": [
+  "crackers",
+  "cracker",
+  "fette biscottate",
+  "fetta biscottata",
+  "pretzel",
+  "grissini",
+  "taralli",
+  "gallette"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/HK_food_%E6%A2%B3%E6%89%93%E9%A4%85%E4%B9%BE_Soda_biscuits_crackers_June_2024_R12S_01.jpg/960px-HK_food_%E6%A2%B3%E6%89%93%E9%A4%85%E4%B9%BE_Soda_biscuits_crackers_June_2024_R12S_01.jpg",
+  "autore": "SZolramui Hwa Griom",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:HK_food_%E6%A2%B3%E6%89%93%E9%A4%85%E4%B9%BE_Soda_biscuits_crackers_June_2024_R12S_01.jpg"
+ },
+ "descrizione": [
+  "Pani secchi e croccanti: crackers (sfoglia salata), fette biscottate (pane biscottato), pretzel (ciambelle salate tedesche).",
+  "Senz'acqua concentrano le calorie: circa 400 kcal per 100 g."
+ ],
+ "proprieta": [
+  {
+   "t": "Calorie concentrate",
+   "d": "Un pacchetto di crackers (25 g) ≈ 110 kcal, come una fetta e mezza di pane."
+  },
+  {
+   "t": "Sale e grassi",
+   "d": "Spesso più del pane: guarda l'etichetta."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 3,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Crackers",
+   "valori": [
+    {
+     "stato": "salati",
+     "alimento": "Crackers"
+    }
+   ]
+  },
+  {
+   "nome": "Fette biscottate",
+   "testo": "Una fetta ≈ 8–10 g.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Zwieback-1.jpg/500px-Zwieback-1.jpg",
+    "autore": "Wikimedia Commons",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Zwieback-1.jpg"
+   },
+   "valori": [
+    {
+     "stato": "classiche",
+     "alimento": "Fette biscottate"
+    }
+   ]
+  },
+  {
+   "nome": "Pretzel",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/BrezelnSalz02_%28cropped%29.JPG/500px-BrezelnSalz02_%28cropped%29.JPG",
+    "autore": "Sundar1",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:BrezelnSalz02_%28cropped%29.JPG"
+   },
+   "valori": [
+    {
+     "stato": "salati",
+     "alimento": "Pretzel salati"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarli",
+ "cotture": [
+  {
+   "metodo": "Colazione",
+   "tempo": "",
+   "come": "Fette biscottate con ricotta e marmellata, o burro d'arachidi e banana."
+  },
+  {
+   "metodo": "Spuntino",
+   "tempo": "",
+   "come": "Crackers con hummus o formaggio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Chiusi",
+   "d": "aperti, in una scatola di latta: restano croccanti."
+  }
+ ],
+ "simili": [
+  "Pane",
+  "Mais"
+ ],
+ "abbinamenti": [
+  "Hummus",
+  "Formaggio spalmabile (tipo Philadelphia)",
+  "Marmellata",
+  "Ricotta vaccina"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

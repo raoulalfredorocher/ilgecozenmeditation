@@ -1,0 +1,165 @@
+{
+ "id": "uovo",
+ "nome": "Uovo",
+ "cat": "Carne, pesce e uova",
+ "latino": "Gallus gallus domesticus",
+ "famiglia": "Uova",
+ "parole": [
+  "uovo",
+  "uova",
+  "albume",
+  "albumi",
+  "tuorlo",
+  "egg",
+  "frittata",
+  "uova sode",
+  "uova strapazzate"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Huevo_frito.jpg/960px-Huevo_frito.jpg",
+  "autore": "Horacio Cambeiro",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Huevo_frito.jpg"
+ },
+ "descrizione": [
+  "Un uovo medio pesa circa 60 g (50 g senza guscio): 6 g di proteine. Il codice sul guscio dice l'allevamento: 0 biologico, 1 all'aperto, 2 a terra, 3 in gabbia.",
+  "L'albume è quasi solo proteine; tuorlo con grassi, vitamine e colesterolo."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine complete",
+   "d": "Il riferimento per qualità delle proteine."
+  },
+  {
+   "t": "Colina e luteina",
+   "d": "Nel tuorlo: utili per cervello e vista."
+  },
+  {
+   "t": "Colesterolo",
+   "d": "Circa 370 mg per 100 g, ma per la maggior parte delle persone incide poco sul colesterolo nel sangue."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "titolo_tipi": "Uovo e cotture",
+ "tipi": [
+  {
+   "nome": "Uovo intero",
+   "testo": "Un uovo senza guscio ≈ 50 g, 72 kcal.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "01123"
+    },
+    {
+     "stato": "sodo",
+     "usda": "01129"
+    }
+   ]
+  },
+  {
+   "nome": "Albume",
+   "testo": "Un albume ≈ 33 g, 15 kcal.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Albume"
+    }
+   ]
+  },
+  {
+   "nome": "Tuorlo",
+   "testo": "Un tuorlo ≈ 17 g, 55 kcal.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "01125"
+    }
+   ]
+  },
+  {
+   "nome": "Uovo fritto",
+   "valori": [
+    {
+     "stato": "fritto",
+     "alimento": "Uovo fritto"
+    }
+   ]
+  },
+  {
+   "nome": "Uova strapazzate",
+   "valori": [
+    {
+     "stato": "strapazzate",
+     "alimento": "Uova strapazzate"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Sodo",
+   "tempo": "9–10 min",
+   "come": "In acqua bollente, poi in acqua fredda. Alla coque 3 min, bazzotto 6."
+  },
+  {
+   "metodo": "In camicia",
+   "tempo": "3 min",
+   "come": "In acqua appena sotto il bollore con un goccio d'aceto."
+  },
+  {
+   "metodo": "Frittata al forno",
+   "tempo": "20 min · 180 °C",
+   "come": "Con verdure: niente olio in padella."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nella confezione, punta in giù: entro la data (28 giorni dalla deposizione)."
+  },
+  {
+   "t": "Fresco?",
+   "d": "in acqua l'uovo fresco va a fondo, quello vecchio galleggia."
+  }
+ ],
+ "simili": [
+  "Pollo",
+  "Tofu"
+ ],
+ "abbinamenti": [
+  "Spinaci",
+  "Asparagi",
+  "Avocado",
+  "Pane integrale",
+  "Zucchine",
+  "Parmigiano"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

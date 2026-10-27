@@ -131,6 +131,24 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Asparagus_%285661403316%29.jpg/960px-Asparagus_%285661403316%29.jpg"
   },
   {
+   "id": "avena",
+   "nome": "Avena",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Fiocchi d'avena"
+   ],
+   "parole": [
+    "avena",
+    "fiocchi d'avena",
+    "oats",
+    "porridge",
+    "latte d'avena",
+    "bevanda d'avena",
+    "crusca d'avena"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/9/97/Rolled_oats.jpg"
+  },
+  {
    "id": "avocado",
    "nome": "Avocado",
    "cat": "Frutta",
@@ -205,6 +223,36 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/960px-Chard_%28Beta_vulgaris_var_cicla%29.jpg"
   },
   {
+   "id": "brie",
+   "nome": "Brie e camembert",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Brie",
+    "Camembert"
+   ],
+   "parole": [
+    "brie",
+    "camembert",
+    "crosta fiorita"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Brie_01.jpg/960px-Brie_01.jpg"
+  },
+  {
+   "id": "burro",
+   "nome": "Burro",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Burro"
+   ],
+   "parole": [
+    "burro",
+    "butter",
+    "burro chiarificato",
+    "ghee"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG/960px-%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG"
+  },
+  {
    "id": "cachi",
    "nome": "Cachi",
    "cat": "Frutta",
@@ -221,6 +269,22 @@
     "cachi secchi"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Fuyu_persimmon_fruits%2C_one_cut_open.jpg/960px-Fuyu_persimmon_fruits%2C_one_cut_open.jpg"
+  },
+  {
+   "id": "caprino",
+   "nome": "Caprino",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Formaggio caprino fresco"
+   ],
+   "parole": [
+    "caprino",
+    "formaggio di capra",
+    "formaggio caprino",
+    "chèvre",
+    "latte di capra"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Crottin_02.jpg/960px-Crottin_02.jpg"
   },
   {
    "id": "carambola",
@@ -323,6 +387,26 @@
     "broccolo romanesco"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/960px-Cabbage_and_cross_section_on_white.jpg"
+  },
+  {
+   "id": "ceci",
+   "nome": "Ceci",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Ceci (secchi)",
+    "Hummus"
+   ],
+   "parole": [
+    "ceci",
+    "cece",
+    "chickpea",
+    "garbanzo",
+    "farina di ceci",
+    "hummus",
+    "farinata",
+    "panelle"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Soaked_and_dried_chickpeas.jpg/960px-Soaked_and_dried_chickpeas.jpg"
   },
   {
    "id": "cetriolo",
@@ -451,6 +535,47 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Coconut_%28halved%29_%283330701660%29.jpg/960px-Coconut_%28halved%29_%283330701660%29.jpg"
   },
   {
+   "id": "cous-cous",
+   "nome": "Cous cous",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Cous cous (crudo)",
+    "Bulgur (cotto)"
+   ],
+   "parole": [
+    "cous cous",
+    "couscous",
+    "cuscus",
+    "bulgur",
+    "grano",
+    "frumento",
+    "tabbouleh",
+    "farro"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg/960px-Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg"
+  },
+  {
+   "id": "crackers",
+   "nome": "Crackers e fette biscottate",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Crackers",
+    "Fette biscottate",
+    "Pretzel salati"
+   ],
+   "parole": [
+    "crackers",
+    "cracker",
+    "fette biscottate",
+    "fetta biscottata",
+    "pretzel",
+    "grissini",
+    "taralli",
+    "gallette"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/HK_food_%E6%A2%B3%E6%89%93%E9%A4%85%E4%B9%BE_Soda_biscuits_crackers_June_2024_R12S_01.jpg/960px-HK_food_%E6%A2%B3%E6%89%93%E9%A4%85%E4%B9%BE_Soda_biscuits_crackers_June_2024_R12S_01.jpg"
+  },
+  {
    "id": "crescione",
    "nome": "Crescione",
    "cat": "Verdura",
@@ -481,6 +606,44 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Date_Fruits-Duo.jpg/960px-Date_Fruits-Duo.jpg"
   },
   {
+   "id": "emmental",
+   "nome": "Emmental",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Emmental"
+   ],
+   "parole": [
+    "emmental",
+    "emmentaler",
+    "groviera",
+    "gruyère",
+    "svizzero"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Emmentaler_Premier_Cru.jpg/960px-Emmentaler_Premier_Cru.jpg"
+  },
+  {
+   "id": "fagioli",
+   "nome": "Fagioli",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Fagioli borlotti (secchi)",
+    "Fagioli neri (cotti)",
+    "Fagioli rossi (cotti)"
+   ],
+   "parole": [
+    "fagioli",
+    "fagiolo",
+    "borlotti",
+    "cannellini",
+    "fagioli neri",
+    "fagioli rossi",
+    "kidney",
+    "beans",
+    "fagioli di lamon"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Rosecoco_beans.jpg/960px-Rosecoco_beans.jpg"
+  },
+  {
    "id": "fagiolino",
    "nome": "Fagiolino",
    "cat": "Verdura",
@@ -495,6 +658,34 @@
     "green beans"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Heaps_of_beans.jpg/960px-Heaps_of_beans.jpg"
+  },
+  {
+   "id": "fave",
+   "nome": "Fave",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Fave fresche"
+   ],
+   "parole": [
+    "fave",
+    "fava",
+    "fava bean",
+    "fave secche",
+    "macco"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/FavaBeanInPod_%288305001217%29.jpg/960px-FavaBeanInPod_%288305001217%29.jpg"
+  },
+  {
+   "id": "feta",
+   "nome": "Feta",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Feta"
+   ],
+   "parole": [
+    "feta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Feta_Cheese.jpg/960px-Feta_Cheese.jpg"
   },
   {
    "id": "fico-d-india",
@@ -543,6 +734,55 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg/960px-Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg"
   },
   {
+   "id": "fiocchi-di-latte",
+   "nome": "Fiocchi di latte",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Fiocchi di latte"
+   ],
+   "parole": [
+    "fiocchi di latte",
+    "cottage cheese",
+    "quark",
+    "jocca"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Cottagecheese200px.jpg/960px-Cottagecheese200px.jpg"
+  },
+  {
+   "id": "fontina",
+   "nome": "Fontina",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Fontina"
+   ],
+   "parole": [
+    "fontina",
+    "fontal",
+    "asiago",
+    "taleggio",
+    "toma"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Fontina_DOP.jpg/960px-Fontina_DOP.jpg"
+  },
+  {
+   "id": "formaggio-spalmabile",
+   "nome": "Formaggio spalmabile",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Formaggio spalmabile (tipo Philadelphia)"
+   ],
+   "parole": [
+    "formaggio spalmabile",
+    "spalmabile",
+    "cream cheese",
+    "robiola",
+    "stracchino",
+    "crescenza",
+    "mascarpone"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Cream_crackers_with_cheese_spread.jpg/960px-Cream_crackers_with_cheese_spread.jpg"
+  },
+  {
    "id": "fragola",
    "nome": "Fragola",
    "cat": "Frutta",
@@ -579,6 +819,55 @@
     "mushroom"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/0/01/ChampignonMushroom.jpg"
+  },
+  {
+   "id": "gorgonzola",
+   "nome": "Gorgonzola",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Gorgonzola"
+   ],
+   "parole": [
+    "gorgonzola",
+    "erborinato",
+    "roquefort",
+    "formaggio blu",
+    "blue cheese"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/A_Gongonzola_from_Baci.jpg/960px-A_Gongonzola_from_Baci.jpg"
+  },
+  {
+   "id": "gouda",
+   "nome": "Gouda e edam",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Gouda",
+    "Edam"
+   ],
+   "parole": [
+    "gouda",
+    "edam",
+    "maasdam",
+    "formaggio olandese"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Chesses_gouda_affinage.JPG/960px-Chesses_gouda_affinage.JPG"
+  },
+  {
+   "id": "grano-saraceno",
+   "nome": "Grano saraceno",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Grano saraceno (cotto)"
+   ],
+   "parole": [
+    "grano saraceno",
+    "saraceno",
+    "buckwheat",
+    "kasha",
+    "pizzoccheri",
+    "soba"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Yunnan_buckwheat_rice.jpg/960px-Yunnan_buckwheat_rice.jpg"
   },
   {
    "id": "guava",
@@ -630,6 +919,18 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Stack_of_romaine_lettuce_heads.jpg/960px-Stack_of_romaine_lettuce_heads.jpg"
   },
   {
+   "id": "kefir",
+   "nome": "Kefir",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Kefir"
+   ],
+   "parole": [
+    "kefir"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/8/83/Kefir_in_a_glass.JPG"
+  },
+  {
    "id": "kiwi",
    "nome": "Kiwi",
    "cat": "Frutta",
@@ -667,6 +968,45 @@
     "raspberry"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Raspberries_%28Rubus_idaeus%29.jpg/960px-Raspberries_%28Rubus_idaeus%29.jpg"
+  },
+  {
+   "id": "latte",
+   "nome": "Latte",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Latte intero",
+    "Latte parzialmente scremato",
+    "Latte scremato"
+   ],
+   "parole": [
+    "latte",
+    "latte vaccino",
+    "milk",
+    "latte intero",
+    "latte scremato",
+    "latte parzialmente scremato",
+    "latte ps",
+    "latte senza lattosio"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Glass_of_Milk_%2833657535532%29.jpg/960px-Glass_of_Milk_%2833657535532%29.jpg"
+  },
+  {
+   "id": "lenticchie",
+   "nome": "Lenticchie",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Lenticchie (secche)",
+    "Lenticchie (cotte)"
+   ],
+   "parole": [
+    "lenticchie",
+    "lenticchia",
+    "lentil",
+    "lenticchie rosse",
+    "lenticchie decorticate",
+    "castelluccio"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/3_types_of_lentil.png/960px-3_types_of_lentil.png"
   },
   {
    "id": "lime",
@@ -714,6 +1054,32 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Litchi_chinensis_fruits.JPG/960px-Litchi_chinensis_fruits.JPG"
   },
   {
+   "id": "mais",
+   "nome": "Mais",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Mais dolce in scatola (sgocciolato)",
+    "Corn flakes",
+    "Popcorn (senza grassi)",
+    "Tortilla chips (nachos)"
+   ],
+   "parole": [
+    "mais",
+    "granturco",
+    "corn",
+    "polenta",
+    "mais dolce",
+    "pannocchia",
+    "popcorn",
+    "pop corn",
+    "corn flakes",
+    "cornflakes",
+    "nachos",
+    "tortilla chips"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/7/79/VegCorn.jpg"
+  },
+  {
    "id": "mango",
    "nome": "Mango",
    "cat": "Frutta",
@@ -725,6 +1091,25 @@
     "manghi"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/960px-Mangos_-_single_and_halved.jpg"
+  },
+  {
+   "id": "manzo",
+   "nome": "Manzo",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Manzo magro (fesa)"
+   ],
+   "parole": [
+    "manzo",
+    "carne di manzo",
+    "fesa",
+    "bistecca",
+    "macinato",
+    "beef",
+    "vitello",
+    "bresaola"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/6/60/Standing-rib-roast.jpg"
   },
   {
    "id": "maracuja",
@@ -838,6 +1223,36 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Minze.jpg/960px-Minze.jpg"
   },
   {
+   "id": "merluzzo",
+   "nome": "Merluzzo",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Merluzzo"
+   ],
+   "parole": [
+    "merluzzo",
+    "cod",
+    "baccalà",
+    "stoccafisso",
+    "nasello",
+    "filetti di merluzzo"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Cod_fillet.jpg/960px-Cod_fillet.jpg"
+  },
+  {
+   "id": "miglio",
+   "nome": "Miglio",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Miglio (cotto)"
+   ],
+   "parole": [
+    "miglio",
+    "millet"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/MILLET_grains_India.jpg/960px-MILLET_grains_India.jpg"
+  },
+  {
    "id": "mirtillo",
    "nome": "Mirtillo",
    "cat": "Frutta",
@@ -855,6 +1270,19 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/1/15/Blueberries.jpg"
   },
   {
+   "id": "miso",
+   "nome": "Miso",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Miso"
+   ],
+   "parole": [
+    "miso",
+    "zuppa di miso"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Miso_001.jpg/960px-Miso_001.jpg"
+  },
+  {
    "id": "mora",
    "nome": "Mora",
    "cat": "Frutta",
@@ -870,6 +1298,23 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Blackberries_%28Rubus_fruticosus%29.jpg/960px-Blackberries_%28Rubus_fruticosus%29.jpg"
   },
   {
+   "id": "mozzarella",
+   "nome": "Mozzarella",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Mozzarella"
+   ],
+   "parole": [
+    "mozzarella",
+    "fior di latte",
+    "mozzarella di bufala",
+    "burrata",
+    "stracciatella",
+    "bocconcini"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Mozzarella_di_bufala3.jpg/960px-Mozzarella_di_bufala3.jpg"
+  },
+  {
    "id": "nespola",
    "nome": "Nespola",
    "cat": "Frutta",
@@ -883,6 +1328,24 @@
     "nespola del giappone"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg/960px-Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg"
+  },
+  {
+   "id": "noodles",
+   "nome": "Noodles",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Noodles di riso (cotti)"
+   ],
+   "parole": [
+    "noodles",
+    "noodle",
+    "spaghetti di riso",
+    "vermicelli di riso",
+    "ramen",
+    "udon",
+    "pad thai"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Rice_vermicelli.jpg/960px-Rice_vermicelli.jpg"
   },
   {
    "id": "okra",
@@ -918,6 +1381,23 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Olives_in_bowl.jpg/960px-Olives_in_bowl.jpg"
   },
   {
+   "id": "orzo",
+   "nome": "Orzo",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Orzo perlato (cotto)"
+   ],
+   "parole": [
+    "orzo",
+    "orzo perlato",
+    "orzo decorticato",
+    "barley",
+    "orzotto",
+    "caffè d'orzo"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Barley_grains.jpg/960px-Barley_grains.jpg"
+  },
+  {
    "id": "pak-choi",
    "nome": "Pak choi",
    "cat": "Verdura",
@@ -933,6 +1413,54 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Bok_Choy_%2849553125456%29.jpg/960px-Bok_Choy_%2849553125456%29.jpg"
   },
   {
+   "id": "pane",
+   "nome": "Pane",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Pane comune",
+    "Pane integrale",
+    "Pane di segale",
+    "Pane pita",
+    "Tortilla di frumento (piadina tipo wrap)"
+   ],
+   "parole": [
+    "pane",
+    "pane comune",
+    "pane integrale",
+    "pane di segale",
+    "pane pita",
+    "pita",
+    "piadina",
+    "tortilla",
+    "wrap",
+    "pangrattato",
+    "panino",
+    "brioche",
+    "pane in cassetta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Korb_mit_Br%C3%B6tchen.JPG/960px-Korb_mit_Br%C3%B6tchen.JPG"
+  },
+  {
+   "id": "panna",
+   "nome": "Panna",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Panna fresca (da montare)",
+    "Panna spray",
+    "Panna acida"
+   ],
+   "parole": [
+    "panna",
+    "panna fresca",
+    "panna da cucina",
+    "panna montata",
+    "panna spray",
+    "panna acida",
+    "cream"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cream_Drop.jpg/960px-Cream_Drop.jpg"
+  },
+  {
    "id": "papaya",
    "nome": "Papaya",
    "cat": "Frutta",
@@ -944,6 +1472,39 @@
     "papaia"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/03_Preparing_papaya_fruit_-_papaya_peeled_and_cut_in_half.jpg/960px-03_Preparing_papaya_fruit_-_papaya_peeled_and_cut_in_half.jpg"
+  },
+  {
+   "id": "parmigiano",
+   "nome": "Parmigiano",
+   "cat": "Latte e formaggi",
+   "alimenti": [],
+   "parole": [
+    "parmigiano",
+    "parmigiano reggiano",
+    "grana",
+    "grana padano",
+    "parmesan"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Parmigiano_Reggiano%2C_Italien%2C_Europ%C3%A4ische_Union.jpg/960px-Parmigiano_Reggiano%2C_Italien%2C_Europ%C3%A4ische_Union.jpg"
+  },
+  {
+   "id": "pasta",
+   "nome": "Pasta",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Pasta di semola (cruda)"
+   ],
+   "parole": [
+    "pasta",
+    "spaghetti",
+    "penne",
+    "fusilli",
+    "pasta integrale",
+    "pasta di semola",
+    "maccheroni",
+    "pasta all'uovo"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg/960px-%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg"
   },
   {
    "id": "pastinaca",
@@ -997,6 +1558,21 @@
     "fries"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/960px-Patates.jpg"
+  },
+  {
+   "id": "pecorino",
+   "nome": "Pecorino",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Pecorino"
+   ],
+   "parole": [
+    "pecorino",
+    "pecorino romano",
+    "pecorino sardo",
+    "pecorino toscano"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Pecorino_romano_cheese.jpg/960px-Pecorino_romano_cheese.jpg"
   },
   {
    "id": "peperone",
@@ -1053,6 +1629,40 @@
     "peach"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_nectarine_and_cross_section02_edit.jpg/960px-White_nectarine_and_cross_section02_edit.jpg"
+  },
+  {
+   "id": "piselli",
+   "nome": "Piselli",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Piselli",
+    "Piselli secchi spezzati (cotti)"
+   ],
+   "parole": [
+    "piselli",
+    "pisello",
+    "peas",
+    "piselli secchi",
+    "piselli spezzati",
+    "taccole"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Peas_%28484346231%29.jpg/960px-Peas_%28484346231%29.jpg"
+  },
+  {
+   "id": "pollo",
+   "nome": "Pollo",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Petto di pollo (crudo)"
+   ],
+   "parole": [
+    "pollo",
+    "petto di pollo",
+    "chicken",
+    "cosce di pollo",
+    "sovracosce"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Raw_chicken_slices.jpg/960px-Raw_chicken_slices.jpg"
   },
   {
    "id": "pomodoro",
@@ -1120,6 +1730,21 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Parsley_Leaves.jpg/960px-Parsley_Leaves.jpg"
   },
   {
+   "id": "provolone",
+   "nome": "Provolone",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Provolone"
+   ],
+   "parole": [
+    "provolone",
+    "scamorza",
+    "caciocavallo",
+    "provola"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Provolone_watermelon_shape.jpg/960px-Provolone_watermelon_shape.jpg"
+  },
+  {
    "id": "prugna",
    "nome": "Prugna",
    "cat": "Frutta",
@@ -1136,6 +1761,19 @@
     "prune"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Rosales_-_Dried_Prunus_domestica_d.jpg/960px-Rosales_-_Dried_Prunus_domestica_d.jpg"
+  },
+  {
+   "id": "quinoa",
+   "nome": "Quinoa",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Quinoa (cruda)"
+   ],
+   "parole": [
+    "quinoa",
+    "quinua"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Quinoa_closeup.jpg/960px-Quinoa_closeup.jpg"
   },
   {
    "id": "radicchio",
@@ -1190,6 +1828,59 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Redcurrant_%28Ribes_rubrum%29_fruits.jpg/960px-Redcurrant_%28Ribes_rubrum%29_fruits.jpg"
   },
   {
+   "id": "ricotta",
+   "nome": "Ricotta",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Ricotta vaccina"
+   ],
+   "parole": [
+    "ricotta",
+    "ricotta vaccina",
+    "ricotta di pecora",
+    "ricotta di bufala"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Ricotte_fresche.jpg/960px-Ricotte_fresche.jpg"
+  },
+  {
+   "id": "riso",
+   "nome": "Riso",
+   "cat": "Cereali, pane e pasta",
+   "alimenti": [
+    "Riso bianco (cotto)",
+    "Riso integrale (cotto)",
+    "Gallette di riso integrale"
+   ],
+   "parole": [
+    "riso",
+    "rice",
+    "riso integrale",
+    "riso basmati",
+    "arborio",
+    "carnaroli",
+    "riso venere",
+    "riso a crudo",
+    "riso bianco",
+    "gallette",
+    "gallette di riso"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Uncooked_ST25_rice_on_bamboo_surface.jpg/960px-Uncooked_ST25_rice_on_bamboo_surface.jpg"
+  },
+  {
+   "id": "salmone",
+   "nome": "Salmone",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Salmone"
+   ],
+   "parole": [
+    "salmone",
+    "salmon",
+    "salmone affumicato"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Salmon2.jpg/960px-Salmon2.jpg"
+  },
+  {
    "id": "sedano",
    "nome": "Sedano",
    "cat": "Verdura",
@@ -1205,6 +1896,43 @@
     "celeriac"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Celery_1.jpg/960px-Celery_1.jpg"
+  },
+  {
+   "id": "seitan",
+   "nome": "Seitan",
+   "cat": "Legumi e soia",
+   "alimenti": [],
+   "parole": [
+    "seitan",
+    "glutine",
+    "fettine vegetali",
+    "cotoletta vegetale",
+    "bistecca vegetale",
+    "wheat meat"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Seitan_Platter_%284139727246%29.jpg/960px-Seitan_Platter_%284139727246%29.jpg"
+  },
+  {
+   "id": "soia",
+   "nome": "Soia",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Soia gialla (cotta)",
+    "Edamame",
+    "Germogli di soia"
+   ],
+   "parole": [
+    "soia",
+    "soya",
+    "soy",
+    "edamame",
+    "germogli di soia",
+    "latte di soia",
+    "bevanda di soia",
+    "yogurt di soia",
+    "soia gialla"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Yellow_corn_and_soya_beans_good_for_nutrition.jpg/960px-Yellow_corn_and_soya_beans_good_for_nutrition.jpg"
   },
   {
    "id": "spinaci",
@@ -1223,6 +1951,21 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Fresh_spinach_leaves.jpg"
   },
   {
+   "id": "tacchino",
+   "nome": "Tacchino",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Petto di tacchino (crudo)"
+   ],
+   "parole": [
+    "tacchino",
+    "petto di tacchino",
+    "turkey",
+    "fesa di tacchino"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Thanksgiving_Turkey.jpg/960px-Thanksgiving_Turkey.jpg"
+  },
+  {
    "id": "tarassaco",
    "nome": "Tarassaco",
    "cat": "Verdura",
@@ -1239,6 +1982,45 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Dandelion_greens.jpg/960px-Dandelion_greens.jpg"
   },
   {
+   "id": "tempeh",
+   "nome": "Tempeh",
+   "cat": "Legumi e soia",
+   "alimenti": [],
+   "parole": [
+    "tempeh",
+    "tempe"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tempeh_%288681605421%29.jpg/960px-Tempeh_%288681605421%29.jpg"
+  },
+  {
+   "id": "tofu",
+   "nome": "Tofu",
+   "cat": "Legumi e soia",
+   "alimenti": [
+    "Tofu"
+   ],
+   "parole": [
+    "tofu"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG/960px-Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG"
+  },
+  {
+   "id": "tonno",
+   "nome": "Tonno",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Tonno al naturale"
+   ],
+   "parole": [
+    "tonno",
+    "tuna",
+    "tonno in scatola",
+    "tonno al naturale",
+    "tonno sott'olio"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Lata_de_at%C3%BAn-Albo.jpg/960px-Lata_de_at%C3%BAn-Albo.jpg"
+  },
+  {
    "id": "topinambur",
    "nome": "Topinambur",
    "cat": "Verdura",
@@ -1251,6 +2033,28 @@
     "carciofo di gerusalemme"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Jerusalem_Artichokes_tubers.jpg/960px-Jerusalem_Artichokes_tubers.jpg"
+  },
+  {
+   "id": "uovo",
+   "nome": "Uovo",
+   "cat": "Carne, pesce e uova",
+   "alimenti": [
+    "Albume",
+    "Uovo fritto",
+    "Uova strapazzate"
+   ],
+   "parole": [
+    "uovo",
+    "uova",
+    "albume",
+    "albumi",
+    "tuorlo",
+    "egg",
+    "frittata",
+    "uova sode",
+    "uova strapazzate"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Huevo_frito.jpg/960px-Huevo_frito.jpg"
   },
   {
    "id": "uva-spina",
@@ -1285,6 +2089,24 @@
     "regina"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg"
+  },
+  {
+   "id": "yogurt",
+   "nome": "Yogurt",
+   "cat": "Latte e formaggi",
+   "alimenti": [
+    "Yogurt greco 0%",
+    "Yogurt greco intero",
+    "Yogurt bianco intero"
+   ],
+   "parole": [
+    "yogurt",
+    "yoghurt",
+    "yogurt greco",
+    "yogurt bianco",
+    "skyr"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Turkish_strained_yogurt.jpg/960px-Turkish_strained_yogurt.jpg"
   },
   {
    "id": "zenzero",

@@ -1,0 +1,121 @@
+{
+ "id": "yogurt",
+ "nome": "Yogurt",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Latte fermentato",
+ "parole": [
+  "yogurt",
+  "yoghurt",
+  "yogurt greco",
+  "yogurt bianco",
+  "skyr"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Turkish_strained_yogurt.jpg/960px-Turkish_strained_yogurt.jpg",
+  "autore": "Takeaway",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Turkish_strained_yogurt.jpg"
+ },
+ "descrizione": [
+  "Latte fermentato da batteri lattici. Il greco è colato: perde siero, quindi ha il doppio delle proteine e meno zuccheri.",
+  "Lo skyr islandese è simile al greco 0%."
+ ],
+ "proprieta": [
+  {
+   "t": "Fermenti vivi",
+   "d": "Lactobacillus bulgaricus e Streptococcus thermophilus aiutano a digerire il lattosio."
+  },
+  {
+   "t": "Proteine",
+   "d": "Greco 0%: circa 10 g per 100 g con 55 kcal."
+  },
+  {
+   "t": "Calcio",
+   "d": "110–150 mg per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Greco 0%",
+   "valori": [
+    {
+     "stato": "bianco",
+     "alimento": "Yogurt greco 0%"
+    }
+   ]
+  },
+  {
+   "nome": "Greco intero",
+   "valori": [
+    {
+     "stato": "bianco",
+     "alimento": "Yogurt greco intero"
+    }
+   ]
+  },
+  {
+   "nome": "Bianco intero",
+   "valori": [
+    {
+     "stato": "bianco",
+     "alimento": "Yogurt bianco intero"
+    }
+   ]
+  }
+ ],
+ "anche": [
+  {
+   "t": "Alla frutta",
+   "d": "Ha 10–14 g di zuccheri per 100 g, quasi tutti aggiunti: meglio bianco con frutta vera."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "chiuso fino alla data; aperto 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Kefir",
+  "Fiocchi di latte",
+  "Latte"
+ ],
+ "abbinamenti": [
+  "Mirtilli",
+  "Miele",
+  "Noci",
+  "Fiocchi d'avena",
+  "Cetriolo",
+  "Menta"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

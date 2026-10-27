@@ -1,0 +1,118 @@
+{
+ "id": "pollo",
+ "nome": "Pollo",
+ "cat": "Carne, pesce e uova",
+ "latino": "Gallus gallus domesticus",
+ "famiglia": "Carne bianca",
+ "parole": [
+  "pollo",
+  "petto di pollo",
+  "chicken",
+  "cosce di pollo",
+  "sovracosce"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Raw_chicken_slices.jpg/960px-Raw_chicken_slices.jpg",
+  "autore": "kakyusei",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Raw_chicken_slices.jpg"
+ },
+ "descrizione": [
+  "La carne più consumata in Italia. Il petto è magrissimo; cosce e sovracosce sono più saporite e più grasse.",
+  "Cotto perde acqua: 100 g crudi diventano circa 75 g cotti."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine magre",
+   "d": "Petto crudo: 23 g di proteine e 1–2 g di grassi per 100 g."
+  },
+  {
+   "t": "Vitamine B",
+   "d": "Ricco di niacina (B3) e B6; selenio."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Petto di pollo",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Petto di pollo (crudo)"
+    },
+    {
+     "stato": "cotto arrosto",
+     "usda": "05064"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Alla piastra",
+   "tempo": "4–5 min per lato",
+   "come": "Fettine battute, piastra ben calda, sale alla fine."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "20–25 min · 200 °C",
+   "come": "Petto intero marinato con limone, aglio ed erbe."
+  },
+  {
+   "metodo": "In padella",
+   "tempo": "10 min",
+   "come": "A straccetti con verdure o al curry."
+  }
+ ],
+ "nota_cottura": "Va cotto fino a 74 °C al cuore: niente rosa. Non lavarlo sotto il rubinetto, spargi batteri in cucina.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nella parte più fredda, 1–2 giorni."
+  },
+  {
+   "t": "In freezer",
+   "d": "9 mesi; scongela in frigo."
+  }
+ ],
+ "simili": [
+  "Tacchino",
+  "Merluzzo"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Rosmarino",
+  "Peperoni",
+  "Riso bianco (cotto)",
+  "Yogurt greco 0%",
+  "Ananas"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

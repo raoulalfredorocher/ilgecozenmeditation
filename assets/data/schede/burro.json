@@ -1,0 +1,98 @@
+{
+ "id": "burro",
+ "nome": "Burro",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Grasso del latte",
+ "parole": [
+  "burro",
+  "butter",
+  "burro chiarificato",
+  "ghee"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG/960px-%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG",
+  "autore": "Matěj Baťha",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:%C5%A0v%C3%A9dsk%C3%BD_kol%C3%A1%C4%8D_naruby_904_%28cropped%29.JPG"
+ },
+ "descrizione": [
+  "Panna sbattuta finché il grasso si separa dal latticello: è grasso all'82%, il resto è acqua.",
+  "Il chiarificato (ghee) è solo grasso, senza acqua né proteine: regge temperature più alte."
+ ],
+ "proprieta": [
+  {
+   "t": "Molto calorico",
+   "d": "10 g (un ricciolo) sono 75 kcal."
+  },
+  {
+   "t": "Grassi saturi",
+   "d": "Circa 51 g per 100 g."
+  },
+  {
+   "t": "Vitamina A",
+   "d": "Una delle fonti più ricche."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Burro",
+   "valori": [
+    {
+     "stato": "senza sale",
+     "alimento": "Burro"
+    }
+   ]
+  }
+ ],
+ "nota_cottura": "Fuma a circa 150 °C: per friggere o rosolare a lungo meglio il chiarificato o l'olio.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "chiuso, lontano da cibi odorosi: assorbe gli odori."
+  },
+  {
+   "t": "In freezer",
+   "d": "6 mesi."
+  }
+ ],
+ "simili": [
+  "Panna",
+  "Olio extravergine d'oliva"
+ ],
+ "abbinamenti": [
+  "Salvia",
+  "Pane",
+  "Parmigiano",
+  "Miele"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

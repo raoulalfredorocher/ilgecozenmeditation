@@ -1,0 +1,166 @@
+{
+ "id": "mais",
+ "nome": "Mais",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Zea mays",
+ "famiglia": "Poacee",
+ "parole": [
+  "mais",
+  "granturco",
+  "corn",
+  "polenta",
+  "mais dolce",
+  "pannocchia",
+  "popcorn",
+  "pop corn",
+  "corn flakes",
+  "cornflakes",
+  "nachos",
+  "tortilla chips"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/7/79/VegCorn.jpg",
+  "autore": "Wikimedia Commons",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:VegCorn.jpg"
+ },
+ "descrizione": [
+  "Cereale americano: mais dolce in chicchi, farina per la polenta, fiocchi per la colazione, chicchi da scoppiare.",
+  "Il mais è senza glutine; la polenta integrale (bramata) ha più fibra."
+ ],
+ "proprieta": [
+  {
+   "t": "Senza glutine",
+   "d": "Adatto ai celiaci (controlla i prodotti industriali)."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Luteina e zeaxantina, il colore giallo."
+  },
+  {
+   "t": "Popcorn",
+   "d": "Senza grassi è un cereale integrale leggero: 30 g ≈ 115 kcal."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   8
+  ],
+  "testo": "pannocchie fresche in estate; il resto tutto l'anno."
+ },
+ "titolo_tipi": "Mais in tavola",
+ "tipi": [
+  {
+   "nome": "Mais dolce",
+   "testo": "In scatola, sgocciolato. Una scatoletta ≈ 140 g.",
+   "valori": [
+    {
+     "stato": "in scatola",
+     "alimento": "Mais dolce in scatola (sgocciolato)"
+    }
+   ]
+  },
+  {
+   "nome": "Farina per polenta",
+   "testo": "Integrale.",
+   "valori": [
+    {
+     "stato": "farina",
+     "usda": "20020"
+    }
+   ]
+  },
+  {
+   "nome": "Corn flakes",
+   "testo": "Una tazza (30 g) ≈ 110 kcal; spesso arricchiti di vitamine.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Kellogg%27s_Corn_Flakes%2C_with_milk.jpg/500px-Kellogg%27s_Corn_Flakes%2C_with_milk.jpg",
+    "autore": "Th78blue",
+    "licenza": "CC BY-SA 4.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Kellogg%27s_Corn_Flakes%2C_with_milk.jpg"
+   },
+   "valori": [
+    {
+     "stato": "fiocchi",
+     "alimento": "Corn flakes"
+    }
+   ]
+  },
+  {
+   "nome": "Popcorn",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Popcorn_-_Studio_-_2011.jpg/500px-Popcorn_-_Studio_-_2011.jpg",
+    "autore": "Bill Ebbesen",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Popcorn_-_Studio_-_2011.jpg"
+   },
+   "valori": [
+    {
+     "stato": "senza grassi",
+     "alimento": "Popcorn (senza grassi)"
+    }
+   ]
+  },
+  {
+   "nome": "Tortilla chips",
+   "testo": "Fritte e salate: 30 g ≈ 150 kcal.",
+   "valori": [
+    {
+     "stato": "nachos",
+     "alimento": "Tortilla chips (nachos)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Polenta",
+   "tempo": "40–50 min",
+   "come": "250 g di farina per 1 litro d'acqua salata, a pioggia, mescolando."
+  },
+  {
+   "metodo": "Popcorn",
+   "tempo": "3–4 min",
+   "come": "In pentola coperta con un cucchiaino d'olio, o ad aria."
+  },
+  {
+   "metodo": "Pannocchia",
+   "tempo": "10–15 min",
+   "come": "Lessata o alla griglia."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Farina",
+   "d": "chiusa, al fresco: quella integrale irrancidisce prima (6 mesi)."
+  }
+ ],
+ "simili": [
+  "Riso",
+  "Pasta",
+  "Crackers e fette biscottate"
+ ],
+ "abbinamenti": [
+  "Fagioli neri (cotti)",
+  "Funghi",
+  "Formaggio",
+  "Lime",
+  "Tonno al naturale"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

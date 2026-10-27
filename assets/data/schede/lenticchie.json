@@ -1,0 +1,140 @@
+{
+ "id": "lenticchie",
+ "nome": "Lenticchie",
+ "cat": "Legumi e soia",
+ "latino": "Lens culinaris",
+ "famiglia": "Fabacee",
+ "parole": [
+  "lenticchie",
+  "lenticchia",
+  "lentil",
+  "lenticchie rosse",
+  "lenticchie decorticate",
+  "castelluccio"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/3_types_of_lentil.png/960px-3_types_of_lentil.png",
+  "autore": "Justinc",
+  "licenza": "CC BY-SA 2.5",
+  "pagina": "https://commons.wikimedia.org/wiki/File:3_types_of_lentil.png"
+ },
+ "descrizione": [
+  "Il legume più veloce: non serve ammollo. Verdi o marroni (Castelluccio IGP, Colfiorito), nere beluga, rosse decorticate.",
+  "Le rosse si sfaldano: ottime per zuppe e dal (India)."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine",
+   "d": "Cotte: 9 g per 100 g, secche 25 g."
+  },
+  {
+   "t": "Ferro e folati",
+   "d": "100 g cotte: 3,3 mg di ferro e metà dei folati del giorno."
+  },
+  {
+   "t": "Fibra",
+   "d": "8 g per 100 g cotte: glicemia stabile e sazietà."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "secche tutto l'anno."
+ },
+ "titolo_tipi": "Tipi di lenticchie",
+ "tipi": [
+  {
+   "nome": "Lenticchie",
+   "testo": "100 g secche diventano circa 250 g cotte.",
+   "valori": [
+    {
+     "stato": "secche",
+     "alimento": "Lenticchie (secche)"
+    },
+    {
+     "stato": "cotte",
+     "alimento": "Lenticchie (cotte)"
+    }
+   ]
+  },
+  {
+   "nome": "Rosse decorticate",
+   "testo": "Senza buccia, cuociono in 10–15 min.",
+   "valori": [
+    {
+     "stato": "secche",
+     "usda": "16144"
+    }
+   ]
+  },
+  {
+   "nome": "Beluga (nere)",
+   "testo": "Piccole, restano intere: in insalata."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Lessate",
+   "tempo": "20–30 min",
+   "come": "Sciacquate, in acqua fredda con alloro; salate alla fine."
+  },
+  {
+   "metodo": "In umido",
+   "tempo": "30 min",
+   "come": "Con soffritto e pomodoro: con il riso o come sugo."
+  },
+  {
+   "metodo": "Dal",
+   "tempo": "15 min",
+   "come": "Rosse con curcuma, zenzero, cumino e latte di cocco."
+  }
+ ],
+ "nota_cottura": "Con qualcosa di acido o ricco di vitamina C (pomodoro, limone, peperone) si assorbe più ferro.",
+ "conservare": [
+  {
+   "t": "Secche",
+   "d": "in barattolo, 1 anno."
+  },
+  {
+   "t": "Cotte",
+   "d": "in frigo 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Ceci",
+  "Fagioli",
+  "Piselli"
+ ],
+ "abbinamenti": [
+  "Riso bianco (cotto)",
+  "Carote",
+  "Cipolla",
+  "Pomodoro",
+  "Zenzero fresco",
+  "Cocco"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
