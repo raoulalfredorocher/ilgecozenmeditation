@@ -1,0 +1,121 @@
+{
+ "id": "orzo",
+ "nome": "Orzo",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Hordeum vulgare",
+ "famiglia": "Poacee",
+ "parole": [
+  "orzo",
+  "orzo perlato",
+  "orzo decorticato",
+  "barley",
+  "orzotto",
+  "caffè d'orzo"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Barley_grains.jpg/960px-Barley_grains.jpg",
+  "autore": "National Institute of Korean Language",
+  "licenza": "CC BY-SA 2.0 kr",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Barley_grains.jpg"
+ },
+ "descrizione": [
+  "Cereale antico e rustico. Perlato (lucidato, cuoce in 30–40 min) o decorticato (più integrale).",
+  "Tostato diventa la bevanda \"caffè d'orzo\"."
+ ],
+ "proprieta": [
+  {
+   "t": "Beta-glucani",
+   "d": "Come l'avena: fibra solubile che aiuta il colesterolo."
+  },
+  {
+   "t": "Glicemia",
+   "d": "Tra i cereali con l'indice glicemico più basso."
+  },
+  {
+   "t": "Glutine",
+   "d": "Contiene glutine."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Orzo perlato",
+   "valori": [
+    {
+     "stato": "cotto",
+     "alimento": "Orzo perlato (cotto)"
+    },
+    {
+     "stato": "crudo",
+     "usda": "20005"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "In zuppa",
+   "tempo": "40 min",
+   "come": "Con legumi o verdure (orzo e fagioli)."
+  },
+  {
+   "metodo": "Orzotto",
+   "tempo": "30 min",
+   "come": "Come un risotto, con zucca o funghi."
+  },
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "Freddo, regge bene."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Chiuso",
+   "d": "al fresco: 1 anno."
+  },
+  {
+   "t": "Cotto",
+   "d": "in frigo 4 giorni."
+  }
+ ],
+ "simili": [
+  "Avena",
+  "Riso",
+  "Cous cous"
+ ],
+ "abbinamenti": [
+  "Fagioli",
+  "Funghi",
+  "Zucca",
+  "Piselli"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

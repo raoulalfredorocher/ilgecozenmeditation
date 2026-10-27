@@ -1,0 +1,90 @@
+{
+ "id": "fontina",
+ "nome": "Fontina",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio a pasta semidura",
+ "parole": [
+  "fontina",
+  "fontal",
+  "asiago",
+  "taleggio",
+  "toma"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Fontina_DOP.jpg/960px-Fontina_DOP.jpg",
+  "autore": "Luigi Chiesa",
+  "licenza": "CC BY 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Fontina_DOP.jpg"
+ },
+ "descrizione": [
+  "Formaggio valdostano DOP di latte vaccino intero, morbido e fondente: è quello della fonduta."
+ ],
+ "proprieta": [
+  {
+   "t": "Fonde bene",
+   "d": "Ideale per gratinare e per la fonduta."
+  },
+  {
+   "t": "Grasso",
+   "d": "Circa 31 g di grassi per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 3,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Fontina",
+   "valori": [
+    {
+     "stato": "stagionata",
+     "alimento": "Fontina"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2 settimane in carta."
+  }
+ ],
+ "simili": [
+  "Emmental",
+  "Provolone",
+  "Gorgonzola"
+ ],
+ "abbinamenti": [
+  "Patata",
+  "Polenta",
+  "Funghi",
+  "Pane"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,163 @@
+{
+ "id": "fagioli",
+ "nome": "Fagioli",
+ "cat": "Legumi e soia",
+ "latino": "Phaseolus vulgaris",
+ "famiglia": "Fabacee",
+ "parole": [
+  "fagioli",
+  "fagiolo",
+  "borlotti",
+  "cannellini",
+  "fagioli neri",
+  "fagioli rossi",
+  "kidney",
+  "beans",
+  "fagioli di lamon"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Rosecoco_beans.jpg/960px-Rosecoco_beans.jpg",
+  "autore": "Tiia Monto",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Rosecoco_beans.jpg"
+ },
+ "descrizione": [
+  "Arrivati dalle Americhe, oggi base della cucina contadina italiana: borlotti, cannellini, di Lamon, zolfini, neri, rossi (kidney).",
+  "Crudi contengono lectine: vanno sempre ammollati e cotti bene."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine e fibra",
+   "d": "Cotti: circa 9 g di proteine e 6–9 g di fibra per 100 g."
+  },
+  {
+   "t": "Colesterolo",
+   "d": "La fibra solubile aiuta ad abbassare il colesterolo LDL."
+  },
+  {
+   "t": "Potassio e magnesio",
+   "d": "Buona fonte di entrambi."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   7,
+   8,
+   9
+  ],
+  "testo": "freschi da sgranare in estate, secchi tutto l'anno."
+ },
+ "titolo_tipi": "Tipi di fagioli",
+ "tipi": [
+  {
+   "nome": "Borlotti",
+   "testo": "Screziati, cremosi: pasta e fagioli.",
+   "valori": [
+    {
+     "stato": "secchi",
+     "alimento": "Fagioli borlotti (secchi)"
+    },
+    {
+     "stato": "cotti",
+     "usda": "16020"
+    }
+   ]
+  },
+  {
+   "nome": "Cannellini",
+   "testo": "Bianchi, delicati: con tonno e cipolla, all'uccelletto.",
+   "valori": [
+    {
+     "stato": "cotti",
+     "usda": "16050"
+    }
+   ]
+  },
+  {
+   "nome": "Neri",
+   "testo": "Cucina messicana e brasiliana.",
+   "valori": [
+    {
+     "stato": "cotti",
+     "alimento": "Fagioli neri (cotti)"
+    }
+   ]
+  },
+  {
+   "nome": "Rossi (kidney)",
+   "testo": "Chili, insalate.",
+   "valori": [
+    {
+     "stato": "cotti",
+     "alimento": "Fagioli rossi (cotti)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Lessati",
+   "tempo": "12 h ammollo + 1–2 h",
+   "come": "Butta l'acqua dell'ammollo; cuoci a fuoco basso con salvia e aglio."
+  },
+  {
+   "metodo": "In pentola a pressione",
+   "tempo": "25–35 min",
+   "come": "Dopo l'ammollo."
+  },
+  {
+   "metodo": "Pasta e fagioli",
+   "tempo": "",
+   "come": "Metà frullati per la cremosità."
+  }
+ ],
+ "nota_cottura": "Ammollo lungo, acqua cambiata e cottura completa riducono gonfiore e lectine.",
+ "conservare": [
+  {
+   "t": "Secchi",
+   "d": "1 anno al buio."
+  },
+  {
+   "t": "Cotti",
+   "d": "in frigo 3–4 giorni o in freezer."
+  }
+ ],
+ "simili": [
+  "Ceci",
+  "Lenticchie",
+  "Soia"
+ ],
+ "abbinamenti": [
+  "Pasta di semola (cruda)",
+  "Tonno al naturale",
+  "Cipolla",
+  "Salvia",
+  "Riso bianco (cotto)",
+  "Cicoria"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

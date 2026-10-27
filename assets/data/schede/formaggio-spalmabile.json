@@ -1,0 +1,98 @@
+{
+ "id": "formaggio-spalmabile",
+ "nome": "Formaggio spalmabile",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio fresco",
+ "parole": [
+  "formaggio spalmabile",
+  "spalmabile",
+  "cream cheese",
+  "robiola",
+  "stracchino",
+  "crescenza",
+  "mascarpone"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Cream_crackers_with_cheese_spread.jpg/960px-Cream_crackers_with_cheese_spread.jpg",
+  "autore": "AnemoneProjectors",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cream_crackers_with_cheese_spread.jpg"
+ },
+ "descrizione": [
+  "Formaggi freschi cremosi da spalmare, fatti con latte e panna. Robiola e stracchino sono i cugini italiani; il mascarpone è quasi solo panna."
+ ],
+ "proprieta": [
+  {
+   "t": "Grasso",
+   "d": "Classico: circa 34 g di grassi per 100 g. Le versioni light ne hanno la metà."
+  },
+  {
+   "t": "Poche proteine",
+   "d": "Circa 6 g per 100 g, molte meno di ricotta o fiocchi di latte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Classico",
+   "valori": [
+    {
+     "stato": "fresco",
+     "alimento": "Formaggio spalmabile (tipo Philadelphia)"
+    }
+   ]
+  }
+ ],
+ "anche": [
+  {
+   "t": "Mascarpone",
+   "d": "Circa 450 kcal per 100 g: è la base del tiramisù."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperto 1 settimana."
+  }
+ ],
+ "simili": [
+  "Ricotta",
+  "Fiocchi di latte",
+  "Caprino"
+ ],
+ "abbinamenti": [
+  "Salmone",
+  "Pane",
+  "Cetriolo",
+  "Erba cipollina"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

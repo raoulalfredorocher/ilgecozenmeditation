@@ -1,0 +1,90 @@
+{
+ "id": "fiocchi-di-latte",
+ "nome": "Fiocchi di latte",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio fresco",
+ "parole": [
+  "fiocchi di latte",
+  "cottage cheese",
+  "quark",
+  "jocca"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Cottagecheese200px.jpg/960px-Cottagecheese200px.jpg",
+  "autore": "Fastily",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cottagecheese200px.jpg"
+ },
+ "descrizione": [
+  "Granuli di cagliata in una crema leggera. Il quark tedesco è simile ma liscio, come uno yogurt denso."
+ ],
+ "proprieta": [
+  {
+   "t": "Tante proteine, poche calorie",
+   "d": "Circa 11–12 g di proteine con meno di 100 kcal per 100 g."
+  },
+  {
+   "t": "Caseina",
+   "d": "Proteina lenta: sazia a lungo."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Fiocchi di latte",
+   "valori": [
+    {
+     "stato": "freschi",
+     "alimento": "Fiocchi di latte"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperti 3–5 giorni."
+  }
+ ],
+ "simili": [
+  "Ricotta",
+  "Yogurt",
+  "Formaggio spalmabile"
+ ],
+ "abbinamenti": [
+  "Ananas",
+  "Pomodoro",
+  "Erba cipollina",
+  "Pane",
+  "Mirtilli"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

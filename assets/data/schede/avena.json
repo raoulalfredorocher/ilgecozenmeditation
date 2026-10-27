@@ -1,0 +1,122 @@
+{
+ "id": "avena",
+ "nome": "Avena",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Avena sativa",
+ "famiglia": "Poacee",
+ "parole": [
+  "avena",
+  "fiocchi d'avena",
+  "oats",
+  "porridge",
+  "latte d'avena",
+  "bevanda d'avena",
+  "crusca d'avena"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/9/97/Rolled_oats.jpg",
+  "autore": "Hankwang",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Rolled_oats.jpg"
+ },
+ "descrizione": [
+  "Cereale dei climi freschi, si mangia quasi sempre in fiocchi: chicchi schiacciati e tostati, pronti in pochi minuti.",
+  "Il latte d'avena è avena frullata con acqua e filtrata."
+ ],
+ "proprieta": [
+  {
+   "t": "Beta-glucani",
+   "d": "Fibra solubile: 3 g al giorno abbassano il colesterolo LDL (indicazione approvata dall'EFSA)."
+  },
+  {
+   "t": "Sazietà",
+   "d": "Il porridge forma un gel che rallenta lo svuotamento dello stomaco."
+  },
+  {
+   "t": "Glutine",
+   "d": "Non ne contiene, ma spesso è contaminata: per celiaci solo quella certificata."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Fiocchi d'avena",
+   "testo": "Porzione tipica 40 g ≈ 150 kcal.",
+   "valori": [
+    {
+     "stato": "secchi",
+     "alimento": "Fiocchi d'avena"
+    },
+    {
+     "stato": "porridge con acqua",
+     "usda": "08121"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Porridge",
+   "tempo": "5 min",
+   "come": "40 g con 250 ml di latte o acqua, mescolando; frutta e cannella."
+  },
+  {
+   "metodo": "Overnight oats",
+   "tempo": "1 notte",
+   "come": "Con yogurt o latte in frigo: pronti al mattino."
+  },
+  {
+   "metodo": "Nei dolci",
+   "tempo": "",
+   "come": "Frullati come farina per pancake e biscotti."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Chiusi",
+   "d": "al fresco e all'asciutto: 6–12 mesi."
+  }
+ ],
+ "simili": [
+  "Orzo",
+  "Riso",
+  "Miglio"
+ ],
+ "abbinamenti": [
+  "Banana",
+  "Mirtillo",
+  "Yogurt greco 0%",
+  "Cannella",
+  "Mela",
+  "Noci"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Beta-glucani dell'avena e colesterolo: EFSA Journal 2010;8(12):1885",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

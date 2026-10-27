@@ -1,0 +1,99 @@
+{
+ "id": "mozzarella",
+ "nome": "Mozzarella",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio fresco a pasta filata",
+ "parole": [
+  "mozzarella",
+  "fior di latte",
+  "mozzarella di bufala",
+  "burrata",
+  "stracciatella",
+  "bocconcini"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Mozzarella_di_bufala3.jpg/960px-Mozzarella_di_bufala3.jpg",
+  "autore": "Popo le Chien",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Mozzarella_di_bufala3.jpg"
+ },
+ "descrizione": [
+  "Formaggio fresco a pasta filata: la cagliata si fila in acqua calda e si \"mozza\". Di vacca (fiordilatte) o di bufala, più grassa.",
+  "La burrata è un involucro di mozzarella ripieno di stracciatella e panna."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine e calcio",
+   "d": "Circa 18 g di proteine e 400 mg di calcio per 100 g."
+  },
+  {
+   "t": "Fresca",
+   "d": "Meno sale e meno calorie dei formaggi stagionati."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Fiordilatte",
+   "valori": [
+    {
+     "stato": "fresca",
+     "alimento": "Mozzarella"
+    }
+   ]
+  }
+ ],
+ "anche": [
+  {
+   "t": "Light",
+   "d": "Le versioni light hanno circa la metà dei grassi (160–170 kcal)."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nel suo liquido, 2–3 giorni; tirala fuori mezz'ora prima di mangiarla."
+  }
+ ],
+ "simili": [
+  "Ricotta",
+  "Provolone",
+  "Feta"
+ ],
+ "abbinamenti": [
+  "Pomodoro",
+  "Basilico",
+  "Olio extravergine d'oliva",
+  "Melanzana",
+  "Pesca"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,104 @@
+{
+ "id": "brie",
+ "nome": "Brie e camembert",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio a crosta fiorita",
+ "parole": [
+  "brie",
+  "camembert",
+  "crosta fiorita"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Brie_01.jpg/960px-Brie_01.jpg",
+  "autore": "Coyau",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Brie_01.jpg"
+ },
+ "descrizione": [
+  "Formaggi francesi morbidi di latte vaccino con la crosta bianca di muffa (Penicillium camemberti), che si mangia. Maturando diventano cremosi dal bordo al centro."
+ ],
+ "proprieta": [
+  {
+   "t": "Più leggeri di quanto sembri",
+   "d": "Camembert 300 kcal, brie 334 per 100 g: meno dei formaggi duri."
+  },
+  {
+   "t": "Vitamina B12",
+   "d": "Buona fonte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 1,
+  "Amaro": 1,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Brie",
+   "valori": [
+    {
+     "stato": "maturo",
+     "alimento": "Brie"
+    }
+   ]
+  },
+  {
+   "nome": "Camembert",
+   "valori": [
+    {
+     "stato": "maturo",
+     "alimento": "Camembert"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "15 min · 180 °C",
+   "come": "Camembert intero nella sua scatola di legno, con aglio e rosmarino: da intingere."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nella sua carta, 1 settimana; tiralo fuori un'ora prima."
+  }
+ ],
+ "simili": [
+  "Gorgonzola",
+  "Caprino"
+ ],
+ "abbinamenti": [
+  "Mela",
+  "Uva",
+  "Noci",
+  "Miele",
+  "Fichi"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

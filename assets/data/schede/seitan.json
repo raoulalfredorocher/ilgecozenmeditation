@@ -1,0 +1,109 @@
+{
+ "id": "seitan",
+ "nome": "Seitan",
+ "cat": "Legumi e soia",
+ "latino": "",
+ "famiglia": "Derivato del frumento",
+ "parole": [
+  "seitan",
+  "glutine",
+  "fettine vegetali",
+  "cotoletta vegetale",
+  "bistecca vegetale",
+  "wheat meat"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Seitan_Platter_%284139727246%29.jpg/960px-Seitan_Platter_%284139727246%29.jpg",
+  "autore": "Amy Stephenson",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Seitan_Platter_%284139727246%29.jpg"
+ },
+ "descrizione": [
+  "Non è un legume: è il glutine del frumento, lavato dall'amido e cotto in brodo. Consistenza simile alla carne.",
+  "Molti affettati e cotolette vegetali sono a base di seitan o di soia: guarda l'etichetta."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine",
+   "d": "Circa 20–25 g per 100 g, poche calorie e pochi grassi."
+  },
+  {
+   "t": "Lisina",
+   "d": "È povero di lisina: abbinalo a legumi o soia nella giornata."
+  },
+  {
+   "t": "Glutine",
+   "d": "Vietato a chi è celiaco."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 2,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Glutine di frumento",
+   "testo": "La farina per farlo in casa. I valori del seitan pronto variano con la marca: cerca la tua voce.",
+   "valori": [
+    {
+     "stato": "in polvere",
+     "usda": "48052"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "In padella",
+   "tempo": "5–8 min",
+   "come": "A fettine, con limone o vino bianco (scaloppine)."
+  },
+  {
+   "metodo": "Spezzatino",
+   "tempo": "20 min",
+   "come": "A cubetti con verdure e pomodoro."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nel suo liquido, 4–5 giorni dall'apertura."
+  }
+ ],
+ "simili": [
+  "Tofu",
+  "Tempeh"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Funghi",
+  "Fagioli",
+  "Lenticchie",
+  "Patata"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

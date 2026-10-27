@@ -1,0 +1,115 @@
+{
+ "id": "quinoa",
+ "nome": "Quinoa",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Chenopodium quinoa",
+ "famiglia": "Amarantacee",
+ "parole": [
+  "quinoa",
+  "quinua"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Quinoa_closeup.jpg/960px-Quinoa_closeup.jpg",
+  "autore": "Pom²",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Quinoa_closeup.jpg"
+ },
+ "descrizione": [
+  "Seme andino usato come un cereale (pseudocereale), bianco, rosso o nero. Cuoce in 15 minuti."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine complete",
+   "d": "Contiene tutti gli aminoacidi essenziali, lisina compresa."
+  },
+  {
+   "t": "Senza glutine",
+   "d": "Adatta a chi è celiaco."
+  },
+  {
+   "t": "Minerali",
+   "d": "Magnesio, ferro e fibra più del riso bianco."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Quinoa",
+   "testo": "70 g crudi ≈ 200 g cotti.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Quinoa (cruda)"
+    },
+    {
+     "stato": "cotta",
+     "usda": "20137"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Lessata",
+   "tempo": "12–15 min",
+   "come": "Sciacquata (toglie le saponine amare), 1 parte e 2 d'acqua, coperta."
+  },
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "Fredda con verdure, feta, ceci, limone."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Cruda",
+   "d": "chiusa: 1 anno."
+  },
+  {
+   "t": "Cotta",
+   "d": "in frigo 4 giorni."
+  }
+ ],
+ "simili": [
+  "Riso",
+  "Cous cous",
+  "Miglio",
+  "Grano saraceno"
+ ],
+ "abbinamenti": [
+  "Avocado",
+  "Ceci",
+  "Feta",
+  "Zucca",
+  "Limone",
+  "Spinaci"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

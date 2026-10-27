@@ -1,0 +1,118 @@
+{
+ "id": "latte",
+ "nome": "Latte",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Latte vaccino",
+ "parole": [
+  "latte",
+  "latte vaccino",
+  "milk",
+  "latte intero",
+  "latte scremato",
+  "latte parzialmente scremato",
+  "latte ps",
+  "latte senza lattosio"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Glass_of_Milk_%2833657535532%29.jpg/960px-Glass_of_Milk_%2833657535532%29.jpg",
+  "autore": "NIAID",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Glass_of_Milk_%2833657535532%29.jpg"
+ },
+ "descrizione": [
+  "Latte di mucca: cambia solo la quantità di grassi. Intero 3,6%, parzialmente scremato 1,5–1,8%, scremato sotto lo 0,5%.",
+  "Il senza lattosio ha gli stessi valori, con il lattosio già scisso: per questo è un po' più dolce."
+ ],
+ "proprieta": [
+  {
+   "t": "Calcio",
+   "d": "Circa 120 mg per 100 ml: un bicchiere copre un quinto del fabbisogno."
+  },
+  {
+   "t": "Proteine complete",
+   "d": "3,3 g per 100 ml, in ogni versione."
+  },
+  {
+   "t": "Vitamina B12 e B2",
+   "d": "Buona fonte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Intero",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Latte intero"
+    }
+   ]
+  },
+  {
+   "nome": "Parzialmente scremato",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Latte parzialmente scremato"
+    }
+   ]
+  },
+  {
+   "nome": "Scremato",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Latte scremato"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperto 3 giorni (fresco) o 7–10 (alta qualità / UHT)."
+  }
+ ],
+ "simili": [
+  "Yogurt",
+  "Kefir",
+  "Latte di soia",
+  "Latte di mandorla (senza zucchero)"
+ ],
+ "abbinamenti": [
+  "Caffè",
+  "Fiocchi d'avena",
+  "Cacao",
+  "Banana",
+  "Miele"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

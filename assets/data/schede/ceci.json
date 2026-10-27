@@ -1,0 +1,156 @@
+{
+ "id": "ceci",
+ "nome": "Ceci",
+ "cat": "Legumi e soia",
+ "latino": "Cicer arietinum",
+ "famiglia": "Fabacee",
+ "parole": [
+  "ceci",
+  "cece",
+  "chickpea",
+  "garbanzo",
+  "farina di ceci",
+  "hummus",
+  "farinata",
+  "panelle"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Soaked_and_dried_chickpeas.jpg/960px-Soaked_and_dried_chickpeas.jpg",
+  "autore": "Tiia Monto",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Soaked_and_dried_chickpeas.jpg"
+ },
+ "descrizione": [
+  "Legume antichissimo del Mediterraneo e del Medio Oriente. Secchi vanno ammollati; in scatola sono già cotti.",
+  "Con la farina si fanno farinata e panelle; frullati con tahina diventano hummus."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine e fibra",
+   "d": "Cotti: circa 9 g di proteine e 8 g di fibra per 100 g."
+  },
+  {
+   "t": "Glicemia",
+   "d": "Indice glicemico basso: saziano a lungo."
+  },
+  {
+   "t": "Folati e ferro",
+   "d": "100 g cotti coprono quasi metà dei folati."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "secchi tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Ceci",
+   "testo": "100 g secchi diventano circa 250 g cotti.",
+   "valori": [
+    {
+     "stato": "secchi",
+     "alimento": "Ceci (secchi)"
+    },
+    {
+     "stato": "cotti",
+     "usda": "16057"
+    }
+   ]
+  },
+  {
+   "nome": "Hummus",
+   "testo": "Ceci, tahina, limone, aglio e olio. Due cucchiai (30 g) ≈ 50 kcal.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Lebanese_style_hummus.jpg/500px-Lebanese_style_hummus.jpg",
+    "autore": "Beyrouthhh",
+    "licenza": "CC BY 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Lebanese_style_hummus.jpg"
+   },
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Hummus"
+    }
+   ]
+  },
+  {
+   "nome": "Farina di ceci",
+   "testo": "Senza glutine: farinata, panelle, frittate vegane.",
+   "valori": [
+    {
+     "stato": "farina",
+     "usda": "16157"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Lessati",
+   "tempo": "12 h ammollo + 1,5–2 h",
+   "come": "In acqua fredda con alloro o un pezzetto di kombu; il sale alla fine."
+  },
+  {
+   "metodo": "In pentola a pressione",
+   "tempo": "30–40 min",
+   "come": "Dopo l'ammollo."
+  },
+  {
+   "metodo": "Croccanti al forno",
+   "tempo": "30 min · 200 °C",
+   "come": "Cotti, asciugati, con olio e paprika: snack."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Secchi",
+   "d": "in barattolo, al buio: 1 anno."
+  },
+  {
+   "t": "Cotti",
+   "d": "in frigo 3–4 giorni, in freezer mesi."
+  },
+  {
+   "t": "In scatola",
+   "d": "sciacquali: togli metà del sale."
+  }
+ ],
+ "simili": [
+  "Lenticchie",
+  "Fagioli",
+  "Piselli"
+ ],
+ "abbinamenti": [
+  "Pasta di semola (cruda)",
+  "Rosmarino",
+  "Spinaci",
+  "Tahina (crema di sesamo)",
+  "Limone",
+  "Cumino"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

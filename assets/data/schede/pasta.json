@@ -1,0 +1,148 @@
+{
+ "id": "pasta",
+ "nome": "Pasta",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Triticum durum",
+ "famiglia": "Poacee (frumento)",
+ "parole": [
+  "pasta",
+  "spaghetti",
+  "penne",
+  "fusilli",
+  "pasta integrale",
+  "pasta di semola",
+  "maccheroni",
+  "pasta all'uovo"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg/960px-%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg",
+  "autore": "David Adam Kess",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg"
+ },
+ "descrizione": [
+  "In Italia la pasta secca è per legge di sola semola di grano duro e acqua. Trafilata al bronzo è più ruvida e trattiene il sugo.",
+  "Cotta raddoppia il peso circa: 80 g crudi diventano 180–200 g."
+ ],
+ "proprieta": [
+  {
+   "t": "Glicemia",
+   "d": "Al dente ha un indice glicemico più basso; raffreddata forma amido resistente."
+  },
+  {
+   "t": "Integrale",
+   "d": "Il doppio della fibra (circa 7 g per 100 g crudi) e più magnesio."
+  },
+  {
+   "t": "Proteine",
+   "d": "13 g per 100 g crudi: con i legumi diventano proteine complete."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "titolo_tipi": "Tipi di pasta",
+ "tipi": [
+  {
+   "nome": "Pasta di semola",
+   "testo": "Porzione tipica: 80 g crudi ≈ 280 kcal.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Pasta di semola (cruda)"
+    },
+    {
+     "stato": "cotta",
+     "usda": "20421"
+    }
+   ]
+  },
+  {
+   "nome": "Pasta integrale",
+   "testo": "Più fibra, sapore più rustico.",
+   "valori": [
+    {
+     "stato": "cotta",
+     "usda": "20125"
+    }
+   ]
+  },
+  {
+   "nome": "Pasta all'uovo",
+   "testo": "Tagliatelle, lasagne: semola o farina con uova.",
+   "valori": [
+    {
+     "stato": "cotta",
+     "usda": "20410"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al dente",
+   "tempo": "1–2 min meno della confezione",
+   "come": "1 litro d'acqua e 10 g di sale ogni 100 g; finisci la cottura nel sugo con un po' d'acqua di cottura."
+  },
+  {
+   "metodo": "Pasta e legumi",
+   "tempo": "",
+   "come": "Con ceci, fagioli o lenticchie: piatto unico completo."
+  },
+  {
+   "metodo": "Fredda",
+   "tempo": "",
+   "come": "In insalata con verdure e tonno o legumi."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Secca",
+   "d": "chiusa, al fresco: 2–3 anni."
+  },
+  {
+   "t": "Cotta",
+   "d": "in frigo 3 giorni."
+  }
+ ],
+ "simili": [
+  "Riso",
+  "Cous cous",
+  "Noodles"
+ ],
+ "abbinamenti": [
+  "Pomodoro",
+  "Ceci",
+  "Fagioli",
+  "Pesto alla genovese",
+  "Parmigiano",
+  "Cime di rapa"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Pasta e glicemia: BMJ Open 2018 (meta-analisi)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

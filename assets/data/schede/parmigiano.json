@@ -1,0 +1,102 @@
+{
+ "id": "parmigiano",
+ "nome": "Parmigiano",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio stagionato a pasta dura",
+ "parole": [
+  "parmigiano",
+  "parmigiano reggiano",
+  "grana",
+  "grana padano",
+  "parmesan"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Parmigiano_Reggiano%2C_Italien%2C_Europ%C3%A4ische_Union.jpg/960px-Parmigiano_Reggiano%2C_Italien%2C_Europ%C3%A4ische_Union.jpg",
+  "autore": "Naturpuur",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Parmigiano_Reggiano%2C_Italien%2C_Europ%C3%A4ische_Union.jpg"
+ },
+ "descrizione": [
+  "Formaggio a pasta dura DOP di latte vaccino, stagionato almeno 12 mesi (di solito 24–30). Il Grana Padano è simile e un po' meno stagionato.",
+  "I cristalli bianchi sono tirosina, un amminoacido: segno di stagionatura."
+ ],
+ "proprieta": [
+  {
+   "t": "Il più proteico",
+   "d": "Circa 33 g di proteine per 100 g."
+  },
+  {
+   "t": "Senza lattosio",
+   "d": "Oltre i 12 mesi di stagionatura il lattosio sparisce."
+  },
+  {
+   "t": "Calcio",
+   "d": "1.100 mg per 100 g: 30 g ne coprono quasi metà del fabbisogno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 4,
+  "Acido": 1,
+  "Amaro": 1,
+  "Umami": 5
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Parmigiano / grana",
+   "valori": [
+    {
+     "stato": "stagionato",
+     "usda": "01033"
+    }
+   ]
+  }
+ ],
+ "anche": [
+  {
+   "t": "La crosta",
+   "d": "Si mangia: grattata o lasciata nel minestrone dà sapore."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "a pezzo in carta o pellicola, settimane."
+  }
+ ],
+ "simili": [
+  "Pecorino",
+  "Emmental"
+ ],
+ "abbinamenti": [
+  "Pere",
+  "Aceto balsamico",
+  "Rucola",
+  "Zucca",
+  "Pasta di semola (cruda)",
+  "Funghi"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,90 @@
+{
+ "id": "gorgonzola",
+ "nome": "Gorgonzola",
+ "cat": "Latte e formaggi",
+ "latino": "",
+ "famiglia": "Formaggio erborinato",
+ "parole": [
+  "gorgonzola",
+  "erborinato",
+  "roquefort",
+  "formaggio blu",
+  "blue cheese"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/A_Gongonzola_from_Baci.jpg/960px-A_Gongonzola_from_Baci.jpg",
+  "autore": "Peachyeung316",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:A_Gongonzola_from_Baci.jpg"
+ },
+ "descrizione": [
+  "Formaggio lombardo-piemontese DOP di latte vaccino con muffe blu (Penicillium) iniettate. Dolce e cremoso o piccante e più compatto."
+ ],
+ "proprieta": [
+  {
+   "t": "Grasso",
+   "d": "Circa 29 g di grassi per 100 g."
+  },
+  {
+   "t": "Sapore forte",
+   "d": "Ne basta poco per insaporire."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 4,
+  "Acido": 1,
+  "Amaro": 2,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Erborinato",
+   "valori": [
+    {
+     "stato": "stagionato",
+     "alimento": "Gorgonzola"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "avvolto in carta, 1 settimana; la muffa blu è voluta."
+  }
+ ],
+ "simili": [
+  "Brie e camembert",
+  "Fontina"
+ ],
+ "abbinamenti": [
+  "Pere",
+  "Noci",
+  "Miele",
+  "Radicchio",
+  "Polenta"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

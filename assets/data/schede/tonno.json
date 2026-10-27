@@ -1,0 +1,121 @@
+{
+ "id": "tonno",
+ "nome": "Tonno",
+ "cat": "Carne, pesce e uova",
+ "latino": "Thunnus spp.",
+ "famiglia": "Pesce",
+ "parole": [
+  "tonno",
+  "tuna",
+  "tonno in scatola",
+  "tonno al naturale",
+  "tonno sott'olio"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Lata_de_at%C3%BAn-Albo.jpg/960px-Lata_de_at%C3%BAn-Albo.jpg",
+  "autore": "Tamorlan",
+  "licenza": "CC BY 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Lata_de_at%C3%BAn-Albo.jpg"
+ },
+ "descrizione": [
+  "Grande pesce migratore. In scatola è comodo e proteico; fresco (pinna gialla, rosso) si mangia scottato o crudo."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine",
+   "d": "Al naturale: circa 24 g per 100 g e pochi grassi."
+  },
+  {
+   "t": "Mercurio",
+   "d": "Grande predatore, ne accumula: per gravide e bambini il tonno fresco va limitato."
+  },
+  {
+   "t": "Sott'olio",
+   "d": "Sgocciolato ha circa il doppio delle calorie di quello al naturale."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 2,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   5,
+   6
+  ],
+  "testo": "in scatola tutto l'anno; fresco (tonno rosso) a maggio-giugno."
+ },
+ "tipi": [
+  {
+   "nome": "Tonno al naturale",
+   "testo": "Una scatoletta sgocciolata ≈ 60–80 g.",
+   "valori": [
+    {
+     "stato": "sgocciolato",
+     "alimento": "Tonno al naturale"
+    }
+   ]
+  },
+  {
+   "nome": "Tonno fresco",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "15117"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "In scatola",
+   "tempo": "",
+   "come": "Con fagioli e cipolla, nell'insalata di riso o di patate."
+  },
+  {
+   "metodo": "Scottato",
+   "tempo": "1 min per lato",
+   "come": "Fresco in crosta di sesamo, rosa dentro."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Aperto",
+   "d": "in un contenitore di vetro in frigo, 2 giorni."
+  }
+ ],
+ "simili": [
+  "Salmone",
+  "Merluzzo"
+ ],
+ "abbinamenti": [
+  "Fagioli",
+  "Cipolla",
+  "Pomodoro",
+  "Olive nere",
+  "Semi di sesamo",
+  "Riso bianco (cotto)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Mercurio nel pesce: EFSA 2014; Ministero della Salute",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

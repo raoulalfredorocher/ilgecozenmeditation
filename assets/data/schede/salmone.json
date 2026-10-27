@@ -1,0 +1,129 @@
+{
+ "id": "salmone",
+ "nome": "Salmone",
+ "cat": "Carne, pesce e uova",
+ "latino": "Salmo salar",
+ "famiglia": "Pesce grasso",
+ "parole": [
+  "salmone",
+  "salmon",
+  "salmone affumicato"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Salmon2.jpg/960px-Salmon2.jpg",
+  "autore": "Tiia Monto",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Salmon2.jpg"
+ },
+ "descrizione": [
+  "Pesce grasso dei mari freddi; quasi tutto quello in commercio è allevato (Norvegia, Scozia). Il selvaggio del Pacifico è più magro.",
+  "Ottimo crudo (abbattuto), cotto o affumicato."
+ ],
+ "proprieta": [
+  {
+   "t": "Omega-3",
+   "d": "EPA e DHA: circa 2 g per 100 g, tra le fonti più ricche. Utili per cuore e cervello."
+  },
+  {
+   "t": "Vitamina D e B12",
+   "d": "100 g coprono il fabbisogno di entrambe."
+  },
+  {
+   "t": "Proteine",
+   "d": "20 g per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Salmone allevato",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Salmone"
+    },
+    {
+     "stato": "cotto",
+     "usda": "15237"
+    }
+   ]
+  },
+  {
+   "nome": "Salmone selvaggio (sockeye)",
+   "testo": "Più magro e più rosso.",
+   "valori": [
+    {
+     "stato": "cotto",
+     "usda": "15086"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "12–15 min · 200 °C",
+   "come": "Filetto con la pelle sotto, limone e aneto."
+  },
+  {
+   "metodo": "In padella",
+   "tempo": "4 + 2 min",
+   "come": "Dalla pelle, finché è croccante; poco dall'altro lato."
+  },
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "Tartare o poke solo se abbattuto (−20 °C per 24 h)."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fresco",
+   "d": "in frigo 1–2 giorni."
+  },
+  {
+   "t": "Affumicato",
+   "d": "molto salato: circa 2 g di sale per 100 g."
+  }
+ ],
+ "simili": [
+  "Tonno",
+  "Merluzzo"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Avocado",
+  "Riso bianco (cotto)",
+  "Asparagi",
+  "Yogurt greco 0%",
+  "Semi di sesamo"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

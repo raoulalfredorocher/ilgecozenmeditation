@@ -1,0 +1,116 @@
+{
+ "id": "noodles",
+ "nome": "Noodles",
+ "cat": "Cereali, pane e pasta",
+ "latino": "",
+ "famiglia": "Pasta asiatica",
+ "parole": [
+  "noodles",
+  "noodle",
+  "spaghetti di riso",
+  "vermicelli di riso",
+  "ramen",
+  "udon",
+  "pad thai"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Rice_vermicelli.jpg/960px-Rice_vermicelli.jpg",
+  "autore": "Popo le Chien",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Rice_vermicelli.jpg"
+ },
+ "descrizione": [
+  "La \"pasta\" asiatica: di riso (senza glutine), di frumento (ramen, udon), di saraceno (soba) o di fagioli (vermicelli trasparenti)."
+ ],
+ "proprieta": [
+  {
+   "t": "Noodles di riso",
+   "d": "Senza glutine, leggeri: circa 110 kcal per 100 g cotti."
+  },
+  {
+   "t": "Istantanei",
+   "d": "Quelli in busta sono fritti e molto salati: leggi l'etichetta."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Noodles di riso",
+   "valori": [
+    {
+     "stato": "cotti",
+     "alimento": "Noodles di riso (cotti)"
+    }
+   ]
+  },
+  {
+   "nome": "Noodles all'uovo",
+   "testo": "Di frumento, per wok e ramen.",
+   "valori": [
+    {
+     "stato": "cotti",
+     "usda": "20410"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "In ammollo",
+   "tempo": "5–10 min",
+   "come": "I noodles di riso sottili bastano in acqua calda."
+  },
+  {
+   "metodo": "Saltati nel wok",
+   "tempo": "5 min",
+   "come": "Con verdure, tofu o pollo, salsa di soia e lime (pad thai)."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Secchi",
+   "d": "chiusi: 1–2 anni."
+  }
+ ],
+ "simili": [
+  "Pasta",
+  "Riso",
+  "Grano saraceno"
+ ],
+ "abbinamenti": [
+  "Tofu",
+  "Pak choi (cavolo cinese)",
+  "Salsa teriyaki",
+  "Germogli di soia",
+  "Arachidi",
+  "Lime"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

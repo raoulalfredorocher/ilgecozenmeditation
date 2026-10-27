@@ -1,0 +1,138 @@
+{
+ "id": "cous-cous",
+ "nome": "Cous cous",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Triticum durum",
+ "famiglia": "Poacee (frumento)",
+ "parole": [
+  "cous cous",
+  "couscous",
+  "cuscus",
+  "bulgur",
+  "grano",
+  "frumento",
+  "tabbouleh",
+  "farro"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg/960px-Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg",
+  "autore": "Lmmima",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg"
+ },
+ "descrizione": [
+  "Due modi nordafricani e mediorientali di preparare il grano duro: il cous cous è semola in granelli precotti; il bulgur è grano spezzato già cotto e seccato.",
+  "Pronti in pochi minuti."
+ ],
+ "proprieta": [
+  {
+   "t": "Bulgur",
+   "d": "Grano intero: più fibra (circa 4,5 g su 100 g cotto) e indice glicemico più basso."
+  },
+  {
+   "t": "Glutine",
+   "d": "Entrambi contengono glutine."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Cous cous",
+   "testo": "Basta acqua bollente, 5 minuti coperto.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Cous cous (crudo)"
+    },
+    {
+     "stato": "cotto",
+     "usda": "20029"
+    }
+   ]
+  },
+  {
+   "nome": "Bulgur",
+   "testo": "Grano spezzato precotto: tabbouleh, kibbeh.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Bulgur.jpg/500px-Bulgur.jpg",
+    "autore": "Wikimedia Commons",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Bulgur.jpg"
+   },
+   "valori": [
+    {
+     "stato": "cotto",
+     "alimento": "Bulgur (cotto)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Cous cous",
+   "tempo": "5 min",
+   "come": "Stesso volume di acqua bollente salata, coperto, poi sgranato con la forchetta e un filo d'olio."
+  },
+  {
+   "metodo": "Bulgur",
+   "tempo": "10–15 min",
+   "come": "Lessato o in ammollo in acqua calda."
+  },
+  {
+   "metodo": "Tabbouleh",
+   "tempo": "",
+   "come": "Bulgur, tanto prezzemolo, menta, pomodoro, limone."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Crudi",
+   "d": "chiusi: 1 anno."
+  },
+  {
+   "t": "Cotti",
+   "d": "in frigo 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Quinoa",
+  "Riso",
+  "Pasta"
+ ],
+ "abbinamenti": [
+  "Ceci",
+  "Prezzemolo fresco",
+  "Uvetta",
+  "Zucchine",
+  "Menta fresca",
+  "Melograno"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

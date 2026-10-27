@@ -1,0 +1,104 @@
+{
+ "id": "miglio",
+ "nome": "Miglio",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Panicum miliaceum",
+ "famiglia": "Poacee",
+ "parole": [
+  "miglio",
+  "millet"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/MILLET_grains_India.jpg/960px-MILLET_grains_India.jpg",
+  "autore": "Nandhinikandhasamy",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:MILLET_grains_India.jpg"
+ },
+ "descrizione": [
+  "Piccoli chicchi gialli, un cereale antichissimo. Cotto diventa cremoso o sgranato secondo l'acqua."
+ ],
+ "proprieta": [
+  {
+   "t": "Senza glutine",
+   "d": "Adatto ai celiaci."
+  },
+  {
+   "t": "Magnesio e fosforo",
+   "d": "Buona fonte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Miglio",
+   "valori": [
+    {
+     "stato": "cotto",
+     "alimento": "Miglio (cotto)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Sgranato",
+   "tempo": "15–20 min",
+   "come": "Sciacquato, 1 parte e 2 d'acqua, coperto."
+  },
+  {
+   "metodo": "Cremoso",
+   "tempo": "25 min",
+   "come": "Con più acqua o latte: come un porridge o una polenta."
+  },
+  {
+   "metodo": "Polpette",
+   "tempo": "",
+   "come": "Con verdure, al forno."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Chiuso",
+   "d": "al fresco: 6 mesi."
+  }
+ ],
+ "simili": [
+  "Quinoa",
+  "Grano saraceno",
+  "Cous cous"
+ ],
+ "abbinamenti": [
+  "Zucca",
+  "Carote",
+  "Ceci",
+  "Latte"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

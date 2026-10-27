@@ -1,0 +1,110 @@
+{
+ "id": "tacchino",
+ "nome": "Tacchino",
+ "cat": "Carne, pesce e uova",
+ "latino": "Meleagris gallopavo",
+ "famiglia": "Carne bianca",
+ "parole": [
+  "tacchino",
+  "petto di tacchino",
+  "turkey",
+  "fesa di tacchino"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Thanksgiving_Turkey.jpg/960px-Thanksgiving_Turkey.jpg",
+  "autore": "Patrick Fitzgerald",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Thanksgiving_Turkey.jpg"
+ },
+ "descrizione": [
+  "Carne bianca magra come il pollo, un po' più asciutta. Il petto (fesa) si usa a fettine o arrosto."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine magre",
+   "d": "Petto crudo: circa 24 g di proteine per 100 g, pochissimi grassi."
+  },
+  {
+   "t": "Selenio e B6",
+   "d": "Buona fonte."
+  },
+  {
+   "t": "Affettato",
+   "d": "La fesa di tacchino al forno da banco ha molto sale."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Petto di tacchino",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Petto di tacchino (crudo)"
+    },
+    {
+     "stato": "arrosto",
+     "usda": "05220"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Fettine in padella",
+   "tempo": "2–3 min per lato",
+   "come": "Con limone o salvia; non troppo, si asciuga."
+  },
+  {
+   "metodo": "Arrosto",
+   "tempo": "1 h · 180 °C",
+   "come": "Fesa intera legata, con erbe; a fette sottili."
+  }
+ ],
+ "nota_cottura": "Fino a 74 °C al cuore.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "1–2 giorni."
+  }
+ ],
+ "simili": [
+  "Pollo",
+  "Manzo"
+ ],
+ "abbinamenti": [
+  "Salvia",
+  "Limone",
+  "Prugne secche",
+  "Mela",
+  "Spinaci"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

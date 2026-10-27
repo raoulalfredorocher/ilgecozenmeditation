@@ -1,0 +1,112 @@
+{
+ "id": "piselli",
+ "nome": "Piselli",
+ "cat": "Legumi e soia",
+ "latino": "Pisum sativum",
+ "famiglia": "Fabacee",
+ "parole": [
+  "piselli",
+  "pisello",
+  "peas",
+  "piselli secchi",
+  "piselli spezzati",
+  "taccole"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Peas_%28484346231%29.jpg/960px-Peas_%28484346231%29.jpg",
+  "autore": "Ruth Hartnup",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Peas_%28484346231%29.jpg"
+ },
+ "descrizione": [
+  "Freschi o surgelati sono un ortaggio dolce; secchi spezzati sono un legume da zuppa.",
+  "I surgelati vengono congelati poche ore dopo la raccolta: spesso più dolci di quelli \"freschi\"."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine vegetali",
+   "d": "Freschi: 5 g per 100 g, secchi 24 g."
+  },
+  {
+   "t": "Fibra e vitamina C",
+   "d": "Anche vitamina K e folati."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   4,
+   5,
+   6
+  ],
+  "picco": [
+   5
+  ],
+  "testo": "freschi da aprile a giugno; surgelati tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Piselli freschi o surgelati",
+   "valori": [
+    {
+     "stato": "crudi",
+     "alimento": "Piselli"
+    },
+    {
+     "stato": "cotti",
+     "usda": "11305"
+    }
+   ]
+  },
+  {
+   "nome": "Secchi spezzati",
+   "testo": "Senza ammollo: zuppe e creme.",
+   "valori": [
+    {
+     "stato": "cotti",
+     "alimento": "Piselli secchi spezzati (cotti)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "In padella",
+   "tempo": "10 min",
+   "come": "Con cipollotto e un goccio d'acqua; menta alla fine."
+  },
+  {
+   "metodo": "Crema",
+   "tempo": "20 min",
+   "come": "Frullati con menta e un filo d'olio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Freschi",
+   "d": "nel baccello in frigo, 2–3 giorni: gli zuccheri diventano amido in fretta."
+  }
+ ],
+ "simili": [
+  "Fave",
+  "Fagiolino",
+  "Edamame"
+ ],
+ "abbinamenti": [
+  "Menta fresca",
+  "Uovo",
+  "Riso bianco (cotto)",
+  "Cipollotti",
+  "Parmigiano"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

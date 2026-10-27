@@ -1,0 +1,162 @@
+{
+ "id": "riso",
+ "nome": "Riso",
+ "cat": "Cereali, pane e pasta",
+ "latino": "Oryza sativa",
+ "famiglia": "Poacee",
+ "parole": [
+  "riso",
+  "rice",
+  "riso integrale",
+  "riso basmati",
+  "arborio",
+  "carnaroli",
+  "riso venere",
+  "riso a crudo",
+  "riso bianco",
+  "gallette",
+  "gallette di riso"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Uncooked_ST25_rice_on_bamboo_surface.jpg/960px-Uncooked_ST25_rice_on_bamboo_surface.jpg",
+  "autore": "VinhNguyen.1257",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Uncooked_ST25_rice_on_bamboo_surface.jpg"
+ },
+ "descrizione": [
+  "L'Italia è il primo produttore europeo (Piemonte e Lombardia). Arborio, Carnaroli e Vialone Nano per risotti; basmati e jasmine profumati; integrale e Venere con la crusca.",
+  "Cotto triplica il peso: 70 g crudi ≈ 200 g cotti."
+ ],
+ "proprieta": [
+  {
+   "t": "Senza glutine",
+   "d": "Adatto a chi è celiaco."
+  },
+  {
+   "t": "Integrale",
+   "d": "Più fibra, magnesio e vitamine B del bianco."
+  },
+  {
+   "t": "Arsenico",
+   "d": "Il riso ne assorbe dal terreno: cuocerlo in tanta acqua e scolarlo ne toglie una parte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "titolo_tipi": "Tipi di riso",
+ "tipi": [
+  {
+   "nome": "Riso bianco",
+   "testo": "70 g crudi ≈ 255 kcal.",
+   "valori": [
+    {
+     "stato": "cotto",
+     "alimento": "Riso bianco (cotto)"
+    },
+    {
+     "stato": "crudo",
+     "usda": "20444"
+    }
+   ]
+  },
+  {
+   "nome": "Riso integrale",
+   "testo": "Cuoce in 40 min.",
+   "valori": [
+    {
+     "stato": "cotto",
+     "alimento": "Riso integrale (cotto)"
+    },
+    {
+     "stato": "crudo",
+     "usda": "20036"
+    }
+   ]
+  },
+  {
+   "nome": "Gallette di riso",
+   "testo": "Riso soffiato pressato: una galletta ≈ 9 g, 35 kcal.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffed_Rice_Cakes.jpg/500px-Puffed_Rice_Cakes.jpg",
+    "autore": "BD2412",
+    "licenza": "Pubblico dominio",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Puffed_Rice_Cakes.jpg"
+   },
+   "valori": [
+    {
+     "stato": "integrali",
+     "alimento": "Gallette di riso integrale"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Risotto",
+   "tempo": "16–18 min",
+   "come": "Tostato a secco, poi brodo caldo un po' alla volta; mantecato a fuoco spento."
+  },
+  {
+   "metodo": "Pilaf",
+   "tempo": "15 min + 10 riposo",
+   "come": "1 parte di riso, 1,5 di acqua, coperto: chicchi separati."
+  },
+  {
+   "metodo": "Lessato e raffreddato",
+   "tempo": "",
+   "come": "Per insalate di riso: forma amido resistente."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Crudo",
+   "d": "chiuso, al fresco: anni (integrale 6 mesi)."
+  },
+  {
+   "t": "Cotto",
+   "d": "raffreddalo in fretta e mettilo in frigo: 1–2 giorni (Bacillus cereus)."
+  }
+ ],
+ "simili": [
+  "Pasta",
+  "Quinoa",
+  "Orzo",
+  "Noodles"
+ ],
+ "abbinamenti": [
+  "Lenticchie",
+  "Piselli",
+  "Zucca",
+  "Funghi",
+  "Salmone",
+  "Parmigiano"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Arsenico e cottura del riso: EFSA 2014; Sci Total Environ 2022",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

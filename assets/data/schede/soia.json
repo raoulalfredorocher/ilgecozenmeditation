@@ -1,0 +1,160 @@
+{
+ "id": "soia",
+ "nome": "Soia",
+ "cat": "Legumi e soia",
+ "latino": "Glycine max",
+ "famiglia": "Fabacee",
+ "parole": [
+  "soia",
+  "soya",
+  "soy",
+  "edamame",
+  "germogli di soia",
+  "latte di soia",
+  "bevanda di soia",
+  "yogurt di soia",
+  "soia gialla"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Yellow_corn_and_soya_beans_good_for_nutrition.jpg/960px-Yellow_corn_and_soya_beans_good_for_nutrition.jpg",
+  "autore": "Sunday Glory",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Yellow_corn_and_soya_beans_good_for_nutrition.jpg"
+ },
+ "descrizione": [
+  "Legume asiatico con più proteine e grassi degli altri. Da lì vengono edamame (verdi), latte e yogurt di soia, tofu, tempeh, miso e salsa di soia.",
+  "I \"germogli di soia\" del supermercato sono quasi sempre di fagiolo mungo."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine complete",
+   "d": "Ha tutti gli aminoacidi essenziali, come le proteine animali."
+  },
+  {
+   "t": "Isoflavoni",
+   "d": "Fitoestrogeni studiati per cuore e menopausa; nelle quantità alimentari sono sicuri."
+  },
+  {
+   "t": "Colesterolo",
+   "d": "25 g di proteine di soia al giorno abbassano un po' il colesterolo LDL."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno (edamame surgelati)."
+ },
+ "titolo_tipi": "Tipi di soia",
+ "tipi": [
+  {
+   "nome": "Soia gialla",
+   "testo": "Secca, si ammolla e cuoce come i fagioli.",
+   "valori": [
+    {
+     "stato": "cotta",
+     "alimento": "Soia gialla (cotta)"
+    },
+    {
+     "stato": "secca",
+     "usda": "16108"
+    }
+   ]
+  },
+  {
+   "nome": "Edamame",
+   "testo": "Baccelli verdi, si lessano 5 min e si sgranano.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Edamame_by_Zesmerelda_in_Chicago.jpg/500px-Edamame_by_Zesmerelda_in_Chicago.jpg",
+    "autore": "Tammy Green",
+    "licenza": "CC BY-SA 2.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Edamame_by_Zesmerelda_in_Chicago.jpg"
+   },
+   "valori": [
+    {
+     "stato": "cotti",
+     "alimento": "Edamame"
+    }
+   ]
+  },
+  {
+   "nome": "Germogli",
+   "testo": "Croccanti, crudi o saltati nel wok.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Organic_mixed_beans_shoots.jpg/500px-Organic_mixed_beans_shoots.jpg",
+    "autore": "Wikimedia Commons",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Organic_mixed_beans_shoots.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudi",
+     "alimento": "Germogli di soia"
+    }
+   ]
+  },
+  {
+   "nome": "Latte di soia",
+   "testo": "Senza zucchero, meglio se con calcio aggiunto.",
+   "valori": [
+    {
+     "stato": "senza zucchero, con calcio",
+     "usda": "16222"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Edamame",
+   "tempo": "5 min",
+   "come": "Lessati in acqua salata, con sale grosso o peperoncino."
+  },
+  {
+   "metodo": "Germogli saltati",
+   "tempo": "2 min",
+   "come": "Nel wok con verdure e salsa di soia."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Germogli",
+   "d": "in frigo 2 giorni: meglio cotti per sicurezza."
+  }
+ ],
+ "simili": [
+  "Tofu",
+  "Tempeh",
+  "Fagioli"
+ ],
+ "abbinamenti": [
+  "Riso bianco (cotto)",
+  "Zenzero fresco",
+  "Semi di sesamo",
+  "Pak choi (cavolo cinese)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Isoflavoni: EFSA 2015; soia e colesterolo: meta-analisi 2019",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
