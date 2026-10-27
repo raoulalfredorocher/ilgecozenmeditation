@@ -1,0 +1,95 @@
+{
+ "id": "mochi",
+ "nome": "Mochi",
+ "famiglia": "Dolce giapponese",
+ "parole": [
+  "mochi",
+  "daifuku",
+  "mochi gelato",
+  "mochi ice cream"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Daifuku_001.jpg/960px-Daifuku_001.jpg",
+  "autore": "Ocdp",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Daifuku_001.jpg"
+ },
+ "descrizione": [
+  "Pasta di riso glutinoso pestato, morbida ed elastica. Il daifuku è ripieno di anko (crema di fagioli azuki); il mochi gelato racchiude una pallina di gelato."
+ ],
+ "proprieta": [
+  {
+   "t": "Piccoli",
+   "d": "Un daifuku da 35 g circa 80 kcal; un mochi gelato da 32 g circa 70."
+  },
+  {
+   "t": "Poco grasso",
+   "d": "Il daifuku è quasi tutto carboidrati."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Daifuku all'anko",
+   "valori": [
+    {
+     "stato": "tradizionale",
+     "alimento": "Mochi (daifuku all'anko)"
+    }
+   ]
+  },
+  {
+   "nome": "Mochi gelato",
+   "valori": [
+    {
+     "stato": "surgelato",
+     "alimento": "Mochi gelato"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Daifuku",
+   "d": "si induriscono in frigo: tienili a temperatura ambiente e mangiali in 1–2 giorni."
+  }
+ ],
+ "simili": [
+  "Gelato",
+  "Riso"
+ ],
+ "abbinamenti": [
+  "Tè verde",
+  "Fragola"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

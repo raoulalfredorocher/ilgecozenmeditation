@@ -1,0 +1,109 @@
+{
+ "id": "biscotti",
+ "nome": "Biscotti",
+ "famiglia": "Dolci da forno",
+ "parole": [
+  "biscotti",
+  "biscotto",
+  "frollini",
+  "cookies",
+  "digestive",
+  "oreo",
+  "savoiardi",
+  "cantucci"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Chocolate_chip_cookies_on_cutting_board.jpg/960px-Chocolate_chip_cookies_on_cutting_board.jpg",
+  "autore": "Mshuang2",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Chocolate_chip_cookies_on_cutting_board.jpg"
+ },
+ "descrizione": [
+  "Piccoli dolci secchi: frollini (burro), con gocce di cioccolato, farciti. I digestive sono integrali ma non per questo leggeri."
+ ],
+ "proprieta": [
+  {
+   "t": "Densi",
+   "d": "460–490 kcal per 100 g: un frollino pesa 8–12 g, cioè 40–55 kcal."
+  },
+  {
+   "t": "Zucchero e grassi",
+   "d": "Circa 25–35 g di zuccheri e 20 g di grassi per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Frollini al burro",
+   "valori": [
+    {
+     "stato": "confezionati",
+     "alimento": "Biscotti frollini al burro"
+    }
+   ]
+  },
+  {
+   "nome": "Con gocce di cioccolato",
+   "valori": [
+    {
+     "stato": "confezionati",
+     "alimento": "Biscotti con gocce di cioccolato"
+    }
+   ]
+  },
+  {
+   "nome": "Al cacao farciti",
+   "valori": [
+    {
+     "stato": "confezionati",
+     "alimento": "Biscotti al cacao con crema (tipo Oreo)"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In scatola di latta",
+   "d": "chiusi, settimane."
+  }
+ ],
+ "simili": [
+  "Crackers e fette biscottate",
+  "Torte e crostate"
+ ],
+ "abbinamenti": [
+  "Latte",
+  "Tè",
+  "Caffè"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

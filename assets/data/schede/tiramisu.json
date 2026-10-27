@@ -1,0 +1,85 @@
+{
+ "id": "tiramisu",
+ "nome": "Tiramisù",
+ "famiglia": "Dolce al cucchiaio",
+ "parole": [
+  "tiramisù",
+  "tiramisu"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Classic_Italian_Tiramisu-3_%2829989504485%29.jpg/960px-Classic_Italian_Tiramisu-3_%2829989504485%29.jpg",
+  "autore": "Sharon Chen",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Classic_Italian_Tiramisu-3_%2829989504485%29.jpg"
+ },
+ "descrizione": [
+  "Dolce veneto: savoiardi inzuppati nel caffè, crema di mascarpone e uova, cacao amaro sopra."
+ ],
+ "proprieta": [
+  {
+   "t": "Calorie",
+   "d": "Circa 280 kcal per 100 g; una porzione da ristorante è 150 g."
+  },
+  {
+   "t": "Caffeina",
+   "d": "Dal caffè: una porzione circa mezza tazzina."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 3,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Tiramisù",
+   "valori": [
+    {
+     "stato": "classico",
+     "alimento": "Tiramisù"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2 giorni (uova crude)."
+  }
+ ],
+ "simili": [
+  "Budini e mousse",
+  "Torte e crostate"
+ ],
+ "abbinamenti": [
+  "Caffè",
+  "Cacao",
+  "Fragola"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

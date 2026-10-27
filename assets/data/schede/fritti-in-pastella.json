@@ -1,0 +1,108 @@
+{
+ "id": "fritti-in-pastella",
+ "nome": "Fritti in pastella",
+ "famiglia": "Fritture",
+ "parole": [
+  "tempura",
+  "fritto in pastella",
+  "fritti",
+  "anelli di cipolla",
+  "onion rings",
+  "fritto misto",
+  "frittelle"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Tempura_01.jpg/960px-Tempura_01.jpg",
+  "autore": "Yaco",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Tempura_01.jpg"
+ },
+ "descrizione": [
+  "Verdure (o pesce) passate in una pastella di farina e acqua fredda e fritte. La tempura giapponese è leggera e croccante; gli anelli di cipolla americani sono più spessi e impanati."
+ ],
+ "proprieta": [
+  {
+   "t": "Olio assorbito",
+   "d": "La pastella assorbe 10–15 g di olio ogni 100 g: le verdure da 25 kcal diventano 150–400."
+  },
+  {
+   "t": "Temperatura",
+   "d": "A 170–180 °C la crosta si chiude subito e assorbe meno olio."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 3,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "tipi": [
+  {
+   "nome": "Verdure in tempura",
+   "valori": [
+    {
+     "stato": "fritte",
+     "alimento": "Verdure in tempura"
+    }
+   ]
+  },
+  {
+   "nome": "Anelli di cipolla",
+   "valori": [
+    {
+     "stato": "fritti",
+     "alimento": "Anelli di cipolla fritti"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Tempura",
+   "tempo": "2–3 min · 175 °C",
+   "come": "Acqua gelata (anche frizzante) e farina appena mescolate, coi grumi: verdure asciutte, pochi pezzi alla volta."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Subito",
+   "d": "si ammorbidiscono in pochi minuti."
+  }
+ ],
+ "simili": [
+  "Patata",
+  "Olio"
+ ],
+ "abbinamenti": [
+  "Salsa di soia",
+  "Zenzero",
+  "Limone",
+  "Zucchina",
+  "Patata dolce"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

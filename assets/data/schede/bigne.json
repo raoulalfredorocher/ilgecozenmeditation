@@ -1,0 +1,87 @@
+{
+ "id": "bigne",
+ "nome": "Bignè ed éclair",
+ "famiglia": "Pasta choux",
+ "parole": [
+  "bignè",
+  "bigne",
+  "éclair",
+  "eclair",
+  "profiteroles",
+  "zeppole",
+  "chou"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg/960px-2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg",
+  "autore": "Michael Barera",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:2025_Wisconsin_State_Fair_47_%28Chocolate_Cream_Puff%29.jpg"
+ },
+ "descrizione": [
+  "Pasta choux: acqua, burro, farina e uova cotti in pentola e poi al forno, dove si gonfiano vuoti dentro. Si farciscono di crema o panna.",
+  "Le zeppole di San Giuseppe sono choux fritte o al forno."
+ ],
+ "proprieta": [
+  {
+   "t": "Calorie",
+   "d": "Circa 330 kcal per 100 g farciti; un bignè mignon (20 g) circa 65 kcal."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Éclair alla crema",
+   "valori": [
+    {
+     "stato": "farcito",
+     "alimento": "Bignè / éclair alla crema"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "farciti, 1–2 giorni."
+  }
+ ],
+ "simili": [
+  "Cornetto e sfoglia",
+  "Torte e crostate"
+ ],
+ "abbinamenti": [
+  "Cioccolato",
+  "Caffè",
+  "Panna"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

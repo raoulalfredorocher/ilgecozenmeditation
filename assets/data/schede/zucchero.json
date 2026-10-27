@@ -1,0 +1,124 @@
+{
+ "id": "zucchero",
+ "nome": "Zucchero e sciroppi",
+ "famiglia": "Dolcificanti",
+ "parole": [
+  "zucchero",
+  "zucchero di canna",
+  "zucchero a velo",
+  "sciroppo",
+  "sciroppo d'acero",
+  "sciroppo d'agave",
+  "agave",
+  "dolcificante"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Sugar_cubes_V1.jpg/960px-Sugar_cubes_V1.jpg",
+  "autore": "Poyraz 72",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Sugar_cubes_V1.jpg"
+ },
+ "descrizione": [
+  "Lo zucchero bianco è saccarosio puro, da barbabietola o canna. Quello di canna grezzo ha un velo di melassa: stesse calorie.",
+  "Gli sciroppi sono zuccheri sciolti in acqua: l'acero è linfa concentrata, l'agave è quasi tutto fruttosio."
+ ],
+ "proprieta": [
+  {
+   "t": "Solo energia",
+   "d": "Un cucchiaino (5 g) sono 20 kcal, senza altro."
+  },
+  {
+   "t": "Limite OMS",
+   "d": "Zuccheri aggiunti sotto il 10% delle calorie (circa 50 g al giorno), meglio sotto il 5% (25 g)."
+  },
+  {
+   "t": "Agave",
+   "d": "Indice glicemico basso perché è fruttosio, che però va tutto al fegato."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Bianco",
+   "valori": [
+    {
+     "stato": "semolato",
+     "alimento": "Zucchero"
+    }
+   ]
+  },
+  {
+   "nome": "Di canna",
+   "valori": [
+    {
+     "stato": "grezzo",
+     "alimento": "Zucchero di canna"
+    }
+   ]
+  },
+  {
+   "nome": "Sciroppo d'acero",
+   "valori": [
+    {
+     "stato": "puro",
+     "alimento": "Sciroppo d'acero"
+    }
+   ]
+  },
+  {
+   "nome": "Sciroppo d'agave",
+   "valori": [
+    {
+     "stato": "puro",
+     "alimento": "Sciroppo d'agave"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In dispensa",
+   "d": "lo zucchero non scade; l'acero aperto va in frigo."
+  }
+ ],
+ "simili": [
+  "Miele",
+  "Marmellata"
+ ],
+ "abbinamenti": [
+  "Caffè",
+  "Cannella",
+  "Pancake e waffle",
+  "Limone"
+ ],
+ "cat": "Dolci e snack",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
