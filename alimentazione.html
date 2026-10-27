@@ -277,14 +277,74 @@
     #tab-spesa .sp-row { border: .5px solid var(--border); border-radius: var(--radius-md); background: var(--card); border-top: .5px solid var(--border); }
     /* Risultati: bilancio del giorno e medie 7/30/90 nella scheda Calorie */
     .rs-sub { margin: var(--space-5) 0 var(--space-2); }
+    /* Alimenti: ricerca e scheda di dettaglio */
+    .al-card { --t: var(--tn4); display: flex; align-items: stretch; gap: var(--space-3); width: 100%; text-align: left; padding: 0; margin-bottom: var(--space-3); cursor: pointer; color: inherit; overflow: hidden;
+      border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
+    .al-card:active { opacity: .75; }
+    .al-card-img { flex: 0 0 104px; aspect-ratio: 1; }
+    .al-card-img img, .al-vimg img, .al-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .al-card-txt { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: var(--space-3) var(--space-3) var(--space-3) 0; }
+    .al-card-name { font: 500 1.375rem/1.2 var(--font-serif); }
+    .al-row { gap: var(--space-3); text-align: left; width: 100%; }
+    .al-row-name { font-size: var(--fs-md); }
+    .al-kcal { font-size: var(--fs-xs); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .al-kcal b { font-size: var(--fs-md); font-weight: 500; color: var(--text); }
+    .al-tag { font-size: .625rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: color-mix(in srgb, var(--tn4) 22%, var(--card)); color: color-mix(in srgb, var(--tn4) 70%, var(--text)); }
+    .al-hero { margin: 0; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 3 / 2; background: var(--surface); }
+    .al-credit { display: block; font-size: .6875rem; color: var(--muted); margin-top: 4px; text-decoration: none; }
+    .al-latin { font-family: var(--font-serif); font-style: italic; margin-bottom: var(--space-4); }
+    .al-sec { --t: var(--tn1); position: relative; overflow: hidden; margin-top: var(--space-4); padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); border-radius: var(--radius-lg);
+      border: .5px solid color-mix(in srgb, var(--t) 28%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 2%, var(--card))); }
+    .al-sec::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .al-c2 { --t: var(--tn4); } .al-c3 { --t: var(--tn3); } .al-c4 { --t: var(--tn2); }
+    .al-p { margin: 0 0 var(--space-3); line-height: 1.6; font-size: var(--fs-md); }
+    .al-p.sm { font-size: var(--fs-sm); margin-bottom: var(--space-2); }
+    .al-p:last-child { margin-bottom: 0; }
+    .al-var { gap: 6px; }
+    .al-var .pill { height: 30px; padding: 0 12px; font-size: var(--fs-xs); }
+    .al-var .pill[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+    .al-macros { margin: var(--space-3) 0; }
+    .al-macros > div { background: color-mix(in srgb, var(--card) 70%, transparent); }
+    .al-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 4px var(--space-4); font-size: var(--fs-sm); }
+    .al-r > span { white-space: nowrap; }
+    .al-r { display: flex; justify-content: space-between; gap: var(--space-2); border-bottom: .5px solid var(--border); padding: 4px 0; }
+    .al-r b, .al-m-v, .al-m-p { font-weight: 500; font-variant-numeric: tabular-nums; }
+    .al-micro { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-3); }
+    .al-m { display: grid; grid-template-columns: 1fr auto 64px 36px; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); }
+    .al-m-v { color: var(--muted); font-size: var(--fs-xs); }
+    .al-m-p { text-align: right; font-size: var(--fs-xs); }
+    .al-bar { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--tn1) 12%, var(--surface)); overflow: hidden; }
+    .al-bar i { display: block; height: 100%; border-radius: 3px; background: var(--tn1); }
+    .al-vars { display: flex; flex-direction: column; gap: var(--space-3); }
+    .al-vcard { display: flex; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-lg); border: .5px solid var(--border); background: var(--card); box-shadow: var(--shadow-sm); }
+    .al-vimg { flex: 0 0 92px; height: 92px; border-radius: var(--radius-md); overflow: hidden; background: var(--surface); }
+    .al-vtxt { min-width: 0; flex: 1; }
+    .al-vname { font: 500 var(--fs-lg)/1.25 var(--font-serif); }
+    .al-vtxt .s { margin-bottom: 4px; }
+    .al-cook { display: grid; grid-template-columns: 1fr; gap: var(--space-2); }
+    .al-ck { --t: var(--tn3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border: .5px solid color-mix(in srgb, var(--t) 26%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 12%, var(--card)), var(--card)); }
+    .al-ck:nth-child(4n+2) { --t: var(--tn4); } .al-ck:nth-child(4n+3) { --t: var(--tn2); } .al-ck:nth-child(4n+4) { --t: var(--tn1); }
+    .al-ck-h { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); margin-bottom: 4px; }
+    .al-ck-h b { font: 500 var(--fs-lg) var(--font-serif); }
+    .al-ck-h .s { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .al-eff { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); font-family: var(--font-serif); font-style: italic; }
+    .al-months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; margin-bottom: var(--space-3); }
+    .al-months span { text-align: center; font-size: .6875rem; padding: 6px 0; border-radius: 6px; background: var(--surface); color: var(--muted); }
+    .al-months .on { background: color-mix(in srgb, var(--tn3) 30%, var(--card)); color: var(--text); }
+    .al-months .pk { background: var(--tn3); color: #fff; font-weight: 600; }
+    .al-kv { margin-bottom: var(--space-3); } .al-kv:last-child { margin-bottom: 0; }
+    .al-kv b { font-weight: 600; font-size: var(--fs-sm); }
+    .al-src { margin: 0; padding-left: 1.1em; font-size: var(--fs-xs); color: var(--muted); line-height: 1.6; }
+    .al-page .ed-scroll { padding-left: var(--space-4); padding-right: var(--space-4); }
   </style>
 </head>
 <!--
-  Alimentazione: quattro schede.
+  Alimentazione: cinque schede.
     Dieta      → js/pages/alimentazione/dieta.js (+ dayeditor.js, pdf.js, profile.js)
     Risultati  → js/pages/alimentazione/risultati.js (+ charts.js)
     Ricette    → js/pages/alimentazione/ricette.js
     Spesa      → js/pages/alimentazione/spesa.js
+    Alimenti   → js/pages/alimentazione/alimenti.js (schede in assets/data/schede-alimenti.json)
   Il + della barra in basso preme #alim-add, che esegue l'azione della scheda attiva.
   Database degli alimenti: assets/data/alimenti.json (vedi foods.js per il formato).
 -->
@@ -304,6 +364,7 @@
         <button type="button" data-tab-btn="risultati">Risultati</button>
         <button type="button" data-tab-btn="ricette">Ricette</button>
         <button type="button" data-tab-btn="spesa">Spesa</button>
+        <button type="button" data-tab-btn="alimenti">Alimenti</button>
       </div>
     </div>
 
@@ -311,6 +372,7 @@
     <section class="tab-panel" id="tab-risultati" aria-label="Risultati" hidden></section>
     <section class="tab-panel" id="tab-ricette" aria-label="Ricette" hidden></section>
     <section class="tab-panel" id="tab-spesa" aria-label="Spesa" hidden></section>
+    <section class="tab-panel" id="tab-alimenti" aria-label="Alimenti" hidden></section>
 
     <button type="button" id="alim-add" hidden aria-hidden="true" tabindex="-1"></button>
   </main>

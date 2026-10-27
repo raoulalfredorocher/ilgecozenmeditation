@@ -12,6 +12,7 @@
  *     grassi: g | fat | grassi | lipidi
  *     u (facoltativo): pesi di porzioni comuni in grammi, es. { "uovo": 60 }
  *     gal (facoltativo): avanzi alle galline, 0 non mangiabile · 1 mangiabile · 2 superfood
+ *     f (facoltativo): fonte dei valori (es. "USDA 11485")
  * Gli alimenti aggiunti a mano dall'app (state.customFoods) si sommano a questi.
  */
 import { state } from './state.js';
@@ -34,6 +35,7 @@ export function normalizeFood(o) {
     g: toNum(pick(o, ['g', 'fat', 'grassi', 'lipidi', 'Grassi'])),
     u: o.u && typeof o.u === 'object' ? o.u : undefined,
     gal: [0, 1, 2].includes(o.gal) ? o.gal : undefined,
+    f: o.f ? String(o.f) : undefined,
   };
 }
 
