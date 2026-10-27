@@ -1,6 +1,6 @@
 /**
- * main.js — pagina Alimentazione: quattro schede (Dieta, Risultati, Ricette,
- * Spesa). Il + della barra in basso esegue l'azione della scheda aperta e il
+ * main.js — pagina Alimentazione: cinque schede (Dieta, Risultati, Ricette,
+ * Spesa, Alimenti). Il + della barra in basso esegue l'azione della scheda aperta e il
  * menu dei tre puntini offre ciò che serve a quella scheda.
  */
 import { waitForUser } from '../../core/auth-guard.js';
@@ -11,9 +11,10 @@ import * as dieta from './dieta.js';
 import * as risultati from './risultati.js';
 import * as ricette from './ricette.js';
 import * as spesa from './spesa.js';
+import * as alimenti from './alimenti.js';
 import { openProfile } from './profile.js';
 
-const TABS = { dieta, risultati, ricette, spesa };
+const TABS = { dieta, risultati, ricette, spesa, alimenti };
 const LEGACY = { oggi: 'risultati', settimana: 'dieta' };      // vecchi indirizzi
 let current = 'dieta';
 
@@ -23,6 +24,7 @@ const MENU = {
   risultati: [['Il mio profilo', openProfile]],
   ricette: [['Esporta le ricette (CSV)', ricette.exportRecipes]],
   spesa: [],
+  alimenti: [],
 };
 
 function showTab(name) {

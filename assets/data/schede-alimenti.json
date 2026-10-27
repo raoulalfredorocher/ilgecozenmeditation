@@ -1,0 +1,85 @@
+{
+  "_info": "Schede di dettaglio degli alimenti (Alimentazione → Alimenti). Valori per 100 g da USDA SR28 (numero NDB in 'f'), la stessa fonte di alimenti.json. Foto da Wikimedia Commons con licenza libera: autore e licenza in 'foto'.",
+  "schede": [
+    {
+      "id": "zucca",
+      "nome": "Zucca",
+      "latino": "Cucurbita maxima · C. moschata · C. pepo",
+      "famiglia": "Cucurbitacee",
+      "parole": ["zucca", "zucche", "butternut", "delica", "hokkaido", "mantovana", "chioggia", "spaghetti squash", "pumpkin", "kabocha"],
+      "alimenti": ["Zucca butternut", "Semi di zucca"],
+      "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Cucurbita_2011_G1.jpg/960px-Cucurbita_2011_G1.jpg", "autore": "George Chernilevsky", "licenza": "Pubblico dominio", "pagina": "https://commons.wikimedia.org/wiki/File:Cucurbita_2011_G1.jpg" },
+      "descrizione": [
+        "La zucca è il frutto delle piante del genere Cucurbita, la stessa famiglia di zucchine, cetrioli e meloni. Arriva dalle Americhe: in Messico si coltivava già 8.000–10.000 anni fa ed è sbarcata in Europa nel Cinquecento.",
+        "Le zucche invernali si raccolgono a fine estate, quando la buccia è dura, e si conservano per mesi. Le specie in cucina sono tre: C. maxima (polpa asciutta e dolce, come Delica, Hokkaido e Mantovana), C. moschata (polpa più umida e profumata, come Butternut e Moscata di Provenza) e C. pepo (più acquosa, come la zucca di Halloween e la spaghetti).",
+        "È soprattutto acqua (oltre il 90%) e ha poche calorie: 26 kcal ogni 100 g nella zucca comune, 45 nella butternut. Il colore arancio viene dai carotenoidi (beta-carotene e alfa-carotene), che il corpo trasforma in vitamina A: 100 g di zucca cruda coprono circa metà del fabbisogno giornaliero di vitamina A. Dà anche potassio (340 mg) e un po' di vitamina C."
+      ],
+      "nutrienti": {
+        "nota": "Carboidrati come USDA, fibra compresa (come in alimenti.json). %VNR = quota dei valori nutritivi di riferimento per un adulto (Reg. UE 1169/2011).",
+        "varianti": [
+          { "id": "cruda", "nome": "Comune, cruda", "f": "USDA 11422", "kcal": 26, "acqua": 91.6, "prot": 1.0, "carb": 6.5, "zuccheri": 2.8, "fibra": 0.5, "grassi": 0.1, "vitA": 426, "betacar": 3100, "vitC": 9.0, "vitE": 1.06, "vitK": 1.1, "b6": 0.061, "folati": 16, "k": 340, "mg": 12, "ca": 21, "p": 44, "fe": 0.8, "zn": 0.32, "na": 1 },
+          { "id": "lessata", "nome": "Comune, lessata", "f": "USDA 11423", "kcal": 20, "acqua": 93.7, "prot": 0.7, "carb": 4.9, "zuccheri": 2.1, "fibra": 1.1, "grassi": 0.1, "vitA": 288, "betacar": 2096, "vitC": 4.7, "vitE": 0.80, "vitK": 0.8, "b6": 0.044, "folati": 9, "k": 230, "mg": 9, "ca": 15, "p": 30, "fe": 0.57, "zn": 0.23, "na": 1 },
+          { "id": "butternut", "nome": "Butternut, cruda", "f": "USDA 11485", "alimento": "Zucca butternut", "kcal": 45, "acqua": 86.4, "prot": 1.0, "carb": 11.7, "zuccheri": 2.2, "fibra": 2.0, "grassi": 0.1, "vitA": 532, "betacar": 4226, "vitC": 21.0, "vitE": 1.44, "vitK": 1.1, "b6": 0.154, "folati": 27, "k": 352, "mg": 34, "ca": 48, "p": 33, "fe": 0.7, "zn": 0.15, "na": 4 },
+          { "id": "butternut-forno", "nome": "Butternut, al forno", "f": "USDA 11486", "kcal": 40, "acqua": 87.8, "prot": 0.9, "carb": 10.5, "zuccheri": 2.0, "fibra": 3.2, "grassi": 0.1, "vitA": 558, "betacar": 4570, "vitC": 15.1, "vitE": 1.29, "vitK": 1.0, "b6": 0.124, "folati": 19, "k": 284, "mg": 29, "ca": 41, "p": 27, "fe": 0.6, "zn": 0.13, "na": 4 },
+          { "id": "spaghetti", "nome": "Spaghetti, cruda", "f": "USDA 11492", "kcal": 31, "acqua": 91.6, "prot": 0.6, "carb": 6.9, "zuccheri": 2.8, "fibra": 1.5, "grassi": 0.6, "vitA": 6, "betacar": 64, "vitC": 2.1, "vitE": 0.13, "vitK": 0.9, "b6": 0.101, "folati": 12, "k": 108, "mg": 12, "ca": 23, "p": 12, "fe": 0.31, "zn": 0.19, "na": 17 },
+          { "id": "spaghetti-cotta", "nome": "Spaghetti, cotta", "f": "USDA 11493", "kcal": 27, "acqua": 92.3, "prot": 0.7, "carb": 6.5, "zuccheri": 2.5, "fibra": 1.4, "grassi": 0.3, "vitA": 6, "betacar": 59, "vitC": 3.5, "vitE": 0.12, "vitK": 0.8, "b6": 0.099, "folati": 8, "k": 117, "mg": 11, "ca": 21, "p": 14, "fe": 0.34, "zn": 0.2, "na": 18 }
+        ]
+      },
+      "varieta": [
+        { "nome": "Butternut", "specie": "C. moschata", "peso": "1–2 kg", "variante": "butternut",
+          "testo": "A forma di pera, buccia beige liscia e sottile, semi solo nella parte bombata. Polpa arancio, dolce, che ricorda la nocciola. Si sbuccia facilmente con il pelapatate: ottima a cubetti al forno, nelle vellutate e anche cruda, grattugiata in insalata.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Cucurbita_moschata_Butternut_2012_G1.jpg/500px-Cucurbita_moschata_Butternut_2012_G1.jpg", "autore": "George Chernilevsky", "licenza": "Pubblico dominio", "pagina": "https://commons.wikimedia.org/wiki/File:Cucurbita_moschata_Butternut_2012_G1.jpg" } },
+        { "nome": "Delica", "specie": "C. maxima", "peso": "1–2 kg",
+          "testo": "Varietà giapponese (tipo kabocha), tonda e schiacciata, buccia verde scuro. Polpa arancio intenso, asciutta e farinosa, dolce come una castagna. La buccia cotta si mangia. Perfetta al forno, negli gnocchi e nei risotti.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Kabocha.jpg/500px-Kabocha.jpg", "autore": "Cota", "licenza": "Pubblico dominio", "pagina": "https://commons.wikimedia.org/wiki/File:Kabocha.jpg" } },
+        { "nome": "Hokkaido", "specie": "C. maxima", "peso": "1–1,5 kg",
+          "testo": "Detta anche potimarron o red kuri: a goccia, buccia rosso-arancio sottile e commestibile. Polpa compatta con sapore di castagna. Non serve sbucciarla: a spicchi al forno o in vellutata con tutta la buccia.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Red_kuri_squash%28Uchiki_kuri_squash%29.jpg/500px-Red_kuri_squash%28Uchiki_kuri_squash%29.jpg", "autore": "さつまやまいもすけ", "licenza": "CC0", "pagina": "https://commons.wikimedia.org/wiki/File:Red_kuri_squash(Uchiki_kuri_squash).jpg" } },
+        { "nome": "Mantovana", "specie": "C. maxima", "peso": "2–4 kg",
+          "testo": "Tonda e un po' schiacciata, buccia verde-grigio rugosa. Polpa giallo-arancio compatta, asciutta e molto dolce: è la zucca dei tortelli di zucca e del risotto alla mantovana.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Cucurbita_maxima_zucca_mantovana_Cena_giapponese_2.jpg/500px-Cucurbita_maxima_zucca_mantovana_Cena_giapponese_2.jpg", "autore": "fugzu", "licenza": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Cucurbita_maxima_zucca_mantovana_Cena_giapponese_2.jpg" } },
+        { "nome": "Marina di Chioggia", "specie": "C. maxima", "peso": "3–5 kg",
+          "testo": "La \"suca baruca\" veneta: buccia verde scuro piena di bitorzoli. Polpa giallo-arancio, farinosa e dolce. Tradizionale a fette al forno (\"suca rosta\"), nei risotti e negli gnocchi.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Marina_Di_Chioggia_squash.jpg/500px-Marina_Di_Chioggia_squash.jpg", "autore": "miriam diamond", "licenza": "CC BY-SA 3.0", "pagina": "https://commons.wikimedia.org/wiki/File:Marina_Di_Chioggia_squash.jpg" } },
+        { "nome": "Moscata di Provenza", "specie": "C. moschata", "peso": "5–10 kg",
+          "testo": "Grande, schiacciata e a spicchi, buccia che passa dal verde al marrone-arancio. Polpa arancio umida e profumata (il \"muschiato\" del nome). Spesso si vende a fette: ideale per vellutate, creme e marmellate.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Cucurbita_moschata_Musqu%C3%A9e_de_Provence_-_Une_belle_musquee.jpg/500px-Cucurbita_moschata_Musqu%C3%A9e_de_Provence_-_Une_belle_musquee.jpg", "autore": "Une vallée dans la lune", "licenza": "CC BY-SA 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Cucurbita_moschata_Musqu%C3%A9e_de_Provence_-_Une_belle_musquee.jpg" } },
+        { "nome": "Spaghetti", "specie": "C. pepo", "peso": "1–2 kg", "variante": "spaghetti",
+          "testo": "Ovale, giallo paglierino. Cotta, la polpa si sfila con una forchetta in filamenti simili a spaghetti. Sapore delicato e poche calorie (31 kcal/100 g): si condisce come la pasta.",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Spaghetti_squash_J1.jpg/500px-Spaghetti_squash_J1.jpg", "autore": "Jamain", "licenza": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Spaghetti_squash_J1.jpg" } },
+        { "nome": "Comune / di Halloween", "specie": "C. pepo", "peso": "3–8 kg", "variante": "cruda",
+          "testo": "Tonda, arancione, a coste. Polpa più acquosa e fibrosa, meno dolce: va bene per zuppe e purè, ma soprattutto per l'intaglio. I semi sono ottimi tostati. Nelle tabelle USDA è la \"pumpkin\".",
+          "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Pumpkin-2327488.jpg/500px-Pumpkin-2327488.jpg", "autore": "Robert Davis", "licenza": "CC0", "pagina": "https://commons.wikimedia.org/wiki/File:Pumpkin-2327488.jpg" } }
+      ],
+      "cotture": [
+        { "metodo": "Al forno", "tempo": "30–40 min · 200 °C", "come": "A spicchi o cubi di 2–3 cm, con un filo d'olio. Delica e Hokkaido anche con la buccia.", "effetto": "Perde acqua e diventa più dolce e saporita. USDA: butternut 45 kcal cruda, 40 al forno; la vitamina C scende da 21 a 15 mg." },
+        { "metodo": "Al vapore", "tempo": "15–20 min", "come": "A cubi di 3 cm, finché la forchetta entra senza sforzo.", "effetto": "Resta compatta e non finisce nell'acqua: è la cottura che trattiene meglio potassio e vitamina C." },
+        { "metodo": "Lessata", "tempo": "15–20 min", "come": "A cubi in acqua bollente leggermente salata, poi scolata.", "effetto": "Parte dei minerali passa nell'acqua. USDA (zucca comune): potassio da 340 a 230 mg, vitamina C da 9 a 4,7 mg. Se fai una vellutata e usi anche l'acqua, non li perdi." },
+        { "metodo": "In padella", "tempo": "15–20 min", "come": "A cubetti con poco olio, uno spicchio d'aglio e un dito d'acqua, coperchio a fuoco medio; scopri alla fine per asciugare.", "effetto": "Morbida e un po' caramellata. Calcola l'olio a parte (1 cucchiaio = 10 g ≈ 90 kcal)." },
+        { "metodo": "Friggitrice ad aria", "tempo": "15–20 min · 190 °C", "come": "Cubi di 2 cm con un cucchiaino d'olio, scuoti il cestello a metà.", "effetto": "Crosticina esterna come al forno, con meno tempo e meno olio." },
+        { "metodo": "Microonde", "tempo": "8–10 min · 800 W", "come": "A cubi in un contenitore coperto con 2 cucchiai d'acqua; mescola a metà.", "effetto": "Veloce e simile al vapore: buono per purè e ripieni." },
+        { "metodo": "Vellutata", "tempo": "25–30 min", "come": "Rosola cipolla, aggiungi zucca e brodo a filo, cuoci e frulla.", "effetto": "Usa tutta l'acqua di cottura, quindi i minerali restano nel piatto." },
+        { "metodo": "Cruda", "tempo": "—", "come": "Butternut giovane grattugiata finissima in insalata, con olio e limone.", "effetto": "Massima vitamina C, consistenza croccante." }
+      ],
+      "nota_cottura": "Il beta-carotene si scioglie nei grassi: un filo d'olio nel piatto ne aumenta l'assorbimento.",
+      "stagione": { "mesi": [9, 10, 11, 12, 1, 2], "picco": [10, 11], "testo": "Si raccoglie da fine agosto a ottobre; intera si conserva e si trova fino a febbraio." },
+      "conservare": [
+        { "t": "Come sceglierla", "d": "Pesante per la sua grandezza, buccia dura e opaca senza ammaccature, picciolo secco e ben attaccato. Battuta con le nocche suona piena." },
+        { "t": "Intera", "d": "In un posto fresco, asciutto e buio (10–15 °C), non in frigo: da 2 a 6 mesi, più a lungo quelle a buccia dura come Delica, Butternut e Marina di Chioggia." },
+        { "t": "Tagliata", "d": "Togli semi e filamenti, copri con pellicola e tieni in frigo: 4–5 giorni." },
+        { "t": "In freezer", "d": "A cubi crudi o già cotta (purè, vellutata), in sacchetti: 6–8 mesi. Da cruda, cuocila senza scongelare." }
+      ],
+      "anche": [
+        { "t": "Semi", "d": "Lavati, asciugati e tostati a 160 °C per 15–20 min. Ricchi di proteine, grassi buoni e magnesio: 559 kcal, 30 g di proteine e 592 mg di magnesio per 100 g (semi sgusciati, USDA 12014).", "alimento": "Semi di zucca" },
+        { "t": "Fiori", "d": "Commestibili come quelli delle zucchine: in pastella, ripieni o nel risotto. Pochissime calorie (15 kcal/100 g, USDA 11416)." },
+        { "t": "Buccia", "d": "Si mangia cotta nelle varietà a buccia sottile (Hokkaido, Delica). Le altre vanno sbucciate." }
+      ],
+      "abbinamenti": ["Salvia", "Rosmarino", "Noce moscata", "Cannella", "Zenzero", "Curry", "Parmigiano", "Amaretti", "Castagne", "Ceci", "Lenticchie rosse", "Noci", "Semi tostati"],
+      "fonti": [
+        { "t": "Valori nutrizionali: USDA National Nutrient Database SR28 (11422, 11423, 11485, 11486, 11492, 11493, 12014, 11416)" },
+        { "t": "Valori nutritivi di riferimento (%VNR): Regolamento UE 1169/2011, allegato XIII" },
+        { "t": "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)" }
+      ]
+    }
+  ]
+}
