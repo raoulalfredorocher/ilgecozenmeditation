@@ -10,6 +10,8 @@ import { createSheet, toast, compressImage } from '../../ui/dialog.js';
 import { addRecipeDoc, updateRecipeDoc, deleteRecipeDoc } from '../../core/db.js';
 import { state, onChange, RECIPE_CATS, MC } from './state.js';
 import { deliver, csvFile } from '../../ui/files.js';
+import { searchFoods, findFood, macrosFor, galIcon } from './foods.js';
+import { openAlimento } from './alimenti.js';
 
 const root = document.getElementById('tab-ricette');
 const catLabel = Object.fromEntries(RECIPE_CATS);
@@ -84,7 +86,10 @@ function openDetail(id) {
         ${[['kcal', 'kcal', ''], ['prot', 'Proteine', ' g'], ['carb', 'Carbo', ' g'], ['fat', 'Grassi', ' g']].map(([k, l, u]) =>
           `<div><span class="dot" style="--c:${MC[k]}"></span><b>${+r[k] || 0}${u}</b><span class="s">${l}</span></div>`).join('')}
       </div>
-      ${(r.ingredients || []).length ? `<div class="field-lbl">Ingredienti</div><ul class="rc-list">${r.ingredients.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : ''}
+      ${r.porz ? `<div class="s" style="margin:-8px 0 var(--space-4)">Valori a porzione · ricetta per ${+r.porz} ${+r.porz === 1 ? 'porzione' : 'porzioni'}</div>` : ''}
+      ${ingrOf(r).length ? `<div class="field-lbl">Ingredienti</div><ul class="rc-list">${ingrOf(r).map(i => i.n
+        ? `<li><button type="button" class="rc-food" data-food="${esc(i.n)}">${i.g ? `${+i.g} g ` : ''}${esc(i.n)}</button></li>`
+        : `<li>${esc(i.t)}</li>`).join('')}</ul>` : ''}
       ${(r.steps || []).length ? `<div class="field-lbl">Procedimento</div><ol class="rc-steps">${r.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
       ${url ? `<a class="text-btn" href="${esc(url)}" target="_blank" rel="noopener">Apri la fonte</a>` : ''}
       <div style="margin-top:var(--space-6)"><button type="button" class="text-btn danger" data-del>Elimina ricetta</button></div>
@@ -94,6 +99,8 @@ function openDetail(id) {
 detail.addEventListener('click', async e => {
   if (e.target.closest('[data-close]')) return shut(detail);
   if (e.target.closest('[data-edit]')) { shut(detail); return openEditor(detailId); }
+  const fd = e.target.closest('[data-food]');
+  if (fd) return openAlimento(fd.dataset.food);
   const del = e.target.closest('[data-del]');
   if (!del) return;
   if (!delArmed) { delArmed = true; del.textContent = 'Tocca ancora per confermare'; return; }
@@ -113,12 +120,15 @@ editor.innerHTML = `
     <input class="ed-title" id="rf-name" placeholder="Nome della ricetta" autocomplete="off"/>
     <div class="chips-wrap" id="rf-cats" role="group" aria-label="Categoria"></div>
     <input class="input" id="rf-nat" placeholder="Cucina (es. italiana)" autocomplete="off" style="margin-top:var(--space-4)"/>
+    <div class="field-lbl" style="margin-top:var(--space-6)">Ingredienti</div>
+    <p class="note">Scrivi un ingrediente e scegli l'alimento dal database: con i grammi, kcal e macro della ricetta si calcolano da soli. Quello che non scegli (es. "sale q.b.") resta testo e non conta.</p>
+    <div id="rf-ingr"></div><button type="button" class="text-btn" data-add="ingr">+ Ingrediente</button>
+    <div class="rc-tot" id="rf-tot" hidden></div>
     <div class="field-lbl" style="margin-top:var(--space-6)">Valori nutrizionali (a porzione)</div>
+    <label class="rc-porz"><span>Porzioni</span><input id="rf-porz" type="number" inputmode="numeric" min="1" step="1" placeholder="1"/></label>
     <div class="rc-fields">
       ${[['kcal', 'kcal'], ['prot', 'Proteine'], ['carb', 'Carbo'], ['fat', 'Grassi']].map(([k, l]) => `<label class="rc-num"><span class="s">${l}</span><input id="rf-${k}" type="number" inputmode="decimal" min="0" placeholder="0"/></label>`).join('')}
     </div>
-    <div class="field-lbl" style="margin-top:var(--space-6)">Ingredienti</div>
-    <div id="rf-ingr"></div><button type="button" class="text-btn" data-add="ingr">+ Ingrediente</button>
     <div class="field-lbl" style="margin-top:var(--space-6)">Procedimento</div>
     <div id="rf-steps"></div><button type="button" class="text-btn" data-add="steps">+ Passaggio</button>
     <input class="input" id="rf-url" type="url" inputmode="url" placeholder="Link alla fonte (facoltativo)" style="margin-top:var(--space-6)"/>
@@ -127,9 +137,82 @@ editor.innerHTML = `
 const $$e = sel => editor.querySelector(sel);
 
 function lineRow(kind, v = '') {
-  return `<div class="rc-line"><input class="rc-input" value="${esc(v)}" placeholder="${kind === 'ingr' ? 'es. 100 g di pasta integrale' : 'Descrivi il passaggio'}" aria-label="${kind === 'ingr' ? 'Ingrediente' : 'Passaggio'}"/><button type="button" class="text-btn" data-remove aria-label="Togli" style="color:var(--muted);font-weight:400">Togli</button></div>`;
+  if (kind === 'ingr') return ingrRow(typeof v === 'string' ? { t: v } : v);
+  return `<div class="rc-line"><input class="rc-input" value="${esc(v)}" placeholder="Descrivi il passaggio" aria-label="Passaggio"/><button type="button" class="text-btn" data-remove aria-label="Togli" style="color:var(--muted);font-weight:400">Togli</button></div>`;
 }
 function addLine(kind, v = '') { $$e(kind === 'ingr' ? '#rf-ingr' : '#rf-steps').insertAdjacentHTML('beforeend', lineRow(kind, v)); }
+
+// ─── Ingredienti dal database degli alimenti ─────────────────────────────
+/** Ingredienti di una ricetta: [{ t } testo libero | { n, g } alimento del database con i grammi]. Le ricette vecchie hanno solo testo. */
+const ingrOf = r => (r.ingr?.length ? r.ingr : (r.ingredients || []).map(t => ({ t })));
+const ingrText = i => (i.n ? `${i.g ? `${+i.g} g ` : ''}${i.n}` : i.t);
+function ingrRow(i) {
+  return `<div class="rc-line rc-ingr${i.n ? ' linked' : ''}" data-n="${esc(i.n || '')}">
+    <input class="rc-input" value="${esc(i.n || i.t || '')}" placeholder="es. Zucca Delica" aria-label="Ingrediente" autocomplete="off"/>
+    <label class="rc-g"${i.n ? '' : ' hidden'}><input type="number" inputmode="decimal" min="0" value="${esc(i.g ?? '')}" placeholder="0" aria-label="Grammi"/>g</label>
+    <span class="rc-ik s"></span>
+    <button type="button" class="text-btn" data-remove aria-label="Togli" style="color:var(--muted);font-weight:400">Togli</button>
+    <div class="rc-sugg" hidden></div>
+  </div>`;
+}
+let macroTouched = false;
+/** Somma gli ingredienti scelti dal database e, se non li hai corretti a mano, scrive i valori a porzione. */
+function recalc() {
+  const rows = [...editor.querySelectorAll('.rc-ingr')];
+  const tot = { kcal: 0, prot: 0, carb: 0, fat: 0 };
+  let linked = 0;
+  for (const row of rows) {
+    const f = row.dataset.n && findFood(row.dataset.n);
+    const g = parseFloat(row.querySelector('.rc-g input').value) || 0;
+    const out = row.querySelector('.rc-ik');
+    if (!f) { out.textContent = ''; continue; }
+    linked++;
+    const m = macrosFor(f, g);
+    out.textContent = g ? `${m.kcal} kcal` : '';
+    for (const k in tot) tot[k] += m[k];
+  }
+  const porz = Math.max(1, parseInt($$e('#rf-porz').value, 10) || 1);
+  const box = $$e('#rf-tot');
+  box.hidden = !linked;
+  if (!linked) return;
+  const r1 = x => Math.round(x * 10) / 10;
+  const it = x => r1(x).toLocaleString('it-IT');
+  box.innerHTML = `Totale ricetta <b>${Math.round(tot.kcal)} kcal</b> · P ${it(tot.prot)} · C ${it(tot.carb)} · G ${it(tot.fat)}${porz > 1 ? `<br>A porzione (÷ ${porz}) <b>${Math.round(tot.kcal / porz)} kcal</b>` : ''}`;
+  if (macroTouched) return;
+  $$e('#rf-kcal').value = Math.round(tot.kcal / porz);
+  for (const k of ['prot', 'carb', 'fat']) $$e('#rf-' + k).value = r1(tot[k] / porz);
+}
+function suggest(row) {
+  const q = row.querySelector('.rc-input').value.trim();
+  const box = row.querySelector('.rc-sugg');
+  const list = q.length < 2 ? [] : searchFoods(q, 6);
+  editor.querySelectorAll('.rc-sugg').forEach(b => { if (b !== box) b.hidden = true; });
+  box.hidden = !list.length;
+  box.innerHTML = list.map(f => `<button type="button" class="rc-sopt" data-pick="${esc(f.n)}">${galIcon(f)}<span class="grow">${esc(f.n)}</span><span class="s">${Math.round(f.k)} kcal/100 g</span></button>`).join('');
+}
+editor.addEventListener('input', e => {
+  const row = e.target.closest('.rc-ingr');
+  if (row && e.target.classList.contains('rc-input')) {
+    if (row.dataset.n && e.target.value !== row.dataset.n) { row.dataset.n = ''; row.classList.remove('linked'); row.querySelector('.rc-g').hidden = true; }
+    suggest(row); return recalc();
+  }
+  if (row || e.target.id === 'rf-porz') return recalc();
+  if (/^rf-(kcal|prot|carb|fat)$/.test(e.target.id)) macroTouched = true;
+});
+editor.addEventListener('click', e => {
+  const p = e.target.closest('[data-pick]');
+  if (!p) return;
+  const row = p.closest('.rc-ingr');
+  row.dataset.n = p.dataset.pick;
+  row.classList.add('linked');
+  row.querySelector('.rc-input').value = p.dataset.pick;
+  row.querySelector('.rc-sugg').hidden = true;
+  const g = row.querySelector('.rc-g');
+  g.hidden = false;
+  macroTouched = false;
+  g.querySelector('input').focus();
+  recalc();
+});
 function showPhoto() {
   $$e('#rf-photo-btn').classList.toggle('has', !!photoData);
   $$e('#rf-photo-ph').innerHTML = photoData ? `<img src="${esc(safeUrl(photoData))}" alt=""/>` : 'Aggiungi una foto';
@@ -148,8 +231,12 @@ export function openEditor(id) {
   $$e('#rf-nat').value = r?.nat || '';
   $$e('#rf-url').value = r?.url || '';
   for (const k of ['kcal', 'prot', 'carb', 'fat']) $$e('#rf-' + k).value = r?.[k] || '';
+  $$e('#rf-porz').value = r?.porz || '';
   $$e('#rf-ingr').innerHTML = ''; $$e('#rf-steps').innerHTML = '';
-  (r?.ingredients?.length ? r.ingredients : ['']).forEach(v => addLine('ingr', v));
+  const ing = r ? ingrOf(r) : [];
+  (ing.length ? ing : [{ t: '' }]).forEach(v => addLine('ingr', v));
+  macroTouched = !!r && !(r.ingr || []).some(i => i.n);   // ricette vecchie: i valori scritti a mano restano
+  recalc();
   (r?.steps?.length ? r.steps : ['']).forEach(v => addLine('steps', v));
   $$e('#rf-error').hidden = true;
   showPhoto(); drawFormCats();
@@ -162,7 +249,7 @@ editor.addEventListener('click', async e => {
   const add = e.target.closest('button[data-add]');   // niente [data-add] nudo: coinciderebbe con l'attributo del <body>
   if (add) { addLine(add.dataset.add); return $$e(add.dataset.add === 'ingr' ? '#rf-ingr' : '#rf-steps').lastElementChild.querySelector('input').focus(); }
   const rm = e.target.closest('[data-remove]');
-  if (rm) return rm.parentElement.remove();
+  if (rm) { rm.parentElement.remove(); return recalc(); }
   if (e.target.closest('#rf-photo-btn')) return $$e('#rf-photo').click();
   if (e.target.closest('[data-save]')) return saveRecipe(e.target.closest('[data-save]'));
 });
@@ -179,11 +266,16 @@ async function saveRecipe(btn) {
   if (!v('name')) { err.textContent = 'Dai un nome alla ricetta.'; err.hidden = false; return $$e('#rf-name').focus(); }
   err.hidden = true;
   const lines = sel => [...editor.querySelectorAll(sel + ' input')].map(i => i.value.trim()).filter(Boolean);
+  const ingr = [...editor.querySelectorAll('.rc-ingr')].map(row => {
+    const t = row.querySelector('.rc-input').value.trim();
+    const g = parseFloat(row.querySelector('.rc-g input').value) || 0;
+    return row.dataset.n ? { n: row.dataset.n, g } : (t ? { t } : null);
+  }).filter(Boolean);
   const num = k => parseFloat(v(k)) || 0;
   const recipe = {
     id: editingId || 'r_' + Date.now(), name: v('name'), cat: formCat, nat: v('nat'), url: v('url'), photo: photoData,
     kcal: Math.round(num('kcal')), prot: num('prot'), carb: num('carb'), fat: num('fat'),
-    ingredients: lines('#rf-ingr'), steps: lines('#rf-steps'),
+    porz: parseInt(v('porz'), 10) || 0, ingr, ingredients: ingr.map(ingrText), steps: lines('#rf-steps'),
   };
   btn.disabled = true;
   try {

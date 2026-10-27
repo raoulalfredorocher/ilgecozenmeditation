@@ -277,6 +277,24 @@
     #tab-spesa .sp-row { border: .5px solid var(--border); border-radius: var(--radius-md); background: var(--card); border-top: .5px solid var(--border); }
     /* Risultati: bilancio del giorno e medie 7/30/90 nella scheda Calorie */
     .rs-sub { margin: var(--space-5) 0 var(--space-2); }
+    /* Ricette: ingredienti scelti dagli Alimenti */
+    .rc-ingr { position: relative; flex-wrap: wrap; }
+    .rc-ingr .rc-input { flex: 1 1 140px; }
+    .rc-ingr.linked .rc-input { color: var(--geco-blue); font-weight: 500; }
+    .rc-g { display: inline-flex; align-items: center; gap: 2px; font-size: var(--fs-sm); color: var(--muted); }
+    .rc-g[hidden] { display: none; }
+    .rc-g input { width: 56px; border: 1px solid var(--border); border-radius: var(--radius-sm, 8px); background: var(--card); padding: 6px 6px; font: 500 var(--fs-md) var(--font); color: var(--text); text-align: right; }
+    .rc-ik { min-width: 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .rc-sugg { flex-basis: 100%; display: flex; flex-direction: column; margin: 0 0 var(--space-2); border: .5px solid var(--border); border-radius: var(--radius-md); background: var(--card); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .rc-sugg[hidden] { display: none; }
+    .rc-sopt { display: flex; align-items: baseline; gap: var(--space-2); padding: var(--space-3); border: 0; border-top: .5px solid var(--border); background: none; text-align: left; color: var(--text); font-size: var(--fs-md); cursor: pointer; }
+    .rc-sopt:first-child { border-top: 0; }
+    .rc-sopt:active { background: var(--surface); }
+    .rc-tot { margin-top: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface); font-size: var(--fs-sm); line-height: 1.6; font-variant-numeric: tabular-nums; }
+    .rc-tot[hidden] { display: none; }
+    .rc-porz { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-2); font-size: var(--fs-md); }
+    .rc-porz input { width: 72px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); padding: var(--space-2) var(--space-3); font: 500 var(--fs-lg) var(--font); color: var(--text); text-align: right; }
+    .rc-food { background: none; border: 0; padding: 0; font: inherit; color: var(--geco-blue); text-align: left; cursor: pointer; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--geco-blue) 35%, transparent); text-underline-offset: 3px; }
     /* Alimenti: ricerca e scheda di dettaglio */
     .al-card { --t: var(--tn4); display: flex; align-items: stretch; gap: var(--space-3); width: 100%; text-align: left; padding: 0; margin-bottom: var(--space-3); cursor: pointer; color: inherit; overflow: hidden;
       border-radius: var(--radius-lg); border: .5px solid color-mix(in srgb, var(--t) 30%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 18%, var(--card)), color-mix(in srgb, var(--t) 3%, var(--card))); }
@@ -332,9 +350,20 @@
     .al-months span { text-align: center; font-size: .6875rem; padding: 6px 0; border-radius: 6px; background: var(--surface); color: var(--muted); }
     .al-months .on { background: color-mix(in srgb, var(--tn3) 30%, var(--card)); color: var(--text); }
     .al-months .pk { background: var(--tn3); color: #fff; font-weight: 600; }
-    .al-kv { margin-bottom: var(--space-3); } .al-kv:last-child { margin-bottom: 0; }
-    .al-kv b { font-weight: 600; font-size: var(--fs-sm); }
-    .al-src { margin: 0; padding-left: 1.1em; font-size: var(--fs-xs); color: var(--muted); line-height: 1.6; }
+    .al-kv { font-size: var(--fs-sm); line-height: 1.55; margin-bottom: var(--space-2); }
+    .al-kv b { font-weight: 600; }
+    .al-link { height: 32px; padding: 0 12px; font-size: var(--fs-sm); }
+    .al-warn { color: var(--danger); }
+    .al-vcard[data-var] { cursor: pointer; }
+    .al-vcard[data-var]:active { opacity: .75; }
+    .al-flavor { text-align: center; }
+    .al-radar { width: 100%; max-width: 260px; display: block; margin: 0 auto; }
+    .al-radar .g { fill: none; stroke: var(--border); stroke-width: 1; }
+    .al-radar .v { fill: color-mix(in srgb, var(--tn4) 45%, transparent); stroke: var(--tn4); stroke-width: 2; stroke-linejoin: round; }
+    .al-radar text { font: 500 11px var(--font); fill: var(--muted); }
+    details.al-src { margin-top: var(--space-5); font-size: var(--fs-xs); color: var(--muted); }
+    details.al-src summary { cursor: pointer; letter-spacing: .2em; text-transform: uppercase; font-size: .625rem; color: var(--cat-label); }
+    details.al-src ul { margin: var(--space-2) 0 0; padding-left: 1.1em; line-height: 1.6; }
     .al-page .ed-scroll { padding-left: var(--space-4); padding-right: var(--space-4); }
   </style>
 </head>

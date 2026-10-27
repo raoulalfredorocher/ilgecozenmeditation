@@ -87,15 +87,16 @@ const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 /** Parola senza la vocale finale, così singolare e plurale si trovano a vicenda (pera → pere, fragola → fragole). */
 const stem = w => (w.length > 3 ? w.replace(/[aeiou]$/, '') : w);
 
-/** Ricerca per nome (senza accenti, ogni parola deve comparire). Prima chi inizia con il testo cercato. */
+/** Ricerca per nome (senza accenti, ogni parola deve comparire). Prima chi inizia con il testo esatto (olio → Olio EVO prima di Olive), poi con la radice. */
 export function searchFoods(q, limit = 40) {
-  const words = fold(q.trim()).split(/\s+/).filter(Boolean).map(stem);
+  const raw = fold(q.trim());
+  const words = raw.split(/\s+/).filter(Boolean).map(stem);
   const list = allFoods();
   if (!words.length) return list.slice(0, limit);
   return list
     .map(f => ({ f, name: fold(f.n) }))
     .filter(x => words.every(w => x.name.includes(w)))
-    .sort((a, b) => (b.name.startsWith(words[0]) - a.name.startsWith(words[0])) || a.name.localeCompare(b.name))
+    .sort((a, b) => (b.name.startsWith(raw) - a.name.startsWith(raw)) || (b.name.startsWith(words[0]) - a.name.startsWith(words[0])) || a.name.localeCompare(b.name))
     .slice(0, limit)
     .map(x => x.f);
 }
