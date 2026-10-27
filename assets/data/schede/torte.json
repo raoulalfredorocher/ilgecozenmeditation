@@ -12,7 +12,8 @@
   "torta al cioccolato",
   "plumcake",
   "ciambellone",
-  "apple pie"
+  "apple pie",
+  "pan di spagna"
  ],
  "foto": {
   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Apple_cake_with_vanilla_ice_cream_2.jpg/960px-Apple_cake_with_vanilla_ice_cream_2.jpg",
@@ -85,6 +86,16 @@
      "alimento": "Torta al cioccolato (con glassa)"
     }
    ]
+  },
+  {
+   "nome": "Pan di Spagna",
+   "valori": [
+    {
+     "stato": "base",
+     "alimento": "Pan di Spagna"
+    }
+   ],
+   "testo": "Uova, zucchero e farina montati: la base delle torte farcite."
   }
  ],
  "conservare": [
