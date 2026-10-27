@@ -170,7 +170,7 @@ function openScheda(id, fromFood) {
           <span class="al-vimg"><img src="${esc(safeUrl(v.foto?.src))}" alt="${esc(v.nome)}" loading="lazy"/></span>
           <div class="al-vtxt">
             <div class="al-vname">${esc(v.nome)}</div>
-            <div class="s"><i>${esc(v.specie)}</i> · ${esc(v.peso)}${v.variante ? ` · ${Math.round(vs.find(x => x.id === v.variante)?.kcal)} kcal/100 g` : ''}</div>
+            <div class="s"><i>${esc(v.specie)}</i> · ${esc(v.peso)}${v.variante || v.kcal ? ` · ${Math.round(v.kcal ?? vs.find(x => x.id === v.variante)?.kcal)} kcal/100 g` : ''}</div>
             <p class="al-p sm">${esc(v.testo)}</p>
             ${credit(v.foto)}
           </div>
