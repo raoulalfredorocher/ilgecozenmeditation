@@ -1,0 +1,101 @@
+{
+ "id": "basilico",
+ "nome": "Basilico",
+ "cat": "Erbe e alghe",
+ "latino": "Ocimum basilicum",
+ "famiglia": "Lamiacee",
+ "parole": [
+  "basilico",
+  "basil"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/960px-Ocimum_basilicum_8zz.jpg",
+  "autore": "David J. Stang",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Ocimum_basilicum_8zz.jpg"
+ },
+ "descrizione": [
+  "Erba aromatica estiva, base del pesto genovese (basilico genovese DOP). Le foglie si anneriscono al freddo e al taglio."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina K",
+   "d": "Ricchissimo, ma se ne usano pochi grammi."
+  },
+  {
+   "t": "Aroma",
+   "d": "Eugenolo e linalolo: dà sapore senza calorie."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   7,
+   8
+  ],
+  "testo": "da maggio a settembre."
+ },
+ "tipi": [
+  {
+   "nome": "Basilico fresco",
+   "testo": "5 foglie ≈ 2,5 g.",
+   "valori": [
+    {
+     "stato": "fresco",
+     "alimento": "Basilico fresco"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "A crudo, alla fine",
+   "tempo": "",
+   "come": "Spezzettato con le mani su pasta, pizza, caprese."
+  },
+  {
+   "metodo": "Pesto",
+   "tempo": "",
+   "come": "Con pinoli, parmigiano, pecorino, aglio e olio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fuori dal frigo",
+   "d": "come un mazzo di fiori in acqua; in frigo annerisce."
+  },
+  {
+   "t": "In freezer",
+   "d": "tritato con olio nei cubetti del ghiaccio."
+  }
+ ],
+ "simili": [
+  "Menta",
+  "Prezzemolo"
+ ],
+ "abbinamenti": [
+  "Pomodoro",
+  "Mozzarella",
+  "Pinoli",
+  "Olio EVO",
+  "Fragola"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

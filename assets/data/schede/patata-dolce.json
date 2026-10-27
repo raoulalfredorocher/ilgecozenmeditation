@@ -1,0 +1,105 @@
+{
+ "id": "patata-dolce",
+ "nome": "Patata dolce",
+ "cat": "Verdura",
+ "latino": "Ipomoea batatas",
+ "famiglia": "Convolvulacee",
+ "parole": [
+  "patata dolce",
+  "patate dolci",
+  "patata americana",
+  "batata",
+  "sweet potato"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ipomoea_batatas_006.JPG/960px-Ipomoea_batatas_006.JPG",
+  "autore": "Llez",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Ipomoea_batatas_006.JPG"
+ },
+ "descrizione": [
+  "Non è parente della patata: è una radice della famiglia del convolvolo. Polpa arancio, bianca o viola, dolce.",
+  "In Italia si coltiva in Veneto (Anguillara) e Campania."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina A",
+   "d": "Quella arancio copre il fabbisogno con 100 g, grazie al beta-carotene."
+  },
+  {
+   "t": "Fibra",
+   "d": "Circa 3 g per 100 g; con la buccia di più."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10,
+   11,
+   12,
+   1,
+   2
+  ],
+  "picco": [
+   10,
+   11
+  ],
+  "testo": "da settembre a febbraio."
+ },
+ "tipi": [
+  {
+   "nome": "Patata dolce",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Patate dolci"
+    },
+    {
+     "stato": "al forno",
+     "usda": "11508"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "40–50 min · 200 °C",
+   "come": "Intera con la buccia, o a spicchi con paprika."
+  },
+  {
+   "metodo": "Purè",
+   "tempo": "20 min",
+   "come": "Al vapore e schiacciata con cannella o zenzero."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fuori dal frigo",
+   "d": "al fresco e al buio, 2–3 settimane."
+  }
+ ],
+ "simili": [
+  "Patata",
+  "Zucca",
+  "Carota"
+ ],
+ "abbinamenti": [
+  "Fagioli neri (cotti)",
+  "Cannella",
+  "Lime",
+  "Feta",
+  "Petto di pollo (crudo)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

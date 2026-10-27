@@ -1,0 +1,213 @@
+{
+ "id": "cavolo",
+ "nome": "Cavolo",
+ "cat": "Verdura",
+ "latino": "Brassica oleracea",
+ "famiglia": "Brassicacee",
+ "parole": [
+  "cavolo",
+  "cavoli",
+  "cavolo cappuccio",
+  "verza",
+  "cavolo rosso",
+  "cavolo nero",
+  "broccolo",
+  "broccoli",
+  "cavolfiore",
+  "cabbage",
+  "kale",
+  "cavoletti",
+  "cavoletti di bruxelles",
+  "cavolfiore romano",
+  "broccolo romanesco"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/960px-Cabbage_and_cross_section_on_white.jpg",
+  "autore": "Fir0002",
+  "licenza": "GFDL 1.2",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cabbage_and_cross_section_on_white.jpg"
+ },
+ "descrizione": [
+  "Cappuccio, verza, rosso, nero, broccolo e cavolfiore sono la stessa specie, selezionata in forme diverse.",
+  "Verdure invernali, economiche e ricchissime di composti protettivi."
+ ],
+ "proprieta": [
+  {
+   "t": "Antitumorale",
+   "d": "Glucosinolati: tagliati o masticati diventano isotiocianati (sulforafano). Chi mangia più crucifere ha meno tumori del colon e del polmone negli studi di popolazione."
+  },
+  {
+   "t": "Vitamina C e K",
+   "d": "100 g coprono metà della vitamina C e quasi tutta la K."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Antociani nel cavolo rosso."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 3,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   12,
+   1
+  ],
+  "testo": "da ottobre a marzo; il cappuccio anche d'estate."
+ },
+ "titolo_tipi": "Tipi di cavolo",
+ "tipi": [
+  {
+   "nome": "Cappuccio",
+   "testo": "Liscio, compatto: crudo in insalata, crauti, coleslaw.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Cavolo cappuccio"
+    },
+    {
+     "stato": "lessato",
+     "usda": "11110"
+    }
+   ]
+  },
+  {
+   "nome": "Verza",
+   "testo": "Foglie bollose e morbide: involtini, minestre, pizzoccheri.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Savoy_Cabbage.jpg/500px-Savoy_Cabbage.jpg",
+    "autore": "Evelyn Gunn",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Savoy_Cabbage.jpg"
+   },
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Verza"
+    }
+   ]
+  },
+  {
+   "nome": "Cavolo rosso",
+   "testo": "Croccante, dolce; con aceto diventa più rosso.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Brassica_oleracea_var_capitata_Rubyball.jpg/500px-Brassica_oleracea_var_capitata_Rubyball.jpg",
+    "autore": "KENPEI",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Brassica_oleracea_var_capitata_Rubyball.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Cavolo rosso"
+    }
+   ]
+  },
+  {
+   "nome": "Broccolo",
+   "testo": "Infiorescenze verdi: il più ricco di sulforafano.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "11090"
+    },
+    {
+     "stato": "lessato",
+     "usda": "11091"
+    }
+   ]
+  },
+  {
+   "nome": "Cavolfiore",
+   "testo": "Bianco (o viola, arancio), delicato.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "11135"
+    },
+    {
+     "stato": "lessato",
+     "usda": "11136"
+    }
+   ]
+  },
+  {
+   "nome": "Cavolo nero",
+   "testo": "Toscano, foglie lunghe e scure: ribollita.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "11233"
+    }
+   ]
+  },
+  {
+   "nome": "Cavoletti di Bruxelles",
+   "testo": "Piccoli cavoli sul fusto: al forno a metà diventano dolci e croccanti.",
+   "valori": [
+    {
+     "stato": "crudi",
+     "usda": "11098"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "Tagliato finissimo, con olio, limone o aceto: tiene vitamina C e sulforafano."
+  },
+  {
+   "metodo": "Stufato",
+   "tempo": "20–30 min",
+   "come": "In padella con cipolla e un goccio d'aceto o acqua."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "25 min · 200 °C",
+   "come": "Broccoli e cavolfiore a cimette con olio e spezie."
+  }
+ ],
+ "nota_cottura": "Taglia e lascia riposare 10 minuti prima di cuocere: si forma più sulforafano. Cotture brevi conservano più vitamine.",
+ "conservare": [
+  {
+   "t": "Interi",
+   "d": "in frigo 1–2 settimane (cappuccio anche di più)."
+  },
+  {
+   "t": "Tagliati",
+   "d": "coperti con pellicola, 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Cime di rapa",
+  "Cavolo rapa",
+  "Pak choi"
+ ],
+ "abbinamenti": [
+  "Mela",
+  "Aceto di mele",
+  "Cumino",
+  "Patata",
+  "Fagioli borlotti (secchi)",
+  "Parmigiano"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Crucifere e tumori: WCRF/AICR e meta-analisi (Ann Oncol 2012)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

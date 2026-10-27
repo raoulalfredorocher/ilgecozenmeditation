@@ -1,0 +1,106 @@
+{
+ "id": "melograno",
+ "nome": "Melograno",
+ "cat": "Frutta",
+ "latino": "Punica granatum",
+ "famiglia": "Litracee",
+ "parole": [
+  "melograno",
+  "melagrana",
+  "melagrane",
+  "pomegranate"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Pomegranate_Juice_%282019%29.jpg/960px-Pomegranate_Juice_%282019%29.jpg",
+  "autore": "Augustus Binu",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Pomegranate_Juice_%282019%29.jpg"
+ },
+ "descrizione": [
+  "Frutto autunnale del Mediterraneo e del Medio Oriente. Dentro ci sono centinaia di chicchi (arilli) succosi, ognuno con un seme."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Punicalagine e antociani: tra i succhi di frutta più antiossidanti."
+  },
+  {
+   "t": "Fibra",
+   "d": "Circa 4 g per 100 g di chicchi, grazie ai semi."
+  },
+  {
+   "t": "Vitamina K",
+   "d": "100 g ne coprono un quinto del fabbisogno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10,
+   11,
+   12,
+   1
+  ],
+  "picco": [
+   10,
+   11
+  ],
+  "testo": "da settembre a gennaio."
+ },
+ "tipi": [
+  {
+   "nome": "Chicchi",
+   "valori": [
+    {
+     "stato": "crudi",
+     "usda": "09286"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Sgranato",
+   "tempo": "",
+   "come": "Taglialo a metà e batti la buccia con un cucchiaio sopra una ciotola."
+  },
+  {
+   "metodo": "Nei piatti",
+   "tempo": "",
+   "come": "Su insalate, yogurt, hummus, cous cous."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Intero",
+   "d": "fuori dal frigo 1–2 settimane, in frigo un mese."
+  },
+  {
+   "t": "Chicchi",
+   "d": "in frigo 4–5 giorni, si congelano."
+  }
+ ],
+ "simili": [
+  "Ribes",
+  "Uva"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Hummus",
+  "Noci",
+  "Feta",
+  "Cous cous (crudo)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

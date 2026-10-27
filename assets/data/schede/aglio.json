@@ -1,0 +1,113 @@
+{
+ "id": "aglio",
+ "nome": "Aglio",
+ "cat": "Verdura",
+ "latino": "Allium sativum",
+ "famiglia": "Amarillidacee",
+ "parole": [
+  "aglio",
+  "garlic",
+  "aglio rosso",
+  "aglio nero"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Garlic_bulbs_and_cloves.jpg/960px-Garlic_bulbs_and_cloves.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Garlic_bulbs_and_cloves.jpg"
+ },
+ "descrizione": [
+  "Bulbo diviso in spicchi, fratello della cipolla. In Italia: aglio rosso di Sulmona, bianco Polesano DOP, di Vessalico.",
+  "Si usa in piccole quantità: conta per il sapore, non per le calorie."
+ ],
+ "proprieta": [
+  {
+   "t": "Allicina",
+   "d": "Si forma quando l'aglio viene schiacciato o tagliato: è la sostanza dell'odore, studiata per pressione e colesterolo."
+  },
+  {
+   "t": "Antimicrobico",
+   "d": "L'allicina ha attività antibatterica in laboratorio."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   6,
+   7
+  ],
+  "testo": "fresco a inizio estate, secco tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Aglio",
+   "testo": "Uno spicchio ≈ 3 g, 4 kcal.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "11215"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "In camicia",
+   "tempo": "",
+   "come": "Spicchio intero con la buccia nel soffritto: profumo delicato, si toglie dopo."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "40 min · 180 °C",
+   "come": "Testa intera: diventa una crema dolce da spalmare."
+  },
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "Schiacciato su bruschetta o nello tzatziki."
+  }
+ ],
+ "nota_cottura": "Schiaccialo e aspetta 10 minuti prima di cuocerlo: si forma più allicina. Non farlo bruciare, diventa amaro.",
+ "conservare": [
+  {
+   "t": "Asciutto",
+   "d": "fuori dal frigo, in un posto aerato: mesi."
+  }
+ ],
+ "simili": [
+  "Cipolla",
+  "Porro"
+ ],
+ "abbinamenti": [
+  "Olio EVO",
+  "Prezzemolo fresco",
+  "Pomodoro",
+  "Peperoncino",
+  "Spinaci"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

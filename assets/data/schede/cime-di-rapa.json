@@ -1,0 +1,109 @@
+{
+ "id": "cime-di-rapa",
+ "nome": "Cime di rapa",
+ "cat": "Verdura",
+ "latino": "Brassica rapa subsp. sylvestris",
+ "famiglia": "Brassicacee",
+ "parole": [
+  "cime di rapa",
+  "rape",
+  "friarielli",
+  "broccoletti",
+  "rapini"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/7/76/Rapini.jpg",
+  "autore": "Roedelius",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Rapini.jpg"
+ },
+ "descrizione": [
+  "Foglie e infiorescenze di una varietà di rapa, simbolo della Puglia (orecchiette) e della Campania (friarielli).",
+  "Gusto amarognolo e deciso."
+ ],
+ "proprieta": [
+  {
+   "t": "Antitumorale",
+   "d": "Come tutti i cavoli, ricche di glucosinolati."
+  },
+  {
+   "t": "Vitamina K, C e folati",
+   "d": "Un piatto copre il fabbisogno di vitamina K."
+  },
+  {
+   "t": "Calcio",
+   "d": "Circa 100 mg per 100 g, ben assorbibile."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 4,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   11,
+   12,
+   1
+  ],
+  "testo": "da ottobre a marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Cime di rapa",
+   "valori": [
+    {
+     "stato": "crude",
+     "alimento": "Cime di rapa"
+    },
+    {
+     "stato": "cotte",
+     "usda": "11097"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Con le orecchiette",
+   "tempo": "10 min",
+   "come": "Cotte nella stessa acqua della pasta, poi saltate con aglio, olio, peperoncino e acciughe."
+  },
+  {
+   "metodo": "Ripassate",
+   "tempo": "10 min",
+   "come": "In padella con aglio e peperoncino (friarielli)."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 giorni: ingialliscono in fretta."
+  }
+ ],
+ "simili": [
+  "Cavolo",
+  "Spinaci",
+  "Cicoria"
+ ],
+ "abbinamenti": [
+  "Pasta di semola (cruda)",
+  "Peperoncino",
+  "Fagioli borlotti (secchi)",
+  "Pecorino"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

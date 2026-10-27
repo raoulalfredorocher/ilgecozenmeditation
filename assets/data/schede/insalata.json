@@ -1,0 +1,155 @@
+{
+ "id": "insalata",
+ "nome": "Insalata",
+ "cat": "Verdura",
+ "latino": "Lactuca sativa",
+ "famiglia": "Asteracee",
+ "parole": [
+  "insalata",
+  "lattuga",
+  "iceberg",
+  "romana",
+  "trocadero",
+  "gentilina",
+  "songino",
+  "valeriana",
+  "rucola",
+  "lettuce"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Stack_of_romaine_lettuce_heads.jpg/960px-Stack_of_romaine_lettuce_heads.jpg",
+  "autore": "Jeffery Martin",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Stack_of_romaine_lettuce_heads.jpg"
+ },
+ "descrizione": [
+  "\"Insalata\" in cucina sono tante foglie diverse. La lattuga (romana, iceberg, trocadero, gentilina) è la più comune.",
+  "Quasi solo acqua: dà volume, croccantezza e freschezza a pochissime calorie."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggerissima",
+   "d": "15–20 kcal per 100 g: una ciotola piena non pesa nel bilancio."
+  },
+  {
+   "t": "Vitamina K e folati",
+   "d": "Le foglie verdi scure (romana, rucola) ne hanno di più."
+  },
+  {
+   "t": "Sazietà",
+   "d": "Mangiata all'inizio del pasto riempie e riduce la quantità del resto."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   4,
+   5,
+   6,
+   9,
+   10
+  ],
+  "testo": "tutto l'anno; in campo aperto in primavera e autunno."
+ },
+ "titolo_tipi": "Tipi di insalata",
+ "tipi": [
+  {
+   "nome": "Lattuga romana",
+   "testo": "Foglie lunghe e croccanti: quella della Caesar salad.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Insalata"
+    }
+   ]
+  },
+  {
+   "nome": "Iceberg",
+   "testo": "Cespo compatto, croccantissima, poco sapore.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "11252"
+    }
+   ]
+  },
+  {
+   "nome": "Rucola",
+   "testo": "Piccante e amarognola, più ricca di calcio e vitamina K.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "11959"
+    }
+   ]
+  },
+  {
+   "nome": "Songino (valeriana)",
+   "testo": "Piccole foglie tonde, dolci."
+  },
+  {
+   "nome": "Trocadero e gentilina",
+   "testo": "Foglie morbide, sapore delicato."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Lavata e ben asciugata (centrifuga), condita all'ultimo momento."
+  },
+  {
+   "metodo": "Alla griglia",
+   "tempo": "1–2 min",
+   "come": "Romana tagliata a metà, appena scottata: buonissima con parmigiano."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "intera, non lavata, in un sacchetto con carta: 5–7 giorni."
+  },
+  {
+   "t": "In busta",
+   "d": "già lavata: consumala entro la data, dopo l'apertura in giornata."
+  }
+ ],
+ "simili": [
+  "Radicchio",
+  "Indivia belga",
+  "Crescione",
+  "Spinaci"
+ ],
+ "abbinamenti": [
+  "Pomodoro",
+  "Cetriolo",
+  "Aceto balsamico",
+  "Noci",
+  "Parmigiano",
+  "Petto di pollo (crudo)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,90 @@
+{
+ "id": "agretti",
+ "nome": "Agretti",
+ "cat": "Verdura",
+ "latino": "Salsola soda",
+ "famiglia": "Amarantacee",
+ "parole": [
+  "agretti",
+  "barba di frate",
+  "barba dei frati",
+  "roscano",
+  "lischi"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Salsola_soda_6330.jpg/960px-Salsola_soda_6330.jpg",
+  "autore": "Schurdl",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Salsola_soda_6330.jpg"
+ },
+ "descrizione": [
+  "Pianta che cresce vicino al mare, con foglie lunghe e sottili come erba cipollina. Gusto leggermente acidulo e salino.",
+  "Si trovano solo in primavera."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggeri",
+   "d": "Circa 17 kcal per 100 g."
+  },
+  {
+   "t": "Minerali",
+   "d": "Ricchi di sali minerali, in particolare potassio e calcio."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 2,
+  "Acido": 2,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   3,
+   4,
+   5
+  ],
+  "picco": [
+   4
+  ],
+  "testo": "da marzo a maggio."
+ },
+ "tipi": [
+  {
+   "nome": "Agretti",
+   "testo": "Non ci sono nelle tabelle USDA: se li hai nella tua tabella, cercali per nome e la scheda mostra i tuoi valori."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Lessati",
+   "tempo": "3–5 min",
+   "come": "Senza radici, poi olio e limone."
+  },
+  {
+   "metodo": "In padella",
+   "tempo": "5 min",
+   "come": "Con aglio e un uovo strapazzato, o nella frittata."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 giorni."
+  }
+ ],
+ "simili": [
+  "Spinaci",
+  "Bietola"
+ ],
+ "abbinamenti": [
+  "Uovo",
+  "Limone",
+  "Aglio",
+  "Pasta di semola (cruda)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

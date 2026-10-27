@@ -1,0 +1,99 @@
+{
+ "id": "indivia-belga",
+ "nome": "Indivia belga",
+ "cat": "Verdura",
+ "latino": "Cichorium intybus var. foliosum",
+ "famiglia": "Asteracee",
+ "parole": [
+  "indivia belga",
+  "belga",
+  "witloof",
+  "cicoria belga"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Endive_p1160063.jpg/960px-Endive_p1160063.jpg",
+  "autore": "David Monniaux",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Endive_p1160063.jpg"
+ },
+ "descrizione": [
+  "Germoglio di cicoria fatto crescere al buio: per questo è bianco, compatto e solo leggermente amaro.",
+  "Croccante, le foglie fanno da \"barchetta\"."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggerissima",
+   "d": "Circa 17 kcal per 100 g; folati e vitamina K."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 3,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   12,
+   1,
+   2
+  ],
+  "testo": "da ottobre ad aprile."
+ },
+ "tipi": [
+  {
+   "nome": "Indivia belga",
+   "testo": "Un cespo ≈ 53 g.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Indivia belga"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Foglie intere ripiene di formaggio fresco, salmone o hummus."
+  },
+  {
+   "metodo": "Brasata",
+   "tempo": "15 min",
+   "come": "A metà in padella con poco burro e arancia."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Al buio",
+   "d": "in frigo avvolta nella carta: alla luce diventa verde e amara."
+  }
+ ],
+ "simili": [
+  "Radicchio",
+  "Cicoria",
+  "Insalata"
+ ],
+ "abbinamenti": [
+  "Gorgonzola",
+  "Noci",
+  "Mela",
+  "Salmone",
+  "Arancia"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

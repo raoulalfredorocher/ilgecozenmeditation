@@ -1,0 +1,124 @@
+{
+ "id": "bietola",
+ "nome": "Bietola",
+ "cat": "Verdura",
+ "latino": "Beta vulgaris var. cicla",
+ "famiglia": "Amarantacee",
+ "parole": [
+  "bietola",
+  "bietole",
+  "biete",
+  "bieta",
+  "coste",
+  "erbette",
+  "chard"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/960px-Chard_%28Beta_vulgaris_var_cicla%29.jpg",
+  "autore": "Neelix",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Chard_%28Beta_vulgaris_var_cicla%29.jpg"
+ },
+ "descrizione": [
+  "La stessa specie della barbabietola, selezionata per le foglie. Erbette (foglie piccole) o coste (gambo largo bianco, rosso o giallo)."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina K e A",
+   "d": "Un piatto copre più del fabbisogno di vitamina K."
+  },
+  {
+   "t": "Magnesio",
+   "d": "Circa 80 mg per 100 g."
+  },
+  {
+   "t": "Ossalati",
+   "d": "Come gli spinaci: la cottura in acqua li riduce."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   4,
+   5,
+   9,
+   10
+  ],
+  "testo": "quasi tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Bietola",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "11147"
+    },
+    {
+     "stato": "lessata",
+     "usda": "11148"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Ripassata",
+   "tempo": "5 + 5 min",
+   "come": "Lessata, strizzata e saltata con aglio e olio."
+  },
+  {
+   "metodo": "Coste gratinate",
+   "tempo": "20 min · 200 °C",
+   "come": "I gambi lessati, con parmigiano."
+  },
+  {
+   "metodo": "Nelle torte salate",
+   "tempo": "",
+   "come": "Con ricotta: torta pasqualina, erbazzone."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Spinaci",
+  "Barbabietola",
+  "Cicoria"
+ ],
+ "abbinamenti": [
+  "Ricotta vaccina",
+  "Uovo",
+  "Parmigiano",
+  "Uvetta",
+  "Pinoli",
+  "Ceci (secchi)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

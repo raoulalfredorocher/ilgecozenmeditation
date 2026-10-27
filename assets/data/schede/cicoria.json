@@ -1,0 +1,128 @@
+{
+ "id": "cicoria",
+ "nome": "Cicoria",
+ "cat": "Verdura",
+ "latino": "Cichorium intybus · C. endivia",
+ "famiglia": "Asteracee",
+ "parole": [
+  "cicoria",
+  "cicorie",
+  "catalogna",
+  "puntarelle",
+  "scarola",
+  "indivia riccia",
+  "riccia",
+  "chicory",
+  "endive"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cicoria_puntarelle_Torino_coup%C3%A9e.JPG/960px-Cicoria_puntarelle_Torino_coup%C3%A9e.JPG",
+  "autore": "Michel Chauvet",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cicoria_puntarelle_Torino_coup%C3%A9e.JPG"
+ },
+ "descrizione": [
+  "Famiglia di verdure amare: cicoria da taglio, catalogna (con le puntarelle romane), e le indivie scarola e riccia.",
+  "Amara da cruda, si addolcisce cotta."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina K e A",
+   "d": "Un piatto copre ampiamente il fabbisogno di vitamina K."
+  },
+  {
+   "t": "Digestione",
+   "d": "Le sostanze amare stimolano bile e appetito."
+  },
+  {
+   "t": "Intestino",
+   "d": "Inulina, soprattutto nella radice."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 5,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   12,
+   1,
+   2
+  ],
+  "testo": "da ottobre ad aprile."
+ },
+ "titolo_tipi": "Tipi di cicoria",
+ "tipi": [
+  {
+   "nome": "Cicoria",
+   "testo": "Da taglio o catalogna: si lessa e si ripassa.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Cicoria"
+    }
+   ]
+  },
+  {
+   "nome": "Puntarelle",
+   "testo": "Germogli della catalogna: a striscioline in acqua fredda, con salsa di acciughe."
+  },
+  {
+   "nome": "Scarola e riccia",
+   "testo": "Indivie: la scarola liscia e tenera, la riccia frastagliata. Crude o cotte (scarola alla napoletana)."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Ripassata",
+   "tempo": "10 + 5 min",
+   "come": "Lessata, strizzata e saltata con aglio, olio e peperoncino."
+  },
+  {
+   "metodo": "Con le fave",
+   "tempo": "",
+   "come": "Purè di fave secche e cicoria: classico pugliese."
+  },
+  {
+   "metodo": "Scarola in padella",
+   "tempo": "10 min",
+   "come": "Con olive, capperi, pinoli e uvetta."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "3–5 giorni."
+  }
+ ],
+ "simili": [
+  "Radicchio",
+  "Indivia belga",
+  "Tarassaco",
+  "Cime di rapa"
+ ],
+ "abbinamenti": [
+  "Fave fresche",
+  "Olive nere",
+  "Pinoli",
+  "Uvetta",
+  "Fagioli borlotti (secchi)",
+  "Peperoncino"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,97 @@
+{
+ "id": "pastinaca",
+ "nome": "Pastinaca",
+ "cat": "Verdura",
+ "latino": "Pastinaca sativa",
+ "famiglia": "Apiacee",
+ "parole": [
+  "pastinaca",
+  "pastinache",
+  "parsnip"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Parsnip%2C_Farmers_Market_20090828.10D.52127.P1_SML_%283868236634%29.jpg/960px-Parsnip%2C_Farmers_Market_20090828.10D.52127.P1_SML_%283868236634%29.jpg",
+  "autore": "See-ming Lee",
+  "licenza": "CC BY-SA 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Parsnip%2C_Farmers_Market_20090828.10D.52127.P1_SML_%283868236634%29.jpg"
+ },
+ "descrizione": [
+  "Radice bianca parente della carota, molto usata nel Nord Europa. Il freddo la rende più dolce."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Circa 5 g per 100 g."
+  },
+  {
+   "t": "Folati e potassio",
+   "d": "Buona fonte di entrambi."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   12,
+   1
+  ],
+  "testo": "da ottobre a marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Pastinaca",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Pastinaca"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "30–35 min · 200 °C",
+   "come": "A bastoni con olio e miele, come le carote."
+  },
+  {
+   "metodo": "Purè",
+   "tempo": "20 min",
+   "come": "Lessata con patate."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane."
+  }
+ ],
+ "simili": [
+  "Carota",
+  "Topinambur",
+  "Patata dolce"
+ ],
+ "abbinamenti": [
+  "Miele",
+  "Carota",
+  "Rosmarino",
+  "Mela"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

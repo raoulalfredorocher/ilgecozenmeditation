@@ -1,0 +1,181 @@
+{
+ "id": "funghi",
+ "nome": "Funghi",
+ "cat": "Verdura",
+ "latino": "Agaricus bisporus · Lentinula edodes · Pleurotus ostreatus",
+ "famiglia": "Funghi",
+ "parole": [
+  "funghi",
+  "fungo",
+  "champignon",
+  "portobello",
+  "shiitake",
+  "pleurotus",
+  "orecchioni",
+  "porcini",
+  "mushroom"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/0/01/ChampignonMushroom.jpg",
+  "autore": "chris_73",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:ChampignonMushroom.jpg"
+ },
+ "descrizione": [
+  "Non sono verdure ma il \"frutto\" di un fungo. Quelli coltivati: champignon (bianco o bruno, e da grande portobello), shiitake e pleurotus.",
+  "Danno umami ai piatti con pochissime calorie."
+ ],
+ "proprieta": [
+  {
+   "t": "Umami",
+   "d": "Ricchi di glutammato e guanilato: insaporiscono e permettono meno sale."
+  },
+  {
+   "t": "Vitamine B e selenio",
+   "d": "Riboflavina, niacina e selenio; poche calorie."
+  },
+  {
+   "t": "Vitamina D",
+   "d": "Esposti al sole o a lampade UV ne producono molta."
+  },
+  {
+   "t": "Beta-glucani",
+   "d": "Fibre studiate per il sistema immunitario, soprattutto negli shiitake."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 5
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   9,
+   10,
+   11
+  ],
+  "testo": "coltivati tutto l'anno; selvatici in autunno."
+ },
+ "titolo_tipi": "Tipi di funghi",
+ "tipi": [
+  {
+   "nome": "Champignon",
+   "testo": "Bianco o bruno, il più comune.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Funghi champignon"
+    },
+    {
+     "stato": "cotto",
+     "usda": "11261"
+    }
+   ]
+  },
+  {
+   "nome": "Portobello",
+   "testo": "Champignon adulto, grande e carnoso: alla griglia come una \"bistecca\".",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Funghi portobello"
+    }
+   ]
+  },
+  {
+   "nome": "Shiitake",
+   "testo": "Giapponese, saporito, gambo duro da togliere.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Shiitakegrowing.jpg/500px-Shiitakegrowing.jpg",
+    "autore": "frankenstoen",
+    "licenza": "CC BY 2.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Shiitakegrowing.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Funghi shiitake"
+    }
+   ]
+  },
+  {
+   "nome": "Pleurotus (orecchioni)",
+   "testo": "A ventaglio, consistenza carnosa: ottimi impanati o alla piastra.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Pleurotus_ostreatus_JPG7.jpg/500px-Pleurotus_ostreatus_JPG7.jpg",
+    "autore": "Wikimedia Commons",
+    "licenza": "CC BY 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Pleurotus_ostreatus_JPG7.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Funghi pleurotus"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Trifolati",
+   "tempo": "10 min",
+   "come": "In padella calda con aglio e prezzemolo, senza girarli troppo."
+  },
+  {
+   "metodo": "Alla griglia",
+   "tempo": "4–5 min per lato",
+   "come": "Portobello e pleurotus con olio e timo."
+  },
+  {
+   "metodo": "Crudi",
+   "tempo": "",
+   "come": "Champignon a lamelle con limone, olio e parmigiano."
+  }
+ ],
+ "nota_cottura": "Non lavarli in acqua: puliscili con un panno umido o un pennello, assorbono acqua.",
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "in un sacchetto di carta, 4–5 giorni."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Funghi selvatici",
+   "d": "raccogli o mangia solo funghi controllati dall'Ispettorato micologico dell'ASL."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Tofu",
+  "Melanzana"
+ ],
+ "abbinamenti": [
+  "Prezzemolo fresco",
+  "Riso bianco (cotto)",
+  "Uovo",
+  "Parmigiano",
+  "Salsa teriyaki",
+  "Miso"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

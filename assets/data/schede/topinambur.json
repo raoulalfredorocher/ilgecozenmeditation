@@ -1,0 +1,103 @@
+{
+ "id": "topinambur",
+ "nome": "Topinambur",
+ "cat": "Verdura",
+ "latino": "Helianthus tuberosus",
+ "famiglia": "Asteracee",
+ "parole": [
+  "topinambur",
+  "rapa tedesca",
+  "carciofo di gerusalemme"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Jerusalem_Artichokes_tubers.jpg/960px-Jerusalem_Artichokes_tubers.jpg",
+  "autore": "Christian Guthier",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Jerusalem_Artichokes_tubers.jpg"
+ },
+ "descrizione": [
+  "Tubero di una pianta parente del girasole. Sapore che ricorda il carciofo.",
+  "Al posto dell'amido contiene inulina."
+ ],
+ "proprieta": [
+  {
+   "t": "Inulina",
+   "d": "Fibra prebiotica che nutre la flora intestinale; in eccesso dà gonfiore."
+  },
+  {
+   "t": "Ferro e potassio",
+   "d": "Circa 3,4 mg di ferro e 430 mg di potassio per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   11,
+   12
+  ],
+  "testo": "da ottobre a marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Topinambur",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Topinambur"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "30 min · 200 °C",
+   "come": "Con la buccia ben spazzolata, a spicchi."
+  },
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "A fettine sottili con limone, in insalata."
+  },
+  {
+   "metodo": "Vellutata",
+   "tempo": "20 min",
+   "come": "Con porro e patata."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "in un sacchetto, 1–2 settimane."
+  }
+ ],
+ "simili": [
+  "Carciofo",
+  "Patata",
+  "Pastinaca"
+ ],
+ "abbinamenti": [
+  "Porro",
+  "Nocciole",
+  "Limone",
+  "Rosmarino"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

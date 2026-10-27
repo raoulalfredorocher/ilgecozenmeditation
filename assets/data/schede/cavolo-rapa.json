@@ -1,0 +1,109 @@
+{
+ "id": "cavolo-rapa",
+ "nome": "Cavolo rapa",
+ "cat": "Verdura",
+ "latino": "Brassica oleracea var. gongylodes",
+ "famiglia": "Brassicacee",
+ "parole": [
+  "cavolo rapa",
+  "cavolorapa",
+  "kohlrabi"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Brassica_oleracea_var._gongylodes_%28kohlrabi%29.jpg/960px-Brassica_oleracea_var._gongylodes_%28kohlrabi%29.jpg",
+  "autore": "Wikimedia Commons",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Brassica_oleracea_var._gongylodes_%28kohlrabi%29.jpg"
+ },
+ "descrizione": [
+  "Un cavolo che ingrossa il fusto in una palla verde chiaro o viola. Si mangia la palla, pelata.",
+  "Croccante e succoso, sa di torsolo di broccolo dolce."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "100 g coprono più di metà del fabbisogno."
+  },
+  {
+   "t": "Antitumorale",
+   "d": "Glucosinolati, come gli altri cavoli."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   5,
+   6,
+   7,
+   9,
+   10,
+   11
+  ],
+  "picco": [
+   6,
+   10
+  ],
+  "testo": "primavera-estate e autunno."
+ },
+ "tipi": [
+  {
+   "nome": "Cavolo rapa",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Cavolo rapa"
+    },
+    {
+     "stato": "lessato",
+     "usda": "11242"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "A bastoncini o julienne con limone: croccantissimo."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "25–30 min · 200 °C",
+   "come": "A spicchi con olio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "senza foglie, 1–2 settimane."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Foglie",
+   "d": "tenere, si cucinano come la verza."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Cavolo",
+  "Sedano",
+  "Daikon"
+ ],
+ "abbinamenti": [
+  "Mela",
+  "Limone",
+  "Yogurt greco 0%",
+  "Burro"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

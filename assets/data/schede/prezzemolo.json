@@ -1,0 +1,113 @@
+{
+ "id": "prezzemolo",
+ "nome": "Prezzemolo",
+ "cat": "Erbe e alghe",
+ "latino": "Petroselinum crispum",
+ "famiglia": "Apiacee",
+ "parole": [
+  "prezzemolo",
+  "parsley"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Parsley_Leaves.jpg/960px-Parsley_Leaves.jpg",
+  "autore": "Etopalrux",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Parsley_Leaves.jpg"
+ },
+ "descrizione": [
+  "L'erba aromatica più usata in Italia: liscio (più profumato) o riccio."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina K e C",
+   "d": "Un cucchiaio (4 g) copre più di metà del fabbisogno di vitamina K."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Apigenina e altri flavonoidi."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   4,
+   5,
+   6,
+   9,
+   10
+  ],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Prezzemolo fresco",
+   "testo": "Un cucchiaio tritato ≈ 4 g.",
+   "valori": [
+    {
+     "stato": "fresco",
+     "alimento": "Prezzemolo fresco"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "Tritato a crudo",
+   "tempo": "",
+   "come": "Alla fine su pesce, funghi, legumi, zuppe."
+  },
+  {
+   "metodo": "Salsa verde",
+   "tempo": "",
+   "come": "Con capperi, acciughe, aceto e olio."
+  },
+  {
+   "metodo": "Tabbouleh",
+   "tempo": "",
+   "come": "Tanto prezzemolo, poco bulgur, pomodoro, menta e limone."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "in un bicchiere d'acqua coperto da un sacchetto: 1 settimana."
+  }
+ ],
+ "simili": [
+  "Basilico",
+  "Menta",
+  "Sedano"
+ ],
+ "abbinamenti": [
+  "Aglio",
+  "Limone",
+  "Funghi champignon",
+  "Merluzzo",
+  "Bulgur (cotto)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,145 @@
+{
+ "id": "sedano",
+ "nome": "Sedano",
+ "cat": "Verdura",
+ "latino": "Apium graveolens",
+ "famiglia": "Apiacee",
+ "parole": [
+  "sedano",
+  "sedani",
+  "celery",
+  "sedano rapa",
+  "celeriac"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Celery_1.jpg/960px-Celery_1.jpg",
+  "autore": "Lombroso",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Celery_1.jpg"
+ },
+ "descrizione": [
+  "Del sedano da coste si mangiano i gambi croccanti; il sedano rapa è la stessa specie selezionata per la radice, grossa e profumata.",
+  "Base del soffritto con carota e cipolla."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggerissimo",
+   "d": "Il sedano da coste ha circa 16 kcal per 100 g."
+  },
+  {
+   "t": "Vitamina K",
+   "d": "Un gambo grande ne dà un quarto del fabbisogno."
+  },
+  {
+   "t": "Allergia",
+   "d": "È tra i 14 allergeni da dichiarare in etichetta."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 2,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   9,
+   10,
+   11
+  ],
+  "testo": "tutto l'anno; il sedano rapa da ottobre a marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Sedano da coste",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Sedano"
+    },
+    {
+     "stato": "cotto",
+     "usda": "11144"
+    }
+   ]
+  },
+  {
+   "nome": "Sedano rapa",
+   "testo": "Radice nodosa: si pela e si usa in purè, vellutate o crudo grattugiato.",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/C%C3%A9leri-rave-fendu.jpg/500px-C%C3%A9leri-rave-fendu.jpg",
+    "autore": "DocteurCosmos",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:C%C3%A9leri-rave-fendu.jpg"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Sedano rapa"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "A bastoncini con hummus o in pinzimonio."
+  },
+  {
+   "metodo": "Nel soffritto",
+   "tempo": "5–8 min",
+   "come": "A dadini con carota e cipolla."
+  },
+  {
+   "metodo": "Sedano rapa in purè",
+   "tempo": "20 min",
+   "come": "Lessato con una patata e frullato: più leggero del purè classico."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "avvolto in carta umida, 1–2 settimane. Se si affloscia, rinviene in acqua fredda."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Foglie",
+   "d": "molto profumate: nel brodo o tritate come il prezzemolo."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Finocchio",
+  "Carota",
+  "Cavolo rapa"
+ ],
+ "abbinamenti": [
+  "Carota",
+  "Cipolla",
+  "Hummus",
+  "Mela",
+  "Noci",
+  "Tahina (crema di sesamo)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

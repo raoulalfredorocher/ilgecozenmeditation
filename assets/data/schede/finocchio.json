@@ -1,0 +1,117 @@
+{
+ "id": "finocchio",
+ "nome": "Finocchio",
+ "cat": "Verdura",
+ "latino": "Foeniculum vulgare var. azoricum",
+ "famiglia": "Apiacee",
+ "parole": [
+  "finocchio",
+  "finocchi",
+  "fennel"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg/960px-Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg",
+  "autore": "Daderot",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Fennel_bulbs_-_Wellington%2C_New_Zealand.jpg"
+ },
+ "descrizione": [
+  "Grumolo bianco e croccante dal profumo di anice. Tondo (\"maschio\") più tenero da crudo, allungato (\"femmina\") più adatto alla cottura.",
+  "L'Italia è il primo produttore mondiale."
+ ],
+ "proprieta": [
+  {
+   "t": "Digestione",
+   "d": "Anetolo e fibra: tradizionalmente usato contro gonfiore e aria."
+  },
+  {
+   "t": "Leggero",
+   "d": "Circa 31 kcal per 100 g; potassio e vitamina C."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   12,
+   1,
+   2
+  ],
+  "testo": "da ottobre ad aprile."
+ },
+ "tipi": [
+  {
+   "nome": "Finocchio",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Finocchi"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "A fettine sottili con arancia, olive nere e olio."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "30 min · 200 °C",
+   "come": "A spicchi con un velo di parmigiano o pangrattato."
+  },
+  {
+   "metodo": "Brasato",
+   "tempo": "20 min",
+   "come": "In padella coperto con un goccio d'acqua o brodo."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglilo",
+   "d": "bianco, sodo, senza macchie, barbe verdi fresche."
+  },
+  {
+   "t": "In frigo",
+   "d": "1 settimana."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Barbe",
+   "d": "le foglioline si usano come erba aromatica sul pesce."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Sedano",
+  "Cipolla"
+ ],
+ "abbinamenti": [
+  "Arancia",
+  "Olive nere",
+  "Salmone",
+  "Parmigiano",
+  "Mela",
+  "Pompelmo"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,164 @@
+{
+ "id": "pomodoro",
+ "nome": "Pomodoro",
+ "cat": "Verdura",
+ "latino": "Solanum lycopersicum",
+ "famiglia": "Solanacee",
+ "parole": [
+  "pomodoro",
+  "pomodori",
+  "pomodorini",
+  "pomodorino",
+  "ciliegino",
+  "datterino",
+  "passata",
+  "passata di pomodoro",
+  "pelati",
+  "sugo",
+  "sugo di pomodoro",
+  "salsa di pomodoro",
+  "tomato"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/960px-Tomato_je.jpg",
+  "autore": "Softeis",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Tomato_je.jpg"
+ },
+ "descrizione": [
+  "Arrivato dalle Americhe, è diventato il simbolo della cucina italiana: San Marzano, Pachino, ciliegino, datterino, cuore di bue, ramato.",
+  "Botanicamente è un frutto. Cotto e con olio rilascia più licopene."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Licopene, il pigmento rosso: si assorbe molto meglio da pomodoro cotto con un filo d'olio."
+  },
+  {
+   "t": "Antitumorale",
+   "d": "Negli studi di popolazione chi consuma più prodotti di pomodoro ha meno tumori della prostata."
+  },
+  {
+   "t": "Leggero",
+   "d": "Circa 18 kcal per 100 g, con vitamina C e potassio."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 0,
+  "Umami": 4
+ },
+ "stagione": {
+  "mesi": [
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "picco": [
+   7,
+   8
+  ],
+  "testo": "da giugno a ottobre; conserve tutto l'anno."
+ },
+ "titolo_tipi": "Fresco e conserve",
+ "tipi": [
+  {
+   "nome": "Pomodoro fresco",
+   "testo": "Ramato, cuore di bue, ciliegino, datterino.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "11529"
+    }
+   ]
+  },
+  {
+   "nome": "Passata",
+   "testo": "Pomodoro passato e cotto, senza sale.",
+   "valori": [
+    {
+     "stato": "in bottiglia",
+     "usda": "11547"
+    }
+   ]
+  },
+  {
+   "nome": "Pelati",
+   "testo": "In scatola, interi nel loro succo.",
+   "valori": [
+    {
+     "stato": "in scatola",
+     "usda": "11531"
+    }
+   ]
+  },
+  {
+   "nome": "Concentrato",
+   "testo": "Un cucchiaio (16 g) ≈ 13 kcal.",
+   "valori": [
+    {
+     "stato": "doppio concentrato",
+     "usda": "11546"
+    }
+   ]
+  },
+  {
+   "nome": "Sugo pronto (marinara)",
+   "testo": "Con olio e sale: guarda le etichette, cambiano molto.",
+   "valori": [
+    {
+     "stato": "pronto",
+     "alimento": "Sugo di pomodoro pronto (marinara)"
+    }
+   ]
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Crudo",
+   "tempo": "",
+   "come": "Con olio, basilico e sale; nella caprese o nella panzanella."
+  },
+  {
+   "metodo": "Sugo veloce",
+   "tempo": "10–15 min",
+   "come": "Pomodorini in padella con aglio e olio finché si aprono."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "1–2 ore · 120 °C",
+   "come": "Confit, tagliati a metà con olio, zucchero e origano: concentrati e dolcissimi."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fuori dal frigo",
+   "d": "il freddo toglie profumo; in frigo solo se molto maturi."
+  },
+  {
+   "t": "Per farli maturare",
+   "d": "a temperatura ambiente, picciolo in giù."
+  }
+ ],
+ "simili": [
+  "Peperone",
+  "Melanzana"
+ ],
+ "abbinamenti": [
+  "Basilico fresco",
+  "Mozzarella",
+  "Olio EVO",
+  "Aglio",
+  "Pasta di semola (cruda)",
+  "Origano"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Licopene e cottura: J Agric Food Chem 2002; tumore prostata: meta-analisi Medicine 2017",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
