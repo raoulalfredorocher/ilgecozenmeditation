@@ -1,6 +1,24 @@
 {
  "schede": [
   {
+   "id": "aceto",
+   "nome": "Aceto",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Aceto balsamico",
+    "Aceto di mele"
+   ],
+   "parole": [
+    "aceto",
+    "aceto balsamico",
+    "aceto di mele",
+    "aceto di vino",
+    "aceto di riso",
+    "glassa di aceto balsamico"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Balsamic_vinegar_%28drops%29.jpg/960px-Balsamic_vinegar_%28drops%29.jpg"
+  },
+  {
    "id": "aglio",
    "nome": "Aglio",
    "cat": "Verdura",
@@ -982,6 +1000,20 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/8/83/Kefir_in_a_glass.JPG"
   },
   {
+   "id": "ketchup",
+   "nome": "Ketchup",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Ketchup"
+   ],
+   "parole": [
+    "ketchup",
+    "catchup",
+    "salsa rosa"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/French_fries_in_a_ketchup_bowl_%2849175621297%29.jpg/960px-French_fries_in_a_ketchup_bowl_%2849175621297%29.jpg"
+  },
+  {
    "id": "kiwi",
    "nome": "Kiwi",
    "cat": "Frutta",
@@ -1117,6 +1149,22 @@
     "noce macadamia"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Macadamia_nut_kernels.jpg/960px-Macadamia_nut_kernels.jpg"
+  },
+  {
+   "id": "maionese",
+   "nome": "Maionese",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Maionese"
+   ],
+   "parole": [
+    "maionese",
+    "mayo",
+    "mayonnaise",
+    "salsa tartara",
+    "aioli"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Mayonnaise_%281%29.jpg/960px-Mayonnaise_%281%29.jpg"
   },
   {
    "id": "mais",
@@ -1507,6 +1555,26 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/3/32/Bucket_of_raw_okra_pods.jpg"
   },
   {
+   "id": "olio",
+   "nome": "Olio",
+   "cat": "Condimenti e salse",
+   "alimenti": [],
+   "parole": [
+    "olio",
+    "olio evo",
+    "olio extravergine",
+    "olio d'oliva",
+    "olio di oliva",
+    "olio di semi",
+    "olio di girasole",
+    "olio di cocco",
+    "olio di sesamo",
+    "olio di arachidi",
+    "olio di colza"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/FRESH_OLIVE_OIL_OF_SUPERIOR_QUALITY.jpg/960px-FRESH_OLIVE_OIL_OF_SUPERIOR_QUALITY.jpg"
+  },
+  {
    "id": "olive",
    "nome": "Olive",
    "cat": "Verdura",
@@ -1774,6 +1842,21 @@
     "peach"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_nectarine_and_cross_section02_edit.jpg/960px-White_nectarine_and_cross_section02_edit.jpg"
+  },
+  {
+   "id": "pesto",
+   "nome": "Pesto",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Pesto alla genovese"
+   ],
+   "parole": [
+    "pesto",
+    "pesto alla genovese",
+    "pesto genovese",
+    "pesto di basilico"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Ingredienti_per_il_pesto_Genovese_e_Pesto_Genovese_%28Ingridients_for_Pesto_Genovese_and_Pesto_genovese%29.jpg/960px-Ingredienti_per_il_pesto_Genovese_e_Pesto_Genovese_%28Ingridients_for_Pesto_Genovese_and_Pesto_genovese%29.jpg"
   },
   {
    "id": "pinoli",
@@ -2055,6 +2138,69 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Salmon2.jpg/960px-Salmon2.jpg"
   },
   {
+   "id": "salsa-di-soia",
+   "nome": "Salsa di soia",
+   "cat": "Condimenti e salse",
+   "alimenti": [],
+   "parole": [
+    "salsa di soia",
+    "soy sauce",
+    "shoyu",
+    "tamari"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Soy_sauce_2.jpg/960px-Soy_sauce_2.jpg"
+  },
+  {
+   "id": "salse-americane",
+   "nome": "Salse americane",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Salsa barbecue",
+    "Salsa Caesar",
+    "Salsa ranch",
+    "Salsa Worcestershire"
+   ],
+   "parole": [
+    "salsa barbecue",
+    "barbecue",
+    "bbq",
+    "salsa caesar",
+    "caesar",
+    "salsa ranch",
+    "ranch",
+    "salsa worcestershire",
+    "worcestershire",
+    "salse americane"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Spare_ribs_with_Chinese_barbecue_sauce_cropped.jpg/960px-Spare_ribs_with_Chinese_barbecue_sauce_cropped.jpg"
+  },
+  {
+   "id": "salse-asiatiche",
+   "nome": "Salse asiatiche",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Salsa teriyaki",
+    "Salsa hoisin",
+    "Salsa sriracha",
+    "Salsa di pesce (fish sauce)",
+    "Salsa d'ostrica"
+   ],
+   "parole": [
+    "salsa teriyaki",
+    "teriyaki",
+    "salsa hoisin",
+    "hoisin",
+    "salsa sriracha",
+    "sriracha",
+    "salsa di pesce",
+    "fish sauce",
+    "salsa d'ostrica",
+    "oyster sauce",
+    "salse asiatiche"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sommerrolle_mit_Hoisin-Sauce_170305_AW.jpg/960px-Sommerrolle_mit_Hoisin-Sauce_170305_AW.jpg"
+  },
+  {
    "id": "sedano",
    "nome": "Sedano",
    "cat": "Verdura",
@@ -2177,6 +2323,21 @@
     "pumpkin seeds"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pepita_de_calabaza.jpg/960px-Pepita_de_calabaza.jpg"
+  },
+  {
+   "id": "senape",
+   "nome": "Senape",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Senape"
+   ],
+   "parole": [
+    "senape",
+    "mostarda",
+    "mustard",
+    "senape di digione"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Senf-Variationen.jpg/960px-Senf-Variationen.jpg"
   },
   {
    "id": "soia",
@@ -2355,6 +2516,21 @@
     "regina"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg"
+  },
+  {
+   "id": "wasabi",
+   "nome": "Wasabi",
+   "cat": "Condimenti e salse",
+   "alimenti": [
+    "Wasabi (pasta)"
+   ],
+   "parole": [
+    "wasabi",
+    "rafano",
+    "cren",
+    "barbaforte"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/7/71/Fresh_wasabi_rhizomes.jpg"
   },
   {
    "id": "yogurt",

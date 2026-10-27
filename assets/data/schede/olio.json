@@ -1,0 +1,147 @@
+{
+ "id": "olio",
+ "nome": "Olio",
+ "famiglia": "Grassi da condimento",
+ "parole": [
+  "olio",
+  "olio evo",
+  "olio extravergine",
+  "olio d'oliva",
+  "olio di oliva",
+  "olio di semi",
+  "olio di girasole",
+  "olio di cocco",
+  "olio di sesamo",
+  "olio di arachidi",
+  "olio di colza"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/FRESH_OLIVE_OIL_OF_SUPERIOR_QUALITY.jpg/960px-FRESH_OLIVE_OIL_OF_SUPERIOR_QUALITY.jpg",
+  "autore": "Amenduni",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:FRESH_OLIVE_OIL_OF_SUPERIOR_QUALITY.jpg"
+ },
+ "descrizione": [
+  "Tutti gli oli sono grasso puro: circa 9 kcal per grammo, 90 kcal a cucchiaio (10 g). Cambia il tipo di grassi.",
+  "L'extravergine è spremuto a freddo dalle olive, senza raffinazione: conserva profumi e polifenoli."
+ ],
+ "proprieta": [
+  {
+   "t": "Extravergine: polifenoli",
+   "d": "Antiossidanti e antinfiammatori (oleocantale: il pizzicore in gola). L'EFSA riconosce che proteggono il colesterolo LDL dall'ossidazione."
+  },
+  {
+   "t": "Monoinsaturi",
+   "d": "L'oliva ha circa 73% di acido oleico, il cuore della dieta mediterranea."
+  },
+  {
+   "t": "Cocco: saturi",
+   "d": "Oltre l'80% di grassi saturi, più del burro."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "tipi": [
+  {
+   "nome": "Extravergine d'oliva",
+   "valori": [
+    {
+     "stato": "100 g",
+     "usda": "04053"
+    }
+   ]
+  },
+  {
+   "nome": "Di semi di girasole",
+   "valori": [
+    {
+     "stato": "100 g",
+     "usda": "04506"
+    }
+   ]
+  },
+  {
+   "nome": "Di cocco",
+   "valori": [
+    {
+     "stato": "100 g",
+     "usda": "04047"
+    }
+   ]
+  },
+  {
+   "nome": "Di sesamo",
+   "valori": [
+    {
+     "stato": "100 g",
+     "usda": "04058"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "A crudo",
+   "tempo": "",
+   "come": "L'extravergine dà il meglio a crudo, a fine cottura."
+  },
+  {
+   "metodo": "Per friggere",
+   "tempo": "170–180 °C",
+   "come": "Extravergine o arachidi: reggono il calore. Evita i semi di girasole \"normali\", ricchi di omega-6 che si ossidano."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Misuralo",
+   "d": "Un \"giro d'olio\" spesso sono 2–3 cucchiai: 200–270 kcal. Usa un cucchiaio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Al buio e al fresco",
+   "d": "Luce e caldo lo ossidano. L'extravergine è al meglio entro 12–18 mesi dalla spremitura."
+  }
+ ],
+ "simili": [
+  "Burro",
+  "Olive"
+ ],
+ "abbinamenti": [
+  "Pane",
+  "Pomodoro",
+  "Aglio",
+  "Limone",
+  "Basilico"
+ ],
+ "cat": "Condimenti e salse",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

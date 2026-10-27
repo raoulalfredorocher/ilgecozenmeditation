@@ -1,0 +1,104 @@
+{
+ "id": "salsa-di-soia",
+ "nome": "Salsa di soia",
+ "famiglia": "Salsa fermentata",
+ "parole": [
+  "salsa di soia",
+  "soy sauce",
+  "shoyu",
+  "tamari"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Soy_sauce_2.jpg/960px-Soy_sauce_2.jpg",
+  "autore": "국립국어원",
+  "licenza": "CC BY-SA 2.0 kr",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Soy_sauce_2.jpg"
+ },
+ "descrizione": [
+  "Soia e grano fermentati per mesi con sale (shoyu). Il tamari è quasi solo soia, senza glutine o quasi."
+ ],
+ "proprieta": [
+  {
+   "t": "Molto sale",
+   "d": "Circa 14 g di sale per 100 g: un cucchiaio (15 ml) ne ha più di 2 g, quasi metà del limite giornaliero."
+  },
+  {
+   "t": "Umami",
+   "d": "Glutammato naturale della fermentazione."
+  },
+  {
+   "t": "Iposodica",
+   "d": "Le versioni \"less salt\" hanno circa il 40% di sale in meno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 5,
+  "Acido": 1,
+  "Amaro": 1,
+  "Umami": 5
+ },
+ "tipi": [
+  {
+   "nome": "Shoyu",
+   "valori": [
+    {
+     "stato": "soia e grano",
+     "usda": "16123"
+    }
+   ]
+  },
+  {
+   "nome": "Tamari",
+   "valori": [
+    {
+     "stato": "solo soia",
+     "usda": "16124"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In dispensa o frigo",
+   "d": "aperta, in frigo mantiene il profumo più a lungo."
+  }
+ ],
+ "simili": [
+  "Miso",
+  "Salse asiatiche",
+  "Soia"
+ ],
+ "abbinamenti": [
+  "Riso bianco (cotto)",
+  "Tofu",
+  "Zenzero",
+  "Aglio",
+  "Noodles",
+  "Semi di sesamo"
+ ],
+ "cat": "Condimenti e salse",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
