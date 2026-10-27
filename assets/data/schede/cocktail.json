@@ -17,7 +17,11 @@
   "mojito",
   "whisky sour",
   "americano",
-  "bitter"
+  "bitter",
+  "moscow mule",
+  "cuba libre",
+  "mimosa",
+  "bellini"
  ],
  "foto": {
   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Negroni_served_in_Vancouver_BC.jpg/960px-Negroni_served_in_Vancouver_BC.jpg",
@@ -105,6 +109,44 @@
      "alimento": "Whisky sour"
     }
    ]
+  },
+  {
+   "nome": "Moscow mule",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Moscow Mule"
+    }
+   ]
+  },
+  {
+   "nome": "Cuba libre",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Cuba libre"
+    }
+   ]
+  },
+  {
+   "nome": "Mimosa",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Mimosa"
+    }
+   ],
+   "testo": "Spumante e succo d'arancia."
+  },
+  {
+   "nome": "Bellini",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Bellini"
+    }
+   ],
+   "testo": "Prosecco e polpa di pesca bianca."
   },
   {
    "nome": "Bitter arancio",

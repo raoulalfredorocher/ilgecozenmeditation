@@ -800,6 +800,10 @@
     "Vodka lemon",
     "Mojito",
     "Whisky sour",
+    "Moscow Mule",
+    "Cuba libre",
+    "Mimosa",
+    "Bellini",
     "Aperol",
     "Campari bitter",
     "Vermouth rosso (tipo Martini Rosso)"
@@ -819,7 +823,11 @@
     "mojito",
     "whisky sour",
     "americano",
-    "bitter"
+    "bitter",
+    "moscow mule",
+    "cuba libre",
+    "mimosa",
+    "bellini"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Negroni_served_in_Vancouver_BC.jpg/960px-Negroni_served_in_Vancouver_BC.jpg"
   },
@@ -2937,7 +2945,8 @@
     "Crostata di ciliegie",
     "Strudel di mele",
     "Cheesecake",
-    "Torta al cioccolato (con glassa)"
+    "Torta al cioccolato (con glassa)",
+    "Pan di Spagna"
    ],
    "parole": [
     "torta",
@@ -2949,7 +2958,8 @@
     "torta al cioccolato",
     "plumcake",
     "ciambellone",
-    "apple pie"
+    "apple pie",
+    "pan di spagna"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Apple_cake_with_vanilla_ice_cream_2.jpg/960px-Apple_cake_with_vanilla_ice_cream_2.jpg"
   },
