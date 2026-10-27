@@ -1,0 +1,100 @@
+{
+ "id": "semi-di-lino",
+ "nome": "Semi di lino",
+ "cat": "Frutta secca e semi",
+ "latino": "Linum usitatissimum",
+ "famiglia": "Linaceae",
+ "parole": [
+  "lino",
+  "semi di lino",
+  "linseed",
+  "flaxseed",
+  "farina di lino"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Flaxseed.jpg/960px-Flaxseed.jpg",
+  "autore": "Gaurav Dhwaj Khadka",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Flaxseed.jpg"
+ },
+ "descrizione": [
+  "Semi della pianta del lino, bruni o dorati. Interi passano quasi intatti: per assorbirli vanno macinati."
+ ],
+ "proprieta": [
+  {
+   "t": "Omega-3",
+   "d": "La fonte vegetale più ricca di ALA: 23 g per 100 g."
+  },
+  {
+   "t": "Lignani",
+   "d": "Ne contengono molti più di ogni altro alimento."
+  },
+  {
+   "t": "Fibra",
+   "d": "27 g per 100 g; con acqua fanno una gelatina che aiuta l'intestino."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Semi di lino",
+   "valori": [
+    {
+     "stato": "secchi",
+     "alimento": "Semi di lino"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 6 mesi; macinati in frigo e da usare in pochi giorni."
+  }
+ ],
+ "simili": [
+  "Semi di chia",
+  "Semi di canapa"
+ ],
+ "abbinamenti": [
+  "Yogurt",
+  "Fiocchi d'avena",
+  "Pane",
+  "Banana"
+ ],
+ "cotture": [
+  {
+   "metodo": "\"Uovo\" di lino",
+   "tempo": "10 min",
+   "come": "1 cucchiaio di lino macinato + 3 di acqua: sostituisce un uovo nei dolci."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

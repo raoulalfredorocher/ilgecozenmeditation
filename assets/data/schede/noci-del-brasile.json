@@ -1,0 +1,91 @@
+{
+ "id": "noci-del-brasile",
+ "nome": "Noci del Brasile",
+ "cat": "Frutta secca e semi",
+ "latino": "Bertholletia excelsa",
+ "famiglia": "Lecythidaceae",
+ "parole": [
+  "noci del brasile",
+  "noce del brasile",
+  "noci amazzoniche",
+  "brazil nut"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Bertholletia_excelsa_compose.jpg/960px-Bertholletia_excelsa_compose.jpg",
+  "autore": "Lior Golgher e altri",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Bertholletia_excelsa_compose.jpg"
+ },
+ "descrizione": [
+  "Semi di un albero gigante dell'Amazzonia, chiusi a 15–20 dentro un frutto legnoso. Crescono solo nella foresta, non coltivati."
+ ],
+ "proprieta": [
+  {
+   "t": "Selenio",
+   "d": "Fonte più ricca al mondo: una sola noce (5 g) supera il fabbisogno giornaliero."
+  },
+  {
+   "t": "Non esagerare",
+   "d": "Oltre 3–4 al giorno, tutti i giorni, il selenio supera il limite massimo (300 µg, EFSA)."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importate tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Noci del Brasile",
+   "valori": [
+    {
+     "stato": "secche",
+     "alimento": "Noci del Brasile"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Macadamia",
+  "Noci"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente",
+  "Banana",
+  "Fiocchi d'avena"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,93 @@
+{
+ "id": "semi-di-canapa",
+ "nome": "Semi di canapa",
+ "cat": "Frutta secca e semi",
+ "latino": "Cannabis sativa",
+ "famiglia": "Cannabaceae",
+ "parole": [
+  "canapa",
+  "semi di canapa",
+  "hemp",
+  "semi di canapa decorticati"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Konopne_seminko_loupane.jpg/960px-Konopne_seminko_loupane.jpg",
+  "autore": "Luděk Kovář",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Konopne_seminko_loupane.jpg"
+ },
+ "descrizione": [
+  "Semi decorticati della canapa alimentare: morbidi, sapore di pinolo. Non contengono THC."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine complete",
+   "d": "32 g per 100 g, con tutti gli amminoacidi essenziali."
+  },
+  {
+   "t": "Omega-3 e omega-6",
+   "d": "In rapporto equilibrato (circa 1:3)."
+  },
+  {
+   "t": "Magnesio",
+   "d": "700 mg per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Decorticati",
+   "valori": [
+    {
+     "stato": "decorticati",
+     "alimento": "Semi di canapa decorticati"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 6 mesi; macinati in frigo e da usare in pochi giorni."
+  }
+ ],
+ "simili": [
+  "Semi di chia",
+  "Semi di lino",
+  "Semi di zucca"
+ ],
+ "abbinamenti": [
+  "Yogurt",
+  "Insalata",
+  "Avocado",
+  "Banana"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

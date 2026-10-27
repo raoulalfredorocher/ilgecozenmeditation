@@ -1,0 +1,113 @@
+{
+ "id": "arachidi",
+ "nome": "Arachidi",
+ "cat": "Frutta secca e semi",
+ "latino": "Arachis hypogaea",
+ "famiglia": "Fabaceae (legumi)",
+ "parole": [
+  "arachide",
+  "arachidi",
+  "noccioline",
+  "peanuts",
+  "burro d'arachidi",
+  "burro di arachidi",
+  "crema di arachidi",
+  "peanut butter"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Roasted_Peanuts_with_shell.jpg/960px-Roasted_Peanuts_with_shell.jpg",
+  "autore": "Sanjay Acharya",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Roasted_Peanuts_with_shell.jpg"
+ },
+ "descrizione": [
+  "Non sono noci: sono legumi, che maturano sotto terra. Per questo hanno più proteine della frutta secca.",
+  "Il burro d'arachidi è solo arachidi tostate e macinate (più sale e a volte zucchero e olio di palma)."
+ ],
+ "proprieta": [
+  {
+   "t": "Proteine",
+   "d": "26 g per 100 g, le più alte di tutta la \"frutta secca\"."
+  },
+  {
+   "t": "Niacina (B3)",
+   "d": "30 g coprono quasi metà del fabbisogno."
+  },
+  {
+   "t": "Allergia",
+   "d": "Tra le allergie alimentari più frequenti e gravi."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 3
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10
+  ],
+  "picco": [],
+  "testo": "raccolta a inizio autunno."
+ },
+ "tipi": [
+  {
+   "nome": "Arachidi",
+   "valori": [
+    {
+     "stato": "crude",
+     "alimento": "Arachidi"
+    },
+    {
+     "stato": "tostate salate",
+     "alimento": "Arachidi tostate salate"
+    }
+   ]
+  },
+  {
+   "nome": "Burro d'arachidi",
+   "testo": "Cremoso, con sale. Un cucchiaio (16 g) sono circa 95 kcal.",
+   "valori": [
+    {
+     "stato": "cremoso",
+     "usda": "16098"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Mandorle",
+  "Anacardi",
+  "Soia"
+ ],
+ "abbinamenti": [
+  "Banana",
+  "Cioccolato fondente",
+  "Mela",
+  "Fiocchi d'avena",
+  "Noodles"
+ ],
+ "anche": [
+  {
+   "t": "Scegliere il burro d'arachidi",
+   "d": "Ingredienti: solo arachidi (e sale). L'olio che affiora è normale, si rimescola."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

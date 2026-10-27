@@ -1,0 +1,112 @@
+{
+ "id": "nocciole",
+ "nome": "Nocciole",
+ "cat": "Frutta secca e semi",
+ "latino": "Corylus avellana",
+ "famiglia": "Betulaceae",
+ "parole": [
+  "nocciola",
+  "nocciole",
+  "hazelnut",
+  "granella di nocciole",
+  "crema di nocciole",
+  "crema spalmabile"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Hazelnuts_%28Corylus_avellana%29_-_whole_with_kernels.jpg/960px-Hazelnuts_%28Corylus_avellana%29_-_whole_with_kernels.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Hazelnuts_%28Corylus_avellana%29_-_whole_with_kernels.jpg"
+ },
+ "descrizione": [
+  "Frutto del nocciolo. Le migliori italiane sono la Tonda Gentile del Piemonte e la Tonda di Giffoni. Tostate profumano molto di più."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina E",
+   "d": "15 mg per 100 g."
+  },
+  {
+   "t": "Grassi monoinsaturi",
+   "d": "Come le mandorle, quasi tutti \"buoni\"."
+  },
+  {
+   "t": "Manganese e rame",
+   "d": "Tra le fonti più ricche."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   8,
+   9
+  ],
+  "picco": [],
+  "testo": "raccolta ad agosto–settembre."
+ },
+ "tipi": [
+  {
+   "nome": "Nocciole",
+   "valori": [
+    {
+     "stato": "sgusciate",
+     "alimento": "Nocciole"
+    }
+   ]
+  },
+  {
+   "nome": "Crema spalmabile",
+   "testo": "Tipo Nutella: circa metà è zucchero e solo il 13% nocciole.",
+   "valori": [
+    {
+     "stato": "industriale",
+     "alimento": "Crema spalmabile alle nocciole (tipo Nutella)"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Mandorle",
+  "Noci",
+  "Macadamia"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente",
+  "Cacao",
+  "Caffè",
+  "Pere"
+ ],
+ "anche": [
+  {
+   "t": "Una porzione",
+   "d": "30 g, una manciata: circa 170–200 kcal."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Tostatura e pelatura",
+   "tempo": "10 min · 170 °C",
+   "come": "Tostale, poi strofinale calde in un canovaccio: la pellicina viene via."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

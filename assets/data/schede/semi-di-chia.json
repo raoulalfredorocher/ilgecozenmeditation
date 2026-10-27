@@ -1,0 +1,99 @@
+{
+ "id": "semi-di-chia",
+ "nome": "Semi di chia",
+ "cat": "Frutta secca e semi",
+ "latino": "Salvia hispanica",
+ "famiglia": "Lamiaceae",
+ "parole": [
+  "chia",
+  "semi di chia",
+  "chia pudding"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Seed_of_chia_%28Salvia_hispanica%29Salvia_hispanica_group.jpg/960px-Seed_of_chia_%28Salvia_hispanica%29Salvia_hispanica_group.jpg",
+  "autore": "Keegan Fields",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Seed_of_chia_%28Salvia_hispanica%29Salvia_hispanica_group.jpg"
+ },
+ "descrizione": [
+  "Piccoli semi messicani che in acqua o latte si gonfiano e fanno un gel: base del chia pudding."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "34 g per 100 g: 1 cucchiaio (12 g) dà 4 g."
+  },
+  {
+   "t": "Omega-3",
+   "d": "ALA: 18 g per 100 g."
+  },
+  {
+   "t": "Calcio",
+   "d": "630 mg per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Semi di chia",
+   "valori": [
+    {
+     "stato": "secchi",
+     "alimento": "Semi di chia"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 6 mesi; macinati in frigo e da usare in pochi giorni."
+  }
+ ],
+ "simili": [
+  "Semi di lino",
+  "Semi di canapa"
+ ],
+ "abbinamenti": [
+  "Latte",
+  "Yogurt",
+  "Mango",
+  "Fragole",
+  "Cacao"
+ ],
+ "cotture": [
+  {
+   "metodo": "Chia pudding",
+   "tempo": "una notte in frigo",
+   "come": "3 cucchiai di semi in 200 ml di latte o bevanda vegetale, mescola dopo 10 minuti."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

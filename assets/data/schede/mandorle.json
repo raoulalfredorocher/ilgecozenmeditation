@@ -1,0 +1,118 @@
+{
+ "id": "mandorle",
+ "nome": "Mandorle",
+ "cat": "Frutta secca e semi",
+ "latino": "Prunus dulcis",
+ "famiglia": "Rosaceae",
+ "parole": [
+  "mandorla",
+  "mandorle",
+  "almond",
+  "farina di mandorle",
+  "latte di mandorla",
+  "bevanda di mandorla"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Almonds_-_in_shell%2C_shell_cracked_open%2C_shelled%2C_blanched.jpg/960px-Almonds_-_in_shell%2C_shell_cracked_open%2C_shelled%2C_blanched.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Almonds_-_in_shell%2C_shell_cracked_open%2C_shelled%2C_blanched.jpg"
+ },
+ "descrizione": [
+  "Il seme di un parente del pesco. Si mangiano crude con la pellicina, pelate (bianche) o tostate.",
+  "Con le mandorle si fanno farina, latte e pasta di mandorle."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina E",
+   "d": "30 g coprono più di metà del fabbisogno: antiossidante."
+  },
+  {
+   "t": "Grassi buoni",
+   "d": "Soprattutto monoinsaturi, come l'olio d'oliva. Aiutano il colesterolo."
+  },
+  {
+   "t": "Fibra e magnesio",
+   "d": "12 g di fibra e 270 mg di magnesio per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   8,
+   9
+  ],
+  "picco": [],
+  "testo": "raccolta ad agosto–settembre; secche tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Mandorle",
+   "valori": [
+    {
+     "stato": "crude",
+     "alimento": "Mandorle"
+    },
+    {
+     "stato": "pelate",
+     "usda": "12062"
+    }
+   ]
+  },
+  {
+   "nome": "Latte di mandorla",
+   "testo": "Senza zucchero: poche calorie perché è quasi tutta acqua (2–3% di mandorle).",
+   "valori": [
+    {
+     "stato": "senza zucchero",
+     "alimento": "Latte di mandorla (senza zucchero)"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Nocciole",
+  "Pistacchi",
+  "Anacardi"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente",
+  "Albicocche",
+  "Yogurt",
+  "Fichi",
+  "Miele"
+ ],
+ "anche": [
+  {
+   "t": "Una porzione",
+   "d": "30 g, una manciata: circa 170–200 kcal."
+  }
+ ],
+ "cotture": [
+  {
+   "metodo": "Tostatura",
+   "tempo": "8–10 min · 170 °C",
+   "come": "In forno su teglia, o in padella asciutta mescolando: tirale via appena profumano."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

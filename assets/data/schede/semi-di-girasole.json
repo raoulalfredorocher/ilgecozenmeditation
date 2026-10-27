@@ -1,0 +1,84 @@
+{
+ "id": "semi-di-girasole",
+ "nome": "Semi di girasole",
+ "cat": "Frutta secca e semi",
+ "latino": "Helianthus annuus",
+ "famiglia": "Asteraceae",
+ "parole": [
+  "girasole",
+  "semi di girasole",
+  "sunflower seeds"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Sunflower_Seeds_Kaldari.jpg/960px-Sunflower_Seeds_Kaldari.jpg",
+  "autore": "Kaldari",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Sunflower_Seeds_Kaldari.jpg"
+ },
+ "descrizione": [
+  "Semi del girasole, sgusciati. Si mangiano crudi o tostati, nelle insalate e nel pane."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina E",
+   "d": "35 mg per 100 g: la fonte più ricca tra i semi."
+  },
+  {
+   "t": "Selenio e B1",
+   "d": "Buona fonte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   8,
+   9
+  ],
+  "picco": [],
+  "testo": "raccolta a fine estate."
+ },
+ "tipi": [
+  {
+   "nome": "Semi di girasole",
+   "valori": [
+    {
+     "stato": "sgusciati",
+     "alimento": "Semi di girasole"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 6 mesi; macinati in frigo e da usare in pochi giorni."
+  }
+ ],
+ "simili": [
+  "Semi di zucca",
+  "Semi di sesamo"
+ ],
+ "abbinamenti": [
+  "Insalata",
+  "Pane",
+  "Yogurt",
+  "Carota"
+ ],
+ "cotture": [
+  {
+   "metodo": "Tostatura",
+   "tempo": "8–10 min · 170 °C",
+   "come": "In forno su teglia, o in padella asciutta mescolando: tirale via appena profumano."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
