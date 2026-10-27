@@ -1,0 +1,103 @@
+{
+ "id": "fico-d-india",
+ "nome": "Fico d'India",
+ "cat": "Frutta",
+ "latino": "Opuntia ficus-indica",
+ "famiglia": "Cactacee",
+ "parole": [
+  "fico d'india",
+  "fichi d'india",
+  "ficodindia",
+  "prickly pear",
+  "opuntia"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Opuntia_ficus-indica%2Cpeeled%2CMorocco.jpg/960px-Opuntia_ficus-indica%2Cpeeled%2CMorocco.jpg",
+  "autore": "Marcin Sochacki",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Opuntia_ficus-indica%2Cpeeled%2CMorocco.jpg"
+ },
+ "descrizione": [
+  "Frutto del cactus arrivato dal Messico, simbolo della Sicilia (IGP dell'Etna e di San Cono). Gialli, rossi o bianchi.",
+  "La buccia ha piccole spine (glochidi): si sbuccia con forchetta e coltello."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Tanti semini che si mangiano: circa 4 g per 100 g."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Betalaine (i pigmenti giallo-rossi)."
+  },
+  {
+   "t": "Magnesio e calcio",
+   "d": "Più della media della frutta."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   8,
+   9,
+   10,
+   11
+  ],
+  "picco": [
+   9,
+   10
+  ],
+  "testo": "da agosto a novembre; i \"bastardoni\" a ottobre-novembre."
+ },
+ "tipi": [
+  {
+   "nome": "Fico d'India",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Fichi d'India"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Fresco e freddo",
+   "tempo": "",
+   "come": "Taglia le estremità, incidi la buccia per il lungo e aprila."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "3–4 giorni. Maneggialo con guanti o forchetta."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Troppi semi",
+   "d": "in grandi quantità possono rallentare l'intestino."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Fico",
+  "Guava"
+ ],
+ "abbinamenti": [
+  "Limone",
+  "Menta fresca",
+  "Ricotta vaccina"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

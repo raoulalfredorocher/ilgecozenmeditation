@@ -1,0 +1,129 @@
+{
+ "id": "uva",
+ "nome": "Uva",
+ "cat": "Frutta",
+ "latino": "Vitis vinifera",
+ "famiglia": "Vitacee",
+ "parole": [
+  "uva",
+  "uve",
+  "grape",
+  "uvetta",
+  "uva passa",
+  "sultanina",
+  "italia",
+  "regina"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg",
+  "autore": "Vyacheslav Argenberg",
+  "licenza": "CC BY 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Grapes%2C_Rostov-on-Don%2C_Russia.jpg"
+ },
+ "descrizione": [
+  "Coltivata da migliaia di anni, in Italia soprattutto in Puglia e Sicilia. L'uva da tavola ha acini grandi e buccia sottile; quella da vino è più piccola e zuccherina.",
+  "Seccata diventa uvetta: l'acqua se ne va e zuccheri e calorie si concentrano quattro volte."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Polifenoli nella buccia e nei semi: resveratrolo e, nell'uva nera, antociani."
+  },
+  {
+   "t": "Zuccheri",
+   "d": "Più ricca di zuccheri di molta frutta: circa 16 g per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   7,
+   8,
+   9,
+   10,
+   11
+  ],
+  "picco": [
+   9
+  ],
+  "testo": "da luglio a novembre."
+ },
+ "tipi": [
+  {
+   "nome": "Uva fresca",
+   "testo": "Bianca (Italia, Vittoria) o nera (Red Globe, Black Magic).",
+   "valori": [
+    {
+     "stato": "fresca",
+     "alimento": "Uva"
+    }
+   ]
+  },
+  {
+   "nome": "Uvetta",
+   "testo": "Acini seccati: un cucchiaio (10 g) vale 30 kcal.",
+   "valori": [
+    {
+     "stato": "secca",
+     "alimento": "Uvetta"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Fresca",
+   "tempo": "",
+   "come": "Lavata solo prima di mangiarla. Con buccia e, se c'è, semi."
+  },
+  {
+   "metodo": "Congelata",
+   "tempo": "3 ore",
+   "come": "Acini in freezer: un \"sorbetto\" naturale."
+  },
+  {
+   "metodo": "Uvetta",
+   "tempo": "10 min in ammollo",
+   "come": "In acqua tiepida si ammorbidisce: nel cous cous, nei dolci, con pinoli negli spinaci."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglila",
+   "d": "acini sodi attaccati al raspo verde."
+  },
+  {
+   "t": "In frigo",
+   "d": "senza lavarla, 5–7 giorni."
+  },
+  {
+   "t": "Uvetta",
+   "d": "in barattolo chiuso, mesi."
+  }
+ ],
+ "simili": [
+  "Ribes",
+  "Uva spina",
+  "Mirtillo"
+ ],
+ "abbinamenti": [
+  "Formaggio",
+  "Pecorino",
+  "Noci",
+  "Pinoli",
+  "Spinaci",
+  "Cous cous (crudo)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Concentrazione uvetta: rapporto tra USDA 09132 e 09298",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

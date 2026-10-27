@@ -1,0 +1,97 @@
+{
+ "id": "kumquat",
+ "nome": "Kumquat",
+ "cat": "Frutta",
+ "latino": "Citrus japonica",
+ "famiglia": "Rutacee",
+ "parole": [
+  "kumquat",
+  "mandarino cinese",
+  "fortunella"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Kumquat_from_Spain.jpg/960px-Kumquat_from_Spain.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Kumquat_from_Spain.jpg"
+ },
+ "descrizione": [
+  "Piccolo agrume ovale dalla Cina, grande come un'oliva. Si mangia intero, con la buccia.",
+  "La buccia è dolce e la polpa acida: il contrasto è il suo bello."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Mangiando anche la buccia: circa 6 g per 100 g."
+  },
+  {
+   "t": "Vitamina C",
+   "d": "100 g ne coprono metà del fabbisogno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 4,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   1,
+   2
+  ],
+  "testo": "da novembre a marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Kumquat",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Kumquat"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Intero",
+   "tempo": "",
+   "come": "Lavato, rotolato un po' tra le dita per liberare gli oli, e mangiato con la buccia."
+  },
+  {
+   "metodo": "Canditi o in composta",
+   "tempo": "20 min",
+   "come": "A rondelle con poco zucchero: con formaggi e carni."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2 settimane."
+  }
+ ],
+ "simili": [
+  "Clementina",
+  "Arancia",
+  "Lime"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente 70%",
+  "Formaggio",
+  "Zenzero fresco"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

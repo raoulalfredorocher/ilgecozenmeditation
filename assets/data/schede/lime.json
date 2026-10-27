@@ -1,0 +1,106 @@
+{
+ "id": "lime",
+ "nome": "Lime",
+ "cat": "Frutta",
+ "latino": "Citrus × aurantiifolia",
+ "famiglia": "Rutacee",
+ "parole": [
+  "lime",
+  "limetta"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Lime_-_whole_and_halved.jpg/960px-Lime_-_whole_and_halved.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Lime_-_whole_and_halved.jpg"
+ },
+ "descrizione": [
+  "Agrume tropicale, più piccolo del limone, verde e con un profumo più erbaceo.",
+  "Base di cucina messicana e del sud-est asiatico e di molti cocktail (mojito, caipirinha)."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Un lime (67 g) ne dà circa 20 mg."
+  },
+  {
+   "t": "Leggero",
+   "d": "30 kcal per 100 g: si usa come condimento."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 5,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importato, tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Lime",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Lime"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "Succo",
+   "tempo": "",
+   "come": "Su avocado (guacamole), pesce crudo (ceviche), mango e insalate."
+  },
+  {
+   "metodo": "Scorza",
+   "tempo": "",
+   "come": "Grattugiata su riso, yogurt e dolci."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglilo",
+   "d": "verde intenso, che cede un po': è più succoso."
+  },
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane."
+  }
+ ],
+ "simili": [
+  "Limone",
+  "Kumquat"
+ ],
+ "abbinamenti": [
+  "Avocado",
+  "Mango",
+  "Cocco",
+  "Menta fresca",
+  "Zenzero fresco",
+  "Rum"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

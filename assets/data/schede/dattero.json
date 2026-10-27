@@ -1,0 +1,112 @@
+{
+ "id": "dattero",
+ "nome": "Dattero",
+ "cat": "Frutta",
+ "latino": "Phoenix dactylifera",
+ "famiglia": "Arecacee",
+ "parole": [
+  "dattero",
+  "datteri",
+  "medjool",
+  "deglet nour",
+  "date"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Date_Fruits-Duo.jpg/960px-Date_Fruits-Duo.jpg",
+  "autore": "J.P.Lon",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Date_Fruits-Duo.jpg"
+ },
+ "descrizione": [
+  "Frutto della palma da datteri, dal Medio Oriente e Nord Africa. Si trova quasi sempre semi-secco.",
+  "Il Medjool è grande e morbido come caramello; il Deglet Nour più piccolo e asciutto."
+ ],
+ "proprieta": [
+  {
+   "t": "Energia",
+   "d": "Circa 280 kcal per 100 g, quasi tutte da zuccheri: un Medjool (24 g) vale 66 kcal."
+  },
+  {
+   "t": "Potassio e fibra",
+   "d": "Circa 700 mg di potassio e 7 g di fibra per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10,
+   11,
+   12,
+   1
+  ],
+  "picco": [
+   11,
+   12
+  ],
+  "testo": "raccolto in autunno, secco tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Medjool",
+   "testo": "Grande, morbido. Un dattero ≈ 24 g.",
+   "valori": [
+    {
+     "stato": "semisecco",
+     "alimento": "Datteri Medjool"
+    }
+   ]
+  },
+  {
+   "nome": "Deglet Nour",
+   "testo": "Piccolo, ambrato, più asciutto. Un dattero ≈ 7 g.",
+   "valori": [
+    {
+     "stato": "semisecco",
+     "alimento": "Datteri Deglet Nour"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Ripieno",
+   "tempo": "",
+   "come": "Senza nocciolo, con una mandorla o un po' di burro d'arachidi."
+  },
+  {
+   "metodo": "Come dolcificante",
+   "tempo": "",
+   "come": "Frullato in porridge, smoothie e barrette."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo",
+   "d": "chiuso, al fresco per mesi; in frigo più a lungo."
+  }
+ ],
+ "simili": [
+  "Fico",
+  "Prugna",
+  "Uva"
+ ],
+ "abbinamenti": [
+  "Mandorle",
+  "Noci",
+  "Arachidi",
+  "Cacao amaro in polvere",
+  "Fiocchi d'avena"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

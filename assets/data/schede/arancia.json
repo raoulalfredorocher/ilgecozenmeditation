@@ -1,0 +1,137 @@
+{
+ "id": "arancia",
+ "nome": "Arancia",
+ "cat": "Frutta",
+ "latino": "Citrus × sinensis",
+ "famiglia": "Rutacee",
+ "parole": [
+  "arancia",
+  "arance",
+  "orange",
+  "tarocco",
+  "moro",
+  "sanguinello",
+  "navel",
+  "spremuta"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Oranges_-_whole-halved-segment.jpg/960px-Oranges_-_whole-halved-segment.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Oranges_-_whole-halved-segment.jpg"
+ },
+ "descrizione": [
+  "Agrume nato da un incrocio tra pomelo e mandarino. In Sicilia crescono le arance rosse (Tarocco, Moro, Sanguinello), colorate dal freddo notturno dell'Etna.",
+  "Mangiata a spicchi mantiene la fibra che la spremuta perde."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Un'arancia media (180 g) copre il fabbisogno di un giorno."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Flavonoidi (esperidina) e, nelle rosse, antociani."
+  },
+  {
+   "t": "Ferro",
+   "d": "La vitamina C aiuta ad assorbire il ferro dei legumi e delle verdure."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "picco": [
+   1,
+   2,
+   3
+  ],
+  "testo": "da novembre a maggio; le rosse da dicembre ad aprile."
+ },
+ "tipi": [
+  {
+   "nome": "Arancia",
+   "testo": "Bionde (Navel, Valencia) e rosse (Tarocco, Moro, Sanguinello).",
+   "valori": [
+    {
+     "stato": "a spicchi",
+     "alimento": "Arancia"
+    }
+   ]
+  },
+  {
+   "nome": "Spremuta",
+   "testo": "Fresca: tiene vitamina C e zuccheri, perde quasi tutta la fibra.",
+   "valori": [
+    {
+     "stato": "fresca",
+     "alimento": "Succo d'arancia (spremuta)"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "A spicchi",
+   "tempo": "",
+   "come": "Con la parte bianca, che ha fibra e flavonoidi."
+  },
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "Con finocchio, olive nere e un filo d'olio: classico siciliano."
+  },
+  {
+   "metodo": "Spremuta",
+   "tempo": "",
+   "come": "Da bere subito: la vitamina C cala con aria e luce."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglila",
+   "d": "pesante e soda, buccia lucida."
+  },
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane; fuori una settimana."
+  },
+  {
+   "t": "Buccia",
+   "d": "solo da arance non trattate per scorza grattugiata o canditi."
+  }
+ ],
+ "simili": [
+  "Clementina",
+  "Pompelmo",
+  "Limone",
+  "Kumquat"
+ ],
+ "abbinamenti": [
+  "Finocchi",
+  "Olive nere",
+  "Cioccolato fondente 70%",
+  "Cannella",
+  "Salmone",
+  "Mandorle"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,125 @@
+{
+ "id": "prugna",
+ "nome": "Prugna",
+ "cat": "Frutta",
+ "latino": "Prunus domestica",
+ "famiglia": "Rosacee",
+ "parole": [
+  "prugna",
+  "prugne",
+  "susina",
+  "susine",
+  "prugne secche",
+  "plum",
+  "prune"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Rosales_-_Dried_Prunus_domestica_d.jpg/960px-Rosales_-_Dried_Prunus_domestica_d.jpg",
+  "autore": "Emőke Dénes",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Rosales_-_Dried_Prunus_domestica_d.jpg"
+ },
+ "descrizione": [
+  "Prugne e susine sono lo stesso frutto. Fresche d'estate; secche (spesso varietà d'Ente o California) tutto l'anno.",
+  "Le secche sono note per l'effetto lassativo."
+ ],
+ "proprieta": [
+  {
+   "t": "Intestino",
+   "d": "Fibra e sorbitolo: 4–5 prugne secche al giorno aiutano la regolarità."
+  },
+  {
+   "t": "Ossa",
+   "d": "Vitamina K e boro; alcuni studi le collegano a una migliore densità ossea."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Acidi clorogenici e antociani nella buccia."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   6,
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   7,
+   8
+  ],
+  "testo": "fresche da giugno a settembre, secche tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Fresca",
+   "valori": [
+    {
+     "stato": "cruda",
+     "usda": "09279"
+    }
+   ]
+  },
+  {
+   "nome": "Secca",
+   "testo": "Una prugna secca ≈ 9,5 g, 23 kcal.",
+   "valori": [
+    {
+     "stato": "secca",
+     "alimento": "Prugne secche"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Fresca",
+   "tempo": "",
+   "come": "Con la buccia, lavata."
+  },
+  {
+   "metodo": "Cotta",
+   "tempo": "10 min",
+   "come": "Secche in acqua e cannella: sullo yogurt."
+  },
+  {
+   "metodo": "Con la carne",
+   "tempo": "",
+   "come": "Nell'arrosto di maiale o con il tacchino."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fresche",
+   "d": "in frigo 3–5 giorni; la patina bianca è naturale."
+  },
+  {
+   "t": "Secche",
+   "d": "chiuse, al fresco, mesi."
+  }
+ ],
+ "simili": [
+  "Albicocca",
+  "Ciliegia",
+  "Dattero"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Cannella",
+  "Noci",
+  "Petto di tacchino (crudo)"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Prugne secche e stipsi: Aliment Pharmacol Ther 2011; ossa: Br J Nutr 2011",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

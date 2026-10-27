@@ -1,0 +1,109 @@
+{
+ "id": "clementina",
+ "nome": "Clementina",
+ "cat": "Frutta",
+ "latino": "Citrus × clementina",
+ "famiglia": "Rutacee",
+ "parole": [
+  "clementina",
+  "clementine",
+  "mandarino",
+  "mandarini",
+  "tangerine"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clementines_whole%2C_peeled%2C_half_and_sectioned.jpg/960px-Clementines_whole%2C_peeled%2C_half_and_sectioned.jpg",
+  "autore": "carol",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Clementines_whole%2C_peeled%2C_half_and_sectioned.jpg"
+ },
+ "descrizione": [
+  "Incrocio tra mandarino e arancia, quasi senza semi. In Italia soprattutto in Calabria (IGP) e Sicilia.",
+  "Il mandarino vero è più profumato e pieno di semi; la clementina si sbuccia altrettanto facilmente."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Due clementine coprono metà del fabbisogno."
+  },
+  {
+   "t": "Pratica",
+   "d": "Una clementina (74 g) vale circa 35 kcal: spuntino comodo."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2
+  ],
+  "picco": [
+   11,
+   12
+  ],
+  "testo": "da ottobre a febbraio."
+ },
+ "tipi": [
+  {
+   "nome": "Clementina",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Clementine"
+    }
+   ]
+  },
+  {
+   "nome": "Mandarino",
+   "testo": "Più profumato, con semi.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "09218"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "A spicchi",
+   "tempo": "",
+   "come": "Da sola o nell'insalata con finocchi."
+  },
+  {
+   "metodo": "Scorza",
+   "tempo": "",
+   "come": "Essiccata, nel tè o nei dolci."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "1–2 settimane; fuori pochi giorni."
+  }
+ ],
+ "simili": [
+  "Arancia",
+  "Kumquat"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente 70%",
+  "Finocchi",
+  "Noci",
+  "Cannella"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

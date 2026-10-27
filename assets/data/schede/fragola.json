@@ -1,0 +1,118 @@
+{
+ "id": "fragola",
+ "nome": "Fragola",
+ "cat": "Frutta",
+ "latino": "Fragaria × ananassa",
+ "famiglia": "Rosacee",
+ "parole": [
+  "fragola",
+  "fragole",
+  "strawberry",
+  "fragoline"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg/960px-Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg"
+ },
+ "descrizione": [
+  "La fragola coltivata nasce in Francia nel Settecento da due specie americane. I \"semini\" sulla superficie sono i veri frutti.",
+  "Ha pochissime calorie e tanta vitamina C."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "150 g coprono più del fabbisogno di un giorno."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Antociani (il rosso) ed ellagitannini."
+  },
+  {
+   "t": "Leggera",
+   "d": "Circa 30 kcal per 100 g: una ciotola intera ne ha meno di 60."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "picco": [
+   5,
+   6
+  ],
+  "testo": "da aprile a giugno in campo aperto; in serra da marzo."
+ },
+ "tipi": [
+  {
+   "nome": "Fragola",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Fragole"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Lavata intera e poi tagliata: tagliata prima di lavarla si inzuppa."
+  },
+  {
+   "metodo": "Con aceto balsamico",
+   "tempo": "10 min",
+   "come": "Qualche goccia e pepe nero: esalta la dolcezza."
+  },
+  {
+   "metodo": "Nello yogurt",
+   "tempo": "",
+   "come": "Schiacciate con la forchetta, al posto della marmellata."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglile",
+   "d": "rosse fino al picciolo, lucide, profumate."
+  },
+  {
+   "t": "In frigo",
+   "d": "2–3 giorni, senza lavarle, su carta assorbente."
+  },
+  {
+   "t": "In freezer",
+   "d": "lavate e asciutte, intere: per frullati."
+  }
+ ],
+ "simili": [
+  "Mora",
+  "Ribes",
+  "Mirtillo"
+ ],
+ "abbinamenti": [
+  "Aceto balsamico",
+  "Yogurt greco 0%",
+  "Cioccolato fondente 70%",
+  "Menta fresca",
+  "Ricotta vaccina",
+  "Limone"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

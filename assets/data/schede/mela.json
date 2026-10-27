@@ -1,0 +1,152 @@
+{
+ "id": "mela",
+ "nome": "Mela",
+ "cat": "Frutta",
+ "latino": "Malus domestica",
+ "famiglia": "Rosacee",
+ "parole": [
+  "mela",
+  "mele",
+  "apple",
+  "golden",
+  "fuji",
+  "renetta",
+  "granny smith",
+  "pink lady"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/960px-Red_Apple.jpg",
+  "autore": "Abhijit Tembhekar",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Red_Apple.jpg"
+ },
+ "descrizione": [
+  "Il frutto più coltivato in Italia, soprattutto in Trentino-Alto Adige. Esistono migliaia di varietà: cambiano dolcezza, acidità e consistenza.",
+  "È fatta per l'85% di acqua; la fibra (pectina) sta soprattutto nella buccia e appena sotto."
+ ],
+ "proprieta": [
+  {
+   "t": "Saziante",
+   "d": "Acqua e pectina riempiono lo stomaco con poche calorie: una mela media (180 g) ne ha circa 80."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Polifenoli come quercetina e procianidine, concentrati nella buccia: sbucciarla ne toglie fino a metà."
+  },
+  {
+   "t": "Intestino",
+   "d": "La pectina è una fibra solubile: nutre la flora intestinale e rallenta l'assorbimento degli zuccheri."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   8,
+   9,
+   10,
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   9,
+   10
+  ],
+  "testo": "si raccoglie da agosto a ottobre; conservata in celle frigo si trova tutto l'anno."
+ },
+ "titolo_tipi": "Varietà comuni",
+ "tipi": [
+  {
+   "nome": "Mela",
+   "testo": "Valori medi di una mela con la buccia.",
+   "valori": [
+    {
+     "stato": "con buccia",
+     "alimento": "Mela"
+    },
+    {
+     "stato": "senza buccia",
+     "usda": "09004"
+    }
+   ]
+  },
+  {
+   "nome": "Golden Delicious",
+   "testo": "Gialla, dolce e poco acida, polpa morbida. La più diffusa in Italia."
+  },
+  {
+   "nome": "Fuji e Pink Lady",
+   "testo": "Croccanti e molto dolci, ottime crude."
+  },
+  {
+   "nome": "Granny Smith",
+   "testo": "Verde, acidula e soda: in insalata e nelle torte tiene la forma."
+  },
+  {
+   "nome": "Renetta",
+   "testo": "Buccia rugginosa, polpa farinosa e acidula: la mela da strudel e da forno."
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Con la buccia, ben lavata. A spicchi con yogurt o qualche noce."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "30–40 min · 180 °C",
+   "come": "Intera e svuotata dal torsolo, con cannella. Diventa dolcissima senza zucchero."
+  },
+  {
+   "metodo": "Cotta in padella",
+   "tempo": "5–8 min",
+   "come": "A cubetti con un goccio d'acqua e cannella: sul porridge o sullo yogurt."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglila",
+   "d": "soda, buccia liscia e senza ammaccature."
+  },
+  {
+   "t": "In frigo",
+   "d": "nel cassetto della frutta dura 3–4 settimane; fuori una settimana."
+  },
+  {
+   "t": "Lontana",
+   "d": "dalle altre frutte: rilascia etilene e le fa maturare prima."
+  },
+  {
+   "t": "Tagliata",
+   "d": "qualche goccia di limone evita che diventi scura."
+  }
+ ],
+ "simili": [
+  "Pera",
+  "Mela cotogna"
+ ],
+ "abbinamenti": [
+  "Cannella",
+  "Noci",
+  "Yogurt greco 0%",
+  "Fiocchi d'avena",
+  "Formaggio",
+  "Miele"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Polifenoli nella buccia: studi su varietà commerciali (J Agric Food Chem)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

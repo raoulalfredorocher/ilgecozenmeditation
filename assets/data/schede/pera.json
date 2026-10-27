@@ -1,0 +1,136 @@
+{
+ "id": "pera",
+ "nome": "Pera",
+ "cat": "Frutta",
+ "latino": "Pyrus communis",
+ "famiglia": "Rosacee",
+ "parole": [
+  "pera",
+  "pere",
+  "pear",
+  "williams",
+  "abate",
+  "kaiser",
+  "conference"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Four_pears.jpg/960px-Four_pears.jpg",
+  "autore": "Rhododendrites",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Four_pears.jpg"
+ },
+ "descrizione": [
+  "Parente stretta della mela, l'Italia è il primo produttore europeo (Emilia-Romagna). Matura dopo la raccolta, partendo dall'interno.",
+  "Ha più fibra della mela e un po' più di fruttosio."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Circa 3 g per 100 g, metà nella buccia: aiuta la regolarità intestinale."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Flavonoidi e acidi fenolici, concentrati nella buccia."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   1,
+   2,
+   3
+  ],
+  "picco": [
+   8,
+   9,
+   10
+  ],
+  "testo": "Williams in estate, Abate, Kaiser e Conference in autunno; si conservano fino a primavera."
+ },
+ "titolo_tipi": "Varietà comuni",
+ "tipi": [
+  {
+   "nome": "Pera",
+   "testo": "Valori medi.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Pere"
+    }
+   ]
+  },
+  {
+   "nome": "Abate Fétel",
+   "testo": "Lunga e affusolata, dolcissima e succosa."
+  },
+  {
+   "nome": "Williams",
+   "testo": "Estiva, profumata e burrosa. Gialla quando è matura."
+  },
+  {
+   "nome": "Kaiser",
+   "testo": "Buccia color ruggine, polpa soda: ideale cotta al vino."
+  },
+  {
+   "nome": "Conference",
+   "testo": "Allungata, verde, croccante: si conserva a lungo."
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Con la buccia, magari con un pezzo di formaggio stagionato."
+  },
+  {
+   "metodo": "Cotta al vino",
+   "tempo": "25–30 min",
+   "come": "Kaiser intere in vino rosso con cannella e chiodi di garofano."
+  },
+  {
+   "metodo": "Al forno",
+   "tempo": "25 min · 180 °C",
+   "come": "A metà, con un cucchiaino di miele e noci."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Matura",
+   "d": "quando cede appena vicino al picciolo."
+  },
+  {
+   "t": "A temperatura ambiente",
+   "d": "finché matura, poi in frigo: 3–5 giorni."
+  }
+ ],
+ "simili": [
+  "Mela",
+  "Mela cotogna",
+  "Nespola"
+ ],
+ "abbinamenti": [
+  "Pecorino",
+  "Gorgonzola",
+  "Noci",
+  "Cioccolato fondente 70%",
+  "Cannella",
+  "Vino rosso"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

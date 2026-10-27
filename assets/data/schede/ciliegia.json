@@ -1,0 +1,112 @@
+{
+ "id": "ciliegia",
+ "nome": "Ciliegia",
+ "cat": "Frutta",
+ "latino": "Prunus avium",
+ "famiglia": "Rosacee",
+ "parole": [
+  "ciliegia",
+  "ciliegie",
+  "cherry",
+  "durone",
+  "amarena",
+  "visciola"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cherry_season_%2848216568227%29.jpg/960px-Cherry_season_%2848216568227%29.jpg",
+  "autore": "spurekar",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cherry_season_%2848216568227%29.jpg"
+ },
+ "descrizione": [
+  "Frutto di inizio estate, in Italia soprattutto in Puglia (Bari), Campania, Emilia-Romagna e Veneto. I duroni hanno polpa soda e croccante.",
+  "Le amarene e le visciole sono ciliegie acide (Prunus cerasus), usate per confetture e sciroppi."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Antociani (il rosso scuro) e acidi fenolici."
+  },
+  {
+   "t": "Sonno",
+   "d": "Contengono un po' di melatonina, soprattutto le amarene."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   5,
+   6,
+   7
+  ],
+  "picco": [
+   6
+  ],
+  "testo": "da metà maggio a luglio."
+ },
+ "tipi": [
+  {
+   "nome": "Ciliegia dolce",
+   "testo": "Duroni e ciliegie da tavola.",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Ciliegie"
+    }
+   ]
+  },
+  {
+   "nome": "Amarena e visciola",
+   "testo": "Acide, si usano cotte o sciroppate."
+  }
+ ],
+ "titolo_cotture": "Come gustarle",
+ "cotture": [
+  {
+   "metodo": "Fresche",
+   "tempo": "",
+   "come": "Lavate col picciolo, che si toglie solo prima di mangiarle."
+  },
+  {
+   "metodo": "Cotte",
+   "tempo": "10 min",
+   "come": "Snocciolate in padella con un goccio d'acqua: sullo yogurt o con la ricotta."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglile",
+   "d": "lucide, sode, picciolo verde."
+  },
+  {
+   "t": "In frigo",
+   "d": "3–5 giorni, senza lavarle."
+  },
+  {
+   "t": "In freezer",
+   "d": "snocciolate: mesi."
+  }
+ ],
+ "simili": [
+  "Albicocca",
+  "Prugna",
+  "Ribes"
+ ],
+ "abbinamenti": [
+  "Cioccolato fondente 70%",
+  "Ricotta vaccina",
+  "Mandorle",
+  "Yogurt greco 0%"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Melatonina nelle ciliegie: studi su Prunus cerasus (Eur J Nutr 2012)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

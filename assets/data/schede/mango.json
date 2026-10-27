@@ -1,0 +1,120 @@
+{
+ "id": "mango",
+ "nome": "Mango",
+ "cat": "Frutta",
+ "latino": "Mangifera indica",
+ "famiglia": "Anacardiacee",
+ "parole": [
+  "mango",
+  "manghi"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/960px-Mangos_-_single_and_halved.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Mangos_-_single_and_halved.jpg"
+ },
+ "descrizione": [
+  "Frutto tropicale dell'India, oggi coltivato anche in Sicilia e Calabria. Ha un grosso seme piatto al centro.",
+  "Polpa arancio, profumata, ricca di beta-carotene e vitamina C."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Beta-carotene, vitamina C e mangiferina."
+  },
+  {
+   "t": "Vitamina C",
+   "d": "200 g di polpa coprono il fabbisogno di un giorno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   8,
+   9,
+   10
+  ],
+  "testo": "importato tutto l'anno; quello siciliano da agosto a ottobre."
+ },
+ "tipi": [
+  {
+   "nome": "Mango",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Mango"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "A cubetti",
+   "tempo": "",
+   "come": "Taglia due \"guance\" ai lati del seme, incidi a griglia e rovescia."
+  },
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "Con avocado, lime e cipollotto, o con gamberi."
+  },
+  {
+   "metodo": "Frullato",
+   "tempo": "",
+   "come": "Con yogurt (lassi) o kefir."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Maturo",
+   "d": "profumato vicino al picciolo, cede alla pressione. Il colore non conta."
+  },
+  {
+   "t": "Per farlo maturare",
+   "d": "fuori dal frigo, in un sacchetto di carta."
+  },
+  {
+   "t": "Maturo",
+   "d": "in frigo 4–5 giorni."
+  }
+ ],
+ "simili": [
+  "Papaya",
+  "Ananas",
+  "Pesca"
+ ],
+ "abbinamenti": [
+  "Lime",
+  "Avocado",
+  "Yogurt greco 0%",
+  "Kefir",
+  "Cocco",
+  "Peperoncino"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

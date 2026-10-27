@@ -1,0 +1,107 @@
+{
+ "id": "maracuja",
+ "nome": "Maracuja",
+ "cat": "Frutta",
+ "latino": "Passiflora edulis",
+ "famiglia": "Passifloracee",
+ "parole": [
+  "maracuja",
+  "frutto della passione",
+  "passion fruit",
+  "passiflora"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Cut_and_uncut_passion_fruits.jpg/960px-Cut_and_uncut_passion_fruits.jpg",
+  "autore": "Nana Pearls",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Cut_and_uncut_passion_fruits.jpg"
+ },
+ "descrizione": [
+  "Frutto della passiflora, dal Sud America. La buccia viola si raggrinzisce quando è maturo.",
+  "Dentro c'è una polpa gelatinosa, profumatissima, con semi croccanti che si mangiano."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Circa 10 g per 100 g, grazie ai semi."
+  },
+  {
+   "t": "Vitamina C e A",
+   "d": "Un frutto è piccolo (18 g di polpa), ma molto aromatico."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 4,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importato, tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Maracuja",
+   "valori": [
+    {
+     "stato": "polpa",
+     "alimento": "Frutto della passione (maracuja)"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Al cucchiaio",
+   "tempo": "",
+   "come": "Tagliato a metà, con i semi."
+  },
+  {
+   "metodo": "Come salsa",
+   "tempo": "",
+   "come": "La polpa sullo yogurt greco o sulla cheesecake."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Maturo",
+   "d": "buccia rugosa e pesante."
+  },
+  {
+   "t": "In frigo",
+   "d": "1 settimana; la polpa si congela."
+  }
+ ],
+ "simili": [
+  "Ananas",
+  "Mango",
+  "Guava"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Cocco",
+  "Mango",
+  "Rum"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

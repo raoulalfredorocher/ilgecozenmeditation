@@ -1,6 +1,566 @@
 {
  "schede": [
   {
+   "id": "albicocca",
+   "nome": "Albicocca",
+   "cat": "Frutta",
+   "alimenti": [
+    "Albicocche",
+    "Albicocche secche"
+   ],
+   "parole": [
+    "albicocca",
+    "albicocche",
+    "apricot",
+    "albicocche secche"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Apricot_and_cross_section.jpg/960px-Apricot_and_cross_section.jpg"
+  },
+  {
+   "id": "ananas",
+   "nome": "Ananas",
+   "cat": "Frutta",
+   "alimenti": [
+    "Ananas"
+   ],
+   "parole": [
+    "ananas",
+    "pineapple"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg/960px-%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg"
+  },
+  {
+   "id": "arancia",
+   "nome": "Arancia",
+   "cat": "Frutta",
+   "alimenti": [
+    "Arancia",
+    "Succo d'arancia (spremuta)"
+   ],
+   "parole": [
+    "arancia",
+    "arance",
+    "orange",
+    "tarocco",
+    "moro",
+    "sanguinello",
+    "navel",
+    "spremuta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Oranges_-_whole-halved-segment.jpg/960px-Oranges_-_whole-halved-segment.jpg"
+  },
+  {
+   "id": "avocado",
+   "nome": "Avocado",
+   "cat": "Frutta",
+   "alimenti": [
+    "Avocado"
+   ],
+   "parole": [
+    "avocado",
+    "avocadi",
+    "hass",
+    "guacamole"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Avocado_Hass_-_single_and_halved.jpg/960px-Avocado_Hass_-_single_and_halved.jpg"
+  },
+  {
+   "id": "banana",
+   "nome": "Banana",
+   "cat": "Frutta",
+   "alimenti": [
+    "Banana"
+   ],
+   "parole": [
+    "banana",
+    "banane",
+    "platano"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Diverse_Banana_Display%2C_Toledo_Market.jpg/960px-Diverse_Banana_Display%2C_Toledo_Market.jpg"
+  },
+  {
+   "id": "cachi",
+   "nome": "Cachi",
+   "cat": "Frutta",
+   "alimenti": [
+    "Cachi secchi"
+   ],
+   "parole": [
+    "cachi",
+    "caco",
+    "kaki",
+    "loto",
+    "persimmon",
+    "cachi mela",
+    "cachi secchi"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Fuyu_persimmon_fruits%2C_one_cut_open.jpg/960px-Fuyu_persimmon_fruits%2C_one_cut_open.jpg"
+  },
+  {
+   "id": "carambola",
+   "nome": "Carambola",
+   "cat": "Frutta",
+   "alimenti": [
+    "Carambola"
+   ],
+   "parole": [
+    "carambola",
+    "star fruit",
+    "frutto stella"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Averrhoa_carambola_ARS_k5735-7.jpg/960px-Averrhoa_carambola_ARS_k5735-7.jpg"
+  },
+  {
+   "id": "ciliegia",
+   "nome": "Ciliegia",
+   "cat": "Frutta",
+   "alimenti": [
+    "Ciliegie"
+   ],
+   "parole": [
+    "ciliegia",
+    "ciliegie",
+    "cherry",
+    "durone",
+    "amarena",
+    "visciola"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cherry_season_%2848216568227%29.jpg/960px-Cherry_season_%2848216568227%29.jpg"
+  },
+  {
+   "id": "clementina",
+   "nome": "Clementina",
+   "cat": "Frutta",
+   "alimenti": [
+    "Clementine"
+   ],
+   "parole": [
+    "clementina",
+    "clementine",
+    "mandarino",
+    "mandarini",
+    "tangerine"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clementines_whole%2C_peeled%2C_half_and_sectioned.jpg/960px-Clementines_whole%2C_peeled%2C_half_and_sectioned.jpg"
+  },
+  {
+   "id": "cocco",
+   "nome": "Cocco",
+   "cat": "Frutta",
+   "alimenti": [
+    "Cocco (polpa fresca)",
+    "Cocco disidratato (rapè)",
+    "Acqua di cocco"
+   ],
+   "parole": [
+    "cocco",
+    "noce di cocco",
+    "coconut",
+    "rapè",
+    "cocco grattugiato",
+    "acqua di cocco"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Coconut_%28halved%29_%283330701660%29.jpg/960px-Coconut_%28halved%29_%283330701660%29.jpg"
+  },
+  {
+   "id": "dattero",
+   "nome": "Dattero",
+   "cat": "Frutta",
+   "alimenti": [
+    "Datteri Medjool",
+    "Datteri Deglet Nour"
+   ],
+   "parole": [
+    "dattero",
+    "datteri",
+    "medjool",
+    "deglet nour",
+    "date"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Date_Fruits-Duo.jpg/960px-Date_Fruits-Duo.jpg"
+  },
+  {
+   "id": "fico-d-india",
+   "nome": "Fico d'India",
+   "cat": "Frutta",
+   "alimenti": [
+    "Fichi d'India"
+   ],
+   "parole": [
+    "fico d'india",
+    "fichi d'india",
+    "ficodindia",
+    "prickly pear",
+    "opuntia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Opuntia_ficus-indica%2Cpeeled%2CMorocco.jpg/960px-Opuntia_ficus-indica%2Cpeeled%2CMorocco.jpg"
+  },
+  {
+   "id": "fico",
+   "nome": "Fico",
+   "cat": "Frutta",
+   "alimenti": [
+    "Fichi secchi"
+   ],
+   "parole": [
+    "fico",
+    "fichi",
+    "fichi secchi",
+    "fig",
+    "fioroni"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Fig_%28Ficus_carica%29_fruit_halved.jpg/960px-Fig_%28Ficus_carica%29_fruit_halved.jpg"
+  },
+  {
+   "id": "fragola",
+   "nome": "Fragola",
+   "cat": "Frutta",
+   "alimenti": [
+    "Fragole"
+   ],
+   "parole": [
+    "fragola",
+    "fragole",
+    "strawberry",
+    "fragoline"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg/960px-Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg"
+  },
+  {
+   "id": "guava",
+   "nome": "Guava",
+   "cat": "Frutta",
+   "alimenti": [
+    "Guava"
+   ],
+   "parole": [
+    "guava",
+    "guaiava"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Guava_pink_fruit.jpg/960px-Guava_pink_fruit.jpg"
+  },
+  {
+   "id": "kumquat",
+   "nome": "Kumquat",
+   "cat": "Frutta",
+   "alimenti": [
+    "Kumquat"
+   ],
+   "parole": [
+    "kumquat",
+    "mandarino cinese",
+    "fortunella"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Kumquat_from_Spain.jpg/960px-Kumquat_from_Spain.jpg"
+  },
+  {
+   "id": "lime",
+   "nome": "Lime",
+   "cat": "Frutta",
+   "alimenti": [
+    "Lime"
+   ],
+   "parole": [
+    "lime",
+    "limetta"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Lime_-_whole_and_halved.jpg/960px-Lime_-_whole_and_halved.jpg"
+  },
+  {
+   "id": "limone",
+   "nome": "Limone",
+   "cat": "Frutta",
+   "alimenti": [
+    "Limone",
+    "Succo di limone"
+   ],
+   "parole": [
+    "limone",
+    "limoni",
+    "lemon",
+    "succo di limone",
+    "sfusato",
+    "femminello"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Lemon_-_whole_and_split.jpg/960px-Lemon_-_whole_and_split.jpg"
+  },
+  {
+   "id": "litchi",
+   "nome": "Litchi",
+   "cat": "Frutta",
+   "alimenti": [
+    "Litchi"
+   ],
+   "parole": [
+    "litchi",
+    "lychee",
+    "litchee"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Litchi_chinensis_fruits.JPG/960px-Litchi_chinensis_fruits.JPG"
+  },
+  {
+   "id": "mango",
+   "nome": "Mango",
+   "cat": "Frutta",
+   "alimenti": [
+    "Mango"
+   ],
+   "parole": [
+    "mango",
+    "manghi"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/960px-Mangos_-_single_and_halved.jpg"
+  },
+  {
+   "id": "maracuja",
+   "nome": "Maracuja",
+   "cat": "Frutta",
+   "alimenti": [
+    "Frutto della passione (maracuja)"
+   ],
+   "parole": [
+    "maracuja",
+    "frutto della passione",
+    "passion fruit",
+    "passiflora"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Cut_and_uncut_passion_fruits.jpg/960px-Cut_and_uncut_passion_fruits.jpg"
+  },
+  {
+   "id": "mela-cotogna",
+   "nome": "Mela cotogna",
+   "cat": "Frutta",
+   "alimenti": [
+    "Mele cotogne"
+   ],
+   "parole": [
+    "mela cotogna",
+    "mele cotogne",
+    "cotogna",
+    "cotognata",
+    "quince"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Quince_%2810889s%29.jpg/960px-Quince_%2810889s%29.jpg"
+  },
+  {
+   "id": "mela",
+   "nome": "Mela",
+   "cat": "Frutta",
+   "alimenti": [
+    "Mela"
+   ],
+   "parole": [
+    "mela",
+    "mele",
+    "apple",
+    "golden",
+    "fuji",
+    "renetta",
+    "granny smith",
+    "pink lady"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/960px-Red_Apple.jpg"
+  },
+  {
+   "id": "melone",
+   "nome": "Melone",
+   "cat": "Frutta",
+   "alimenti": [
+    "Melone d'inverno (verde)"
+   ],
+   "parole": [
+    "melone",
+    "meloni",
+    "melone retato",
+    "cantalupo",
+    "melone giallo",
+    "melone d'inverno",
+    "melon"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Canteloupe_and_cross_section.jpg/960px-Canteloupe_and_cross_section.jpg"
+  },
+  {
+   "id": "mirtillo",
+   "nome": "Mirtillo",
+   "cat": "Frutta",
+   "alimenti": [
+    "Mirtilli rossi secchi (zuccherati)"
+   ],
+   "parole": [
+    "mirtillo",
+    "mirtilli",
+    "blueberry",
+    "cranberry",
+    "mirtilli rossi",
+    "mirtillo rosso"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/1/15/Blueberries.jpg"
+  },
+  {
+   "id": "mora",
+   "nome": "Mora",
+   "cat": "Frutta",
+   "alimenti": [
+    "More"
+   ],
+   "parole": [
+    "mora",
+    "more",
+    "blackberry",
+    "rovo"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Blackberries_%28Rubus_fruticosus%29.jpg/960px-Blackberries_%28Rubus_fruticosus%29.jpg"
+  },
+  {
+   "id": "nespola",
+   "nome": "Nespola",
+   "cat": "Frutta",
+   "alimenti": [
+    "Nespole"
+   ],
+   "parole": [
+    "nespola",
+    "nespole",
+    "loquat",
+    "nespola del giappone"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg/960px-Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg"
+  },
+  {
+   "id": "papaya",
+   "nome": "Papaya",
+   "cat": "Frutta",
+   "alimenti": [
+    "Papaya"
+   ],
+   "parole": [
+    "papaya",
+    "papaia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/03_Preparing_papaya_fruit_-_papaya_peeled_and_cut_in_half.jpg/960px-03_Preparing_papaya_fruit_-_papaya_peeled_and_cut_in_half.jpg"
+  },
+  {
+   "id": "pera",
+   "nome": "Pera",
+   "cat": "Frutta",
+   "alimenti": [
+    "Pere"
+   ],
+   "parole": [
+    "pera",
+    "pere",
+    "pear",
+    "williams",
+    "abate",
+    "kaiser",
+    "conference"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Four_pears.jpg/960px-Four_pears.jpg"
+  },
+  {
+   "id": "pesca",
+   "nome": "Pesca",
+   "cat": "Frutta",
+   "alimenti": [
+    "Nettarine (pesche noci)"
+   ],
+   "parole": [
+    "pesca",
+    "pesche",
+    "nettarina",
+    "nettarine",
+    "pesca noce",
+    "pesche noci",
+    "percoca",
+    "tabacchiera",
+    "peach"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_nectarine_and_cross_section02_edit.jpg/960px-White_nectarine_and_cross_section02_edit.jpg"
+  },
+  {
+   "id": "pompelmo",
+   "nome": "Pompelmo",
+   "cat": "Frutta",
+   "alimenti": [
+    "Pompelmo"
+   ],
+   "parole": [
+    "pompelmo",
+    "pompelmi",
+    "grapefruit"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Grapefruits_-_whole-halved-segments.jpg/960px-Grapefruits_-_whole-halved-segments.jpg"
+  },
+  {
+   "id": "prugna",
+   "nome": "Prugna",
+   "cat": "Frutta",
+   "alimenti": [
+    "Prugne secche"
+   ],
+   "parole": [
+    "prugna",
+    "prugne",
+    "susina",
+    "susine",
+    "prugne secche",
+    "plum",
+    "prune"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Rosales_-_Dried_Prunus_domestica_d.jpg/960px-Rosales_-_Dried_Prunus_domestica_d.jpg"
+  },
+  {
+   "id": "ribes",
+   "nome": "Ribes",
+   "cat": "Frutta",
+   "alimenti": [
+    "Ribes rosso",
+    "Ribes nero"
+   ],
+   "parole": [
+    "ribes",
+    "ribes rosso",
+    "ribes nero",
+    "currant",
+    "cassis"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Redcurrant_%28Ribes_rubrum%29_fruits.jpg/960px-Redcurrant_%28Ribes_rubrum%29_fruits.jpg"
+  },
+  {
+   "id": "uva-spina",
+   "nome": "Uva spina",
+   "cat": "Frutta",
+   "alimenti": [
+    "Uva spina"
+   ],
+   "parole": [
+    "uva spina",
+    "uvaspina",
+    "gooseberry"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Gooseberries.jpg/960px-Gooseberries.jpg"
+  },
+  {
+   "id": "uva",
+   "nome": "Uva",
+   "cat": "Frutta",
+   "alimenti": [
+    "Uva",
+    "Uvetta"
+   ],
+   "parole": [
+    "uva",
+    "uve",
+    "grape",
+    "uvetta",
+    "uva passa",
+    "sultanina",
+    "italia",
+    "regina"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/960px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg"
+  },
+  {
    "id": "zucca",
    "nome": "Zucca",
    "cat": "Verdura",
