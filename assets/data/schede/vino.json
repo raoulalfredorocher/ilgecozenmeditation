@@ -1,0 +1,139 @@
+{
+ "id": "vino",
+ "nome": "Vino",
+ "famiglia": "Bevanda alcolica fermentata",
+ "parole": [
+  "vino",
+  "vino rosso",
+  "vino bianco",
+  "rosé",
+  "vino rosato",
+  "spumante",
+  "prosecco",
+  "champagne",
+  "franciacorta",
+  "passito",
+  "vino da dessert",
+  "wine"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/020260524_140002_Red_wine_in_glass.jpg/960px-020260524_140002_Red_wine_in_glass.jpg",
+  "autore": "Auctor quaerendae",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:020260524_140002_Red_wine_in_glass.jpg"
+ },
+ "descrizione": [
+  "Mosto d'uva fermentato, di solito 11–14% di alcol. Lo spumante rifermenta in bottiglia (metodo classico) o in autoclave (Prosecco)."
+ ],
+ "proprieta": [
+  {
+   "t": "Alcol",
+   "d": "7 kcal per grammo, senza nutrienti. L'alcol è cancerogeno (IARC gruppo 1) già a dosi basse; un'unità alcolica sono 12 g."
+  },
+  {
+   "t": "Un bicchiere",
+   "d": "125 ml di rosso o bianco circa 105 kcal e 1,2 unità alcoliche; un flute di prosecco circa 80 kcal."
+  },
+  {
+   "t": "Resveratrolo",
+   "d": "Nel rosso, ma in quantità troppo piccole per un effetto: lo stesso si trova nell'uva."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Rosso",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Vino rosso"
+    }
+   ]
+  },
+  {
+   "nome": "Bianco",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Vino bianco"
+    }
+   ]
+  },
+  {
+   "nome": "Rosé",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Vino rosé"
+    }
+   ]
+  },
+  {
+   "nome": "Spumante / Prosecco",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Spumante / Prosecco"
+    }
+   ],
+   "testo": "Brut: pochi zuccheri."
+  },
+  {
+   "nome": "Passito",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Vino da dessert (passito)"
+    }
+   ],
+   "testo": "Dolce: più zuccheri e più alcol."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Aperto",
+   "d": "tappato in frigo, 2–3 giorni; lo spumante perde le bollicine in un giorno."
+  }
+ ],
+ "simili": [
+  "Birra",
+  "Aperitivi e cocktail",
+  "Uva"
+ ],
+ "abbinamenti": [
+  "Formaggi",
+  "Parmigiano",
+  "Pizza",
+  "Funghi"
+ ],
+ "cat": "Bevande",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

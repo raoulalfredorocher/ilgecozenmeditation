@@ -1,0 +1,123 @@
+{
+ "id": "succhi",
+ "nome": "Succhi di frutta",
+ "famiglia": "Bevande di frutta",
+ "parole": [
+  "succo",
+  "succhi",
+  "succo di frutta",
+  "succo di mela",
+  "succo d'ananas",
+  "succo d'arancia",
+  "nettare",
+  "smoothie",
+  "centrifugato",
+  "estratto"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Orange_juice_1_edit1.jpg/960px-Orange_juice_1_edit1.jpg",
+  "autore": "USDA",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg"
+ },
+ "descrizione": [
+  "Il succo 100% è solo frutta spremuta o concentrata e ricostituita. Il \"nettare\" ha acqua e zucchero aggiunti (25–50% di frutta)."
+ ],
+ "proprieta": [
+  {
+   "t": "Zuccheri liberi",
+   "d": "Per l'OMS lo zucchero dei succhi conta come zucchero aggiunto: un bicchiere (200 ml) circa 20 g."
+  },
+  {
+   "t": "Senza fibra",
+   "d": "Sazia meno del frutto intero: un'arancia ha 3 g di fibra, il suo succo quasi zero."
+  },
+  {
+   "t": "Vitamina C",
+   "d": "Resta, soprattutto nella spremuta fresca."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Arancia (confezionato)",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Succo d'arancia (confezionato)"
+    }
+   ]
+  },
+  {
+   "nome": "Mela",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Succo di mela"
+    }
+   ]
+  },
+  {
+   "nome": "Ananas",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Succo d'ananas"
+    }
+   ]
+  }
+ ],
+ "anche": [
+  {
+   "t": "Spremuta",
+   "d": "La spremuta fresca è nella scheda Arancia."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "aperto 3–5 giorni; la spremuta va bevuta subito."
+  }
+ ],
+ "simili": [
+  "Arancia",
+  "Mela",
+  "Ananas",
+  "Bibite"
+ ],
+ "abbinamenti": [
+  "Zenzero",
+  "Carota",
+  "Menta"
+ ],
+ "cat": "Bevande",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

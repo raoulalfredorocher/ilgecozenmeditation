@@ -1,0 +1,182 @@
+{
+ "id": "cocktail",
+ "nome": "Aperitivi e cocktail",
+ "famiglia": "Bevande alcoliche miste",
+ "parole": [
+  "aperitivo",
+  "aperitivi",
+  "cocktail",
+  "spritz",
+  "aperol",
+  "campari",
+  "vermouth",
+  "martini",
+  "negroni",
+  "gin tonic",
+  "vodka lemon",
+  "mojito",
+  "whisky sour",
+  "americano",
+  "bitter"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Negroni_served_in_Vancouver_BC.jpg/960px-Negroni_served_in_Vancouver_BC.jpg",
+  "autore": "Geoff Peters",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Negroni_served_in_Vancouver_BC.jpg"
+ },
+ "descrizione": [
+  "Gli aperitivi amari (bitter rosso, vermouth) si bevono lisci o nei cocktail: spritz, negroni, americano. Ogni cocktail somma alcol e zucchero degli ingredienti."
+ ],
+ "proprieta": [
+  {
+   "t": "Alcol",
+   "d": "7 kcal per grammo, senza nutrienti. L'alcol è cancerogeno (IARC gruppo 1) già a dosi basse; un'unità alcolica sono 12 g."
+  },
+  {
+   "t": "Per bicchiere",
+   "d": "Spritz (180 ml) circa 155 kcal; negroni (90 ml) circa 180; gin tonic (200 ml) circa 165; mojito circa 160."
+  },
+  {
+   "t": "Zucchero nascosto",
+   "d": "Tonica, lemon, sciroppi e bitter sono zuccherati: un gin tonic ne ha 13 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 4,
+  "Umami": 0
+ },
+ "tipi": [
+  {
+   "nome": "Spritz",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Spritz (Aperol Spritz)"
+    }
+   ],
+   "testo": "90 ml prosecco, 60 ml bitter arancio, 30 ml soda."
+  },
+  {
+   "nome": "Negroni",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Negroni"
+    }
+   ],
+   "testo": "Gin, bitter rosso e vermouth in parti uguali."
+  },
+  {
+   "nome": "Gin tonic",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Gin tonic"
+    }
+   ]
+  },
+  {
+   "nome": "Vodka lemon",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Vodka lemon"
+    }
+   ]
+  },
+  {
+   "nome": "Mojito",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Mojito"
+    }
+   ]
+  },
+  {
+   "nome": "Whisky sour",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Whisky sour"
+    }
+   ]
+  },
+  {
+   "nome": "Bitter arancio",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Aperol"
+    }
+   ],
+   "testo": "11% di alcol."
+  },
+  {
+   "nome": "Bitter rosso",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Campari bitter"
+    }
+   ],
+   "testo": "25% di alcol."
+  },
+  {
+   "nome": "Vermouth rosso",
+   "valori": [
+    {
+     "stato": "per 100 ml",
+     "alimento": "Vermouth rosso (tipo Martini Rosso)"
+    }
+   ],
+   "testo": "15% di alcol."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Vermouth",
+   "d": "è un vino: aperto va in frigo e dura un mese o due."
+  }
+ ],
+ "simili": [
+  "Distillati",
+  "Vino",
+  "Bibite"
+ ],
+ "abbinamenti": [
+  "Olive",
+  "Arachidi",
+  "Arancia",
+  "Lime",
+  "Menta"
+ ],
+ "cat": "Bevande",
+ "latino": "",
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "tutto l'anno."
+ },
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

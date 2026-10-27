@@ -49,10 +49,13 @@ const schedeFor = q => {
   const w = fold(q.trim());
   if (!w) return [];
   const words = s => [s.nome, ...(s.parole || [])].map(fold);
-  const direct = schede.filter(s => words(s).some(p => p.includes(w)));
+  // a inizio parola: "gin" trova Gin, non "melanzana lunga (aubergine)"; "tè" non trova Pomodoro
+  const pad = t => ` ${t.replace(/[^a-z0-9]+/g, ' ')} `;
+  const direct = schede.filter(s => words(s).some(p => pad(p).includes(pad(w).trimEnd())));
   if (direct.length) return direct;
   // "patate bianche" → Patata; non usato se la ricerca trova già una scheda ("burro d'arachidi" → Arachidi, non Burro)
-  return w.length > 3 ? schede.filter(s => words(s).some(p => w.includes(p))) : [];
+  // solo parole intere: "tortilla di frumento" non deve trovare Rum
+  return w.length > 3 ? schede.filter(s => words(s).some(p => pad(w).includes(pad(p)))) : [];
 };
 const num = (v, d = 1) => (Math.round(v * 10 ** d) / 10 ** d).toLocaleString('it-IT');
 const credit = f => f?.autore ? `<a class="al-credit" href="${esc(safeUrl(f.pagina))}" target="_blank" rel="noopener">Foto: ${esc(f.autore)} · ${esc(f.licenza)}</a>` : '';
