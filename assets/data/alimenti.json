@@ -108,6 +108,7 @@
   {"n": "Germogli di soia", "k": 30, "p": 3.0, "c": 5.9, "g": 0.2, "u": {"porzione": 50}, "f": "USDA 11043", "gal": 1},
   {"n": "Mais dolce in scatola (sgocciolato)", "k": 67, "p": 2.3, "c": 14.3, "g": 1.2, "u": {"scatoletta": 140}, "f": "USDA 11172", "gal": 1},
   {"n": "Zucca butternut", "k": 45, "p": 1.0, "c": 11.7, "g": 0.1, "u": {"porzione": 200}, "f": "USDA 11485", "gal": 2},
+  {"n": "Zucca Delica", "k": 78, "p": 1.9, "c": 20.6, "g": 0.3, "u": {"porzione": 200}, "f": "MEXT 8a ed. 06048 (kabocha, cruda)", "gal": 2},
   {"n": "Okra", "k": 33, "p": 1.9, "c": 7.5, "g": 0.2, "u": {"porzione": 100}, "f": "USDA 11278", "gal": 1},
   {"n": "Topinambur", "k": 73, "p": 2.0, "c": 17.4, "g": 0.0, "u": {"porzione": 150}, "f": "USDA 11226", "gal": 1},
   {"n": "Pastinaca", "k": 75, "p": 1.2, "c": 18.0, "g": 0.3, "u": {"porzione": 150}, "f": "USDA 11298", "gal": 1},

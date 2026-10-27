@@ -7,7 +7,7 @@
       "latino": "Cucurbita maxima · C. moschata · C. pepo",
       "famiglia": "Cucurbitacee",
       "parole": ["zucca", "zucche", "butternut", "delica", "hokkaido", "mantovana", "chioggia", "spaghetti squash", "pumpkin", "kabocha"],
-      "alimenti": ["Zucca butternut", "Semi di zucca"],
+      "alimenti": ["Zucca butternut", "Zucca Delica", "Semi di zucca"],
       "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Cucurbita_2011_G1.jpg/960px-Cucurbita_2011_G1.jpg", "autore": "George Chernilevsky", "licenza": "Pubblico dominio", "pagina": "https://commons.wikimedia.org/wiki/File:Cucurbita_2011_G1.jpg" },
       "descrizione": [
         "La zucca è il frutto delle piante del genere Cucurbita, la stessa famiglia di zucchine, cetrioli e meloni. Arriva dalle Americhe: in Messico si coltivava già 8.000–10.000 anni fa ed è sbarcata in Europa nel Cinquecento.",
@@ -29,8 +29,8 @@
         { "nome": "Butternut", "specie": "C. moschata", "peso": "1–2 kg", "variante": "butternut",
           "testo": "A forma di pera, buccia beige liscia e sottile, semi solo nella parte bombata. Polpa arancio, dolce, che ricorda la nocciola. Si sbuccia facilmente con il pelapatate: ottima a cubetti al forno, nelle vellutate e anche cruda, grattugiata in insalata.",
           "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Cucurbita_moschata_Butternut_2012_G1.jpg/500px-Cucurbita_moschata_Butternut_2012_G1.jpg", "autore": "George Chernilevsky", "licenza": "Pubblico dominio", "pagina": "https://commons.wikimedia.org/wiki/File:Cucurbita_moschata_Butternut_2012_G1.jpg" } },
-        { "nome": "Delica", "specie": "C. maxima", "peso": "1–2 kg",
-          "testo": "Varietà giapponese (tipo kabocha), tonda e schiacciata, buccia verde scuro. Polpa arancio intenso, asciutta e farinosa, dolce come una castagna. La buccia cotta si mangia. Perfetta al forno, negli gnocchi e nei risotti.",
+        { "nome": "Delica", "specie": "C. maxima", "peso": "1–2 kg", "kcal": 78, "alimento": "Zucca Delica",
+          "testo": "Varietà giapponese (tipo kabocha), tonda e schiacciata, buccia verde scuro. Polpa arancio intenso, asciutta e farinosa, dolce come una castagna: per questo ha più calorie della zucca comune (78 kcal, 20,6 g di carboidrati, 1,9 g di proteine per 100 g, tabella giapponese MEXT). La buccia cotta si mangia. Perfetta al forno, negli gnocchi e nei risotti.",
           "foto": { "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Kabocha.jpg/500px-Kabocha.jpg", "autore": "Cota", "licenza": "Pubblico dominio", "pagina": "https://commons.wikimedia.org/wiki/File:Kabocha.jpg" } },
         { "nome": "Hokkaido", "specie": "C. maxima", "peso": "1–1,5 kg",
           "testo": "Detta anche potimarron o red kuri: a goccia, buccia rosso-arancio sottile e commestibile. Polpa compatta con sapore di castagna. Non serve sbucciarla: a spicchi al forno o in vellutata con tutta la buccia.",
@@ -78,6 +78,7 @@
       "fonti": [
         { "t": "Valori nutrizionali: USDA National Nutrient Database SR28 (11422, 11423, 11485, 11486, 11492, 11493, 12014, 11416)" },
         { "t": "Valori nutritivi di riferimento (%VNR): Regolamento UE 1169/2011, allegato XIII" },
+        { "t": "Zucca Delica: tabella giapponese MEXT 8a edizione, voce 06048 (kabocha cruda)" },
         { "t": "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)" }
       ]
     }
