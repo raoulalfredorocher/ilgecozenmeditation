@@ -1,0 +1,99 @@
+{
+ "id": "noci",
+ "nome": "Noci",
+ "cat": "Frutta secca e semi",
+ "latino": "Juglans regia",
+ "famiglia": "Juglandaceae",
+ "parole": [
+  "noce",
+  "noci",
+  "walnut",
+  "gherigli"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Walnuts_-_whole_and_open_with_halved_kernel.jpg/960px-Walnuts_-_whole_and_open_with_halved_kernel.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Walnuts_-_whole_and_open_with_halved_kernel.jpg"
+ },
+ "descrizione": [
+  "Il gheriglio della noce comune, a forma di piccolo cervello. Fresche (a settembre) sono dolci e latticine, secche più oleose."
+ ],
+ "proprieta": [
+  {
+   "t": "Omega-3 vegetali",
+   "d": "La frutta secca più ricca di ALA: 30 g ne danno circa 2,7 g, più del fabbisogno."
+  },
+  {
+   "t": "Antiossidanti",
+   "d": "Polifenoli soprattutto nella pellicina."
+  },
+  {
+   "t": "Cuore",
+   "d": "Una manciata al giorno abbassa il colesterolo LDL (studi PREDIMED e WAHA)."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 2,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10
+  ],
+  "picco": [],
+  "testo": "raccolta a settembre–ottobre."
+ },
+ "tipi": [
+  {
+   "nome": "Noci",
+   "valori": [
+    {
+     "stato": "sgusciate",
+     "alimento": "Noci"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Noci pecan",
+  "Nocciole",
+  "Mandorle"
+ ],
+ "abbinamenti": [
+  "Pere",
+  "Gorgonzola",
+  "Miele",
+  "Radicchio",
+  "Fichi",
+  "Banana"
+ ],
+ "anche": [
+  {
+   "t": "Una porzione",
+   "d": "30 g, una manciata: circa 170–200 kcal."
+  },
+  {
+   "t": "Si irrancidiscono",
+   "d": "Per gli omega-3: se sanno di vernice, buttale."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

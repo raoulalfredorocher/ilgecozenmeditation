@@ -1,0 +1,81 @@
+{
+ "id": "noci-pecan",
+ "nome": "Noci pecan",
+ "cat": "Frutta secca e semi",
+ "latino": "Carya illinoinensis",
+ "famiglia": "Juglandaceae",
+ "parole": [
+  "noci pecan",
+  "pecan",
+  "noce pecan"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Pecans.jpg/960px-Pecans.jpg",
+  "autore": "Scott Bauer",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Pecans.jpg"
+ },
+ "descrizione": [
+  "Parente americana della noce, più dolce e meno amara. Classica nella pecan pie."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidanti",
+   "d": "Tra la frutta secca, quella con più polifenoli."
+  },
+  {
+   "t": "Grassi monoinsaturi",
+   "d": "41 g per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11
+  ],
+  "picco": [],
+  "testo": "raccolta in autunno."
+ },
+ "tipi": [
+  {
+   "nome": "Noci pecan",
+   "valori": [
+    {
+     "stato": "secche",
+     "alimento": "Noci pecan"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Noci",
+  "Macadamia"
+ ],
+ "abbinamenti": [
+  "Sciroppo d'acero",
+  "Zucca",
+  "Mela",
+  "Cannella"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

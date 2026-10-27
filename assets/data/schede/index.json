@@ -69,6 +69,21 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Mekabu_001.jpg/960px-Mekabu_001.jpg"
   },
   {
+   "id": "anacardi",
+   "nome": "Anacardi",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Anacardi"
+   ],
+   "parole": [
+    "anacardo",
+    "anacardi",
+    "cashew",
+    "crema di anacardi"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/CASHEW_NUTS.jpg/960px-CASHEW_NUTS.jpg"
+  },
+  {
    "id": "ananas",
    "nome": "Ananas",
    "cat": "Frutta",
@@ -93,6 +108,26 @@
     "watermelon"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/960px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg"
+  },
+  {
+   "id": "arachidi",
+   "nome": "Arachidi",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Arachidi",
+    "Arachidi tostate salate"
+   ],
+   "parole": [
+    "arachide",
+    "arachidi",
+    "noccioline",
+    "peanuts",
+    "burro d'arachidi",
+    "burro di arachidi",
+    "crema di arachidi",
+    "peanut butter"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Roasted_Peanuts_with_shell.jpg/960px-Roasted_Peanuts_with_shell.jpg"
   },
   {
    "id": "arancia",
@@ -798,6 +833,22 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg/960px-Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg"
   },
   {
+   "id": "frutta-secca-mista",
+   "nome": "Frutta secca mista",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Frutta secca mista tostata"
+   ],
+   "parole": [
+    "frutta secca",
+    "frutta secca mista",
+    "mix di frutta secca",
+    "trail mix",
+    "misto noci"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mixed_Nuts_%28Alabama_Extension%29.jpg/960px-Mixed_Nuts_%28Alabama_Extension%29.jpg"
+  },
+  {
    "id": "funghi",
    "nome": "Funghi",
    "cat": "Verdura",
@@ -1054,6 +1105,20 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Litchi_chinensis_fruits.JPG/960px-Litchi_chinensis_fruits.JPG"
   },
   {
+   "id": "macadamia",
+   "nome": "Macadamia",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Noci macadamia"
+   ],
+   "parole": [
+    "macadamia",
+    "noci macadamia",
+    "noce macadamia"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Macadamia_nut_kernels.jpg/960px-Macadamia_nut_kernels.jpg"
+  },
+  {
    "id": "mais",
    "nome": "Mais",
    "cat": "Cereali, pane e pasta",
@@ -1078,6 +1143,24 @@
     "tortilla chips"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/7/79/VegCorn.jpg"
+  },
+  {
+   "id": "mandorle",
+   "nome": "Mandorle",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Mandorle",
+    "Latte di mandorla (senza zucchero)"
+   ],
+   "parole": [
+    "mandorla",
+    "mandorle",
+    "almond",
+    "farina di mandorle",
+    "latte di mandorla",
+    "bevanda di mandorla"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Almonds_-_in_shell%2C_shell_cracked_open%2C_shelled%2C_blanched.jpg/960px-Almonds_-_in_shell%2C_shell_cracked_open%2C_shelled%2C_blanched.jpg"
   },
   {
    "id": "mango",
@@ -1328,6 +1411,68 @@
     "nespola del giappone"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg/960px-Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg"
+  },
+  {
+   "id": "nocciole",
+   "nome": "Nocciole",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Nocciole",
+    "Crema spalmabile alle nocciole (tipo Nutella)"
+   ],
+   "parole": [
+    "nocciola",
+    "nocciole",
+    "hazelnut",
+    "granella di nocciole",
+    "crema di nocciole",
+    "crema spalmabile"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Hazelnuts_%28Corylus_avellana%29_-_whole_with_kernels.jpg/960px-Hazelnuts_%28Corylus_avellana%29_-_whole_with_kernels.jpg"
+  },
+  {
+   "id": "noci-del-brasile",
+   "nome": "Noci del Brasile",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Noci del Brasile"
+   ],
+   "parole": [
+    "noci del brasile",
+    "noce del brasile",
+    "noci amazzoniche",
+    "brazil nut"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Bertholletia_excelsa_compose.jpg/960px-Bertholletia_excelsa_compose.jpg"
+  },
+  {
+   "id": "noci-pecan",
+   "nome": "Noci pecan",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Noci pecan"
+   ],
+   "parole": [
+    "noci pecan",
+    "pecan",
+    "noce pecan"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Pecans.jpg/960px-Pecans.jpg"
+  },
+  {
+   "id": "noci",
+   "nome": "Noci",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Noci"
+   ],
+   "parole": [
+    "noce",
+    "noci",
+    "walnut",
+    "gherigli"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Walnuts_-_whole_and_open_with_halved_kernel.jpg/960px-Walnuts_-_whole_and_open_with_halved_kernel.jpg"
   },
   {
    "id": "noodles",
@@ -1631,6 +1776,20 @@
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_nectarine_and_cross_section02_edit.jpg/960px-White_nectarine_and_cross_section02_edit.jpg"
   },
   {
+   "id": "pinoli",
+   "nome": "Pinoli",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Pinoli"
+   ],
+   "parole": [
+    "pinolo",
+    "pinoli",
+    "pine nuts"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Pine_nuts.jpg/960px-Pine_nuts.jpg"
+  },
+  {
    "id": "piselli",
    "nome": "Piselli",
    "cat": "Legumi e soia",
@@ -1647,6 +1806,21 @@
     "taccole"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Peas_%28484346231%29.jpg/960px-Peas_%28484346231%29.jpg"
+  },
+  {
+   "id": "pistacchi",
+   "nome": "Pistacchi",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Pistacchi (sgusciati)"
+   ],
+   "parole": [
+    "pistacchio",
+    "pistacchi",
+    "pistachio",
+    "crema di pistacchio"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Pistachio.jpg/960px-Pistachio.jpg"
   },
   {
    "id": "pollo",
@@ -1911,6 +2085,98 @@
     "wheat meat"
    ],
    "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Seitan_Platter_%284139727246%29.jpg/960px-Seitan_Platter_%284139727246%29.jpg"
+  },
+  {
+   "id": "semi-di-canapa",
+   "nome": "Semi di canapa",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Semi di canapa decorticati"
+   ],
+   "parole": [
+    "canapa",
+    "semi di canapa",
+    "hemp",
+    "semi di canapa decorticati"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Konopne_seminko_loupane.jpg/960px-Konopne_seminko_loupane.jpg"
+  },
+  {
+   "id": "semi-di-chia",
+   "nome": "Semi di chia",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Semi di chia"
+   ],
+   "parole": [
+    "chia",
+    "semi di chia",
+    "chia pudding"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Seed_of_chia_%28Salvia_hispanica%29Salvia_hispanica_group.jpg/960px-Seed_of_chia_%28Salvia_hispanica%29Salvia_hispanica_group.jpg"
+  },
+  {
+   "id": "semi-di-girasole",
+   "nome": "Semi di girasole",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Semi di girasole"
+   ],
+   "parole": [
+    "girasole",
+    "semi di girasole",
+    "sunflower seeds"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Sunflower_Seeds_Kaldari.jpg/960px-Sunflower_Seeds_Kaldari.jpg"
+  },
+  {
+   "id": "semi-di-lino",
+   "nome": "Semi di lino",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Semi di lino"
+   ],
+   "parole": [
+    "lino",
+    "semi di lino",
+    "linseed",
+    "flaxseed",
+    "farina di lino"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Flaxseed.jpg/960px-Flaxseed.jpg"
+  },
+  {
+   "id": "semi-di-sesamo",
+   "nome": "Semi di sesamo",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Semi di sesamo",
+    "Tahina (crema di sesamo)"
+   ],
+   "parole": [
+    "sesamo",
+    "semi di sesamo",
+    "sesame",
+    "tahina",
+    "tahini",
+    "gomasio",
+    "olio di sesamo"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Sa_white_sesame_seeds.jpg/960px-Sa_white_sesame_seeds.jpg"
+  },
+  {
+   "id": "semi-di-zucca",
+   "nome": "Semi di zucca",
+   "cat": "Frutta secca e semi",
+   "alimenti": [
+    "Semi di zucca"
+   ],
+   "parole": [
+    "semi di zucca",
+    "pepitas",
+    "pumpkin seeds"
+   ],
+   "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pepita_de_calabaza.jpg/960px-Pepita_de_calabaza.jpg"
   },
   {
    "id": "soia",

@@ -48,7 +48,11 @@ function schedaOf(name) {
 const schedeFor = q => {
   const w = fold(q.trim());
   if (!w) return [];
-  return schede.filter(s => [s.nome, ...(s.parole || [])].some(p => fold(p).includes(w) || (w.length > 3 && w.includes(fold(p)))));
+  const words = s => [s.nome, ...(s.parole || [])].map(fold);
+  const direct = schede.filter(s => words(s).some(p => p.includes(w)));
+  if (direct.length) return direct;
+  // "patate bianche" → Patata; non usato se la ricerca trova già una scheda ("burro d'arachidi" → Arachidi, non Burro)
+  return w.length > 3 ? schede.filter(s => words(s).some(p => w.includes(p))) : [];
 };
 const num = (v, d = 1) => (Math.round(v * 10 ** d) / 10 ** d).toLocaleString('it-IT');
 const credit = f => f?.autore ? `<a class="al-credit" href="${esc(safeUrl(f.pagina))}" target="_blank" rel="noopener">Foto: ${esc(f.autore)} · ${esc(f.licenza)}</a>` : '';

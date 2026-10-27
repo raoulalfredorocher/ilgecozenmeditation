@@ -1,0 +1,96 @@
+{
+ "id": "pistacchi",
+ "nome": "Pistacchi",
+ "cat": "Frutta secca e semi",
+ "latino": "Pistacia vera",
+ "famiglia": "Anacardiaceae",
+ "parole": [
+  "pistacchio",
+  "pistacchi",
+  "pistachio",
+  "crema di pistacchio"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Pistachio.jpg/960px-Pistachio.jpg",
+  "autore": "Kobi Schutz",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Pistachio.jpg"
+ },
+ "descrizione": [
+  "Semi di un albero dell'Asia centrale; in Italia il famoso è quello di Bronte (Sicilia), verde intenso."
+ ],
+ "proprieta": [
+  {
+   "t": "I meno calorici",
+   "d": "560 kcal per 100 g: tra la frutta secca, i più leggeri insieme agli anacardi."
+  },
+  {
+   "t": "Luteina",
+   "d": "Il colore verde viene da luteina e zeaxantina, utili agli occhi."
+  },
+  {
+   "t": "Vitamina B6 e potassio",
+   "d": "Buona fonte."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 1,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   8,
+   9
+  ],
+  "picco": [],
+  "testo": "raccolta a fine estate; Bronte ogni due anni."
+ },
+ "tipi": [
+  {
+   "nome": "Pistacchi",
+   "valori": [
+    {
+     "stato": "sgusciati",
+     "alimento": "Pistacchi (sgusciati)"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Anacardi",
+  "Mandorle"
+ ],
+ "abbinamenti": [
+  "Ricotta",
+  "Cioccolato bianco",
+  "Limone",
+  "Fragole"
+ ],
+ "anche": [
+  {
+   "t": "Una porzione",
+   "d": "30 g, una manciata: circa 170–200 kcal."
+  },
+  {
+   "t": "Salati col guscio",
+   "d": "Molto sale: meglio al naturale."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

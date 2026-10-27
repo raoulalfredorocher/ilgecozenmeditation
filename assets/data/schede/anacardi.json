@@ -1,0 +1,108 @@
+{
+ "id": "anacardi",
+ "nome": "Anacardi",
+ "cat": "Frutta secca e semi",
+ "latino": "Anacardium occidentale",
+ "famiglia": "Anacardiaceae",
+ "parole": [
+  "anacardo",
+  "anacardi",
+  "cashew",
+  "crema di anacardi"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/CASHEW_NUTS.jpg/960px-CASHEW_NUTS.jpg",
+  "autore": "Ranjithkumar Murugesan",
+  "licenza": "CC0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:CASHEW_NUTS.jpg"
+ },
+ "descrizione": [
+  "Il seme che pende sotto un falso frutto (la \"mela di acagiù\"). Si vende sempre sgusciato e trattato col calore: il guscio contiene una sostanza irritante."
+ ],
+ "proprieta": [
+  {
+   "t": "Più carboidrati",
+   "d": "30 g per 100 g, più delle altre noci: per questo sono dolci e cremosi."
+  },
+  {
+   "t": "Ferro e zinco",
+   "d": "6,7 mg di ferro e 5,8 mg di zinco per 100 g."
+  },
+  {
+   "t": "Magnesio",
+   "d": "290 mg per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 2
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importati tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Anacardi",
+   "valori": [
+    {
+     "stato": "crudi",
+     "alimento": "Anacardi"
+    }
+   ]
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In barattolo chiuso",
+   "d": "al fresco e al buio, 3–6 mesi; sgusciata irrancidisce prima."
+  },
+  {
+   "t": "In freezer",
+   "d": "fino a un anno."
+  }
+ ],
+ "simili": [
+  "Macadamia",
+  "Pistacchi",
+  "Mandorle"
+ ],
+ "abbinamenti": [
+  "Curry",
+  "Riso bianco (cotto)",
+  "Broccoli",
+  "Cocco",
+  "Tofu"
+ ],
+ "anche": [
+  {
+   "t": "Una porzione",
+   "d": "30 g, una manciata: circa 170–200 kcal."
+  },
+  {
+   "t": "Crema vegetale",
+   "d": "Ammollati 4 ore e frullati diventano una \"panna\" per salse vegane."
+  }
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
