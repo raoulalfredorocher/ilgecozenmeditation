@@ -1,0 +1,119 @@
+{
+ "id": "melone",
+ "nome": "Melone",
+ "cat": "Frutta",
+ "latino": "Cucumis melo",
+ "famiglia": "Cucurbitacee",
+ "parole": [
+  "melone",
+  "meloni",
+  "melone retato",
+  "cantalupo",
+  "melone giallo",
+  "melone d'inverno",
+  "melon"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Canteloupe_and_cross_section.jpg/960px-Canteloupe_and_cross_section.jpg",
+  "autore": "Fir0002",
+  "licenza": "GFDL 1.2",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Canteloupe_and_cross_section.jpg"
+ },
+ "descrizione": [
+  "Cugino di zucca e cetriolo. D'estate il melone retato o cantalupo a polpa arancio; d'inverno quello giallo o verde a polpa bianca.",
+  "È quasi tutto acqua: dolce ma leggero."
+ ],
+ "proprieta": [
+  {
+   "t": "Idratante",
+   "d": "Circa 90% d'acqua e potassio: ottimo d'estate."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Il cantalupo arancio è ricco di beta-carotene."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   7,
+   8
+  ],
+  "testo": "retato da giugno a settembre; invernale fino a dicembre."
+ },
+ "titolo_tipi": "Tipi di melone",
+ "tipi": [
+  {
+   "nome": "Retato o cantalupo",
+   "testo": "Polpa arancio, profumatissimo.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "09181"
+    }
+   ]
+  },
+  {
+   "nome": "D'inverno (giallo o verde)",
+   "testo": "Polpa bianco-verde, croccante, si conserva a lungo.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Melone d'inverno (verde)"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Fresco",
+   "tempo": "",
+   "come": "Freddo, a fette."
+  },
+  {
+   "metodo": "Con il salato",
+   "tempo": "",
+   "come": "Con prosciutto crudo, feta o menta."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglilo",
+   "d": "pesante, profumato vicino al picciolo, che si stacca facilmente."
+  },
+  {
+   "t": "Tagliato",
+   "d": "coperto in frigo, 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Papaya",
+  "Zucca"
+ ],
+ "abbinamenti": [
+  "Feta",
+  "Menta fresca",
+  "Lime",
+  "Yogurt greco 0%"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

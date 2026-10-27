@@ -1,0 +1,115 @@
+{
+ "id": "avocado",
+ "nome": "Avocado",
+ "cat": "Frutta",
+ "latino": "Persea americana",
+ "famiglia": "Lauracee",
+ "parole": [
+  "avocado",
+  "avocadi",
+  "hass",
+  "guacamole"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Avocado_Hass_-_single_and_halved.jpg/960px-Avocado_Hass_-_single_and_halved.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Avocado_Hass_-_single_and_halved.jpg"
+ },
+ "descrizione": [
+  "Frutto messicano, oggi coltivato anche in Sicilia. Al posto degli zuccheri ha grassi, quasi tutti monoinsaturi come l'olio d'oliva.",
+  "L'Hass ha buccia rugosa che scurisce quando è maturo."
+ ],
+ "proprieta": [
+  {
+   "t": "Grassi buoni",
+   "d": "Circa 15 g per 100 g, soprattutto acido oleico."
+  },
+  {
+   "t": "Fibra e potassio",
+   "d": "7 g di fibra e 485 mg di potassio per 100 g."
+  },
+  {
+   "t": "Assorbimento",
+   "d": "Aiuta ad assorbire i carotenoidi delle verdure mangiate insieme."
+  }
+ ],
+ "sapori": {
+  "Dolce": 1,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 1
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   1,
+   2
+  ],
+  "testo": "siciliano da novembre ad aprile; importato tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Avocado",
+   "testo": "Mezzo avocado (70 g di polpa) vale circa 110 kcal.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Avocado"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Sul pane",
+   "tempo": "",
+   "come": "Schiacciato con limone, sale e pepe."
+  },
+  {
+   "metodo": "Guacamole",
+   "tempo": "",
+   "come": "Con lime, cipollotto, pomodoro e coriandolo."
+  },
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "Con pompelmo, salmone o mango."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Maturo",
+   "d": "cede alla pressione vicino al picciolo."
+  },
+  {
+   "t": "Tagliato",
+   "d": "con il nocciolo e limone, coperto in frigo: 1–2 giorni."
+  }
+ ],
+ "simili": [
+  "Olive",
+  "Cocco"
+ ],
+ "abbinamenti": [
+  "Lime",
+  "Limone",
+  "Pane integrale",
+  "Salmone",
+  "Uovo",
+  "Pompelmo"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

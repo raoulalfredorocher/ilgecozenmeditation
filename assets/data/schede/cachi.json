@@ -1,0 +1,117 @@
+{
+ "id": "cachi",
+ "nome": "Cachi",
+ "cat": "Frutta",
+ "latino": "Diospyros kaki",
+ "famiglia": "Ebenacee",
+ "parole": [
+  "cachi",
+  "caco",
+  "kaki",
+  "loto",
+  "persimmon",
+  "cachi mela",
+  "cachi secchi"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Fuyu_persimmon_fruits%2C_one_cut_open.jpg/960px-Fuyu_persimmon_fruits%2C_one_cut_open.jpg",
+  "autore": "Frank Schulenburg",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Fuyu_persimmon_fruits%2C_one_cut_open.jpg"
+ },
+ "descrizione": [
+  "Frutto autunnale dall'Asia. Il cachi \"tipo\" va mangiato molle, quando perde l'astringenza; il cachi mela (Fuyu) si mangia sodo.",
+  "In Italia si coltiva soprattutto in Campania ed Emilia-Romagna."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Beta-carotene e criptoxantina, tannini."
+  },
+  {
+   "t": "Energia",
+   "d": "Più zuccherino di molta frutta: circa 70 kcal per 100 g."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   11
+  ],
+  "testo": "da ottobre a dicembre."
+ },
+ "tipi": [
+  {
+   "nome": "Cachi fresco",
+   "valori": [
+    {
+     "stato": "crudo",
+     "usda": "09263"
+    }
+   ]
+  },
+  {
+   "nome": "Cachi secco",
+   "testo": "Essiccato all'aria (hoshigaki): un frutto ≈ 34 g.",
+   "valori": [
+    {
+     "stato": "secco",
+     "alimento": "Cachi secchi"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Al cucchiaio",
+   "tempo": "",
+   "come": "Molto maturo, tagliato a metà."
+  },
+  {
+   "metodo": "Cachi mela",
+   "tempo": "",
+   "come": "Sodo, a fette, anche in insalata con rucola e noci."
+  },
+  {
+   "metodo": "Congelato",
+   "tempo": "",
+   "come": "Mangiato semi-congelato è un sorbetto naturale."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Per farli maturare",
+   "d": "vicino a mele o banane."
+  },
+  {
+   "t": "Maturi",
+   "d": "in frigo 2–3 giorni."
+  }
+ ],
+ "simili": [
+  "Albicocca",
+  "Mango"
+ ],
+ "abbinamenti": [
+  "Noci",
+  "Yogurt greco 0%",
+  "Ricotta vaccina",
+  "Cannella"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

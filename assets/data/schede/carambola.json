@@ -1,0 +1,93 @@
+{
+ "id": "carambola",
+ "nome": "Carambola",
+ "cat": "Frutta",
+ "latino": "Averrhoa carambola",
+ "famiglia": "Ossalidacee",
+ "parole": [
+  "carambola",
+  "star fruit",
+  "frutto stella"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Averrhoa_carambola_ARS_k5735-7.jpg/960px-Averrhoa_carambola_ARS_k5735-7.jpg",
+  "autore": "USDA ARS",
+  "licenza": "Pubblico dominio",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Averrhoa_carambola_ARS_k5735-7.jpg"
+ },
+ "descrizione": [
+  "Frutto tropicale del sud-est asiatico: tagliato a fette fa delle stelle.",
+  "Succosa e croccante, dolce-acidula, poche calorie."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggera",
+   "d": "Circa 31 kcal per 100 g."
+  },
+  {
+   "t": "Reni",
+   "d": "Contiene acido ossalico e una neurotossina (caramboxina): pericolosa per chi ha i reni malati."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 4,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   10,
+   11,
+   12,
+   1,
+   2
+  ],
+  "picco": [],
+  "testo": "importata, soprattutto in autunno-inverno."
+ },
+ "tipi": [
+  {
+   "nome": "Carambola",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Carambola"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "A fette",
+   "tempo": "",
+   "come": "Con la buccia, in macedonia o insalate."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Matura",
+   "d": "gialla con bordi appena bruni."
+  },
+  {
+   "t": "In frigo",
+   "d": "1 settimana."
+  }
+ ],
+ "simili": [
+  "Maracuja",
+  "Guava"
+ ],
+ "abbinamenti": [
+  "Lime",
+  "Mango",
+  "Cocco"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Caramboxina e insufficienza renale: Nature Communications 2013",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

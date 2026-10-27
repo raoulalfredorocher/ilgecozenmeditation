@@ -1,0 +1,108 @@
+{
+ "id": "pompelmo",
+ "nome": "Pompelmo",
+ "cat": "Frutta",
+ "latino": "Citrus × paradisi",
+ "famiglia": "Rutacee",
+ "parole": [
+  "pompelmo",
+  "pompelmi",
+  "grapefruit"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Grapefruits_-_whole-halved-segments.jpg/960px-Grapefruits_-_whole-halved-segments.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Grapefruits_-_whole-halved-segments.jpg"
+ },
+ "descrizione": [
+  "Agrume grande nato ai Caraibi da un incrocio tra pomelo e arancia. Bianco, rosa o rosso.",
+  "Gusto acido e amarognolo, dato dalla naringina."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Mezzo pompelmo copre metà del fabbisogno."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Licopene nelle varietà rosa e rosse, flavonoidi in tutte."
+  },
+  {
+   "t": "Farmaci",
+   "d": "Blocca un enzima del fegato (CYP3A4): cambia l'effetto di alcuni farmaci, come certe statine."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 4,
+  "Amaro": 3,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1,
+   2,
+   3,
+   4
+  ],
+  "picco": [
+   1,
+   2
+  ],
+  "testo": "da novembre ad aprile."
+ },
+ "tipi": [
+  {
+   "nome": "Pompelmo",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Pompelmo"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "A metà",
+   "tempo": "",
+   "come": "Col cucchiaio, separando gli spicchi col coltello."
+  },
+  {
+   "metodo": "In insalata",
+   "tempo": "",
+   "come": "A vivo con avocado, finocchio o gamberi."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglilo",
+   "d": "pesante e sodo."
+  },
+  {
+   "t": "In frigo",
+   "d": "2–3 settimane."
+  }
+ ],
+ "simili": [
+  "Arancia",
+  "Limone",
+  "Clementina"
+ ],
+ "abbinamenti": [
+  "Avocado",
+  "Finocchi",
+  "Salmone",
+  "Menta fresca"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Interazioni pompelmo–farmaci: AIFA e FDA",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

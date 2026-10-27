@@ -1,0 +1,140 @@
+{
+ "id": "limone",
+ "nome": "Limone",
+ "cat": "Frutta",
+ "latino": "Citrus × limon",
+ "famiglia": "Rutacee",
+ "parole": [
+  "limone",
+  "limoni",
+  "lemon",
+  "succo di limone",
+  "sfusato",
+  "femminello"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Lemon_-_whole_and_split.jpg/960px-Lemon_-_whole_and_split.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Lemon_-_whole_and_split.jpg"
+ },
+ "descrizione": [
+  "Agrume acido coltivato in Sicilia, Campania (Sfusato amalfitano, Sorrento) e Calabria. Si usa più come condimento che come frutto.",
+  "Il succo dà acidità senza calorie; la scorza ha gli oli profumati."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Circa 50 mg per 100 g di polpa."
+  },
+  {
+   "t": "Ferro",
+   "d": "Qualche goccia su legumi e verdure aiuta ad assorbire il ferro vegetale."
+  },
+  {
+   "t": "Meno sale",
+   "d": "L'acidità esalta i sapori: permette di salare meno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 0,
+  "Salato": 0,
+  "Acido": 5,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   12,
+   1,
+   2,
+   3
+  ],
+  "testo": "tutto l'anno; il raccolto principale è in inverno."
+ },
+ "tipi": [
+  {
+   "nome": "Limone",
+   "testo": "Polpa senza buccia.",
+   "valori": [
+    {
+     "stato": "polpa",
+     "alimento": "Limone"
+    }
+   ]
+  },
+  {
+   "nome": "Succo di limone",
+   "testo": "Un cucchiaio (15 g) vale 3 kcal.",
+   "valori": [
+    {
+     "stato": "succo",
+     "alimento": "Succo di limone"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "Succo",
+   "tempo": "",
+   "come": "Su pesce, insalate, legumi e carni bianche al posto di parte del sale."
+  },
+  {
+   "metodo": "Scorza",
+   "tempo": "",
+   "come": "Grattugiata (solo la parte gialla) su pasta, risotti e dolci. Solo da limoni non trattati."
+  },
+  {
+   "metodo": "In acqua",
+   "tempo": "",
+   "come": "Qualche fetta in acqua o tè: profumo senza zucchero."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Sceglilo",
+   "d": "pesante, buccia sottile e lucida."
+  },
+  {
+   "t": "In frigo",
+   "d": "in un sacchetto chiuso fino a 4 settimane."
+  },
+  {
+   "t": "Succo",
+   "d": "nei cubetti del ghiaccio, mesi."
+  }
+ ],
+ "simili": [
+  "Lime",
+  "Arancia",
+  "Pompelmo"
+ ],
+ "abbinamenti": [
+  "Salmone",
+  "Merluzzo",
+  "Petto di pollo (crudo)",
+  "Ceci (secchi)",
+  "Prezzemolo fresco",
+  "Menta fresca"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

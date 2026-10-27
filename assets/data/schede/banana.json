@@ -1,0 +1,120 @@
+{
+ "id": "banana",
+ "nome": "Banana",
+ "cat": "Frutta",
+ "latino": "Musa × paradisiaca",
+ "famiglia": "Musacee",
+ "parole": [
+  "banana",
+  "banane",
+  "platano"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Diverse_Banana_Display%2C_Toledo_Market.jpg/960px-Diverse_Banana_Display%2C_Toledo_Market.jpg",
+  "autore": "QueenCityCebu",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Diverse_Banana_Display%2C_Toledo_Market.jpg"
+ },
+ "descrizione": [
+  "Frutto tropicale raccolto verde e fatto maturare durante il viaggio. Mentre matura, l'amido si trasforma in zuccheri.",
+  "Verde è più amidacea e meno dolce, con macchie scure è più dolce e digeribile."
+ ],
+ "proprieta": [
+  {
+   "t": "Energia pronta",
+   "d": "Zuccheri e amido facili da digerire: utile prima o dopo l'allenamento."
+  },
+  {
+   "t": "Potassio",
+   "d": "Circa 360 mg per 100 g, importante per muscoli e pressione."
+  },
+  {
+   "t": "Amido resistente",
+   "d": "Quella poco matura ne ha molto: si comporta come una fibra e alza meno la glicemia."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importata, disponibile tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Banana",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Banana"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Da sola, a rondelle nel porridge o nello yogurt."
+  },
+  {
+   "metodo": "Frullata",
+   "tempo": "",
+   "come": "Congelata a pezzi diventa una \"crema gelato\" senza zucchero."
+  },
+  {
+   "metodo": "Nei dolci",
+   "tempo": "",
+   "come": "Molto matura sostituisce parte dello zucchero in pancake e banana bread."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Fuori dal frigo",
+   "d": "il freddo annerisce la buccia; la polpa resta buona."
+  },
+  {
+   "t": "Per farla maturare",
+   "d": "vicino alle mele; per rallentare, separa il casco."
+  },
+  {
+   "t": "Troppo matura",
+   "d": "sbucciata e a pezzi in freezer, per frullati."
+  }
+ ],
+ "simili": [
+  "Mango",
+  "Dattero"
+ ],
+ "abbinamenti": [
+  "Fiocchi d'avena",
+  "Yogurt greco 0%",
+  "Cacao amaro in polvere",
+  "Arachidi",
+  "Cannella",
+  "Noci"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

@@ -1,0 +1,101 @@
+{
+ "id": "nespola",
+ "nome": "Nespola",
+ "cat": "Frutta",
+ "latino": "Eriobotrya japonica",
+ "famiglia": "Rosacee",
+ "parole": [
+  "nespola",
+  "nespole",
+  "loquat",
+  "nespola del giappone"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg/960px-Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg",
+  "autore": "Ed Uthman",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Loquat_fruit_and_foliage_%28Eriobotrya_japonica%29.jpg"
+ },
+ "descrizione": [
+  "La nespola del Giappone, primo frutto della primavera. Arancio, succosa, dolce-acidula, con 2–4 semi grandi.",
+  "Diversa dalla nespola comune (Mespilus germanica), invernale, che si mangia stramatura."
+ ],
+ "proprieta": [
+  {
+   "t": "Leggera",
+   "d": "Circa 47 kcal per 100 g."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Beta-carotene, che le dà il colore."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   4,
+   5,
+   6
+  ],
+  "picco": [
+   5
+  ],
+  "testo": "da aprile a giugno."
+ },
+ "tipi": [
+  {
+   "nome": "Nespola",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Nespole"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Fresca",
+   "tempo": "",
+   "come": "Si sbuccia con le dita e si tolgono i semi."
+  },
+  {
+   "metodo": "Confettura",
+   "tempo": "40 min",
+   "come": "Con limone, perché ha poca pectina."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Delicata",
+   "d": "si ammacca facilmente: in frigo 2–3 giorni."
+  }
+ ],
+ "anche": [
+  {
+   "t": "I semi",
+   "d": "non si mangiano: contengono glicosidi cianogenici."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Albicocca",
+  "Pera"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Mandorle",
+  "Ricotta vaccina"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

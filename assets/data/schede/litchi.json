@@ -1,0 +1,95 @@
+{
+ "id": "litchi",
+ "nome": "Litchi",
+ "cat": "Frutta",
+ "latino": "Litchi chinensis",
+ "famiglia": "Sapindacee",
+ "parole": [
+  "litchi",
+  "lychee",
+  "litchee"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Litchi_chinensis_fruits.JPG/960px-Litchi_chinensis_fruits.JPG",
+  "autore": "B.navez",
+  "licenza": "CC BY-SA 3.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Litchi_chinensis_fruits.JPG"
+ },
+ "descrizione": [
+  "Frutto della Cina meridionale: buccia rossa e ruvida, polpa bianca traslucida, profumo di rosa.",
+  "Si trova soprattutto a Natale, dal Madagascar."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "100 g (una decina di frutti) coprono quasi il fabbisogno di un giorno."
+  },
+  {
+   "t": "Attenzione",
+   "d": "Acerbi e a digiuno possono abbassare la glicemia (casi documentati in India nei bambini malnutriti)."
+  }
+ ],
+ "sapori": {
+  "Dolce": 5,
+  "Salato": 0,
+  "Acido": 1,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   11,
+   12,
+   1
+  ],
+  "picco": [
+   12
+  ],
+  "testo": "da novembre a gennaio (Madagascar)."
+ },
+ "tipi": [
+  {
+   "nome": "Litchi",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Litchi"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Fresco",
+   "tempo": "",
+   "come": "Si sbuccia con le dita, si toglie il seme (non commestibile)."
+  },
+  {
+   "metodo": "In macedonia",
+   "tempo": "",
+   "come": "Con mango, lime e menta."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "nel sacchetto, 1 settimana. La buccia scurisce, la polpa resta buona."
+  }
+ ],
+ "simili": [
+  "Uva",
+  "Maracuja"
+ ],
+ "abbinamenti": [
+  "Lime",
+  "Menta fresca",
+  "Mango",
+  "Cocco"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Litchi e ipoglicemia: Lancet Glob Health 2017 (Muzaffarpur)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

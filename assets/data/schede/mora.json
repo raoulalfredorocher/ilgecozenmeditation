@@ -1,0 +1,104 @@
+{
+ "id": "mora",
+ "nome": "Mora",
+ "cat": "Frutta",
+ "latino": "Rubus fruticosus",
+ "famiglia": "Rosacee",
+ "parole": [
+  "mora",
+  "more",
+  "blackberry",
+  "rovo"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Blackberries_%28Rubus_fruticosus%29.jpg/960px-Blackberries_%28Rubus_fruticosus%29.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Blackberries_%28Rubus_fruticosus%29.jpg"
+ },
+ "descrizione": [
+  "Frutto del rovo, cresce spontaneo lungo i sentieri a fine estate. Quella coltivata è più grande.",
+  "È un frutto \"composto\": tante piccole drupe, ognuna con un seme."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Circa 5 g per 100 g, grazie ai semini."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Ricca di antociani (il colore scuro) e vitamina C."
+  },
+  {
+   "t": "Vitamina K",
+   "d": "100 g ne danno un quarto del fabbisogno."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   7,
+   8,
+   9
+  ],
+  "picco": [
+   8
+  ],
+  "testo": "da luglio a settembre."
+ },
+ "tipi": [
+  {
+   "nome": "More",
+   "valori": [
+    {
+     "stato": "crude",
+     "alimento": "More"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarle",
+ "cotture": [
+  {
+   "metodo": "Fresche",
+   "tempo": "",
+   "come": "Con yogurt o nel porridge."
+  },
+  {
+   "metodo": "Composta",
+   "tempo": "10 min",
+   "come": "In padella con poca acqua: si sciolgono da sole."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "2–3 giorni, senza lavarle."
+  },
+  {
+   "t": "In freezer",
+   "d": "su un vassoio, poi in sacchetto."
+  }
+ ],
+ "simili": [
+  "Mirtillo",
+  "Ribes",
+  "Fragola"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Fiocchi d'avena",
+  "Ricotta vaccina",
+  "Limone"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

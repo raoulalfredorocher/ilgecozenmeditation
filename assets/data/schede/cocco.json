@@ -1,0 +1,149 @@
+{
+ "id": "cocco",
+ "nome": "Cocco",
+ "cat": "Frutta",
+ "latino": "Cocos nucifera",
+ "famiglia": "Arecacee",
+ "parole": [
+  "cocco",
+  "noce di cocco",
+  "coconut",
+  "rapè",
+  "cocco grattugiato",
+  "acqua di cocco"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Coconut_%28halved%29_%283330701660%29.jpg/960px-Coconut_%28halved%29_%283330701660%29.jpg",
+  "autore": "Chandrika Nair",
+  "licenza": "CC BY 2.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Coconut_%28halved%29_%283330701660%29.jpg"
+ },
+ "descrizione": [
+  "Frutto della palma tropicale. La polpa bianca è ricca di grassi, soprattutto saturi a catena media.",
+  "L'acqua di cocco (dalla noce giovane) è leggera; la polpa e il rapè sono molto calorici."
+ ],
+ "proprieta": [
+  {
+   "t": "Fibra",
+   "d": "Circa 9 g per 100 g di polpa."
+  },
+  {
+   "t": "Grassi saturi",
+   "d": "Circa 30 g su 100 g di polpa: tanti, da usare con misura."
+  },
+  {
+   "t": "Manganese",
+   "d": "La polpa è molto ricca di questo minerale."
+  }
+ ],
+ "sapori": {
+  "Dolce": 3,
+  "Salato": 0,
+  "Acido": 0,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importato, tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Polpa fresca",
+   "testo": "Un pezzo (45 g) vale circa 160 kcal.",
+   "valori": [
+    {
+     "stato": "fresca",
+     "alimento": "Cocco (polpa fresca)"
+    }
+   ]
+  },
+  {
+   "nome": "Rapè (disidratato)",
+   "testo": "Un cucchiaio (5 g) vale 33 kcal.",
+   "valori": [
+    {
+     "stato": "secco",
+     "alimento": "Cocco disidratato (rapè)"
+    }
+   ]
+  },
+  {
+   "nome": "Acqua di cocco",
+   "testo": "Il liquido della noce giovane: leggero, con potassio.",
+   "valori": [
+    {
+     "stato": "bevanda",
+     "alimento": "Acqua di cocco"
+    }
+   ]
+  },
+  {
+   "nome": "Latte di cocco",
+   "testo": "Polpa spremuta con acqua, per curry e dolci.",
+   "valori": [
+    {
+     "stato": "in lattina",
+     "usda": "12118"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come usarlo",
+ "cotture": [
+  {
+   "metodo": "Fresco",
+   "tempo": "",
+   "come": "A pezzetti, come spuntino."
+  },
+  {
+   "metodo": "Latte di cocco",
+   "tempo": "",
+   "come": "Nei curry di verdure e legumi, nel riso."
+  },
+  {
+   "metodo": "Rapè",
+   "tempo": "",
+   "come": "Sul porridge, nello yogurt, nei biscotti."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Intero",
+   "d": "senti l'acqua dentro scuotendolo: è fresco."
+  },
+  {
+   "t": "Polpa",
+   "d": "in frigo coperta d'acqua, 3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Ananas",
+  "Mandorle"
+ ],
+ "abbinamenti": [
+  "Ananas",
+  "Mango",
+  "Lime",
+  "Riso bianco (cotto)",
+  "Cioccolato fondente 70%"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

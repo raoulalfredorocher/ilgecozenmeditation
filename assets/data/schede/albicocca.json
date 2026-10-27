@@ -1,0 +1,130 @@
+{
+ "id": "albicocca",
+ "nome": "Albicocca",
+ "cat": "Frutta",
+ "latino": "Prunus armeniaca",
+ "famiglia": "Rosacee",
+ "parole": [
+  "albicocca",
+  "albicocche",
+  "apricot",
+  "albicocche secche"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Apricot_and_cross_section.jpg/960px-Apricot_and_cross_section.jpg",
+  "autore": "Fir0002",
+  "licenza": "GFDL 1.2",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Apricot_and_cross_section.jpg"
+ },
+ "descrizione": [
+  "Frutto estivo a nocciolo, arrivato dall'Asia centrale. In Italia si coltiva soprattutto in Emilia-Romagna, Campania e Basilicata.",
+  "Il colore arancio viene dal beta-carotene. Seccata si conserva a lungo ma concentra gli zuccheri."
+ ],
+ "proprieta": [
+  {
+   "t": "Antiossidante",
+   "d": "Beta-carotene (vitamina A), che il corpo usa per pelle e vista."
+  },
+  {
+   "t": "Fibra",
+   "d": "Secche: circa 7 g di fibra per 100 g, utili per l'intestino."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   5,
+   6,
+   7,
+   8
+  ],
+  "picco": [
+   6,
+   7
+  ],
+  "testo": "da fine maggio ad agosto."
+ },
+ "tipi": [
+  {
+   "nome": "Fresca",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Albicocche"
+    }
+   ]
+  },
+  {
+   "nome": "Secca",
+   "testo": "Una albicocca secca pesa circa 7 g e vale 17 kcal.",
+   "valori": [
+    {
+     "stato": "secca",
+     "alimento": "Albicocche secche"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Fresca",
+   "tempo": "",
+   "come": "Matura e profumata, con la buccia."
+  },
+  {
+   "metodo": "Alla griglia",
+   "tempo": "3–4 min",
+   "come": "A metà, con yogurt e mandorle."
+  },
+  {
+   "metodo": "Secca",
+   "tempo": "",
+   "come": "Due o tre come spuntino con qualche mandorla."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Matura",
+   "d": "arancio intenso, profumata, cede appena."
+  },
+  {
+   "t": "In frigo",
+   "d": "3–5 giorni."
+  },
+  {
+   "t": "Secche",
+   "d": "in barattolo, al fresco: mesi."
+  }
+ ],
+ "anche": [
+  {
+   "t": "Il seme",
+   "d": "dentro il nocciolo c'è una mandorla amara: contiene amigdalina, che libera cianuro. Non va mangiata cruda in quantità."
+  }
+ ],
+ "titolo_anche": "Da sapere",
+ "simili": [
+  "Pesca",
+  "Ciliegia",
+  "Prugna"
+ ],
+ "abbinamenti": [
+  "Mandorle",
+  "Yogurt greco 0%",
+  "Ricotta vaccina",
+  "Miele",
+  "Fiocchi d'avena"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Amigdalina nei semi: EFSA, parere 2016",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

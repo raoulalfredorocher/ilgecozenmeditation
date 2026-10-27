@@ -1,0 +1,108 @@
+{
+ "id": "guava",
+ "nome": "Guava",
+ "cat": "Frutta",
+ "latino": "Psidium guajava",
+ "famiglia": "Mirtacee",
+ "parole": [
+  "guava",
+  "guaiava"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Guava_pink_fruit.jpg/960px-Guava_pink_fruit.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Guava_pink_fruit.jpg"
+ },
+ "descrizione": [
+  "Frutto tropicale dell'America centrale, polpa rosa o bianca e profumo intenso.",
+  "Uno dei frutti più ricchi di vitamina C in assoluto."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Circa 230 mg per 100 g: tre volte il fabbisogno."
+  },
+  {
+   "t": "Fibra",
+   "d": "Circa 5 g per 100 g."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Licopene nelle varietà rosa."
+  }
+ ],
+ "sapori": {
+  "Dolce": 4,
+  "Salato": 0,
+  "Acido": 2,
+  "Amaro": 0,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [],
+  "testo": "importata, tutto l'anno."
+ },
+ "tipi": [
+  {
+   "nome": "Guava",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Guava"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarla",
+ "cotture": [
+  {
+   "metodo": "Cruda",
+   "tempo": "",
+   "come": "Con la buccia, a fette; i semi si mangiano."
+  },
+  {
+   "metodo": "In pasta (goiabada)",
+   "tempo": "",
+   "come": "Cotta con zucchero: in Brasile con il formaggio."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Matura",
+   "d": "profumata, cede appena."
+  },
+  {
+   "t": "In frigo",
+   "d": "3–4 giorni."
+  }
+ ],
+ "simili": [
+  "Maracuja",
+  "Papaya",
+  "Fico d'India"
+ ],
+ "abbinamenti": [
+  "Lime",
+  "Formaggio",
+  "Yogurt greco 0%"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

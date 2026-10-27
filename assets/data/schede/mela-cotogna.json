@@ -1,0 +1,102 @@
+{
+ "id": "mela-cotogna",
+ "nome": "Mela cotogna",
+ "cat": "Frutta",
+ "latino": "Cydonia oblonga",
+ "famiglia": "Rosacee",
+ "parole": [
+  "mela cotogna",
+  "mele cotogne",
+  "cotogna",
+  "cotognata",
+  "quince"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Quince_%2810889s%29.jpg/960px-Quince_%2810889s%29.jpg",
+  "autore": "Rhododendrites",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Quince_%2810889s%29.jpg"
+ },
+ "descrizione": [
+  "Frutto antico, gialla e profumatissima, con buccia un po' lanuginosa. Cruda è dura e astringente.",
+  "Si mangia cotta: con tanta pectina, si rapprende da sola nella cotognata."
+ ],
+ "proprieta": [
+  {
+   "t": "Pectina",
+   "d": "Una delle frutte più ricche: fibra solubile che addensa e nutre la flora intestinale."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Polifenoli, che crudi la rendono astringente."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 3,
+  "Amaro": 2,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   9,
+   10,
+   11,
+   12
+  ],
+  "picco": [
+   10
+  ],
+  "testo": "da settembre a dicembre."
+ },
+ "tipi": [
+  {
+   "nome": "Mela cotogna",
+   "valori": [
+    {
+     "stato": "cruda",
+     "alimento": "Mele cotogne"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come cucinarla",
+ "cotture": [
+  {
+   "metodo": "Al forno",
+   "tempo": "45–60 min · 180 °C",
+   "come": "A spicchi con poco miele: diventa rosata e morbida."
+  },
+  {
+   "metodo": "Cotognata",
+   "tempo": "1 ora",
+   "come": "Polpa cotta, frullata e ristretta con zucchero: si taglia a fette."
+  },
+  {
+   "metodo": "Con la carne",
+   "tempo": "30 min",
+   "come": "Brasata con maiale o agnello."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "Al fresco",
+   "d": "fuori dal frigo, 2–3 settimane: profuma la stanza."
+  }
+ ],
+ "simili": [
+  "Mela",
+  "Pera"
+ ],
+ "abbinamenti": [
+  "Pecorino",
+  "Formaggio",
+  "Cannella",
+  "Miele"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}

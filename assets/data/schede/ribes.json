@@ -1,0 +1,118 @@
+{
+ "id": "ribes",
+ "nome": "Ribes",
+ "cat": "Frutta",
+ "latino": "Ribes rubrum · R. nigrum",
+ "famiglia": "Grossulariacee",
+ "parole": [
+  "ribes",
+  "ribes rosso",
+  "ribes nero",
+  "currant",
+  "cassis"
+ ],
+ "foto": {
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Redcurrant_%28Ribes_rubrum%29_fruits.jpg/960px-Redcurrant_%28Ribes_rubrum%29_fruits.jpg",
+  "autore": "Ivar Leidus",
+  "licenza": "CC BY-SA 4.0",
+  "pagina": "https://commons.wikimedia.org/wiki/File:Redcurrant_%28Ribes_rubrum%29_fruits.jpg"
+ },
+ "descrizione": [
+  "Piccole bacche a grappolo dei climi freschi, in Italia soprattutto in montagna (Trentino, Valle d'Aosta).",
+  "Il rosso è acidulo e brillante; il nero (cassis) è più aromatico e ricchissimo di vitamina C."
+ ],
+ "proprieta": [
+  {
+   "t": "Vitamina C",
+   "d": "Il ribes nero ne ha circa 180 mg per 100 g: più di tre volte l'arancia."
+  },
+  {
+   "t": "Antiossidante",
+   "d": "Antociani, soprattutto nel nero."
+  }
+ ],
+ "sapori": {
+  "Dolce": 2,
+  "Salato": 0,
+  "Acido": 5,
+  "Amaro": 1,
+  "Umami": 0
+ },
+ "stagione": {
+  "mesi": [
+   6,
+   7,
+   8
+  ],
+  "picco": [
+   7
+  ],
+  "testo": "da giugno ad agosto."
+ },
+ "tipi": [
+  {
+   "nome": "Ribes rosso",
+   "testo": "Acido e brillante, da decorazione e gelatine.",
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Ribes rosso"
+    }
+   ]
+  },
+  {
+   "nome": "Ribes nero",
+   "testo": "Aromatico, per sciroppi, confetture e liquori (cassis).",
+   "foto": {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ribes_nigrum_a1.JPG/500px-Ribes_nigrum_a1.JPG",
+    "autore": "Jerzy Opioła",
+    "licenza": "CC BY-SA 3.0",
+    "pagina": "https://commons.wikimedia.org/wiki/File:Ribes_nigrum_a1.JPG"
+   },
+   "valori": [
+    {
+     "stato": "crudo",
+     "alimento": "Ribes nero"
+    }
+   ]
+  }
+ ],
+ "titolo_cotture": "Come gustarlo",
+ "cotture": [
+  {
+   "metodo": "Fresco",
+   "tempo": "",
+   "come": "Sgranato con una forchetta, su yogurt e dolci."
+  },
+  {
+   "metodo": "In salsa",
+   "tempo": "10 min",
+   "come": "Cotto con poco zucchero: con selvaggina e formaggi."
+  }
+ ],
+ "conservare": [
+  {
+   "t": "In frigo",
+   "d": "ancora sul grappolo, 3–4 giorni."
+  },
+  {
+   "t": "In freezer",
+   "d": "sgranato, mesi."
+  }
+ ],
+ "simili": [
+  "Uva spina",
+  "Mirtillo",
+  "Mora"
+ ],
+ "abbinamenti": [
+  "Yogurt greco 0%",
+  "Ricotta vaccina",
+  "Cioccolato bianco",
+  "Formaggio"
+ ],
+ "fonti": [
+  "Valori: alimenti.json della dieta (macro) e USDA SR28 (vitamine e minerali)",
+  "Foto: Wikimedia Commons, licenze libere (autore e licenza sotto ogni foto)"
+ ]
+}
