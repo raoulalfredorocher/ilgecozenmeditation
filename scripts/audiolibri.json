@@ -1,4 +1,5 @@
 [
  { "modulo": "js/meditazione/studio-appunti.js", "cartella": "audio/appunti" },
- { "modulo": "js/pages/allenamento/studio-appunti.js", "cartella": "audio/allenamento" }
+ { "modulo": "js/pages/allenamento/studio-appunti.js", "cartella": "audio/allenamento" },
+ { "modulo": "js/pages/alimentazione/studio-appunti.js", "cartella": "audio/alimentazione" }
 ]

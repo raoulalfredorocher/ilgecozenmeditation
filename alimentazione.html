@@ -15,9 +15,14 @@
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
   <link rel="stylesheet" href="styles/editor-giorno.css"/>
+  <link rel="stylesheet" href="styles/libro.css"/>
   <style>
     .tab-panel { display: flex; flex-direction: column; gap: var(--space-5); }
     .tab-panel[hidden] { display: none; }
+    /* sette schede: la barra scorre di lato invece di stringere le parole */
+    .page-tabs .segmented { overflow-x: auto; scrollbar-width: none; }
+    .page-tabs .segmented::-webkit-scrollbar { display: none; }
+    .page-tabs .segmented > button { flex: 1 0 auto; padding: 0 14px; white-space: nowrap; }
     .s { font-size: var(--fs-xs); color: var(--muted); }
     .m { font-size: var(--fs-md); }
     .cap { font-size: .6875rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin: var(--space-4) 0 var(--space-2); }
@@ -380,6 +385,7 @@
     Ricette    → js/pages/alimentazione/ricette.js
     Spesa      → js/pages/alimentazione/spesa.js
     Alimenti   → js/pages/alimentazione/alimenti.js (schede in assets/data/schede-alimenti.json)
+    Studio, Appunti → motore js/libro/studio.js con studio-lezioni.js e studio-appunti.js (audio in audio/alimentazione/)
   Il + della barra in basso preme #alim-add, che esegue l'azione della scheda attiva.
   Database degli alimenti: assets/data/alimenti.json (vedi foods.js per il formato).
 -->
@@ -400,6 +406,8 @@
         <button type="button" data-tab-btn="ricette">Ricette</button>
         <button type="button" data-tab-btn="spesa">Spesa</button>
         <button type="button" data-tab-btn="alimenti">Alimenti</button>
+        <button type="button" data-tab-btn="studio">Studio</button>
+        <button type="button" data-tab-btn="appunti">Appunti</button>
       </div>
     </div>
 
@@ -408,6 +416,10 @@
     <section class="tab-panel" id="tab-ricette" aria-label="Ricette" hidden></section>
     <section class="tab-panel" id="tab-spesa" aria-label="Spesa" hidden></section>
     <section class="tab-panel" id="tab-alimenti" aria-label="Alimenti" hidden></section>
+    <section class="view lb-view" id="view-studio" aria-label="Studio" hidden></section>
+    <section class="view lb-view" id="view-lesson" aria-label="Lezione" hidden></section>
+    <section class="view lb-view" id="view-appunti" aria-label="Appunti" hidden></section>
+    <div class="au-minibar" id="au-minibar" hidden></div>
 
     <button type="button" id="alim-add" hidden aria-hidden="true" tabindex="-1"></button>
   </main>
