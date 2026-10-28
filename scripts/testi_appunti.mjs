@@ -1,9 +1,12 @@
-// Testi da leggere ad alta voce per l'audiolibro degli appunti zen.
-// Legge js/meditazione/studio-appunti.js e stampa in JSON [{ id, testo }]:
+// Testi da leggere ad alta voce per l'audiolibro di un libro di appunti.
+// Legge il modulo dei capitoli indicato (es. js/meditazione/studio-appunti.js) e stampa in JSON [{ id, testo }]:
 // via grassetti, link e simboli, aggiunge le pause (punti) dopo titoli e voci di elenco,
 // scioglie le abbreviazioni che una voce sintetica leggerebbe male.
-// Uso: node scripts/testi_appunti.mjs   (lo chiama scripts/audio_appunti.py)
-import { CAPITOLI } from '../js/meditazione/studio-appunti.js';
+// Uso: node scripts/testi_appunti.mjs js/meditazione/studio-appunti.js   (lo chiama scripts/audio_appunti.py)
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
+
+const { CAPITOLI } = await import(pathToFileURL(resolve(process.argv[2] || 'js/meditazione/studio-appunti.js')).href);
 
 const NUMERI = ['', 'uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
 const ORDINALI = { I: 'primo', II: 'secondo', III: 'terzo', IV: 'quarto', V: 'quinto', VI: 'sesto', VII: 'settimo',
