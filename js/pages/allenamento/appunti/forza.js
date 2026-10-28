@@ -26,37 +26,6 @@ Il riscaldamento aumenta la forza durante l'allenamento contro resistenza.
 - In deficit, l'allenamento di forza fa sì che la maggior parte del peso perso sia grasso e non muscolo; il cardio da solo ne fa perdere di più.
 - **Allenamento concorrente** (pesi + cardio): l'interferenza sulla crescita muscolare è piccola, un po' maggiore con la corsa che con la bici, ed è più evidente sulla potenza esplosiva (Wilson 2012; Schumann 2022). Mettere il cardio **dopo** i pesi, o in giorni diversi, protegge la qualità delle serie.
 - Il **riscaldamento** migliora la performance nella maggior parte degli studi (Fradkin 2010): 5–10 minuti di movimento generale più 1–3 serie di avvicinamento all'esercizio principale.` },
-    { id: 'tr-addominali', titolo: 'Addominali', testo: `
-A livello anatomico non esistono addominali bassi e alti. Esistono:
-
-- **Retto dell'addome**.
-- **Obliqui** esterni e interni.
-- **Trasverso** dell'addome.
-
-Lo scopo principale di tutti gli addominali è sostenere la flessione della colonna e del tronco.
-
-Possiamo allenarli in tre modi:
-
-- **Esercizi isometrici**: plank (3 minuti totali, gomiti in avanti e retroversione del bacino), plank laterale, barchetta.
-- **Esercizi dinamici**: crunch, l'esercizio principe (prima a braccia tese, poi alla crunch machine, con la corda o alla macchina inversa); hanging leg raise (facilitato con la schiena appoggiata, altrimenti alla sbarra); side bend; crunch inverso; military crunch.
-- **Circuiti**: meno efficaci degli altri. Se si vuole inserirli, una sola volta a settimana.
-
-Circuito perfetto, 3 giri:
-- Crunch a braccia tese: 20.
-- Side bend: 10.
-- Leg raise: 8.
-- Plank: 1 minuto.
-
-Circuito light, 3 giri:
-- Crunch a braccia tese: 20.
-- Side bend: 10.
-- Plank: 1 minuto.
-
-## Cosa dice la ricerca
-- Il **dimagrimento localizzato non esiste**: fare addominali non toglie grasso dalla pancia più che da altre zone (Vispute 2011). La "tartaruga" si vede quando scende il grasso totale.
-- Retto e obliqui sono muscoli come gli altri: crescono con serie dure e progressione del carico (crunch ai cavi, macchine), non con centinaia di ripetizioni. Anche per loro valgono le 10–20 serie a settimana.
-- Il **core** si allena molto anche con squat, stacchi e farmer walk; plank e side plank sono ottimi per la stabilità e la salute della schiena (le prove migliori per chi ha la lombalgia).
-- Il trasverso lavora soprattutto come "cintura" di stabilità: si attiva tirando l'ombelico verso la colonna e respirando con il diaframma.` },
     { id: 'tr-gambe', titolo: 'Gambe: quadricipiti e vasti', testo: `
 *Questa pagina e le due seguenti sono vuote nei tuoi appunti: le ho scritte dalla letteratura.*
 
