@@ -9,6 +9,7 @@ on:
     branches: [main]
     paths:
       - 'js/**/studio-appunti.js'
+      - 'js/**/appunti/*.js'
       - scripts/audiolibri.json
       - scripts/testi_appunti.mjs
       - scripts/audio_appunti.py
