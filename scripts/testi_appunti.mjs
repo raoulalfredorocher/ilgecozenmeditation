@@ -15,6 +15,9 @@ const ORDINALI = { I: 'primo', II: 'secondo', III: 'terzo', IV: 'quarto', V: 'qu
 
 const ORD_F = { 1: 'prima', 2: 'seconda', 3: 'terza', 4: 'quarta', 5: 'quinta', 6: 'sesta', 7: 'settima', 8: 'ottava', 9: 'nona', 10: 'decima', 11: 'undicesima', 12: 'dodicesima', 17: 'diciassettesima' };
 
+// Parole dopo le quali un intervallo si legge "14, 17" e non "da 14 a 17"
+const PRIMA_DI_INTERVALLO = /^(il|lo|la|i|gli|le|l|di|del|dei|delle|degli|a|al|ai|alle|agli|in|nel|nei|nelle|con|su|per|tra|fra|circa|oltre|sono|ultime|ultimi|prime|primi|fare|fai|ogni|e|o)$/i;
+
 const fine = s => (/[.!?:;…"»)]$/.test(s) ? s : s + '.');
 
 function parlato(riga) {
@@ -27,7 +30,10 @@ function parlato(riga) {
     .replace(/S\.p\.A\./g, 'S.p.A')
     .replace(/(\d)\s*°C\b/g, '$1 gradi')
     .replace(/\b(\d+)×(\d+)-(\d+)-(\d+)\b/g, '$1 serie da $2, $3 e $4').replace(/\b(\d+)×(\d+)\b/g, '$1 per $2')
-    .replace(/\b([A-Z]?\d+(?:,\d+)?)\s*–\s*([A-Z]?\d+(?:,\d+)?)/g, 'da $1 a $2')
+    .replace(/(?:\b(\p{L}+) )?\b([A-Z]?\d+(?:,\d+)?)\s*–\s*([A-Z]?\d+(?:,\d+)?)/gu, (m, p, a, b) =>
+      // "da 6–10" → "da 6 a 10"; dopo articoli e preposizioni ("il 14–17%", "con 5–10 serie") → "14, 17"
+      !p ? `da ${a} a ${b}` : p.toLowerCase() === 'da' ? `${p} ${a} a ${b}`
+      : PRIMA_DI_INTERVALLO.test(p) ? `${p} ${a}, ${b}` : `${p} da ${a} a ${b}`)
     .replace(/\b(\d+)ª/g, (m, n) => ORD_F[n] || m).replace(/\b(\d+)°(?! \p{L})/gu, '$1 gradi')
     .replace(/\b(\d+):(\d\d) al km\b/g, '$1 minuti e $2 al chilometro')
     .replace(/\b1RM\b/g, 'massimale').replace(/VO2max/g, 'V O 2 max')
@@ -46,6 +52,7 @@ function testoParlato(testo) {
     riga = riga.trim();
     if (!riga || /^Fonti:/.test(riga)) continue;
     if (riga.startsWith('## ')) { out.push('', fine(parlato(riga.slice(3))), ''); continue; }
+    if (riga.startsWith('### ')) { out.push('', fine(parlato(riga.slice(4))), ''); continue; }
     riga = riga.replace(/^>\s*/, '').replace(/^-\s+/, '').replace(/^(\d+)\.\s+/, (m, n) => `${NUMERI[+n] || n}: `);
     const p = parlato(riga);
     if (p) out.push(fine(p));
