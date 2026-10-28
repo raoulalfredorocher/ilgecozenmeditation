@@ -49,7 +49,7 @@ La scienza pone anche enfasi su alcuni comportamenti che aiutano ad aumentare il
 
 ## Cosa dice la scienza
 
-## La flessibilità batte la perfezione
+### La flessibilità batte la perfezione
 
 La prima frase dei tuoi appunti è anche la più solida. Gli psicologi dell'alimentazione distinguono due modi di controllarsi a tavola. Il **controllo rigido** ragiona per divieti assoluti: quel cibo non si tocca, quel giorno è rovinato, da lunedì si ricomincia. Il **controllo flessibile** ragiona per quantità e per equilibrio: oggi ho mangiato di più, domani compenso un po', e la settimana resta buona.
 
@@ -57,11 +57,11 @@ Negli studi di Joachim Westenhoefer e colleghi, su migliaia di persone, chi usa 
 
 Per questo la regola delle settimane allo 0% funziona. Una settimana all'80% ripetuta per un anno vale molto di più di tre settimane perfette seguite da un mese di abbandono.
 
-## Le abitudini si costruiscono con la ripetizione
+### Le abitudini si costruiscono con la ripetizione
 
 Uno studio dell'University College di Londra (Lally e colleghi, 2010) ha seguito persone che volevano prendere una nuova abitudine, come mangiare un frutto a pranzo o bere un bicchiere d'acqua al mattino. Per diventare automatica, un'abitudine ha richiesto in media **66 giorni**, con una variazione enorme: da 18 a oltre 250. Saltare un giorno ogni tanto **non** ha cambiato il risultato. Conta ripetere lo stesso gesto nello stesso contesto, non essere perfetti.
 
-## I singoli principi, uno per uno
+### I singoli principi, uno per uno
 
 - **Zuccheri**: l'Organizzazione Mondiale della Sanità chiede di tenere gli zuccheri liberi (quelli aggiunti, più quelli di miele, sciroppi e succhi) sotto il 10% delle calorie, meglio sotto il 5%: per un adulto circa 25 grammi al giorno, cinque o sei cucchiaini. L'American Heart Association indica al massimo 36 grammi al giorno per l'uomo e 25 per la donna. Una sola lattina di bibita ne contiene circa 35.
 - **Cereali integrali**: circa 90 grammi al giorno di cereali integrali, cioè tre porzioni, si associano a una mortalità più bassa del 17% e a meno malattie di cuore (meta-analisi di Aune sul British Medical Journal, 2016). Il capitolo sui carboidrati spiega perché.
@@ -71,7 +71,7 @@ Uno studio dell'University College di Londra (Lally e colleghi, 2010) ha seguito
 - **Camminata dopo i pasti**: anche 2-5 minuti di cammino leggero abbassano il picco di glicemia rispetto a restare seduti (Buffey e colleghi, 2022). I muscoli delle gambe, contraendosi, prendono glucosio dal sangue anche senza insulina. I 10 minuti dei tuoi appunti bastano e avanzano.
 - **Alcol**: per l'OMS (2023) non esiste una quantità sicura; l'alcol è cancerogeno di gruppo 1 per l'Agenzia internazionale per la ricerca sul cancro. Ne parliamo nel capitolo sulle scelte per la vita.
 
-## Potenziativo e depotenziativo
+### Potenziativo e depotenziativo
 
 La tua distinzione tra cibi potenziativi e depotenziativi corrisponde abbastanza bene a quella usata oggi dalla ricerca: **cibi poco lavorati** contro **cibi ultra-processati**. Con una precisazione: non sono i singoli cibi a decidere la salute, ma lo **schema** che si ripete nei mesi. Un cornetto alla settimana dentro una dieta mediterranea non cambia nulla; un cornetto ogni mattina sì. Le linee guida moderne, dall'OMS all'AHA, parlano infatti di **modelli alimentari**, non di cibi proibiti.
 
@@ -90,11 +90,11 @@ Nei miei appunti la regola diventa: **50% frutta e verdura di stagione, 25% carb
 
 ## Cosa dice la scienza
 
-## Da dove viene il piatto
+### Da dove viene il piatto
 
 Il piatto sano di Harvard è stato pubblicato nel 2011 dalla Harvard T.H. Chan School of Public Health, guidata allora da Walter Willett, proprio per correggere i limiti del piatto ufficiale americano di quell'anno, che metteva sullo stesso piano tutti i cereali, tutte le proteine e consigliava latte a ogni pasto. Il piatto di Harvard parte invece dagli studi di popolazione più grandi mai fatti sull'alimentazione: il Nurses' Health Study e lo Health Professionals Follow-up Study, oltre duecentomila persone seguite per decenni.
 
-## Le differenze che contano
+### Le differenze che contano
 
 - **Le patate non contano come verdura.** Hanno un effetto sulla glicemia simile a quello del pane bianco e, negli studi di Harvard, chi ne mangia di più, soprattutto fritte, prende più peso negli anni. Vanno nel quarto dei carboidrati.
 - **I cereali devono essere integrali**, non solo "cereali". Pane bianco e riso bianco si comportano quasi come zucchero.
@@ -103,7 +103,7 @@ Il piatto sano di Harvard è stato pubblicato nel 2011 dalla Harvard T.H. Chan S
 - **I grassi non vanno evitati**: va scelto il tipo. L'olio extravergine è nel piatto, non fuori.
 - Sotto il piatto c'è sempre l'**attività fisica**.
 
-## Perché metà piatto di verdura
+### Perché metà piatto di verdura
 
 Una meta-analisi di Dagfinn Aune e colleghi (2017, 95 studi, due milioni di persone) mostra che il rischio di malattie di cuore, ictus, tumori e morte continua a scendere fino a circa **800 grammi** di frutta e verdura al giorno, il doppio dei 400 grammi minimi indicati dall'OMS. Ogni 200 grammi in più al giorno il rischio di morte si riduce di circa il 10%. Gli autori stimano che nel mondo quasi otto milioni di morti premature all'anno siano legate a un consumo sotto gli 800 grammi.
 
@@ -111,7 +111,7 @@ Riempire metà piatto di verdura ha anche un effetto pratico: abbassa la **densi
 
 Le verdure più associate ai benefici sono le **crucifere** (broccoli, cavoli, cavolfiore, rucola), le **verdure a foglia verde**, quelle **gialle e arancioni** (carote, zucca, peperoni) e i **pomodori**; tra la frutta mele, pere, agrumi e frutti di bosco.
 
-## Come usarlo davvero
+### Come usarlo davvero
 
 Il piatto non va preso alla lettera a ogni pasto. Una colazione con yogurt, avena e frutta, o una pasta e ceci con l'insalata accanto, rispettano lo stesso equilibrio anche se non sono "divise in quattro". Le linee guida italiane (CREA, 2018) usano la stessa logica: in ogni pasto principale un cereale, meglio integrale; verdura in abbondanza; una fonte proteica che ruota nella settimana; olio extravergine come condimento.
 
@@ -356,23 +356,23 @@ Le proteine sono i mattoni della vita. Si trovano in quasi tutti gli alimenti; t
 
 ## Cosa dice la scienza
 
-## Un cantiere sempre aperto
+### Un cantiere sempre aperto
 
 Il turnover dei tuoi appunti è più grande di quanto si immagini. Un adulto costruisce e smonta ogni giorno circa **250-300 grammi** di proteine, molte più di quelle che mangia. Funziona perché gran parte degli aminoacidi liberati dalla demolizione viene riciclata. Quello che mangiamo serve a coprire la parte che si perde, a fornire gli aminoacidi essenziali e a dare lo stimolo per costruire di più.
 
 Non tutti i tessuti girano alla stessa velocità. Le cellule dell'intestino si rinnovano in pochi giorni; gli enzimi del fegato in ore; il **muscolo** più lentamente, circa l'1-2% al giorno; il collagene di tendini e ossa ancora più lento. Per questo il muscolo risponde all'alimentazione e all'allenamento in settimane e mesi, non in giorni.
 
-## Il muscolo come bilancia
+### Il muscolo come bilancia
 
 La massa muscolare dipende dal saldo tra costruzione e demolizione. A digiuno il saldo è negativo: il corpo smonta un po' di muscolo per avere aminoacidi. Dopo un pasto proteico diventa positivo. Nell'arco della giornata i due momenti si compensano, e il muscolo resta uguale.
 
 L'**allenamento con i pesi** sposta la bilancia: rende il muscolo più sensibile agli aminoacidi per **24-48 ore**. Se in quelle ore arrivano abbastanza proteine, il saldo della giornata diventa positivo e, ripetuto per settimane, si traduce in muscolo nuovo. Senza allenamento, mangiare più proteine non costruisce muscolo: si usano come energia. Senza proteine sufficienti, l'allenamento costruisce meno.
 
-## Le proteine come energia
+### Le proteine come energia
 
 Le proteine danno **4 kcal per grammo**, come i carboidrati. Il corpo però non le usa volentieri come carburante: per bruciarle deve prima togliere l'azoto, che il fegato trasforma in urea e i reni eliminano. È un lavoro che costa energia: circa il **20-30%** delle calorie delle proteine si spende per digerirle e trasformarle, contro il 5-10% dei carboidrati e lo 0-3% dei grassi. È uno dei motivi per cui una dieta più ricca di proteine aiuta nel dimagrimento.
 
-## Correzioni e aggiunte
+### Correzioni e aggiunte
 
 - *Correzione piccola*: il DNA non è fatto di proteine, è un acido nucleico. Le proteine servono a copiarlo, leggerlo e ripararlo.
 - La qualità di una proteina oggi si misura con il **DIAAS**, proposto dalla FAO nel 2013, che guarda sia il profilo di aminoacidi sia quanto viene davvero digerito alla fine dell'intestino tenue. Latte, uova e carne superano 100; la soia è intorno a 90; piselli, ceci e fagioli tra 60 e 80; i cereali tra 40 e 60. Il valore riguarda il singolo alimento: combinare fonti diverse nella giornata alza la qualità complessiva, perché ciò che manca a una fonte lo porta l'altra.
@@ -409,19 +409,19 @@ Gli alimenti animali hanno il profilo più completo; quelli vegetali sono spesso
 
 ## Cosa dice la scienza
 
-## L'aminoacido limitante
+### L'aminoacido limitante
 
 Immagina di costruire una collana con perle di nove colori, e che ogni collana ne richieda un numero preciso per colore. Puoi fare tante collane quante te ne permette il colore di cui hai meno perle. In nutrizione quel colore si chiama **aminoacido limitante**: nei cereali è la lisina, nei legumi la metionina e la cisteina. È per questo che pasta e fagioli, riso e lenticchie, pane e hummus sono abbinamenti antichi in tutte le cucine del mondo: si completano.
 
 Non serve però metterli nello stesso piatto. Il corpo ha una piccola riserva di aminoacidi liberi nel sangue e nei tessuti, che si rinnova in poche ore: basta che cereali e legumi arrivino nella **stessa giornata**.
 
-## La leucina, l'interruttore
+### La leucina, l'interruttore
 
 Tra gli essenziali, la leucina ha un ruolo speciale. Non è solo un mattone: è anche un **segnale** che accende la via chiamata mTOR, il "sì, costruisci" delle cellule muscolari. Gli studi indicano che per accendere bene la sintesi muscolare servono circa **2-3 grammi di leucina** a pasto. Li danno 25-30 grammi di proteine animali, oppure un po' di più di proteine vegetali, perché ne contengono di meno: 30 grammi di proteine del siero hanno circa 3 grammi di leucina; per arrivare alla stessa cifra con le lenticchie ne serve quasi mezzo chilo, cotte. Per questo le proteine della soia, del latte e delle uova sono così pratiche per chi si allena.
 
 Con l'età il muscolo diventa meno sensibile, ciò che i ricercatori chiamano "resistenza anabolica": dopo i sessant'anni servono pasti con più proteine e più leucina per ottenere la stessa risposta.
 
-## Gli integratori di aminoacidi
+### Gli integratori di aminoacidi
 
 - **BCAA** (leucina, isoleucina e valina): da soli non bastano a costruire muscolo, perché mancano gli altri sei essenziali. Se le proteine della giornata sono sufficienti, sono soldi buttati.
 - **Glutammina**: è l'aminoacido più abbondante nel sangue e il corpo ne produce molta. Come integratore non migliora la composizione corporea né la forza negli adulti sani.
@@ -455,30 +455,30 @@ Per il pesce, guarda la zona FAO in etichetta: **preferire** FAO 37 (Mediterrane
 
 ## Cosa dice la scienza
 
-## Il "pacchetto" conta quanto la proteina
+### Il "pacchetto" conta quanto la proteina
 
 Le proteine non arrivano mai da sole: ogni fonte porta con sé un pacchetto di altri nutrienti, ed è quel pacchetto a fare la differenza sulla salute. Cento grammi di lenticchie cotte danno circa 9 grammi di proteine insieme a 8 grammi di fibra, ferro, folati e quasi niente grassi saturi. Cento grammi di salame danno circa 25 grammi di proteine insieme a 4-5 grammi di sale, nitriti e molti saturi. Per questo gli studi trovano che **sostituire** la carne rossa con legumi, frutta secca o pesce riduce il rischio cardiovascolare, anche a parità di proteine (AHA 2021; studi di Harvard su oltre centomila persone).
 
-## Carne rossa e carni lavorate
+### Carne rossa e carni lavorate
 
 - **Carni lavorate** (salumi, wurstel, carni in scatola, carni affumicate): l'Agenzia internazionale per la ricerca sul cancro le ha classificate nel 2015 come **cancerogene di gruppo 1**, la stessa categoria del fumo per quanto riguarda la certezza delle prove, non per l'entità del rischio. Ogni 50 grammi al giorno, una porzione di prosciutto, il rischio di tumore del colon sale del 18% circa.
 - **Carne rossa** non lavorata: gruppo **2A**, probabilmente cancerogena; circa il 17% in più ogni 100 grammi al giorno.
 - Il World Cancer Research Fund indica al massimo **350-500 grammi di carne rossa cotta a settimana** e il meno possibile di carni lavorate.
 - I meccanismi ipotizzati: il ferro eme, i nitriti e le nitrosammine, le sostanze che si formano nelle cotture ad alta temperatura.
 
-## Il pesce
+### Il pesce
 
 - **Benefici**: una revisione di Mozaffarian e Rimm (JAMA 2006) ha stimato che 1-2 porzioni a settimana di pesce, soprattutto grasso, riducono di circa un terzo le morti per malattie di cuore. Il pesce porta omega-3, vitamina D, iodio e selenio.
 - **Mercurio**: si accumula nei pesci grandi e predatori che vivono a lungo, come pesce spada, tonno rosso, squalo, verdesca. Il pesce piccolo e azzurro (alici, sardine, sgombro, aringhe) ne ha poco ed è il più ricco di omega-3. Per l'EFSA i benefici di 1-4 porzioni a settimana superano i rischi, a patto di variare le specie.
 - **Allevato o pescato**: il salmone e l'orata d'allevamento sono più grassi di quelli selvatici e spesso portano una quantità di omega-3 paragonabile, che dipende molto dal mangime; contano la filiera e i controlli, più dell'etichetta "selvaggio".
 - Le **zone FAO** dicono **dove** è stato pescato, non quanto è inquinato o sostenibile il singolo prodotto: sono un buon criterio di filiera, non una garanzia di qualità. Marchi di certificazione della pesca sostenibile danno un'informazione in più.
 
-## Uova e latticini
+### Uova e latticini
 
 - **Uova**: tra le proteine di qualità più alta e più economiche. Un uovo ha circa 6 grammi di proteine, colina, vitamina B12, luteina. Per le persone sane, fino a un uovo al giorno non si associa a più malattie di cuore (AHA 2019).
 - **Latticini**: yogurt e kefir si associano a meno diabete di tipo 2 negli studi di popolazione. Yogurt greco, skyr, quark e fiocchi di latte hanno 10-12 grammi di proteine per 100 grammi con pochi grassi. I formaggi stagionati sono ottimi ma densi di grassi e sale: si usano come condimento, una grattugiata, più che come secondo.
 
-## Proteine vegetali
+### Proteine vegetali
 
 - **Soia**: tofu, tempeh, edamame, bevanda di soia. Proteina quasi completa; negli studi sugli sportivi integrare soia o proteine del latte ha dato gli stessi aumenti di forza e massa magra (meta-analisi di Messina, 2018).
 - **Legumi**: la fonte vegetale più completa dal punto di vista nutrizionale, ma anche la più trascurata. Le linee guida italiane ne chiedono 2-4 porzioni a settimana; gli studi sulla longevità li trovano in tutte le popolazioni più longeve.
@@ -502,11 +502,11 @@ Al contrario, è doveroso abbinare **cereali e legumi**.
 
 **Da correggere.** Le regole di "dieta dissociata" non hanno basi scientifiche. Questa è una delle pagine dei tuoi appunti in cui la scienza dice cose molto diverse, quindi vale la pena capire perché.
 
-## Da dove nasce l'idea
+### Da dove nasce l'idea
 
 La dieta dissociata è stata proposta negli anni Venti dal medico americano William Hay, e poi ripresa da molti libri di dieta. L'idea era che proteine e carboidrati richiedano ambienti diversi: le proteine un ambiente acido, i carboidrati uno basico. Mangiarli insieme avrebbe "bloccato" la digestione, con fermentazioni e scorie.
 
-## Come funziona davvero la digestione
+### Come funziona davvero la digestione
 
 Il nostro apparato digerente è fatto per i pasti misti, perché quasi tutti i cibi naturali lo sono già: i legumi contengono insieme amido e proteine, il latte lattosio, grassi e proteine, i cereali amido e proteine. La digestione funziona a tappe:
 
@@ -516,18 +516,18 @@ Il nostro apparato digerente è fatto per i pasti misti, perché quasi tutti i c
 
 Non esiste un "conflitto" tra enzimi. In uno studio controllato (Golay e colleghi, 2000) la dieta dissociata e una dieta mista con le stesse calorie hanno fatto perdere esattamente lo stesso peso in sei settimane. Chi dimagrisce con la dieta dissociata dimagrisce perché, con tante regole, finisce per mangiare meno.
 
-## L'abbinamento fa bene alla glicemia
+### L'abbinamento fa bene alla glicemia
 
 C'è un motivo per fare il contrario dei tuoi appunti: mettere **proteine, fibre e grassi** accanto ai carboidrati **abbassa** il picco di glicemia, perché rallenta lo svuotamento dello stomaco e stimola gli ormoni della sazietà. Pasta con legumi o con pesce, pane con formaggio, riso con verdure e uova: sono pasti che saziano di più e alzano meno la glicemia della pasta in bianco.
 
-## Cosa resta vero, e anzi è importante
+### Cosa resta vero, e anzi è importante
 
 - **Cereali e legumi** si completano, come hai scritto. Non serve metterli nello stesso piatto, basta la stessa giornata (Academy of Nutrition and Dietetics, 2016).
 - **Verdura e limone a ogni pasto**: la vitamina C trasforma il ferro dei vegetali in una forma che l'intestino assorbe meglio, fino a tre o quattro volte di più (Hallberg). Un'insalata di peperoni con le lenticchie, il prezzemolo sui ceci, un'arancia dopo il pasto.
 - **Tè e caffè durante il pasto** riducono l'assorbimento del ferro dei vegetali anche di più della metà, a causa dei polifenoli. Se ti serve ferro, bevili almeno un'ora prima o dopo i pasti.
 - **Il calcio** compete con il ferro: un grande bicchiere di latte con un piatto di legumi ne riduce un po' l'assorbimento. Per chi non ha problemi di ferro non conta.
 
-## Gli altri abbinamenti dei tuoi appunti
+### Gli altri abbinamenti dei tuoi appunti
 
 - **Uovo e spinaci**: gli spinaci contengono ossalati che legano il loro stesso calcio e ferro: degli spinaci si assorbe solo circa il 5% del calcio. Questo dice che gli spinaci non sono una buona fonte di calcio, non che l'abbinamento con l'uovo sia dannoso.
 - **Latte e caffè**: le proteine del latte legano un po' i polifenoli del caffè, ma non ci sono effetti documentati sulla salute. Il cappuccino va benissimo.
@@ -541,7 +541,7 @@ Nei tuoi appunti: il valore biologico è quanto un cibo assomiglia alla nostra s
 
 ## Cosa dice la scienza
 
-## Il minimo e l'ottimo
+### Il minimo e l'ottimo
 
 - **Sedentari**: 0,9 grammi per chilo al giorno per i LARN; 0,83 per l'EFSA. È la quantità che evita di perdere tessuto nella maggior parte delle persone: un **minimo**, non l'ottimo per chi si allena.
 - **Chi si allena con i pesi**: **1,4-2,0 grammi per chilo** al giorno (International Society of Sports Nutrition, 2017). La meta-analisi di Morton e colleghi (2018, 49 studi, quasi duemila persone) vede che i guadagni di massa magra crescono fino a circa **1,6 grammi per chilo** e poi si appiattiscono, con un margine fino a 2,2 per chi vuole stare sicuro.
@@ -550,22 +550,22 @@ Nei tuoi appunti: il valore biologico è quanto un cibo assomiglia alla nostra s
 
 Per un uomo di 80 chili che si allena, 1,6 grammi per chilo sono circa 130 grammi al giorno.
 
-## Come distribuirle
+### Come distribuirle
 
 - **3-5 pasti** con circa **0,3-0,4 grammi per chilo** ciascuno: per 80 chili, 25-35 grammi a pasto, ogni 3-5 ore. Per arrivare a 1,6 grammi per chilo servono almeno quattro pasti da 0,4 (Schoenfeld e Aragon, 2018).
 - **Il "tetto" dei 30 grammi non esiste.** Uno studio di Maastricht (Trommelen e colleghi, 2023) ha dato dopo l'allenamento 25 oppure 100 grammi di proteine in un solo pasto: con 100 grammi la sintesi muscolare è stata più alta e durata oltre 12 ore. Il corpo non "spreca" le proteine in più, le usa più a lungo. Distribuirle resta comodo e utile, ma un pasto ricco non è un errore.
 - **Prima di dormire**: in uno studio di 12 settimane (Snijders e colleghi, 2015) chi prendeva circa 27 grammi di proteine la sera prima di dormire ha guadagnato più forza e più muscolo di chi prendeva un placebo. Lo yogurt greco, lo skyr, il quark o i fiocchi di latte sono la versione in cibo, perché la caseina si digerisce lentamente.
 - **Dopo l'allenamento**: la "finestra anabolica" di trenta minuti è molto più larga di quanto si credeva. Conta mangiare un pasto proteico nelle ore prima o dopo, non correre al frullato.
 
-## Esempi pratici
+### Esempi pratici
 
 Circa 30 grammi di proteine stanno in: 250 grammi di yogurt greco o skyr; 4 uova e un albume; 120 grammi di petto di pollo, pesato crudo; 170 grammi di merluzzo; 200 grammi di tofu sodo; 250 grammi di lenticchie cotte con 60 grammi di pasta integrale; 300 grammi di fiocchi di latte.
 
-## Vegetariani
+### Vegetariani
 
 Le proteine vegetali sono un po' meno digeribili e più povere di leucina. Stare nella parte alta degli intervalli, come i tuoi +0,2 grammi per chilo, è una regola ragionevole, anche se non esiste un numero ufficiale. La buona notizia viene da uno studio dell'Università di San Paolo (Hevia-Larraín e colleghi, 2021): vegani e onnivori, entrambi a 1,6 grammi per chilo, hanno guadagnato **la stessa massa e la stessa forza** in 12 settimane di pesi. Con abbastanza proteine, la fonte conta poco.
 
-## I reni e le ossa
+### I reni e le ossa
 
 - Una meta-analisi di 28 studi (Devries e colleghi, 2018) non ha trovato effetti negativi delle diete ricche di proteine, sopra 1,5 grammi per chilo, sulla funzione dei **reni** in persone sane. Chi ha già una malattia renale è un caso diverso.
 - Le proteine non "rubano" calcio alle **ossa**: con abbastanza calcio nella dieta, più proteine si associano a ossa più forti.
