@@ -1,0 +1,121 @@
+{
+ "voce": "it-IT-IsabellaNeural",
+ "pagine": {
+  "tr-perche": {
+   "h": "b09e4144639d",
+   "s": 132
+  },
+  "tr-cinque-secondi": {
+   "h": "27c62d770d77",
+   "s": 81
+  },
+  "tr-parametri": {
+   "h": "a6e3a2c4c12c",
+   "s": 171
+  },
+  "tr-progressione": {
+   "h": "acf4e2f41097",
+   "s": 113
+  },
+  "tr-periodizzazione": {
+   "h": "ea5fca9b0a3e",
+   "s": 187
+  },
+  "tr-esaurimento": {
+   "h": "b5a5ffece505",
+   "s": 156
+  },
+  "tr-esercizi": {
+   "h": "52273c33b8ea",
+   "s": 273
+  },
+  "tr-nutrizione": {
+   "h": "3b9727b2fa21",
+   "s": 174
+  },
+  "tr-endocrino": {
+   "h": "1c84ed23db58",
+   "s": 100
+  },
+  "tr-steroidei": {
+   "h": "87a99e94f4cc",
+   "s": 161
+  },
+  "tr-peptidici": {
+   "h": "73c1ffda1f2e",
+   "s": 170
+  },
+  "tr-catecolamine": {
+   "h": "a4a8a0eefc0a",
+   "s": 133
+  },
+  "tr-altri-ormoni": {
+   "h": "ba744f704a47",
+   "s": 103
+  },
+  "tr-pesi-cardio": {
+   "h": "e5b38dd1b43c",
+   "s": 134
+  },
+  "tr-addominali": {
+   "h": "c27a7a4aa76d",
+   "s": 141
+  },
+  "tr-dorso": {
+   "h": "a1106cf99f36",
+   "s": 150
+  },
+  "tr-spalle": {
+   "h": "4454f7b5ee29",
+   "s": 83
+  },
+  "tr-petto": {
+   "h": "eb34008549a4",
+   "s": 103
+  },
+  "tr-bicipiti": {
+   "h": "0d1cb60db9a9",
+   "s": 108
+  },
+  "tr-tricipiti": {
+   "h": "ac4da8f165dd",
+   "s": 84
+  },
+  "tr-gambe": {
+   "h": "0b4b8e88e447",
+   "s": 106
+  },
+  "tr-femorali": {
+   "h": "52451d6eb190",
+   "s": 115
+  },
+  "tr-polpacci": {
+   "h": "f21ae8bde631",
+   "s": 81
+  },
+  "tr-miei-esercizi": {
+   "h": "50e6680dc92e",
+   "s": 187
+  },
+  "tr-resistenza": {
+   "h": "cd9160d3a486",
+   "s": 128
+  },
+  "tr-hiit": {
+   "h": "ae25e5924ff9",
+   "s": 161
+  },
+  "tr-liss": {
+   "h": "5c807500d01f",
+   "s": 151
+  },
+  "tr-bici": {
+   "h": "44cd0a907ee4",
+   "s": 190
+  },
+  "tr-flessibilita": {
+   "h": "a07b095ed70f",
+   "s": 134
+  }
+ }
+}
