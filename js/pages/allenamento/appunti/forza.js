@@ -57,18 +57,6 @@ Circuito light, 3 giri:
 - Retto e obliqui sono muscoli come gli altri: crescono con serie dure e progressione del carico (crunch ai cavi, macchine), non con centinaia di ripetizioni. Anche per loro valgono le 10–20 serie a settimana.
 - Il **core** si allena molto anche con squat, stacchi e farmer walk; plank e side plank sono ottimi per la stabilità e la salute della schiena (le prove migliori per chi ha la lombalgia).
 - Il trasverso lavora soprattutto come "cintura" di stabilità: si attiva tirando l'ombelico verso la colonna e respirando con il diaframma.` },
-    { id: 'tr-spalle', titolo: 'Spalle', testo: `
-Gli esercizi su cui baso l'allenamento delle spalle sono:
-
-- Military press.
-- Shoulder press.
-- Alzate laterali.
-
-## Cosa dice la ricerca
-- Il **deltoide** ha tre fasci: **anteriore** (porta il braccio avanti: lavora già molto in panca e spinte), **laterale** (lo alza di lato: dà la larghezza delle spalle, si allena con le alzate laterali) e **posteriore** (lo porta indietro: rematori, face pull, alzate a busto flesso, reverse pec deck).
-- Il fascio laterale e quello posteriore sono i più trascurati: le alzate laterali ai cavi o con i manubri e i face pull meritano serie dedicate; molte serie di spinte bastano invece per il fascio anteriore.
-- La **cuffia dei rotatori** (sovraspinato, sottospinato, piccolo rotondo, sottoscapolare) tiene la testa dell'omero centrata nella spalla. Rotazioni esterne ai cavi e face pull la rinforzano e proteggono la spalla.
-- La spalla è l'articolazione più mobile e la più delicata: se un esercizio dà dolore, si cambia angolo, presa o attrezzo (manubri, macchine, cavi). Esistono quasi sempre varianti che allenano lo stesso muscolo senza fastidio.` },
     { id: 'tr-bicipiti', titolo: 'Bicipiti', testo: `
 Il bicipite brachiale è il muscolo più grande e superficiale della parte anteriore del braccio. Non è un singolo ventre muscolare: è composto da due capi che lavorano insieme.
 
