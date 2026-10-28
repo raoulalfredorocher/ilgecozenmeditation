@@ -73,17 +73,37 @@
    "h": "def46f9360fc",
    "s": 125
   },
+  "tr-dorso": {
+   "h": "5c84abd6f417",
+   "s": 300
+  },
+  "tr-gran-dorsale": {
+   "h": "4bb38b669f23",
+   "s": 693
+  },
+  "tr-trapezio": {
+   "h": "3bd8131f674b",
+   "s": 607
+  },
+  "tr-romboidi": {
+   "h": "81d817143b58",
+   "s": 581
+  },
+  "tr-erettori": {
+   "h": "4c600080faa8",
+   "s": 666
+  },
+  "tr-riepilogo-dorso": {
+   "h": "90b23a718226",
+   "s": 130
+  },
   "tr-pesi-cardio": {
-   "h": "0fbaa291d482",
+   "h": "77e6c71858bf",
    "s": 134
   },
   "tr-addominali": {
    "h": "bec387f4e3e4",
    "s": 141
-  },
-  "tr-dorso": {
-   "h": "a1106cf99f36",
-   "s": 150
   },
   "tr-spalle": {
    "h": "4454f7b5ee29",
@@ -114,8 +134,8 @@
    "s": 187
   },
   "tr-resistenza": {
-   "h": "2c2019e46b40",
-   "s": 127
+   "h": "19bbf21b2875",
+   "s": 128
   },
   "tr-hiit": {
    "h": "ae25e5924ff9",
@@ -130,7 +150,7 @@
    "s": 190
   },
   "tr-flessibilita": {
-   "h": "7e75f4cefd52",
+   "h": "10d59882c606",
    "s": 134
   }
  }
