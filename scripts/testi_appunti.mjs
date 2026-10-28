@@ -13,6 +13,8 @@ const ORDINALI = { I: 'primo', II: 'secondo', III: 'terzo', IV: 'quarto', V: 'qu
   VIII: 'ottavo', IX: 'nono', X: 'decimo', XI: 'undicesimo', XII: 'dodicesimo', XIII: 'tredicesimo', XIV: 'quattordicesimo',
   XV: 'quindicesimo', XVI: 'sedicesimo', XVII: 'diciassettesimo', XVIII: 'diciottesimo', XIX: 'diciannovesimo', XX: 'ventesimo', XXI: 'ventunesimo' };
 
+const ORD_F = { 1: 'prima', 2: 'seconda', 3: 'terza', 4: 'quarta', 5: 'quinta', 6: 'sesta', 7: 'settima', 8: 'ottava', 9: 'nona', 10: 'decima', 11: 'undicesima', 12: 'dodicesima', 17: 'diciassettesima' };
+
 const fine = s => (/[.!?:;…"»)]$/.test(s) ? s : s + '.');
 
 function parlato(riga) {
@@ -23,6 +25,16 @@ function parlato(riga) {
     .replace(/\ba\.C\./g, 'avanti Cristo').replace(/\bd\.C\./g, 'dopo Cristo')
     .replace(/\(es\. /g, '(ad esempio ').replace(/\becc\./g, 'eccetera')
     .replace(/S\.p\.A\./g, 'S.p.A')
+    .replace(/(\d)\s*°C\b/g, '$1 gradi')
+    .replace(/\b(\d+)×(\d+)-(\d+)-(\d+)\b/g, '$1 serie da $2, $3 e $4').replace(/\b(\d+)×(\d+)\b/g, '$1 per $2')
+    .replace(/\b([A-Z]?\d+(?:,\d+)?)\s*–\s*([A-Z]?\d+(?:,\d+)?)/g, 'da $1 a $2')
+    .replace(/\b(\d+)ª/g, (m, n) => ORD_F[n] || m).replace(/\b(\d+)°(?! \p{L})/gu, '$1 gradi')
+    .replace(/\b(\d+):(\d\d) al km\b/g, '$1 minuti e $2 al chilometro')
+    .replace(/\b1RM\b/g, 'massimale').replace(/VO2max/g, 'V O 2 max')
+    .replace(/(\d)\s*µg\b/g, '$1 microgrammi').replace(/(\d)\s*mg\/dl\b/gi, '$1 milligrammi per decilitro').replace(/(\d)\s*mg\b/g, '$1 milligrammi')
+    .replace(/(\d)\s*mmHg\b/g, '$1 millimetri di mercurio').replace(/(\d)\s*ml\b/g, '$1 millilitri').replace(/(\d)\s*UI\b/g, '$1 unità internazionali').replace(/(\d)\s*°C\b/g, '$1 gradi')
+    .replace(/\bg\/kg\b/g, 'grammi per chilo').replace(/(\d)\s*g\b/g, '$1 grammi').replace(/\bkcal\b/g, 'chilocalorie').replace(/(\d)\s*kg\b/g, '$1 chili').replace(/\bkg\b/g, 'chili').replace(/\bkm\b/g, 'chilometri')
+    .replace(/\s+·(?=\s|$)/g, '')
     .replace(/\s*→\s*/g, ', poi ').replace(/\b(\d+)-(\d+)\b/g, 'da $1 a $2').replace(/\s*=\s*/g, ' uguale ').replace(/\s*\+\s*/g, ' più ')
     .replace(/[–—]/g, ',')
     .replace(/\s+/g, ' ').trim();
@@ -32,7 +44,7 @@ function testoParlato(testo) {
   const out = [];
   for (let riga of testo.trim().split('\n')) {
     riga = riga.trim();
-    if (!riga) continue;
+    if (!riga || /^Fonti:/.test(riga)) continue;
     if (riga.startsWith('## ')) { out.push('', fine(parlato(riga.slice(3))), ''); continue; }
     riga = riga.replace(/^>\s*/, '').replace(/^-\s+/, '').replace(/^(\d+)\.\s+/, (m, n) => `${NUMERI[+n] || n}: `);
     const p = parlato(riga);

@@ -14,6 +14,7 @@
   <script src="js/ui/theme-boot.js"></script>
   <link rel="stylesheet" href="styles/tokens.css"/>
   <link rel="stylesheet" href="styles/zen.css"/>
+  <link rel="stylesheet" href="styles/libro.css"/>
   <style>
     .tab-panel { display: flex; flex-direction: column; gap: var(--space-5); }
     .tab-panel[hidden] { display: none; }
@@ -225,10 +226,12 @@
   </style>
 </head>
 <!--
-  Allenamento: tre schede.
+  Allenamento: quattro schede.
     (il registro delle sessioni fatte è nel calendario centrale: js/pages/allenamento/sessione.js)
     Schede   → js/pages/allenamento/schede.js     allenamenti → schede → esercizi (si riordinano trascinando)
     Avvia    → js/pages/allenamento/avvia.js + guida.js   la guida a tutto schermo durante l'allenamento
+    Studio   → js/libro/studio.js + studio-lezioni.js     il percorso a lezioni
+    Appunti  → js/libro/studio.js + studio-appunti.js     gli appunti come libro, con l'audiolibro
   Il + della barra in basso preme #al-add, che esegue l'azione della scheda attiva.
 -->
 <body class="zen zen-native" data-title="Allenamento" data-add="#al-add">
@@ -245,13 +248,20 @@
       <div class="segmented" role="group" aria-label="Sezioni di Allenamento">
         <button type="button" data-tab-btn="schede" aria-pressed="true">Schede</button>
         <button type="button" data-tab-btn="avvia" aria-pressed="false">Avvia</button>
+        <button type="button" data-tab-btn="studio" aria-pressed="false">Studio</button>
+        <button type="button" data-tab-btn="appunti" aria-pressed="false">Appunti</button>
       </div>
     </div>
 
     <section class="tab-panel" id="tab-schede" aria-label="Schede"></section>
     <section class="tab-panel" id="tab-avvia" aria-label="Avvia" hidden></section>
+    <!-- Studio e Appunti: js/libro/studio.js (le viste le gestisce il motore, non .tab-panel) -->
+    <section class="lb-view" id="tab-studio" aria-label="Studio" hidden></section>
+    <section class="lb-view" id="tab-lezione" aria-label="Lezione" hidden></section>
+    <section class="lb-view" id="tab-appunti" aria-label="Appunti" hidden></section>
+    <div class="au-minibar" id="au-minibar" hidden></div>
 
-    <a class="al-cal" href="calendario.html">Gli allenamenti che hai fatto sono nel Calendario ›</a>
+    <a class="al-cal" id="al-cal" href="calendario.html">Gli allenamenti che hai fatto sono nel Calendario ›</a>
 
     <button type="button" id="al-add" hidden aria-hidden="true" tabindex="-1"></button>
   </main>
