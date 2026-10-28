@@ -18,8 +18,8 @@
    "s": 338
   },
   "al-sazieta": {
-   "h": "25063b59ff58",
-   "s": 303
+   "h": "a9ecf7e77027",
+   "s": 302
   },
   "al-etichette": {
    "h": "2c893b3140e5",
@@ -54,72 +54,116 @@
    "s": 149
   },
   "al-carboidrati": {
-   "h": "f9141f15153d",
-   "s": 182
+   "h": "beb3b8f67d9d",
+   "s": 397
   },
   "al-glicemia": {
-   "h": "b0403b96b49d",
-   "s": 136
+   "h": "157bd25e505e",
+   "s": 346
   },
   "al-integrali": {
-   "h": "3fb5c74a938f",
-   "s": 96
+   "h": "86036c3345c5",
+   "s": 281
   },
   "al-fibre": {
-   "h": "b563049da0c0",
-   "s": 133
+   "h": "d9d86c5bce14",
+   "s": 284
+  },
+  "al-microbiota": {
+   "h": "b5d4120e7784",
+   "s": 297
+  },
+  "al-zuccheri-dolcificanti": {
+   "h": "8ae189d32698",
+   "s": 323
+  },
+  "al-riepilogo-carboidrati": {
+   "h": "0785109b92da",
+   "s": 134
   },
   "al-grassi": {
-   "h": "efab7f0a7fce",
-   "s": 165
+   "h": "34daf1799668",
+   "s": 362
   },
   "al-saturi-trans": {
-   "h": "cc89e2f26c19",
-   "s": 189
+   "h": "7baf7e71d629",
+   "s": 377
   },
   "al-insaturi": {
-   "h": "7e2dde0b90f6",
-   "s": 180
+   "h": "fabcb6e810b8",
+   "s": 378
+  },
+  "al-colesterolo": {
+   "h": "dfe61ae234b6",
+   "s": 351
+  },
+  "al-olio-frutta-secca": {
+   "h": "1051e51660d1",
+   "s": 342
+  },
+  "al-riepilogo-grassi": {
+   "h": "c321dd03913c",
+   "s": 140
   },
   "al-vitamine-liposolubili": {
-   "h": "a33a05ce7b69",
-   "s": 259
+   "h": "f5238d520686",
+   "s": 435
   },
   "al-vitamine-b-c": {
-   "h": "ad9cfc5237f5",
-   "s": 247
+   "h": "40fdf6fdbfe7",
+   "s": 481
   },
   "al-macrominerali": {
-   "h": "acd80727b9ff",
-   "s": 205
+   "h": "bbed9b8ad16e",
+   "s": 411
   },
   "al-oligoelementi": {
-   "h": "491bdd795f66",
-   "s": 242
+   "h": "70b29bc5cea1",
+   "s": 400
   },
   "al-acqua": {
-   "h": "5163bcdaf55c",
-   "s": 111
+   "h": "432c911548db",
+   "s": 317
+  },
+  "al-fitonutrienti": {
+   "h": "5cb79bebb736",
+   "s": 339
+  },
+  "al-riepilogo-micro": {
+   "h": "b1447146b9d5",
+   "s": 143
   },
   "al-bilancio": {
-   "h": "314316112c29",
-   "s": 141
+   "h": "dd4cecf857d9",
+   "s": 361
   },
   "al-deficit": {
-   "h": "39ea74682cd9",
-   "s": 129
+   "h": "c69a0ae08e2b",
+   "s": 313
   },
   "al-cosa-mangiare": {
-   "h": "c1e799bad04f",
-   "s": 217
+   "h": "8ec96294d8d7",
+   "s": 416
   },
   "al-priorita": {
-   "h": "e89e9f526186",
-   "s": 114
+   "h": "346c463e9e07",
+   "s": 290
   },
   "al-movimento": {
-   "h": "8c73ca1ab272",
-   "s": 117
+   "h": "014945d529da",
+   "s": 282
+  },
+  "al-adattamento": {
+   "h": "ffa058c3b62e",
+   "s": 285
+  },
+  "al-mantenimento": {
+   "h": "b140f572eb3c",
+   "s": 286
+  },
+  "al-riepilogo-dimagrimento": {
+   "h": "fe10c7f98d6b",
+   "s": 135
   },
   "al-cottura": {
    "h": "07dab669d2eb",

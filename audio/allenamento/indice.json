@@ -97,25 +97,61 @@
    "h": "90b23a718226",
    "s": 130
   },
+  "tr-spalle": {
+   "h": "8c80ded4a9c7",
+   "s": 289
+  },
+  "tr-deltoide-anteriore": {
+   "h": "f831eb041d4a",
+   "s": 633
+  },
+  "tr-deltoide-laterale": {
+   "h": "8d4fb31ce815",
+   "s": 587
+  },
+  "tr-deltoide-posteriore": {
+   "h": "1536cedea310",
+   "s": 600
+  },
+  "tr-cuffia": {
+   "h": "b13e7ca7e83a",
+   "s": 659
+  },
+  "tr-riepilogo-spalle": {
+   "h": "d77230134da4",
+   "s": 124
+  },
+  "tr-braccia": {
+   "h": "c2b1ff632eed",
+   "s": 232
+  },
+  "tr-bicipiti": {
+   "h": "838a1005554d",
+   "s": 622
+  },
+  "tr-brachiale": {
+   "h": "5bfed929a206",
+   "s": 586
+  },
+  "tr-tricipiti": {
+   "h": "a681012321ae",
+   "s": 601
+  },
+  "tr-avambracci": {
+   "h": "7254c6d15a84",
+   "s": 577
+  },
+  "tr-riepilogo-braccia": {
+   "h": "7372ccf47e68",
+   "s": 123
+  },
   "tr-pesi-cardio": {
-   "h": "77e6c71858bf",
+   "h": "b4f36ab8e226",
    "s": 134
   },
   "tr-addominali": {
    "h": "bec387f4e3e4",
    "s": 141
-  },
-  "tr-spalle": {
-   "h": "4454f7b5ee29",
-   "s": 83
-  },
-  "tr-bicipiti": {
-   "h": "0d1cb60db9a9",
-   "s": 108
-  },
-  "tr-tricipiti": {
-   "h": "ac4da8f165dd",
-   "s": 84
   },
   "tr-gambe": {
    "h": "0b4b8e88e447",
@@ -134,7 +170,7 @@
    "s": 187
   },
   "tr-resistenza": {
-   "h": "19bbf21b2875",
+   "h": "cd116f5421c7",
    "s": 128
   },
   "tr-hiit": {
@@ -150,7 +186,7 @@
    "s": 190
   },
   "tr-flessibilita": {
-   "h": "10d59882c606",
+   "h": "1614a912c378",
    "s": 134
   }
  }
