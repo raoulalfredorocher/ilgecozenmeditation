@@ -2,7 +2,7 @@
  "voce": "it-IT-IsabellaNeural",
  "pagine": {
   "tr-perche": {
-   "h": "b09e4144639d",
+   "h": "3dbc5fb2151d",
    "s": 132
   },
   "tr-cinque-secondi": {
@@ -10,32 +10,32 @@
    "s": 81
   },
   "tr-parametri": {
-   "h": "a6e3a2c4c12c",
+   "h": "bc3086fab90f",
    "s": 171
   },
   "tr-progressione": {
-   "h": "acf4e2f41097",
-   "s": 113
+   "h": "e3833b266a92",
+   "s": 114
   },
   "tr-periodizzazione": {
-   "h": "ea5fca9b0a3e",
-   "s": 187
+   "h": "7897a767d7d9",
+   "s": 188
   },
   "tr-esaurimento": {
-   "h": "b5a5ffece505",
+   "h": "8f767975a172",
    "s": 156
   },
   "tr-esercizi": {
-   "h": "52273c33b8ea",
-   "s": 273
+   "h": "78a860297fd3",
+   "s": 274
   },
   "tr-nutrizione": {
-   "h": "3b9727b2fa21",
+   "h": "b876692d1ff8",
    "s": 174
   },
   "tr-endocrino": {
-   "h": "1c84ed23db58",
-   "s": 100
+   "h": "302283b1c24c",
+   "s": 101
   },
   "tr-steroidei": {
    "h": "87a99e94f4cc",
@@ -46,19 +46,39 @@
    "s": 170
   },
   "tr-catecolamine": {
-   "h": "a4a8a0eefc0a",
+   "h": "c4dfedfb0c57",
    "s": 133
   },
   "tr-altri-ormoni": {
    "h": "ba744f704a47",
    "s": 103
   },
+  "tr-petto": {
+   "h": "017878c683b8",
+   "s": 310
+  },
+  "tr-gran-pettorale": {
+   "h": "31f3c7128329",
+   "s": 782
+  },
+  "tr-piccolo-pettorale": {
+   "h": "27d8162b2332",
+   "s": 617
+  },
+  "tr-dentato": {
+   "h": "a5721f907248",
+   "s": 572
+  },
+  "tr-riepilogo-petto": {
+   "h": "def46f9360fc",
+   "s": 125
+  },
   "tr-pesi-cardio": {
-   "h": "e5b38dd1b43c",
+   "h": "0fbaa291d482",
    "s": 134
   },
   "tr-addominali": {
-   "h": "c27a7a4aa76d",
+   "h": "bec387f4e3e4",
    "s": 141
   },
   "tr-dorso": {
@@ -68,10 +88,6 @@
   "tr-spalle": {
    "h": "4454f7b5ee29",
    "s": 83
-  },
-  "tr-petto": {
-   "h": "eb34008549a4",
-   "s": 103
   },
   "tr-bicipiti": {
    "h": "0d1cb60db9a9",
@@ -90,7 +106,7 @@
    "s": 115
   },
   "tr-polpacci": {
-   "h": "f21ae8bde631",
+   "h": "19df7802cff7",
    "s": 81
   },
   "tr-miei-esercizi": {
@@ -98,23 +114,23 @@
    "s": 187
   },
   "tr-resistenza": {
-   "h": "cd9160d3a486",
-   "s": 128
+   "h": "2c2019e46b40",
+   "s": 127
   },
   "tr-hiit": {
    "h": "ae25e5924ff9",
    "s": 161
   },
   "tr-liss": {
-   "h": "5c807500d01f",
-   "s": 151
+   "h": "d86bddbc5e03",
+   "s": 152
   },
   "tr-bici": {
-   "h": "44cd0a907ee4",
+   "h": "6cde342a2a19",
    "s": 190
   },
   "tr-flessibilita": {
-   "h": "a07b095ed70f",
+   "h": "7e75f4cefd52",
    "s": 134
   }
  }
