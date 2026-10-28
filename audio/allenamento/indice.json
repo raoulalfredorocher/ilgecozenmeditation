@@ -10,48 +10,56 @@
    "s": 81
   },
   "tr-parametri": {
-   "h": "bc3086fab90f",
-   "s": 171
+   "h": "08e75f8f5057",
+   "s": 496
   },
   "tr-progressione": {
-   "h": "e3833b266a92",
-   "s": 114
+   "h": "7324cf4bb9db",
+   "s": 473
   },
   "tr-periodizzazione": {
-   "h": "7897a767d7d9",
-   "s": 188
+   "h": "a28d15ec2738",
+   "s": 272
   },
   "tr-esaurimento": {
-   "h": "8f767975a172",
-   "s": 156
+   "h": "4936b5e79ac9",
+   "s": 447
   },
   "tr-esercizi": {
-   "h": "78a860297fd3",
-   "s": 274
+   "h": "63ed6d4fd6d7",
+   "s": 527
   },
   "tr-nutrizione": {
-   "h": "b876692d1ff8",
-   "s": 174
+   "h": "43ab87242cd0",
+   "s": 454
+  },
+  "tr-riepilogo-principi": {
+   "h": "5fa2962f18ee",
+   "s": 127
   },
   "tr-endocrino": {
-   "h": "302283b1c24c",
-   "s": 101
+   "h": "fd4a61a6a334",
+   "s": 444
   },
   "tr-steroidei": {
-   "h": "87a99e94f4cc",
-   "s": 161
+   "h": "f04729c33244",
+   "s": 474
   },
   "tr-peptidici": {
-   "h": "73c1ffda1f2e",
-   "s": 170
+   "h": "7a3e05ca0a30",
+   "s": 450
   },
   "tr-catecolamine": {
-   "h": "c4dfedfb0c57",
-   "s": 133
+   "h": "0df90936c91d",
+   "s": 413
   },
   "tr-altri-ormoni": {
-   "h": "ba744f704a47",
-   "s": 103
+   "h": "e277b6872dce",
+   "s": 427
+  },
+  "tr-riepilogo-ormoni": {
+   "h": "11b135ffd58a",
+   "s": 117
   },
   "tr-petto": {
    "h": "017878c683b8",
@@ -165,28 +173,52 @@
    "h": "d0c91494d545",
    "s": 122
   },
-  "tr-pesi-cardio": {
-   "h": "910f44446181",
-   "s": 134
-  },
   "tr-gambe": {
-   "h": "0b4b8e88e447",
-   "s": 106
+   "h": "0bb11ac70027",
+   "s": 293
+  },
+  "tr-quadricipite": {
+   "h": "0fab9ca2cad8",
+   "s": 666
   },
   "tr-femorali": {
-   "h": "52451d6eb190",
-   "s": 115
+   "h": "b093e18f6a16",
+   "s": 618
+  },
+  "tr-grande-gluteo": {
+   "h": "7c97b50e572e",
+   "s": 586
+  },
+  "tr-medio-gluteo": {
+   "h": "6494c148cac4",
+   "s": 610
+  },
+  "tr-adduttori": {
+   "h": "eb57d6446dd6",
+   "s": 606
   },
   "tr-polpacci": {
-   "h": "19df7802cff7",
-   "s": 81
+   "h": "7f62c84ed108",
+   "s": 591
+  },
+  "tr-soleo": {
+   "h": "1b224fd0da6f",
+   "s": 581
+  },
+  "tr-riepilogo-gambe": {
+   "h": "57874c53e723",
+   "s": 121
+  },
+  "tr-pesi-cardio": {
+   "h": "535054a01e9a",
+   "s": 133
   },
   "tr-miei-esercizi": {
    "h": "50e6680dc92e",
    "s": 187
   },
   "tr-resistenza": {
-   "h": "4581c59050bd",
+   "h": "eb843a0ee6d2",
    "s": 128
   },
   "tr-hiit": {
