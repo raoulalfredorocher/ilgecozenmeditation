@@ -608,11 +608,32 @@ Preferire le fonti di carboidrati complessi **integrali e non raffinati** (pasta
 
 ## Cosa dice la scienza
 
-- *Correzione*: gli oligosaccaridi partono da **3** unità (con 2 sono disaccaridi).
-- Il **fruttosio della frutta intera** non è un problema: arriva con fibre, acqua e polifenoli. Quello aggiunto (sciroppi, bibite) in eccesso si associa a fegato grasso e trigliceridi alti.
-- L'OMS (2023) raccomanda che i carboidrati vengano **soprattutto da cereali integrali, legumi, frutta e verdura**. Per gli adulti i LARN indicano il 45-60% delle calorie da carboidrati, con zuccheri sotto il 15% (quelli aggiunti il meno possibile).
+### A cosa servono i carboidrati
 
-Fonti: [OMS, carboidrati 2023](https://www.who.int/publications/i/item/9789240073593) · [LARN, SINU](https://sinu.it/tabelle-larn-2014/)
+I carboidrati sono il carburante preferito di due organi. Il **cervello** usa circa 120 grammi di glucosio al giorno, quasi un quarto dell'energia a riposo. I **muscoli** che lavorano forte, come in una serie pesante o in uno scatto, usano soprattutto il glicogeno, perché il glucosio dà energia più in fretta dei grassi.
+
+Il corpo tiene una piccola riserva di **glicogeno**: circa 80-100 grammi nel fegato, che servono a tenere stabile la glicemia tra i pasti e di notte, e circa 300-500 grammi nei muscoli, che servono solo al muscolo stesso. Ogni grammo di glicogeno trattiene circa tre grammi d'acqua. È per questo che nei primi giorni di una dieta povera di carboidrati la bilancia scende di uno o due chili: è soprattutto acqua, non grasso, e torna appena si rimettono i carboidrati.
+
+Se mancano, il fegato sa produrre glucosio da aminoacidi e glicerolo, e con un digiuno lungo produce chetoni che il cervello può usare. Per questo i carboidrati non sono tecnicamente "essenziali". Ma una dieta molto povera di carboidrati toglie quasi sempre anche cereali integrali, legumi e frutta, cioè le fonti principali di fibra: è lì il problema, non nel glucosio.
+
+### Correzioni e precisazioni
+
+- *Correzione*: gli oligosaccaridi partono da **3** unità; con 2 sono disaccaridi.
+- **Il fruttosio non è uguale ovunque.** Quello della **frutta intera** arriva lentamente, con fibre, acqua e polifenoli, e in quantità piccole: una mela ne ha circa 10 grammi. Quello **aggiunto**, negli sciroppi e nelle bibite, arriva in fretta e in grandi quantità. In uno studio di Kimber Stanhope (2009) adulti in sovrappeso che hanno bevuto per dieci settimane bevande dolcificate con fruttosio hanno accumulato più grasso nella pancia, attorno agli organi, e hanno visto peggiorare trigliceridi e sensibilità all'insulina; con il glucosio no. Il fegato trasforma il fruttosio in eccesso direttamente in grasso.
+- **Il lattosio**: dopo lo svezzamento molte persone producono meno lattasi, l'enzima che lo digerisce. Yogurt, kefir e formaggi stagionati ne contengono pochissimo e di solito si tollerano anche con un'intolleranza.
+- **Il miele** è per l'OMS uno zucchero libero come lo zucchero bianco: circa 80% di zuccheri, soprattutto fruttosio e glucosio. Ha qualche antiossidante in più, ma in quantità troppo piccole per contare.
+
+### Quanti carboidrati
+
+- L'OMS (2023) raccomanda che i carboidrati vengano **soprattutto da cereali integrali, legumi, frutta e verdura**, e non fissa una percentuale obbligatoria: conta la qualità.
+- Per gli adulti i LARN indicano il **45-60% delle calorie** da carboidrati, con gli zuccheri totali sotto il 15% e quelli aggiunti il meno possibile.
+- Per chi si allena, la nutrizione sportiva usa i grammi per chilo invece delle percentuali: **3-5 grammi per chilo** al giorno con un allenamento moderato, di più per gli sport di resistenza. Con tre sessioni di pesi a settimana e un po' di cardio, la parte bassa dell'intervallo basta.
+
+### Diete povere di carboidrati
+
+Le diete chetogeniche e "low carb" fanno dimagrire quanto le altre a parità di calorie. Negli studi a confronto, come il DIETFITS di Stanford (2018, oltre seicento persone), le persone hanno perso in un anno lo stesso peso con una dieta povera di grassi o povera di carboidrati, purché di buona qualità. Funzionano per chi le segue volentieri; non hanno un vantaggio "metabolico" speciale. E per chi si allena con i pesi, troppi pochi carboidrati riducono il volume di lavoro che si riesce a sostenere.
+
+Fonti: [OMS, carboidrati 2023](https://www.who.int/publications/i/item/9789240073593) · [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [Stanhope et al., J Clin Invest 2009](https://pubmed.ncbi.nlm.nih.gov/19381015/) · [Gardner et al., DIETFITS, JAMA 2018](https://jamanetwork.com/journals/jama/fullarticle/2673150)
 ` },
     { id: 'al-glicemia', titolo: 'Glicemia, indice e carico glicemico', testo: `
 Il **glucosio** è la principale fonte di energia del corpo. I carboidrati di frutta, cereali, pane, pasta e riso, una volta assimilati, diventano glucosio e alzano lo zucchero nel sangue. **La quantità di glucosio nel sangue si chiama glicemia.**
@@ -626,12 +647,46 @@ Ogni cibo incide sulla glicemia; i parametri sono due:
 
 ## Cosa dice la scienza
 
-- **Da correggere**: i valori normali a digiuno sono **70-99 mg/dl** per l'American Diabetes Association; da 100 a 125 si parla di glicemia alterata a digiuno, da 126 in su (confermato) di diabete. L'OMS mette la soglia dell'alterata a 110. Il vecchio "70-110" è il limite OMS, non il valore ideale.
-- Dopo un pasto, nelle persone sane la glicemia resta di solito **sotto 140 mg/dl** e torna alla base entro 2-3 ore.
-- **Esempi di carico glicemico** per porzione: anguria circa 4 (indice alto ma pochi carboidrati), mela 6, lenticchie 7, pasta al dente 15-20, riso bianco 25-30, patate al forno circa 25.
-- Cosa abbassa il picco: **fibre, proteine e grassi nello stesso pasto**; mangiare **prima la verdura** e poi i carboidrati; pasta **al dente**; riso o patate **cotti e raffreddati** (l'amido diventa in parte resistente); aceto; una **camminata** dopo il pasto.
+### Come si regola la glicemia
 
-Fonti: [American Diabetes Association, Standards of Care](https://diabetesjournals.org/care/issue/48/Supplement_1) · [Atkinson et al., tabelle internazionali dell'indice glicemico 2021](https://pubmed.ncbi.nlm.nih.gov/34258626/)
+Dopo un pasto il glucosio entra nel sangue e il **pancreas** risponde con l'**insulina**, l'ormone che apre le porte delle cellule di muscoli, fegato e grasso perché lo prendano. Quando la glicemia scende, tra i pasti o di notte, il pancreas produce **glucagone**, che fa liberare dal fegato il glucosio del glicogeno. È un sistema molto preciso: in una persona sana, in tutto il sangue circolano appena 4-5 grammi di glucosio, un cucchiaino.
+
+I muscoli sono il magazzino più grande di glucosio e, quando lavorano, il suo consumatore principale. Più muscolo hai e più lo usi, più facilmente la glicemia torna giù. Per questo l'allenamento con i pesi e la camminata dopo i pasti migliorano la sensibilità all'insulina, a volte quanto un farmaco.
+
+### I valori
+
+- **Da correggere**: i valori normali a digiuno sono **70-99 mg/dl** per l'American Diabetes Association; da 100 a 125 si parla di glicemia alterata a digiuno, da 126 in su, confermato due volte, di diabete. L'OMS mette la soglia della glicemia alterata a 110. Il vecchio "70-110" è il limite dell'OMS, non il valore ideale.
+- Un altro esame utile è l'**emoglobina glicata**, che racconta la media degli ultimi due o tre mesi: normale sotto 5,7%, da 5,7 a 6,4% prediabete, da 6,5% diabete.
+- Dopo un pasto, nelle persone sane la glicemia resta di solito **sotto 140 mg/dl** e torna alla base entro due o tre ore.
+
+### Indice e carico, con esempi
+
+L'indice glicemico si misura in laboratorio dando a dieci persone una porzione con 50 grammi di carboidrati. Ha due limiti: le porzioni reali sono diverse, e il cibo si mangia quasi sempre insieme ad altri. Per questo il **carico glicemico**, che moltiplica l'indice per i grammi di carboidrati della porzione e divide per cento, è più utile nella vita reale. Sotto 10 è basso, sopra 20 è alto.
+
+- **Anguria**: indice alto, circa 75, ma una fetta ha pochi carboidrati: carico circa 4.
+- **Mela**: indice circa 36, carico 6.
+- **Lenticchie**: indice circa 30, carico 7.
+- **Pasta al dente**: indice circa 45-50, carico 15-20 per 80 grammi.
+- **Riso bianco**: indice circa 70, carico 25-30.
+- **Patate al forno**: indice circa 85, carico circa 25.
+- **Pane bianco**: indice circa 75, carico circa 10 per fetta.
+- **Fiocchi d'avena** tradizionali: indice circa 55; quelli istantanei salgono verso 80.
+
+### Cosa abbassa il picco
+
+- **Fibre, proteine e grassi nello stesso pasto**: rallentano lo svuotamento dello stomaco.
+- **L'ordine**: in uno studio della Cornell (Shukla e colleghi, 2015) mangiare **prima verdura e proteine** e solo dopo i carboidrati ha ridotto il picco di glicemia di circa un terzo, rispetto allo stesso pasto mangiato al contrario.
+- **Pasta al dente**: la struttura più compatta dell'amido si digerisce più lentamente della pasta scotta.
+- **Riso, pasta o patate cotti e raffreddati**: una parte dell'amido si riorganizza in **amido resistente**, che si comporta come una fibra. Riscaldarli dopo non annulla l'effetto.
+- **Aceto e limone** nel condimento abbassano un po' il picco.
+- **Una camminata** dopo il pasto, anche breve.
+- **Il sonno**: dopo una notte corta, la stessa colazione alza la glicemia di più.
+
+### Una parola sui sensori
+
+I sensori continui della glicemia, oggi venduti anche a chi non ha il diabete, mostrano picchi che sembrano allarmanti ma sono normali. Nelle persone sane non ci sono prove che "appiattire" ogni picco migliori la salute: contano la glicemia a digiuno, l'emoglobina glicata, il peso, il movimento e la qualità della dieta.
+
+Fonti: [American Diabetes Association, Standards of Care](https://diabetesjournals.org/care/issue/48/Supplement_1) · [Atkinson et al., tabelle internazionali dell'indice glicemico 2021](https://pubmed.ncbi.nlm.nih.gov/34258626/) · [Shukla et al., Diabetes Care 2015](https://pubmed.ncbi.nlm.nih.gov/26106234/) · [Buffey et al., Sports Med 2022](https://pubmed.ncbi.nlm.nih.gov/35147898/)
 ` },
     { id: 'al-integrali', titolo: 'Integrale o raffinato', testo: `
 Il chicco di grano è fatto di tre parti:
@@ -644,12 +699,38 @@ Negli alimenti integrali ci sono tutte e tre le parti. Nelle farine raffinate (0
 
 ## Cosa dice la scienza
 
-- *Correzione*: nei tuoi appunti c'era scritto che nella farina bianca "rimane solo il germe": è il contrario, il germe viene tolto (si irrancidirebbe) e resta l'endosperma.
-- **90 g al giorno** di cereali integrali (circa tre porzioni) si associano a un rischio più basso del 19% di malattie di cuore, del 17% di morte per tutte le cause e a meno diabete di tipo 2 (meta-analisi BMJ 2016).
-- In etichetta "integrale" vuol dire poco se la farina integrale non è al primo posto degli ingredienti. Molti pani "integrali" sono farina 00 con crusca aggiunta.
-- I **cereali in chicco** (orzo, farro, avena, riso integrale) hanno un indice glicemico più basso delle farine, anche integrali, perché la struttura del chicco rallenta la digestione.
+- *Correzione*: nei tuoi appunti c'era scritto che nella farina bianca "rimane solo il germe": è il contrario. Il germe viene tolto, perché con i suoi grassi farebbe irrancidire la farina, e resta l'endosperma.
 
-Fonti: [Aune et al., BMJ 2016](https://www.bmj.com/content/353/bmj.i2716) · [Harvard, Whole grains](https://nutritionsource.hsph.harvard.edu/what-should-you-eat/whole-grains/)
+### Cosa si perde raffinando
+
+Quando il grano diventa farina 00 perde circa tre quarti della **fibra**, più della metà di **magnesio, zinco, ferro e potassio**, gran parte delle **vitamine B1, B3, B6 ed E** e quasi tutti i **polifenoli**, che stanno nella crusca. Resta l'amido, che si digerisce in fretta. In alcuni paesi le farine bianche vengono "arricchite" con ferro e vitamine del gruppo B per compensare, ma la fibra e i polifenoli non si rimettono.
+
+### Le prove
+
+- La meta-analisi di Dagfinn Aune (BMJ 2016, 45 studi): **90 grammi al giorno** di cereali integrali, circa tre porzioni, si associano a un rischio più basso del 19% di malattie di cuore, del 22% di malattie cardiovascolari, del 17% di morte per tutte le cause, e a meno tumori e diabete di tipo 2. Il beneficio cresce già con le prime porzioni.
+- Gli studi sperimentali spiegano perché: i cereali integrali abbassano un po' il colesterolo LDL, migliorano la sensibilità all'insulina e saziano di più. La fibra di avena e orzo, i **beta-glucani**, ha un effetto sul colesterolo riconosciuto dall'EFSA: servono circa 3 grammi al giorno, che stanno in 60-70 grammi di fiocchi d'avena; l'orzo ne ha un po' di più.
+
+### Il chicco e la farina
+
+I **cereali in chicco** (orzo, farro, avena, riso integrale, grano saraceno, miglio) hanno un indice glicemico più basso delle farine, anche integrali, perché la struttura del chicco intero rallenta la digestione. Il pane integrale fatto con farina macinata finissima alza la glicemia quasi come quello bianco; un pane con chicchi interi o semi, o fatto con lievito madre, un po' meno. In pratica:
+
+- I cereali in chicco sono la scelta migliore per i pasti principali.
+- Tra le paste, quella **integrale** ha circa il doppio di fibra della pasta di semola; la pasta di legumi ha più proteine e fibra, ma sapore e consistenza diversi.
+- Tra i pani, quello integrale vero, con lievito madre, è il migliore.
+
+### Leggere l'etichetta
+
+In etichetta "integrale" vuol dire poco se la **farina integrale** non è al **primo posto** negli ingredienti. Molti pani e cracker "integrali" o "ai cereali" sono farina 00 con un po' di crusca o di farina integrale aggiunta, o colorati con malto. Guarda la percentuale e la fibra: un prodotto davvero integrale ha almeno 6 grammi di fibra per 100 grammi.
+
+### Riso integrale e arsenico
+
+Il riso integrale ha più arsenico inorganico di quello bianco, perché l'arsenico si concentra negli strati esterni. Non è un motivo per evitarlo, ma per **variare i cereali** e per cuocere il riso in molta acqua e scolarlo, come spiega la pagina sugli oligoelementi.
+
+### Glutine
+
+Le persone con celiachia, circa l'1% della popolazione, devono eliminare il glutine del tutto. Per gli altri, togliere il glutine non porta benefici dimostrati e spesso toglie cereali integrali: i prodotti senza glutine sono in genere più raffinati, con più zuccheri e grassi. Esistono però ottimi cereali naturalmente senza glutine, come grano saraceno, miglio, quinoa, amaranto, riso integrale e teff.
+
+Fonti: [Aune et al., BMJ 2016](https://www.bmj.com/content/353/bmj.i2716) · [Harvard, Whole grains](https://nutritionsource.hsph.harvard.edu/what-should-you-eat/whole-grains/) · [Atkinson et al., 2021](https://pubmed.ncbi.nlm.nih.gov/34258626/)
 ` },
     { id: 'al-fibre', titolo: 'Le fibre', testo: `
 Le **fibre alimentari** sono carboidrati che lo stomaco e l'intestino tenue non digeriscono: il loro destino si compie più in basso, nel **colon**. Regolano il transito intestinale e **nutrono i batteri del colon**, il microbiota.
@@ -661,13 +742,148 @@ Uno studio citato nei tuoi appunti mostra che più fibre riducono malattie cardi
 
 ## Cosa dice la scienza
 
-- La conferma più forte è la meta-analisi del **Lancet 2019** (Reynolds e colleghi, 185 studi di popolazione e 58 sperimentali): chi mangia **25-29 g di fibra al giorno** ha dal 15 al 30% in meno di mortalità, malattie di cuore, ictus, diabete di tipo 2 e tumore del colon rispetto a chi ne mangia meno di 15 g. Oltre i 30 g i benefici crescono ancora.
-- L'OMS chiede **almeno 25 g al giorno**; la maggior parte degli europei ne mangia 18-20.
-- Come arrivarci: 5 porzioni di frutta e verdura (circa 12 g), una porzione di legumi (7-8 g), 2-3 porzioni di cereali integrali (8-10 g), una manciata di frutta secca (3 g).
-- I batteri del colon trasformano le fibre in **acidi grassi a catena corta** (butirrato), che nutrono la mucosa e riducono l'infiammazione.
-- Aumentale **gradualmente** e bevi di più, per evitare gonfiore.
+### Il numero che conta
+
+La conferma più forte è la meta-analisi del **Lancet 2019**, commissionata dall'OMS (Reynolds e colleghi, 185 studi di popolazione e 58 studi sperimentali): chi mangia **25-29 grammi di fibra al giorno** ha dal 15 al 30% in meno di mortalità, malattie di cuore, ictus, diabete di tipo 2 e tumore del colon rispetto a chi ne mangia meno di 15. Oltre i 30 grammi i benefici crescono ancora. Gli studi sperimentali mostrano anche peso, pressione e colesterolo più bassi. I tuoi appunti, quindi, erano giusti.
+
+L'OMS chiede **almeno 25 grammi al giorno**; la maggior parte degli europei ne mangia 18-20, molte persone meno di 15.
+
+### Come funzionano
+
+- **Volume e sazietà**: la fibra trattiene acqua, riempie lo stomaco e lo svuota più lentamente.
+- **Glicemia**: la fibra viscosa forma un gel che rallenta l'assorbimento degli zuccheri.
+- **Colesterolo**: la fibra solubile lega gli acidi biliari, fatti di colesterolo, e li porta fuori con le feci; il fegato deve prendere altro colesterolo dal sangue per produrne di nuovi.
+- **Intestino**: la fibra insolubile aumenta il volume delle feci e accelera il transito.
+- **Microbiota**: i batteri del colon fermentano le fibre e producono **acidi grassi a catena corta**, soprattutto **butirrato**, acetato e propionato. Il butirrato è il cibo principale delle cellule del colon, rinforza la barriera intestinale e riduce l'infiammazione. La pagina successiva ne parla meglio.
+
+### Dove trovarla, con i numeri
+
+Circa 10 grammi di fibra stanno in: una porzione di legumi cotti, 150 grammi; oppure 80 grammi di pasta integrale con una porzione di broccoli; oppure due pere con la buccia; oppure 50 grammi di fiocchi d'avena con un cucchiaio di semi di chia. Una giornata tipo che arriva a 30 grammi:
+
+- colazione con 50 grammi di avena e frutti di bosco: circa 7 grammi;
+- pranzo con cereali in chicco, legumi e verdura: circa 12 grammi;
+- una mela e una manciata di mandorle: circa 7 grammi;
+- cena con verdura cotta, pane integrale e insalata: circa 6 grammi.
+
+### Le diverse fibre
+
+Non esiste "la fibra", ne esistono decine: cellulosa, emicellulose, pectine della frutta, beta-glucani di avena e orzo, inulina di cicoria, carciofi, cipolle e aglio, amido resistente, gomme dei legumi, psillio. Batteri diversi preferiscono fibre diverse: per questo conta la **varietà** delle piante più della quantità di un singolo alimento.
+
+### In pratica
+
+- Aumentale **gradualmente**, in due o tre settimane, e bevi di più: un aumento brusco dà gonfiore e gas, che di solito si riducono quando i batteri si adattano.
+- I legumi danno meno gas se messi in ammollo a lungo, cotti bene e mangiati spesso, in piccole porzioni all'inizio.
+- Gli integratori di fibra, come lo psillio, sono utili per la stitichezza, ma non sostituiscono i cibi: nei cibi la fibra arriva con vitamine, minerali e polifenoli.
 
 Fonti: [Reynolds et al., Lancet 2019](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(18)31809-9/fulltext) · [OMS, carboidrati 2023](https://www.who.int/publications/i/item/9789240073593)
+` },
+    { id: 'al-microbiota', titolo: 'Intestino e microbiota', testo: `
+*Pagina nuova, dalla letteratura: i batteri che mangiano le tue fibre.*
+
+Nel nostro intestino vivono decine di migliaia di miliardi di batteri, più o meno quante sono le cellule del corpo, di circa mille specie diverse. Pesano tutti insieme circa 200 grammi. Insieme a virus, lieviti e altri microrganismi formano il **microbiota intestinale**. Quasi tutti stanno nel colon, dove arriva ciò che non abbiamo digerito: soprattutto fibre.
+
+### Cosa fanno
+
+- **Digeriscono le fibre** che noi non sappiamo digerire e producono acidi grassi a catena corta, come il butirrato, che nutrono la mucosa e riducono l'infiammazione.
+- **Producono vitamine**, come la vitamina K2 e alcune del gruppo B.
+- **Allenano il sistema immunitario**: buona parte delle cellule immunitarie del corpo si trova attorno all'intestino.
+- **Occupano spazio** e rendono più difficile la vita ai batteri nocivi.
+- **Parlano con il cervello** attraverso il nervo vago, gli ormoni e i loro prodotti: è il cosiddetto asse intestino-cervello. Negli animali il legame con umore e comportamento è chiaro; nelle persone si studia ancora.
+
+### Cosa lo rende sano
+
+Un microbiota in salute è soprattutto **vario**: tante specie diverse. Le scoperte più solide:
+
+- **La varietà delle piante**. Nel progetto American Gut (McDonald e colleghi, 2018, oltre diecimila persone) chi mangiava più di **30 tipi diversi di vegetali alla settimana** aveva un microbiota più vario di chi ne mangiava meno di dieci. Contano tutti: verdure, frutta, legumi, cereali, frutta secca, semi, erbe e spezie. Un minestrone con otto verdure vale otto.
+- **I cibi fermentati**. In uno studio di Stanford (Wastyk e colleghi, 2021) 36 adulti hanno seguito per dieci settimane una dieta ricca di fibre o una dieta ricca di cibi fermentati: yogurt, kefir, crauti, kimchi, kombucha, formaggi stagionati. Il gruppo dei **fermentati** ha aumentato la varietà del microbiota e ridotto diciannove marcatori di infiammazione nel sangue. Il gruppo delle fibre in quelle settimane no: forse serve più tempo perché i batteri giusti arrivino.
+- **Le fibre fermentabili** e l'amido resistente: legumi, avena, orzo, cipolla, aglio, porri, carciofi, banane poco mature, patate e riso cotti e raffreddati.
+- **I polifenoli** di frutti di bosco, cacao, tè, caffè, olio extravergine, che in gran parte arrivano nel colon e vengono trasformati dai batteri.
+
+### Cosa lo danneggia
+
+- **Pochi vegetali e poca fibra**: i batteri, senza cibo, consumano lo strato di muco che protegge la parete intestinale.
+- **Gli antibiotici**, necessari quando servono, riducono la varietà per settimane o mesi. Dopo una cura conviene mangiare molte fibre e fermentati.
+- **Alcuni emulsionanti** usati negli ultra-processati, come la carbossimetilcellulosa e il polisorbato 80, negli animali e in un primo studio sulle persone hanno alterato il microbiota e lo strato di muco. Un motivo in più per preferire cibi semplici.
+- **Alcol, fumo, sonno scarso, stress cronico.**
+
+### Probiotici e prebiotici
+
+- I **probiotici** in capsule hanno prove buone solo per situazioni precise, come la diarrea da antibiotici o alcuni casi di colon irritabile. Nelle persone sane di solito passano e non si stabiliscono. I cibi fermentati sembrano più utili delle capsule.
+- I **prebiotici** sono le fibre che nutrono i batteri buoni: inulina e frutto-oligosaccaridi di cicoria, cipolla, aglio, porri, asparagi, carciofi, banane. Funzionano meglio dai cibi che dalle bustine.
+
+### Cosa non sappiamo ancora
+
+Il microbiota è un campo giovane, e molte promesse sono più veloci dei dati. I test del microbiota venduti online non sanno ancora dire che cosa mangiare: lo stesso intestino cambia da un giorno all'altro, e non esiste un "microbiota ideale" definito. Le indicazioni pratiche, però, sono semplici e coincidono con il resto del libro: **tante piante diverse, tanta fibra, qualche fermentato ogni giorno, pochi ultra-processati**.
+
+Fonti: [McDonald et al., mSystems 2018](https://pubmed.ncbi.nlm.nih.gov/29795809/) · [Wastyk et al., Cell 2021](https://pubmed.ncbi.nlm.nih.gov/34256014/) · [Reynolds et al., Lancet 2019](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(18)31809-9/fulltext)
+` },
+    { id: 'al-zuccheri-dolcificanti', titolo: 'Zuccheri aggiunti e dolcificanti', testo: `
+*Pagina nuova, dalla letteratura: dove si nascondono gli zuccheri e cosa sapere sui dolcificanti.*
+
+Il primo dei tuoi principi è eliminare lo zucchero raffinato e gli alimenti con zuccheri aggiunti. È anche uno dei punti su cui OMS, AHA e linee guida italiane sono più d'accordo.
+
+### Zuccheri liberi e zuccheri naturali
+
+L'OMS distingue due cose:
+
+- gli **zuccheri intrinseci**, chiusi dentro le cellule di frutta e verdura intere, e il lattosio del latte: non sono un problema;
+- gli **zuccheri liberi**: quelli aggiunti da noi o dall'industria, più quelli di miele, sciroppi, succhi di frutta e frullati. Vanno tenuti sotto il 10% delle calorie, meglio sotto il 5%, cioè circa 25 grammi al giorno.
+
+Il succo di frutta, anche al 100% e senza zuccheri aggiunti, conta come zucchero libero: spremendo la frutta lo zucchero esce dalle cellule e si beve in pochi secondi l'equivalente di tre arance. Un frullato fatto in casa con la frutta intera è una via di mezzo: tiene la fibra, ma sazia meno della frutta masticata.
+
+### Dove si nascondono
+
+La maggior parte degli zuccheri aggiunti non viene dalla zuccheriera ma da prodotti pronti:
+
+- **bibite**, tè freddi, succhi, energy drink: 25-40 grammi per lattina o bottiglietta;
+- **yogurt alla frutta** e dessert al cucchiaio: 10-15 grammi per vasetto;
+- **cereali da colazione**, anche quelli "fitness": spesso 15-30 grammi per 100 grammi;
+- **biscotti, merendine, barrette**, anche quelle "proteiche";
+- **salse**, come ketchup e salse barbecue, e **pane in cassetta**;
+- **bevande vegetali** zuccherate e caffè pronti da bar.
+
+### Perché le bibite sono le peggiori
+
+Tra tutte le fonti, le **bevande zuccherate** hanno le prove più forti di danno. In una meta-analisi di Vasanti Malik (Harvard, 2010) chi beveva una o due lattine al giorno aveva un rischio di diabete di tipo 2 più alto del 26% rispetto a chi ne beveva meno di una al mese. Le calorie liquide non saziano, arrivano in fretta e il fruttosio in grandi quantità va dritto al fegato.
+
+### I dolcificanti
+
+I dolcificanti senza calorie, come aspartame, sucralosio, acesulfame, saccarina, stevia, e i polioli, come eritritolo, xilitolo, maltitolo, sembrano la soluzione perfetta. Le prove però sono meno rassicuranti del previsto.
+
+- **Peso**: negli studi brevi, sostituire bibite zuccherate con bibite dolcificate fa perdere un po' di peso. Negli studi di popolazione lunghi, però, chi usa più dolcificanti non pesa di meno. Per questo nel **2023 l'OMS** ha consigliato di **non usarli per controllare il peso**: conviene abituare il palato a meno dolce.
+- **Aspartame**: nel 2023 l'Agenzia internazionale per la ricerca sul cancro lo ha messo nel gruppo 2B, "possibilmente cancerogeno", la categoria con le prove più deboli. Lo stesso anno il comitato di esperti di OMS e FAO ha confermato la dose giornaliera accettabile di 40 milligrammi per chilo: per una persona di 80 chili, più di una decina di lattine di bibita al giorno. Non è un rischio con i consumi normali.
+- **Eritritolo**: uno studio della Cleveland Clinic (Witkowski e colleghi, 2023) ha trovato più infarti e ictus in chi aveva livelli alti di eritritolo nel sangue e ha mostrato che l'eritritolo rende le piastrine più reattive. È uno studio di associazione, da confermare; ma l'eritritolo si trova in grandi quantità proprio nei prodotti "senza zucchero" e "keto".
+- **Polioli** come maltitolo, sorbitolo, xilitolo: in quantità alte hanno effetto lassativo e danno gonfiore.
+- **Stevia**: estratti purificati sicuri alle dosi normali; le prove sul peso sono le stesse degli altri dolcificanti.
+
+La conclusione pratica: una bibita "zero" ogni tanto è meglio di una zuccherata, ma l'obiettivo vero è **bere acqua** e ridurre il gusto dolce in generale.
+
+### Come ridurre
+
+- Il palato si adatta: dopo **3-4 settimane** con meno zucchero, i cibi molto dolci sembrano troppo dolci.
+- Riduci per gradi lo zucchero nel caffè o nello yogurt, mezzo cucchiaino alla volta.
+- Dolcifica con la **frutta**: banana matura schiacciata nell'avena, datteri tritati nei dolci fatti in casa, frutti di bosco nello yogurt bianco.
+- Usa spezie che "suonano" dolci: **cannella**, vaniglia, cardamomo, noce moscata.
+- Tieni i dolci fuori casa e programmali, come nel tuo pasto libero, invece di eliminarli con la forza.
+
+Fonti: [OMS, zuccheri](https://www.who.int/publications/i/item/9789241549028) · [OMS, dolcificanti 2023](https://www.who.int/publications/i/item/9789240073616) · [Malik et al., Diabetes Care 2010](https://pubmed.ncbi.nlm.nih.gov/20693348/) · [Witkowski et al., Nat Med 2023](https://pubmed.ncbi.nlm.nih.gov/36849732/) · [Stanhope et al., J Clin Invest 2009](https://pubmed.ncbi.nlm.nih.gov/19381015/)
+` },
+    { id: 'al-riepilogo-carboidrati', titolo: 'Riepilogo: I carboidrati', testo: `
+1. **I carboidrati sono il carburante preferito** di cervello e muscoli. Il glicogeno trattiene acqua: per questo il primo calo di una dieta senza carboidrati è soprattutto acqua.
+2. **Conta la fonte**: cereali integrali, legumi, frutta e verdura. Per chi si allena con i pesi bastano 3-5 grammi per chilo al giorno.
+3. **Il fruttosio della frutta intera non è un problema**; quello aggiunto in bibite e sciroppi sì, perché il fegato lo trasforma in grasso.
+4. **Glicemia a digiuno normale: 70-99.** Il carico glicemico, che tiene conto della porzione, conta più dell'indice.
+5. **Per abbassare il picco**: prima verdura e proteine, poi i carboidrati; pasta al dente; amidi cotti e raffreddati; una camminata dopo il pasto.
+6. **Integrale vero**: farina integrale al primo posto e almeno 6 grammi di fibra per 100 grammi. I cereali in chicco sono i migliori. Circa 90 grammi di integrali al giorno si associano al 17% in meno di mortalità.
+7. **Almeno 25-30 grammi di fibra al giorno**, aumentandola piano e bevendo di più.
+8. **Il microbiota ama la varietà**: oltre 30 vegetali diversi alla settimana, qualche cibo fermentato ogni giorno, pochi ultra-processati.
+9. **Zuccheri liberi sotto i 25 grammi al giorno**: i succhi contano come zucchero. I dolcificanti non aiutano a dimagrire nel lungo periodo; l'obiettivo è abituare il palato a meno dolce.
+
+Domande per verificare:
+
+- Quanti vegetali diversi hai mangiato negli ultimi sette giorni, contando anche erbe, spezie e frutta secca?
+- In una giornata normale, quanti grammi di fibra mangi? Dove potresti aggiungerne 10?
+- Quale prodotto della tua dispensa ha zuccheri aggiunti che non ti aspettavi?
 ` },
   ] },
 
@@ -702,10 +918,30 @@ Gli acidi grassi si distinguono per i doppi legami nella catena di carbonio:
 
 ## Cosa dice la scienza
 
-- *Correzione piccola*: lipidi semplici al 95% e composti al 10% fanno più di 100; la quota corretta dei composti è intorno al 5%.
-- Quanti grassi: **20-35% delle calorie** per i LARN, **non oltre il 30%** per l'OMS. Conta più il **tipo** della quantità: la dieta mediterranea del PREDIMED arrivava al 40% di grassi, quasi tutti da olio extravergine e frutta secca, con meno infarti e ictus.
+### Perché la forma conta
 
-Fonti: [OMS, grassi 2023](https://www.who.int/publications/i/item/9789240073630) · [LARN, SINU](https://sinu.it/tabelle-larn-2014/)
+Un acido grasso saturo è una catena dritta: le molecole si impacchettano bene tra loro, ed è per questo che burro, strutto e grasso della carne sono **solidi** a temperatura ambiente. Ogni doppio legame in forma "cis" crea una piega nella catena: le molecole non si incastrano più e il grasso resta **liquido**, come l'olio d'oliva o l'olio di semi. I grassi **trans** hanno il doppio legame ma restano dritti come i saturi, e il corpo li tratta in modo anomalo: per questo sono i più dannosi.
+
+La stessa piega spiega anche la stabilità in cucina. Più doppi legami ci sono, più punti la catena offre all'ossigeno per "attaccarla": i polinsaturi irrancidiscono e si degradano al calore più facilmente, i monoinsaturi meno, i saturi quasi niente. È per questo che l'olio di lino va tenuto in frigo e non si cuoce, mentre l'olio extravergine regge bene la padella.
+
+### Il viaggio dei grassi nel corpo
+
+I grassi non si sciolgono in acqua, quindi digerirli e trasportarli è complicato. La **bile** del fegato li spezza in goccioline piccolissime, la lipasi del pancreas li taglia, l'intestino li assorbe e li rimonta in pacchetti chiamati chilomicroni, che entrano nella linfa e poi nel sangue. Nel sangue i grassi viaggiano dentro le **lipoproteine**, piccole navicelle fatte di proteine e fosfolipidi: VLDL, LDL e HDL, di cui parla la pagina sul colesterolo.
+
+Per lo stesso motivo le **vitamine A, D, E e K** e i carotenoidi delle verdure si assorbono solo se nel pasto c'è un po' di grasso: un'insalata di carote condita senza olio porta molto meno betacarotene di una condita con un cucchiaio di extravergine.
+
+### Il grasso corporeo
+
+Il grasso di riserva non è un deposito inerte: è un organo vero, che produce ormoni come la leptina. Ma non tutto il grasso è uguale. Il grasso **sottocutaneo**, quello delle maniglie e delle cosce, è relativamente innocuo. Il grasso **viscerale**, quello dentro la pancia attorno agli organi, è molto più attivo: libera acidi grassi e sostanze infiammatorie direttamente verso il fegato. È quello più legato a diabete e malattie di cuore. Una buona notizia: è anche tra i primi a calare con il deficit calorico e con l'attività fisica, specie aerobica.
+
+### Correzioni e numeri
+
+- *Correzione piccola*: lipidi semplici al 95% e composti al 10% fanno più di 100; la quota corretta dei composti è intorno al 5%.
+- **Quanti grassi**: dal 20 al 35% delle calorie per i LARN, **non oltre il 30%** per l'OMS. Ma conta più il **tipo** della quantità. La dieta mediterranea del PREDIMED arrivava al 40% di grassi, quasi tutti da olio extravergine e frutta secca, con meno infarti e ictus.
+- **Il minimo**: sotto il 15-20% delle calorie diventa difficile avere abbastanza acidi grassi essenziali e assorbire le vitamine liposolubili. Negli uomini, diete con pochissimi grassi riducono anche un po' il testosterone.
+- **Le diete "low fat"** degli anni Ottanta e Novanta hanno insegnato una lezione: togliendo grassi dai prodotti l'industria li ha sostituiti con zuccheri e farine raffinate, senza benefici per il cuore. Per questo oggi le linee guida non dicono "meno grassi" ma "grassi migliori".
+
+Fonti: [OMS, grassi 2023](https://www.who.int/publications/i/item/9789240073630) · [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [PREDIMED, NEJM 2018](https://www.nejm.org/doi/full/10.1056/NEJMoa1800389)
 ` },
     { id: 'al-saturi-trans', titolo: 'Grassi saturi e trans', testo: `
 ## Grassi saturi
@@ -729,12 +965,38 @@ Fonti principali: grassi vegetali idrogenati e alcune margarine; prodotti da for
 
 ## Cosa dice la scienza
 
-- La revisione Cochrane 2020 (15 studi, 56.000 persone): **ridurre i saturi** abbassa del 17% gli eventi cardiovascolari, soprattutto se li si sostituisce con **polinsaturi**.
-- **Olio di cocco**: alza l'LDL più del burro di quanto si pensi; l'AHA (2017) lo sconsiglia come olio "salutare".
-- **Formaggi e yogurt** sembrano più neutri del burro sul cuore, a parità di saturi: conta anche la "matrice" dell'alimento. Il burro resta da usare poco.
-- **Trans**: l'OMS chiede meno dell'1% delle calorie. Dal 2021 in Unione Europea i trans industriali non possono superare 2 g per 100 g di grasso (Regolamento UE 2019/649): oggi in Italia sono molto meno frequenti di un tempo, ma restano in prodotti extra-UE e fritture ripetute.
+### La "guerra dei grassi saturi"
 
-Fonti: [Hooper et al., Cochrane 2020](https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD011737.pub3/full) · [Sacks et al., AHA 2017](https://www.ahajournals.org/doi/10.1161/CIR.0000000000000510) · [OMS, grassi 2023](https://www.who.int/publications/i/item/9789240073630)
+Negli ultimi quindici anni sono usciti molti titoli del tipo "il burro è tornato" o "i grassi saturi non fanno male". Nascono da alcune meta-analisi di studi di popolazione, che non trovavano un legame netto tra saturi e infarti. Il problema di quegli studi è che non guardavano **con cosa** i saturi venivano sostituiti. Se togli burro e metti pane bianco e zucchero, il rischio non cambia; se togli burro e metti olio d'oliva, noci o olio di semi, il rischio scende.
+
+Le prove migliori vengono dagli studi sperimentali:
+
+- La **revisione Cochrane** del 2020 (Hooper e colleghi, 15 studi, 56.000 persone): ridurre i saturi per almeno due anni abbassa del **17%** gli eventi cardiovascolari. L'effetto è più grande quanto più scende il colesterolo e quando i saturi vengono sostituiti con **polinsaturi**.
+- Il documento dell'American Heart Association sui grassi (Sacks e colleghi, 2017) arriva alla stessa conclusione: sostituire i saturi con polinsaturi riduce il rischio di circa il 30%, quanto una statina.
+- Il meccanismo è chiaro: i saturi riducono i recettori che nel fegato tolgono l'LDL dal sangue; più saturi, più LDL che circola. E l'LDL, come vedremo, è una causa diretta dell'aterosclerosi.
+
+### Non tutti i cibi con saturi sono uguali
+
+Gli studi più recenti mostrano che conta anche la **matrice**, cioè la struttura del cibo:
+
+- **Yogurt e formaggi** sembrano più neutri del burro sul cuore, a parità di saturi; lo yogurt si associa anzi a meno diabete. Il burro resta da usare poco.
+- **Carni lavorate** sono il caso peggiore: saturi, sale e nitriti insieme.
+- **Cioccolato fondente**: il burro di cacao è ricco di acido stearico, un saturo che alza poco l'LDL.
+- **Olio di cocco**: è pubblicizzato come salutare, ma è per oltre l'80% saturo. Una meta-analisi di studi sperimentali (Neelakantan e colleghi, 2020) mostra che alza l'LDL più degli oli vegetali non tropicali, senza benefici su peso, glicemia o infiammazione. L'AHA lo sconsiglia.
+- **Olio di palma**: circa metà saturo. È stato in gran parte tolto dai prodotti italiani, spesso sostituito con olio di girasole alto oleico: un miglioramento.
+
+### Quanto è poco
+
+Sotto il 10% delle calorie vuol dire, per una dieta da 2.300 kcal, circa **25 grammi di saturi al giorno**. Ci si arriva in fretta: 50 grammi di parmigiano ne hanno circa 10, 100 grammi di salame 14, una brioche da bar 6-8, 10 grammi di burro 5. Una cucina con olio extravergine, legumi, pesce e latticini magri ci resta sotto senza fatica.
+
+### I grassi trans
+
+- Sono i peggiori per grammo: secondo una revisione di Mozaffarian e colleghi (NEJM 2006), ogni 2% delle calorie da trans alza del **23%** il rischio di malattie di cuore.
+- L'OMS chiede meno dell'**1%** delle calorie e dal 2018 lavora per eliminarli dal cibo industriale nel mondo.
+- **In Europa**, dal 2021, i trans industriali non possono superare **2 grammi per 100 grammi di grasso** (Regolamento UE 2019/649). In Italia sono molto meno frequenti di un tempo; restano nei prodotti fuori dall'Unione Europea e negli oli di frittura riusati molte volte.
+- Quelli **naturali** di latte e carne di ruminanti sono pochi e sembrano meno dannosi.
+
+Fonti: [Hooper et al., Cochrane 2020](https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD011737.pub3/full) · [Sacks et al., AHA 2017](https://www.ahajournals.org/doi/10.1161/CIR.0000000000000510) · [Neelakantan et al., Circulation 2020](https://pubmed.ncbi.nlm.nih.gov/31928080/) · [Mozaffarian et al., NEJM 2006](https://pubmed.ncbi.nlm.nih.gov/16611951/) · [OMS, grassi 2023](https://www.who.int/publications/i/item/9789240073630)
 ` },
     { id: 'al-insaturi', titolo: 'Monoinsaturi, omega-3 e omega-6', testo: `
 ## Monoinsaturi
@@ -758,12 +1020,157 @@ Funzioni: struttura delle membrane, soprattutto nel cervello e nella retina; eff
 
 ## Cosa dice la scienza
 
-- **Rapporto omega-6 / omega-3**: l'idea che gli omega-6 siano "infiammatori" non è confermata negli esseri umani; l'AHA (2009) consiglia di **non ridurre** gli omega-6, ma di **aumentare** gli omega-3. Il problema vero della dieta occidentale sono gli oli di frittura ripetuta e gli ultra-processati, non l'olio di semi in sé.
-- **Quanti omega-3**: l'EFSA indica **250 mg al giorno di EPA più DHA**, cioè 1-2 porzioni di pesce grasso a settimana.
-- Il corpo trasforma solo il **5-10% dell'ALA** in EPA e meno dell'1-5% in DHA: chi non mangia pesce può usare un integratore di **olio di alghe**.
-- **Olio extravergine**: oltre ai monoinsaturi porta polifenoli (idrossitirosolo) con effetto antiossidante riconosciuto dall'EFSA. Nel PREDIMED il gruppo con circa 50 ml al giorno ha avuto meno eventi cardiovascolari.
+### Che cosa vuol dire "omega"
 
-Fonti: [Harris et al., AHA 2009 sugli omega-6](https://www.ahajournals.org/doi/10.1161/CIRCULATIONAHA.108.191627) · [EFSA, valori di riferimento per i grassi](https://www.efsa.europa.eu/en/efsajournal/pub/1461) · [PREDIMED, NEJM 2018](https://www.nejm.org/doi/full/10.1056/NEJMoa1800389)
+Il nome indica la posizione del primo doppio legame contando dalla coda della catena, l'estremità chiamata omega: negli omega-3 è al terzo atomo di carbonio, negli omega-6 al sesto, negli omega-9, come l'acido oleico dell'olio d'oliva, al nono. Il corpo non sa creare doppi legami in quelle posizioni: per questo omega-3 e omega-6 sono essenziali, mentre gli omega-9 il corpo li produce.
+
+### Il "rapporto" omega-6 e omega-3
+
+Si legge spesso che la dieta occidentale ha troppi omega-6, che sarebbero "infiammatori", e che il rapporto ideale con gli omega-3 sarebbe di quattro a uno. L'idea viene dal fatto che l'acido arachidonico, un omega-6, è il punto di partenza di alcune molecole dell'infiammazione.
+
+Negli esseri umani, però, mangiare più acido linoleico **non** aumenta i marcatori di infiammazione, e gli studi di popolazione associano più omega-6 a **meno** malattie di cuore. Per questo l'American Heart Association (Harris e colleghi, 2009) consiglia di **non ridurre** gli omega-6, ma di **aumentare** gli omega-3. Il problema vero della dieta occidentale sono gli oli di frittura riusati e gli ultra-processati, non l'olio di semi in sé. Il rapporto, da solo, dice poco: conta avere abbastanza di entrambi.
+
+### Gli omega-3: quanti e da dove
+
+- L'EFSA indica **250 milligrammi al giorno di EPA più DHA**, cioè una o due porzioni di pesce grasso a settimana. Una porzione da 150 grammi di sgombro ne porta circa 2-3 grammi, di alici circa 2, di salmone 2-3, di merluzzo appena 0,3.
+- Per l'**ALA** vegetale l'EFSA indica lo 0,5% delle calorie, circa 1,3 grammi al giorno: li danno un cucchiaio di semi di lino macinati o 4-5 noci. I semi di lino vanno **macinati**, altrimenti attraversano l'intestino interi.
+- Il corpo trasforma solo il **5-10% dell'ALA** in EPA e meno dell'1-5% in DHA. Chi non mangia pesce, come i vegetariani, può usare un integratore di **olio di alghe**, la fonte da cui i pesci stessi prendono gli omega-3.
+
+### Gli integratori di omega-3
+
+Qui le prove sono più fredde di quanto si legga. Il grande studio **VITAL** (Manson e colleghi, 2019, oltre 25.000 persone sane) ha dato un grammo al giorno di omega-3 per cinque anni: nessuna riduzione di infarti, ictus o tumori nel complesso, con una possibile riduzione degli infarti nei pochi che mangiavano poco pesce. Altri studi hanno visto un piccolo aumento della fibrillazione atriale con dosi alte. Gli integratori sono utili per chi **non mangia pesce** e per alcune persone con trigliceridi molto alti seguite da un medico; per gli altri il pesce resta meglio, perché porta anche proteine, vitamina D, iodio e selenio.
+
+### I monoinsaturi e l'olio extravergine
+
+- Sostituire saturi o carboidrati raffinati con monoinsaturi abbassa l'LDL e migliora un po' la sensibilità all'insulina.
+- L'**olio extravergine** porta in più i **polifenoli**, come l'idrossitirosolo e l'oleocantale, quest'ultimo responsabile del pizzicore in gola dell'olio nuovo. L'EFSA riconosce che i polifenoli dell'olio d'oliva proteggono l'LDL dall'ossidazione, se ne arrivano almeno 5 milligrammi al giorno, cioè circa 20 grammi di un olio ricco di polifenoli.
+- Nel PREDIMED il gruppo con circa 50 millilitri di extravergine al giorno ha avuto meno eventi cardiovascolari; in uno studio di Harvard su 90.000 persone (Guasch-Ferré e colleghi, 2022) chi usava più di mezzo cucchiaio di olio d'oliva al giorno aveva una mortalità più bassa del 19% di chi non lo usava mai.
+
+Fonti: [Harris et al., AHA 2009 sugli omega-6](https://www.ahajournals.org/doi/10.1161/CIRCULATIONAHA.108.191627) · [EFSA, valori di riferimento per i grassi](https://www.efsa.europa.eu/en/efsajournal/pub/1461) · [Manson et al., VITAL, NEJM 2019](https://pubmed.ncbi.nlm.nih.gov/30415637/) · [Guasch-Ferré et al., JACC 2022](https://pubmed.ncbi.nlm.nih.gov/35027106/) · [PREDIMED, NEJM 2018](https://www.nejm.org/doi/full/10.1056/NEJMoa1800389)
+` },
+    { id: 'al-colesterolo', titolo: 'Il colesterolo', testo: `
+*Pagina nuova, dalla letteratura: il colesterolo nel piatto e quello nel sangue non sono la stessa cosa.*
+
+Il **colesterolo** è uno sterolo, una molecola grassa indispensabile: sta in tutte le membrane delle cellule, il corpo lo usa per produrre gli ormoni steroidei (testosterone, estrogeni, cortisolo), la vitamina D e gli acidi biliari che servono a digerire i grassi. Lo produce soprattutto il **fegato**: quasi un grammo al giorno, di solito più di quanto ne arrivi dal cibo.
+
+### Le navicelle: LDL e HDL
+
+Il colesterolo non si scioglie nel sangue e viaggia dentro le lipoproteine.
+
+- Le **LDL** lo portano dal fegato ai tessuti. Quando sono troppe, entrano nella parete delle arterie, si ossidano e attirano cellule infiammatorie: è l'inizio della **placca aterosclerotica**, che con gli anni restringe le arterie e può rompersi, causando infarto o ictus. Per questo il colesterolo LDL si chiama "cattivo".
+- Le **HDL** riportano il colesterolo in eccesso dai tessuti al fegato. Per questo si chiamano "buone".
+
+### Le prove: l'LDL è una causa
+
+Per molto tempo si è discusso se l'LDL fosse una causa o solo un segnale. Oggi la questione è chiusa. Il consenso della European Atherosclerosis Society (Ference e colleghi, 2017) mette insieme studi genetici, studi di popolazione e studi sperimentali su oltre due milioni di persone: tutti dicono che **più LDL, per più anni, vuol dire più aterosclerosi**. Le persone nate con varianti genetiche che abbassano l'LDL hanno molti meno infarti per tutta la vita. E ogni farmaco che abbassa l'LDL riduce gli eventi in proporzione a quanto lo abbassa: circa il 20% in meno di eventi ogni 39 milligrammi per decilitro di LDL in meno.
+
+Due idee importanti vengono da qui:
+
+- conta il valore **cumulativo**: un LDL un po' alto per quarant'anni pesa quanto uno molto alto per dieci. Mantenerlo basso da giovani rende moltissimo;
+- per l'**HDL** la storia è diversa: un HDL alto si associa a meno infarti, ma i farmaci che lo alzano non hanno ridotto gli eventi. L'HDL è un buon segnale, non un bersaglio.
+
+### I valori
+
+Per una persona sana senza altri rischi le linee guida europee indicano un **LDL sotto 116 milligrammi per decilitro**; sotto 100 per chi ha un rischio moderato, valori più bassi per chi ha già avuto problemi o ha il diabete. I **trigliceridi** a digiuno sono buoni sotto 150. Il colesterolo totale da solo dice poco: conta come si divide.
+
+### Il colesterolo del cibo
+
+Ecco la sorpresa per molti: il colesterolo che mangiamo alza poco quello del sangue. Quando ne mangiamo di più, il fegato ne produce di meno e l'intestino ne assorbe una quota minore. La risposta però varia molto da persona a persona.
+
+Per questo l'American Heart Association (Carson e colleghi, 2019) non fissa più un limite preciso al colesterolo alimentare e dice che le persone sane possono mangiare **fino a un uovo al giorno** dentro una dieta sana. Il motivo per non esagerare con i cibi ricchi di colesterolo è un altro: quasi tutti, tranne uova e crostacei, sono anche ricchi di **grassi saturi**, come burro, formaggi grassi, salumi e carni grasse.
+
+### Cosa alza e cosa abbassa l'LDL con il cibo
+
+Alzano l'LDL, in ordine di forza:
+
+- **grassi trans**;
+- **grassi saturi**, soprattutto da burro, carni grasse, olio di cocco e di palma;
+- il **cafestolo** del caffè non filtrato, come il caffè alla turca, il caffè bollito e in parte quello della moka e dell'espresso. Il caffè filtrato con la carta no. Con due o tre espressi al giorno l'effetto è piccolo;
+- in misura minore il colesterolo alimentare e l'eccesso di peso.
+
+Abbassano l'LDL:
+
+- sostituire i saturi con **olio extravergine, oli di semi, frutta secca**: fino al 10-15%;
+- la **fibra solubile** di avena, orzo, legumi, psillio: circa il 5-10%;
+- gli **steroli vegetali** di frutta secca, semi, legumi; nelle quantità degli yogurt arricchiti, 2 grammi al giorno, abbassano l'LDL di circa il 10%;
+- la **soia** e la frutta secca come fonti proteiche;
+- il **calo di peso**, se c'è grasso in eccesso.
+
+Una dieta che mette insieme tutte queste cose, chiamata "portfolio" dal ricercatore canadese David Jenkins, negli studi controllati ha abbassato l'LDL fino a circa il 30%, vicino a una statina a bassa dose; nella vita reale, seguita meno alla lettera, intorno al 10-15%.
+
+### Trigliceridi
+
+Sono i grassi che circolano nel sangue dopo un pasto e tra i pasti. Salgono soprattutto con lo **zucchero** e il fruttosio aggiunto, l'**alcol**, le farine raffinate e il peso in eccesso; scendono con il movimento, il calo di peso e gli omega-3 del pesce.
+
+Fonti: [Ference et al., Eur Heart J 2017](https://pubmed.ncbi.nlm.nih.gov/28444290/) · [Carson et al., AHA 2019](https://pubmed.ncbi.nlm.nih.gov/31838890/) · [Sacks et al., AHA 2017](https://www.ahajournals.org/doi/10.1161/CIR.0000000000000510)
+` },
+    { id: 'al-olio-frutta-secca', titolo: 'Olio, frutta secca e semi', testo: `
+*Pagina nuova, dalla letteratura: i grassi buoni nel piatto di tutti i giorni.*
+
+Nei tuoi appunti i grassi a contorno sono olive, olio extravergine, olio di colza, avocado, semi, noci e omega-3. È esattamente la lista delle linee guida. Questa pagina spiega come usarli nella pratica.
+
+### L'olio extravergine d'oliva
+
+- **Cos'è**: il succo dell'oliva, estratto solo con mezzi meccanici, senza calore né solventi, con acidità sotto lo 0,8%. L'olio "di oliva" semplice è invece una miscela di olio raffinato e un po' di vergine: ha gli stessi grassi ma quasi niente polifenoli.
+- **La qualità** si sente: profumo di erba o carciofo, un amaro gentile e un **pizzicore in gola** sono segni di polifenoli. Un olio piatto e dolce ne ha pochi.
+- **Conservazione**: luce, calore e aria lo degradano. Bottiglia scura o latta, al riparo dal fornello, e da consumare entro un anno dalla raccolta, meglio entro pochi mesi dall'apertura.
+- **In cucina**: è il grasso migliore anche per cuocere, come spiega il capitolo sulla cucina, grazie alla stabilità dei monoinsaturi e degli antiossidanti.
+- **Quanto**: le linee guida italiane contano un cucchiaio, 10 grammi, come una porzione, e ne prevedono alcune al giorno per condire tutti i pasti. Un cucchiaio sono 90 kcal: in un periodo di dimagrimento si **misura** con il cucchiaio invece di versarlo a occhio, dove facilmente diventano tre.
+
+### Gli altri oli
+
+- **Olio di colza**: ricco di monoinsaturi e con un po' di omega-3 vegetali; buono per condire e per cotture moderate.
+- **Oli di semi** di girasole, mais, soia: ricchi di omega-6, abbassano l'LDL rispetto ai grassi animali. Meglio a crudo o in cotture brevi; per friggere meglio le versioni **alto oleico**, più stabili.
+- **Olio di lino e di noci**: ricchissimi di omega-3 vegetali, ma fragili: in frigo, solo a crudo.
+- **Olio di arachide**: stabile, adatto alla frittura.
+- **Olio di cocco e di palma**: soprattutto saturi, da limitare.
+
+### La frutta secca
+
+Mandorle, noci, nocciole, pistacchi, anacardi, noci del Brasile, pinoli e arachidi, che botanicamente sono legumi ma si comportano allo stesso modo.
+
+- **Le prove**: in una meta-analisi di Aune e colleghi (2016, 20 studi) una manciata al giorno, circa **28 grammi**, si associava al 29% in meno di malattie di cuore, al 21% in meno di malattie cardiovascolari, al 22% in meno di mortalità totale. Nel PREDIMED 30 grammi al giorno di noci, mandorle e nocciole hanno ridotto infarti e ictus.
+- **Il peso**: sono molto caloriche, circa 600 kcal per 100 grammi, eppure negli studi chi le mangia non ingrassa di più. I motivi: saziano molto, una parte dei grassi resta chiusa nelle pareti delle cellule e non viene assorbita, e il corpo compensa riducendo altro. Le mandorle intere danno in pratica circa un quinto di calorie in meno di quelle scritte in etichetta.
+- **Quale**: tutte vanno bene, meglio variare. Le **noci** hanno più omega-3, i **pistacchi** più proteine e potassio, le **mandorle** più calcio e vitamina E, due **noci del Brasile** coprono il selenio di un giorno; di più non serve, perché il selenio in eccesso fa male.
+- **Come**: al naturale o tostate, senza sale e senza zucchero. Le arachidi salate e i mix con frutta candita e cioccolato sono un'altra cosa.
+- **Porzione**: 30 grammi, una manciata, circa 180 kcal. In deficit si pesa.
+
+### I semi
+
+- **Semi di lino** macinati: omega-3 vegetali e lignani; un cucchiaio al giorno nello yogurt o nell'avena.
+- **Semi di chia**: omega-3, molta fibra solubile; a contatto con l'acqua formano un gel.
+- **Semi di zucca**: zinco, magnesio, ferro, proteine.
+- **Semi di girasole**: vitamina E.
+- **Sesamo e tahina**: calcio, soprattutto con il seme intero.
+- **Semi di canapa**: proteine complete e omega-3.
+
+### Olive e avocado
+
+- **Olive**: monoinsaturi e polifenoli, ma molto sale, circa 1-2 grammi ogni dieci olive in salamoia. Si usano come condimento.
+- **Avocado**: monoinsaturi, fibra, potassio. È un buon grasso; l'impatto ambientale, per acqua e trasporto, è alto. Mezzo avocado sono circa 160 kcal.
+
+### Burro
+
+Va bene in piccole quantità, come nei tuoi appunti, per il sapore di alcune ricette. Non come grasso abituale: dieci grammi hanno circa 5 grammi di saturi, un quinto del massimo giornaliero.
+
+Fonti: [Aune et al., BMC Med 2016](https://pubmed.ncbi.nlm.nih.gov/27916000/) · [PREDIMED, NEJM 2018](https://www.nejm.org/doi/full/10.1056/NEJMoa1800389) · [Guasch-Ferré et al., JACC 2022](https://pubmed.ncbi.nlm.nih.gov/35027106/) · [CREA 2018](https://www.crea.gov.it/web/alimenti-e-nutrizione/-/linee-guida-per-una-sana-alimentazione-2018)
+` },
+    { id: 'al-riepilogo-grassi', titolo: 'Riepilogo: I grassi', testo: `
+1. **I grassi sono essenziali**: membrane, ormoni, assorbimento delle vitamine A, D, E e K. Senza un po' d'olio i carotenoidi della verdura si assorbono poco.
+2. **Conta il tipo più della quantità**: tra il 20 e il 35% delle calorie va bene, purché quasi tutti insaturi. Il PREDIMED arrivava al 40% di grassi con meno infarti.
+3. **I saturi vanno sostituiti con grassi insaturi**, non con zuccheri: così gli eventi cardiovascolari scendono di circa un quinto o più. Sotto il 10% delle calorie vuol dire circa 25 grammi al giorno.
+4. **I trans sono i peggiori**: in Europa sono quasi spariti dai prodotti, ma restano negli oli di frittura riusati e nei prodotti fuori dall'Unione Europea.
+5. **Omega-6 non vanno tagliati; omega-3 vanno aumentati**: pesce azzurro una o due volte a settimana, oppure semi di lino macinati, noci e, per chi non mangia pesce, olio di alghe.
+6. **Gli integratori di omega-3** nelle persone sane non hanno ridotto infarti e tumori nello studio VITAL: sono utili soprattutto per chi non mangia pesce.
+7. **L'LDL è una causa dell'aterosclerosi**, e conta quanto e per quanti anni è alto. Il colesterolo del cibo lo alza poco; i saturi e i trans molto di più. Un uovo al giorno va bene.
+8. **Abbassano l'LDL**: olio extravergine e frutta secca al posto dei grassi animali, fibra di avena, orzo e legumi, soia, steroli vegetali.
+9. **Olio extravergine** misurato con il cucchiaio, **frutta secca** una manciata al giorno senza sale: sono i due grassi con le prove migliori.
+
+Domande per verificare:
+
+- Da dove vengono, nella tua giornata tipo, la maggior parte dei grassi saturi?
+- Quante volte a settimana mangi pesce azzurro o semi ricchi di omega-3?
+- Quanti cucchiai di olio usi davvero in un pasto, se provi a misurarli?
 ` },
   ] },
 
