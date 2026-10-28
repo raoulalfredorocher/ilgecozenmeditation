@@ -1,0 +1,36 @@
+# Firebase Hosting (piano gratuito) ha un tetto di spazio e di default tiene ogni versione pubblicata per sempre.
+# Con gli MP3 degli audiolibri lo spazio si esaurisce e ogni pubblicazione fallisce con errore 429.
+# Questo workflow imposta "tieni solo le ultime N versioni": Firebase cancella da solo le più vecchie.
+# Si lancia a mano da Actions → "Limite versioni Hosting" → Run workflow.
+name: Limite versioni Hosting
+
+on:
+  workflow_dispatch:
+    inputs:
+      versioni:
+        description: 'Quante versioni tenere'
+        default: '5'
+
+permissions:
+  contents: read
+
+jobs:
+  limite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Imposta il limite
+        env:
+          N: ${{ inputs.versioni }}
+        run: |
+          TOKEN=$(gcloud auth print-access-token)
+          URL="https://firebasehosting.googleapis.com/v1beta1/sites/ilgecozen-b2df7/config"
+          curl -sS --fail-with-body -X PATCH "$URL?updateMask=maxVersions" \
+            -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+            -d "{\"maxVersions\": $N}"
+          echo
+          curl -sS --fail-with-body "$URL" -H "Authorization: Bearer $TOKEN"
