@@ -27,6 +27,7 @@ import dorso from './appunti/dorso.js';
 import spalle from './appunti/spalle.js';
 import braccia from './appunti/braccia.js';
 import addome from './appunti/addome.js';
+import gambe from './appunti/gambe.js';
 import forza from './appunti/forza.js';
 import resistenza from './appunti/resistenza.js';
 import flessibilita from './appunti/flessibilita.js';
@@ -39,4 +40,4 @@ export const LIBRO = {
   ],
 };
 
-export const CAPITOLI = [perche, principi, ormoni, petto, dorso, spalle, braccia, addome, forza, resistenza, flessibilita];
+export const CAPITOLI = [perche, principi, ormoni, petto, dorso, spalle, braccia, addome, gambe, forza, resistenza, flessibilita];
