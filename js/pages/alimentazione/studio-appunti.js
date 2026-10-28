@@ -256,7 +256,7 @@ Gli studi successivi hanno confermato il quadro:
 
 ## Fame vera e voglia
 
-La **fame fisica** cresce piano, si accontenta di cibi diversi e passa quando sei pieno. La **voglia** arriva all'improvviso, chiede un cibo preciso (quasi sempre dolce o salato e grasso) e non si ferma con la sazietà. Non serve combatterla con la forza: aiuta di più cambiare l'ambiente, cioè non avere quei cibi a portata di mano in casa, e programmarli invece in un momento scelto, come il tuo pasto libero del sabato.
+La **fame fisica** cresce piano, si accontenta di cibi diversi e passa quando sei pieno. La **voglia** arriva all'improvviso, chiede un cibo preciso (quasi sempre dolce o salato e grasso) e non si ferma con la sazietà. Non serve combatterla con la forza: aiuta di più cambiare l'ambiente, cioè non avere quei cibi a portata di mano in casa, e programmarli invece in un momento scelto, come un pasto libero a settimana.
 
 Fonti: [Holt et al., Eur J Clin Nutr 1995](https://pubmed.ncbi.nlm.nih.gov/7498104/) · [Leidy et al., Am J Clin Nutr 2015](https://pubmed.ncbi.nlm.nih.gov/25926512/) · [Al Khatib et al., Eur J Clin Nutr 2017](https://pubmed.ncbi.nlm.nih.gov/27804960/) · [Rolls, Physiol Behav 2009](https://pubmed.ncbi.nlm.nih.gov/19303887/)
 ` },
@@ -864,7 +864,7 @@ La conclusione pratica: una bibita "zero" ogni tanto è meglio di una zuccherata
 - Riduci per gradi lo zucchero nel caffè o nello yogurt, mezzo cucchiaino alla volta.
 - Dolcifica con la **frutta**: banana matura schiacciata nell'avena, datteri tritati nei dolci fatti in casa, frutti di bosco nello yogurt bianco.
 - Usa spezie che "suonano" dolci: **cannella**, vaniglia, cardamomo, noce moscata.
-- Tieni i dolci fuori casa e programmali, come nel tuo pasto libero, invece di eliminarli con la forza.
+- Tieni i dolci fuori casa e programmali, per esempio in un pasto libero a settimana, invece di eliminarli con la forza.
 
 Fonti: [OMS, zuccheri](https://www.who.int/publications/i/item/9789241549028) · [OMS, dolcificanti 2023](https://www.who.int/publications/i/item/9789240073616) · [Malik et al., Diabetes Care 2010](https://pubmed.ncbi.nlm.nih.gov/20693348/) · [Witkowski et al., Nat Med 2023](https://pubmed.ncbi.nlm.nih.gov/36849732/) · [Stanhope et al., J Clin Invest 2009](https://pubmed.ncbi.nlm.nih.gov/19381015/)
 ` },
@@ -1199,13 +1199,37 @@ Viene dagli alimenti o dal microbiota intestinale; serve alla coagulazione e all
 
 ## Cosa dice la scienza
 
-- **Vitamina A**: i LARN indicano **700 µg** per l'uomo e 600 per la donna. Troppa vitamina A già pronta (fegato tutti i giorni, integratori) è tossica; i carotenoidi della verdura no.
-- **Da correggere, vitamina D**: il fabbisogno è **15 µg al giorno** (600 UI) per LARN ed EFSA, non 50. Il limite massimo sicuro è 100 µg (4000 UI). Da ottobre a marzo, in Italia, il sole è troppo basso per produrne abbastanza: per questo molti integrano, meglio dopo aver misurato i livelli nel sangue.
-- **Crema solare**: in pratica non azzera la produzione di vitamina D, perché nessuno la mette in quantità da laboratorio.
-- **Vitamina E**: 13 mg al giorno per l'uomo (LARN). Non esistono prove che aiuti l'assorbimento del calcio; gli integratori ad alte dosi non proteggono il cuore.
-- **Vitamina K**: i 140 µg dei tuoi appunti sono proprio il valore dei LARN (l'EFSA dice 70). Il legame tra K2 e "calcio nelle arterie" è interessante ma ancora non dimostrato negli studi sperimentali.
+### Vitamina A
 
-Fonti: [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [EFSA, valori di riferimento](https://www.efsa.europa.eu/en/topics/topic/dietary-reference-values) · [NIH, vitamina D](https://ods.od.nih.gov/factsheets/VitaminD-Consumer/)
+- I LARN indicano **700 microgrammi** al giorno per l'uomo e 600 per la donna. Una carota media, circa 80 grammi, ne copre da sola quasi tutto il fabbisogno sotto forma di betacarotene.
+- **Troppa vitamina A già pronta** è tossica: il limite massimo per gli adulti è 3.000 microgrammi al giorno. Ci si arriva con il fegato mangiato spesso o con integratori. Il **betacarotene** della verdura invece no: il corpo ne trasforma solo quanto gli serve, e al massimo la pelle diventa un po' arancione.
+- Gli **integratori di betacarotene** sono un'altra storia: in grandi studi sui fumatori hanno **aumentato** i tumori del polmone. Nella revisione Cochrane di Bjelakovic (2012, 78 studi, quasi 300.000 persone) gli integratori di betacarotene e di vitamina E hanno aumentato leggermente la mortalità.
+
+### Vitamina D
+
+- **Da correggere**: il fabbisogno è **15 microgrammi al giorno**, cioè 600 unità internazionali, per LARN ed EFSA, non 50. Il limite massimo sicuro è 100 microgrammi, 4.000 unità.
+- **Il sole**: è la fonte principale, perché pochi cibi ne contengono abbastanza. Da ottobre a marzo, in Italia, il sole è troppo basso sull'orizzonte e i raggi UVB che servono alla pelle arrivano molto deboli: in quei mesi si vive di riserve. Una regola pratica usata dai dermatologi: la pelle produce vitamina D quando la propria ombra è più corta della propria altezza.
+- **La crema solare** in pratica non azzera la produzione, perché nessuno la mette nelle quantità usate in laboratorio.
+- **Gli integratori**: lo studio **VITAL** (Manson e colleghi, 2019, oltre 25.000 persone sane) ha dato 2.000 unità al giorno per cinque anni: nessuna riduzione di tumori, infarti o ictus nel complesso. Gli integratori servono a correggere una **carenza**, non a prevenire malattie in chi ha livelli normali. Per questo conviene misurare i livelli nel sangue, la 25-idrossi vitamina D: sotto 20 nanogrammi per millilitro si parla di carenza.
+- Chi è più a rischio: chi sta molto al chiuso, chi ha la pelle scura, le persone anziane, chi è in sovrappeso, e d'inverno quasi tutti.
+
+### Vitamina E
+
+- 13 milligrammi al giorno per l'uomo (LARN): li danno una manciata di mandorle e un cucchiaio di olio extravergine.
+- Non esistono prove che aiuti l'assorbimento del calcio; gli integratori ad alte dosi non proteggono il cuore e, come visto, possono fare danni. In uno studio molto grande, il SELECT, la vitamina E ha aumentato un po' i tumori della prostata.
+- Gli antiossidanti in dosi alte possono anche **ridurre gli adattamenti all'allenamento**: i radicali liberi prodotti durante lo sforzo sono anche un segnale che dice al muscolo di adattarsi.
+
+### Vitamina K
+
+- I 140 microgrammi dei tuoi appunti sono proprio il valore dei LARN; l'EFSA indica 70. Una porzione di verdura a foglia verde ne porta molto di più: 50 grammi di spinaci crudi circa 250 microgrammi.
+- Il legame tra **K2** e "calcio nelle arterie" è interessante, ma ancora non dimostrato negli studi sperimentali.
+- Chi prende farmaci anticoagulanti come il warfarin non deve eliminare la verdura verde, ma mangiarne una quantità **costante**, perché la vitamina K ne cambia l'effetto.
+
+### Cibo prima di tutto
+
+Le vitamine liposolubili hanno insegnato una lezione importante: negli studi di popolazione chi **mangia** più cibi ricchi di vitamina A, E e carotenoidi si ammala di meno; chi **prende** le stesse sostanze in capsule non ha gli stessi benefici, a volte ha danni. Nei cibi le vitamine arrivano in dosi fisiologiche e insieme a centinaia di altre sostanze.
+
+Fonti: [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [EFSA, valori di riferimento](https://www.efsa.europa.eu/en/topics/topic/dietary-reference-values) · [NIH, vitamina D](https://ods.od.nih.gov/factsheets/VitaminD-Consumer/) · [Manson et al., VITAL, NEJM 2019](https://pubmed.ncbi.nlm.nih.gov/30415629/) · [Bjelakovic et al., Cochrane 2012](https://pubmed.ncbi.nlm.nih.gov/22419320/)
 ` },
     { id: 'al-vitamine-b-c', titolo: 'Vitamine del gruppo B e vitamina C', testo: `
 Le vitamine del gruppo B e la C sono **idrosolubili**: si sciolgono in acqua, il corpo ne fa poca scorta (tranne la B12) e si perdono in parte nell'acqua di cottura.
@@ -1227,10 +1251,40 @@ Essenziale per produrre il **collagene**: se manca, i tessuti faticano a rigener
 
 ## Cosa dice la scienza
 
-- **Da correggere**: nei tuoi appunti la **B7 era l'inositolo**. La vitamina B7 è la **biotina** (in Italia chiamata anche B8 o H); l'inositolo non è una vitamina per l'uomo, perché il corpo lo produce. Ho messo la biotina come B8 e tolto l'inositolo.
-- **B12**: con un'alimentazione vegetariana i livelli calano col tempo; per i vegani l'integrazione è **obbligatoria**. Gli schemi usati: 25-100 µg al giorno, oppure 2000 µg una volta a settimana. Il fabbisogno da cibo è 2,4 µg (LARN), 4 µg per l'EFSA.
-- **Folati**: 400 µg al giorno (LARN). Sono fragili al calore: verdura a foglia anche cruda.
-- **Da correggere, vitamina C**: il fabbisogno è **105 mg** per l'uomo (LARN), facile da raggiungere con un kiwi e un peperone. **500 mg al giorno** non portano benefici dimostrati: sopra i 200 mg l'intestino ne assorbe sempre meno e il resto si elimina con le urine. Per chi fuma servono circa 35 mg in più.
+### Correzioni
+
+- **Da correggere**: nei tuoi appunti la **B7 era l'inositolo**. La vitamina B7 è la **biotina**, che in Italia si chiama anche B8 o H; l'inositolo non è una vitamina per l'uomo, perché il corpo lo produce. Ho messo la biotina come B8 e tolto l'inositolo.
+- **Da correggere, vitamina C**: il fabbisogno è **105 milligrammi** per l'uomo (LARN), facile da raggiungere con un kiwi e mezzo peperone. **500 milligrammi al giorno** non portano benefici dimostrati: sopra i 200 milligrammi l'intestino ne assorbe sempre meno e il resto si elimina con le urine. Per chi fuma servono circa 35 milligrammi in più.
+
+### Le vitamine B lavorano in squadra
+
+Le vitamine del gruppo B non danno energia, ma sono le chiavi che servono agli enzimi per **estrarre** energia da carboidrati, grassi e proteine. Per questo la stanchezza è un segno comune di carenza, e per questo gli integratori "energizzanti" di vitamine B non danno energia a chi non è carente. Si trovano soprattutto nei cereali **integrali**, nei legumi, nelle uova, nel latte, nella carne e nel pesce: la raffinazione delle farine ne toglie gran parte.
+
+### La B12: la più importante per chi mangia vegetale
+
+- La B12 la producono solo i **batteri**. Gli animali la accumulano mangiando terra, erba e cibo contaminato dai batteri, o la producono nel loro intestino; noi la prendiamo da carne, pesce, uova e latticini. I vegetali, le alghe come la spirulina e i cibi fermentati vegetali non ne contengono in forma utile.
+- Il fegato ne tiene una scorta per **anni**: per questo una carenza si vede tardi, quando ha già fatto danni ai nervi, a volte non del tutto reversibili. I segni: stanchezza, formicolii a mani e piedi, problemi di memoria, anemia.
+- Con un'alimentazione **vegetariana** i livelli calano spesso col tempo; per i **vegani** l'integrazione è obbligatoria. Gli schemi usati: 25-100 microgrammi al giorno, oppure 2.000 microgrammi una volta a settimana. Più alta la dose singola, più bassa la percentuale assorbita, per questo le dosi sembrano grandi. Il fabbisogno da cibo è 2,4 microgrammi per i LARN, 4 per l'EFSA.
+- Con l'età, e con alcuni farmaci come la metformina e quelli che riducono l'acido dello stomaco, si assorbe meno B12 anche mangiando carne.
+- Si può controllare con un esame del sangue; il dosaggio di omocisteina o di acido metilmalonico è più sensibile della sola B12.
+
+### Folati
+
+400 microgrammi al giorno (LARN). Servono a costruire il DNA, per questo il fabbisogno sale molto in gravidanza. Sono fragili al calore e alla luce: verdura a foglia anche cruda, legumi, agrumi, asparagi. Il nome viene dal latino *folium*, foglia.
+
+### Vitamina C, a cosa serve davvero
+
+- **Collagene**: senza vitamina C l'enzima che lo costruisce non funziona. Lo scorbuto dei marinai, con gengive sanguinanti e ferite che non guarivano, era proprio questo. Bastano 10 milligrammi al giorno per prevenirlo.
+- **Ferro**: aumenta l'assorbimento del ferro vegetale, come abbiamo visto negli abbinamenti.
+- **Raffreddore**: le revisioni Cochrane mostrano che prenderla ogni giorno non previene il raffreddore nelle persone comuni e accorcia la durata di poco, circa l'8% negli adulti. Fa eccezione chi fa sforzi fisici estremi, come i maratoneti, nei quali dimezza il rischio.
+- **Cottura**: è la vitamina più fragile. Si perde con il calore, con l'acqua di cottura, con l'aria e con il tempo dopo il taglio: un'insalata tagliata e lasciata ore ne perde molta. Peperoni crudi, agrumi, kiwi, fragole e prezzemolo sono le fonti più sicure.
+
+### Le altre vitamine B, in breve
+
+- **B1**: la carenza grave, il beriberi, oggi si vede quasi solo con l'alcol: l'alcol ne blocca l'assorbimento.
+- **B3**: il corpo la produce in parte dal triptofano.
+- **B6**: dosi alte da integratori, di qualche decina di milligrammi al giorno per mesi, possono danneggiare i nervi; l'EFSA ha fissato il limite massimo a 12 milligrammi al giorno. È un caso in cui un integratore "innocuo" fa male.
+- **Biotina**: la carenza è rarissima; gli integratori per capelli e unghie non servono a chi non è carente e possono falsare alcuni esami del sangue, come quelli della tiroide.
 
 Fonti: [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [NIH, vitamina B12](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/) · [NIH, vitamina C](https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/)
 ` },
@@ -1247,11 +1301,37 @@ Gli **elettroliti** sono minerali con una carica elettrica, capaci di condurre c
 
 ## Cosa dice la scienza
 
-- **Fabbisogni** per un uomo adulto (LARN): calcio **1000 mg**, fosforo 700 mg, magnesio 240 mg, potassio **3900 mg**, sodio 1500 mg (con un massimo consigliato di 2000 mg, cioè 5 g di sale).
-- **Sodio e potassio**: non è vero che "se uno è alto l'altro è basso", ma conta il loro **rapporto**. La dieta occidentale ha troppo sodio e poco potassio. Più potassio (frutta, verdura, legumi) e meno sodio abbassano la pressione: è il principio della dieta **DASH**, che riduce la massima di 8-11 mmHg in chi ha la pressione alta.
-- **Da correggere, "alcalinizzante"**: il cibo non cambia il pH del sangue, che reni e polmoni tengono fisso tra 7,35 e 7,45. Le diete "alcaline" fanno bene solo perché sono ricche di frutta e verdura.
-- **Calcio**: l'acqua del rubinetto o le minerali con più di 300 mg/l di calcio sono una buona fonte e si assorbono come quello del latte.
-- L'80% del sodio che mangiamo è già **dentro i cibi** (pane, formaggi, salumi, piatti pronti), non nella saliera.
+### I fabbisogni
+
+Per un uomo adulto i LARN indicano: calcio **1.000 milligrammi**, fosforo 700, magnesio 240, potassio **3.900**, sodio 1.500, con un massimo consigliato di 2.000 milligrammi, cioè 5 grammi di sale. Il cloro segue il sodio, perché arriva insieme a lui nel sale.
+
+### Sodio e potassio: una coppia
+
+Ogni cellula del corpo ha una pompa che spinge il sodio fuori e il potassio dentro. Da questa differenza dipendono il battito del cuore, i segnali dei nervi, la contrazione dei muscoli e la quantità d'acqua nel corpo. Per questo i reni tengono sodio e potassio nel sangue entro limiti strettissimi.
+
+- Non è vero che "se uno è alto l'altro è basso", ma conta il loro **rapporto** nella dieta. La dieta occidentale ha troppo sodio, da pane, formaggi, salumi e piatti pronti, e poco potassio, perché mancano frutta, verdura e legumi. I nostri antenati mangiavano il contrario: molto potassio e poco sodio.
+- Più potassio e meno sodio abbassano la pressione: è il principio della dieta **DASH**, studiata negli Stati Uniti negli anni Novanta. Con la DASH e poco sale (Sacks e colleghi, 2001) la pressione massima di chi l'aveva alta è scesa di circa 11 millimetri di mercurio, quanto con un farmaco.
+- L'OMS chiede almeno **3,5 grammi di potassio al giorno**. Li danno cinque porzioni di frutta e verdura, una porzione di legumi e cereali integrali. Una banana ne ha circa 400 milligrammi, una porzione di lenticchie 500, una patata 600, 200 grammi di spinaci cotti quasi mille.
+- I **sostituti del sale** con potassio, come mostra lo studio SSaSS che vedremo nel capitolo sulle scelte, riducono ictus e morti; non sono adatti a chi ha malattie renali o prende alcuni farmaci per la pressione.
+
+### Calcio
+
+- Serve a ossa, muscoli, nervi e coagulazione. Se ne arriva poco, il corpo lo prende dalle ossa per tenere stabile quello nel sangue.
+- **Fonti**: latte, yogurt e formaggi; acque minerali con più di 300 milligrammi per litro, che si assorbono come il latte; tofu preparato con solfato di calcio; cavoli, broccoli, rucola, cime di rapa, che si assorbono bene; mandorle, sesamo intero, fichi secchi. Gli spinaci ne hanno molto, ma con gli ossalati se ne assorbe pochissimo.
+- Con due porzioni di latticini al giorno e un litro di acqua calcica si arriva a 1.000 milligrammi.
+- **Ossa forti** non vuol dire solo calcio: servono anche vitamina D, proteine, vitamina K, magnesio, potassio e soprattutto **carico meccanico**, cioè pesi, salti e camminate. L'allenamento con i pesi è uno dei modi migliori per proteggere le ossa negli anni.
+
+### Magnesio
+
+Partecipa a oltre trecento reazioni, dalla produzione di energia alla sintesi delle proteine al rilassamento dei muscoli. Molte persone ne mangiano meno del necessario, perché sta soprattutto nei cibi integrali: cereali integrali, legumi, frutta secca, semi di zucca, cacao amaro, verdura verde. Gli integratori sono utili se la dieta è povera di questi cibi; in dosi alte hanno effetto lassativo. Sui crampi notturni le prove di beneficio sono deboli.
+
+### Da correggere: i cibi "alcalinizzanti"
+
+Il cibo **non cambia il pH del sangue**, che reni e polmoni tengono fisso tra 7,35 e 7,45: anche una piccola variazione sarebbe un'emergenza medica. Il cibo cambia il pH delle **urine**, ed è da lì che nasce la confusione. Le diete "alcaline" fanno bene solo perché sono ricche di frutta, verdura e legumi, e quindi di potassio e magnesio.
+
+### Il sale nascosto
+
+Circa l'**80%** del sodio che mangiamo è già dentro i cibi, non nella saliera. Le fonti principali in Italia sono pane e prodotti da forno, formaggi stagionati, salumi, piatti pronti, sughi, dadi e patatine. Due fette di pane ne hanno circa un grammo, 50 grammi di prosciutto crudo circa 3 grammi di sale, 50 grammi di pecorino quasi 2.
 
 Fonti: [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [OMS, potassio](https://www.who.int/publications/i/item/9789241504829) · [Sacks et al., DASH, NEJM 2001](https://www.nejm.org/doi/full/10.1056/NEJM200101043440101)
 ` },
@@ -1267,48 +1347,151 @@ Gli **oligoelementi** sono minerali di cui serve meno di 100 mg al giorno, a vol
 
 Arsenico, piombo, cadmio e **mercurio**. Il mercurio si accumula nei pesci di grossa taglia.
 
-## Cosa completa la scienza
+## Cosa dice la scienza
 
-Le voci vuote dei tuoi appunti:
+### Le voci vuote dei tuoi appunti
 
-- **Zinco** (12 mg per l'uomo): difese immunitarie, pelle, fertilità, gusto. Carne, pesce, molluschi, semi di zucca, legumi, cereali integrali. I fitati di legumi e cereali lo legano: ammollo, germogli e lievitazione ne liberano di più.
-- **Selenio** (55 µg): antiossidante e tiroide. Due noci del Brasile ne danno già abbastanza; pesce, uova, cereali.
-- **Rame** (0,9 mg): con il ferro forma i globuli rossi. Frutta secca, legumi, cacao, frattaglie.
-- **Manganese**: enzimi antiossidanti. Cereali integrali, frutta secca, tè.
+- **Zinco**, 12 milligrammi per l'uomo: difese immunitarie, pelle, guarigione delle ferite, fertilità, gusto e olfatto. Carne, pesce, molluschi, semi di zucca, legumi, cereali integrali, formaggi. I **fitati** di legumi e cereali lo legano: ammollo, germogliazione, lievitazione con lievito madre e fermentazione ne liberano di più. Chi mangia vegetale ha bisogno di circa il 50% in più.
+- **Selenio**, 55 microgrammi: fa parte di enzimi antiossidanti e serve alla tiroide. Due noci del Brasile ne danno già abbastanza; pesce, uova, cereali. In eccesso è tossico: il limite massimo per l'EFSA è circa 250 microgrammi al giorno.
+- **Rame**, 0,9 milligrammi: con il ferro serve a formare i globuli rossi e il collagene. Frutta secca, legumi, cacao, frattaglie.
+- **Manganese**: enzimi antiossidanti e metabolismo delle ossa. Cereali integrali, frutta secca, tè.
 - **Fluoro**: rinforza lo smalto dei denti. Acqua, tè, pesce.
 - **Molibdeno**: enzimi del fegato. Legumi, cereali.
 - **Cobalto**: serve solo come parte della vitamina B12.
-- Silicio, vanadio, bromo, alluminio, germanio e litio **non sono considerati essenziali** dall'EFSA: non c'è un fabbisogno.
+- Silicio, vanadio, bromo, alluminio, germanio e litio **non sono considerati essenziali** dall'EFSA: non esiste un fabbisogno.
 
-Correzioni:
+### Il ferro, il più complicato
 
-- **Ferro**: 10 mg al giorno per l'uomo (LARN). Il ferro "eme" di carne e pesce si assorbe al 15-35%, quello dei vegetali al 2-20%, di più con la vitamina C. È il ferro eme della carne rossa e lavorata, insieme ai nitriti, che favorisce nell'intestino la formazione di nitrosammine: uno dei motivi del rischio di tumore al colon. L'idea che il ferro "distrugga la vitamina E" riguarda solo integratori ad alte dosi presi insieme.
-- **Iodio**: 150 µg al giorno. In Italia la carenza è ancora diffusa: per questo il Ministero della Salute raccomanda il sale iodato, "poco ma iodato".
-- **Mercurio**: il limone o la vitamina C **non** aiutano a eliminarlo. Funziona solo scegliere pesci piccoli. L'EFSA consiglia di limitare pesce spada, tonno grande e squalo, soprattutto in gravidanza e nei bambini.
-- **Arsenico inorganico**: si concentra nel **riso**; cuocerlo in molta acqua (1 parte di riso e 6-10 di acqua, poi scolare) ne toglie fino al 50-60%.
-- **Cadmio**: nel tabacco, nei molluschi e in alcuni cereali; **piombo**: un tempo dalle tubature, oggi raro.
+- **Fabbisogno**: 10 milligrammi al giorno per l'uomo, 18 per la donna in età fertile (LARN), che perde ferro con le mestruazioni.
+- **Due forme**: il ferro **eme**, di carne e pesce, si assorbe al 15-35%; quello **non eme**, dei vegetali e delle uova, al 2-20%. L'assorbimento del non eme dipende molto dal pasto: lo aumentano la **vitamina C** e la carne; lo riducono tè, caffè, calcio, fitati e polifenoli.
+- **Il corpo si regola**: quando le scorte sono basse l'intestino ne assorbe molto di più; quando sono piene, quasi niente. Il corpo non ha un modo per eliminare il ferro in eccesso, per questo lo controlla all'ingresso.
+- **Ferro e carne rossa**: il ferro eme della carne rossa e lavorata, insieme ai nitriti, favorisce nell'intestino la formazione di nitrosammine, uno dei motivi del rischio di tumore al colon.
+- **Integratori** solo se manca, misurando la ferritina: l'eccesso è ossidante e fa male. L'idea che il ferro "distrugga la vitamina E" riguarda solo integratori ad alte dosi presi insieme.
 
-Fonti: [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · EFSA, metalli negli alimenti · ISS, Osservatorio iodoprofilassi
+### Lo iodio
+
+150 microgrammi al giorno. In Italia la carenza è ancora diffusa, soprattutto nelle zone interne e di montagna, lontano dal mare. Dal 2005 una legge prevede il sale iodato nei negozi e nelle mense, e il Ministero della Salute ripete lo slogan "poco sale, ma iodato". Un grammo di sale iodato porta 30 microgrammi di iodio: con 3-5 grammi al giorno, più pesce e latticini, si arriva al fabbisogno. Le **alghe** sono una fonte irregolare: alcune, come la kombu, ne hanno così tanto da superare il limite sicuro con una sola porzione.
+
+### I minerali tossici
+
+- **Mercurio**: il limone o la vitamina C **non** aiutano a eliminarlo, è una leggenda. Funziona solo scegliere **pesci piccoli** e variare. L'EFSA consiglia di limitare pesce spada, tonno grande e squalo, soprattutto in gravidanza e nei bambini.
+- **Arsenico inorganico**: si concentra nel **riso**, che cresce in acqua. Cuocerlo in molta acqua, una parte di riso e sei-dieci di acqua, e poi scolarlo ne toglie fino al 50-60%. Per gli adulti con un consumo normale di riso non è un problema; per i bambini piccoli conviene non dare bevande di riso.
+- **Cadmio**: nel tabacco, nei molluschi, in alcuni cereali e nel cacao. Il fumo ne è la fonte principale.
+- **Piombo**: un tempo dalle tubature e dalla benzina, oggi molto più raro. Attenzione alle ceramiche artigianali non a norma, specie con cibi acidi.
+- **Alluminio**: le pentole di alluminio non rivestite cedono un po' di metallo con cibi acidi e salati, come il sugo di pomodoro o i limoni: meglio non conservarci il cibo.
+
+### Il nichel
+
+Il nichel dei tuoi appunti è importante soprattutto per chi ha l'allergia al nichel, molto comune, specie nelle donne. In quel caso si riducono i cibi più ricchi, come cacao, legumi, frutta secca, avena, pomodori e molluschi, e il cibo in scatola. Per gli altri non è un problema.
+
+Fonti: [LARN, SINU](https://sinu.it/tabelle-larn-2014/) · [Hallberg, ferro e vitamina C](https://pubmed.ncbi.nlm.nih.gov/2507689/) · EFSA, metalli negli alimenti · ISS, Osservatorio iodoprofilassi
 ` },
     { id: 'al-acqua', titolo: 'Acqua e idratazione', testo: `
 *Pagina aggiunta dalla letteratura: nei tuoi appunti l'acqua compare tra i micronutrienti da controllare.*
 
-L'acqua è circa il **60% del peso** di un uomo adulto. Trasporta i nutrienti, regola la temperatura con il sudore, elimina le scorie con le urine e lubrifica articolazioni e intestino.
+L'acqua è circa il **60% del peso** di un uomo adulto: nei muscoli è circa il 75%, nel grasso circa il 10-20%. Trasporta i nutrienti, regola la temperatura con il sudore, elimina le scorie con le urine e lubrifica articolazioni e intestino. Senza cibo si sopravvive settimane; senza acqua, pochi giorni.
 
-## Quanta
+### Quanta
 
-- L'**EFSA** indica come apporto totale **2,5 litri al giorno per l'uomo** e 2 per la donna. Circa il 20% arriva dal cibo (frutta, verdura, minestre): restano circa **2 litri da bere** per l'uomo.
-- Con caldo e allenamento serve di più: si perdono da 0,5 a 1,5 litri di sudore per ora di sport. Pesarsi prima e dopo un allenamento dice quanto bere: circa 1,5 litri per ogni chilo perso.
-- Il colore delle urine è un buon termometro: giallo paglierino chiaro va bene.
+- L'**EFSA** indica come apporto totale **2,5 litri al giorno per l'uomo** e 2 per la donna. Circa il 20% arriva dal cibo: frutta, verdura, minestre, yogurt. Restano circa **2 litri da bere** per l'uomo.
+- La regola degli "otto bicchieri" non nasce da uno studio: è una semplificazione. La quantità giusta dipende da caldo, sudore, peso e dieta.
+- Con caldo e allenamento serve di più: si perdono da mezzo litro a un litro e mezzo di sudore per ora di sport. Pesarsi prima e dopo un allenamento dice quanto bere: circa 1,5 litri per ogni chilo perso.
+- Il **colore delle urine** è un buon termometro: giallo paglierino chiaro va bene, scuro vuol dire bere di più. Le vitamine del gruppo B in integratore le colorano di giallo acceso, senza significato.
 
-## Cosa conta
+### La sete
 
-- **Acqua del rubinetto**: in Italia è sicura e controllata; le minerali si scelgono per il gusto o per il contenuto di calcio.
-- **Caffè e tè** idratano anche loro: l'effetto diuretico della caffeina è piccolo in chi li beve ogni giorno. Il consumo moderato di caffè (fino a 3-4 tazzine) è associato a una salute migliore.
-- **Bibite zuccherate e succhi**: l'OMS e l'AHA chiedono di limitarli al massimo; le calorie liquide non saziano. Le bibite "zero" sono meglio di quelle zuccherate, ma l'acqua resta la scelta migliore.
-- La disidratazione anche lieve (perdere il 2% del peso) riduce la prestazione fisica e la concentrazione.
+Il cervello controlla la concentrazione del sangue con una precisione altissima: basta una variazione dell'1-2% per far scattare la sete. Nelle persone sane la sete è una guida affidabile, tranne in due casi: le persone **anziane**, in cui la sete si attenua, e durante lo **sport** lungo e al caldo, quando si perde acqua più in fretta di quanto la sete riesca a segnalare.
 
-Fonti: [EFSA, valori di riferimento per l'acqua](https://www.efsa.europa.eu/en/efsajournal/pub/1459) · [CREA 2018, Bevi ogni giorno acqua in abbondanza](https://www.crea.gov.it/web/alimenti-e-nutrizione/-/linee-guida-per-una-sana-alimentazione-2018)
+### Disidratazione e prestazione
+
+Perdere il **2% del peso** in acqua, cioè 1,6 chili per una persona di 80, riduce la prestazione negli sport di resistenza e la concentrazione. Per un'ora di pesi in palestra di solito bastano un paio di bicchieri prima e una bottiglia durante. Per allenamenti lunghi e sudati, oltre l'ora e mezza, conviene un po' di sodio nell'acqua o una bevanda con sali.
+
+### Bere troppo
+
+Anche l'eccesso esiste: bere molti litri in poche ore senza sali, come succede ad alcuni maratoneti lenti, può abbassare il sodio nel sangue in modo pericoloso, l'iponatriemia. È raro, ma spiega perché "più acqua è sempre meglio" non è vero. I reni sani eliminano al massimo circa un litro all'ora.
+
+### Cosa bere
+
+- **Acqua del rubinetto**: in Italia è sicura e controllata più spesso delle minerali. Se ha odore di cloro, basta lasciarla in una caraffa aperta qualche ora. Le minerali si scelgono per il gusto o per il contenuto di calcio e magnesio. Il "residuo fisso" dice quanti sali contiene; un'acqua "leggera" non fa dimagrire né "pulisce" i reni più di un'altra.
+- **Caffè e tè** idratano anche loro: l'effetto diuretico della caffeina è piccolo in chi li beve ogni giorno. Il consumo moderato di **caffè**, fino a 3-4 tazzine, è associato a una salute migliore: un'ombrella di meta-analisi sul BMJ (Poole e colleghi, 2017) trova meno mortalità, meno malattie di cuore, meno diabete di tipo 2 e meno malattie del fegato nei bevitori moderati. Il **tè verde** e nero portano polifenoli; il tè durante i pasti riduce l'assorbimento del ferro vegetale.
+- **Caffeina**: fino a 400 milligrammi al giorno per gli adulti sono sicuri secondo l'EFSA, circa quattro o cinque espressi. Meglio non dopo il primo pomeriggio: la caffeina resta nel sangue per 5-6 ore e riduce il sonno profondo anche quando ci si addormenta senza fatica.
+- **Bibite zuccherate e succhi**: l'OMS e l'AHA chiedono di limitarli al massimo; le calorie liquide non saziano.
+- **Bibite "zero"** e acque aromatizzate con dolcificanti: meglio di quelle zuccherate, ma l'acqua resta la scelta migliore.
+- **Acqua frizzante**: idrata come quella naturale. Può dare gonfiore a chi ha uno stomaco sensibile.
+- **Bevande vegetali**: meglio quelle senza zuccheri aggiunti e arricchite di calcio.
+- **Alcol**: disidrata, perché blocca l'ormone che fa trattenere acqua ai reni.
+
+### Idee pratiche
+
+Una bottiglia sempre a portata di mano; un bicchiere d'acqua al risveglio e a ogni pasto; acqua aromatizzata in casa con limone, menta, zenzero o cetriolo; frutta e verdura acquose, come anguria, cetrioli, pomodori e agrumi, che contano anche loro.
+
+Fonti: [EFSA, valori di riferimento per l'acqua](https://www.efsa.europa.eu/en/efsajournal/pub/1459) · [Poole et al., BMJ 2017](https://pubmed.ncbi.nlm.nih.gov/29167102/) · [CREA 2018, Bevi ogni giorno acqua in abbondanza](https://www.crea.gov.it/web/alimenti-e-nutrizione/-/linee-guida-per-una-sana-alimentazione-2018)
+` },
+    { id: 'al-fitonutrienti', titolo: 'Antiossidanti e colori del piatto', testo: `
+*Pagina nuova, dalla letteratura: le sostanze delle piante che non sono vitamine ma contano.*
+
+Nei tuoi appunti, tra i micronutrienti, ci sono i **fitonutrienti** e gli **antiossidanti**. Sono migliaia di sostanze prodotte dalle piante per difendersi da sole, insetti, funghi e predatori. Non sono essenziali come le vitamine, ma chi mangia molti cibi che le contengono si ammala di meno.
+
+### Le famiglie principali
+
+- **Polifenoli**: la famiglia più grande, con oltre ottomila sostanze. Comprende i **flavonoidi** di tè, cacao, mele, cipolle, agrumi e frutti di bosco; gli **antociani** che colorano di rosso, viola e blu frutti di bosco, uva nera, cavolo rosso e melanzane; l'**idrossitirosolo** dell'olio extravergine; l'**acido clorogenico** del caffè; il **resveratrolo** dell'uva.
+- **Carotenoidi**: i pigmenti gialli, arancioni e rossi. Il **betacarotene** di carote e zucca, il **licopene** del pomodoro e dell'anguria, la **luteina** e la **zeaxantina** delle verdure verdi e del tuorlo, che si accumulano nella retina.
+- **Glucosinolati**: le sostanze amare delle **crucifere**, come broccoli, cavoli, rucola e ravanelli. Tagliate o masticate si trasformano in **sulforafano** e altre molecole che attivano i sistemi di difesa delle cellule.
+- **Composti solforati** di aglio, cipolla e porri, come l'allicina.
+- **Fitosteroli** di semi, frutta secca e legumi, che abbassano un po' il colesterolo.
+- **Lignani** dei semi di lino e dei cereali integrali.
+
+### Come funzionano davvero
+
+Per anni si è pensato che agissero come **antiossidanti** diretti, "spugne" che neutralizzano i radicali liberi. Oggi sappiamo che è vero solo in parte: molti polifenoli vengono assorbiti poco, trasformati dal fegato e dal microbiota, e nel sangue arrivano in quantità piccole. Sembra che agiscano soprattutto come **segnali**: stimolano le cellule ad accendere i propri sistemi di difesa, come se ricevessero un piccolo allenamento. È lo stesso principio per cui l'esercizio, che produce radicali liberi, rende il corpo più resistente.
+
+Questo spiega anche perché gli **integratori di antiossidanti** non funzionano come i cibi. Nella revisione Cochrane del 2012 su quasi 300.000 persone, betacarotene, vitamina E e vitamina A ad alte dosi non hanno ridotto la mortalità, e i primi due l'hanno aumentata un po'. Dosi alte e isolate possono spegnere i segnali utili invece di rinforzarli.
+
+### Le prove sui cibi
+
+- **Frutta e verdura**: fino a circa 800 grammi al giorno, meno malattie di cuore, ictus, tumori e mortalità (Aune, 2017).
+- **Frutti di bosco e mele**: negli studi di Harvard si associano a meno diabete di tipo 2.
+- **Cacao** amaro e cioccolato fondente: i flavanoli del cacao migliorano la funzione dei vasi sanguigni negli studi brevi. Il cioccolato resta un alimento calorico: un paio di quadretti di fondente al 70-85%.
+- **Tè e caffè**: associati a meno malattie croniche.
+- **Olio extravergine**: polifenoli riconosciuti dall'EFSA per la protezione dell'LDL.
+- **Pomodoro cotto con olio**: il licopene si assorbe molto di più cotto e con un grasso. È uno dei casi in cui la passata è meglio del pomodoro crudo.
+- **Crucifere**: il sulforafano si forma meglio se le verdure sono crude, o cotte poco e al vapore. Un trucco: tagliarle e lasciarle riposare qualche minuto prima di cuocerle, o aggiungere un po' di senape o rucola cruda a quelle cotte.
+
+### Mangiare l'arcobaleno
+
+Il modo più semplice per avere tante sostanze diverse è guardare i **colori**, perché ogni colore corrisponde più o meno a una famiglia:
+
+- **rosso**: pomodori, anguria, peperoni rossi, fragole, ciliegie;
+- **arancione e giallo**: carote, zucca, albicocche, agrumi, mais, curcuma;
+- **verde**: verdure a foglia, broccoli, zucchine, kiwi, erbe aromatiche;
+- **viola e blu**: frutti di bosco, uva nera, melanzane, cavolo rosso, radicchio;
+- **bianco e marrone**: aglio, cipolla, porri, cavolfiore, funghi, legumi, cereali integrali, frutta secca.
+
+Un obiettivo semplice: **tre colori a ogni pasto principale**, e tutti i colori nella settimana.
+
+### Le spezie
+
+Le spezie dei tuoi appunti sono tra i cibi con più polifenoli per grammo: chiodi di garofano, origano, cannella, curcuma, rosmarino, timo, zenzero. Si usano in piccole quantità, ma ogni giorno, e permettono di ridurre il sale. La **curcumina** della curcuma si assorbe poco; il pepe nero e un grasso la rendono più disponibile. Gli integratori di curcumina non hanno prove solide per la salute nelle persone sane.
+
+Fonti: [Bjelakovic et al., Cochrane 2012](https://pubmed.ncbi.nlm.nih.gov/22419320/) · [Aune et al., Int J Epidemiol 2017](https://pubmed.ncbi.nlm.nih.gov/28338764/) · [Harvard, frutta e verdura](https://nutritionsource.hsph.harvard.edu/what-should-you-eat/vegetables-and-fruits/)
+` },
+    { id: 'al-riepilogo-micro', titolo: 'Riepilogo: Vitamine, minerali e acqua', testo: `
+1. **Le vitamine liposolubili** A, D, E e K si assorbono con un po' di grasso. Dai cibi proteggono; in capsule ad alte dosi, betacarotene e vitamina E hanno aumentato un po' la mortalità.
+2. **Vitamina D: 15 microgrammi al giorno**, non 50. D'inverno in Italia il sole non basta; gli integratori servono a correggere una carenza misurata, non a prevenire malattie in chi sta bene.
+3. **B12 indispensabile da integrare per i vegani** e da controllare per i vegetariani: il fegato ne ha scorte per anni e la carenza si vede tardi.
+4. **Vitamina C: 105 milligrammi**; oltre i 200 si elimina con le urine. Peperoni crudi, kiwi, agrumi, prezzemolo.
+5. **Più potassio e meno sodio** abbassano la pressione: frutta, verdura e legumi, poco pane salato, formaggi e salumi. L'80% del sale è già nei cibi.
+6. **Il cibo non cambia il pH del sangue**: le diete "alcaline" fanno bene solo perché sono piene di vegetali.
+7. **Ferro vegetale con vitamina C**, tè e caffè lontano dai pasti; integratori di ferro solo se manca. **Sale poco ma iodato**.
+8. **Mercurio**: pesci piccoli, il limone non lo elimina. **Arsenico**: riso cotto in molta acqua e scolato.
+9. **Acqua**: circa 2 litri da bere al giorno, di più con caldo e sport. Il colore delle urine è la guida. Caffè fino a 3-4 tazzine, ma non dopo il primo pomeriggio.
+10. **Mangia l'arcobaleno**: tre colori a ogni pasto, spezie ogni giorno, crucifere spesso, pomodoro cotto con olio.
+
+Domande per verificare:
+
+- Se sei vegetariano, quando hai controllato l'ultima volta la B12 e la vitamina D?
+- Quanti colori diversi c'erano nel tuo piatto di oggi?
+- Quali sono le tre fonti principali di sale nella tua settimana?
 ` },
   ] },
 
@@ -1326,13 +1509,40 @@ Una volta mangiato l'hot dog, il corpo consuma l'energia; quella che avanza dive
 
 ## Cosa dice la scienza
 
-- **Il bilancio energetico è la legge**, confermata da decenni di studi in reparto metabolico: a parità di calorie e proteine, diete con più carboidrati o più grassi fanno perdere lo stesso grasso (Hall e colleghi, 2015 e 2017).
-- **Ma la qualità cambia quante calorie mangi.** Nello studio NIH del 2019 (Hall), con cibi **ultra-processati** liberi le persone mangiavano circa **500 kcal in più al giorno** e prendevano quasi un chilo in due settimane, rispetto agli stessi nutrienti da cibi poco lavorati.
-- **7.700 kcal per chilo** vale per il grasso puro; il peso sulla bilancia include acqua e glicogeno. Nel tempo il corpo si adatta (consuma un po' meno), quindi il calo rallenta: è normale, non un errore.
-- Il surplus diventa **muscolo** solo se c'è lo stimolo dell'allenamento con i pesi e abbastanza proteine; altrimenti diventa quasi tutto grasso.
-- **TDEE**: il dispendio di un giorno è fatto di metabolismo a riposo (60-70%), effetto termico del cibo (circa 10%; le proteine ne bruciano il 20-30%), movimento quotidiano non sportivo (passi, NEAT) e allenamento.
+### Cos'è una caloria
 
-Fonti: [Hall et al., Cell Metab 2019](https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7) · [Hall et al., Lancet 2011](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(11)60812-X/fulltext)
+Una chilocaloria è l'energia che serve per scaldare di un grado un litro d'acqua. I valori delle etichette vengono dai fattori calcolati più di un secolo fa dal chimico americano Wilbur Atwater: **4 kcal per grammo** per proteine e carboidrati, **9** per i grassi, **7** per l'alcol, circa **2** per le fibre. Sono medie: il corpo non assorbe tutto allo stesso modo. Dalla frutta secca intera, per esempio, si assorbe meno di quanto dice l'etichetta, dai cibi molto lavorati di più. Ma sono abbastanza precise per orientarsi.
+
+### Il bilancio energetico è la legge
+
+L'equazione dei tuoi appunti è confermata da decenni di studi in **reparto metabolico**, dove le persone vivono per settimane in stanze in cui si misura tutto ciò che mangiano e tutta l'energia che consumano. A parità di calorie e proteine, diete con più carboidrati o più grassi fanno perdere **lo stesso grasso**: lo hanno mostrato gli studi di Kevin Hall al National Institutes of Health nel 2015 e nel 2017. Non esistono cibi che "fanno dimagrire" o combinazioni magiche: esistono cibi che rendono più facile mangiare meno.
+
+### Il TDEE: da cosa è fatto il consumo
+
+Il dispendio di un giorno, in inglese TDEE, ha quattro parti:
+
+- **Metabolismo a riposo**, il 60-70%: l'energia che serve a cuore, cervello, fegato, reni e muscoli per funzionare anche se stai fermo. Dipende soprattutto dal peso e dalla **massa magra**: i muscoli consumano più del grasso, circa 13 kcal al giorno per chilo contro 4-5. Il cervello da solo consuma circa il 20%.
+- **Effetto termico del cibo**, circa il 10%: l'energia spesa per digerire. Le proteine ne bruciano il 20-30% delle loro calorie, i carboidrati il 5-10%, i grassi quasi niente.
+- **NEAT**, il movimento quotidiano non sportivo: camminare, stare in piedi, gesticolare, le faccende di casa. È la parte che cambia di più tra le persone: può valere da 200 a oltre 1.000 kcal al giorno.
+- **Allenamento**: spesso meno di quanto si pensi. Un'ora di pesi consuma in genere 200-400 kcal.
+
+### Quanto vale il NEAT
+
+In uno studio della Mayo Clinic (Levine e colleghi, 1999), 16 volontari hanno mangiato **mille calorie in più al giorno** per otto settimane. Alcuni hanno preso quasi niente di grasso, altri oltre quattro chili. La differenza era quasi tutta nel **NEAT**: chi senza accorgersene si muoveva di più, gesticolava, stava più in piedi, ha bruciato gran parte dell'eccesso. Lo stesso succede al contrario: in deficit il NEAT tende a **calare** senza che ce ne accorgiamo. Per questo tenere fisso un obiettivo di passi è una delle protezioni migliori del dimagrimento.
+
+### La qualità cambia quante calorie mangi
+
+Nello studio del 2019 di Kevin Hall, 20 adulti hanno vissuto quattro settimane in reparto: due con cibi **ultra-processati**, due con cibi **poco lavorati**, con le stesse calorie, zuccheri, grassi, fibre e sale **offerti** e la libertà di mangiare quanto volevano. Con gli ultra-processati hanno mangiato circa **500 kcal in più al giorno** e hanno preso quasi un chilo in due settimane; con i cibi poco lavorati ne hanno perso quasi uno. Il bilancio energetico resta la legge, ma **cosa** mangi decide quanto è facile rispettarla.
+
+### I 7.700 kcal per chilo
+
+Valgono per il **grasso puro**. Il peso sulla bilancia include acqua, glicogeno, contenuto dell'intestino e muscolo: per questo nelle prime settimane si perde più peso del previsto e dopo meno. Nel tempo il corpo si adatta e consuma un po' meno, come spiega la pagina sull'adattamento: il calo rallenta, ed è normale. I modelli moderni, come quello di Hall pubblicato sul Lancet nel 2011, tengono conto di questi cambiamenti e sono più precisi della regola dei 7.700.
+
+### Surplus e muscolo
+
+Il surplus diventa **muscolo** solo se c'è lo stimolo dell'allenamento con i pesi e abbastanza proteine; altrimenti diventa quasi tutto grasso. Anche con l'allenamento, un uomo allenato da qualche anno costruisce al massimo qualche etto di muscolo al mese: per questo i surplus grandi fanno ingrassare senza far crescere di più.
+
+Fonti: [Hall et al., Cell Metab 2019](https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7) · [Hall et al., Lancet 2011](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(11)60812-X/fulltext) · [Levine et al., Science 1999](https://pubmed.ncbi.nlm.nih.gov/9880251/)
 ` },
     { id: 'al-deficit', titolo: 'Quanto deficit', testo: `
 Dai tuoi appunti, due livelli di dimagrimento:
@@ -1344,13 +1554,42 @@ Nella vita di tutti i giorni la **qualità** degli alimenti è da preferire alla
 
 ## Cosa dice la scienza
 
-- **Velocità consigliata**: per chi si allena, **0,5-1% del peso a settimana** (Helms e colleghi, 2014). Più lento protegge meglio i muscoli e la prestazione; più veloce aumenta fame, stanchezza e perdita di massa magra.
-- **Non serve scegliere tra qualità e quantità**: i cibi di qualità (verdura, legumi, cereali in chicco, proteine magre) sono proprio quelli che rendono il deficit **sopportabile**, perché saziano con poche calorie. L'olio extravergine resta il grasso migliore: si **misura** con il cucchiaio invece di versarlo a occhio.
-- **Pause dalla dieta**: nello studio MATADOR (2018) alternare 2 settimane di deficit e 2 di mantenimento ha fatto perdere più grasso, a 6 mesi, che 16 settimane di fila.
-- **Un giorno libero a settimana** è compatibile con il dimagrimento se il deficit della settimana regge: conta il totale settimanale.
-- **Pesarsi** al mattino, a digiuno, più volte a settimana e guardare la **media**: il peso del singolo giorno oscilla di 1-2 kg per acqua, sale e glicogeno.
+### La velocità giusta
 
-Fonti: [Helms et al., JISSN 2014](https://jissn.biomedcentral.com/articles/10.1186/1550-2783-11-20) · [Byrne et al., MATADOR, Int J Obes 2018](https://www.nature.com/articles/ijo2017206)
+Per chi si allena con i pesi la letteratura consiglia di perdere circa lo **0,5-1% del peso a settimana** (Helms e colleghi, 2014): per una persona di 80 chili, da 400 a 800 grammi. I tuoi due livelli stanno nella parte bassa e prudente dell'intervallo, che è la più adatta a chi vuole tenere il muscolo.
+
+- **Più lento** protegge meglio i muscoli e la prestazione in palestra, e la fame resta gestibile.
+- **Più veloce** aumenta fame, stanchezza, irritabilità, perdita di massa magra e la probabilità di mollare.
+- Più sei **magro**, più conviene andare piano: chi ha molto grasso da perdere sopporta deficit più grandi.
+
+### Qualità e quantità non sono rivali
+
+I cibi di qualità, come verdura, legumi, cereali in chicco, frutta e proteine magre, sono proprio quelli che rendono il deficit **sopportabile**, perché saziano con poche calorie. Quindi la scelta non è tra qualità e quantità: la qualità è lo strumento per controllare la quantità. L'olio extravergine resta il grasso migliore: si **misura** con il cucchiaio invece di versarlo a occhio.
+
+### Contare o non contare
+
+Pesare e registrare il cibo, anche solo per qualche settimana, è uno dei comportamenti più legati al successo negli studi sul dimagrimento: quasi tutti sottostimano quanto mangiano, a volte del 30-40%. Non serve farlo per sempre: dopo un po' si impara a riconoscere le porzioni a occhio. Le voci da pesare con più attenzione sono quelle dense: olio, frutta secca, formaggi, pane, pasta e riso a crudo.
+
+### Pause dalla dieta
+
+Nello studio **MATADOR** (Byrne e colleghi, 2018) uomini con obesità hanno fatto 16 settimane di deficit: un gruppo di fila, l'altro alternando **due settimane di deficit e due di mantenimento**. Il gruppo con le pause ha perso più grasso e, a sei mesi, ne aveva ripreso meno. Altri studi su persone allenate hanno trovato effetti più piccoli. Le pause programmate, una o due settimane a mantenimento ogni due o tre mesi di dieta, sono comunque utili per la testa e per l'aderenza.
+
+### I giorni liberi
+
+**Un pasto libero a settimana** è compatibile con il dimagrimento se il deficit della settimana regge: conta il totale settimanale. Va però tenuto d'occhio, perché un solo pasto molto abbondante, con alcol e dolci, può valere 1.500-2.500 kcal e cancellare due o tre giorni di deficit. Funziona meglio un pasto libero che una giornata libera.
+
+### La bilancia
+
+- Pesarsi **al mattino**, a digiuno, dopo il bagno, più volte a settimana, e guardare la **media** della settimana o la linea di tendenza. Il peso del singolo giorno oscilla di uno o due chili per acqua, sale, carboidrati, intestino e, nelle donne, ciclo.
+- Dopo un pasto ricco di sale e carboidrati la bilancia sale il giorno dopo: è acqua, non grasso, e se ne va in due o tre giorni.
+- Gli studi sulle persone che mantengono il peso perso mostrano che **pesarsi regolarmente** è uno dei comportamenti più comuni tra chi ci riesce.
+- Oltre al peso conviene misurare la **circonferenza della vita**, all'altezza dell'ombelico, una volta a settimana: dice meglio come sta cambiando il grasso della pancia, specie se nel frattempo il muscolo cresce.
+
+### Quando il calo si ferma
+
+Se la media del peso non scende per **due o tre settimane** di fila, nonostante la dieta sia rispettata, il deficit si è ridotto: perché pesi meno, perché il NEAT è calato, o perché le porzioni sono cresciute senza accorgersene. Le leve, in ordine: controllare con onestà le porzioni, aumentare i passi, togliere 100-200 kcal al giorno.
+
+Fonti: [Helms et al., JISSN 2014](https://jissn.biomedcentral.com/articles/10.1186/1550-2783-11-20) · [Byrne et al., MATADOR, Int J Obes 2018](https://www.nature.com/articles/ijo2017206) · [Wing e Phelan, Am J Clin Nutr 2005](https://pubmed.ncbi.nlm.nih.gov/16002825/)
 ` },
     { id: 'al-cosa-mangiare', titolo: 'Cosa mangiare in deficit', testo: `
 Nel dimagrimento, soprattutto se aggressivo, vanno preferiti i cibi con:
@@ -1392,13 +1631,44 @@ Olive, olio extravergine, olio di colza, avocado, semi, noci, burro, omega-3.
 
 ## Cosa dice la scienza
 
-- **Densità calorica** (Barbara Rolls, Penn State): mangiando cibi con meno calorie per grammo (verdura, frutta acquosa, minestre, legumi) si mangia lo stesso volume con meno calorie e la stessa sazietà. Una zuppa o un'insalata **prima** del pasto riduce le calorie totali del 10-20%.
-- Le **proteine** sono il nutriente più saziante e quello che costa più energia per essere digerito.
-- **Miele e pappa reale** sono zuccheri liberi per l'OMS: vanno contati come lo zucchero.
-- **Burro**: l'AHA consiglia di preferire gli oli vegetali liquidi; va bene in piccole quantità, non come grasso abituale.
-- Le **patate** non sono un male: bollite e raffreddate hanno un buon potere saziante; contano come carboidrato, non come verdura.
+### La densità calorica
 
-Fonti: [Rolls, Physiol Behav 2009](https://pubmed.ncbi.nlm.nih.gov/19303887/) · [Il piatto sano, Harvard](https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/translations/italian/)
+La ricercatrice Barbara Rolls, della Penn State University, ha dedicato trent'anni a una domanda semplice: perché alcune persone mangiano meno senza fare fatica? La sua risposta è la **densità calorica**, cioè quante calorie ci sono in un grammo di cibo. Le persone tendono a mangiare più o meno lo stesso **peso** e volume di cibo ogni giorno; se quel volume ha meno calorie, si mangia di meno senza sentirsi a dieta.
+
+- **Molto bassa**, sotto 0,6 kcal per grammo: verdura, frutta acquosa, brodi, minestre, yogurt magro.
+- **Bassa**, da 0,6 a 1,5: legumi, cereali cotti, patate, pesce, carne magra, uova, frutta più dolce.
+- **Media**, da 1,5 a 4: pane, formaggi freschi, carni grasse, dolci fatti in casa.
+- **Alta**, oltre 4: frutta secca, olio, burro, cioccolato, biscotti, patatine, cracker.
+
+Una **zuppa** o un'**insalata grande** all'inizio del pasto riduce le calorie totali del pasto del 10-20% negli esperimenti di Rolls. Aggiungere verdura a un piatto di pasta, invece di toglierne un po', è uno dei trucchi più efficaci.
+
+### Le proteine in deficit
+
+Le proteine sono il nutriente più saziante, quello che costa più energia per essere digerito e quello che protegge il muscolo. In uno studio della McMaster University (Longland e colleghi, 2016) giovani uomini in un deficit molto forte, con pesi e allenamento intenso sei giorni a settimana, hanno mangiato 1,2 oppure 2,4 grammi di proteine per chilo per quattro settimane. Il gruppo con più proteine ha **guadagnato** oltre un chilo di massa magra e perso più grasso; l'altro ha tenuto la massa magra ferma. È un caso estremo, ma mostra quanto contino le proteine quando le calorie scarseggiano.
+
+### Correzioni e precisazioni
+
+- **Miele e pappa reale** sono zuccheri liberi per l'OMS: vanno contati come lo zucchero. La pappa reale non ha benefici dimostrati sul dimagrimento.
+- **Burro**: l'AHA consiglia di preferire gli oli vegetali liquidi; va bene in piccole quantità, non come grasso abituale.
+- **Le patate** non sono un male: bollite e raffreddate sono tra i cibi più sazianti misurati da Holt. Contano come carboidrato, non come verdura. Le patate dolci non sono "da limitare" più delle altre: hanno più fibre e carotenoidi.
+- **Biologico**: ha vantaggi per l'ambiente e meno residui di pesticidi, ma non cambia calorie e nutrienti in modo rilevante.
+
+### Idee per pasti che saziano
+
+- **Colazione**: yogurt greco o skyr con frutti di bosco e un cucchiaio di avena; oppure uova strapazzate con verdure e una fetta di pane integrale.
+- **Pranzo**: una ciotola con metà verdura cruda e cotta, un quarto di farro o orzo, un quarto di ceci o pesce, olio misurato e limone.
+- **Cena**: una zuppa di legumi e verdure, poi un secondo di pesce o tofu con verdura al forno.
+- **Spuntini**: frutta intera, yogurt bianco, verdure crude con hummus, una piccola manciata di frutta secca pesata.
+
+### Trucchi che funzionano
+
+- Piatti e ciotole **più piccoli**, e le porzioni servite in cucina invece della pentola in tavola.
+- La verdura **prima**, e nel piatto per prima.
+- **Bere** acqua prima e durante i pasti.
+- Cibi che richiedono di **masticare**: frutta intera invece di succhi, cereali in chicco invece di fiocchi istantanei.
+- Non avere in casa i cibi che si mangiano "senza fermarsi".
+
+Fonti: [Rolls, Physiol Behav 2009](https://pubmed.ncbi.nlm.nih.gov/19303887/) · [Longland et al., Am J Clin Nutr 2016](https://pubmed.ncbi.nlm.nih.gov/26817506/) · [Holt et al., Eur J Clin Nutr 1995](https://pubmed.ncbi.nlm.nih.gov/7498104/) · [Il piatto sano, Harvard](https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/translations/italian/)
 ` },
     { id: 'al-priorita', titolo: 'La piramide delle priorità', testo: `
 Per controllare l'alimentazione, segui questi indicatori **in ordine di importanza**:
@@ -1411,13 +1681,41 @@ Per controllare l'alimentazione, segui questi indicatori **in ordine di importan
 
 ## Cosa dice la scienza
 
-Questo ordine è lo stesso della "piramide della nutrizione" usata nella nutrizione sportiva (Eric Helms e colleghi): prima la costanza e le calorie, poi le proteine, poi il resto.
+Questo ordine è lo stesso della "piramide della nutrizione" usata nella nutrizione sportiva, resa popolare da Eric Helms e colleghi: prima la costanza e le calorie, poi le proteine e gli altri macronutrienti, poi i micronutrienti, poi gli orari, infine gli integratori. Ogni livello conta solo se quello sotto è già a posto.
 
-- **Alla base, ancora prima delle calorie**: l'**aderenza**. La dieta migliore è quella che riesci a seguire per mesi: nei confronti diretti tra diete (mediterranea, a basso contenuto di grassi, di carboidrati) le differenze di peso a un anno sono piccole, e dipendono da quanto le persone ci restano fedeli.
-- **Timing**: mangiare 3 o 6 volte al giorno non cambia il dimagrimento a parità di calorie. Il **digiuno intermittente** e la finestra oraria ristretta funzionano come una normale riduzione di calorie, non meglio (studi TREAT 2020 e NEJM 2022). Conta di più distribuire le **proteine** su 3-4 pasti e non mangiare tanto a ridosso del sonno.
-- **Micronutrienti**: con 5 porzioni di frutta e verdura, legumi e cereali integrali di solito arrivano da soli.
+### Alla base, prima delle calorie: l'aderenza
 
-Fonti: [Liu et al., NEJM 2022](https://www.nejm.org/doi/full/10.1056/NEJMoa2114833) · [Gardner et al., DIETFITS, JAMA 2018](https://jamanetwork.com/journals/jama/fullarticle/2673150)
+La dieta migliore è quella che riesci a seguire per mesi. Nei confronti diretti tra diete, come mediterranea, povera di grassi o povera di carboidrati, le differenze di peso a un anno sono piccole e dipendono da quanto le persone ci restano fedeli. Nel DIETFITS di Stanford (Gardner e colleghi, 2018) 609 adulti hanno seguito per un anno una dieta povera di grassi o povera di carboidrati, entrambe di buona qualità: hanno perso in media lo stesso peso, circa 5-6 chili, con una variabilità enorme da persona a persona. Né i geni né l'insulina predicevano chi avrebbe perso di più. Contava quanto ciascuno riusciva a seguire la dieta.
+
+### Le calorie
+
+Restano il primo numero, come nei tuoi appunti. Il bilancio energetico non si aggira.
+
+### I macronutrienti
+
+Dentro le calorie, la priorità è la **proteina**: 1,6-2,2 grammi per chilo in deficit per chi si allena. Grassi e carboidrati si dividono il resto secondo gusto e allenamento, con un minimo di grassi intorno al 20% delle calorie e abbastanza carboidrati per allenarsi bene.
+
+### I micronutrienti
+
+Con cinque porzioni di frutta e verdura, legumi e cereali integrali di solito arrivano da soli. Le eccezioni, come visto, sono la vitamina D d'inverno, la B12 per chi mangia vegetale, lo iodio se non si usa sale iodato, a volte ferro e omega-3.
+
+### Il timing
+
+- **Quanti pasti**: mangiare tre o sei volte al giorno non cambia il dimagrimento a parità di calorie. Si sceglie in base alla fame e agli orari.
+- **Il digiuno intermittente** e la finestra oraria ristretta funzionano come una normale riduzione di calorie, non meglio. Nello studio TREAT (Lowe e colleghi, 2020) mangiare solo dalle 12 alle 20 ha fatto perdere pochissimo peso, e in parte massa magra. In uno studio cinese sul NEJM (Liu e colleghi, 2022) la finestra di otto ore con le stesse calorie non ha dato vantaggi rispetto alla semplice riduzione di calorie per tutto un anno.
+- **La colazione**: saltarla non fa ingrassare né dimagrire di per sé; conta se ti fa arrivare affamato al pranzo.
+- **La sera**: mangiare tardi non fa ingrassare di per sé, ma un pasto molto abbondante a ridosso del sonno peggiora il riposo e la glicemia del mattino. Meglio cenare due o tre ore prima di dormire, con un pasto proteico.
+- Conta di più distribuire le **proteine** su tre o quattro pasti e avere un pasto prima o dopo l'allenamento.
+
+### L'integrazione
+
+È davvero la punta: creatina, caffeina e proteine in polvere sono gli unici con prove solide per chi si allena; vitamina D, B12 e omega-3 solo se servono. Ne parla la pagina sugli integratori.
+
+### La piramide sotto la piramide
+
+Sotto tutto il resto ci sono tre cose che nessuna dieta può sostituire: il **sonno**, che regola la fame; il **movimento quotidiano**, che regola il dispendio; e lo **stress**, che spinge a mangiare per consolarsi. Una settimana di sonno corto può annullare l'effetto di un piano alimentare perfetto.
+
+Fonti: [Gardner et al., DIETFITS, JAMA 2018](https://jamanetwork.com/journals/jama/fullarticle/2673150) · [Lowe et al., TREAT, JAMA Intern Med 2020](https://pubmed.ncbi.nlm.nih.gov/32986097/) · [Liu et al., NEJM 2022](https://www.nejm.org/doi/full/10.1056/NEJMoa2114833) · [Helms et al., JISSN 2014](https://jissn.biomedcentral.com/articles/10.1186/1550-2783-11-20)
 ` },
     { id: 'al-movimento', titolo: 'Allenamento e dimagrimento', testo: `
 Nei tuoi appunti: va fatto **cardio** insieme all'**allenamento con i pesi** (muscle resistance training). L'HIIT consuma più carboidrati durante, ma brucia più grassi a riposo. In deficit, nell'allenamento con i pesi, usare tecniche come **stripping** e **rest pause**.
@@ -1426,13 +1724,155 @@ E dopo i pasti, **10 minuti di camminata**.
 
 ## Cosa dice la scienza
 
-- **I pesi in deficit sono la priorità**: dicono al corpo di tenere il muscolo. Dieta senza pesi fa perdere fino a un quarto del peso come massa magra; con i pesi e abbastanza proteine quasi solo grasso.
-- **HIIT o cardio lento?** Le meta-analisi (Wewege 2017, 13 studi) mostrano una perdita di grasso **simile** a parità di energia spesa. Il consumo extra dopo l'HIIT (EPOC) è piccolo: 6-15% delle calorie dell'allenamento. L'HIIT fa risparmiare tempo; il cardio a bassa intensità pesa meno su articolazioni e recupero, utile se ci sono infortuni.
-- **Passi**: il movimento quotidiano non sportivo (NEAT) può variare di centinaia di calorie al giorno ed è il primo a calare in deficit, senza accorgersene. Tenere fisso un obiettivo di passi protegge il dispendio. 8.000-10.000 passi al giorno si associano a una mortalità più bassa (meta-analisi Lancet Public Health 2022).
-- **Stripping e rest pause**: allungano la serie oltre il cedimento e fanno risparmiare tempo; non bruciano più grasso. In deficit, con meno recupero, vanno usati con misura.
-- **Camminata dopo i pasti**: abbassa il picco di glicemia in modo misurabile anche con 2-5 minuti.
+### I pesi in deficit sono la priorità
 
-Fonti: [Wewege et al., Obes Rev 2017](https://pubmed.ncbi.nlm.nih.gov/28401638/) · [Paluch et al., Lancet Public Health 2022](https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00302-9/fulltext) · [Buffey et al., Sports Med 2022](https://pubmed.ncbi.nlm.nih.gov/35147898/)
+Quando le calorie scarseggiano, il corpo deve decidere che cosa sacrificare. L'allenamento con i pesi gli dice di **tenere il muscolo**. Una dieta senza pesi fa perdere fino a un quarto del peso come massa magra; con i pesi e abbastanza proteine si perde quasi solo grasso, e chi è all'inizio o torna dopo una pausa può perfino guadagnare un po' di muscolo.
+
+In deficit l'obiettivo dell'allenamento cambia: non serve aumentare il volume, ma **mantenere i carichi**. Se riesci a sollevare gli stessi pesi per le stesse ripetizioni mentre il peso scende, stai perdendo grasso e non muscolo. È il miglior segnale che hai.
+
+### HIIT o cardio lento
+
+- Le meta-analisi, come quella di Wewege e colleghi (2017, 13 studi), mostrano una perdita di grasso **simile** con HIIT e cardio continuo a intensità moderata, a parità di energia spesa.
+- Il consumo extra dopo l'HIIT, l'EPOC, è **piccolo**: dal 6 al 15% delle calorie dell'allenamento. La frase dei tuoi appunti "brucia più grassi a riposo" è vera, ma la differenza è di poche decine di calorie.
+- L'HIIT fa **risparmiare tempo**; il cardio a bassa intensità pesa meno su articolazioni e recupero ed è più adatto se ci sono **infortuni** o se le gambe servono per i pesi.
+- Per il dimagrimento conta il **totale** di energia spesa nella settimana e la possibilità di farlo con costanza.
+
+### Il cardio in numeri
+
+Venti minuti di cardio moderato, come bicicletta o ellittica a un ritmo in cui si riesce a parlare, consumano circa 150-250 kcal per una persona di 80 chili. Utile, ma meno di un piatto di pasta in più. Per questo il cardio aiuta il deficit, ma non lo sostituisce. Il beneficio più grande è un altro: il **cuore** e la capacità aerobica, che sono tra i fattori più legati alla longevità.
+
+### I passi, la vera arma
+
+Il movimento quotidiano non sportivo può variare di centinaia di calorie al giorno ed è il primo a calare in deficit, senza accorgersene. Tenere fisso un obiettivo di passi protegge il dispendio. Ottomila passi a passo normale consumano circa 250-350 kcal in una persona di 80 chili.
+
+Una meta-analisi su 15 studi e quasi 50.000 persone (Paluch e colleghi, Lancet Public Health 2022) mostra che la mortalità scende con i passi fino a circa **8.000-10.000 al giorno** negli adulti sotto i sessant'anni, e fino a 6.000-8.000 negli anziani. La velocità dei passi conta meno del numero.
+
+### Stripping e rest pause
+
+Sono tecniche che allungano la serie oltre il cedimento: lo **stripping** abbassa il peso e continua subito, il **rest pause** fa qualche respiro e riprende con lo stesso peso. Fanno **risparmiare tempo** a parità di stimolo; non bruciano più grasso. In deficit, quando il recupero è più lento, vanno usate con misura, sugli ultimi esercizi e non sui fondamentali pesanti.
+
+### La camminata dopo i pasti
+
+Abbassa il picco di glicemia in modo misurabile anche con 2-5 minuti (Buffey e colleghi, 2022), perché i muscoli delle gambe prendono glucosio dal sangue. Dieci minuti dopo pranzo e cena aggiungono circa duemila passi al giorno: due piccioni con una fava.
+
+### Fame e allenamento
+
+Alcune persone, dopo allenamenti lunghi, hanno più fame e compensano mangiando di più. Per altre succede il contrario. Conviene osservarsi: se dopo la palestra arriva una fame da lupo, è utile avere pronto un pasto proteico invece di arrivare a cena affamati.
+
+Fonti: [Wewege et al., Obes Rev 2017](https://pubmed.ncbi.nlm.nih.gov/28401638/) · [Paluch et al., Lancet Public Health 2022](https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00302-9/fulltext) · [Buffey et al., Sports Med 2022](https://pubmed.ncbi.nlm.nih.gov/35147898/) · [Longland et al., Am J Clin Nutr 2016](https://pubmed.ncbi.nlm.nih.gov/26817506/)
+` },
+    { id: 'al-adattamento', titolo: 'Adattamento e stallo', testo: `
+*Pagina nuova, dalla letteratura: perché il dimagrimento rallenta e cosa fare.*
+
+Chi ha fatto una dieta lo conosce: le prime settimane il peso scende veloce, poi sempre più piano, poi sembra fermarsi. Non è un errore né un "metabolismo rotto". È il corpo che si **adatta** a un ambiente con meno energia, come ha fatto per centinaia di migliaia di anni di carestie.
+
+### Le cause del rallentamento
+
+- **Pesi di meno**: un corpo più leggero consuma meno a riposo e quando si muove. Dopo aver perso otto chili, il fabbisogno scende di circa 150-250 kcal al giorno anche senza alcun adattamento "speciale". Il deficit di partenza si restringe da solo.
+- **Il NEAT cala**: in deficit, senza accorgercene, ci muoviamo meno, stiamo più seduti, gesticoliamo meno. È la componente che cala di più.
+- **L'effetto termico del cibo cala**: meno cibo, meno energia spesa per digerirlo.
+- **L'adattamento vero**: il metabolismo a riposo scende un po' più di quanto spieghi la perdita di peso, per un calo di ormoni come leptina, ormoni tiroidei e testosterone. Negli studi controllati vale in genere **50-100 kcal al giorno**.
+- **La fame sale**: la leptina scende, la grelina sale, e il cervello rende il cibo più attraente.
+
+### Il caso estremo: The Biggest Loser
+
+Uno studio dei National Institutes of Health (Fothergill e colleghi, 2016) ha seguito i concorrenti di un reality televisivo americano, che avevano perso in media 58 chili in trenta settimane con diete durissime e ore di allenamento al giorno. Sei anni dopo avevano ripreso gran parte del peso, ma il loro metabolismo a riposo era ancora circa **500 kcal più basso** di quanto ci si aspettava per il loro peso. È il caso estremo di un dimagrimento estremo: con deficit moderati, proteine alte e pesi l'adattamento è molto più piccolo. Ma lo studio insegna che il corpo "difende" il peso più di quanto si pensasse.
+
+### Riconoscere uno stallo vero
+
+Prima di cambiare qualcosa conviene essere sicuri:
+
+- La **media** del peso è ferma da almeno **due o tre settimane**? Una settimana non basta: acqua, sale, carboidrati e stress muovono la bilancia.
+- La **circonferenza della vita** è ferma? A volte il peso è fermo ma la vita scende, specie quando si guadagna un po' di muscolo.
+- Le **porzioni** sono davvero quelle di prima? Con il tempo si tende a ingrandirle, e olio e frutta secca "a occhio" crescono senza accorgersene.
+- Il **fine settimana** è uguale a prima?
+
+### Cosa fare, in ordine
+
+1. **Rimettere a fuoco** le basi: pesare per una settimana olio, frutta secca, pane, pasta e formaggi.
+2. **Aumentare i passi** di due o tremila al giorno: il modo meno faticoso per allargare il deficit.
+3. **Togliere 100-200 kcal** al giorno, preferibilmente da grassi e carboidrati densi, non dalle proteine.
+4. **Una pausa a mantenimento** di una o due settimane, mangiando a calorie di mantenimento. Riduce la fatica mentale, migliora l'allenamento e, come nello studio MATADOR, può rendere più efficace la fase successiva.
+5. **Fermarsi** e consolidare: a volte il traguardo giusto è mantenere qualche mese il peso raggiunto prima di scendere ancora.
+
+### Cosa non fare
+
+- **Deficit drastici** improvvisi: aumentano l'adattamento, la perdita di muscolo e la probabilità di abbuffate.
+- **Ore di cardio in più**: il corpo tende a compensare con meno NEAT e più fame.
+- **Eliminare un gruppo alimentare** per disperazione: funziona solo perché si mangia meno, e dura poco.
+
+### Una buona notizia
+
+Il metabolismo **non si rompe**. Il calo del metabolismo a riposo nelle diete normali è piccolo e in gran parte reversibile quando si torna al mantenimento. Le persone che mantengono il peso perso dimostrano che il corpo può abituarsi al nuovo peso, purché lo si accompagni con abitudini stabili.
+
+Fonti: [Fothergill et al., Obesity 2016](https://pubmed.ncbi.nlm.nih.gov/27136388/) · [Levine et al., Science 1999](https://pubmed.ncbi.nlm.nih.gov/9880251/) · [Byrne et al., MATADOR, Int J Obes 2018](https://www.nature.com/articles/ijo2017206) · [Hall et al., Lancet 2011](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(11)60812-X/fulltext)
+` },
+    { id: 'al-mantenimento', titolo: 'Mantenere il peso perso', testo: `
+*Pagina nuova, dalla letteratura: la parte più difficile, quella che viene dopo la dieta.*
+
+Perdere peso è difficile; mantenerlo lo è di più. Una meta-analisi di 29 studi americani (Anderson e colleghi, 2001) ha trovato che, cinque anni dopo un programma di dimagrimento, le persone avevano mantenuto in media circa **3 chili** di quanto avevano perso: poco più del 3% del peso iniziale. Una parte riesce a mantenere tutto, molti riprendono quasi tutto. La differenza non sta nella dieta usata per dimagrire, ma in **cosa succede dopo**.
+
+### Chi ce la fa
+
+Dal 1994 il **National Weight Control Registry** americano raccoglie i dati di oltre diecimila persone che hanno perso almeno 14 chili e li hanno mantenuti per almeno un anno; in media ne hanno persi oltre 30 e li tengono da più di cinque anni. Rena Wing e Suzanne Phelan (2005) hanno descritto le loro abitudini comuni:
+
+- **Tanto movimento**: in media circa un'ora al giorno di attività, soprattutto camminata.
+- **Pesarsi regolarmente**, almeno una volta a settimana; molti ogni giorno.
+- **Colazione** quasi tutti i giorni.
+- **Un'alimentazione costante** nei giorni della settimana e nel fine settimana: chi "si lascia andare" il sabato e la domenica ha più probabilità di riprendere peso.
+- **Poca televisione.**
+- **Reagire subito** a piccoli aumenti: un chilo o due, non dieci.
+
+Questi dati vengono da persone che ce l'hanno fatta e non dimostrano causa ed effetto, ma coincidono con gli studi sperimentali.
+
+### La transizione: uscire dalla dieta
+
+Il momento più delicato è la fine del deficit. Due errori opposti:
+
+- **Tornare subito a mangiare come prima**: il fabbisogno ora è più basso di quello di partenza, perché pesi meno. Mangiare "come prima" vuol dire riprendere il peso di prima.
+- **Restare a dieta per sempre**: dopo mesi di deficit la fatica è grande e prima o poi si cede, spesso tutto insieme.
+
+La soluzione è una **fase di passaggio**: aumentare le calorie per gradi, 100-200 al giorno ogni settimana, guardando la media del peso. Quando il peso resta stabile, quello è il tuo nuovo mantenimento. È normale che la bilancia salga di uno o due chili nei primi giorni, per l'acqua e il glicogeno che tornano: non è grasso.
+
+### Le abitudini che proteggono
+
+- **Proteine** alte anche nel mantenimento: saziano e proteggono il muscolo.
+- **Pesi** almeno due o tre volte a settimana: più muscolo vuol dire un fabbisogno più alto e un margine più largo.
+- **Passi**: il movimento quotidiano è il fattore più legato al mantenimento in quasi tutti gli studi.
+- **Sonno** di sette ore o più.
+- **Pesarsi** e misurare la vita: una "zona di tolleranza" di due chili, oltre la quale si torna per due o tre settimane a un piccolo deficit.
+- **Cibi di qualità** e poco ultra-processati, che rendono più facile non mangiare troppo senza contare.
+- **Flessibilità**: torna il primo principio del libro. Le settimane allo 0% sono quelle da evitare.
+
+### La testa
+
+Gli studi mostrano che chi mantiene il peso ha imparato a **gestire le ricadute** senza drammi: un pasto abbondante, una vacanza, un periodo di stress sono parte della vita. Conta tornare alle abitudini il giorno dopo, non compensare con giorni di digiuno.
+
+Un'altra cosa che aiuta è spostare l'obiettivo dal numero sulla bilancia a **cosa sai fare**: la forza in palestra, la resistenza in bicicletta, come ti senti la mattina, la pressione e gli esami del sangue. Sono obiettivi che si mantengono con le stesse abitudini che mantengono il peso.
+
+### Il mantenimento è la vera dieta
+
+Alla fine, la dieta per dimagrire è una parentesi di qualche mese; il mantenimento è il resto della vita. Per questo ha senso dimagrire con le stesse abitudini che si vogliono tenere per sempre, solo con porzioni un po' più piccole: piatto unico, tanta verdura, proteine a ogni pasto, cereali integrali, olio extravergine misurato, movimento ogni giorno.
+
+Fonti: [Anderson et al., Am J Clin Nutr 2001](https://pubmed.ncbi.nlm.nih.gov/11684524/) · [Wing e Phelan, Am J Clin Nutr 2005](https://pubmed.ncbi.nlm.nih.gov/16002825/) · [Fothergill et al., Obesity 2016](https://pubmed.ncbi.nlm.nih.gov/27136388/)
+` },
+    { id: 'al-riepilogo-dimagrimento', titolo: 'Riepilogo: Il dimagrimento', testo: `
+1. **Il bilancio energetico è la legge**: a parità di calorie e proteine, carboidrati o grassi non cambiano il grasso perso. Ma con gli ultra-processati si mangiano circa 500 kcal in più al giorno.
+2. **Il consumo giornaliero** è fatto di metabolismo a riposo, digestione, movimento quotidiano e allenamento. Il movimento quotidiano, il NEAT, è la parte più variabile e la prima a calare in deficit.
+3. **Velocità**: 0,5-1% del peso a settimana per chi si allena; più si è magri, più conviene andare piano.
+4. **Pesarsi spesso e guardare la media**, più la circonferenza della vita. Uno stallo vero dura almeno due o tre settimane.
+5. **Densità calorica**: tanta verdura, minestre e legumi saziano con poche calorie. Olio e frutta secca si pesano.
+6. **Proteine alte e pesi** proteggono il muscolo; in deficit l'obiettivo è mantenere i carichi.
+7. **Timing e digiuno intermittente** non danno vantaggi a parità di calorie: conta l'aderenza.
+8. **HIIT e cardio lento** fanno perdere lo stesso grasso; i passi, fino a 8.000-10.000 al giorno, sono l'arma più semplice.
+9. **L'adattamento esiste ma è piccolo** nelle diete moderate. In stallo: controllare le porzioni, più passi, poi 100-200 kcal in meno o una pausa a mantenimento.
+10. **Il mantenimento** è la parte più lunga: uscire dalla dieta per gradi, pesi, passi, sonno, una zona di tolleranza di due chili.
+
+Domande per verificare:
+
+- Quanti passi fai in media nei giorni di dieta rispetto a quelli normali?
+- Quali due cibi della tua giornata hanno la densità calorica più alta? Li pesi?
+- Se il peso si fermasse per tre settimane, qual è la prima cosa che controlleresti?
 ` },
   ] },
 
