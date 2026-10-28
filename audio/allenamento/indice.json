@@ -145,13 +145,29 @@
    "h": "7372ccf47e68",
    "s": 123
   },
-  "tr-pesi-cardio": {
-   "h": "b4f36ab8e226",
-   "s": 134
-  },
   "tr-addominali": {
-   "h": "bec387f4e3e4",
-   "s": 141
+   "h": "bcc27140c261",
+   "s": 347
+  },
+  "tr-retto-addome": {
+   "h": "3f391a56255e",
+   "s": 590
+  },
+  "tr-obliqui": {
+   "h": "9cefbf4db9b9",
+   "s": 584
+  },
+  "tr-trasverso": {
+   "h": "a7cd167b5433",
+   "s": 580
+  },
+  "tr-riepilogo-addome": {
+   "h": "d0c91494d545",
+   "s": 122
+  },
+  "tr-pesi-cardio": {
+   "h": "910f44446181",
+   "s": 134
   },
   "tr-gambe": {
    "h": "0b4b8e88e447",
@@ -170,7 +186,7 @@
    "s": 187
   },
   "tr-resistenza": {
-   "h": "cd116f5421c7",
+   "h": "4581c59050bd",
    "s": 128
   },
   "tr-hiit": {
@@ -186,8 +202,8 @@
    "s": 190
   },
   "tr-flessibilita": {
-   "h": "1614a912c378",
-   "s": 134
+   "h": "4da7e5638f47",
+   "s": 135
   }
  }
 }
