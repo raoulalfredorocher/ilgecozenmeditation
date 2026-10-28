@@ -2,12 +2,16 @@
  "voce": "it-IT-IsabellaNeural",
  "pagine": {
   "tr-perche": {
-   "h": "3dbc5fb2151d",
-   "s": 132
+   "h": "2eb90c711382",
+   "s": 379
   },
   "tr-cinque-secondi": {
-   "h": "27c62d770d77",
-   "s": 81
+   "h": "4a423541df5d",
+   "s": 350
+  },
+  "tr-riepilogo-perche": {
+   "h": "82531601cf85",
+   "s": 107
   },
   "tr-parametri": {
    "h": "08e75f8f5057",
@@ -210,32 +214,48 @@
    "s": 121
   },
   "tr-pesi-cardio": {
-   "h": "535054a01e9a",
-   "s": 133
+   "h": "4814c5fa199b",
+   "s": 372
   },
   "tr-miei-esercizi": {
-   "h": "50e6680dc92e",
-   "s": 187
+   "h": "706463821560",
+   "s": 321
+  },
+  "tr-riepilogo-forza": {
+   "h": "ea4449e31ec7",
+   "s": 100
   },
   "tr-resistenza": {
-   "h": "eb843a0ee6d2",
-   "s": 128
+   "h": "ec877ba4e922",
+   "s": 429
   },
   "tr-hiit": {
-   "h": "ae25e5924ff9",
-   "s": 161
+   "h": "a9feab47ddee",
+   "s": 433
   },
   "tr-liss": {
-   "h": "d86bddbc5e03",
-   "s": 152
+   "h": "074ab37493ec",
+   "s": 408
   },
   "tr-bici": {
-   "h": "6cde342a2a19",
-   "s": 190
+   "h": "02ebaa3969f4",
+   "s": 406
+  },
+  "tr-riepilogo-resistenza": {
+   "h": "dd39ed114887",
+   "s": 107
   },
   "tr-flessibilita": {
-   "h": "4da7e5638f47",
-   "s": 135
+   "h": "30204d15ec6f",
+   "s": 406
+  },
+  "tr-mobilita": {
+   "h": "5d1f97b58ab2",
+   "s": 370
+  },
+  "tr-riepilogo-flessibilita": {
+   "h": "e1ebb9765b8d",
+   "s": 97
   }
  }
 }
