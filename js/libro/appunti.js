@@ -1,32 +1,18 @@
 /**
- * appunti.js — Spiritualità → scheda "Appunti": gli appunti come un libro.
+ * appunti.js — la scheda "Appunti": gli appunti di una pagina come un libro.
  *
  * Indice dei capitoli e lettura pagina per pagina, sempre liberi (nessuno
- * sblocco). Testi in studio-appunti.js; le schede e la cronologia le gestisce
- * studio.js, che chiama renderIndice / renderPagina.
+ * sblocco). I testi stanno nel file dei contenuti di ogni pagina (es.
+ * js/meditazione/studio-appunti.js) con LIBRO e CAPITOLI; le schede e la
+ * cronologia le gestisce studio.js, che chiama renderIndice / renderPagina.
  */
 import { escapeHtml } from '../core/dom.js';
-import { LIBRO, CAPITOLI } from './studio-appunti.js';
 
-/** Tutte le pagine in fila, con il loro capitolo. */
-export const PAGINE = CAPITOLI.flatMap((c, i) => c.sezioni.map(s => ({ ...s, cap: c, nCap: i + 1 })));
-export const trovaPagina = id => PAGINE.find(p => p.id === id) || null;
-
-/** Lezione del percorso → pagina degli appunti dove se ne parla. */
-export const PAGINA_DI_LEZIONE = {
-  siddharta: 'a-buddha', 'tre-gioielli': 'a-new-study', 'cose-buddismo': 'a-il-buddismo', correnti: 'a-correnti',
-  'chan-zen': 'a-correnti', 'dito-luna': 'a-zen', tempio: 'a-tempio', shoshin: 'a-new-study',
-  'prima-verita': 'a-prima', 'seconda-verita': 'a-seconda', 'tre-veleni': 'a-seconda', incommensurabili: 'a-pensiero',
-  'non-attaccamento': 'a-non-attaccamento', 'terza-verita': 'a-terza', 'via-di-mezzo': 'a-via-mezzo',
-  'quarta-verita': 'a-quarta', 'natura-buddha': 'a-correnti',
-  'retta-visione': 'a-visione', 'retto-pensiero': 'a-pensiero', 'retta-parola': 'a-parola', 'retta-azione': 'a-azione',
-  karma: 'a-karma', 'retto-sostentamento': 'a-sostentamento', 'retto-sforzo': 'a-sforzo',
-  'retta-consapevolezza': 'a-consapevolezza', 'cinque-ostacoli': 'a-concentrazione', 'retta-concentrazione': 'a-concentrazione',
-  zazen: 'a-zen',
-  impermanenza: 'a-impermanenza', 'origine-condizionata': 'a-origine', interdipendenza: 'a-interdipendenza',
-  'cinque-aggregati': 'a-aggregati', 'non-se': 'a-non-se', 'non-dualita': 'a-yin-yang',
-  satori: 'a-zen', 'samsara-nirvana': 'a-termini',
-};
+/** Le pagine in fila, con il loro capitolo, e la ricerca per id. */
+export function creaLibro({ LIBRO, CAPITOLI }) {
+  const PAGINE = CAPITOLI.flatMap((c, i) => c.sezioni.map(s => ({ ...s, cap: c, nCap: i + 1 })));
+  return { LIBRO, CAPITOLI, PAGINE, trovaPagina: id => PAGINE.find(p => p.id === id) || null };
+}
 
 // ─── Testo: **grassetto**, *corsivo*, [link](https://…) ─────────────────────
 const inline = s => escapeHtml(s)
@@ -86,13 +72,13 @@ const piano = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 // ═══════════════════════════════════════════════════════════════════════════
 // INDICE
 // ═══════════════════════════════════════════════════════════════════════════
-/** @param ultima pagina letta per ultima (o null) */
-export function renderIndice(el, ultima) {
+/** @param libro creaLibro(…)  @param ultima pagina letta per ultima (o null) */
+export function renderIndice(el, { LIBRO, CAPITOLI, PAGINE }, ultima) {
   el.innerHTML = `
     <div class="ap-cover">
       <div class="st-eyebrow">I tuoi appunti</div>
       <h2 class="ap-book">${escapeHtml(LIBRO.titolo)}</h2>
-      <p class="ap-epi">${escapeHtml(LIBRO.epigrafi[0])}</p>
+      ${LIBRO.epigrafi?.length ? `<p class="ap-epi">${escapeHtml(LIBRO.epigrafi[0])}</p>` : ""}
       <span class="ap-meta">${CAPITOLI.length} capitoli · ${PAGINE.length} pagine</span>
       ${ultima ? `<span class="ap-last">Eri a: <b>${escapeHtml(ultima.titolo)}</b></span>
                   <button class="btn primary block" type="button" data-pagina="${ultima.id}">Riprendi la lettura</button>`
@@ -131,7 +117,7 @@ export function renderIndice(el, ultima) {
 // ═══════════════════════════════════════════════════════════════════════════
 // PAGINA
 // ═══════════════════════════════════════════════════════════════════════════
-export function renderPagina(el, p) {
+export function renderPagina(el, { PAGINE }, p) {
   const i = PAGINE.indexOf(p), prev = PAGINE[i - 1], next = PAGINE[i + 1];
   el.innerHTML = `
     <button class="text-btn st-back" type="button" data-indice>‹ Indice</button>

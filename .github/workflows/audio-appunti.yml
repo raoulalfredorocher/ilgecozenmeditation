@@ -1,6 +1,6 @@
-# Audiolibro degli appunti zen (Spiritualità → Appunti): un MP3 per pagina, voce neurale gratuita.
-# Quando cambiano gli appunti rigenera solo le pagine cambiate (scripts/audio_appunti.py),
-# salva gli MP3 in audio/appunti/ con un commit su main e ripubblica il sito.
+# Audiolibri degli appunti (Spiritualità, Allenamento, … → Appunti): un MP3 per pagina, voce neurale gratuita.
+# I libri sono elencati in scripts/audiolibri.json. Quando cambiano gli appunti rigenera solo le
+# pagine cambiate (scripts/audio_appunti.py), salva gli MP3 in audio/ con un commit su main e ripubblica il sito.
 # Si può lanciare a mano da Actions → "Audiolibro appunti" → Run workflow.
 name: Audiolibro appunti
 
@@ -8,7 +8,8 @@ on:
   push:
     branches: [main]
     paths:
-      - js/meditazione/studio-appunti.js
+      - 'js/**/studio-appunti.js'
+      - scripts/audiolibri.json
       - scripts/testi_appunti.mjs
       - scripts/audio_appunti.py
       - .github/workflows/audio-appunti.yml
@@ -37,7 +38,7 @@ jobs:
       - run: python scripts/audio_appunti.py
       - id: salva
         run: |
-          git add audio/appunti
+          git add audio
           if git diff --cached --quiet; then echo "cambiato=no" >> "$GITHUB_OUTPUT"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898888+github-actions[bot]@users.noreply.github.com"

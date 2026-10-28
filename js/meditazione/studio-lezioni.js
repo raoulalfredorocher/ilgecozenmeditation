@@ -752,3 +752,29 @@ export const FRASI = [
   [204, 'La salute è il dono più grande, l\'appagamento la ricchezza più grande.'],
   [276, 'Tu stesso devi fare lo sforzo: i Buddha indicano soltanto la via.'],
 ];
+
+/** Lezione del percorso → pagina degli appunti dove se ne parla. */
+export const PAGINA_DI_LEZIONE = {
+  siddharta: 'a-buddha', 'tre-gioielli': 'a-new-study', 'cose-buddismo': 'a-il-buddismo', correnti: 'a-correnti',
+  'chan-zen': 'a-correnti', 'dito-luna': 'a-zen', tempio: 'a-tempio', shoshin: 'a-new-study',
+  'prima-verita': 'a-prima', 'seconda-verita': 'a-seconda', 'tre-veleni': 'a-seconda', incommensurabili: 'a-pensiero',
+  'non-attaccamento': 'a-non-attaccamento', 'terza-verita': 'a-terza', 'via-di-mezzo': 'a-via-mezzo',
+  'quarta-verita': 'a-quarta', 'natura-buddha': 'a-correnti',
+  'retta-visione': 'a-visione', 'retto-pensiero': 'a-pensiero', 'retta-parola': 'a-parola', 'retta-azione': 'a-azione',
+  karma: 'a-karma', 'retto-sostentamento': 'a-sostentamento', 'retto-sforzo': 'a-sforzo',
+  'retta-consapevolezza': 'a-consapevolezza', 'cinque-ostacoli': 'a-concentrazione', 'retta-concentrazione': 'a-concentrazione',
+  zazen: 'a-zen',
+  impermanenza: 'a-impermanenza', 'origine-condizionata': 'a-origine', interdipendenza: 'a-interdipendenza',
+  'cinque-aggregati': 'a-aggregati', 'non-se': 'a-non-se', 'non-dualita': 'a-yin-yang',
+  satori: 'a-zen', 'samsara-nirvana': 'a-termini',
+};
+
+/** Etichette del percorso (js/libro/studio.js). */
+export const ETICHETTE = {
+  percorso: 'Iniziamo a studiare',
+  pratica: 'Nello zazen',
+  diario: 'Il mio diario zen',
+  diarioLezione: 'Il tuo diario zen',
+  frasePrefisso: 'Dhammapada, ',
+  fine: 'Hai attraversato tutte le tappe. Ora torna al mercato a mani aperte: rileggi una lezione quando vuoi, con la mente del principiante.',
+};
