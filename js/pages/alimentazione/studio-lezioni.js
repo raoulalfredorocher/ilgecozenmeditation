@@ -1,0 +1,710 @@
+/**
+ * studio-lezioni.js — il percorso "Studio dell'alimentazione" (solo contenuti).
+ *
+ * Costruito dagli appunti di Raoul (Notion, Via della virtù → Salute →
+ * Alimentazione) e integrato con la letteratura: piramide mediterranea, OMS,
+ * American Heart Association, CREA, LARN, EFSA e studi citati in ogni lezione.
+ * Non si usano le Dietary Guidelines for Americans 2025-2030.
+ * Nessun dato personale: le risposte del diario vivono in Firestore
+ * (direction/studio_alimentazione), non qui.
+ *
+ * Formato di una lezione (lo legge js/libro/studio.js):
+ *   id, tappa, titolo, termine, idea (una frase),
+ *   testo: [ "paragrafo con **grassetto**", { h: 'sottotitolo' }, { lista: [...] } ],
+ *   appunti: frase dai suoi appunti (facoltativa), pratica, domanda, fonti: [[titolo, url]]
+ * Gli id sono le chiavi dei progressi: non rinominarli.
+ */
+
+const OMS = ['OMS, Healthy diet', 'https://www.who.int/news-room/fact-sheets/detail/healthy-diet'];
+const AHA = ['AHA, Dietary guidance 2021', 'https://www.ahajournals.org/doi/10.1161/CIR.0000000000001031'];
+const CREA = ['CREA, Linee guida per una sana alimentazione', 'https://www.crea.gov.it/web/alimenti-e-nutrizione/-/linee-guida-per-una-sana-alimentazione-2018'];
+const LARN = ['LARN, SINU 2014', 'https://sinu.it/tabelle-larn-2014/'];
+const HARVARD = ['Il piatto sano, Harvard', 'https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/translations/italian/'];
+
+export const ETICHETTE = {
+  percorso: 'Iniziamo a studiare',
+  pratica: 'Nel piatto',
+  diario: 'Il mio diario di alimentazione',
+  diarioLezione: 'Il tuo diario',
+  frase: 'Frase del giorno',
+  fine: 'Hai attraversato tutte le tappe. Ora la teoria vive nel piatto di ogni giorno: rileggi una lezione quando vuoi.',
+};
+
+export const TAPPE = [
+  { id: 'basi',      n: 1, titolo: 'Le basi',               sotto: 'Flessibilità, piatto unico, piramide e linee guida' },
+  { id: 'macro',     n: 2, titolo: 'I macronutrienti',       sotto: 'Proteine, carboidrati e grassi' },
+  { id: 'micro',     n: 3, titolo: 'I micronutrienti',       sotto: 'Vitamine, minerali e acqua' },
+  { id: 'dimagrire', n: 4, titolo: 'Dimagrire bene',         sotto: 'Bilancio, deficit, sazietà e movimento' },
+  { id: 'cucina',    n: 5, titolo: 'In cucina',              sotto: 'Cotture, oli, temperature e sous vide' },
+  { id: 'vita',      n: 6, titolo: 'Per la vita',            sotto: 'Miti, sale, zucchero, alcol, integratori, scelte vegetali' },
+];
+
+export const LEZIONI = [
+  // ═══ 1. LE BASI ═════════════════════════════════════════════════════════
+  {
+    id: 'l-flessibilita', tappa: 'basi', titolo: 'Niente settimane allo 0%', termine: 'Controllo flessibile',
+    idea: 'Non serve la perfezione: serve evitare il crollo. La costanza su mesi batte il giorno perfetto.',
+    testo: [
+      'Il primo principio dei tuoi appunti è psicologico prima che nutrizionale: **smettere di inseguire le settimane al 100% e iniziare a evitare le settimane allo 0%**.',
+      'La ricerca gli dà ragione. Gli psicologi distinguono due modi di controllare cosa si mangia:',
+      { lista: [
+        '**Controllo rigido**: regole tutto o niente ("mai dolci", "oggi ho sgarrato, ormai…"). Si associa a più abbuffate, più sensi di colpa e un peso che va su e giù.',
+        '**Controllo flessibile**: obiettivi di media, spazio per gli imprevisti, si riprende al pasto successivo. Si associa a un peso più stabile e a meno stress.',
+      ] },
+      'Il meccanismo è l\'effetto "ormai è andata" (in inglese *what-the-hell effect*): dopo una piccola violazione di una regola rigida si smette del tutto di controllarsi. Con un obiettivo flessibile la stessa violazione resta piccola.',
+      { h: 'In pratica' },
+      'Guarda la **settimana**, non il giorno: un pasto libero dentro una settimana costante non cambia la direzione. Conta la media.',
+    ],
+    appunti: 'Invece di considerare ogni decisione come un bianco o un nero, allargate lo sguardo, guardate al quadro generale, godetevi un po\' di flessibilità.',
+    pratica: 'Questa settimana scegli una sola regola "flessibile" (es. verdura in almeno 10 pasti su 14) invece di una regola assoluta. A fine settimana conta i pasti, non i fallimenti.',
+    domanda: 'Quando ti è capitato l\'effetto "ormai è andata"? Che cosa avresti potuto fare al pasto successivo?',
+    fonti: [['Westenhoefer et al., controllo rigido e flessibile', 'https://pubmed.ncbi.nlm.nih.gov/10349584/'], CREA],
+  },
+  {
+    id: 'l-piatto', tappa: 'basi', titolo: 'Il piatto unico', termine: 'Healthy Eating Plate · Harvard',
+    idea: 'Metà verdura e frutta, un quarto cereali integrali, un quarto proteine sane, olio buono, acqua.',
+    testo: [
+      'Il **piatto sano di Harvard** traduce le linee guida in un\'immagine che si può usare a ogni pasto:',
+      { lista: [
+        '**Metà piatto**: verdura (tanta, di colori diversi) e frutta. Le **patate non contano** come verdura.',
+        '**Un quarto**: cereali **integrali** (farro, orzo, riso integrale, avena, pasta integrale).',
+        '**Un quarto**: proteine sane: legumi, pesce, pollame, uova, frutta secca; poca carne rossa, niente salumi.',
+        '**Oli vegetali** (soprattutto extravergine) con misura.',
+        'Da bere **acqua**, tè o caffè senza zucchero; latticini 1-2 porzioni al giorno, non a ogni pasto.',
+      ] },
+      'Nei tuoi appunti la regola è la stessa in percentuale: **50% frutta e verdura, 25% carboidrati, 25% proteine**.',
+      'Il piatto non chiede di pesare: chiede di **guardare**. Per questo funziona fuori casa, al ristorante, in mensa.',
+    ],
+    appunti: 'Ogni pasto, ma in generale ogni giorno, deve seguire le regole del piatto unico di Harvard.',
+    pratica: 'Al prossimo pranzo, prima di mangiare, dividi il piatto a occhio in quattro: due quarti verdura, uno cereale, uno proteine. Se manca la verdura, aggiungila prima di iniziare.',
+    domanda: 'Quale quarto del piatto ti manca più spesso? Perché?',
+    fonti: [HARVARD, CREA],
+  },
+  {
+    id: 'l-piramide', tappa: 'basi', titolo: 'La piramide mediterranea', termine: 'Dieta mediterranea · UNESCO 2010',
+    idea: 'La piramide dice quanto spesso: alla base lo stile di vita, poi ogni pasto, ogni giorno, ogni settimana.',
+    testo: [
+      'Il piatto dice **come** comporre un pasto; la **piramide** dice **quanto spesso** mangiare ogni gruppo.',
+      { lista: [
+        '**Base**: movimento, riposo, convivialità, stagionalità, acqua.',
+        '**A ogni pasto principale**: cereali (meglio integrali), verdura (almeno 2 porzioni), frutta, olio extravergine.',
+        '**Ogni giorno**: latticini (2, magri), frutta secca e semi (1-2 manciate), erbe e spezie.',
+        '**Ogni settimana**: pesce almeno 2 volte, legumi almeno 2 (le linee guida italiane 2-4), uova 2-4, carne bianca 2, patate fino a 3; carne rossa meno di 2, salumi al massimo 1, dolci al massimo 2.',
+      ] },
+      'È il modello con le prove più forti. Nel **PREDIMED** (7.447 persone a rischio) la dieta mediterranea con olio extravergine o frutta secca ha ridotto di circa il **30%** infarti, ictus e morti cardiovascolari rispetto a una dieta povera di grassi.',
+      'Nota che non è "pasta e pizza": è soprattutto **verdura, legumi, cereali in chicco, olio, pesce, frutta secca**.',
+    ],
+    pratica: 'Conta quante porzioni di legumi e di pesce hai mangiato negli ultimi 7 giorni. Se sono meno di 2 ciascuno, pianifica la prossima settimana partendo da quelle.',
+    domanda: 'Quale piano della piramide rispetti già senza fatica, e quale invece ti sfugge?',
+    fonti: [['Bach-Faig et al., la piramide mediterranea', 'https://pubmed.ncbi.nlm.nih.gov/22166184/'], ['PREDIMED, NEJM 2018', 'https://www.nejm.org/doi/full/10.1056/NEJMoa1800389']],
+  },
+  {
+    id: 'l-linee-guida', tappa: 'basi', titolo: 'Cosa dicono le linee guida', termine: 'OMS · AHA · CREA',
+    idea: 'Tre istituzioni, un messaggio: più vegetali e integrali, grassi insaturi, poco zucchero, sale e alcol.',
+    testo: [
+      '**OMS**: almeno 400 g di frutta e verdura al giorno; almeno 25 g di fibra; grassi sotto il 30% delle calorie, saturi sotto il 10%, trans sotto l\'1%; zuccheri liberi sotto il 10% (meglio 5%); sale sotto 5 g, iodato.',
+      '**American Heart Association (2021)**: bilancia calorie e movimento; tanta frutta e verdura; integrali; proteine soprattutto vegetali e pesce; oli vegetali liquidi al posto di burro e grassi tropicali; cibi poco lavorati; pochissimi zuccheri aggiunti; poco sale; limitare l\'alcol.',
+      '**CREA (Italia, 2018)**: tredici indicazioni, dal "più frutta e verdura" al "la sicurezza dei cibi dipende anche da te", passando per "diete e integratori senza basi scientifiche: attenzione".',
+      { h: 'Il punto' },
+      'Quando fonti indipendenti arrivano alle stesse conclusioni con metodi diversi, la conclusione è solida. Le mode passano; queste regole sono stabili da vent\'anni.',
+    ],
+    pratica: 'Scegli una delle regole OMS che oggi non rispetti (fibra, zuccheri o sale) e misurala per tre giorni con il diario dell\'app.',
+    domanda: 'Quale di queste indicazioni ti sembra più difficile per te, e cosa la rende difficile?',
+    fonti: [OMS, AHA, CREA],
+  },
+  {
+    id: 'l-cibi-veri', tappa: 'basi', titolo: 'Cibi veri e ultra-processati', termine: 'Classificazione NOVA',
+    idea: 'La natura offre cibi potenziativi, l\'industria spesso depotenziativi: la scienza li chiama ultra-processati.',
+    testo: [
+      'La tua distinzione tra cibi **potenziativi** e **depotenziativi** ha un equivalente scientifico: la classificazione **NOVA**, in quattro gruppi.',
+      { lista: [
+        '**1. Non lavorati**: frutta, verdura, legumi, cereali, uova, latte, carne e pesce freschi o surgelati.',
+        '**2. Ingredienti da cucina**: olio, sale, zucchero, burro.',
+        '**3. Processati**: legumi in vetro, pane, formaggi, tonno in scatola.',
+        '**4. Ultra-processati**: formulazioni industriali con ingredienti che in cucina non usi (sciroppi, proteine isolate, emulsionanti, aromi): bibite, merendine, snack, piatti pronti.',
+      ] },
+      'Nello studio di Kevin Hall (NIH, 2019) chi mangiava ultra-processati assumeva **500 kcal in più al giorno** senza accorgersene. Una grande revisione sul BMJ (2024) li associa a più malattie di cuore, diabete e depressione.',
+      '**Processato non vuol dire cattivo**: ceci in vetro e piselli surgelati sono scelte ottime.',
+    ],
+    appunti: 'In generale la natura ci offre cibi potenziativi, le industrie ci offrono cibi depotenziativi.',
+    pratica: 'Apri la dispensa e leggi gli ingredienti di tre prodotti confezionati. Se trovi nomi che non useresti in cucina, è un ultra-processato: cerca un\'alternativa del gruppo 1 o 3.',
+    domanda: 'Quale ultra-processato è più radicato nelle tue abitudini? Con cosa potresti sostituirlo?',
+    fonti: [['Lane et al., BMJ 2024', 'https://www.bmj.com/content/384/bmj-2023-077310'], ['Hall et al., Cell Metab 2019', 'https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7']],
+  },
+
+  // ═══ 2. I MACRONUTRIENTI ════════════════════════════════════════════════
+  {
+    id: 'l-proteine', tappa: 'macro', titolo: 'Le proteine, i mattoni della vita', termine: 'Aminoacidi · turnover proteico',
+    idea: 'Il corpo non ha riserve di proteine: le rinnova di continuo e devono arrivare ogni giorno.',
+    testo: [
+      'Le proteine sono catene di **aminoacidi**. Ogni giorno il corpo ne demolisce e ne ricostruisce centinaia di grammi: è il **turnover proteico**, che dopo l\'allenamento accelera.',
+      'Fanno molto più che costruire muscoli:',
+      { lista: ['enzimi che regolano ogni reazione del metabolismo;', 'trasportatori nel sangue (l\'emoglobina);', 'ormoni (l\'insulina) e precursori dei neurotrasmettitori;', 'anticorpi;', 'coagulazione e contrazione muscolare.'] },
+      'A differenza di grassi e carboidrati, **non esiste un magazzino di proteine**: tutte quelle del corpo lavorano. Se ne mancano, il corpo le prende dai muscoli.',
+      'Le fonti sono animali (carne, pesce, uova, latticini) e vegetali (legumi, soia, frutta secca, semi, cereali): cambiano quantità e **valore biologico**.',
+    ],
+    appunti: 'Le proteine devono essere introdotte quotidianamente con la dieta perché il nostro organismo non dispone di riserve proteiche.',
+    pratica: 'Per un giorno metti una fonte proteica in ogni pasto, colazione compresa (yogurt greco, uova, fiocchi di latte, legumi).',
+    domanda: 'Com\'è distribuita oggi la tua proteina nella giornata: tutta a cena o in ogni pasto?',
+    fonti: [LARN, ['ISSN, Protein and exercise 2017', 'https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0177-8']],
+  },
+  {
+    id: 'l-aminoacidi', tappa: 'macro', titolo: 'Aminoacidi essenziali e qualità', termine: 'Valore biologico · DIAAS',
+    idea: 'Nove aminoacidi vanno presi dal cibo; la qualità di una proteina dice quanti ne porta e quanto si digerisce.',
+    testo: [
+      'Dei 20 aminoacidi delle proteine, **9 sono essenziali**: leucina, isoleucina, valina, lisina, metionina, treonina, fenilalanina, triptofano, istidina. Se ne manca uno, la sintesi proteica si ferma.',
+      'La **leucina** è l\'interruttore della sintesi muscolare: ne servono circa 2-3 g a pasto, cioè 25-30 g di proteine animali o un po\' di più di vegetali.',
+      'Oggi la qualità si misura con il **DIAAS** (FAO, 2013), che considera anche la digeribilità:',
+      { lista: ['latte, uova, carne: sopra 100;', 'soia: circa 90;', 'ceci, fagioli, piselli: 60-80;', 'cereali: 40-60.'] },
+      'I cereali sono poveri di **lisina**, i legumi di **metionina**: insieme si completano. Come dicono i tuoi appunti, **cereali e legumi** sono l\'abbinamento da cercare.',
+    ],
+    appunti: 'Al contrario è doveroso abbinare cereali e legumi.',
+    pratica: 'Prepara un piatto unico cereale più legume (pasta e ceci, riso e lenticchie, farro e fagioli) con verdura: è una proteina completa.',
+    domanda: 'Quante volte a settimana mangi un piatto cereale più legume? Quale ti piace di più?',
+    fonti: [['Wolfe, JISSN 2017', 'https://pubmed.ncbi.nlm.nih.gov/28852372/']],
+  },
+  {
+    id: 'l-quante-proteine', tappa: 'macro', titolo: 'Quante proteine servono', termine: 'g per kg di peso',
+    idea: 'Da 0,9 g/kg per chi è sedentario a 1,6-2,2 per chi si allena, distribuite su 3-5 pasti.',
+    testo: [
+      'I numeri della letteratura:',
+      { lista: [
+        '**Sedentari**: 0,9 g per chilo al giorno (LARN).',
+        '**Chi si allena con i pesi**: 1,4-2,0 g/kg (ISSN). Oltre **1,6 g/kg** i guadagni si appiattiscono (meta-analisi Morton 2018), con un margine fino a 2,2.',
+        '**In deficit calorico**: 1,6-2,4 g/kg per proteggere i muscoli.',
+      ] },
+      'Conta anche la **distribuzione**: 3-5 pasti con circa 0,3-0,4 g/kg ciascuno (per 80 kg, 25-35 g), ogni 3-4 ore. Una porzione di caseina o yogurt greco prima di dormire aiuta la sintesi notturna.',
+      'Con un\'alimentazione molto vegetale conviene stare nella parte alta: i tuoi appunti dicono **+0,2 g/kg**, una regola prudente.',
+      'Nelle persone con reni sani non si sono visti danni fino a 2 g/kg.',
+    ],
+    appunti: 'Aumentare il numero di pasti per aumentare la sintesi proteica.',
+    pratica: 'Calcola il tuo obiettivo: peso × 1,6. Dividilo per 4 pasti. Confronta con quello che hai mangiato ieri nel diario dell\'app.',
+    domanda: 'Quale pasto è il più povero di proteine nella tua giornata tipo? Con cosa lo arricchiresti?',
+    fonti: [['Morton et al., Br J Sports Med 2018', 'https://bjsm.bmj.com/content/52/6/376'], LARN],
+  },
+  {
+    id: 'l-carboidrati', tappa: 'macro', titolo: 'Zuccheri e amidi', termine: 'Glucidi · semplici e complessi',
+    idea: 'Tutti i carboidrati diventano glucosio: cambia la velocità, e la velocità la decidono fibre e lavorazione.',
+    testo: [
+      'I carboidrati sono il carburante preferito di cervello e muscoli. Si dividono in:',
+      { lista: [
+        '**Semplici**: glucosio, fruttosio, galattosio; saccarosio, lattosio, maltosio. Rapidi, poco sazianti.',
+        '**Complessi**: amidi (cereali, tuberi, legumi), glicogeno (la riserva animale), fibre.',
+      ] },
+      'Tutti, per essere usati, diventano **glucosio**. La differenza la fa la **velocità**: lo zucchero di una bibita arriva nel sangue in minuti, l\'amido di un piatto di orzo con verdure in ore.',
+      'Il **fruttosio della frutta intera** non è un problema: arriva con fibre e acqua. Lo è quello aggiunto (sciroppi, bibite), che in eccesso affatica il fegato.',
+      'I LARN indicano il **45-60% delle calorie** dai carboidrati, soprattutto complessi e integrali.',
+    ],
+    appunti: 'Sarebbe buona norma evitare zuccheri industriali ed assumere questi zuccheri tramite la frutta.',
+    pratica: 'Sostituisci per una settimana lo zucchero o il miele che aggiungi (caffè, yogurt) con frutta fresca o cannella.',
+    domanda: 'Dove si nasconde lo zucchero aggiunto nella tua settimana?',
+    fonti: [['OMS, carboidrati 2023', 'https://www.who.int/publications/i/item/9789240073593'], LARN],
+  },
+  {
+    id: 'l-glicemia', tappa: 'macro', titolo: 'Glicemia e carico glicemico', termine: 'Indice glicemico · carico glicemico',
+    idea: 'Non conta solo quanto sale la glicemia, ma quanto in fretta torna giù; e il carico conta più dell\'indice.',
+    testo: [
+      'La **glicemia** è lo zucchero nel sangue. A digiuno è normale tra **70 e 99 mg/dl** (American Diabetes Association); 100-125 è glicemia alterata; da 126 (confermato) diabete.',
+      'Dopo un pasto tutti hanno un **picco**: nelle persone sane resta sotto 140 mg/dl e rientra in 2-3 ore. Come scrivi nei tuoi appunti, conta il **tempo di rientro**.',
+      { lista: [
+        '**Indice glicemico**: quanto in fretta un cibo alza la glicemia rispetto al glucosio (100).',
+        '**Carico glicemico**: indice × quantità di carboidrati nella porzione. L\'anguria ha indice alto ma carico 4; il riso bianco carico 25-30.',
+      ] },
+      { h: 'Cosa abbassa il picco' },
+      { lista: ['fibre, proteine e grassi nello stesso pasto;', 'mangiare prima la verdura;', 'pasta al dente;', 'riso e patate cotti e raffreddati (amido resistente);', 'una camminata dopo mangiato.'] },
+    ],
+    appunti: 'Non conta tanto quanto arriva alto il picco glicemico ma il tempo con la quale i valori dello zucchero nel sangue tornano a livello basale.',
+    pratica: 'Al prossimo pasto con pasta o riso mangia prima la verdura, poi il resto, e cammina 10 minuti dopo.',
+    domanda: 'Ti capita di avere sonnolenza o fame forte un\'ora dopo certi pasti? Quali?',
+    fonti: [['American Diabetes Association, Standards of Care', 'https://diabetesjournals.org/care/issue/48/Supplement_1'], ['Atkinson et al., tabelle IG 2021', 'https://pubmed.ncbi.nlm.nih.gov/34258626/']],
+  },
+  {
+    id: 'l-integrali', tappa: 'macro', titolo: 'Integrale contro raffinato', termine: 'Crusca · endosperma · germe',
+    idea: 'Il chicco intero porta fibre, vitamine e grassi buoni; la farina bianca tiene solo l\'amido.',
+    testo: [
+      'Il chicco ha tre parti: **crusca** (fibre, minerali, vitamine B), **endosperma** (amido e un po\' di proteine), **germe** (grassi buoni, vitamina E).',
+      'La farina **raffinata** tiene solo l\'endosperma: crusca e germe vengono tolti. Per questo la farina bianca alza la glicemia più in fretta e nutre meno.',
+      '**90 g al giorno** di cereali integrali (circa tre porzioni) si associano a un rischio più basso del 19% di malattie di cuore e del 17% di morte per tutte le cause (meta-analisi BMJ 2016).',
+      { lista: [
+        'Meglio ancora i **cereali in chicco** (orzo, farro, avena, riso integrale): la struttura intatta rallenta la digestione.',
+        'In etichetta, la farina integrale deve essere il **primo ingrediente**: molti pani "integrali" sono farina 00 con crusca.',
+      ] },
+    ],
+    appunti: 'Eliminare farine bianche troppo aggressive sul picco glicemico, prediligere alimenti integrali.',
+    pratica: 'Questa settimana prova un cereale in chicco che non usi mai (orzo, miglio, bulgur, amaranto) al posto della pasta bianca.',
+    domanda: 'Quali cereali raffinati mangi più spesso senza pensarci (pane, cracker, pizza)?',
+    fonti: [['Aune et al., BMJ 2016', 'https://www.bmj.com/content/353/bmj.i2716'], ['Harvard, Whole grains', 'https://nutritionsource.hsph.harvard.edu/what-should-you-eat/whole-grains/']],
+  },
+  {
+    id: 'l-fibre', tappa: 'macro', titolo: 'Le fibre e il microbiota', termine: 'Fibra solubile e insolubile',
+    idea: '25-30 g di fibre al giorno riducono dal 15 al 30% mortalità, malattie di cuore, diabete e tumore del colon.',
+    testo: [
+      'Le fibre non si digeriscono: arrivano nel **colon**, dove nutrono i batteri del microbiota.',
+      { lista: [
+        '**Solubile** (legumi, avena, orzo, frutta, psillio): forma un gel, abbassa glicemia e colesterolo, sazia.',
+        '**Insolubile** (cereali integrali, verdure, semi di lino, frutta secca): dà volume e regolarità.',
+      ] },
+      'La meta-analisi del **Lancet 2019** (Reynolds, 185 studi) è chiarissima: chi mangia **25-29 g al giorno** ha dal 15 al 30% in meno di mortalità, infarto, ictus, diabete di tipo 2 e tumore del colon rispetto a chi ne mangia meno di 15. Oltre i 30 g va ancora meglio.',
+      'I batteri trasformano le fibre in **butirrato** e altri acidi grassi a catena corta, che nutrono la parete dell\'intestino e calmano l\'infiammazione.',
+      'Come arrivarci: 5 porzioni di frutta e verdura (12 g), una di legumi (8 g), 2-3 di integrali (10 g), una manciata di frutta secca (3 g).',
+    ],
+    pratica: 'Per tre giorni guarda nel diario dell\'app quanta fibra mangi. Se sei sotto 25 g, aggiungi una porzione di legumi o un cucchiaio di semi.',
+    domanda: 'Da dove arriva oggi la maggior parte della tua fibra?',
+    fonti: [['Reynolds et al., Lancet 2019', 'https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(18)31809-9/fulltext'], OMS],
+  },
+  {
+    id: 'l-grassi', tappa: 'macro', titolo: 'I grassi non sono il nemico', termine: 'Lipidi · trigliceridi',
+    idea: 'I grassi sono essenziali: membrane, ormoni, vitamine. Conta il tipo, più della quantità.',
+    testo: [
+      'Come scrivi nei tuoi appunti, i grassi alimentari non sono il grasso addominale. Servono a:',
+      { lista: ['costruire le membrane delle cellule;', 'produrre ormoni;', 'assorbire le vitamine A, D, E, K;', 'proteggere gli organi e isolare dal freddo;', 'dare energia concentrata (9 kcal per grammo).'] },
+      'Si distinguono per i doppi legami: **saturi** (nessuno), **monoinsaturi** (uno), **polinsaturi** (due o più, omega-3 e omega-6); **trans** se la forma è stata alterata, soprattutto dall\'industria.',
+      'Quanti: 20-35% delle calorie per i LARN, fino al 30% per l\'OMS. Ma il **PREDIMED** aveva circa il 40% di grassi, quasi tutti da olio extravergine e frutta secca, con meno infarti e ictus. Il messaggio è: **scegli quali**, poi dosa.',
+    ],
+    appunti: 'Non vanno confusi con il grasso addominale o il grasso corporeo in eccesso: svolgono funzioni fondamentali per la salute.',
+    pratica: 'Misura l\'olio con un cucchiaio per tre giorni (un cucchiaio è circa 10 g, 90 kcal). Scopri quanto ne usi davvero a occhio.',
+    domanda: 'Che rapporto hai avuto con i grassi negli anni: li hai temuti, ignorati, scelti?',
+    fonti: [['OMS, grassi 2023', 'https://www.who.int/publications/i/item/9789240073630'], LARN],
+  },
+  {
+    id: 'l-saturi-trans', tappa: 'macro', titolo: 'Saturi e trans', termine: 'Colesterolo LDL',
+    idea: 'Saturi da limitare sotto il 10% e da sostituire con insaturi, non con zucchero; trans il più vicino a zero.',
+    testo: [
+      '**Saturi**: carni grasse, salumi, burro, panna, formaggi grassi, olio di cocco e di palma, prodotti da forno industriali. In eccesso alzano il **colesterolo LDL**.',
+      'La revisione **Cochrane 2020** (56.000 persone): ridurre i saturi abbassa del **17%** gli eventi cardiovascolari, soprattutto se al loro posto ci sono **polinsaturi**. Sostituirli con zucchero e farine bianche, invece, non serve.',
+      'L\'**olio di cocco** alza l\'LDL: per l\'AHA non è un olio salutare.',
+      '**Trans**: alzano l\'LDL e abbassano l\'HDL, il peggio dei due mondi. Dal 2021 nell\'Unione Europea i trans industriali sono limitati per legge a 2 g per 100 g di grasso, ma restano in prodotti extra-UE e oli di frittura riusati.',
+    ],
+    appunti: 'Le linee guida internazionali raccomandano di limitare i grassi saturi e di sostituirli con grassi insaturi, non con zuccheri.',
+    pratica: 'Scegli un alimento ricco di saturi che usi spesso (burro, formaggio grasso, salume) e trova per questa settimana un sostituto insaturo (olio, frutta secca, legumi, pesce).',
+    domanda: 'Quali grassi saturi ti sembrano "irrinunciabili"? Con che frequenza li vuoi tenere?',
+    fonti: [['Hooper et al., Cochrane 2020', 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD011737.pub3/full'], ['Sacks et al., AHA 2017', 'https://www.ahajournals.org/doi/10.1161/CIR.0000000000000510']],
+  },
+  {
+    id: 'l-omega', tappa: 'macro', titolo: 'Olio, omega-3 e omega-6', termine: 'MUFA · PUFA · EPA e DHA',
+    idea: 'Olio extravergine ogni giorno, pesce azzurro due volte a settimana, noci e semi: i grassi da scegliere.',
+    testo: [
+      '**Monoinsaturi** (olio extravergine, olive, frutta secca, avocado): abbassano l\'LDL, sono la base della dieta mediterranea.',
+      '**Omega-3**: ALA vegetale (noci, lino, chia) ed EPA e DHA marini (sgombro, sardine, alici, salmone, alghe). Servono a cervello, retina e cuore. L\'EFSA chiede **250 mg al giorno** di EPA più DHA: 1-2 porzioni di pesce grasso a settimana.',
+      'Il corpo trasforma solo il 5-10% dell\'ALA in EPA e pochissimo in DHA: chi non mangia pesce può usare **olio di alghe**.',
+      '**Omega-6** (oli di semi, frutta secca): l\'idea che siano "infiammatori" non è confermata nell\'uomo. L\'AHA consiglia di non ridurli, ma di **aumentare gli omega-3**.',
+      'L\'**extravergine** porta anche polifenoli (idrossitirosolo) con un effetto antiossidante riconosciuto dall\'EFSA.',
+    ],
+    pratica: 'Metti in agenda due pasti di pesce azzurro questa settimana (o, se non lo mangi, un cucchiaio di semi di lino macinati ogni giorno).',
+    domanda: 'Quante volte al mese mangi pesce azzurro? Cosa ti frena?',
+    fonti: [['Harris et al., AHA 2009 sugli omega-6', 'https://www.ahajournals.org/doi/10.1161/CIRCULATIONAHA.108.191627'], ['EFSA, valori di riferimento per i grassi', 'https://www.efsa.europa.eu/en/efsajournal/pub/1461']],
+  },
+
+  // ═══ 3. I MICRONUTRIENTI ════════════════════════════════════════════════
+  {
+    id: 'l-vitamine-liposolubili', tappa: 'micro', titolo: 'Vitamine A, D, E, K', termine: 'Vitamine liposolubili',
+    idea: 'Si sciolgono nei grassi: servono un filo d\'olio per assorbirle, e si accumulano, quindi più non è meglio.',
+    testo: [
+      { lista: [
+        '**A** (700 µg, LARN): vista, difese, pelle. Dal fegato, o dai **carotenoidi** di carote, zucca, albicocche, sempre con un grasso.',
+        '**D** (15 µg, cioè 600 UI): ossa, muscoli. Dal sole e da pesce grasso e tuorlo. Da ottobre a marzo in Italia il sole non basta.',
+        '**E** (13 mg): antiossidante delle membrane. Frutta secca, semi, germe dei cereali, extravergine.',
+        '**K** (140 µg, LARN): coagulazione e ossa. Verdure verdi (K1), formaggi stagionati e fermentati (K2).',
+      ] },
+      '**Correzione dei tuoi appunti**: la vitamina D serve **15 µg al giorno, non 50**. Il limite massimo sicuro è 100 µg. Integrarla ha senso in inverno o se le analisi la mostrano bassa.',
+      'Essendo liposolubili si **accumulano**: troppa vitamina A già pronta o troppa D da integratori sono tossiche. Dai cibi è quasi impossibile esagerare.',
+    ],
+    appunti: 'Il nostro corpo la sintetizza dai carotenoidi, ma solamente abbinata ai grassi (olio).',
+    pratica: 'Condisci le verdure arancioni e verdi di oggi con un cucchiaino di extravergine: è quello che serve per assorbirne le vitamine.',
+    domanda: 'Ti sei mai misurato la vitamina D? Quanto stai all\'aperto nei mesi invernali?',
+    fonti: [LARN, ['NIH, vitamina D', 'https://ods.od.nih.gov/factsheets/VitaminD-Consumer/']],
+  },
+  {
+    id: 'l-vitamine-idrosolubili', tappa: 'micro', titolo: 'Vitamine B e C', termine: 'Vitamine idrosolubili',
+    idea: 'Si sciolgono in acqua, si perdono in cottura e si eliminano con le urine: servono ogni giorno, non in megadosi.',
+    testo: [
+      'Le vitamine del **gruppo B** lavorano come una squadra per trasformare il cibo in energia e far funzionare nervi e sangue: B1, B2, B3, B5, B6, **B8 (biotina)**, **B9 (folati)**, **B12**.',
+      '**Correzione dei tuoi appunti**: la B7 non è l\'inositolo; B7 è un altro nome della **biotina**. L\'inositolo il corpo lo produce da solo.',
+      '**B12**: si trova solo in alimenti animali. Con un\'alimentazione vegetariana i livelli calano col tempo; per i vegani l\'integratore è obbligatorio (25-100 µg al giorno o 2000 µg a settimana).',
+      '**Vitamina C**: collagene, ferro, difese. Ne servono **105 mg** (LARN): un kiwi e mezzo peperone. **Correzione**: i 500 mg dei tuoi appunti non danno benefici dimostrati; sopra i 200 mg l\'intestino ne assorbe sempre meno.',
+      'Si perdono nell\'**acqua di cottura**: vapore e cotture brevi le salvano meglio della bollitura.',
+    ],
+    appunti: 'Nei paesi industrializzati è raro assistere a carenze gravi da vitamine, sono però molto sottovalutate le microcarenze.',
+    pratica: 'Oggi un piatto di verdura cruda ricca di vitamina C (peperoni, rucola, cavolo) insieme a un piatto di legumi: aiuta anche ad assorbire il ferro.',
+    domanda: 'Ti fidi più degli integratori o del cibo? Da dove nasce questa fiducia?',
+    fonti: [['NIH, vitamina B12', 'https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/'], ['NIH, vitamina C', 'https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/']],
+  },
+  {
+    id: 'l-minerali', tappa: 'micro', titolo: 'Sodio, potassio, calcio, magnesio', termine: 'Macroelementi · elettroliti',
+    idea: 'La dieta occidentale ha troppo sodio e poco potassio: invertire il rapporto abbassa la pressione.',
+    testo: [
+      'I **macroelementi** servono in quantità sopra 100 mg al giorno. Numeri LARN per un uomo: calcio **1000 mg**, potassio **3900 mg**, magnesio 240 mg, sodio 1500 mg (massimo consigliato 2000, cioè 5 g di sale).',
+      'Sodio e potassio lavorano in coppia per nervi, muscoli e pressione. Conta il **rapporto**: la dieta **DASH**, ricca di frutta, verdura, legumi e latticini magri e povera di sale, abbassa la pressione massima di 8-11 mmHg in chi ce l\'ha alta.',
+      '**Correzione**: i cibi non sono "alcalinizzanti" per il sangue, il cui pH resta fisso tra 7,35 e 7,45. Le diete "alcaline" funzionano solo perché sono piene di vegetali.',
+      'Il **calcio** si assorbe bene anche da acque con più di 300 mg/l; il **magnesio** sta in verdure verdi, integrali, frutta secca, legumi, cacao.',
+      'L\'80% del sodio è **già dentro i cibi** (pane, formaggi, salumi, piatti pronti).',
+    ],
+    pratica: 'Leggi il sale in etichetta di pane, formaggio e un piatto pronto che usi: somma quanto ne prendi in un giorno tipo senza mai usare la saliera.',
+    domanda: 'Quali cibi molto salati ti mancherebbero di più? Ne servono davvero ogni giorno?',
+    fonti: [LARN, ['Sacks et al., DASH, NEJM 2001', 'https://www.nejm.org/doi/full/10.1056/NEJM200101043440101']],
+  },
+  {
+    id: 'l-oligoelementi', tappa: 'micro', titolo: 'Ferro, iodio, zinco, selenio', termine: 'Oligoelementi',
+    idea: 'Pochi milligrammi o microgrammi, ma indispensabili; e alcuni metalli si accumulano invece di servire.',
+    testo: [
+      { lista: [
+        '**Ferro** (10 mg uomo): emoglobina. Quello di carne e pesce si assorbe al 15-35%, quello vegetale al 2-20%, di più con la **vitamina C**.',
+        '**Iodio** (150 µg): tiroide. In Italia la carenza è ancora diffusa: **sale poco, ma iodato**.',
+        '**Zinco** (12 mg): difese, pelle, fertilità. Legumi ammollati, semi di zucca, integrali, pesce.',
+        '**Selenio** (55 µg): antiossidante, tiroide. Due noci del Brasile bastano.',
+        'Rame, manganese, fluoro, molibdeno; il **cobalto** serve solo dentro la B12.',
+      ] },
+      '**Metalli da evitare**: il **mercurio** si accumula nei pesci grandi e predatori (spada, tonno grande, squalo); l\'**arsenico inorganico** nel riso (cuocerlo in molta acqua e scolarlo ne toglie fino al 50-60%).',
+      '**Correzione**: il limone non aiuta a eliminare il mercurio. Funziona solo scegliere **pesci piccoli**.',
+    ],
+    appunti: 'Iodio: minerale che permette alla tiroide di sviluppare ormoni tiroidei.',
+    pratica: 'Controlla che il sale di casa sia iodato. La prossima volta che cuoci il riso, prova la cottura in abbondante acqua scolata.',
+    domanda: 'Quali pesci mangi più spesso? Sono piccoli o grandi predatori?',
+    fonti: [LARN, OMS],
+  },
+  {
+    id: 'l-acqua', tappa: 'micro', titolo: 'Acqua e idratazione', termine: 'Bilancio idrico',
+    idea: 'Circa 2 litri da bere per un uomo, di più con caldo e sport; il colore delle urine fa da termometro.',
+    testo: [
+      'L\'EFSA indica **2,5 litri al giorno** di acqua totale per l\'uomo: circa il 20% arriva dal cibo, il resto (circa 2 litri) va bevuto.',
+      'Con caldo e allenamento si perdono da 0,5 a 1,5 litri di sudore all\'ora. Regola pratica: per ogni chilo perso durante l\'allenamento, circa **1,5 litri** da reintegrare.',
+      'Perdere anche solo il **2% del peso** in acqua riduce forza, resistenza e concentrazione.',
+      { lista: [
+        '**Urine giallo paglierino chiaro**: va bene.',
+        '**Caffè e tè** idratano anche loro; fino a 3-4 tazzine di caffè al giorno sono associate a una salute migliore.',
+        '**Bibite e succhi**: calorie liquide che non saziano. Acqua prima di tutto.',
+      ] },
+    ],
+    pratica: 'Tieni una bottiglia d\'acqua sulla scrivania e finiscila entro pranzo, una seconda entro sera.',
+    domanda: 'In quali momenti della giornata ti dimentichi di bere?',
+    fonti: [['EFSA, valori di riferimento per l\'acqua', 'https://www.efsa.europa.eu/en/efsajournal/pub/1459'], CREA],
+  },
+
+  // ═══ 4. DIMAGRIRE BENE ══════════════════════════════════════════════════
+  {
+    id: 'l-bilancio', tappa: 'dimagrire', titolo: 'Il bilancio energetico', termine: 'kcal · TDEE',
+    idea: 'Si dimagrisce solo in deficit; ma la qualità del cibo decide quante calorie finisci per mangiare.',
+    testo: [
+      'Le calorie sono **energia**. Se entra meno energia di quella che esce, il corpo usa le riserve, soprattutto il grasso (circa **7.700 kcal per chilo**).',
+      'Il dispendio giornaliero (**TDEE**) è fatto di: metabolismo a riposo (60-70%), effetto termico del cibo (circa 10%; le proteine ne bruciano il 20-30%), movimento quotidiano (passi) e allenamento.',
+      'Negli studi in reparto metabolico, a parità di calorie e proteine, più carboidrati o più grassi fanno perdere **lo stesso grasso**. Il bilancio è la legge.',
+      'Ma la **qualità** cambia il bilancio: con cibi ultra-processati liberi si mangiano circa **500 kcal in più al giorno** (Hall, NIH 2019).',
+      'E il surplus diventa **muscolo** solo con lo stimolo dei pesi e abbastanza proteine.',
+    ],
+    appunti: 'Le calorie altro non sono che la rappresentazione matematica di energia.',
+    pratica: 'Guarda il bilancio della tua ultima settimana nell\'app: entrate contro TDEE, giorno per giorno. Quale giorno sposta di più la media?',
+    domanda: 'Quale parte del tuo dispendio (passi, allenamento, cibo) ti è più facile aumentare?',
+    fonti: [['Hall et al., Cell Metab 2019', 'https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7'], ['Hall et al., Lancet 2011', 'https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(11)60812-X/fulltext']],
+  },
+  {
+    id: 'l-deficit', tappa: 'dimagrire', titolo: 'Quanto deficit', termine: '0,5-1% del peso a settimana',
+    idea: 'Più lento protegge muscoli e umore; conta il totale della settimana, non il singolo giorno.',
+    testo: [
+      'Dai tuoi appunti: un deficit di circa **350 kcal al giorno** fa perdere circa 0,3 kg a settimana; uno di circa **560 kcal** circa 0,5 kg.',
+      'La letteratura sportiva consiglia **0,5-1% del peso a settimana** (Helms 2014): oltre, aumentano fame, stanchezza e perdita di muscolo.',
+      { lista: [
+        '**Conta la settimana**: un pasto libero dentro una settimana in deficit non cambia la direzione.',
+        '**Pause dalla dieta**: nello studio MATADOR alternare 2 settimane di deficit e 2 di mantenimento ha fatto perdere più grasso a 6 mesi.',
+        '**Il calo rallenta**: il corpo si adatta e consuma un po\' meno; è normale.',
+        '**Pesarsi** al mattino più volte a settimana e guardare la **media**: il giorno singolo oscilla di 1-2 kg per acqua e sale.',
+      ] },
+    ],
+    appunti: 'In caso di dimagrimento la quantità ahimè è ciò che conta.',
+    pratica: 'Pesati tre mattine questa settimana, a digiuno, e annota la media. Confrontala con quella della settimana prossima, non con il singolo giorno.',
+    domanda: 'Come reagisci quando la bilancia sale un giorno nonostante tutto? Cosa ti dici?',
+    fonti: [['Helms et al., JISSN 2014', 'https://jissn.biomedcentral.com/articles/10.1186/1550-2783-11-20'], ['Byrne et al., MATADOR 2018', 'https://www.nature.com/articles/ijo2017206']],
+  },
+  {
+    id: 'l-densita', tappa: 'dimagrire', titolo: 'Poche calorie, tanto volume', termine: 'Densità calorica',
+    idea: 'Si mangia un volume abbastanza costante: abbassare le calorie per grammo fa mangiare meno senza fame.',
+    testo: [
+      'Nei tuoi appunti, in deficit si scelgono cibi con **poche calorie, tanto volume, tante proteine**; e le fragole sono meglio delle banane.',
+      'È il principio della **densità calorica** di Barbara Rolls (Penn State): tendiamo a mangiare un **peso** di cibo simile ogni giorno. Se quel peso ha meno calorie per grammo, il deficit arriva senza fame.',
+      { lista: [
+        '**Bassa densità**: verdure, frutta acquosa, minestre, legumi, yogurt magro, pesce bianco.',
+        '**Alta densità**: oli, frutta secca, formaggi, dolci, snack, pane secco.',
+        'Una **zuppa o un\'insalata prima** del pasto riduce le calorie totali del 10-20%.',
+        'Le **proteine** sono il nutriente più saziante.',
+      ] },
+      'Alta densità non vuol dire cattivo: olio e frutta secca restano essenziali, ma si **dosano**.',
+    ],
+    appunti: 'Nel dimagrimento vanno prediletti quei cibi con poche calorie, tanto volume, tante proteine.',
+    pratica: 'Oggi inizia pranzo e cena con un piatto di verdura o una minestra di verdure, prima del resto.',
+    domanda: 'Quali cibi ad alta densità ti finiscono nel piatto senza che te ne accorga?',
+    fonti: [['Rolls, Physiol Behav 2009', 'https://pubmed.ncbi.nlm.nih.gov/19303887/'], HARVARD],
+  },
+  {
+    id: 'l-priorita', tappa: 'dimagrire', titolo: 'La piramide delle priorità', termine: 'Calorie · macro · micro · timing · integratori',
+    idea: 'Prima calorie e costanza, poi macro e micro, poi orari; gli integratori sono la punta.',
+    testo: [
+      'L\'ordine dei tuoi appunti è lo stesso della "piramide della nutrizione" della nutrizione sportiva:',
+      { lista: ['**1. Calorie**', '**2. Macronutrienti** (prima di tutto le proteine)', '**3. Micronutrienti**', '**4. Timing**', '**5. Integratori**'] },
+      'La letteratura aggiunge una base sotto tutto: l\'**aderenza**. Nei confronti diretti (es. DIETFITS, 609 persone, un anno) diete povere di grassi o di carboidrati fanno perdere lo stesso peso: vince quella che si riesce a seguire.',
+      '**Timing**: 3 o 6 pasti non cambiano il dimagrimento; il digiuno intermittente funziona come una normale riduzione di calorie, non meglio (NEJM 2022). Conta distribuire le proteine.',
+    ],
+    appunti: 'L\'integrazione: integrare è sicuramente importante ma è la punta della piramide, non la base.',
+    pratica: 'Scrivi su un foglio i 5 livelli e, accanto a ciascuno, un voto da 1 a 5 per come stai andando. Lavora sul livello più basso con il voto più basso.',
+    domanda: 'Su quale livello della piramide spendi più energie mentali? È quello che conta di più?',
+    fonti: [['Gardner et al., DIETFITS, JAMA 2018', 'https://jamanetwork.com/journals/jama/fullarticle/2673150'], ['Liu et al., NEJM 2022', 'https://www.nejm.org/doi/full/10.1056/NEJMoa2114833']],
+  },
+  {
+    id: 'l-movimento', tappa: 'dimagrire', titolo: 'Pesi, cardio e passi', termine: 'HIIT · NEAT',
+    idea: 'I pesi salvano il muscolo, il cardio aiuta il bilancio, i passi proteggono il dispendio.',
+    testo: [
+      'I tuoi appunti: cardio **insieme** all\'allenamento con i pesi, più 10 minuti di camminata dopo i pasti.',
+      { lista: [
+        '**Pesi in deficit**: dicono al corpo di tenere il muscolo. Senza, fino a un quarto del peso perso può essere massa magra.',
+        '**HIIT o cardio lento**: la perdita di grasso è **simile** a parità di energia (Wewege 2017). L\'extra "a riposo" dopo l\'HIIT è piccolo (6-15%). Con infortuni, meglio il cardio a basso impatto.',
+        '**Passi (NEAT)**: in deficit calano senza accorgersene; un obiettivo fisso li protegge. 8.000-10.000 passi al giorno si associano a una mortalità più bassa (Lancet Public Health 2022).',
+        '**Camminata dopo i pasti**: anche 2-5 minuti abbassano il picco di glicemia.',
+      ] },
+    ],
+    appunti: 'Va fatto cardio associato al muscle resistance training.',
+    pratica: 'Dopo il pasto più abbondante di oggi, esci a camminare 10 minuti. Guarda nell\'app quanti passi aggiunge.',
+    domanda: 'Quale delle tre leve (pesi, cardio, passi) oggi trascuri di più?',
+    fonti: [['Wewege et al., Obes Rev 2017', 'https://pubmed.ncbi.nlm.nih.gov/28401638/'], ['Paluch et al., Lancet Public Health 2022', 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00302-9/fulltext']],
+  },
+
+  // ═══ 5. IN CUCINA ═══════════════════════════════════════════════════════
+  {
+    id: 'l-cottura', tappa: 'cucina', titolo: 'La scienza della cottura', termine: 'Conduzione · convezione · irraggiamento',
+    idea: 'Cuocere è trasferire energia: rende il cibo sicuro e digeribile, ma toglie qualcosa e può creare composti indesiderati.',
+    testo: [
+      'Tre modi di passare il calore: **conduzione** (la piastra), **convezione** (acqua, olio, aria calda), **irraggiamento** (griglia, resistenze, microonde).',
+      'Gli effetti sono doppi:',
+      { lista: [
+        '**Positivi**: igiene, digeribilità (le proteine denaturate si digeriscono meglio), sapore, conservabilità; alcuni nutrienti diventano più disponibili (licopene del pomodoro, carotenoidi delle carote, soprattutto con un filo d\'olio).',
+        '**Negativi**: perdita di vitamina C e folati, carbonizzazione, composti come acrilammide e benzopirene.',
+      ] },
+      '**Reazione di Maillard**: tra 140 e 180 °C zuccheri e aminoacidi formano la crosta bruna e il sapore. Oltre, si brucia.',
+      'Per questo la regola migliore è **alternare crudo e cotto** e preferire cotture moderate.',
+    ],
+    appunti: 'Le cotture sono la base della cucina ed è un processo di trasformazione, un trasferimento di energia da una fonte di calore agli alimenti.',
+    pratica: 'Oggi prepara la stessa verdura in due modi (cruda e al vapore) e assaggiale una accanto all\'altra.',
+    domanda: 'Quali cotture usi di più? Sono scelte o abitudini?',
+    fonti: [['EFSA, acrilammide', 'https://www.efsa.europa.eu/en/topics/topic/acrylamide']],
+  },
+  {
+    id: 'l-oli-padella', tappa: 'cucina', titolo: 'Oli in padella e acrilammide', termine: 'Punto di fumo · stabilità',
+    idea: 'L\'extravergine è il più stabile al calore; dorato, non bruciato; mai riusare l\'olio di frittura.',
+    testo: [
+      'Nei grassi il calore causa idrolisi, ossidazione e, al **punto di fumo**, acroleina.',
+      'Il punto di fumo non basta: conta la **stabilità all\'ossidazione**. In prove di riscaldamento prolungato l\'**extravergine** è risultato il più stabile tra gli oli comuni, grazie a monoinsaturi e antiossidanti. I tuoi appunti erano giusti: extravergine e arachide sono i più adatti.',
+      '**Acrilammide**: si forma sopra 120 °C negli alimenti ricchi di amido (patatine, pane tostato, biscotti). Regola EFSA: **dorato, non bruciato**.',
+      '**Griglia a fiamma viva**: su carne e pesce si formano ammine eterocicliche e benzopirene. Si riducono marinando (limone, aceto, erbe), girando spesso ed evitando la fiamma diretta.',
+      '**Frittura**: l\'alimento **assorbe** olio, dal 5 al 40% del peso. Correzione dei tuoi appunti, che dicevano il contrario.',
+    ],
+    appunti: 'Raggiungimento del punto di fumo (acroleina): il più stabile è l\'olio EVO e arachidi.',
+    pratica: 'La prossima volta che tosti pane o cuoci patate al forno, fermati al colore oro chiaro.',
+    domanda: 'Ti capita di riusare l\'olio o di scaldare la padella vuota a fiamma alta?',
+    fonti: [['EFSA, acrilammide', 'https://www.efsa.europa.eu/en/topics/topic/acrylamide'], ['NCI, carne cotta ad alte temperature', 'https://www.cancer.gov/about-cancer/causes-prevention/risk/diet/cooked-meats-fact-sheet']],
+  },
+  {
+    id: 'l-metodi', tappa: 'cucina', titolo: 'Vapore, microonde, bollitura', termine: 'Cotture e vitamine',
+    idea: 'Cotture brevi e con poca acqua salvano più vitamine; la crosta dà sapore, non trattiene i succhi.',
+    testo: [
+      { lista: [
+        '**Vapore**: conserva sapori e vitamine; nei broccoli si perde il 10-20% della vitamina C, contro il 30-50% della bollitura.',
+        '**Microonde**: tempi brevi e poca acqua, buona conservazione dei nutrienti. **Correzione**: non scaldano "dall\'interno": penetrano 1-2 cm, poi il calore va verso il centro. Mescolare e lasciar riposare.',
+        '**Bollitura**: le vitamine idrosolubili finiscono nell\'acqua; usarla per minestre e risotti.',
+        '**Pentola a pressione**: veloce, ottima per i legumi secchi.',
+        '**Forno caldo e rosolatura**: **correzione**, non "sigillano" i succhi (lo hanno misurato i fisici del cibo): danno sapore con la reazione di Maillard.',
+        '**Induzione**: temperatura precisa e costante.',
+      ] },
+    ],
+    pratica: 'Cuoci al vapore o al microonde una verdura che di solito bolli. Confronta colore, consistenza e sapore.',
+    domanda: 'Quale verdura potresti cucinare in modo diverso per mangiarne di più?',
+    fonti: [['Yuan et al., broccoli e cottura 2009', 'https://pubmed.ncbi.nlm.nih.gov/19650196/']],
+  },
+  {
+    id: 'l-sicurezza', tappa: 'cucina', titolo: 'Temperature al cuore', termine: 'Sicurezza alimentare',
+    idea: 'Il termometro al cuore vale più dell\'occhio: 74 °C pollame, 71 °C macinato, 63 °C pezzi interi e pesce.',
+    testo: [
+      'Le temperature **al cuore** delle autorità sanitarie (USDA; in Europa simili):',
+      { lista: [
+        '**Pollame**: 74 °C.',
+        '**Macinato** (hamburger, polpette, salsiccia): 71 °C.',
+        '**Pezzi interi** di manzo, vitello, agnello e **maiale**: 63 °C più 3 minuti di riposo. Il maiale moderno non richiede più 70 °C.',
+        '**Pesce**: 63 °C o finché si sfalda; il pesce crudo va **abbattuto** (-20 °C per 24 ore) contro l\'Anisakis.',
+        '**Avanzi**: 74 °C.',
+      ] },
+      'Perché la bistecca al sangue va bene e l\'hamburger no: i batteri stanno in **superficie**; nel macinato la superficie finisce dentro.',
+      'Le cinque chiavi dell\'OMS: **pulizia, separare crudo e cotto, cuocere bene, temperature giuste** (frigo sotto 5 °C, cotti fuori al massimo 2 ore), **materie prime sicure**.',
+    ],
+    appunti: 'La carne deve essere cucinata alla giusta temperatura per non incorrere in problemi igienici. Togliere l\'alimento dal fuoco, misurarlo al cuore.',
+    pratica: 'Usa un termometro da cucina sul prossimo petto di pollo o hamburger e annota la temperatura reale a cui di solito lo togli.',
+    domanda: 'Quale regola delle cinque chiavi dell\'OMS dimentichi più spesso in cucina?',
+    fonti: [['USDA, temperature minime sicure', 'https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/safe-temperature-chart'], ['OMS, cinque chiavi', 'https://www.who.int/publications/i/item/9789241594639']],
+  },
+  {
+    id: 'l-sous-vide', tappa: 'cucina', titolo: 'Sous vide e bassa temperatura', termine: 'Roner · pastorizzazione',
+    idea: 'Nel sous vide la sicurezza è temperatura per tempo, misurata da quando il cuore arriva in temperatura.',
+    testo: [
+      'Le tre fasi dei tuoi appunti: **busta** con condimenti, **bagno** a temperatura precisa, **finitura** in padella o griglia per la crosta.',
+      'Il punto chiave che hai già scritto: il tempo parte da quando il **cuore** raggiunge la temperatura, non da quando metti la busta.',
+      'La scienza aggiunge i numeri: sotto i 55 °C i batteri non muoiono. Il pollo è pastorizzato a **60 °C dopo circa 30-35 minuti al cuore**, a 65 °C dopo pochi minuti.',
+      { lista: [
+        'Ciò che non si mangia subito va **raffreddato in acqua e ghiaccio** e messo in frigo.',
+        'L\'**aglio crudo** in busta conservata è un rischio di botulino: aglio in polvere, come dicono i tuoi appunti.',
+        'Le tue ricette di verdure: **84-85 °C per 45-50 minuti**, poi 3 minuti in padella.',
+      ] },
+    ],
+    appunti: 'Ricordarsi che un qualsiasi alimento, nel suo cuore, ci impiega del tempo a raggiungere la temperatura di cottura.',
+    pratica: 'Prova le carote sous vide dei tuoi appunti: 85 °C per 45 minuti con olio, origano e peperoncino, poi 3 minuti in padella.',
+    domanda: 'Cosa ti piace del cucinare con precisione? Dove invece preferisci l\'istinto?',
+    fonti: [['Baldwin, guida al sous vide', 'https://douglasbaldwin.com/sous-vide.html']],
+  },
+
+  // ═══ 6. PER LA VITA ═════════════════════════════════════════════════════
+  {
+    id: 'l-abbinamenti', tappa: 'vita', titolo: 'Abbinamenti: mito e realtà', termine: 'Dieta dissociata',
+    idea: 'Le regole di dissociazione non hanno prove; quelle sull\'assorbimento del ferro sì.',
+    testo: [
+      'Nei tuoi appunti ci sono regole come "non abbinare carne e latte, pesce e legumi, proteine e carboidrati".',
+      '**Correzione**: non hanno basi scientifiche. Gli enzimi digestivi lavorano tutti insieme; in uno studio controllato la dieta dissociata e una dieta mista con le stesse calorie hanno fatto perdere **lo stesso peso**. Anzi, proteine e fibre accanto ai carboidrati **abbassano** il picco di glicemia.',
+      'Cosa resta vero:',
+      { lista: [
+        '**Cereali e legumi** si completano, anche in pasti diversi della stessa giornata.',
+        '**Vitamina C con il ferro vegetale**: ne aumenta l\'assorbimento fino a 3-4 volte.',
+        '**Tè e caffè lontano dai pasti** se serve ferro.',
+        '**Verdura e limone a ogni pasto**: valgono sempre.',
+      ] },
+    ],
+    appunti: 'Aiuta la digestione associare al pasto proteico un po\' di verdura.',
+    pratica: 'Al prossimo piatto di legumi aggiungi una fonte di vitamina C (limone, peperone, prezzemolo) e sposta il caffè a un\'ora dopo.',
+    domanda: 'Quali "regole" alimentari segui senza sapere da dove vengono?',
+    fonti: [['Golay et al., Int J Obes 2000', 'https://pubmed.ncbi.nlm.nih.gov/10805507/'], ['Hallberg, ferro e vitamina C', 'https://pubmed.ncbi.nlm.nih.gov/2507689/']],
+  },
+  {
+    id: 'l-sale-zucchero-alcol', tappa: 'vita', titolo: 'Sale, zucchero, alcol', termine: 'Meno è meglio',
+    idea: 'Sale sotto 5 g (iodato), zuccheri liberi sotto 25 g, alcol: per l\'OMS nessuna quantità è sicura.',
+    testo: [
+      '**Sale**: OMS meno di 5 g; in Italia gli uomini ne mangiano circa 9. Nello studio SSaSS un sale con potassio ha ridotto gli ictus del 14%. Il palato si abitua in 3-4 settimane.',
+      '**Zucchero**: OMS sotto il 10% delle calorie, idealmente sotto il 5% (circa 25 g); AHA al massimo 36 g per l\'uomo. Una lattina di bibita ne ha 35 g. Miele e succhi contano come zucchero; la frutta intera no.',
+      '**Alcol**: per l\'OMS (2023) **non esiste un livello sicuro**; è cancerogeno di gruppo 1. Il "bicchiere che fa bene al cuore" nasceva da studi in cui tra gli astemi c\'erano ex bevitori malati. Riduce anche la sintesi proteica dopo l\'allenamento e peggiora il sonno.',
+      'Su tutti e tre i tuoi appunti erano già allineati, anzi più severi delle linee guida.',
+    ],
+    appunti: 'Ridurre il sale a meno di 3 gr al giorno. Eliminare l\'alcol.',
+    pratica: 'Per una settimana togli la saliera dalla tavola e usa al suo posto limone, pepe, erbe e spezie dei tuoi appunti.',
+    domanda: 'In quali situazioni sociali ti è più difficile dire no all\'alcol o ai dolci?',
+    fonti: [['OMS, sale', 'https://www.who.int/news-room/fact-sheets/detail/salt-reduction'], ['OMS Europa, alcol 2023', 'https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health']],
+  },
+  {
+    id: 'l-integratori', tappa: 'vita', titolo: 'Integratori che servono', termine: 'Creatina · B12 · vitamina D · omega-3',
+    idea: 'Pochi integratori hanno prove solide; gli altri servono solo se c\'è una carenza misurata.',
+    testo: [
+      'Prove solide per chi si allena (Comitato Olimpico Internazionale 2018, ISSN):',
+      { lista: [
+        '**Creatina monoidrato** 3-5 g al giorno, sempre, senza carico né cicli: più forza e massa magra con i pesi.',
+        '**Proteine in polvere**: sono cibo; utili se coi pasti non arrivi al fabbisogno.',
+        '**Caffeina** 3-6 mg/kg prima dell\'allenamento, non la sera.',
+      ] },
+      'Solo se serve: **vitamina D** in inverno se bassa, **B12** per vegetariani e vegani, **omega-3** se non mangi pesce, **ferro** solo se manca.',
+      'Inutili o quasi: brucia-grassi, detox, BCAA se le proteine bastano, antiossidanti ad alte dosi (vitamine C ed E alte possono **ridurre** gli adattamenti all\'allenamento).',
+      'In Italia gli integratori sono **notificati**, non approvati come farmaci: l\'etichetta non garantisce l\'efficacia.',
+    ],
+    appunti: 'Integrare è sicuramente importante ma è la punta della piramide non la base.',
+    pratica: 'Fai la lista degli integratori che prendi e, accanto a ciascuno, scrivi il motivo e la prova che hai. Tieni solo quelli con una risposta chiara.',
+    domanda: 'Quale integratore prendi per abitudine più che per bisogno?',
+    fonti: [['Maughan et al., CIO 2018', 'https://bjsm.bmj.com/content/52/7/439'], ['ISSN, creatina 2017', 'https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0173-z']],
+  },
+  {
+    id: 'l-vegetale', tappa: 'vita', titolo: 'Mangiare vegetale', termine: 'Diete vegetariane',
+    idea: 'Una dieta vegetale ben pianificata è adeguata anche per lo sport, fa bene al cuore e riduce l\'impatto sul pianeta.',
+    testo: [
+      'Il principio dei tuoi appunti: mangiare per i propri obiettivi **evitando il più possibile di causare sofferenza ad altri animali**.',
+      'L\'Academy of Nutrition and Dietetics (2016) e il CREA: le diete vegetariane e vegane **ben pianificate** sono adeguate in ogni fase della vita, anche per gli sportivi, e si associano a meno malattie di cuore, diabete, ipertensione.',
+      'I nutrienti da curare:',
+      { lista: ['**B12** (integratore);', '**ferro** con vitamina C;', '**zinco** da legumi ammollati e semi;', '**calcio** da latticini, acque calciche, tofu, cavoli;', '**omega-3** da noci, lino, chia o olio di alghe;', '**iodio** dal sale iodato.'] },
+      '**Pianeta**: senza prodotti animali le emissioni legate al cibo calano di circa il 70% e l\'uso di suolo di oltre il 75% (Poore e Nemecek, Science 2018). Manzo e agnello pesano di più, i legumi di meno.',
+    ],
+    appunti: 'Tu mangi per alimentare e potenziare i tuoi obiettivi di vita, evitando il più possibile di causare sofferenza ad altri animali.',
+    pratica: 'Pianifica questa settimana due cene completamente vegetali e ad alto contenuto proteico (tofu, tempeh, legumi con cereali).',
+    domanda: 'Cosa significa per te, concretamente, "evitare il più possibile" la sofferenza animale nel piatto?',
+    fonti: [['Academy of Nutrition and Dietetics 2016', 'https://pubmed.ncbi.nlm.nih.gov/27886704/'], ['Poore e Nemecek, Science 2018', 'https://www.science.org/doi/10.1126/science.aaq0216']],
+  },
+  {
+    id: 'l-abitudini', tappa: 'vita', titolo: 'Mangiare con presenza', termine: 'Abitudini · masticazione',
+    idea: 'Mangiare lento, verdura per prima, una camminata dopo: piccoli gesti ripetuti che lavorano per te.',
+    testo: [
+      'L\'ultima lezione torna ai comportamenti che i tuoi appunti mettono accanto ai nutrienti: **mangiare lento**, masticare a lungo, posare la forchetta; una porzione di verdura a ogni pasto; 10 minuti di camminata dopo.',
+      'La scienza li sostiene tutti:',
+      { lista: [
+        '**Mangiare piano** riduce le calorie del pasto senza aumentare la fame dopo (meta-analisi 2014): la sazietà arriva al cervello con 15-20 minuti di ritardo.',
+        '**Mangiare senza schermi**: chi mangia distratto mangia di più anche nel pasto successivo.',
+        '**Abitudini**: in uno studio dell\'University College London (Lally 2010) un comportamento nuovo è diventato automatico in media dopo **66 giorni**, con grandi differenze tra le persone; saltare un giorno non ha cambiato il risultato.',
+      ] },
+      'È il cerchio che si chiude con la prima lezione: **non la perfezione, ma la costanza**.',
+    ],
+    appunti: 'Mangiare lento e prediligere una lunga masticazione, posando se necessario la forchetta.',
+    pratica: 'Al prossimo pasto posa la forchetta tra un boccone e l\'altro e fai durare il pasto almeno 20 minuti, senza telefono.',
+    domanda: 'Di tutto il percorso, quale abitudine vuoi rendere automatica nei prossimi 66 giorni?',
+    fonti: [['Robinson et al., velocità del pasto 2014', 'https://pubmed.ncbi.nlm.nih.gov/24847856/'], ['Lally et al., Eur J Soc Psychol 2010', 'https://onlinelibrary.wiley.com/doi/10.1002/ejsp.674']],
+  },
+];
+
+/** Lezione → pagina degli appunti dove se ne parla. */
+export const PAGINA_DI_LEZIONE = {
+  'l-flessibilita': 'al-principi', 'l-piatto': 'al-piatto', 'l-piramide': 'al-piramide', 'l-linee-guida': 'al-linee-guida',
+  'l-cibi-veri': 'al-processati',
+  'l-proteine': 'al-proteine', 'l-aminoacidi': 'al-aminoacidi', 'l-quante-proteine': 'al-quante-proteine',
+  'l-carboidrati': 'al-carboidrati', 'l-glicemia': 'al-glicemia', 'l-integrali': 'al-integrali', 'l-fibre': 'al-fibre',
+  'l-grassi': 'al-grassi', 'l-saturi-trans': 'al-saturi-trans', 'l-omega': 'al-insaturi',
+  'l-vitamine-liposolubili': 'al-vitamine-liposolubili', 'l-vitamine-idrosolubili': 'al-vitamine-b-c',
+  'l-minerali': 'al-macrominerali', 'l-oligoelementi': 'al-oligoelementi', 'l-acqua': 'al-acqua',
+  'l-bilancio': 'al-bilancio', 'l-deficit': 'al-deficit', 'l-densita': 'al-cosa-mangiare', 'l-priorita': 'al-priorita',
+  'l-movimento': 'al-movimento',
+  'l-cottura': 'al-cottura', 'l-oli-padella': 'al-effetti', 'l-metodi': 'al-tipi-cottura', 'l-sicurezza': 'al-temperature',
+  'l-sous-vide': 'al-sous-vide',
+  'l-abbinamenti': 'al-abbinamenti', 'l-sale-zucchero-alcol': 'al-sale-zucchero-alcol', 'l-integratori': 'al-integrazione',
+  'l-vegetale': 'al-vegetale', 'l-abitudini': 'al-principi',
+};
+
+export const GLOSSARIO = [
+  ['Aminoacidi essenziali', 'I 9 aminoacidi che il corpo non sa produrre e devono arrivare dal cibo.'],
+  ['DIAAS', 'Indice FAO della qualità di una proteina: aminoacidi essenziali e digeribilità.'],
+  ['Turnover proteico', 'Il continuo smontare e ricostruire le proteine del corpo.'],
+  ['Leucina', 'Aminoacido che accende la sintesi delle proteine muscolari; 2-3 g a pasto.'],
+  ['Glicemia', 'La quantità di glucosio nel sangue; a digiuno normale tra 70 e 99 mg/dl.'],
+  ['Indice glicemico', 'Quanto in fretta un cibo alza la glicemia, rispetto al glucosio (100).'],
+  ['Carico glicemico', 'Indice glicemico per quantità di carboidrati nella porzione: dice l\'effetto reale.'],
+  ['Amido resistente', 'Amido che resiste alla digestione, per esempio in riso e patate cotti e raffreddati; si comporta come una fibra.'],
+  ['Fibra solubile', 'Fibra che forma un gel: rallenta l\'assorbimento, abbassa colesterolo e glicemia.'],
+  ['Fibra insolubile', 'Fibra che dà volume e regolarità all\'intestino.'],
+  ['Microbiota', 'L\'insieme dei batteri dell\'intestino, che si nutrono di fibre.'],
+  ['Zuccheri liberi', 'Zuccheri aggiunti più quelli di miele, sciroppi e succhi; esclusi quelli di frutta intera e latte.'],
+  ['Grassi saturi', 'Acidi grassi senza doppi legami; in eccesso alzano il colesterolo LDL.'],
+  ['Grassi trans', 'Acidi grassi alterati, soprattutto dall\'idrogenazione industriale; i più dannosi per il cuore.'],
+  ['Monoinsaturi', 'Acidi grassi con un doppio legame, come l\'acido oleico dell\'olio d\'oliva.'],
+  ['Omega-3', 'Polinsaturi essenziali: ALA vegetale, EPA e DHA marini.'],
+  ['Colesterolo LDL', 'Lipoproteina che porta colesterolo nelle arterie; quello "cattivo".'],
+  ['Colesterolo HDL', 'Lipoproteina che riporta il colesterolo al fegato; quello "buono".'],
+  ['LARN', 'Livelli di assunzione di riferimento di nutrienti per la popolazione italiana (SINU).'],
+  ['EFSA', 'Autorità europea per la sicurezza alimentare, con sede a Parma.'],
+  ['TDEE', 'Dispendio energetico totale di un giorno: metabolismo, cibo, movimento, allenamento.'],
+  ['NEAT', 'Energia spesa con il movimento non sportivo: passi, stare in piedi, gesti.'],
+  ['Densità calorica', 'Calorie per grammo di un cibo; bassa in verdure e minestre, alta in oli e snack.'],
+  ['Deficit calorico', 'Mangiare meno energia di quella che si consuma: l\'unica via per perdere grasso.'],
+  ['NOVA', 'Classificazione dei cibi in quattro gruppi secondo il grado di lavorazione.'],
+  ['Ultra-processati', 'Formulazioni industriali con ingredienti che in cucina non si usano.'],
+  ['Reazione di Maillard', 'Reazione tra zuccheri e aminoacidi oltre i 140 °C: crosta e aroma.'],
+  ['Acrilammide', 'Composto che si forma cuocendo sopra 120 °C cibi ricchi di amido; dorato, non bruciato.'],
+  ['Punto di fumo', 'Temperatura a cui un olio inizia a fumare e degradarsi.'],
+  ['Sous vide', 'Cottura in busta sottovuoto a bagnomaria a temperatura controllata.'],
+  ['Pastorizzazione', 'Riduzione dei batteri con una combinazione di temperatura e tempo.'],
+  ['DASH', 'Dieta contro l\'ipertensione: frutta, verdura, legumi, latticini magri, poco sale.'],
+  ['Dieta mediterranea', 'Modello alimentare dei paesi del Mediterraneo, patrimonio UNESCO dal 2010.'],
+  ['Valore biologico', 'Quanto il profilo di aminoacidi di un cibo assomiglia a quello che serve al corpo.'],
+];
+
+export const FRASI = [
+  ['Michael Pollan, In difesa del cibo', 'Mangia cibo. Non troppo. Soprattutto vegetali.'],
+  ['Michael Pollan, Food Rules', 'Non mangiare nulla che la tua bisnonna non riconoscerebbe come cibo.'],
+  ['I tuoi appunti', 'Smettete di inseguire le settimane al 100% e iniziate a evitare le settimane allo 0%.'],
+  ['I tuoi appunti', 'La natura ci offre cibi potenziativi, le industrie ci offrono cibi depotenziativi.'],
+  ['I tuoi appunti', 'Tu mangi per alimentare e potenziare i tuoi obiettivi di vita.'],
+  ['I tuoi appunti', 'Per la salute è meglio la qualità, per il dimagrimento la quantità.'],
+  ['I tuoi appunti', 'Integrare è importante, ma è la punta della piramide, non la base.'],
+  ['Ministero della Salute', 'Poco sale, ma iodato.'],
+  ['I tuoi appunti', 'Mangiare lento, masticare a lungo, posare la forchetta.'],
+];
