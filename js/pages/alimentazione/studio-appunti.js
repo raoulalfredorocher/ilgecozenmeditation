@@ -1909,11 +1909,37 @@ Pentole antiaderenti senza PFOA né PFAS.
 
 ## Cosa dice la scienza
 
-- **Antiaderenti**: il rivestimento (PTFE, il "teflon") è stabile fino a circa **260 °C**; sopra comincia a degradarsi. Non scaldare la padella vuota a fuoco alto e buttarla quando è graffiata. Il PFOA, usato un tempo per produrlo, è **vietato nell'Unione Europea dal 2020**.
-- Alternative senza questi dubbi: acciaio inox, ghisa, ferro, ceramica smaltata.
-- La cottura **rende disponibili** alcuni nutrienti: il licopene del pomodoro e i carotenoidi delle carote si assorbono meglio cotti e con un filo d'olio. Altri, come vitamina C e folati, si perdono: per questo conviene alternare **crudo e cotto**.
+### Perché cuociamo
 
-Fonti: EFSA, PFAS negli alimenti · [Regolamento UE 2019/1021 sugli inquinanti persistenti](https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:32019R1021)
+Cuocere il cibo è una delle invenzioni che ci hanno resi umani. Il primatologo di Harvard Richard Wrangham sostiene che il fuoco, addomesticato centinaia di migliaia di anni fa, abbia permesso ai nostri antenati di ricavare **più energia** dallo stesso cibo, con meno masticazione e un intestino più corto, liberando energia per un cervello più grande. Gli esperimenti gli danno ragione su un punto: dall'amido cotto, dalla carne cotta e dall'uovo cotto si assorbono più calorie e più proteine che da quelli crudi. Le proteine dell'uovo crudo, per esempio, si digeriscono per circa il 50-65%, quelle dell'uovo cotto per oltre il 90%.
+
+### Le tre vie del calore, in pratica
+
+- **Conduzione**: è la più lenta dentro il cibo. Per questo una bistecca spessa brucia fuori prima di cuocersi dentro, e i pezzi uniformi cuociono meglio.
+- **Convezione**: l'aria e l'acqua in movimento trasferiscono calore molto meglio dell'aria ferma. Il forno ventilato cuoce come un forno statico più caldo di circa 20 gradi; l'acqua a 100 gradi cuoce molto più in fretta dell'aria del forno a 200, perché trasmette il calore circa venti volte meglio.
+- **Irraggiamento**: la griglia e il grill del forno cuociono la superficie con il calore radiante, come il sole sulla pelle.
+
+### Le pentole
+
+- **Antiaderenti**: il rivestimento in PTFE, il "teflon", è stabile fino a circa **260 gradi**; sopra comincia a degradarsi e libera fumi irritanti. Una padella vuota sul fuoco alto può arrivarci in pochi minuti. Quindi: mai scaldarla vuota a fuoco alto, usarla per cotture medie, buttarla quando è graffiata o rovinata.
+- Il **PFOA**, usato un tempo per produrre il PTFE, è **vietato nell'Unione Europea dal 2020**. Le scritte "senza PFOA" oggi sono quasi scontate; l'Unione Europea sta valutando restrizioni più ampie su tutta la famiglia dei PFAS, sostanze molto persistenti nell'ambiente.
+- **Ceramica** antiaderente: senza PFAS, ma il rivestimento perde l'effetto antiaderente più in fretta.
+- **Acciaio inox**: indistruttibile, ottimo per rosolare e per i sughi. Il cibo si attacca meno se la pentola è ben calda prima di aggiungere il grasso.
+- **Ghisa e ferro**: tengono il calore benissimo, perfetti per la crosta. Cedono un po' di ferro al cibo, soprattutto con cibi acidi, il che è un piccolo vantaggio per chi ne ha bisogno.
+- **Alluminio** non rivestito: da evitare per cuocere e conservare cibi acidi o salati.
+
+### Cotto o crudo
+
+La cottura **rende disponibili** alcuni nutrienti e ne distrugge altri:
+
+- Migliora l'assorbimento del **licopene** del pomodoro e dei **carotenoidi** di carote, zucca e spinaci, soprattutto con un filo d'olio. La passata di pomodoro porta più licopene disponibile del pomodoro crudo.
+- Rende digeribili le **proteine** di uova, carne, pesce e legumi e distrugge sostanze che disturbano la digestione, come le lectine dei fagioli crudi, che sono tossiche: i fagioli secchi vanno sempre cotti bene.
+- Fa perdere **vitamina C**, **folati** e in parte le altre vitamine del gruppo B, soprattutto con la bollitura lunga.
+- Riduce i **glucosinolati** delle crucifere se la cottura è lunga in acqua.
+
+La regola pratica è **alternare crudo e cotto** nella giornata: per esempio un'insalata o verdure crude a pranzo e verdure cotte a cena, frutta fresca come spuntino.
+
+Fonti: [Regolamento UE 2019/1021 sugli inquinanti persistenti](https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:32019R1021) · EFSA, PFAS negli alimenti · Wrangham, Catching Fire (2009)
 ` },
     { id: 'al-effetti', titolo: 'Grassi, zuccheri e proteine sul fuoco', testo: `
 ## Nei grassi
@@ -1947,10 +1973,41 @@ Complessi:
 
 ## Cosa dice la scienza
 
-- **Olio extravergine in padella**: il punto di fumo (circa 190-210 °C) non è l'unico criterio; conta la **stabilità all'ossidazione**. In prove di riscaldamento prolungato l'extravergine è risultato **il più stabile** tra gli oli comuni, grazie a monoinsaturi e antiossidanti (De Alzaa e colleghi, 2018). Per friggere vanno bene extravergine e arachide alto oleico, senza mai riusare l'olio più volte.
-- **Acrilammide** (EFSA 2015): si forma sopra i 120 °C negli alimenti ricchi di amido. Regola pratica: **dorato, non bruciato**: patate, pane tostato e biscotti color oro chiaro, non marroni.
-- **Carne alla griglia**: a fiamma viva e a temperature alte si formano **ammine eterocicliche** e **idrocarburi policiclici aromatici** (come il benzopirene). Per ridurli: marinare (limone, aceto, erbe, birra), girare spesso, evitare il contatto con la fiamma, togliere le parti bruciate.
-- **Proteine cotte**: la perdita di aminoacidi con una cottura normale è piccola; la denaturazione rende le proteine dell'uovo e della carne **più** digeribili di quelle crude.
+### La reazione di Maillard
+
+Prende il nome dal chimico francese Louis-Camille Maillard, che la descrisse nel 1912. Quando zuccheri e aminoacidi si scaldano insieme, sopra i 120-140 gradi e in un ambiente abbastanza asciutto, reagiscono e formano centinaia di molecole nuove: sono il profumo e il colore della crosta del pane, della carne rosolata, del caffè tostato, della cipolla dorata. Per questo la carne bollita non ha crosta: l'acqua non supera i 100 gradi. Asciugare bene la carne prima di metterla in padella e non affollare la padella aiuta la crosta.
+
+La **caramellizzazione** è diversa: riguarda solo gli zuccheri, senza proteine, e parte da temperature più alte, intorno ai 160-170 gradi per lo zucchero da tavola.
+
+### L'olio in padella
+
+- Il **punto di fumo** dell'olio extravergine è intorno ai 190-210 gradi, a seconda della qualità; quello dell'olio di semi raffinato più alto. Ma il punto di fumo non è l'unico criterio: conta la **stabilità all'ossidazione**, cioè quanti composti nocivi si formano durante la cottura.
+- In prove di riscaldamento prolungato fino a 240 gradi (De Alzaa e colleghi, 2018) l'olio extravergine è risultato **il più stabile** tra dieci oli comuni, grazie a monoinsaturi e antiossidanti, pur non avendo il punto di fumo più alto. Gli oli ricchi di polinsaturi, come girasole e mais, hanno prodotto più composti polari.
+- Una normale cottura in padella, tra 120 e 180 gradi, è ben sotto il punto di fumo di quasi tutti gli oli.
+- Per **friggere** vanno bene extravergine e oli alto oleico, come arachide e girasole alto oleico, tra 170 e 180 gradi, **senza mai riusare** l'olio più volte: ogni riutilizzo aumenta i composti di degradazione e i trans.
+
+### L'acrilammide
+
+Si forma con la reazione di Maillard negli alimenti ricchi di amido e di un aminoacido, l'asparagina, sopra i 120 gradi: patate fritte e al forno, patatine in busta, pane tostato, biscotti, cracker, caffè tostato. L'EFSA nel 2015 ha concluso che, ai livelli medi di consumo europei, è una preoccupazione per la salute, perché negli animali è cancerogena e danneggia il DNA. Nelle persone le prove sono meno chiare. Dal 2018 un regolamento europeo obbliga l'industria a ridurla.
+
+Regole pratiche:
+
+- **Dorato, non bruciato**: patate, pane tostato e biscotti color oro chiaro, non marroni.
+- Un tempo si consigliava di non tenere in frigo le patate da friggere, perché il freddo trasforma un po' di amido in zuccheri; studi più recenti mostrano che l'effetto è piccolo. Funziona di più tenerle in **ammollo** in acqua 15-30 minuti prima di cuocerle, e non scurirle troppo.
+- Le **patate bollite** o al vapore non ne producono.
+
+### La carne alla griglia
+
+A fiamma viva e a temperature alte si formano due famiglie di sostanze:
+
+- le **ammine eterocicliche**, dalla reazione tra creatina, zuccheri e aminoacidi del muscolo, tanto più quanto più la carne è cotta e annerita;
+- gli **idrocarburi policiclici aromatici**, come il benzopirene, quando il grasso cola sulla brace e il fumo risale sul cibo.
+
+Entrambe negli animali sono cancerogene. Per ridurle: **marinare** con limone, aceto, erbe come rosmarino, birra o vino, che riducono le ammine anche della metà; girare spesso; evitare il contatto con la fiamma e il fumo del grasso; scegliere tagli magri; togliere le parti bruciate; alternare la griglia con cotture più dolci. La verdura grigliata non produce ammine eterocicliche.
+
+### Le proteine cotte
+
+La perdita di aminoacidi con una cottura normale è piccola; la denaturazione rende le proteine di uova e carne **più** digeribili di quelle crude. Solo cotture molto forti e lunghe, o la carbonizzazione, riducono davvero la disponibilità della lisina e di altri aminoacidi.
 
 Fonti: [EFSA, acrilammide](https://www.efsa.europa.eu/en/topics/topic/acrylamide) · De Alzaa et al., Acta Sci Nutr Health 2018 · [NCI, carne cotta ad alte temperature](https://www.cancer.gov/about-cancer/causes-prevention/risk/diet/cooked-meats-fact-sheet)
 ` },
@@ -1969,13 +2026,34 @@ Fonti: [EFSA, acrilammide](https://www.efsa.europa.eu/en/topics/topic/acrylamide
 
 ## Cosa dice la scienza
 
-- **Da correggere, frittura**: l'alimento **assorbe** olio, dal 5% fino al 40% del suo peso secondo il cibo e la temperatura. Con olio ben caldo (170-180 °C) e pezzi non troppo piccoli ne assorbe meno, ma ne assorbe sempre: una porzione di patatine fritte passa da circa 80 a 300 kcal.
-- **Da correggere, crosta e succhi**: rosolare o cuocere a forno caldo **non** "sigilla" i succhi (lo hanno misurato i fisici del cibo, da Harold McGee in poi): la crosta serve al **sapore** (Maillard), non a trattenere l'acqua.
-- **Da correggere, microonde**: non scaldano "dall'interno": penetrano per 1-2 cm, poi il calore va verso il centro per conduzione. Per questo serve mescolare e lasciar riposare.
-- **Vitamine**: vapore, microonde e cottura breve conservano più vitamina C e folati della bollitura lunga, dove finiscono nell'acqua (che si può usare per minestre e risotti). Nei broccoli, la bollitura fa perdere il 30-50% della vitamina C, il vapore il 10-20%.
-- **Pentola a pressione**: tempi brevi, buona conservazione dei nutrienti; ottima per i legumi secchi.
+### Correzioni
 
-Fonti: [Yuan et al., broccoli e cottura, J Zhejiang Univ 2009](https://pubmed.ncbi.nlm.nih.gov/19650196/) · [Harvard, frittura e grassi](https://nutritionsource.hsph.harvard.edu/2015/04/13/ask-the-expert-healthy-cooking-oils/)
+- **Da correggere, frittura**: l'alimento **assorbe** olio, dal 5% fino al 40% del suo peso secondo il cibo e la temperatura. Con olio ben caldo, 170-180 gradi, e pezzi non troppo piccoli ne assorbe meno, ma ne assorbe sempre: una porzione di patate passa da circa 80 kcal bollite a circa 300 fritte. Gran parte dell'olio entra quando il cibo esce dalla friggitrice e si raffredda: scolarlo subito e appoggiarlo su carta assorbente aiuta.
+- **Da correggere, crosta e succhi**: rosolare o cuocere a forno caldo **non** "sigilla" i succhi. Lo hanno misurato i fisici del cibo, da Harold McGee in poi: una bistecca rosolata e poi cotta perde gli stessi liquidi, o di più, di una cotta senza rosolatura. La crosta serve al **sapore**, grazie alla reazione di Maillard, non a trattenere l'acqua. Quello che trattiene i succhi è non cuocere troppo e far **riposare** la carne qualche minuto prima di tagliarla.
+- **Da correggere, microonde**: non scaldano "dall'interno". Le onde penetrano per uno o due centimetri e agitano le molecole d'acqua di quello strato; il calore poi arriva al centro per conduzione. Per questo serve mescolare, girare e lasciar riposare il piatto, che altrimenti resta freddo al centro.
+
+### Le cotture e le vitamine
+
+- **Vapore, microonde e cotture brevi** conservano più vitamina C e folati della bollitura lunga, dove le vitamine finiscono nell'acqua. Nei broccoli (Yuan e colleghi, 2009), la bollitura e la frittura hanno fatto perdere molta più vitamina C e glucosinolati del vapore, che è risultato il metodo migliore.
+- L'acqua di cottura delle verdure si può usare per minestre e risotti: le vitamine perse sono lì.
+- **Pentola a pressione**: tempi brevi e poca acqua, buona conservazione dei nutrienti. È ottima per i legumi secchi, che cuociono in un terzo del tempo e diventano più digeribili.
+- **Microonde con poca acqua**: per le verdure è uno dei metodi che conservano più vitamine.
+
+### Le cotture e i grassi
+
+- La **frittura** è la cottura che aggiunge più calorie e, se l'olio è riusato, più composti di degradazione. Negli studi di popolazione spagnoli, dove si frigge in olio d'oliva usato una volta sola, il fritto non si associa a più malattie di cuore; nei paesi dove si frigge in oli riusati sì. Conta come si frigge.
+- La **friggitrice ad aria** è in realtà un piccolo forno ventilato molto potente: dà una crosta simile con un cucchiaino d'olio invece di mezzo litro. L'acrilammide si forma comunque se si esagera con la doratura.
+- **Al forno, al vapore, in umido, al cartoccio** sono le cotture con meno grassi aggiunti.
+
+### Brasare e stufare
+
+Sono le cotture adatte ai tagli **duri** e pieni di collagene, come guancia, stinco, spalla: il collagene, a 70-80 gradi per alcune ore, si scioglie in gelatina e la carne diventa morbida. Con i tagli magri e teneri, come il filetto o il petto di pollo, invece, le cotture lunghe asciugano la carne: vanno cotti in fretta.
+
+### L'induzione
+
+Il piano a induzione scalda direttamente la pentola con un campo magnetico, senza fiamma: è più efficiente del gas, perché quasi tutta l'energia va nella pentola invece che nell'aria della cucina, e non produce i gas di combustione del fornello, che peggiorano l'aria in casa. Funziona solo con pentole che attirano una calamita.
+
+Fonti: [Yuan et al., broccoli e cottura, J Zhejiang Univ 2009](https://pubmed.ncbi.nlm.nih.gov/19650196/) · [Harvard, frittura e grassi](https://nutritionsource.hsph.harvard.edu/2015/04/13/ask-the-expert-healthy-cooking-oils/) · McGee, On Food and Cooking (2004)
 ` },
     { id: 'al-temperature', titolo: 'Temperature e sicurezza', testo: `
 La cottura della carne si fa tra **140 e 180 °C** in superficie: a queste temperature aminoacidi e zuccheri della carne si trasformano nel classico colore bruno. Se la carne è povera di zuccheri si possono aggiungere con limone, arance, vino o miele.
@@ -1984,18 +2062,46 @@ La carne va cotta alla temperatura giusta per non avere problemi igienici: togli
 
 ## Cosa dice la scienza
 
-Le temperature **al cuore** usate come riferimento dalle autorità sanitarie (USDA; in Europa le indicazioni sono simili):
+### Le temperature al cuore
 
-- **Pollame** (intero, a pezzi, macinato): **74 °C**.
-- **Carne macinata** (hamburger, polpette, salsiccia fresca) di manzo, maiale, agnello: **71 °C**.
-- **Pezzi interi** di manzo, vitello, agnello e **maiale** (bistecche, arrosti, braciole): **63 °C**, poi **3 minuti di riposo**. Il maiale moderno non richiede più 70 °C.
-- **Pesce**: **63 °C**, o finché la carne è opaca e si sfalda. Il pesce da mangiare **crudo** va abbattuto (in Italia è obbligatorio per legge per il pesce crudo al ristorante): -20 °C per almeno 24 ore contro l'Anisakis.
-- **Uova**: tuorlo e albume sodi, o preparazioni a 71 °C.
-- **Avanzi** riscaldati: 74 °C.
+Le temperature **al cuore** usate come riferimento dalle autorità sanitarie, come il dipartimento dell'agricoltura americano; in Europa le indicazioni sono simili:
 
-Perché la bistecca al sangue va bene e l'hamburger no: nei pezzi interi i batteri stanno **sulla superficie**, che la cottura sterilizza; nel macinato la superficie finisce dentro.
+- **Pollame**, intero, a pezzi o macinato: **74 gradi**.
+- **Carne macinata**, come hamburger, polpette e salsiccia fresca, di manzo, maiale o agnello: **71 gradi**.
+- **Pezzi interi** di manzo, vitello, agnello e **maiale**, come bistecche, arrosti e braciole: **63 gradi**, poi **3 minuti di riposo**. Il maiale moderno non richiede più 70 gradi: la trichinella negli allevamenti controllati europei è praticamente scomparsa.
+- **Pesce**: **63 gradi**, o finché la carne è opaca e si sfalda.
+- **Uova**: tuorlo e albume sodi, o preparazioni a 71 gradi.
+- **Avanzi** riscaldati: 74 gradi, cioè ben caldi in tutto il piatto.
 
-Le regole d'oro dell'OMS per cibi sicuri: pulizia; separare crudo e cotto; cuocere bene; conservare alla temperatura giusta (frigo sotto 5 °C, cibi caldi sopra 60 °C, non lasciare cibi cotti fuori per più di 2 ore); usare acqua e materie prime sicure.
+### Perché la bistecca al sangue va bene e l'hamburger no
+
+Nei pezzi interi di manzo i batteri stanno **sulla superficie**, che la cottura sterilizza in pochi secondi; l'interno del muscolo di un animale sano è quasi sterile. Nel macinato la superficie viene sparsa ovunque: i batteri finiscono anche al centro, dove con una cottura al sangue non muoiono. Per questo la tartare va fatta con carne freschissima, tagliata al momento e conservata al freddo, e per questo è sconsigliata a bambini, donne in gravidanza, anziani e persone con difese basse.
+
+### Tempo e temperatura
+
+La sicurezza non dipende solo dalla temperatura, ma da **quanto a lungo** la si tiene. Per il pollo, per esempio, 74 gradi uccidono la salmonella in un istante; 65 gradi la eliminano in pochi minuti; 60 gradi in circa mezz'ora. È il principio su cui si basa la cottura sottovuoto, che vedremo nella pagina successiva, e per questo un termometro da cucina è lo strumento più utile e più economico per cucinare carne e pesce bene e senza seccarli.
+
+### Il pesce crudo
+
+Il pesce da mangiare **crudo**, come sushi, carpacci e marinati, va **abbattuto**: in Italia è obbligatorio per legge per il pesce crudo servito al ristorante. Il congelamento a meno 20 gradi per almeno 24 ore, o a meno 35 per 15 ore, uccide le larve dell'**Anisakis**, un parassita frequente nel pesce azzurro e nei calamari. Il congelatore di casa raggiunge di solito i meno 18: in quel caso servono almeno 96 ore, cioè quattro giorni. La marinatura con limone o aceto **non** uccide l'Anisakis.
+
+### Le regole d'oro dell'OMS
+
+Le cinque chiavi per alimenti più sicuri dell'Organizzazione Mondiale della Sanità:
+
+1. **Pulizia**: lavare le mani prima e durante la preparazione, dopo aver toccato carne e uova crude; pulire superfici e utensili.
+2. **Separare crudo e cotto**: taglieri e coltelli diversi per carne e pesce crudi; contenitori chiusi in frigo, con la carne cruda in basso perché non goccioli.
+3. **Cuocere bene**, soprattutto carne macinata, pollame, uova e pesce.
+4. **Conservare alla temperatura giusta**: frigo **sotto i 5 gradi**, cibi caldi sopra i 60, non lasciare i cibi cotti fuori dal frigo per più di **due ore**.
+5. **Acqua e materie prime sicure**: lavare frutta e verdura, non usare cibi scaduti.
+
+### Lavare il pollo?
+
+No. Lavare il pollo crudo sotto il rubinetto non elimina i batteri, che muoiono solo con la cottura, e li spruzza sul lavandino, sulle superfici e sulle verdure vicine. Vale lo stesso per la carne in generale.
+
+### La zona di pericolo
+
+Tra **5 e 60 gradi** i batteri si moltiplicano in fretta: alcuni raddoppiano ogni venti minuti. Per questo un sugo di carne lasciato a raffreddare sul fornello tutta la notte è rischioso anche se poi viene riscaldato: alcuni batteri, come quelli del riso cotto, producono tossine che il calore non distrugge. I cibi cotti vanno raffreddati in fretta, in contenitori bassi, e messi in frigo entro due ore.
 
 Fonti: [USDA, temperature minime sicure](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/safe-temperature-chart) · [OMS, cinque chiavi per alimenti più sicuri](https://www.who.int/publications/i/item/9789241594639)
 ` },
@@ -2024,10 +2130,35 @@ Tecnica di conservazione: il cibo è esposto a un flusso d'aria calda che toglie
 
 ## Cosa dice la scienza
 
-- **Sicurezza nel sous vide**: sotto i 55 °C i batteri non muoiono e alcuni si moltiplicano. La sicurezza dipende da **temperatura per tempo**: il pollo è pastorizzato a 60 °C dopo circa 30-35 minuti **al cuore**, a 65 °C dopo circa 3-4 minuti. Ciò che si cuoce sous vide e non si mangia subito va **raffreddato in acqua e ghiaccio** e messo in frigo.
-- **L'aglio crudo in busta** è sconsigliato anche per un motivo di sicurezza: insieme all'assenza d'aria è un ambiente adatto al botulino se la busta viene conservata.
-- **Affumicato**: il fumo porta idrocarburi policiclici aromatici; i prodotti affumicati vanno mangiati ogni tanto, non tutti i giorni. Il "fumo liquido" industriale è regolato dall'UE.
-- **Disidratati**: la frutta secca disidratata concentra gli zuccheri; 30 g di albicocche secche valgono circa 100 g di fresche. Bene come spuntino, con misura.
+### Perché il sous vide funziona
+
+In una cottura normale la superficie della carne arriva a 150-200 gradi e il centro a 55-70: tra i due c'è uno strato più cotto e più asciutto. Nel sous vide il bagno d'acqua è alla **temperatura finale** che vuoi al centro, quindi tutta la carne arriva alla stessa temperatura, dal bordo al centro, e non può cuocere oltre. È per questo che un petto di pollo a 63 gradi resta succoso, e una bistecca a 54 gradi è rosa uniforme. La busta trattiene i succhi e gli aromi, e l'acqua trasmette il calore molto meglio dell'aria.
+
+### La sicurezza: temperatura per tempo
+
+- Sotto i **55 gradi** i batteri non muoiono e alcuni si moltiplicano: le cotture sotto questa soglia vanno tenute brevi, sotto le quattro ore in tutto, e servono carne freschissima.
+- La sicurezza dipende da **temperatura per tempo**: secondo le tabelle di Douglas Baldwin, il pollo è pastorizzato a 60 gradi dopo circa 30-35 minuti **al cuore**, a 65 gradi dopo circa 3-4 minuti. Il tempo conta da quando il **centro** ha raggiunto la temperatura: come scrivi, per un petto di pollo spesso serve circa un'ora solo per arrivarci.
+- Ciò che si cuoce sous vide e non si mangia subito va **raffreddato in acqua e ghiaccio** e messo in frigo, dove si conserva pochi giorni.
+
+### Le verdure
+
+Le verdure hanno bisogno di temperature più alte della carne, **83-85 gradi**, perché la pectina che tiene insieme le pareti delle cellule si ammorbidisce solo sopra gli 80 gradi. Le tue ricette sono in linea con questo. Il vantaggio rispetto alla bollitura: le vitamine e i sapori non finiscono nell'acqua. Il burro o l'olio nella busta aiutano ad assorbire i carotenoidi.
+
+### L'aglio crudo in busta
+
+È sconsigliato anche per un motivo di **sicurezza**: aglio crudo, olio e assenza d'aria sono l'ambiente adatto al **botulino** se la busta viene conservata a lungo, soprattutto fuori dal frigo. Lo stesso vale per l'aglio sott'olio fatto in casa. L'aglio in polvere o l'aglio cotto prima riducono il rischio, oltre a dare un sapore migliore in busta.
+
+### Le buste
+
+Si usano buste per alimenti adatte alla cottura, in polietilene o polipropilene, senza bisfenolo. Alle temperature del sous vide, sotto i 90 gradi, le buste a norma sono considerate sicure.
+
+### Affumicato
+
+Il fumo porta **idrocarburi policiclici aromatici**, gli stessi della griglia bruciata. L'Unione Europea fissa limiti precisi per il benzopirene nei prodotti affumicati, ma i prodotti affumicati, come salmone, speck e scamorza, vanno mangiati ogni tanto, non tutti i giorni. Il "fumo liquido" industriale è regolato dall'UE e alcuni aromi di fumo sono stati vietati dal 2024 per dubbi sulla genotossicità.
+
+### Disidratati
+
+La disidratazione toglie acqua e **concentra** zuccheri e calorie: 30 grammi di albicocche secche valgono circa 120-150 grammi di fresche, ma si mangiano molto più in fretta. Bene come spuntino, con misura, e meglio senza zuccheri aggiunti. Le verdure disidratate in casa, come pomodori, zucchine e funghi, sono un ottimo modo per conservare il raccolto di stagione. Attenzione ai solfiti usati industrialmente per conservare il colore di albicocche e uvetta: chi è sensibile deve leggere l'etichetta.
 
 Fonti: [Baldwin, A practical guide to sous vide cooking](https://douglasbaldwin.com/sous-vide.html) · EFSA, idrocarburi policiclici aromatici
 ` },
@@ -2064,12 +2195,112 @@ Se ben tenuti durano molti anni:
 
 ## Cosa dice la scienza
 
-- **Taglieri**: usarne due, uno per carne e pesce crudi e uno per verdura e cibi pronti; è la regola "separare crudo e cotto" dell'OMS. Legno e plastica vanno bene se lavati con acqua calda e sapone e asciugati.
-- **Il taglio cambia la cottura**: pezzi piccoli e uguali cuociono in modo uniforme e assorbono meno olio in frittura per ogni pezzo, ma più superficie fa perdere più vitamine in acqua. Per verdure bollite, pezzi grandi e acqua poca.
-- **Aglio e cipolla**: tritati e lasciati riposare 10 minuti prima di cuocerli producono più allicina, il composto attivo dell'aglio.
-- Un coltello **affilato** è più sicuro di uno smussato: scivola meno.
+### Affilare e riaffilare
 
-Fonti: [OMS, cinque chiavi per alimenti più sicuri](https://www.who.int/publications/i/item/9789241594639)
+L'acciaino e la pietra fanno due lavori diversi. Con l'uso il filo della lama, sottilissimo, si piega da un lato: l'**acciaino** lo raddrizza, e per questo va usato spesso, anche prima di ogni sessione. Quando il filo è consumato e arrotondato serve invece la **pietra** o un affilatore, che toglie un po' di metallo e crea un filo nuovo, di solito ogni qualche mese. I coltelli giapponesi, più duri e affilati a un angolo più stretto, intorno ai 15 gradi, si rovinano con l'acciaino comune e vanno affilati solo sulla pietra.
+
+### La sicurezza
+
+- Un coltello **affilato** è più sicuro di uno smussato: taglia senza forza e scivola meno. La maggior parte dei tagli in cucina avviene con coltelli poco affilati che scivolano sulla buccia.
+- La mano che tiene il cibo va a **"artiglio"**, con la punta delle dita piegate verso l'interno e le nocche contro la lama.
+- Il tagliere non deve muoversi: un panno umido sotto lo tiene fermo.
+- Un cibo rotondo, come una cipolla o una patata, va prima tagliato a metà, per appoggiarlo sul lato piatto.
+
+### I taglieri
+
+- Usarne **due**, uno per carne e pesce crudi e uno per verdura e cibi pronti: è la regola "separare crudo e cotto" dell'OMS.
+- Legno e plastica vanno bene entrambi, purché lavati con acqua calda e sapone e asciugati. Il legno duro, come acero e faggio, ha anche una certa capacità di intrappolare e seccare i batteri; la plastica può andare in lavastoviglie. Quelli molto rigati vanno sostituiti, perché i batteri si nascondono nei solchi.
+- Il vetro e la pietra rovinano il filo delle lame.
+
+### Il taglio cambia la cottura e i nutrienti
+
+- Pezzi **piccoli e uguali** cuociono in modo uniforme; pezzi di misure diverse danno parti crude e parti scotte.
+- Più superficie vuol dire più perdita di vitamine nell'acqua di cottura e all'aria: per le verdure bollite meglio pezzi grandi e poca acqua; per le crude, meglio tagliarle poco prima di mangiarle.
+- In frittura i pezzi piccoli hanno più superficie e assorbono più olio in proporzione al peso: le patatine sottili ne assorbono più degli spicchi.
+- **Aglio e cipolla**: tagliati o schiacciati e lasciati riposare **10 minuti** prima della cottura producono più **allicina** e composti solforati, perché l'enzima che li forma, l'alliinasi, si attiva con il taglio e viene distrutto dal calore. Lo stesso principio vale per le **crucifere** e il sulforafano.
+- La **cipolla** fa piangere per un gas solforato che si libera dalle cellule tagliate: un coltello affilato rompe meno cellule e fa piangere meno; la cipolla fredda di frigo libera il gas più lentamente.
+
+### Il tempo in cucina
+
+Saper tagliare bene e in fretta è una delle abilità che rendono più facile cucinare ogni giorno, e cucinare in casa è uno dei comportamenti più legati a una dieta di qualità negli studi di popolazione. Vale la pena dedicare qualche minuto alla tecnica: dopo qualche settimana tritare una cipolla prende un minuto invece di cinque.
+
+Fonti: [OMS, cinque chiavi per alimenti più sicuri](https://www.who.int/publications/i/item/9789241594639) · McGee, On Food and Cooking (2004)
+` },
+    { id: 'al-conservazione', titolo: 'Frigo, freezer e avanzi', testo: `
+*Pagina nuova, dalla letteratura: conservare bene per mangiare sicuro e sprecare meno.*
+
+Cucinare bene comincia prima dei fornelli: da come si conserva il cibo. È anche il modo più semplice per ridurre lo spreco, che in Italia vale in media decine di chili di cibo a persona all'anno, buttati in casa.
+
+### Il frigorifero
+
+- **Temperatura**: tra 0 e 5 gradi, idealmente 4. Un termometro da frigo costa pochi euro e spesso rivela frigoriferi a 7-8 gradi, dove i batteri crescono molto più in fretta.
+- **Le zone**: la parte più fredda è in basso, sopra il cassetto delle verdure, dove vanno **carne e pesce crudi**, in contenitori chiusi perché non goccioli niente. In alto e in mezzo i cibi cotti, i latticini e gli avanzi. Lo sportello è la parte più calda: bibite, salse, burro, non il latte fresco né le uova, secondo molti esperti.
+- **Non riempirlo troppo**: l'aria fredda deve circolare.
+- **Il cibo caldo** si può mettere in frigo appena smette di fumare, in contenitori bassi e divisi in porzioni: è più sicuro che lasciarlo raffreddare ore sul fornello.
+
+### Quanto dura in frigo
+
+Valori orientativi per cibi conservati bene:
+
+- **Carne macinata e pesce fresco**: uno o due giorni.
+- **Pollo e carne a pezzi crudi**: due o tre giorni.
+- **Cibi cotti e avanzi**: tre o quattro giorni.
+- **Legumi cotti, cereali cotti**: tre o quattro giorni. Il **riso cotto** va raffreddato in fretta e mangiato entro un giorno o due, per un batterio, il Bacillus cereus, che resiste alla cottura con le sue spore.
+- **Uova**: alcune settimane, entro la data indicata.
+- **Yogurt e formaggi freschi**: fino alla data, spesso qualche giorno oltre se il vasetto è chiuso; i formaggi stagionati settimane.
+- **Verdura**: da pochi giorni per le foglie a settimane per le radici, come carote e rape.
+
+### Il congelatore
+
+- **Temperatura**: meno 18 gradi o meno.
+- Il freddo **non uccide** la maggior parte dei batteri: li ferma. Quando il cibo si scongela riprendono a crescere. Per questo il congelamento conserva la sicurezza del cibo com'era il giorno in cui è stato congelato, non la migliora.
+- Si congela il cibo **fresco**, non quello al limite. Porzioni piccole e piatte si congelano e scongelano più in fretta e meglio.
+- La **qualità** cala con il tempo, la sicurezza no: carne e pesce si mantengono buoni da tre a dodici mesi, il pane e i cibi cotti uno-tre mesi. Le "bruciature da freddo", le macchie bianche e secche, sono un problema di sapore, non di sicurezza.
+- **Scongelare** in frigo, mai a temperatura ambiente: un pezzo di carne lasciato sul bancone si scongela fuori mentre il centro è ancora gelato, e la superficie resta per ore nella zona di pericolo. Per fare prima: in acqua fredda, chiusa in un sacchetto, cambiando l'acqua, o al microonde e poi subito in cottura.
+- Si può **ricongelare** un cibo scongelato in frigo, anche se perde un po' di qualità; un cibo crudo scongelato e poi cotto si può congelare di nuovo da cotto.
+
+### Le verdure surgelate
+
+Come abbiamo visto, verdure e frutta surgelate hanno nutrienti paragonabili alle fresche, spesso migliori di quelle tenute giorni in frigo. Sono un aiuto prezioso per mangiare verdura ogni giorno, anche nelle settimane piene. Fanno eccezione le insalate a foglia, che non si congelano.
+
+### Gli avanzi e il "batch cooking"
+
+Cucinare una volta per più pasti, cereali, legumi, verdure al forno, sughi, è la strategia più efficace per mangiare bene con poco tempo:
+
+- una pentola di **legumi** e una di **cereali in chicco** all'inizio della settimana, in frigo per tre o quattro giorni o in freezer a porzioni;
+- una teglia di **verdure al forno** e una di verdure crude già lavate e tagliate;
+- **zuppe e minestroni** in porzioni nel congelatore per le sere senza tempo;
+- una **proteina pronta**, come uova sode, tofu marinato, pesce al forno.
+
+### Le muffe
+
+- Sui cibi **duri**, come formaggi stagionati, carote e cavoli, si può tagliare via la muffa con un margine di un paio di centimetri.
+- Sui cibi **morbidi** o umidi, come yogurt, marmellata, pane in cassetta, frutta morbida, avanzi, sughi, la muffa ha radici invisibili e alcune producono tossine: vanno buttati.
+- Sulla **frutta secca** e sui cereali, la muffa può produrre aflatossine, tra le sostanze naturali più cancerogene: frutta secca dal sapore rancido, amaro o con macchie va buttata.
+
+### Le uova
+
+In Italia le uova si vendono non lavate e si possono tenere in frigo, dove durano di più, nella loro confezione. Non vanno lavate prima di conservarle: si toglierebbe la pellicola protettiva del guscio. La data sulla confezione è quella entro cui consumarle preferibilmente; il codice stampato sul guscio dice il tipo di allevamento: 0 biologico, 1 all'aperto, 2 a terra, 3 in gabbia.
+
+Fonti: [OMS, cinque chiavi per alimenti più sicuri](https://www.who.int/publications/i/item/9789241594639) · [USDA, temperature minime sicure](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/safe-temperature-chart)
+` },
+    { id: 'al-riepilogo-cucina', titolo: 'Riepilogo: In cucina', testo: `
+1. **La cottura rende più digeribili** proteine e amidi e più disponibili carotenoidi e licopene, ma fa perdere vitamina C e folati: alterna crudo e cotto.
+2. **Antiaderenti** mai vuote a fuoco alto e da buttare se graffiate; inox, ghisa e ferro sono alternative senza dubbi.
+3. **La crosta non sigilla i succhi**: dà sapore. I succhi si tengono non cuocendo troppo e facendo riposare la carne.
+4. **L'olio extravergine è il più stabile** in padella e va bene anche per friggere, a 170-180 gradi, senza mai riusare l'olio. Il fritto assorbe sempre olio.
+5. **Dorato, non bruciato**: meno acrilammide e meno sostanze tossiche. Marinare la carne prima della griglia, evitare fiamma e parti nere.
+6. **Vapore, microonde e cotture brevi** conservano più vitamine della bollitura lunga; l'acqua di cottura si riusa.
+7. **Le temperature al cuore**: pollame 74 gradi, macinato 71, pezzi interi e pesce 63. Un termometro è lo strumento più utile in cucina. Il pesce crudo va abbattuto.
+8. **Sous vide**: la sicurezza dipende da temperatura per tempo, da quando il centro arriva in temperatura; niente aglio crudo in busta.
+9. **Separare crudo e cotto**, due taglieri, non lavare il pollo, frigo sotto i 5 gradi, cibi cotti in frigo entro due ore.
+10. **Conservare bene**: avanzi tre o quattro giorni, riso cotto uno o due, scongelare in frigo, cucinare in anticipo per la settimana.
+
+Domande per verificare:
+
+- A che temperatura è davvero il tuo frigorifero?
+- Quale cottura usi più spesso per le verdure, e conserva bene le vitamine?
+- Quali due preparazioni potresti cucinare la domenica per avere pranzi pronti fino a mercoledì?
 ` },
   ] },
 
@@ -2080,19 +2311,43 @@ Dai tuoi principi: in generale **la natura ci offre cibi potenziativi, le indust
 
 ## Cosa dice la scienza
 
-La distinzione che usi ha un nome: la **classificazione NOVA** (Carlos Monteiro, Università di San Paolo), oggi usata da OMS e FAO.
+### La classificazione NOVA
 
-1. **Non lavorati o minimamente lavorati**: frutta, verdura, legumi, cereali, latte, uova, carne e pesce freschi o surgelati, frutta secca.
-2. **Ingredienti da cucina**: olio, burro, sale, zucchero, aceto.
-3. **Processati**: alimenti del gruppo 1 con aggiunta di sale, olio o zucchero: legumi in scatola, pane fresco, formaggi, tonno in scatola, conserve.
-4. **Ultra-processati**: formulazioni industriali con ingredienti che in cucina non si usano (sciroppi di glucosio-fruttosio, proteine isolate, oli idrogenati, aromi, emulsionanti, coloranti): merendine, bibite, snack, piatti pronti, cereali da colazione zuccherati, salumi ricostituiti, "multiproteici".
+La distinzione che usi ha un nome: la **classificazione NOVA**, proposta nel 2009 da Carlos Monteiro dell'Università di San Paolo e oggi usata dalla FAO e in centinaia di studi. Divide i cibi non per nutrienti, ma per **quanto e come** sono stati lavorati.
 
-Cosa si sa:
+1. **Non lavorati o minimamente lavorati**: frutta, verdura, legumi, cereali, latte, uova, carne e pesce freschi o surgelati, frutta secca, yogurt bianco.
+2. **Ingredienti da cucina**: olio, burro, sale, zucchero, aceto, farina.
+3. **Processati**: alimenti del gruppo 1 con l'aggiunta di sale, olio o zucchero, fatti con tecniche che si potrebbero usare anche in casa: legumi in scatola, pane fresco, formaggi, tonno in scatola, conserve, verdure sott'aceto.
+4. **Ultra-processati**: formulazioni industriali con ingredienti che in cucina non si usano, come sciroppo di glucosio-fruttosio, proteine isolate, oli idrogenati, amidi modificati, aromi, emulsionanti, coloranti, dolcificanti. Merendine, bibite, snack, piatti pronti, cereali da colazione zuccherati, salumi ricostituiti, nuggets, molti "multiproteici" e prodotti "fitness".
 
-- Un'ombrella di meta-analisi sul **BMJ** (2024, quasi 10 milioni di persone) associa più ultra-processati a **più mortalità cardiovascolare, diabete di tipo 2, ansia e depressione**, con prove forti o convincenti.
-- Lo studio NIH di Kevin Hall (2019), l'unico sperimentale: con ultra-processati **500 kcal in più al giorno** a parità di nutrienti offerti.
-- **Processato non vuol dire cattivo**: legumi in vetro, verdure surgelate, tonno al naturale, yogurt bianco, passata di pomodoro sono gruppo 1 o 3 e fanno parte di una dieta sana. Le tue scelte (ceci in vetro, piselli surgelati) sono corrette.
-- Regola pratica: se la lista degli ingredienti è lunga e contiene nomi che non useresti in cucina, è ultra-processato.
+In Italia gli ultra-processati sono circa il 15-20% delle calorie; negli Stati Uniti e nel Regno Unito oltre il 50%.
+
+### Cosa si sa
+
+- Una revisione "a ombrello" di meta-analisi sul **BMJ** (Lane e colleghi, 2024, 45 meta-analisi, quasi 10 milioni di persone) associa un consumo più alto di ultra-processati a **più mortalità cardiovascolare, diabete di tipo 2, ansia e depressione**, con prove forti o convincenti, e a molti altri problemi con prove più deboli.
+- Lo studio di Kevin Hall al NIH (2019), il primo esperimento con tutto il cibo controllato: con gli ultra-processati **500 kcal in più al giorno**, a parità di nutrienti offerti.
+
+### Perché fanno mangiare di più
+
+Non è chiaro un solo meccanismo; i candidati più probabili:
+
+- **Velocità**: sono morbidi e si mangiano in fretta, prima che arrivino i segnali di sazietà. Nello studio di Hall le persone mangiavano gli ultra-processati più velocemente.
+- **Densità calorica** alta e poca fibra.
+- **Combinazioni** di grassi, zuccheri e sale che in natura non esistono, studiate per piacere molto: i ricercatori le chiamano "iper-palatabili".
+- **Struttura distrutta**: la matrice del cibo, che rallenta la digestione, non c'è più.
+- **Additivi** come alcuni emulsionanti, che nei primi studi alterano il microbiota.
+- **Marketing**, disponibilità ovunque e prezzi bassi.
+
+### Processato non vuol dire cattivo
+
+È importante non buttare via tutto ciò che viene da una fabbrica. **Legumi in vetro**, verdure **surgelate**, tonno al naturale, yogurt bianco, passata di pomodoro, pane fresco, formaggi, ceci cotti, fiocchi d'avena sono gruppo 1 o 3 e fanno parte di una dieta sana. Le tue scelte, come ceci in vetro e piselli surgelati, sono corrette. E alcuni ultra-processati, come il pane in cassetta integrale o lo yogurt alla frutta, sono molto meno problematici di bibite, merendine e salumi. Gli studi trovano i danni più chiari con bevande zuccherate, carni lavorate e snack.
+
+### Regole pratiche
+
+- Se la lista degli ingredienti è **lunga** e contiene nomi che non useresti in cucina, è ultra-processato.
+- Fai la spesa soprattutto lungo il **perimetro** del supermercato: frutta, verdura, pesce, latticini, pane fresco; le corsie centrali sono piene di prodotti a lunga conservazione.
+- Tieni in casa le versioni semplici dei cibi "comodi": legumi in vetro, cereali in chicco precotti, verdure surgelate, uova, yogurt bianco, frutta secca, pane integrale da congelare a fette.
+- Non serve la perfezione: un prodotto ultra-processato ogni tanto, dentro una dieta di cibi veri, non conta. Conta quanto spazio occupano nella settimana.
 
 Fonti: [Lane et al., BMJ 2024](https://www.bmj.com/content/384/bmj-2023-077310) · [Monteiro et al., NOVA, FAO 2019](https://www.fao.org/3/ca5644en/ca5644en.pdf) · [Hall et al., Cell Metab 2019](https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7)
 ` },
@@ -2101,71 +2356,297 @@ Dai tuoi principi: eliminare lo **zucchero raffinato** ed evitare bibite e alime
 
 ## Cosa dice la scienza
 
-## Sale
+### Sale
 
-- L'OMS chiede **meno di 5 g di sale** al giorno (2 g di sodio); in Italia se ne mangiano in media circa 9 g gli uomini (Istituto Superiore di Sanità).
-- Ridurre il sale abbassa la pressione in tutti, di più in chi ce l'ha alta; nello studio **SSaSS** (2021, 21.000 persone) un sale con potassio al posto di quello normale ha ridotto **ictus del 14%** e morti del 12%.
-- Il palato si abitua in **3-4 settimane**: dopo, i cibi molto salati sembrano troppo salati.
-- Sale **iodato** sempre, per la tiroide.
+- L'OMS chiede **meno di 5 grammi di sale** al giorno, cioè 2 grammi di sodio. In Italia se ne mangiano in media circa 9 grammi gli uomini e 7 le donne, secondo l'Istituto Superiore di Sanità.
+- **Pressione**: ridurre il sale abbassa la pressione in tutti, di più in chi ce l'ha alta, nelle persone anziane e in chi ha una sensibilità genetica al sale. La pressione alta è il primo fattore di rischio di morte nel mondo, prima del fumo.
+- **Lo studio SSaSS** (Neal e colleghi, NEJM 2021): quasi 21.000 persone in 600 villaggi cinesi, con pressione alta o un ictus alle spalle, hanno usato per quasi cinque anni un sostituto del sale con il 25% di cloruro di potassio al posto del sale normale. Risultato: **ictus del 14% in meno**, eventi cardiovascolari del 13% in meno, morti del 12% in meno. È uno dei pochi studi sull'alimentazione con risultati così netti su eventi veri.
+- **Il palato si abitua** in **qualche settimana**: le papille si adattano, e dopo uno o due mesi i cibi molto salati sembrano troppo salati. Conviene ridurre per gradi.
+- **Sale iodato** sempre, per la tiroide.
+- **Il sale "speciale"**, come rosa dell'Himalaya, nero, grigio o marino integrale, è comunque quasi tutto cloruro di sodio: le tracce di altri minerali sono troppo piccole per contare, e di solito non è iodato.
+- Come insaporire senza sale: **erbe e spezie**, limone e scorza di agrumi, aceto, aglio, cipolla, peperoncino, zenzero, pepe, olio extravergine buono, parmigiano grattugiato in piccola quantità, che dà sapore con poco.
 
-## Zucchero
+### Zucchero
 
-- OMS: zuccheri liberi **sotto il 10%** delle calorie, idealmente **sotto il 5%** (circa 25 g, 5-6 cucchiaini). AHA: al massimo **36 g** al giorno per l'uomo. Una lattina di bibita ne ha circa 35 g.
+- OMS: zuccheri liberi **sotto il 10%** delle calorie, idealmente **sotto il 5%**, circa 25 grammi, cinque o sei cucchiaini. AHA: al massimo **36 grammi** al giorno per l'uomo. Una lattina di bibita ne ha circa 35.
 - Lo zucchero della **frutta intera** e del latte non conta tra gli zuccheri liberi; quello di **miele, sciroppi e succhi** sì.
-- Le **bevande zuccherate** sono la fonte con le prove più forti di danno: più diabete di tipo 2, peso e malattie di cuore.
+- Le **bevande zuccherate** sono la fonte con le prove più forti di danno: più diabete di tipo 2, peso e malattie di cuore. La pagina sui dolcificanti ne parla in dettaglio.
+- I **denti**: lo zucchero è la causa principale della carie. Conta anche la frequenza: piccole quantità sparse tutto il giorno, come caramelle o bibite a sorsi, sono peggio della stessa quantità in un momento solo.
 
-## Alcol
+### Alcol
 
-- OMS (2023, Europa): **non esiste un livello sicuro** di alcol per la salute. L'etanolo è cancerogeno di gruppo 1 (IARC) per bocca, gola, esofago, fegato, colon e seno; in Europa metà dei tumori legati all'alcol nasce da un consumo "leggero o moderato".
-- L'idea del "bicchiere di vino che fa bene al cuore" viene da studi in cui gli astemi includevano ex bevitori malati; le analisi corrette (meta-analisi JAMA Netw Open 2023) non trovano benefici.
-- L'alcol porta **7 kcal per grammo**, riduce la sintesi proteica dopo l'allenamento e peggiora il sonno.
+- **Nessun livello sicuro.** L'Ufficio europeo dell'OMS nel 2023 ha scritto che non esiste una quantità di alcol sicura per la salute. L'etanolo è cancerogeno di gruppo 1 per la IARC, come il fumo e l'amianto per certezza delle prove, e causa tumori di bocca, gola, esofago, fegato, colon-retto e seno. In Europa circa metà dei tumori legati all'alcol nasce da un consumo "leggero o moderato", cioè meno di un litro e mezzo di vino a settimana.
+- **Il bicchiere di vino che fa bene al cuore**: l'idea viene da vecchi studi di popolazione in cui il gruppo degli astemi comprendeva anche ex bevitori che avevano smesso perché malati, facendo sembrare più sani i bevitori moderati. Le analisi che correggono questo errore, come la meta-analisi di Zhao e colleghi sul JAMA Network Open nel 2023, su oltre 4 milioni di persone, non trovano una mortalità più bassa con il consumo moderato. Gli studi genetici, che usano varianti che fanno bere di meno, mostrano che anche poco alcol alza pressione e rischio cardiovascolare. Il resveratrolo del vino è in quantità troppo piccole per contare.
+- **Calorie**: 7 kcal per grammo, quasi come i grassi, e nessuna sazietà. Un bicchiere di vino da 150 millilitri ha circa 110-120 kcal, una birra media da 400 millilitri circa 170, un cocktail spesso 200-300. Mentre il fegato smaltisce l'alcol, il corpo smette quasi di bruciare grassi. E l'alcol spinge a mangiare di più, e peggio.
+- **Allenamento**: in uno studio australiano (Parr e colleghi, 2014) una bevuta abbondante dopo l'allenamento, circa dodici drink, ha ridotto la sintesi muscolare del 24% anche insieme alle proteine, e del 37% con i soli carboidrati. Dosi piccole hanno effetti minori, ma nessun beneficio.
+- **Sonno**: l'alcol fa addormentare prima, ma frammenta il sonno della seconda metà della notte e riduce il sonno REM. Anche uno o due bicchieri la sera peggiorano la qualità del riposo.
+- **In pratica**: la tua scelta di eliminarlo è quella con più vantaggi. Per chi beve, il messaggio delle linee guida è "meno è meglio", e mai per motivi di salute.
 
-Fonti: [OMS, sale](https://www.who.int/news-room/fact-sheets/detail/salt-reduction) · [Neal et al., SSaSS, NEJM 2021](https://www.nejm.org/doi/full/10.1056/NEJMoa2105675) · [OMS, zuccheri](https://www.who.int/publications/i/item/9789241549028) · [OMS Europa, alcol 2023](https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health)
+Fonti: [OMS, sale](https://www.who.int/news-room/fact-sheets/detail/salt-reduction) · [Neal et al., SSaSS, NEJM 2021](https://www.nejm.org/doi/full/10.1056/NEJMoa2105675) · [OMS, zuccheri](https://www.who.int/publications/i/item/9789241549028) · [OMS Europa, alcol 2023](https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health) · [Parr et al., PLoS One 2014](https://pubmed.ncbi.nlm.nih.gov/24533082/) · Zhao et al., JAMA Netw Open 2023
 ` },
     { id: 'al-integrazione', titolo: 'Integratori: la punta della piramide', testo: `
 Dai tuoi appunti: l'**integrazione** è sicuramente importante, ma è la **punta della piramide, non la base**. Prima calorie, macro, micro e timing.
 
 ## Cosa dice la scienza
 
-Gli integratori con le prove più solide per chi si allena (posizione del Comitato Olimpico Internazionale, 2018, e dell'International Society of Sports Nutrition):
+### Gli integratori con prove solide per chi si allena
 
-- **Creatina monoidrato**: 3-5 g al giorno, tutti i giorni, a qualunque ora. Aumenta forza e massa magra con l'allenamento con i pesi; è uno degli integratori più studiati e sicuri. Non serve la fase di carico né il ciclo.
-- **Proteine in polvere** (siero, caseina, vegetali): sono **cibo**, non magia. Utili solo se è difficile arrivare al fabbisogno con i pasti.
-- **Caffeina**: 3-6 mg per chilo 30-60 minuti prima migliora la prestazione; da evitare nel pomeriggio per non rovinare il sonno.
+Secondo la posizione del Comitato Olimpico Internazionale (Maughan e colleghi, 2018) e dell'International Society of Sports Nutrition, sono pochi:
 
-Utili **solo se c'è una carenza o un motivo** (misurato o legato allo stile alimentare):
+- **Creatina monoidrato**: 3-5 grammi al giorno, tutti i giorni, a qualunque ora. È l'integratore più studiato in assoluto: con l'allenamento con i pesi aumenta forza e massa magra in media di più del solo allenamento, perché permette di fare una o due ripetizioni in più per serie. È sicura nelle persone sane, anche per anni. Non serve la fase di carico né il ciclo: con 3-5 grammi al giorno i muscoli si riempiono in tre o quattro settimane. Fa trattenere un po' d'acqua **dentro** i muscoli, uno o due chili sulla bilancia, non sotto la pelle. Per chi non mangia carne l'effetto è spesso maggiore, perché le scorte di partenza sono più basse. Studi recenti esplorano anche effetti sul cervello, sul sonno e sulla memoria, con risultati promettenti ma da confermare.
+- **Proteine in polvere** di siero, caseina o vegetali: sono **cibo**, non magia. Utili solo se è difficile arrivare al fabbisogno con i pasti, per comodità.
+- **Caffeina**: 3-6 milligrammi per chilo, 30-60 minuti prima dell'allenamento, migliora forza, resistenza e attenzione (Guest e colleghi, ISSN 2021). Per 80 chili sono 240-480 milligrammi: molto, quasi sempre bastano dosi più basse, come uno o due espressi. Da evitare nel pomeriggio per non rovinare il sonno, che conta di più.
+- Per gli sport di **resistenza** ci sono altri integratori con prove buone, come il nitrato del succo di barbabietola e il bicarbonato, meno utili per chi fa pesi.
+
+### Utili solo se c'è una carenza o un motivo
+
+Misurato con un esame, o legato allo stile alimentare:
 
 - **Vitamina D**: nei mesi invernali, se i livelli nel sangue sono bassi.
 - **Vitamina B12**: indispensabile per i vegani, consigliata per molti vegetariani.
-- **Omega-3** (olio di pesce o di alghe): se non si mangia pesce grasso.
-- **Ferro**: solo se manca, mai "per sicurezza" (l'eccesso fa male).
+- **Omega-3**, olio di pesce o di alghe: se non si mangia pesce grasso.
+- **Ferro**: solo se manca, mai "per sicurezza": l'eccesso fa male.
 - **Magnesio**: se l'alimentazione è povera di cereali integrali, legumi e frutta secca.
+- **Iodio**: di solito basta il sale iodato.
 
-Con poche o nessuna prova: brucia-grassi, detox, glutammina, BCAA (inutili se le proteine bastano), antiossidanti ad alte dosi (vitamina C ed E alte possono **ridurre** gli adattamenti all'allenamento).
+### Con poche o nessuna prova
 
-In Italia gli integratori sono **notificati** al Ministero della Salute, non approvati come farmaci: l'etichetta non garantisce l'efficacia.
+- **Brucia-grassi**, "detox", tisane drenanti: nessuna prova di efficacia; alcuni contengono sostanze stimolanti o diuretiche, a volte non dichiarate.
+- **BCAA** e aminoacidi essenziali: inutili se le proteine bastano.
+- **Glutammina**, arginina, ossido nitrico, booster del testosterone: nessun effetto dimostrato nelle persone sane.
+- **Multivitaminici**: nelle persone che mangiano bene non riducono malattie né mortalità; possono servire a chi mangia molto poco.
+- **Antiossidanti ad alte dosi**: vitamina C ed E alte possono **ridurre** gli adattamenti all'allenamento, e betacarotene e vitamina E in capsule hanno aumentato un po' la mortalità.
+- **Collagene**: è una proteina di qualità bassa, povera di aminoacidi essenziali. I primi studi su tendini e pelle sono interessanti ma piccoli.
+- **Probiotici** in capsule: utili in situazioni precise, non come integratore generale.
 
-Fonti: [Maughan et al., CIO 2018](https://bjsm.bmj.com/content/52/7/439) · [ISSN, creatina 2017](https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0173-z) · [CREA 2018, diete e integratori](https://www.crea.gov.it/web/alimenti-e-nutrizione/-/linee-guida-per-una-sana-alimentazione-2018)
+### Le regole italiane
+
+In Italia gli integratori sono **notificati** al Ministero della Salute, non approvati come farmaci: chi li vende comunica l'etichetta, ma non deve dimostrare che funzionano. L'etichetta, quindi, non garantisce l'efficacia. Le frasi sulla salute ammesse sono solo quelle autorizzate dall'EFSA, per esempio "la vitamina D contribuisce al mantenimento di ossa normali": dicono a cosa serve il nutriente, non che l'integratore serva a te.
+
+### Qualità e contaminazioni
+
+Diversi controlli hanno trovato integratori sportivi contaminati da sostanze vietate o con dosi diverse da quelle dichiarate. Per gli sportivi che fanno controlli antidoping esistono certificazioni di terze parti; per tutti, conviene preferire prodotti semplici, con un solo ingrediente, come la creatina monoidrato pura.
+
+Fonti: [Maughan et al., CIO 2018](https://bjsm.bmj.com/content/52/7/439) · [ISSN, creatina 2017](https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0173-z) · [Guest et al., ISSN caffeina 2021](https://pubmed.ncbi.nlm.nih.gov/33388079/) · [Bjelakovic et al., Cochrane 2012](https://pubmed.ncbi.nlm.nih.gov/22419320/) · [CREA 2018, diete e integratori](https://www.crea.gov.it/web/alimenti-e-nutrizione/-/linee-guida-per-una-sana-alimentazione-2018)
 ` },
     { id: 'al-vegetale', titolo: 'Mangiare vegetale', testo: `
 Il principio dei tuoi appunti: **mangiare per alimentare e potenziare i propri obiettivi di vita, evitando il più possibile di causare sofferenza ad altri animali.** E: essendo vegani o vegetariani, aumentare le proteine di circa 0,2 g per chilo.
 
 ## Cosa dice la scienza
 
-- L'**Academy of Nutrition and Dietetics** (2016) e le linee guida italiane CREA: le diete vegetariane e vegane **ben pianificate** sono adeguate in tutte le fasi della vita, anche per gli sportivi, e si associano a meno malattie di cuore, diabete di tipo 2, ipertensione e alcuni tumori.
-- **Proteine**: con legumi, soia, latticini e uova (per i vegetariani) si arriva facilmente; serve **varietà** nella giornata, non combinazioni nello stesso piatto. Tofu e tempeh hanno un profilo quasi completo.
-- **Nutrienti da curare**:
-  - **B12**: integrare (vegani sempre; vegetariani spesso).
-  - **Ferro**: legumi, cereali integrali, semi, verdure a foglia, con **vitamina C** nello stesso pasto; tè e caffè lontano dai pasti.
-  - **Zinco**: legumi ammollati, semi di zucca, cereali integrali, formaggi.
-  - **Calcio**: latticini, acque calciche, tofu con solfato di calcio, cavoli, mandorle.
-  - **Omega-3**: noci, semi di lino e chia ogni giorno; olio di alghe se non si mangia pesce.
-  - **Iodio**: sale iodato.
-  - **Vitamina D**: come per tutti.
-- **Ambiente**: secondo lo studio di Poore e Nemecek (Science 2018, 38.000 aziende agricole) una dieta senza prodotti animali riduce di circa il **70%** le emissioni legate al cibo e di oltre il 75% l'uso di suolo. Manzo e agnello hanno l'impatto più alto per grammo di proteine, legumi il più basso. La Commissione **EAT-Lancet** (2019, aggiornata nel 2025) propone una "dieta per la salute del pianeta" fatta soprattutto di vegetali, con poca carne rossa.
-- Il **benessere animale** non si misura in grammi, ma pesa sulle scelte: allevamenti all'aperto, pesce da filiere certificate e meno prodotti animali in generale vanno nella stessa direzione dei tuoi principi.
+### Le posizioni ufficiali
 
-Fonti: [Academy of Nutrition and Dietetics 2016](https://pubmed.ncbi.nlm.nih.gov/27886704/) · [Poore e Nemecek, Science 2018](https://www.science.org/doi/10.1126/science.aaq0216) · [EAT-Lancet](https://eatforum.org/eat-lancet-commission/)
+L'**Academy of Nutrition and Dietetics**, la più grande associazione di nutrizionisti al mondo (2016), e le linee guida italiane CREA dicono la stessa cosa: le diete vegetariane e vegane **ben pianificate** sono adeguate in tutte le fasi della vita, anche per gli sportivi, e si associano a meno malattie di cuore, diabete di tipo 2, ipertensione, obesità e alcuni tumori.
+
+### Vegetale non vuol dire automaticamente sano
+
+La parola chiave è **ben pianificate**. Uno studio sulla UK Biobank (Thompson e colleghi, 2023, oltre 120.000 persone) ha diviso le diete a base vegetale in due tipi:
+
+- **sane**: verdura, frutta, cereali integrali, legumi, frutta secca, olio;
+- **poco sane**: patate fritte, pane bianco, dolci, bibite zuccherate, succhi.
+
+Chi seguiva di più la versione sana aveva una mortalità più bassa del 16% e meno tumori e malattie cardiovascolari; chi seguiva di più la versione poco sana aveva più rischi. Una dieta vegetariana fatta di pizza, pasta bianca e dolci non porta i benefici di quella fatta di legumi e verdura.
+
+### Le proteine
+
+Con legumi, soia, latticini e uova per i vegetariani si arriva facilmente al fabbisogno; serve **varietà** nella giornata, non combinazioni nello stesso piatto. Tofu e tempeh hanno un profilo quasi completo. Come abbiamo visto, con 1,6 grammi per chilo vegani e onnivori costruiscono lo stesso muscolo.
+
+### I nutrienti da curare
+
+- **B12**: integrare, i vegani sempre, i vegetariani spesso.
+- **Ferro**: legumi, cereali integrali, semi, verdure a foglia, con **vitamina C** nello stesso pasto; tè e caffè lontano dai pasti. I vegetariani hanno scorte di ferro più basse ma di solito non più anemia.
+- **Zinco**: legumi ammollati, semi di zucca, cereali integrali, formaggi.
+- **Calcio**: latticini, acque calciche, tofu con solfato di calcio, cavoli, mandorle, bevande vegetali arricchite.
+- **Omega-3**: noci, semi di lino e chia ogni giorno; olio di alghe se non si mangia pesce.
+- **Iodio**: sale iodato; le bevande vegetali di solito non sono arricchite di iodio, a differenza del latte.
+- **Vitamina D**: come per tutti.
+- **Creatina**: il corpo la produce, ma le scorte nei muscoli dei vegetariani sono più basse; l'integrazione è particolarmente utile per chi si allena.
+
+### L'ambiente
+
+- Lo studio di Joseph Poore e Thomas Nemecek (Science 2018, dati di 38.000 aziende agricole in 119 paesi) è la valutazione più completa dell'impatto del cibo. Passare dalla dieta media di oggi a una senza prodotti animali ridurrebbe di circa **metà** le emissioni legate al cibo e di circa tre quarti l'uso di suolo.
+- **Manzo e agnello** hanno l'impatto più alto per grammo di proteine: per produrre 100 grammi di proteine di manzo da allevamento intensivo si emettono in media circa 50 chili di CO2 equivalente; per i legumi meno di un chilo. Anche il manzo con l'impatto più basso emette circa sei volte più dei piselli con l'impatto più alto.
+- **Latticini, uova, pollame e pesce d'allevamento** stanno nel mezzo; i **legumi** e la **frutta secca** in fondo.
+- La Commissione **EAT-Lancet** (2019, aggiornata nel 2025) propone una "dieta per la salute del pianeta" fatta soprattutto di vegetali, con poca carne rossa, che potrebbe nutrire dieci miliardi di persone senza superare i limiti del pianeta.
+- Il **trasporto** pesa poco sul totale, di solito meno del 10%: conta molto di più **cosa** si mangia che **da dove** viene. Fa eccezione il cibo trasportato in aereo, come alcuni frutti fuori stagione.
+
+### Il benessere animale
+
+Il benessere animale non si misura in grammi, ma pesa sulle scelte, come nei tuoi principi. Ogni anno nel mondo si allevano e macellano oltre 80 miliardi di animali terrestri, in gran parte in allevamenti intensivi. Scegliere allevamenti all'aperto o biologici, uova con codice 0 o 1, pesce da filiere certificate e, soprattutto, meno prodotti animali in generale vanno nella stessa direzione dei tuoi principi.
+
+### Il percorso
+
+Non serve diventare vegani da un giorno all'altro. Gli studi sul cambiamento delle abitudini mostrano che funzionano meglio i passi graduali: un giorno o più alla settimana senza carne, i legumi come secondo, latticini e uova al posto della carne rossa, la carne come contorno e non come piatto principale.
+
+Fonti: [Academy of Nutrition and Dietetics 2016](https://pubmed.ncbi.nlm.nih.gov/27886704/) · [Thompson et al., JAMA Netw Open 2023](https://pubmed.ncbi.nlm.nih.gov/36976560/) · [Poore e Nemecek, Science 2018](https://www.science.org/doi/10.1126/science.aaq0216) · [EAT-Lancet](https://eatforum.org/eat-lancet-commission/) · [Hevia-Larraín et al., Sports Med 2021](https://pubmed.ncbi.nlm.nih.gov/33599941/)
+` },
+    { id: 'al-sport-cibo', titolo: 'Mangiare intorno all\'allenamento', testo: `
+*Pagina nuova, dalla letteratura: cosa mangiare prima, durante e dopo l'allenamento.*
+
+Nei tuoi appunti il timing è al quarto posto della piramide, dopo calorie, macro e micro. È giusto: per chi si allena tre o quattro volte a settimana con i pesi, cosa si mangia nell'arco della giornata conta molto di più di cosa si mangia nell'ora intorno alla palestra. Ma qualche accorgimento aiuta a stare bene e allenarsi meglio.
+
+### Prima dell'allenamento
+
+- **Un pasto normale 2-3 ore prima**, con carboidrati, proteine e verdura, è la soluzione migliore. Per esempio un piatto di cereali con legumi o pesce, o un'insalata con pane integrale e uova.
+- **Se mancano meno di due ore**, meglio qualcosa di più leggero e digeribile: uno yogurt con una banana, pane con un velo di marmellata o di burro di arachidi, un frutto e qualche mandorla.
+- **A digiuno**: allenarsi la mattina senza mangiare va bene per molte persone, se è più comodo. La perdita di grasso, a parità di calorie della giornata, è la stessa. Alcune persone rendono meno nei pesi a digiuno, altre no: conta come ti senti.
+- Evita pasti molto grassi o molto ricchi di fibra subito prima: rallentano la digestione e possono dare fastidio.
+- La **caffeina**, se la usi, 30-60 minuti prima.
+
+### Durante
+
+Per un allenamento di pesi di un'ora o un'ora e mezza basta **l'acqua**. Bevande con zuccheri e sali servono solo per allenamenti lunghi, oltre i 75-90 minuti, o molto intensi e sudati, come una lunga uscita in bicicletta. Per sforzi di resistenza oltre l'ora la nutrizione sportiva consiglia 30-60 grammi di carboidrati all'ora.
+
+### Dopo
+
+- **Le proteine** sono la cosa più importante: un pasto con 25-40 grammi di proteine, cioè 0,3-0,4 grammi per chilo, **nelle ore** successive. Secondo la posizione dell'International Society of Sports Nutrition sul timing (Kerksick e colleghi, 2017), la famosa "finestra anabolica" di trenta minuti è molto più larga: se hai mangiato un pasto proteico nelle 3-4 ore prima, non c'è fretta.
+- **I carboidrati** dopo i pesi servono a ricaricare il glicogeno; con un giorno di riposo prima del prossimo allenamento, i pasti normali bastano. Contano di più per chi fa due allenamenti al giorno o sport di resistenza.
+- **Il recupero** dipende soprattutto da sonno, proteine totali e calorie della giornata.
+
+### Calorie e allenamento in deficit
+
+- Quando si è in deficit, conviene mettere una parte dei carboidrati della giornata **intorno all'allenamento**, prima e dopo, per allenarsi con più energia e mantenere i carichi.
+- I giorni di allenamento possono avere un po' più calorie e carboidrati, quelli di riposo un po' meno, purché il totale settimanale resti lo stesso. Non è necessario, ma a molte persone piace.
+
+### Il cardio a digiuno
+
+Si legge spesso che il cardio a digiuno "brucia più grassi". Durante l'allenamento è vero: il corpo usa più grasso come carburante. Ma nell'arco della giornata compensa, e a parità di calorie la perdita di grasso è la stessa. Si fa se è comodo, non perché funzioni meglio.
+
+### Il frullato proteico
+
+È comodo, non necessario. Un vasetto di yogurt greco o di skyr, un panino con tofu o uova, un piatto di legumi danno le stesse proteine. Il frullato diventa utile quando manca il tempo, quando si fa fatica ad arrivare al fabbisogno o quando si mangia poco dopo l'allenamento.
+
+### L'idratazione
+
+- Due o tre ore prima, circa mezzo litro d'acqua.
+- Durante, a piccoli sorsi, secondo sete.
+- Dopo, circa un litro e mezzo per ogni chilo perso con il sudore, se ti pesi prima e dopo.
+- Per allenamenti lunghi e molto sudati, un po' di **sale** o una bevanda con elettroliti, per non perdere troppo sodio.
+
+### Recupero e infiammazione
+
+Gli antinfiammatori presi "per prevenzione" e le dosi alte di antiossidanti dopo l'allenamento possono ridurre gli adattamenti, perché l'infiammazione e i radicali liberi dopo lo sforzo sono anche segnali di adattamento. Il ghiaccio e le immersioni fredde subito dopo i pesi, negli studi, hanno ridotto un po' la crescita muscolare. Per recuperare meglio funzionano le cose semplici: dormire, mangiare abbastanza proteine e calorie, distribuire bene il carico nella settimana.
+
+Fonti: [Kerksick et al., ISSN timing 2017](https://pubmed.ncbi.nlm.nih.gov/28919842/) · [Schoenfeld e Aragon, JISSN 2018](https://pubmed.ncbi.nlm.nih.gov/29497353/) · [Guest et al., ISSN caffeina 2021](https://pubmed.ncbi.nlm.nih.gov/33388079/) · [Trommelen et al., Cell Rep Med 2023](https://pubmed.ncbi.nlm.nih.gov/38118410/)
+` },
+    { id: 'al-miti', titolo: 'Falsi miti', testo: `
+*Pagina nuova, dalla letteratura: le frasi che si sentono spesso e cosa dice davvero la scienza.*
+
+Alcuni di questi miti erano anche nei tuoi appunti e li abbiamo già corretti nelle pagine dedicate. Qui li raccogliamo tutti, con la spiegazione breve.
+
+### Sulla digestione
+
+- **"Non mischiare proteine e carboidrati."** Falso: gli enzimi lavorano insieme e i pasti misti alzano meno la glicemia. Nello studio di Golay la dieta dissociata ha fatto perdere lo stesso peso di una mista.
+- **"La frutta va mangiata lontano dai pasti, altrimenti fermenta."** Falso: nello stomaco l'acido impedisce la fermentazione. La frutta a fine pasto porta vitamina C che aiuta ad assorbire il ferro. Chi ha gonfiore può provare a mangiarla separata, ma è una questione personale.
+- **"Il cibo alcalinizza il sangue."** Falso: il pH del sangue è fisso tra 7,35 e 7,45; il cibo cambia quello delle urine.
+- **"Bisogna fare detox."** Falso: fegato e reni eliminano le sostanze di scarto in continuazione. Nessuna tisana o succo "disintossica" meglio di loro; aiutarli vuol dire non bere alcol, dormire, mangiare verdura e fibre.
+
+### Sul peso
+
+- **"Mangiare la sera fa ingrassare."** Non di per sé: conta il totale della giornata. Ma un pasto molto abbondante a ridosso del sonno peggiora il riposo, e chi mangia tardi spesso mangia di più.
+- **"Mangiare spesso accelera il metabolismo."** Falso: l'energia per digerire dipende dal totale del cibo, non dal numero dei pasti. Tre o sei pasti, lo stesso risultato.
+- **"I carboidrati fanno ingrassare."** Falso: ingrassa il surplus calorico, da qualunque fonte. I carboidrati integrali si associano anzi a un peso più basso.
+- **"I grassi fanno ingrassare."** Falso nello stesso modo: il PREDIMED con il 40% di grassi non ha fatto ingrassare nessuno. Sono però densi di calorie, per questo si misurano.
+- **"Le diete chetogeniche bruciano più grasso."** Falso a parità di calorie e proteine, come mostrano gli studi in reparto metabolico.
+- **"Il metabolismo si rompe con le diete."** Falso: rallenta un po' e in modo in gran parte reversibile.
+- **"Si può dimagrire in un punto preciso."** Falso: gli addominali rinforzano gli addominali, ma il grasso della pancia scende con il deficit generale, non con gli esercizi locali.
+- **"Sudare fa dimagrire."** Falso: si perde acqua, che torna appena si beve.
+
+### Sui nutrienti
+
+- **"Le uova alzano il colesterolo."** Poco: un uovo al giorno va bene per le persone sane. Alzano di più l'LDL i grassi saturi e trans.
+- **"Troppe proteine fanno male ai reni."** Non nelle persone con reni sani, fino ad almeno 2 grammi per chilo.
+- **"Gli zuccheri della frutta sono come quelli delle bibite."** Falso: nella frutta intera arrivano con fibre, acqua e polifenoli; più frutta si associa a meno diabete.
+- **"Lo zucchero di canna, il miele e lo sciroppo d'agave sono più sani dello zucchero bianco."** Falso: sono tutti zuccheri liberi.
+- **"Il sale rosa è più sano."** Falso: è cloruro di sodio come l'altro, e in più di solito non è iodato.
+- **"Il glutine fa male a tutti."** Falso: fa male a chi ha celiachia o una sensibilità specifica, circa l'1% e poco più. I prodotti senza glutine sono spesso più raffinati.
+- **"L'olio extravergine non si può cuocere."** Falso: è il più stabile tra gli oli comuni.
+- **"Le verdure surgelate non valgono niente."** Falso: sono paragonabili alle fresche.
+- **"Il limone elimina il mercurio del pesce."** Falso: funziona solo scegliere pesci piccoli.
+- **"La vitamina C previene il raffreddore."** Falso per quasi tutti; ne accorcia di poco la durata.
+- **"Il latte toglie il calcio dalle ossa."** Falso: i latticini sono tra le fonti di calcio migliori; nelle meta-analisi non aumentano le fratture.
+- **"La soia fa male agli uomini, per gli estrogeni."** Falso: i fitoestrogeni della soia non cambiano il testosterone negli uomini con i consumi normali, come mostrano le meta-analisi degli studi sperimentali.
+
+### Sulla cucina
+
+- **"Rosolare sigilla i succhi."** Falso: dà sapore, non trattiene l'acqua.
+- **"Il microonde distrugge i nutrienti e scalda dall'interno."** Falso in entrambi i casi: è uno dei metodi che conservano più vitamine, e scalda dall'esterno verso l'interno, fino a uno o due centimetri.
+- **"Il fritto in olio caldo non assorbe olio."** Falso: ne assorbe meno, ma sempre.
+
+### Perché i miti resistono
+
+I miti hanno spesso un fondo di verità, una spiegazione semplice e qualcuno che ci guadagna. La domanda da farsi davanti a una nuova regola è: **esiste uno studio sulle persone, controllato, che la confermi?** E: chi la sta dicendo vende qualcosa? Le linee guida cambiano poco proprio perché aspettano prove solide.
+
+Fonti: [Golay et al., Int J Obes 2000](https://pubmed.ncbi.nlm.nih.gov/10805507/) · [Carson et al., AHA 2019](https://pubmed.ncbi.nlm.nih.gov/31838890/) · [Devries et al., J Nutr 2018](https://pubmed.ncbi.nlm.nih.gov/30383278/) · [Hall et al., Cell Metab 2019](https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7)
+` },
+    { id: 'al-fuori-casa', titolo: 'Mangiare fuori casa', testo: `
+*Pagina nuova, dalla letteratura: ristoranti, viaggi, feste e mense, senza rinunciare ai principi.*
+
+L'ultima delle dieci indicazioni dell'American Heart Association dice che le regole valgono **ovunque si mangi**: a casa, al ristorante, in viaggio. È anche la più difficile, perché fuori casa non controlli ingredienti e porzioni. I piatti dei ristoranti hanno in media molte più calorie, sale e grassi di quelli fatti in casa, spesso un pasto intero vale la metà del fabbisogno di una giornata.
+
+### Al ristorante
+
+- **Guarda il menù prima**, se puoi, e scegli con calma, non affamato.
+- **Applica il piatto unico**: una verdura o un'insalata, una proteina, un cereale. Ordinare un contorno di verdure in più è quasi sempre possibile.
+- **Le cotture**: alla griglia, al forno, al vapore, in umido, al cartoccio, crudo. Fritti, panati e "croccanti" valgono il doppio.
+- **I condimenti a parte**: salse e olio a parte per insalate e secondi, così decidi tu quanto.
+- **Il pane**: è facile mangiarne due o tre fette prima che arrivi il piatto. Decidi prima quanto.
+- **Le porzioni**: si può condividere un antipasto o un dolce, chiedere mezza porzione o portare a casa ciò che resta.
+- **Il dolce**: se lo desideri, scegli di prenderlo e goditelo, magari diviso. È meglio un dolce scelto che tre biscotti mangiati per abitudine.
+- **Bere acqua**, e l'alcol, se c'è, come una scelta consapevole e non automatica.
+
+### Cucine diverse
+
+- **Italiana**: pasta con verdure, legumi o pesce; secondi di pesce alla griglia; zuppe e minestroni. Attenzione a sughi con panna e burro e alla pizza con salumi e formaggi doppi. Una **pizza margherita** è un pasto unico di circa 800-900 kcal e 3-4 grammi di sale: va bene ogni tanto, con un'insalata accanto.
+- **Giapponese**: sashimi, edamame, zuppa di miso, alghe, pesce alla griglia; attenzione ai roll con maionese, tempura e salsa di soia, che è molto salata.
+- **Indiana**: piatti di legumi, come i dal, tandoori, riso basmati; attenzione a piatti con molta panna o burro chiarificato e alle fritture.
+- **Mediorientale**: hummus, falafel al forno, tabulè, verdure grigliate, spiedini.
+- **Fast food**: se capita, il panino più semplice, senza salse doppie, con un'insalata al posto delle patatine e acqua invece della bibita.
+
+### In viaggio
+
+- **Portare con sé** spuntini semplici: frutta, frutta secca a porzioni, yogurt, pane integrale, verdure crude. Negli aeroporti e nelle stazioni l'offerta sana è scarsa e cara.
+- **Colazione d'albergo**: yogurt, frutta, uova, pane integrale, avena; i dolci da buffet come scelta, non come base.
+- **La settimana di vacanza** non rovina mesi di lavoro: conta tornare alle abitudini quando si rientra. È normale trovare un chilo o due in più al ritorno, soprattutto di acqua e sale.
+- **Il movimento** in viaggio è spesso più facile: camminare per visitare una città vale molti passi.
+- **La cucina locale** è parte del viaggio: assaggiare con curiosità, con porzioni piccole.
+
+### Feste, cene e pressione sociale
+
+- **Mangiare prima** uno spuntino proteico, per non arrivare affamati.
+- **Scegliere** le cose che ti piacciono davvero, invece di assaggiare tutto.
+- **Rispondere con calma** a chi insiste: "no, grazie, sto bene così" basta. Le persone sono in genere meno attente a cosa mangiamo di quanto pensiamo.
+- **Godersi la compagnia**: la convivialità è uno dei pilastri della piramide mediterranea. Un pasto condiviso, mangiato con calma, fa bene anche se non è perfetto.
+
+### Mense e pranzi di lavoro
+
+- Comporre il piatto partendo dalla **verdura**.
+- Preferire **legumi**, pesce, uova, piatti al forno; un primo semplice o un secondo, non entrambi abbondanti.
+- Portare il pranzo da casa qualche giorno a settimana, con il "batch cooking" della pagina sulla conservazione, è il modo più semplice per mangiare bene e risparmiare.
+
+### Il pasto libero
+
+Un **pasto libero programmato** non è un fallimento ma una strategia: rende più facile seguire le regole il resto della settimana. Funziona meglio se è un pasto, non una giornata; se è scelto, non subito; e se il giorno dopo si torna alle abitudini senza compensare con digiuni.
+
+Fonti: [AHA, Dietary guidance 2021](https://www.ahajournals.org/doi/10.1161/CIR.0000000000001031) · [Bach-Faig et al., Public Health Nutr 2011](https://pubmed.ncbi.nlm.nih.gov/22166184/)
+` },
+    { id: 'al-riepilogo-scelte', titolo: 'Riepilogo: Scelte per la vita', testo: `
+1. **Ultra-processati**: si riconoscono dagli ingredienti che non useresti in cucina. Fanno mangiare circa 500 kcal in più al giorno e si associano a più malattie di cuore, diabete e depressione. Legumi in vetro, surgelati, yogurt bianco e passata vanno benissimo.
+2. **Sale sotto i 5 grammi, iodato**: il palato si abitua in qualche settimana. Un sostituto con potassio ha ridotto gli ictus del 14%.
+3. **Zuccheri liberi sotto i 25 grammi**: bibite e succhi sono la fonte peggiore.
+4. **Alcol: nessun livello sicuro**. Il bicchiere che fa bene al cuore era un errore degli studi; l'alcol riduce anche la sintesi muscolare e il sonno.
+5. **Integratori con prove solide**: creatina 3-5 grammi al giorno, caffeina prima dell'allenamento, proteine in polvere per comodità. Vitamina D, B12, omega-3, ferro solo se servono.
+6. **Una dieta vegetale sana**, con legumi, cereali integrali, verdura e frutta secca, riduce mortalità e malattie; una vegetale fatta di pane bianco e dolci no. Curare B12, ferro, zinco, calcio, omega-3, iodio.
+7. **Ambiente**: conta più cosa si mangia che da dove viene; legumi e vegetali hanno l'impatto più basso, manzo e agnello il più alto.
+8. **Intorno all'allenamento**: un pasto normale 2-3 ore prima, acqua durante, 25-40 grammi di proteine nelle ore dopo. La finestra di trenta minuti è molto più larga.
+9. **Falsi miti**: dieta dissociata, cibi alcalinizzanti, detox, la frutta che fermenta, la sera che fa ingrassare, il metabolismo rotto.
+10. **Fuori casa**: piatto unico anche al ristorante, cotture semplici, condimenti a parte, il pasto libero scelto e non subito.
+
+Domande per verificare:
+
+- Quanti prodotti ultra-processati ci sono nel tuo carrello della spesa tipico?
+- Qual è il tuo prossimo pasto fuori casa, e come potresti comporlo con il piatto unico?
+- Quale falso mito ti era sembrato vero fino a oggi?
 ` },
   ] },
 ];
