@@ -51,6 +51,8 @@ export function testoHtml(testo) {
       l.voci.push({ t: m[4] });
     } else if (riga.startsWith('## ')) {
       chiudiPar(); blocchi.push({ k: 'h', t: riga.slice(3) });
+    } else if (riga.startsWith('### ')) {
+      chiudiPar(); blocchi.push({ k: 'h4', t: riga.slice(4) });
     } else if (riga.startsWith('> ')) {
       chiudiPar();
       const prima = blocchi.at(-1);
@@ -62,6 +64,7 @@ export function testoHtml(testo) {
   return blocchi.map(b =>
     b.k === 'p' ? `<p>${inline(b.t)}</p>`
     : b.k === 'h' ? `<h3>${inline(b.t)}</h3>`
+    : b.k === 'h4' ? `<h4>${inline(b.t)}</h4>`
     : b.k === 'q' ? `<blockquote>${inline(b.t)}</blockquote>`
     : lista(b.l)).join('');
 }

@@ -76,6 +76,7 @@ html[data-theme="dark"] { --tn1:#7FCDE6; --tn2:#F2A9BC; --tn3:#9CC79F; --tn4:#E6
 .st-body ul { padding-left: 1.1em; display: flex; flex-direction: column; gap: var(--space-2); }
 .st-body li::marker { color: var(--t); }
 .st-body h3 { font: 500 var(--fs-lg) var(--font-serif); margin: var(--space-2) 0 0; }
+.st-body h4 { font-size: var(--fs-md); font-weight: 600; margin: var(--space-1) 0 0; }
 .st-body b, .st-card b, .st-idea b { font-weight: 600; }
 .st-notes { margin: 0; padding: var(--space-2) 0 var(--space-2) var(--space-4); border-left: 2px solid var(--sakura); }
 .st-notes p { font: italic var(--fs-md)/1.6 var(--font-serif); margin: var(--space-2) 0 0; }
