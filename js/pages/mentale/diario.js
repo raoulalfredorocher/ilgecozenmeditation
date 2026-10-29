@@ -397,9 +397,27 @@ export function openDiaryMenu() {
   });
 }
 
+// ─── Cos'è il journaling ────────────────────────────────────────────────────
+// Gli appunti di Raoul: la domanda resta sempre visibile, il resto si apre a richiesta.
+const GUIDA = `
+  <details class="j-guide">
+    <summary>
+      <span class="j-guide-k">Cos'è il journaling</span>
+      <span class="j-guide-q">Chi sono quando lascio andare i pensieri limitanti, le paure e le angosce?</span>
+      <span class="j-guide-more">Leggi</span>
+    </summary>
+    <div class="j-guide-body">
+      <p>Il journaling è quella tecnica che ci permette di mettere ordine nella nostra testa scrivendo i pensieri nero su bianco. Il journaling permette di sfogarci e di prendere consapevolezza di cosa abbiamo nella mente inconscia.</p>
+      <p>Non aver paura di scrivere ciò che provi, anche se sembra assurdo. Segui il flow: quello che ti viene in testa, scrivilo. Non seguire la grammatica: serve a essere onesti con noi stessi, ad accettarci e a lasciare andare le emozioni.</p>
+      <p>Se non abbiamo ispirazione, andiamo in natura e vedrai che l’ispirazione arriverà.</p>
+      <p>Non scrivere per forza cose positive: essere tristi, paurosi o arrabbiati va benissimo. La sofferenza e le emozioni negative sono inevitabili, ma sono anche il terreno indispensabile su cui costruire forza e determinazione per perseguire la serenità.</p>
+    </div>
+  </details>`;
+
 // ─── Avvio ──────────────────────────────────────────────────────────────────
 export function initDiario() {
   $('view-diario').innerHTML = `
+    ${GUIDA}
     <div id="j-top"></div>
     <div id="j-list"></div>`;
   render();
