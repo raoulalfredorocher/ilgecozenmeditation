@@ -1,0 +1,31 @@
+# Le anteprime delle PR occupano spazio di Hosting (con gli MP3 degli audiolibri) finché non scadono.
+# Quando una pubblicazione fallisce con errore 429 (spazio esaurito), questo workflow cancella
+# tutti i canali di anteprima: il sito pubblico ("live") non viene toccato.
+# Si lancia a mano da Actions → "Pulisci anteprime Hosting" → Run workflow.
+name: Pulisci anteprime Hosting
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pulisci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Cancella le anteprime
+        run: |
+          TOKEN=$(gcloud auth print-access-token)
+          BASE="https://firebasehosting.googleapis.com/v1beta1/sites/ilgecozen-b2df7/channels"
+          for ch in $(curl -sS --fail-with-body "$BASE?pageSize=100" -H "Authorization: Bearer $TOKEN" | jq -r '.channels[]?.name' | grep -v '/channels/live$'); do
+            echo "cancello ${ch##*/}"
+            curl -sS --fail-with-body -X DELETE "https://firebasehosting.googleapis.com/v1beta1/$ch" -H "Authorization: Bearer $TOKEN" > /dev/null
+          done
+          echo "canali rimasti:"
+          curl -sS "$BASE" -H "Authorization: Bearer $TOKEN" | jq -r '.channels[]?.name'
