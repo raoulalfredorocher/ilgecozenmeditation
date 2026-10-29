@@ -1,0 +1,48 @@
+# Libera spazio su Firebase Hosting: cancella le versioni vecchie del sito, tenendo le ultime N
+# (quella pubblicata è sempre tra queste). Stampa lo spazio occupato prima e dopo.
+# Si lancia a mano da Actions → "Pulisci versioni Hosting" → Run workflow.
+name: Pulisci versioni Hosting
+
+on:
+  workflow_dispatch:
+    inputs:
+      tieni:
+        description: 'Quante versioni recenti tenere'
+        default: '3'
+
+permissions:
+  contents: read
+
+jobs:
+  pulisci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Cancella le versioni vecchie
+        env:
+          N: ${{ inputs.tieni }}
+        run: |
+          TOKEN=$(gcloud auth print-access-token)
+          API=https://firebasehosting.googleapis.com/v1beta1
+          SITE=sites/ilgecozen-b2df7
+          : > v.jsonl; PAGE=""
+          while :; do
+            R=$(curl -sS --fail-with-body "$API/$SITE/versions?pageSize=100${PAGE:+&pageToken=$PAGE}" -H "Authorization: Bearer $TOKEN")
+            echo "$R" | jq -c '.versions[]?' >> v.jsonl
+            PAGE=$(echo "$R" | jq -r '.nextPageToken // empty'); [ -z "$PAGE" ] && break
+          done
+          LIVE=$(curl -sS "$API/$SITE/channels/live" -H "Authorization: Bearer $TOKEN" | jq -r '.release.version.name')
+          echo "versioni: $(wc -l < v.jsonl) · spazio: $(jq -s 'map(.versionBytes|tonumber? // 0)|add/1048576|floor' v.jsonl) MB · pubblicata: ${LIVE##*/}"
+          jq -r '[.name,.status,.createTime,(.versionBytes // "0")]|@tsv' v.jsonl | sort -k3 -r > lista.tsv
+          i=0
+          while IFS=$'\t' read -r name status created bytes; do
+            [ "$status" = "DELETED" ] && continue
+            i=$((i+1))
+            if [ "$name" = "$LIVE" ] || [ $i -le "$N" ]; then echo "tengo   ${name##*/} $((bytes/1048576)) MB $created"; continue; fi
+            echo "cancello ${name##*/} $((bytes/1048576)) MB $created"
+            curl -sS -X DELETE "$API/$name" -H "Authorization: Bearer $TOKEN" > /dev/null || echo "  (non cancellata)"
+          done < lista.tsv
