@@ -7,13 +7,14 @@
  * Il + della barra in basso aggiunge ciò che serve al livello in cui sei.
  * Gli esercizi si scelgono dal catalogo (Esercizi): nome, gruppo, tipo e programma consigliato arrivano da lì,
  * i kg dall'ultima volta che l'hai fatto; nella scheda resta l'id del catalogo (`cat`).
+ * Superserie (o circuito): più esercizi di seguito con lo stesso `ss`, si fanno a giri; nell'elenco sono una riga sola.
  */
 import { escapeHtml as esc } from '../../core/dom.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import {
   state, onChange, planById, GROUPS, DEFAULT_WARMUP, DEFAULT_STRETCH, num, exType, exSummary, fmtDur,
-  createPlan, updatePlan, deletePlan, duplicatePlan, reorderPlans, saveSchede, lastTimeFor,
+  createPlan, updatePlan, deletePlan, duplicatePlan, reorderPlans, saveSchede, lastTimeFor, blocks, newSsId,
 } from './state.js';
 import { esercizioOf, imgUrl } from './catalogo.js';
 import { pickEsercizio } from './esercizi.js';
@@ -45,11 +46,21 @@ function render() {
   if (p && sc) {
     root.innerHTML = `${top(sc.nome, p.nome)}
       ${sc.esercizi.length ? `<button type="button" class="btn accent block" data-start>Avvia questa scheda</button>` : ''}
-      ${sc.esercizi.length ? `<div class="list" data-sort-list="esercizi">${sc.esercizi.map((ex, i) => `
-        <div class="list-row al-row" data-row data-id="${i}">${GRIP}
-          <button type="button" class="al-main grow" data-ex="${i}"><span class="al-name">${esc(ex.nome)}</span>
+      ${sc.esercizi.length ? `<div class="list" data-sort-list="esercizi">${blocks(sc.esercizi).map(({ from, to }) => {
+        if (from === to && !sc.esercizi[from].ss) {
+          const ex = sc.esercizi[from];
+          return `<div class="list-row al-row" data-row data-id="${from}">${GRIP}
+          <button type="button" class="al-main grow" data-ex="${from}"><span class="al-name">${esc(ex.nome)}</span>
             <span class="s">${esc(ex.gruppo || 'Altro')} · ${esc(exSummary(ex))}</span></button>
-        </div>`).join('')}</div>` : '<p class="empty-line">Questa scheda non ha ancora esercizi.</p>'}
+        </div>`;
+        }
+        const m = sc.esercizi.slice(from, to + 1), last = m[m.length - 1];
+        return `<div class="list-row al-row" data-row data-id="${from}-${to}">${GRIP}
+          <button type="button" class="al-main grow" data-ss="${from}"><span class="ss-eb">Superserie · ${m.length} esercizi</span>
+            <span class="ss-names">${m.map(x => `<span>${esc(x.nome)} <i>${esc(exType(x) === 't' ? fmtDur(num(x.tempo)) : `${num(x.rep)} rip.${num(x.kg) ? ` · ${x.kg} kg` : ''}`)}</i></span>`).join('')}</span>
+            <span class="s">${num(last.serie) || 1} giri${num(last.recupero) ? ` · rec. ${fmtDur(num(last.recupero))} dopo ogni giro` : ''}</span></button>
+        </div>`;
+      }).join('')}</div>` : '<p class="empty-line">Questa scheda non ha ancora esercizi.</p>'}
       ${addBtn('data-add-ex', 'Aggiungi esercizio')}`;
     return;
   }
@@ -90,7 +101,9 @@ root.addEventListener('click', e => {
   if (os) { view.sc = +os.dataset.openSc; scrollTo({ top: 0 }); return render(); }
   if (t.closest('[data-add-pl]')) return openPlanSheet(null);
   if (t.closest('[data-add-sc]')) return openSchedaSheet(null);
-  if (t.closest('[data-add-ex]')) return openExSheet(null);
+  if (t.closest('[data-add-ex]')) return addExMenu();
+  const ssb = t.closest('[data-ss]');
+  if (ssb) return openSsSheet(+ssb.dataset.ss);
   const ex = t.closest('[data-ex]');
   if (ex) return openExSheet(+ex.dataset.ex);
   if (t.closest('[data-start]')) { const p = planById(view.plan); return startSession(p._docId, view.sc); }
@@ -107,7 +120,12 @@ makeSortable(root, async (kind, ids) => {
   try {
     if (kind === 'plans') { await reorderPlans(ids); }
     else if (kind === 'schede') { p.schede = ids.map(i => p.schede[+i]); render(); await saveSchede(p._docId, p.schede); }
-    else if (kind === 'esercizi') { const s = p.schede[view.sc]; s.esercizi = ids.map(i => s.esercizi[+i]); render(); await saveSchede(p._docId, p.schede); }
+    else if (kind === 'esercizi') {
+      // una superserie si sposta tutta insieme: la sua riga ha "da-a"
+      const s = p.schede[view.sc];
+      s.esercizi = ids.flatMap(id => { const [a, b = a] = String(id).split('-').map(Number); return s.esercizi.slice(a, b + 1); });
+      render(); await saveSchede(p._docId, p.schede);
+    }
   } catch (err) { console.error('ordine', err); toast('Non sono riuscito a salvare l\'ordine'); }
   render();
 });
@@ -116,7 +134,14 @@ makeSortable(root, async (kind, ids) => {
 export function addAction() {
   if (view.plan == null) return openPlanSheet(null);
   if (view.sc == null) return openSchedaSheet(null);
-  return openExSheet(null);
+  return addExMenu();
+}
+/** "Aggiungi": esercizio singolo oppure superserie / circuito. */
+function addExMenu() {
+  openMenu('Aggiungi', [
+    ['Esercizio singolo', () => setTimeout(newEx, 220)],
+    ['Superserie o circuito (più esercizi di seguito)', () => setTimeout(newSs, 220)],
+  ]);
 }
 
 // ─── Menu a foglio (con conferma per ciò che elimina) ────────────────────
@@ -260,6 +285,7 @@ const exSheet = createSheet({ title: 'Esercizio', body: `
     <button type="button" class="btn accent block" id="ex-ok">Salva</button>
     <button type="button" class="btn block" id="ex-more">Salva e aggiungi un altro</button>
     <div class="grid-2" id="ex-edit-acts"><button type="button" class="btn block" id="ex-dup">Duplica</button><button type="button" class="btn block text-danger" id="ex-del">Elimina</button></div>
+    <button type="button" class="text-btn" id="ex-to-ss">Trasforma in superserie ›</button>
   </div>` });
 let exEdit = null, exGroup = 'Altro', exTipo = 'r', delArmed = false;
 let exCat = null, exPicked = false, exOld = null;  // voce del catalogo; scelta ora dal selettore; l'esercizio com'era (in modifica)
@@ -304,6 +330,7 @@ function newEx() {
   exSheet.$('#ex-desc').value = '';
   exSheet.$('#ex-more').hidden = false;
   exSheet.$('#ex-edit-acts').hidden = true;
+  exSheet.$('#ex-to-ss').hidden = true;
   chooseEx(true);
 }
 function openExSheet(i) {
@@ -326,6 +353,7 @@ function openExSheet(i) {
   exSheet.$('#ex-more').hidden = !!ex;
   exSheet.$('#ex-edit-acts').hidden = !ex;
   exSheet.$('#ex-del').textContent = 'Elimina';
+  exSheet.$('#ex-to-ss').hidden = !!ex.ss;
   drawEx();
   exSheet.open();
 }
@@ -348,6 +376,7 @@ const readEx = () => {
     kg: exTipo === 'r' ? exSheet.$('#ex-kg').value.trim() : '',
     tempo, recupero: num(exSheet.$('#ex-rec').value), desc: exSheet.$('#ex-desc').value.trim(),
     ...(exPicked ? { cat: exCat.id } : exOld?.cat ? { cat: exOld.cat } : {}),
+    ...(exOld?.ss ? { ss: exOld.ss } : {}),
   };
 };
 async function commitEx(mutate) {
@@ -382,6 +411,102 @@ exSheet.$('#ex-del').addEventListener('click', async e => {
   if (!delArmed) { delArmed = true; e.currentTarget.textContent = 'Tocca ancora'; return; }
   exSheet.close();
   await commitEx(list => list.splice(exEdit, 1));
+});
+exSheet.$('#ex-to-ss').addEventListener('click', async () => {
+  const i = exEdit;
+  exSheet.close();
+  await commitEx(list => { list[i] = { ...list[i], ss: newSsId() }; });
+  setTimeout(() => openSsSheet(i), 220);
+});
+
+// ─── Superserie / circuito ───────────────────────────────────────────────
+const ssSheet = createSheet({ title: 'Superserie', body: `
+  <div class="stack">
+    <p class="note" style="margin:0">Gli esercizi si fanno uno dopo l'altro senza pausa; il recupero arriva alla fine di ogni giro.</p>
+    <div class="list" id="ss-list"></div>
+    <button type="button" class="de-addfood" id="ss-add"><span aria-hidden="true">＋</span> Aggiungi un esercizio alla superserie</button>
+    <div class="grid-2">
+      <div class="field"><label class="field-lbl" for="ss-giri">Giri</label><input class="input" id="ss-giri" type="number" inputmode="numeric" min="1"/></div>
+      <div class="field"><label class="field-lbl" for="ss-rec">Recupero dopo il giro (s)</label><input class="input" id="ss-rec" type="number" inputmode="numeric" min="0" step="5"/></div>
+    </div>
+    <button type="button" class="btn accent block" id="ss-ok">Salva</button>
+    <div class="grid-2"><button type="button" class="btn block" id="ss-split">Sciogli in esercizi singoli</button><button type="button" class="btn block text-danger" id="ss-del">Elimina superserie</button></div>
+  </div>` });
+let ssAt = null, ssDelArmed = false;        // indice del primo esercizio della superserie aperta
+/** La superserie che contiene l'esercizio `i`: { from, to } (o null). */
+const ssRange = i => blocks(planById(view.plan)?.schede[view.sc]?.esercizi).find(b => b.from <= i && i <= b.to) || null;
+
+function drawSs() {
+  const list = planById(view.plan).schede[view.sc].esercizi, r = ssRange(ssAt);
+  ssSheet.$('#ss-list').innerHTML = list.slice(r.from, r.to + 1).map((x, k) => {
+    const c = esercizioOf(x);
+    return `<button type="button" class="list-row ex-row" data-ss-ex="${r.from + k}"><span class="ex-th">${c?.img ? `<img src="${esc(imgUrl(c))}" alt="" loading="lazy" onerror="this.remove()"/>` : ''}</span>
+      <span class="grow ex-txt"><span class="ex-nm">${k + 1}. ${esc(x.nome)}</span><span class="s">${esc(exSummary({ ...x, recupero: 0 }))}</span></span><span aria-hidden="true">›</span></button>`;
+  }).join('');
+}
+function openSsSheet(i) {
+  const r = ssRange(i);
+  if (!r) return;
+  ssAt = r.from; ssDelArmed = false;
+  const list = planById(view.plan).schede[view.sc].esercizi, last = list[r.to];
+  ssSheet.setTitle(r.to - r.from >= 2 ? 'Circuito' : 'Superserie');
+  ssSheet.$('#ss-giri').value = num(last.serie) || 3;
+  ssSheet.$('#ss-rec').value = num(last.recupero);
+  ssSheet.$('#ss-del').textContent = 'Elimina superserie';
+  drawSs();
+  ssSheet.open();
+}
+/** Giri uguali per tutti; recupero solo sull'ultimo (gli altri si fanno di seguito). */
+function normalizeSs(list, from, to, giri, rec) {
+  for (let k = from; k <= to; k++) list[k] = { ...list[k], serie: giri, recupero: k === to ? rec : 0 };
+}
+const ssValues = () => ({ giri: num(ssSheet.$('#ss-giri').value) || 1, rec: num(ssSheet.$('#ss-rec').value) });
+/** Esercizio nuovo con i valori consigliati del catalogo e i kg dell'ultima volta. */
+function fromCatalog(e, extra) {
+  const [serie, n, rec] = e.prog, last = e.tipo === 'r' ? lastTimeFor(e.nome) : null;
+  return { nome: e.nome, gruppo: e.gruppo, tipo: e.tipo, serie, rep: e.tipo === 'r' ? n : 0, kg: last?.sets[0]?.[1] ? String(last.sets[0][1]) : '',
+    tempo: e.tipo === 't' ? n : 0, recupero: rec, desc: '', cat: e.id, ...extra };
+}
+/** Nuova superserie: si sceglie il primo esercizio, poi si aggiungono gli altri dal foglio. */
+function newSs() {
+  if (!planById(view.plan)?.schede[view.sc]) return;
+  pickEsercizio(async e => {
+    const at = planById(view.plan).schede[view.sc].esercizi.length;
+    await commitEx(list => list.push(fromCatalog(e, { ss: newSsId() })));
+    setTimeout(() => openSsSheet(at), 220);
+  });
+}
+ssSheet.$('#ss-add').addEventListener('click', () => {
+  const { giri, rec } = ssValues();
+  ssSheet.close();
+  setTimeout(() => pickEsercizio(async e => {
+    const r = ssRange(ssAt), list0 = planById(view.plan).schede[view.sc].esercizi;
+    await commitEx(list => { list.splice(r.to + 1, 0, fromCatalog(e, { ss: list0[r.from].ss })); normalizeSs(list, r.from, r.to + 1, giri, rec); });
+    setTimeout(() => openSsSheet(ssAt), 220);
+  }), 220);
+});
+ssSheet.$('#ss-list').addEventListener('click', e => {
+  const b = e.target.closest('[data-ss-ex]');
+  if (!b) return;
+  ssSheet.close();
+  setTimeout(() => openExSheet(+b.dataset.ssEx), 220);
+});
+ssSheet.$('#ss-ok').addEventListener('click', async () => {
+  const { giri, rec } = ssValues(), r = ssRange(ssAt);
+  ssSheet.close();
+  await commitEx(list => normalizeSs(list, r.from, r.to, giri, rec));
+});
+ssSheet.$('#ss-split').addEventListener('click', async () => {
+  const r = ssRange(ssAt);
+  ssSheet.close();
+  await commitEx(list => { for (let k = r.from; k <= r.to; k++) { const { ss, ...rest } = list[k]; list[k] = rest; } });
+  toast('Ora sono esercizi singoli');
+});
+ssSheet.$('#ss-del').addEventListener('click', async e => {
+  if (!ssDelArmed) { ssDelArmed = true; e.currentTarget.textContent = 'Tocca ancora'; return; }
+  const r = ssRange(ssAt);
+  ssSheet.close();
+  await commitEx(list => list.splice(r.from, r.to - r.from + 1));
 });
 
 onChange(what => { if (what === 'plans') render(); });

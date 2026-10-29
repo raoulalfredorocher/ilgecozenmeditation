@@ -60,7 +60,7 @@ export function startSession(planId, schedaIdx) {
   S = {
     planId, planName: p.nome, schedaName: sc.nome, startedAt: null, updated: Date.now(), stage: 'watch-start',
     rwMin: num(p.riscaldamento ?? DEFAULT_WARMUP), stMin: num(p.stretching ?? DEFAULT_STRETCH),
-    exs: sc.esercizi.map(e => ({ n: e.nome, g: e.gruppo || 'Altro', t: exType(e), d: e.desc || '', s: [], c: e.cat || '',
+    exs: sc.esercizi.map(e => ({ n: e.nome, g: e.gruppo || 'Altro', t: exType(e), d: e.desc || '', s: [], c: e.cat || '', ss: e.ss || '',
       p: [num(e.serie) || 1, num(e.rep), num(e.kg), num(e.tempo), num(e.recupero)] })),
     ei: 0, rw: 0, st: 0, acqua: 0, lastWater: 0,
     reps: 0, kg: 0, shownAt: 0, running: false, runEnd: 0, phaseStart: 0, phaseEnd: 0, total: 0, lastRef: null,
@@ -165,13 +165,16 @@ function render() {
   } else if (S.stage === 'ex') {
     const idx = e.s.length, n = e.p[0], next = S.exs[S.ei + 1];
     const last = lastTimeFor(e.n);
-    const head = `<div class="wk-eyebrow">Esercizio ${S.ei + 1} di ${S.exs.length} · ${esc(e.g)}</div><h2 class="wk-h">${esc(e.n)}</h2>
+    const g = ssOf(S.ei);
+    const head = `<div class="wk-eyebrow">${g ? `Superserie · ${S.ei - g.from + 1} di ${g.to - g.from + 1}` : `Esercizio ${S.ei + 1} di ${S.exs.length}`} · ${esc(e.g)}</div><h2 class="wk-h">${esc(e.n)}</h2>
       ${esercizioOf({ cat: e.c, n: e.n }) ? '<button type="button" class="text-btn wk-how" data-act="how">Come si fa ›</button>' : ''}
-      <div class="wk-setline">Serie ${idx + 1} di ${n}</div>`;
+      <div class="wk-setline">${g ? 'Giro' : 'Serie'} ${idx + 1} di ${n}</div>
+      ${g ? `<div class="wk-ss">${S.exs.slice(g.from, g.to + 1).map((x, k) => (g.from + k === S.ei ? `<b>${esc(x.n)}</b>` : esc(x.n))).join(' → ')}</div>` : ''}`;
     const links = `<div class="wk-links"><button type="button" class="text-btn" data-act="skip-set">Salta serie</button>
       <button type="button" class="text-btn" data-act="skip-ex">Salta esercizio</button>
       ${(e.s.length || S.ei > 0) ? '<button type="button" class="text-btn" data-act="undo">Annulla ultima</button>' : ''}</div>`;
-    const foot = `${next ? `<div class="wk-next">Poi: ${esc(next.n)}</div>` : ''}`;
+    const ssNext = g && (S.ei < g.to ? esc(S.exs[S.ei + 1].n) : idx + 1 < n ? `recupero e giro ${idx + 2}` : '');
+    const foot = ssNext ? `<div class="wk-next">Poi: ${ssNext}</div>` : `${next && !(g && S.ei < g.to) ? `<div class="wk-next">Poi: ${esc(next.n)}</div>` : ''}`;
     const target = e.t === 't' ? fmtClock(e.p[3]) : `${e.p[1]} ripetizioni${e.p[2] ? ` · ${fmtKg(e.p[2])} kg` : ''}`;
     body.innerHTML = `<div class="wk-center">${head}<div class="wk-target">${target}</div>${ringHtml(S.running ? '' : 'pronto')}
       ${last && e.t !== 't' ? `<div class="s wk-last">Ultima volta (${new Date(last.data + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}): ${last.sets.map(x => `${x[0]}×${fmtKg(num(x[1]))}`).join(' · ')}</div>` : ''}
@@ -258,8 +261,36 @@ function toFirstExercise() { S.ei = 0; prepSet(); go('ex'); }
 function toStretch() {
   if (S.stMin > 0) countdown('stretch', S.stMin * 60); else go('watch-stop');
 }
+/** La superserie dell'esercizio `i` (esercizi consecutivi con lo stesso `ss`): { from, to }, oppure null se è singolo. */
+function ssOf(i) {
+  const ss = S.exs[i]?.ss;
+  if (!ss) return null;
+  let from = i, to = i;
+  while (from > 0 && S.exs[from - 1].ss === ss) from--;
+  while (to < S.exs.length - 1 && S.exs[to + 1].ss === ss) to++;
+  return to > from ? { from, to } : null;
+}
+/**
+ * Superserie: dopo la serie di un esercizio si passa subito al successivo dello stesso giro; a fine giro il recupero
+ * (quello dell'ultimo esercizio) e poi si riparte dal primo che ha ancora serie da fare; finiti i giri, l'esercizio dopo.
+ */
+function afterSsSet(g, rest) {
+  const round = cur().s.length, left = k => S.exs[k].s.length < S.exs[k].p[0];
+  for (let k = S.ei + 1; k <= g.to; k++) if (left(k) && S.exs[k].s.length < round) { S.ei = k; prepSet(); return go('ex'); }
+  const rec = rest ? S.exs[g.to].p[4] : 0;
+  let next = -1;
+  for (let k = g.from; k <= g.to; k++) if (left(k)) { next = k; break; }
+  if (next < 0) {
+    if (g.to >= S.exs.length - 1) return toStretch();
+    next = g.to + 1;
+  }
+  S.ei = next; prepSet();
+  if (rec > 0) countdown('rest', rec, { restNewEx: true }); else go('ex');
+}
 /** Dopo una serie (fatta o saltata): recupero, poi la serie o l'esercizio successivo. */
 function afterSet(rest) {
+  const g = ssOf(S.ei);
+  if (g) return afterSsSet(g, rest);
   const e = cur(), exDone = e.s.length >= e.p[0], lastEx = S.ei >= S.exs.length - 1;
   if (exDone && lastEx) return toStretch();
   const rec = rest ? e.p[4] : 0;
@@ -274,16 +305,25 @@ function endRest() {
 function recordSet(flag) {
   const e = cur(), exec = S.running ? Math.round((Date.now() - S.shownAt) / 1000) : 0;
   e.s.push(flag ? [0, 0, exec, 0, flag] : [S.reps, S.kg, exec, 0, 0]);
+  (S.hist ||= []).push(S.ei);
   S.lastRef = [S.ei, e.s.length - 1];
   afterSet(!flag);
 }
 function recordTimed() {
   const e = cur(), exec = Math.min(e.p[3], Math.round((Date.now() - S.shownAt) / 1000));
   e.s.push([0, 0, exec, 0, 0]);
+  (S.hist ||= []).push(S.ei);
   S.lastRef = [S.ei, e.s.length - 1];
   afterSet(true);
 }
 function undo() {
+  // in una superserie l'ultima serie può essere di un altro esercizio: si torna a quello (S.hist)
+  while (S.hist?.length) {
+    const i = S.hist.pop();
+    if (!S.exs[i]?.s.length) continue;
+    S.ei = i; S.exs[i].s.pop();
+    prepSet(); return go('ex');
+  }
   let e = cur();
   if (!e.s.length) { if (S.ei === 0) return; S.ei--; e = cur(); }
   e.s.pop();
@@ -308,7 +348,7 @@ async function onClick(ev) {
   if (a === 'set-start') { const now = Date.now(); beep(1); return go('ex', { running: true, shownAt: now, runEnd: cur().t === 't' ? now + cur().p[3] * 1000 : 0 }); }
   if (a === 'set-stop') return cur().t === 't' ? recordTimed() : recordSet(0);
   if (a === 'skip-set') return recordSet(1);
-  if (a === 'skip-ex') { const e = cur(); while (e.s.length < e.p[0]) e.s.push([0, 0, 0, 0, 2]); S.lastRef = null; return afterSet(false); }
+  if (a === 'skip-ex') { const e = cur(); while (e.s.length < e.p[0]) { e.s.push([0, 0, 0, 0, 2]); (S.hist ||= []).push(S.ei); } S.lastRef = null; return afterSet(false); }
   if (a === 'undo') return undo();
   if (a === 'rest-plus') { S.phaseEnd += 15000; S.total += 15; save(); return tick(); }
   if (a === 'rest-minus') { S.phaseEnd = Math.max(Date.now() + 1000, S.phaseEnd - 15000); S.total = Math.max(1, S.total - 15); save(); return tick(); }

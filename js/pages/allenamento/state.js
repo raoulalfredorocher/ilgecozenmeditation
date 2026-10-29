@@ -6,6 +6,8 @@
  *     scheda:    { nome, esercizi: [esercizio] }
  *     esercizio: { nome, gruppo, tipo?: 'r'|'t', serie, rep, kg, tempo (secondi), recupero (secondi), desc, cat? }
  *                cat = id della voce in assets/data/esercizi.json (catalogo.js), se scelto dal catalogo.
+ *                ss = superserie: gli esercizi uno dopo l'altro con lo stesso `ss` si fanno a giro, senza recupero
+ *                tra l'uno e l'altro; il recupero è quello dell'ultimo, dopo ogni giro (vedi blocks).
  *                tipo 'r' = a ripetizioni, 't' = a tempo. Senza `tipo` (dati vecchi): a tempo se tempo > 0.
  *   allenamenti_registro/{id} { data 'AAAA-MM-GG', allenamentoId, allenamentoNome, schedaNome, durata (min),
  *                               feedback 'pos'|'neu'|'neg'|null, note, photos?, ... }
@@ -57,6 +59,21 @@ export function exSummary(ex) {
   const main = t === 't' ? `${num(ex.serie) || 1} × ${fmtDur(num(ex.tempo))}` : `${num(ex.serie) || 1} × ${num(ex.rep) || 1}${num(ex.kg) ? ` · ${fmtKg(num(ex.kg))} kg` : ''}`;
   return `${main}${num(ex.recupero) ? ` · rec. ${fmtDur(num(ex.recupero))}` : ''}`;
 }
+
+/**
+ * Blocchi di una scheda: un esercizio singolo oppure una superserie (esercizi consecutivi con lo stesso `ss`).
+ * Restituisce [{ from, to }] con gli indici del primo e dell'ultimo esercizio del blocco.
+ */
+export function blocks(esercizi) {
+  const out = [];
+  (esercizi || []).forEach((e, i) => {
+    const last = out[out.length - 1];
+    if (last && e.ss && esercizi[last.to].ss === e.ss) last.to = i; else out.push({ from: i, to: i });
+  });
+  return out;
+}
+/** Id nuovo per una superserie. */
+export const newSsId = () => 'ss' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 
 // ─── Piani ───────────────────────────────────────────────────────────────
 const normPlan = p => ({ ...p, schede: (p.schede || []).map(s => ({ ...s, esercizi: s.esercizi || [] })) });
