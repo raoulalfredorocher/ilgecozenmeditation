@@ -5,14 +5,18 @@
  * e ogni scheda ha i suoi esercizi con serie, ripetizioni o tempo, carico e recupero.
  * Tutto si modifica, si duplica, si elimina e si sposta trascinando la maniglia.
  * Il + della barra in basso aggiunge ciò che serve al livello in cui sei.
+ * Gli esercizi si scelgono dal catalogo (Esercizi): nome, gruppo, tipo e programma consigliato arrivano da lì,
+ * i kg dall'ultima volta che l'hai fatto; nella scheda resta l'id del catalogo (`cat`).
  */
 import { escapeHtml as esc } from '../../core/dom.js';
 import { icon } from '../../ui/icons.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import {
   state, onChange, planById, GROUPS, DEFAULT_WARMUP, DEFAULT_STRETCH, num, exType, exSummary, fmtDur,
-  createPlan, updatePlan, deletePlan, duplicatePlan, reorderPlans, saveSchede,
+  createPlan, updatePlan, deletePlan, duplicatePlan, reorderPlans, saveSchede, lastTimeFor,
 } from './state.js';
+import { esercizioOf, imgUrl } from './catalogo.js';
+import { pickEsercizio } from './esercizi.js';
 import { makeSortable, isDragging, GRIP } from './sortable.js';
 import { startSession } from './guida.js';
 
@@ -239,8 +243,8 @@ schedaSheet.$('#sc-ok').addEventListener('click', async () => {
 // ─── Esercizio: nuovo / modifica ─────────────────────────────────────────
 const exSheet = createSheet({ title: 'Esercizio', body: `
   <div class="stack">
-    <div class="field"><label class="field-lbl" for="ex-nome">Nome</label><input class="input" id="ex-nome" list="ex-names" autocomplete="off" placeholder="es. Panca piana"/><datalist id="ex-names"></datalist></div>
-    <div><div class="field-lbl">Gruppo muscolare</div><div class="chips-wrap" id="ex-groups"></div></div>
+    <div class="field"><div class="field-lbl">Esercizio</div><button type="button" class="ex-pick-btn" id="ex-pick"></button></div>
+    <div id="ex-groups-wrap"><div class="field-lbl">Gruppo muscolare</div><div class="chips-wrap" id="ex-groups"></div></div>
     <div class="segmented" role="group" aria-label="Tipo"><button type="button" data-tipo="r">A ripetizioni</button><button type="button" data-tipo="t">A tempo</button></div>
     <div class="grid-2">
       <div class="field"><label class="field-lbl" for="ex-serie">Serie</label><input class="input" id="ex-serie" type="number" inputmode="numeric" min="1"/></div>
@@ -258,21 +262,60 @@ const exSheet = createSheet({ title: 'Esercizio', body: `
     <div class="grid-2" id="ex-edit-acts"><button type="button" class="btn block" id="ex-dup">Duplica</button><button type="button" class="btn block text-danger" id="ex-del">Elimina</button></div>
   </div>` });
 let exEdit = null, exGroup = 'Altro', exTipo = 'r', delArmed = false;
+let exCat = null, exPicked = false, exOld = null;  // voce del catalogo; scelta ora dal selettore; l'esercizio com'era (in modifica)
 
 function drawEx() {
   exSheet.$$('[data-tipo]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tipo === exTipo)));
   exSheet.$$('[data-for]').forEach(f => { f.hidden = f.dataset.for !== exTipo; });
+  // il gruppo arriva dal catalogo; si sceglie a mano solo per un esercizio vecchio che non c'è
+  exSheet.$('#ex-groups-wrap').hidden = !!exCat;
   exSheet.$('#ex-groups').innerHTML = GROUPS.map(g => `<button type="button" class="pill" data-g="${g}" aria-pressed="${g === exGroup}">${g}</button>`).join('');
+  const name = exCat && (exPicked || !exOld) ? exCat.nome : exOld?.nome;
+  exSheet.$('#ex-pick').innerHTML = name
+    ? `<span class="ex-th">${exCat?.img ? `<img src="${esc(imgUrl(exCat))}" alt="" loading="lazy" onerror="this.remove()"/>` : ''}</span>
+       <span class="grow"><span class="ex-nm">${esc(name)}</span><span class="s${exCat ? '' : ' warn'}">${exCat ? `${esc(exCat.gruppo)} · ${esc(exCat.attrezzo)}` : 'Non è nel catalogo: tocca per sceglierlo dalla lista'}</span></span><span aria-hidden="true">›</span>`
+    : '<span class="grow"><span class="ex-nm">Scegli dalla lista</span><span class="s">Cerca tra gli esercizi del catalogo</span></span><span aria-hidden="true">›</span>';
+}
+/** Valori consigliati dal catalogo (serie, ripetizioni o tempo, recupero) e i kg dell'ultima volta. */
+function prefill(e) {
+  exTipo = e.tipo;
+  exGroup = e.gruppo;
+  const [serie, n, rec] = e.prog;
+  exSheet.$('#ex-serie').value = serie;
+  if (e.tipo === 't') { exSheet.$('#ex-min').value = Math.floor(n / 60); exSheet.$('#ex-sec').value = n % 60; } else exSheet.$('#ex-rep').value = n;
+  exSheet.$('#ex-rec').value = rec;
+  const last = e.tipo === 'r' ? lastTimeFor(e.nome) : null;
+  exSheet.$('#ex-kg').value = last?.sets[0]?.[1] || '';
+}
+/** Sceglie (o cambia) l'esercizio dal catalogo: il foglio si chiude, si apre il selettore e poi si riapre. */
+function chooseEx(reopen) {
+  pickEsercizio(e => {
+    exCat = e; exPicked = true;
+    if (!exOld) prefill(e); else { exTipo = e.tipo; exGroup = e.gruppo; }
+    drawEx();
+    if (reopen) setTimeout(() => exSheet.open(), 220);
+  });
+}
+/** Nuovo esercizio: prima si sceglie dal catalogo, poi si apre il foglio già compilato. */
+function newEx() {
+  if (!planById(view.plan)?.schede[view.sc]) return;
+  exEdit = null; exOld = null; exCat = null; exPicked = false; delArmed = false;
+  exSheet.setTitle('Nuovo esercizio');
+  exSheet.$('#ex-desc').value = '';
+  exSheet.$('#ex-more').hidden = false;
+  exSheet.$('#ex-edit-acts').hidden = true;
+  chooseEx(true);
 }
 function openExSheet(i) {
+  if (i == null) return newEx();
   exEdit = i; delArmed = false;
   const sc = planById(view.plan).schede[view.sc];
-  const ex = i != null ? sc.esercizi[i] : null;
+  const ex = sc.esercizi[i];
+  exOld = ex; exCat = esercizioOf(ex); exPicked = false;
   exSheet.setTitle(ex ? 'Modifica esercizio' : 'Nuovo esercizio');
   exTipo = ex ? exType(ex) : 'r';
   exGroup = ex?.gruppo || 'Altro';
   const t = num(ex?.tempo);
-  exSheet.$('#ex-nome').value = ex?.nome || '';
   exSheet.$('#ex-serie').value = ex ? num(ex.serie) || 3 : 3;
   exSheet.$('#ex-rep').value = ex ? num(ex.rep) || 10 : 10;
   exSheet.$('#ex-kg').value = ex?.kg ?? '';
@@ -283,20 +326,20 @@ function openExSheet(i) {
   exSheet.$('#ex-more').hidden = !!ex;
   exSheet.$('#ex-edit-acts').hidden = !ex;
   exSheet.$('#ex-del').textContent = 'Elimina';
-  exSheet.$('#ex-names').innerHTML = [...new Set(state.plans.flatMap(p => p.schede.flatMap(s => s.esercizi.map(e => e.nome))))].map(n => `<option value="${esc(n)}">`).join('');
   drawEx();
   exSheet.open();
-  if (!ex) setTimeout(() => exSheet.$('#ex-nome').focus(), 300);
 }
 exSheet.el.addEventListener('click', e => {
+  if (e.target.closest('#ex-pick')) { exSheet.close(); return setTimeout(() => chooseEx(true), 220); }
   const g = e.target.closest('[data-g]');
   if (g) { exGroup = g.dataset.g; return drawEx(); }
   const t = e.target.closest('[data-tipo]');
   if (t) { exTipo = t.dataset.tipo; drawEx(); }
 });
 const readEx = () => {
-  const nome = exSheet.$('#ex-nome').value.trim();
-  if (!nome) { toast('Scrivi il nome dell’esercizio'); exSheet.$('#ex-nome').focus(); return null; }
+  // in modifica il nome resta quello di prima, finché non scegli un altro esercizio dal catalogo
+  const nome = exCat && (exPicked || !exOld) ? exCat.nome : exOld?.nome;
+  if (!nome) { toast('Scegli l’esercizio dalla lista'); return null; }
   const tempo = exTipo === 't' ? num(exSheet.$('#ex-min').value) * 60 + num(exSheet.$('#ex-sec').value) : 0;
   if (exTipo === 't' && !tempo) { toast('Indica la durata dell’esercizio a tempo'); exSheet.$('#ex-min').focus(); return null; }
   return {
@@ -304,6 +347,7 @@ const readEx = () => {
     rep: exTipo === 'r' ? num(exSheet.$('#ex-rep').value) || 10 : 0,
     kg: exTipo === 'r' ? exSheet.$('#ex-kg').value.trim() : '',
     tempo, recupero: num(exSheet.$('#ex-rec').value), desc: exSheet.$('#ex-desc').value.trim(),
+    ...(exPicked ? { cat: exCat.id } : exOld?.cat ? { cat: exOld.cat } : {}),
   };
 };
 async function commitEx(mutate) {
@@ -326,8 +370,8 @@ exSheet.$('#ex-more').addEventListener('click', async () => {
   if (!data) return;
   if (!(await commitEx(list => list.push(data)))) return;
   toast(`Aggiunto: ${data.nome}`);
-  exSheet.$('#ex-nome').value = '';
-  exSheet.$('#ex-nome').focus();
+  exSheet.close();
+  setTimeout(newEx, 220);
 });
 exSheet.$('#ex-dup').addEventListener('click', async () => {
   exSheet.close();
