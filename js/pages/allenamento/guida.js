@@ -14,6 +14,8 @@
 import { escapeHtml as esc } from '../../core/dom.js';
 import { createSheet, toast } from '../../ui/dialog.js';
 import { state, planById, addSession, updateSession, num, exType, fmtClock, fmtKg, fmtDur, lastTimeFor, dateKey, DEFAULT_WARMUP, DEFAULT_STRETCH, FEEDBACK } from './state.js';
+import { esercizioOf } from './catalogo.js';
+import { openEsercizio } from './esercizi.js';
 
 const KEY = 'geco_wk', PENDING = 'geco_wk_pending', MAX_AGE = 8 * 3600e3, WATER_EVERY = 15 * 60e3;
 const RING = 2 * Math.PI * 88;
@@ -58,7 +60,7 @@ export function startSession(planId, schedaIdx) {
   S = {
     planId, planName: p.nome, schedaName: sc.nome, startedAt: null, updated: Date.now(), stage: 'watch-start',
     rwMin: num(p.riscaldamento ?? DEFAULT_WARMUP), stMin: num(p.stretching ?? DEFAULT_STRETCH),
-    exs: sc.esercizi.map(e => ({ n: e.nome, g: e.gruppo || 'Altro', t: exType(e), d: e.desc || '', s: [],
+    exs: sc.esercizi.map(e => ({ n: e.nome, g: e.gruppo || 'Altro', t: exType(e), d: e.desc || '', s: [], c: e.cat || '',
       p: [num(e.serie) || 1, num(e.rep), num(e.kg), num(e.tempo), num(e.recupero)] })),
     ei: 0, rw: 0, st: 0, acqua: 0, lastWater: 0,
     reps: 0, kg: 0, shownAt: 0, running: false, runEnd: 0, phaseStart: 0, phaseEnd: 0, total: 0, lastRef: null,
@@ -164,6 +166,7 @@ function render() {
     const idx = e.s.length, n = e.p[0], next = S.exs[S.ei + 1];
     const last = lastTimeFor(e.n);
     const head = `<div class="wk-eyebrow">Esercizio ${S.ei + 1} di ${S.exs.length} · ${esc(e.g)}</div><h2 class="wk-h">${esc(e.n)}</h2>
+      ${esercizioOf({ cat: e.c, n: e.n }) ? '<button type="button" class="text-btn wk-how" data-act="how">Come si fa ›</button>' : ''}
       <div class="wk-setline">Serie ${idx + 1} di ${n}</div>`;
     const links = `<div class="wk-links"><button type="button" class="text-btn" data-act="skip-set">Salta serie</button>
       <button type="button" class="text-btn" data-act="skip-ex">Salta esercizio</button>
@@ -295,6 +298,7 @@ async function onClick(ev) {
   if (!a) return;
   if (a === 'begin') { beep(1); S.startedAt = Date.now(); S.lastWater = S.startedAt; return S.rwMin > 0 ? countdown('warmup', S.rwMin * 60) : toFirstExercise(); }
   if (a === 'cancel') return close(), store.del(KEY);
+  if (a === 'how') return openEsercizio({ cat: cur().c, n: cur().n });
   if (a === 'plus-min') { S.phaseEnd += 60000; S.total += 60; S.alerted = false; save(); return tick(); }
   if (a === 'phase-done') {
     const secs = Math.round((Date.now() - S.phaseStart) / 1000);

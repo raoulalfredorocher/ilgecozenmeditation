@@ -4,7 +4,8 @@
  * Formati (compatibili con le versioni precedenti):
  *   allenamenti_piani/{id}   { nome, obiettivo, settimane, order?, riscaldamento?, stretching?, schede: [scheda] }
  *     scheda:    { nome, esercizi: [esercizio] }
- *     esercizio: { nome, gruppo, tipo?: 'r'|'t', serie, rep, kg, tempo (secondi), recupero (secondi), desc }
+ *     esercizio: { nome, gruppo, tipo?: 'r'|'t', serie, rep, kg, tempo (secondi), recupero (secondi), desc, cat? }
+ *                cat = id della voce in assets/data/esercizi.json (catalogo.js), se scelto dal catalogo.
  *                tipo 'r' = a ripetizioni, 't' = a tempo. Senza `tipo` (dati vecchi): a tempo se tempo > 0.
  *   allenamenti_registro/{id} { data 'AAAA-MM-GG', allenamentoId, allenamentoNome, schedaNome, durata (min),
  *                               feedback 'pos'|'neu'|'neg'|null, note, photos?, ... }
@@ -18,6 +19,7 @@
  */
 import { subscribeAllenamenti, subscribeRegistro, updateAllenamentoDoc, addAllenamentoDoc, deleteAllenamentoDoc, addRegistroDoc, updateRegistroDoc } from '../../core/db.js';
 import { dateKey, parseKey } from '../../core/attivita.js';
+import { esercizioOf } from './catalogo.js';
 
 /** Gruppi muscolari, feedback [valore, etichetta], mesi, iniziali dei giorni (0 = lunedì) e minuti predefiniti di riscaldamento/stretching. */
 export const GROUPS = ['Petto', 'Schiena', 'Spalle', 'Bicipiti', 'Tricipiti', 'Gambe', 'Glutei', 'Addome', 'Cardio', 'Altro'];
@@ -116,11 +118,16 @@ export async function addSession(doc) {
 }
 export const updateSession = (id, fields) => updateRegistroDoc(id, fields.es ? { ...fields, es: packEs(fields.es) } : fields);
 
-/** Ultima volta che hai fatto un esercizio: le sue serie, per avere il carico di riferimento. */
+/**
+ * Ultima volta che hai fatto un esercizio: le sue serie, per avere il carico di riferimento.
+ * Vale anche con un nome diverso, se nel catalogo è lo stesso esercizio ("Leg Extension" = "Leg extension").
+ */
 export function lastTimeFor(name) {
   const key = String(name).trim().toLowerCase();
+  const id = esercizioOf(name)?.id;
+  const same = n => String(n).trim().toLowerCase() === key || (id && esercizioOf(n)?.id === id);
   for (const r of state.log) {      // il registro arriva già dal più recente
-    const e = (r.es || []).find(x => String(x.n).trim().toLowerCase() === key && (x.s || []).some(s => !s[4]));
+    const e = (r.es || []).find(x => same(x.n) && (x.s || []).some(s => !s[4]));
     if (e) return { data: r.data, sets: e.s.filter(s => !s[4]) };
   }
   return null;

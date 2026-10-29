@@ -223,13 +223,56 @@
     .al-day { grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); }
     .al-day .bn b { font-size: 1.75rem; }
     .al-cal { display: block; text-align: center; font-size: var(--fs-sm); font-weight: 600; color: var(--geco-blue); text-decoration: none; padding: var(--space-5) 0 var(--space-6); }
+    /* Esercizi: catalogo e scheda dell'esercizio */
+    #tab-esercizi .ex-filtri { gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--space-5)); padding: 0 var(--space-5); }
+    .ex-filtri::-webkit-scrollbar { display: none; }
+    .ex-filtri .pill { height: 32px; padding: 0 12px; font-size: var(--fs-xs); flex-shrink: 0; }
+    .ex-list .ex-row { gap: var(--space-3); text-align: left; width: 100%; }
+    .ex-th { flex: 0 0 52px; width: 52px; height: 52px; border-radius: var(--radius-md); overflow: hidden; background: linear-gradient(135deg, color-mix(in srgb, var(--tn1) 18%, var(--card)), var(--surface)); }
+    .ex-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ex-txt { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+    .ex-nm { font: 500 var(--fs-md)/1.3 var(--font-serif); }
+    .ex-txt .s { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ex-tag { font-size: .625rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; white-space: nowrap; background: color-mix(in srgb, var(--tn3) 22%, var(--card)); color: color-mix(in srgb, var(--tn3) 70%, var(--text)); }
+    .ex-hero { position: relative; margin: 0; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4 / 3; background: #fff; }
+    .ex-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .ex-hero img.b { animation: ex-flip 2.4s steps(1) infinite; }
+    @keyframes ex-flip { 0% { opacity: 0; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .ex-hero img.b { animation: none; opacity: 0; } }
+    .ex-credit { font-size: .6875rem; color: var(--muted); margin-top: 4px; }
+    .ex-title { margin: var(--space-4) 0 2px; font: 600 1.75rem/1.2 var(--font-serif); letter-spacing: -.02em; }
+    .ex-sub { margin-bottom: var(--space-3); }
+    .ex-video { text-decoration: none; display: flex; align-items: center; justify-content: center; }
+    .ex-mus { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-3); }
+    .ex-mus:last-child { margin-bottom: 0; }
+    .ex-chip-p { background: color-mix(in srgb, var(--tn1) 18%, var(--card)); color: var(--text); font-weight: 600; }
+    .ex-steps, .ex-err { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); line-height: 1.55; }
+    .ex-ritmo { font: 500 var(--fs-lg)/1.45 var(--font-serif); }
+    .ex-cards { display: flex; flex-direction: column; gap: var(--space-2); }
+    .ex-card { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); text-align: left; cursor: pointer; color: inherit; border-radius: var(--radius-lg); border: .5px solid var(--border); background: var(--card); box-shadow: var(--shadow-sm); }
+    .ex-card .ex-txt { flex: 1; }
+    .ex-card:active, .ex-row:active { opacity: .75; }
+    .al-sec { --t: var(--tn1); position: relative; overflow: hidden; margin-top: var(--space-4); padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px); border-radius: var(--radius-lg);
+      border: .5px solid color-mix(in srgb, var(--t) 26%, var(--border)); background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 2%, var(--card))); }
+    .al-sec::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
+    .al-c2 { --t: var(--tn4); } .al-c3 { --t: var(--tn3); } .al-c4 { --t: var(--tn2); }
+    .al-p { margin: 0 0 var(--space-2); line-height: 1.6; font-size: var(--fs-md); }
+    .al-p.sm { font-size: var(--fs-sm); color: var(--muted); }
+    .al-p:last-child { margin-bottom: 0; }
+    .ex-picker #pk-chips { margin: var(--space-3) 0; }
+    .ex-picker .ex-filtri { flex-wrap: wrap; }
+    .ex-pick-btn { display: flex; align-items: center; gap: var(--space-3); width: 100%; text-align: left; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--card); color: inherit; cursor: pointer; min-height: 64px; }
+    .ex-pick-btn .grow { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .ex-pick-btn .s.warn { color: var(--danger); }
+    .wk-how { font-size: var(--fs-sm); margin-top: -4px; }
   </style>
 </head>
 <!--
-  Allenamento: quattro schede.
+  Allenamento: cinque schede.
     (il registro delle sessioni fatte è nel calendario centrale: js/pages/allenamento/sessione.js)
     Schede   → js/pages/allenamento/schede.js     allenamenti → schede → esercizi (si riordinano trascinando)
     Avvia    → js/pages/allenamento/avvia.js + guida.js   la guida a tutto schermo durante l'allenamento
+    Esercizi → js/pages/allenamento/esercizi.js + catalogo.js   il catalogo (assets/data/esercizi.json): ricerca e scheda di ogni esercizio
     Studio   → js/libro/studio.js + studio-lezioni.js     il percorso a lezioni
     Appunti  → js/libro/studio.js + studio-appunti.js     gli appunti come libro, con l'audiolibro
   Il + della barra in basso preme #al-add, che esegue l'azione della scheda attiva.
@@ -248,6 +291,7 @@
       <div class="segmented" role="group" aria-label="Sezioni di Allenamento">
         <button type="button" data-tab-btn="schede" aria-pressed="true">Schede</button>
         <button type="button" data-tab-btn="avvia" aria-pressed="false">Avvia</button>
+        <button type="button" data-tab-btn="esercizi" aria-pressed="false">Esercizi</button>
         <button type="button" data-tab-btn="studio" aria-pressed="false">Studio</button>
         <button type="button" data-tab-btn="appunti" aria-pressed="false">Appunti</button>
       </div>
@@ -255,6 +299,7 @@
 
     <section class="tab-panel" id="tab-schede" aria-label="Schede"></section>
     <section class="tab-panel" id="tab-avvia" aria-label="Avvia" hidden></section>
+    <section class="tab-panel" id="tab-esercizi" aria-label="Esercizi" hidden></section>
     <!-- Studio e Appunti: js/libro/studio.js (le viste le gestisce il motore, non .tab-panel) -->
     <section class="lb-view" id="tab-studio" aria-label="Studio" hidden></section>
     <section class="lb-view" id="tab-lezione" aria-label="Lezione" hidden></section>
