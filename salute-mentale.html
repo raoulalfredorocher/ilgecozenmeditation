@@ -63,6 +63,17 @@
     .j-empty { text-align: center; padding: var(--space-8) var(--space-4); color: var(--muted); font-size: var(--fs-sm); line-height: 1.7; }
     .j-empty .zen-quote { color: var(--text); font-size: var(--fs-xl); margin-bottom: var(--space-3); }
 
+    /* Cos'è il journaling: scheda sfumata, la domanda sempre in vista */
+    .j-guide { border: .5px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); background: linear-gradient(135deg, var(--sakura-soft), var(--card) 75%); }
+    .j-guide summary { list-style: none; cursor: pointer; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-5); -webkit-tap-highlight-color: transparent; }
+    .j-guide summary::-webkit-details-marker { display: none; }
+    .j-guide-k { font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); }
+    .j-guide-q { font: 600 1.25rem/1.4 var(--font-serif); letter-spacing: -.01em; border-left: 3px solid var(--sakura); padding-left: var(--space-3); }
+    .j-guide-more { align-self: flex-start; font-size: var(--fs-sm); font-weight: 600; color: var(--geco-blue); }
+    .j-guide[open] .j-guide-more { display: none; }
+    .j-guide-body { padding: 0 var(--space-5) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+    .j-guide-body p { margin: 0; font: 400 var(--fs-md)/1.75 var(--font-serif); }
+
     /* Editor a tutto schermo */
     .editor { position: fixed; top: 0; left: 0; right: 0; bottom: 0; height: 100vh; height: calc(100dvh + var(--deficit, 0px)); z-index: 300; background: var(--bg); display: none; flex-direction: column; }
     .editor.on { display: flex; }
