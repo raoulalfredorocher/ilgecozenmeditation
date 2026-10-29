@@ -1,6 +1,6 @@
 # Pubblica l'app su Firebase Hosting.
 #  - push su main          → sito pubblico (canale "live")
-#  - pull request su main  → anteprima temporanea con link nei commenti della PR
+#  Niente anteprime per le pull request: occupavano lo spazio gratuito di Hosting (errore 429) e mandavano mail.
 # Richiede il secret FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 (vedi docs/DEPLOY.md).
 name: Firebase Hosting
 
@@ -12,19 +12,14 @@ concurrency:
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: read
-  pull-requests: write
   checks: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Le PR da fork non hanno accesso ai secret
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,4 +35,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ILGECOZEN_B2DF7 }}
           projectId: ilgecozen-b2df7
-          channelId: ${{ github.event_name == 'push' && 'live' || '' }}
+          channelId: live
