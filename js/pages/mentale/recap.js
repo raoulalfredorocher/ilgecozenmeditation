@@ -13,7 +13,9 @@ import * as store from './store.js';
 import { labelOf } from './data.js';
 import { $, esc, showSheet, hideSheet, MESI_BREVI } from './ui.js';
 
-const MODELS = ['gemini-flash-latest', 'gemini-flash-lite-latest'];
+// Gli stessi dell'assistente: "gemini-flash-latest" dal piano gratuito a volte non risponde mai.
+const MODELS = ['gemini-flash-lite-latest', 'gemini-3.1-flash-lite-preview'];
+const TIMEOUT = 90000;   // oltre, si passa al modello successivo
 let entries = [];
 let saved = { anni: {}, nomi: [] };   // { anni: { '2025': { testo, at, voci } }, nomi: [{ nome, ruolo }] }
 let year = null, busy = false, error = '';
@@ -74,11 +76,12 @@ async function compute() {
     for (const name of MODELS) {
       try {
         const model = getGenerativeModel(ai, { model: name, generationConfig: { temperature: 0.5, maxOutputTokens: 2500 } });
-        out = (await model.generateContent(text)).response.text().trim();
+        const late = new Promise((_, no) => setTimeout(() => no(new Error('timeout')), TIMEOUT));
+        out = (await Promise.race([model.generateContent(text), late])).response.text().trim();
         break;
       } catch (e) {
         lastErr = e;
-        if (!/not found|404|not supported|no longer available|unavailable for/i.test(String(e.message))) throw e;
+        if (!/timeout|not found|404|not supported|no longer available|unavailable for/i.test(String(e.message))) throw e;
       }
     }
     if (!out) throw lastErr || new Error('Risposta vuota');
