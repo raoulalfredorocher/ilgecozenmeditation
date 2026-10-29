@@ -1,14 +1,14 @@
 /**
  * esercizi.js — scheda "Esercizi": cerca un esercizio e apri la sua scheda (come gli Alimenti in Alimentazione).
  *
- * Scheda dell'esercizio a tutto schermo: foto animata (inizio ↔ fine), video, muscoli, beneficio, come si esegue,
+ * Scheda dell'esercizio a tutto schermo: foto animata (inizio ↔ fine), muscoli, beneficio, come si esegue,
  * ritmo, errori da evitare, programma consigliato, l'ultima volta che l'hai fatto, complementari e sostitutivi.
  * Da qui viene anche il selettore usato da Schede (pickEsercizio) e la scheda aperta dalla guida (openEsercizio).
  */
 import { escapeHtml as esc, safeUrl } from '../../core/dom.js';
 import { createSheet } from '../../ui/dialog.js';
 import { state, onChange, GROUPS, fmtKg } from './state.js';
-import { catalogReady, allEsercizi, esercizioById, esercizioOf, searchEsercizi, imgUrl, videoUrl, progText } from './catalogo.js';
+import { catalogReady, allEsercizi, esercizioById, esercizioOf, searchEsercizi, imgUrl, progText } from './catalogo.js';
 
 const root = document.getElementById('tab-esercizi');
 const FILTRI = ['Tutti', ...GROUPS.filter(g => g !== 'Altro'), 'Mobilità'];
@@ -44,20 +44,39 @@ root.innerHTML = `
   <div id="ex-out"></div>`;
 const $ = sel => root.querySelector(sel);
 
+/**
+ * Mosaico senza buchi su 4 colonne: blocchi da 3 (alta 2×4 + due 2×2, poi due 2×2 + alta), da 1 (larga 4×2)
+ * e da 2 (due 2×2). Un solo risultato occupa tutto (4×4).
+ */
+function sizes(n) {
+  if (n === 1) return ['w4 h4'];
+  const out = [], cicli = [['w2 h4', 'w2 h2', 'w2 h2'], ['w4 h2'], ['w2 h2', 'w2 h4', 'w2 h2'], ['w2 h2', 'w2 h2']];
+  for (let i = 0; out.length < n; i++) {
+    const left = n - out.length;
+    let b = cicli[i % 4];
+    if (b.length > left) b = left === 2 ? cicli[3] : cicli[1];
+    out.push(...b);
+  }
+  return out;
+}
+const tile = (e, sz, attr = 'data-ex-open') => `<button type="button" class="ex-tile ${sz}" ${attr}="${esc(e.id)}">
+  ${e.img ? `<img src="${esc(safeUrl(imgUrl(e)))}" alt="" loading="lazy" onerror="this.remove()"/>` : ''}
+  <span class="ex-tile-name">${esc(e.nome)}</span></button>`;
+const mosaic = list => { const z = sizes(list.length); return `<div class="ex-mosaic">${list.map((e, i) => tile(e, z[i])).join('')}</div>`; };
+
 function render() {
   const all = allEsercizi();
   if (!all.length) { $('#ex-out').innerHTML = '<p class="empty-line">Carico il catalogo…</p>'; return; }
   $('#ex-chips').innerHTML = chips(filtro, 'data-f');
   const found = filtra(searchEsercizi(query), filtro);
-  const mine = usati();
   if (query.trim()) {
-    $('#ex-out').innerHTML = found.length ? `<div class="list ex-list">${found.map(e => row(e, mine)).join('')}</div>` : '<p class="empty-line">Nessun esercizio trovato. Prova con un altro nome o con il muscolo.</p>';
+    $('#ex-out').innerHTML = found.length ? mosaic(found) : '<p class="empty-line">Nessun esercizio trovato. Prova con un altro nome o con il muscolo.</p>';
     return;
   }
   const groupOf = e => (e.attrezzo === 'Mobilità' ? 'Mobilità' : e.gruppo);
   const groups = [...FILTRI.slice(1), 'Altro'].filter(g => found.some(e => groupOf(e) === g));
-  $('#ex-out').innerHTML = `<p class="empty-line">${all.length} esercizi: macchinari, cavi, pesi liberi, corpo libero e mobilità.</p>
-    ${groups.map(g => `<div class="cap">${esc(g)}</div><div class="list ex-list">${found.filter(e => groupOf(e) === g).map(e => row(e, mine)).join('')}</div>`).join('')}`;
+  $('#ex-out').innerHTML = `<p class="empty-line">${all.length} esercizi tra macchinari, cavi, pesi liberi, corpo libero e mobilità.</p>
+    ${groups.map(g => `<div class="cap">${esc(g)}</div>${mosaic(found.filter(e => groupOf(e) === g))}`).join('')}`;
 }
 
 root.addEventListener('click', e => {
@@ -87,9 +106,8 @@ function ultimaVolta(e) {
 }
 const dataIt = k => { const [y, m, d] = k.split('-'); return `${+d}/${+m}/${y}`; };
 
-const card = e => `<button type="button" class="ex-card" data-ex-go="${esc(e.id)}">${thumb(e)}
-  <span class="ex-txt"><span class="ex-nm">${esc(e.nome)}</span><span class="s">${esc(e.attrezzo)}</span></span><span aria-hidden="true">›</span></button>`;
-const sec = (cls, title, body) => `<section class="al-sec ${cls}"><div class="field-lbl">${title}</div>${body}</section>`;
+const cards = list => `<div class="ex-mosaic">${list.map(e => tile(e, 'w2 h2', 'data-ex-go')).join('')}</div>`;
+const sec = (title, body) => `<section class="ex-sec"><div class="field-lbl">${title}</div>${body}</section>`;
 
 function draw(e) {
   const last = ultimaVolta(e);
@@ -103,23 +121,22 @@ function draw(e) {
     <div class="ed-bar"><div class="l"><button type="button" class="text-btn" data-close>‹ Indietro</button></div><span></span><div class="r"></div></div>
     <div class="ed-scroll">
       ${e.img ? `<figure class="ex-hero"><img src="${esc(safeUrl(imgUrl(e, 0)))}" alt="${esc(e.nome)}: inizio" onerror="this.closest('figure').remove()"/><img class="b" src="${esc(safeUrl(imgUrl(e, 1)))}" alt="${esc(e.nome)}: fine" onerror="this.remove()"/></figure>
-        <div class="ex-credit">Immagini: free-exercise-db · pubblico dominio</div>` : ''}
+        <div class="ex-credit">Immagini: free-exercise-db, pubblico dominio</div>` : ''}
       <h2 class="ex-title">${esc(e.nome)}</h2>
       <div class="s ex-sub">${esc(e.gruppo)} · ${esc(e.attrezzo)}</div>
-      <a class="btn block ex-video" href="${esc(videoUrl(e))}" target="_blank" rel="noopener">▶ Guarda un video dell'esecuzione</a>
 
-      ${sec('al-c1', 'Muscoli', `<div class="ex-mus"><span class="s">Principali</span><div class="chips-wrap">${e.primari.map(m => `<span class="chip ex-chip-p">${esc(m)}</span>`).join('')}</div></div>
-        ${e.secondari.length ? `<div class="ex-mus"><span class="s">Aiutano</span><div class="chips-wrap">${e.secondari.map(m => `<span class="chip">${esc(m)}</span>`).join('')}</div></div>` : ''}`)}
-      ${sec('al-c3', 'A cosa serve', `<p class="al-p">${esc(e.beneficio)}</p>`)}
-      ${sec('al-c4', 'Come si esegue', `<ol class="ex-steps">${e.esecuzione.map(s => `<li>${esc(s)}</li>`).join('')}</ol>`)}
-      ${sec('al-c2', 'Ritmo', `<p class="al-p ex-ritmo">${esc(e.ritmo)}</p>`)}
-      ${e.errori.length ? sec('al-c1', 'Errori da evitare', `<ul class="ex-err">${e.errori.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`) : ''}
-      ${sec('al-c3', 'Programma consigliato', `<p class="al-p"><b>${esc(progText(e))}</b></p>
-        ${last ? `<p class="al-p sm">L'ultima volta (${dataIt(last.data)}): ${esc(lastTxt)}</p>` : ''}
-        ${dove.length ? `<p class="al-p sm">Nelle tue schede: ${dove.map(esc).join('; ')}</p>` : ''}`)}
+      ${sec('Muscoli', `<p class="ex-p"><span class="ex-k">Principali</span>${esc(e.primari.join(', '))}</p>
+        ${e.secondari.length ? `<p class="ex-p"><span class="ex-k">Coinvolti</span>${esc(e.secondari.join(', '))}</p>` : ''}`)}
+      ${sec('A cosa serve', `<p class="ex-p">${esc(e.beneficio)}</p>`)}
+      ${sec('Come si esegue', `<ol class="ex-steps">${e.esecuzione.map(s => `<li>${esc(s)}</li>`).join('')}</ol>`)}
+      ${sec('Ritmo', `<p class="ex-p">${esc(e.ritmo)}</p>`)}
+      ${e.errori.length ? sec('Errori da evitare', `<ul class="ex-steps">${e.errori.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`) : ''}
+      ${sec('Programma consigliato', `<p class="ex-p">${esc(progText(e))}</p>
+        ${last ? `<p class="ex-p ex-m">L'ultima volta (${dataIt(last.data)}): ${esc(lastTxt)}</p>` : ''}
+        ${dove.length ? `<p class="ex-p ex-m">Nelle tue schede: ${dove.map(esc).join('; ')}</p>` : ''}`)}
 
-      ${sost.length ? `<div class="cap">Se è occupato, al posto suo</div><div class="ex-cards">${sost.map(card).join('')}</div>` : ''}
-      ${comp.length ? `<div class="cap">Complementari: da abbinare</div><div class="ex-cards">${comp.map(card).join('')}</div>` : ''}
+      ${sost.length ? `<div class="cap">Se è occupato, al posto suo</div>${cards(sost)}` : ''}
+      ${comp.length ? `<div class="cap">Complementari: da abbinare</div>${cards(comp)}` : ''}
     </div>`;
   page.querySelector('.ed-scroll').scrollTo(0, 0);
 }

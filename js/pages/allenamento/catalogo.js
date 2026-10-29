@@ -42,7 +42,6 @@ export const esercizioOf = (nameOrEx) => {
 /** Foto dell'esercizio: 0 = inizio, 1 = fine del movimento. '' se non c'è. */
 export const imgUrl = (e, i = 0) => (e?.img ? `${IMG}${encodeURIComponent(e.img)}/${i}.jpg` : '');
 /** Ricerca video su YouTube (nessuna chiave: si apre la pagina dei risultati). */
-export const videoUrl = e => `https://www.youtube.com/results?search_query=${encodeURIComponent(`${e.nome} esecuzione corretta`)}`;
 
 const stem = w => (w.length > 3 ? w.replace(/[aeiou]$/, '') : w);
 /**
