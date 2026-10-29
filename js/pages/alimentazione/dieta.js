@@ -16,7 +16,8 @@ import { workoutBars } from './charts.js';
 import { deliver, csvFile } from '../../ui/files.js';
 import { buildDietPDF } from './pdf.js';
 
-const root = document.getElementById('tab-dieta');
+const root = document.getElementById('dieta-piano');
+const panel = document.getElementById('tab-dieta');      // in fondo alla scheda c'è risultati.js
 let selected = weekdayIdx(new Date());
 let slide = '';                       // direzione dell'ultimo cambio giorno ('l' | 'r'), per l'animazione
 
@@ -264,6 +265,6 @@ let stale = false;
 export function onShow() { if (stale) { stale = false; render(); } }
 onChange(what => {
   if (!['diet', 'diets', 'diary', 'profile', 'workouts', 'health'].includes(what)) return;
-  if (root.hidden) stale = true; else render();
+  if (panel.hidden) stale = true; else render();
 });
 render();

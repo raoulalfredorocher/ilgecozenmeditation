@@ -105,7 +105,7 @@ function alimentazione(days) {
   const hi = avg.reduce((b, v, i) => (v != null && (b < 0 || v > avg[b]) ? i : b), -1), lo = avg.reduce((b, v, i) => (v != null && (b < 0 || v < avg[b]) ? i : b), -1);
   const polar = hi >= 0 ? card('Il giorno della settimana in cui mangi di più', `Il ${DN[hi]} mangi in media ${it(avg[hi])} kcal, il ${DN[lo]} ${it(avg[lo])}${need ? `; il cerchio tratteggiato è il fabbisogno medio (${it(need)} kcal)` : ''}. Ultime ${range < 28 ? 4 : Math.round(range / 7)} settimane.`,
     weekdayPolar(avg, need, wk.map(l => l.length)), '<div class="gz-readout">Tocca uno spicchio per leggere la media.</div><p class="gz-rif">Più lungo lo spicchio, più calorie in media quel giorno (l\'area è proporzionale alle kcal).</p>') : '';
-  return heat + donut + polar + '<a class="rs-link gz-link" href="alimentazione.html#risultati">Calorie, macro e aderenza alla dieta sono in Alimentazione → Risultati ›</a>';
+  return heat + donut + polar + '<a class="rs-link gz-link" href="alimentazione.html#risultati">Calorie, macro e aderenza alla dieta sono in Alimentazione → Dieta, in fondo ›</a>';
 }
 
 // ─── Riposo ──────────────────────────────────────────────────────────────

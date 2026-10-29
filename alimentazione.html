@@ -19,10 +19,17 @@
   <style>
     .tab-panel { display: flex; flex-direction: column; gap: var(--space-5); }
     .tab-panel[hidden] { display: none; }
-    /* sette schede: la barra scorre di lato invece di stringere le parole */
+    /* Dieta: il piano e, in fondo, i risultati (ex scheda Risultati) */
+    .tab-part { display: flex; flex-direction: column; gap: var(--space-5); }
+    #dieta-risultati { scroll-margin-top: var(--space-6); }
+    .rs-title { margin-top: var(--space-4); }
+    /* Studio: selettore interno Studio / Appunti, a tutta larghezza */
+    .lb-switch[hidden] { display: none; }
+    .lb-switch > button { flex: 1; }
+    /* cinque schede: se non ci stanno, la barra scorre di lato invece di stringere le parole */
     .page-tabs .segmented { overflow-x: auto; scrollbar-width: none; }
     .page-tabs .segmented::-webkit-scrollbar { display: none; }
-    .page-tabs .segmented > button { flex: 1 0 auto; padding: 0 14px; white-space: nowrap; }
+    .page-tabs .segmented > button { flex: 1 0 auto; padding: 0 10px; white-space: nowrap; }
     .s { font-size: var(--fs-xs); color: var(--muted); }
     .m { font-size: var(--fs-md); }
     .cap { font-size: .6875rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cat-label); margin: var(--space-4) 0 var(--space-2); }
@@ -256,7 +263,7 @@
     .rs-card { --t: var(--tn1); position: relative; overflow: hidden; padding-left: calc(var(--space-5) + 4px); border-color: color-mix(in srgb, var(--t) 28%, var(--border));
       background: linear-gradient(135deg, color-mix(in srgb, var(--t) 14%, var(--card)), color-mix(in srgb, var(--t) 2%, var(--card))); }
     .rs-card::before { content: ''; position: absolute; left: 0; top: 18px; bottom: 18px; width: 4px; border-radius: 0 4px 4px 0; background: var(--t); }
-    #tab-risultati .rs-card:nth-of-type(4n+2) { --t: var(--tn2); } #tab-risultati .rs-card:nth-of-type(4n+3) { --t: var(--tn3); } #tab-risultati .rs-card:nth-of-type(4n+4) { --t: var(--tn4); }
+    #dieta-risultati .rs-card:nth-of-type(4n+2) { --t: var(--tn2); } #dieta-risultati .rs-card:nth-of-type(4n+3) { --t: var(--tn3); } #dieta-risultati .rs-card:nth-of-type(4n+4) { --t: var(--tn4); }
     .rs-banner { background: linear-gradient(135deg, color-mix(in srgb, var(--tn2) 18%, var(--card)), color-mix(in srgb, var(--tn2) 3%, var(--card))); border-color: color-mix(in srgb, var(--tn2) 28%, var(--border)); }
     .rs-head { font-size: 3rem; }
     .rs-calhead .cap { font: 500 var(--fs-xl) var(--font-serif); font-style: normal; text-transform: capitalize; }
@@ -381,11 +388,11 @@
 <!--
   Alimentazione: cinque schede.
     Dieta      → js/pages/alimentazione/dieta.js (+ dayeditor.js, pdf.js, profile.js)
-    Risultati  → js/pages/alimentazione/risultati.js (+ charts.js)
+    Risultati  → js/pages/alimentazione/risultati.js (+ charts.js), in fondo alla scheda Dieta
     Ricette    → js/pages/alimentazione/ricette.js
     Spesa      → js/pages/alimentazione/spesa.js
     Alimenti   → js/pages/alimentazione/alimenti.js (schede in assets/data/schede-alimenti.json)
-    Studio, Appunti → motore js/libro/studio.js con studio-lezioni.js e studio-appunti.js (audio in audio/alimentazione/)
+    Studio (con il selettore Studio / Appunti) → motore js/libro/studio.js con studio-lezioni.js e studio-appunti.js (audio in audio/alimentazione/)
   Il + della barra in basso preme #alim-add, che esegue l'azione della scheda attiva.
   Database degli alimenti: assets/data/alimenti.json (vedi foods.js per il formato).
 -->
@@ -402,20 +409,24 @@
     <div class="page-tabs">
       <div class="segmented" role="group" aria-label="Sezioni di Alimentazione">
         <button type="button" data-tab-btn="dieta" aria-pressed="true">Dieta</button>
-        <button type="button" data-tab-btn="risultati">Risultati</button>
         <button type="button" data-tab-btn="ricette">Ricette</button>
         <button type="button" data-tab-btn="spesa">Spesa</button>
         <button type="button" data-tab-btn="alimenti">Alimenti</button>
         <button type="button" data-tab-btn="studio">Studio</button>
-        <button type="button" data-tab-btn="appunti">Appunti</button>
       </div>
     </div>
 
-    <section class="tab-panel" id="tab-dieta" aria-label="Dieta"></section>
-    <section class="tab-panel" id="tab-risultati" aria-label="Risultati" hidden></section>
+    <section class="tab-panel" id="tab-dieta" aria-label="Dieta">
+      <div class="tab-part" id="dieta-piano"></div>
+      <div class="tab-part" id="dieta-risultati" aria-label="Risultati"></div>
+    </section>
     <section class="tab-panel" id="tab-ricette" aria-label="Ricette" hidden></section>
     <section class="tab-panel" id="tab-spesa" aria-label="Spesa" hidden></section>
     <section class="tab-panel" id="tab-alimenti" aria-label="Alimenti" hidden></section>
+    <div class="segmented lb-switch" id="lb-switch" role="group" aria-label="Studio o appunti" hidden>
+      <button type="button" data-lb="studio" aria-pressed="true">Studio</button>
+      <button type="button" data-lb="appunti" aria-pressed="false">Appunti</button>
+    </div>
     <section class="view lb-view" id="view-studio" aria-label="Studio" hidden></section>
     <section class="view lb-view" id="view-lesson" aria-label="Lezione" hidden></section>
     <section class="view lb-view" id="view-appunti" aria-label="Appunti" hidden></section>
