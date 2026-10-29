@@ -56,7 +56,7 @@ Spotify Web API e Web Playback SDK (musica, allenamento), Yahoo Finance
 | `armonia-sociale.html` | Contatti (CRM personale) | `crm_contacts` |
 | `finanza.html` | Conti, categorie, spese, patrimonio | `finanza_accounts`, `finanza_categories`, `finanza_expenses` |
 | `personal-brand.html` | Guardaroba, igiene, ispirazione | `guardaroba`, `igiene_actions`, `ispirazione` |
-| `journaling.html`, `contributo-al-mondo.html` | Pagine informative | — |
+| `contributo-al-mondo.html` | Pagine informative | — |
 
 ## Flusso di login
 
