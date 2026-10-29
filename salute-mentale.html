@@ -199,6 +199,28 @@
     .pill-n { margin-left: 6px; font-size: var(--fs-xs); opacity: .6; font-variant-numeric: tabular-nums; }
     .pill .fam-dot { margin-right: 7px; }
 
+    /* ── Recap dell'anno ── */
+    .rc-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+    .rc-tiles div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-4) var(--space-2); border-radius: var(--radius-md); background: linear-gradient(135deg, var(--geco-mist), var(--card) 80%); border: .5px solid var(--border); }
+    .rc-tiles b { font-size: 1.5rem; font-weight: 300; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .rc-tiles span { font-size: .625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .rc-months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; height: 72px; align-items: end; }
+    .rc-months div { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+    .rc-months i { display: block; width: 100%; min-height: 3px; border-radius: 3px; background: var(--sakura); }
+    .rc-months i.z { background: var(--surface); }
+    .rc-months span { font-size: .5625rem; color: var(--muted); text-transform: uppercase; }
+    .rc-note { margin-top: calc(-1 * var(--space-3)); text-align: center; }
+    .rc-note .text-btn { font-size: inherit; }
+    .rc-card { border: .5px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: var(--space-5); background: linear-gradient(160deg, var(--sakura-soft), var(--card) 45%); font: 400 var(--fs-md)/1.75 var(--font-serif); }
+    .rc-card p, .rc-card ul { margin: 0 0 var(--space-3); }
+    .rc-card ul { padding-left: 1.2em; }
+    .rc-card li { margin-bottom: 4px; }
+    .rc-meta { font: 400 .625rem/1.5 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--cat-label); margin-bottom: var(--space-4); }
+    .rc-h { font: 600 1.125rem/1.35 var(--font-serif); margin: var(--space-5) 0 var(--space-2); border-left: 3px solid var(--sakura); padding-left: var(--space-3); }
+    .rc-meta + .rc-h { margin-top: 0; }
+    .rn-rows { display: flex; flex-direction: column; gap: var(--space-2); }
+    .rn-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+
     /* ── Fogli ── */
     .sheet-body { display: flex; flex-direction: column; gap: var(--space-5); }
     #pick-list { max-height: 52dvh; overflow-y: auto; }
@@ -222,11 +244,13 @@
         <button type="button" data-tab="storia" aria-pressed="false">Storia</button>
         <button type="button" data-tab="diario" aria-pressed="true">Diario</button>
         <button type="button" data-tab="emozioni" aria-pressed="false">Emozioni</button>
+        <button type="button" data-tab="recap" aria-pressed="false">Recap</button>
       </div>
     </div>
     <section class="view" id="view-storia" hidden></section>
     <section class="view" id="view-diario"></section>
     <section class="view" id="view-emozioni" hidden></section>
+    <section class="view" id="view-recap" hidden></section>
   </main>
 
   <!-- Scrittura del diario, a tutto schermo -->

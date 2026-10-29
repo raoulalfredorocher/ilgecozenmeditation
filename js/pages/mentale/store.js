@@ -22,6 +22,8 @@ const emoSafe = key => key.replace(/[^a-zA-Z0-9_À-ɏ]/g, '_');
 export const ready = () => !!root();
 /** Riferimenti Firestore: documento della Storia, raccolta / voce del diario. */
 export const storiaRef = () => { const r = root(); return r && doc(db, ...r, 'salute_mentale', 'storia'); };
+/** Recap dell'anno: { anni: { AAAA: { testo, at, voci } }, nomi: [{ nome, ruolo }] }. */
+export const recapRef  = () => { const r = root(); return r && doc(db, ...r, 'salute_mentale', 'recap'); };
 export const diaryCol  = () => { const r = root(); return r && collection(db, ...r, 'mental_diary'); };
 export const diaryRef  = id => { const r = root(); return r && doc(db, ...r, 'mental_diary', id); };
 // note vocali: pezzi base64 in mental_diary/{voce}/audio/{0000, 0001, …}
