@@ -1,5 +1,5 @@
 /**
- * main.js — Salute mentale: Storia · Diario · Emozioni.
+ * main.js — Salute mentale: Storia · Diario · Emozioni · Recap.
  * Il + della barra in basso fa l'azione principale della scheda aperta:
  *   Storia → nuovo titolo · Diario → nuova voce · Emozioni → "che emozione senti?"
  */
@@ -8,9 +8,10 @@ import { $ } from './ui.js';
 import { initStoria, loadStoria, renderStoria, newSection } from './storia.js';
 import { initDiario, startDiary, openEditor, openDiaryMenu } from './diario.js';
 import { initEmozioni, startEmozioni, openPicker } from './emozioni.js';
+import { initRecap, loadRecap } from './recap.js';
 
 const TAB_KEY = 'zen_mentale_tab';
-const TABS = ['storia', 'diario', 'emozioni'];
+const TABS = ['storia', 'diario', 'emozioni', 'recap'];
 let tab = 'diario';
 try { const t = localStorage.getItem(TAB_KEY); if (TABS.includes(t)) tab = t; } catch { /* storage non disponibile */ }
 
@@ -29,12 +30,14 @@ $('btn-more').addEventListener('click', () => { if (tab === 'diario') openDiaryM
 $('btn-add').addEventListener('click', () => {
   if (tab === 'storia') newSection();
   else if (tab === 'diario') openEditor();
-  else openPicker();
+  else if (tab === 'emozioni') openPicker();
+  else { showTab('diario'); openEditor(); }   // nel Recap il + scrive una nuova voce
 });
 
 initStoria();
 initDiario();
 initEmozioni();
+initRecap();
 showTab(tab);
 
 waitForAuth().then(async () => {
@@ -42,4 +45,5 @@ waitForAuth().then(async () => {
   renderStoria();
   startDiary();
   startEmozioni();
+  loadRecap();
 });

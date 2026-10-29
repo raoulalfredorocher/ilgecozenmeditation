@@ -10,6 +10,7 @@ import * as store from './store.js';
 import * as audio from './audio.js';
 import { $, esc, armedButton, showSheet, hideSheet, dayStr, timeStr, GIORNI_BREVI, mese } from './ui.js';
 import { parseKey as parseDay } from '../../core/attivita.js';
+import { setRecapEntries } from './recap.js';
 
 const DRAFT_KEY = 'zen_diary_draft';
 let entries = [];
@@ -491,5 +492,6 @@ export function startDiary() {
   store.onSnapshot(store.query(col, store.orderBy('createdAt', 'desc')), snap => {
     entries = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
     render();
+    setRecapEntries(entries);
   }, err => console.warn('diario', err));
 }
