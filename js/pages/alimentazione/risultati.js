@@ -1,5 +1,5 @@
 /**
- * risultati.js — scheda "Risultati": come stai andando rispetto alla dieta e al tuo fabbisogno (TDEE).
+ * risultati.js — "Risultati", in fondo alla scheda Dieta: come stai andando rispetto alla dieta e al tuo fabbisogno (TDEE).
  *
  * Ordine di lettura: in cima le medie del periodo (kcal, proteine, carbo, grassi, deficit), poi due grafici giorno per
  * giorno con lo stesso asse e gli stessi colori: calorie contro TDEE e macro in grammi. Tocca un giorno per il dettaglio.
@@ -14,10 +14,10 @@ import {
   fromDietMeal, fromDiaryMeal, itemsTotals, slotLabel, slotOrder,
 } from './state.js';
 import { kcalTdee, macroGrams } from './charts.js';
-import { registerToday } from './dieta.js';
 import { openProfile } from './profile.js';
 
-const root = document.getElementById('tab-risultati');
+const root = document.getElementById('dieta-risultati');
+const panel = document.getElementById('tab-dieta');
 let period = 7;              // giorni, oppure 'all' = dal primo giorno registrato a oggi
 
 const kc = n => Math.round(n).toLocaleString('it-IT');
@@ -127,6 +127,7 @@ function render() {
       <div class="rs-body">${macroGrams(days)}</div>${legend([[MC.prot, 'Proteine'], [MC.carb, 'Carbo'], [MC.fat, 'Grassi']])}</section>` : '';
 
   root.innerHTML = `
+    <h2 class="section-title rs-title">Risultati</h2>
     ${hp ? '' : `<section class="rs-card rs-banner"><div class="m">Completa il tuo profilo</div><div class="s">Serve una volta sola: calcola il TDEE e abilita il deficit.</div><button type="button" class="text-btn" data-profile>Compila il profilo</button></section>`}
     ${controls}${summary}${charts}`;
 }
@@ -140,15 +141,12 @@ root.addEventListener('click', e => {
 });
 root.addEventListener('keydown', e => { const dot = e.target.closest?.('[data-k]'); if (dot && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(dot.dataset.k); } });
 
-/** Azione del + quando la scheda è attiva: registra oggi nel diario. */
-export const addAction = () => registerToday();
-
-// Con la scheda nascosta non si ridisegna: si segna e si ridisegna quando torna visibile (onShow, da main.js).
+// Con la scheda Dieta nascosta non si ridisegna: si segna e si ridisegna quando torna visibile (onShow, da main.js).
 let stale = false;
 /** Chiamata da main.js quando la scheda diventa visibile: ridisegna se i dati sono cambiati nel frattempo. */
 export function onShow() { if (stale) { stale = false; render(); } }
 onChange(what => {
   if (!['diary', 'diet', 'diets', 'profile', 'workouts', 'health'].includes(what)) return;
-  if (root.hidden) stale = true; else render();
+  if (panel.hidden) stale = true; else render();
 });
 render();
