@@ -17,7 +17,6 @@ export const SECTION_GROUPS = [
   { title: 'Mente e spirito', items: [
     { href: 'meditazione.html', desc: 'Pratica e presenza.', title: 'Spiritualità', sub: 'pratica · presenza', icon: 'flower', tone: 'sakura' },
     { href: 'salute-mentale.html', desc: 'Emozioni, diario e la tua storia.', title: 'Salute mentale', sub: 'emozioni · diario', icon: 'heart', tone: 'sakura' },
-    { href: 'journaling.html', desc: 'Scrivere per capirsi.', title: 'Journaling', sub: 'scrittura', icon: 'pen', tone: 'sand' },
   ]},
   { title: 'Relazioni e mondo', items: [
     { href: 'armonia-sociale.html', desc: 'Le persone a cui tieni.', title: 'Relazioni', sub: 'contatti', icon: 'users', tone: 'sky' },
